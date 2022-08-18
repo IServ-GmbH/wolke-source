@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "photos",
+    {
+    "Photos" : "Kuvat",
+    "Your memories under your control" : "Muistosi hallinnassasi",
+    "Your photos" : "Valokuvat",
+    "Your videos" : "Videot",
+    "Favorites" : "Suosikit",
+    "On this day" : "Tänä päivänä",
+    "Your folders" : "Kansiot",
+    "Shared with you" : "Jaettu kanssasi",
+    "Tagged photos" : "Tunnisteilla varustetut kuvat",
+    "Locations" : "Sijainnit",
+    "Settings" : "Asetukset",
+    "Open the full size \"{name}\" image" : "Avaa kuva \"{name}\" todellisessa koossa",
+    "Open the \"{name}\" sub-directory" : "Avaa \"{name}\"-alikansio",
+    "Share this folder" : "Jaa tämä kansio",
+    "Back to {folder}" : "Takaisin kansioon {folder}",
+    "_{years} year ago_::_{years} years ago_" : ["{years} vuosi sitten","{years} vuotta sitten"],
+    "View" : "Näytä",
+    "Enable squared photos view" : "Ota käyttöön neliömäinen kuvanäkymä",
+    "This folder does not exist" : "Tätä kansiota ei ole olemassa",
+    "An error occurred" : "Tapahtui virhe",
+    "No photos in here" : "Ei kuvia täällä",
+    "No tags yet" : "Ei vielä tunnisteita",
+    "Photos with tags will show up here" : "Tunnisteilla varustetut kuvat näkyvät täällä"
+},
+"nplurals=2; plural=(n != 1);");

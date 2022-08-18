@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "photos",
+    {
+    "Photos" : "Fotos",
+    "Your memories under your control" : "Sus recuerdos bajo su control",
+    "Your photos" : "Tus fotos",
+    "Your videos" : "Tus vídeos",
+    "Favorites" : "Favoritos",
+    "On this day" : "En este día",
+    "Your folders" : "Tus carpetas",
+    "Shared with you" : "Compartido contigo",
+    "Tagged photos" : "Fotos etiquetadas",
+    "Locations" : "Ubicaciones",
+    "Settings" : "Ajustes",
+    "Open the full size \"{name}\" image" : "Abrir la imagen \"{name}\" a tamaño completo",
+    "Open the \"{name}\" sub-directory" : "Abrir el subdirectorio \"{name}\"",
+    "Share this folder" : "Compartir esta carpeta",
+    "Back to {folder}" : "Atrás a {folder}",
+    "_{years} year ago_::_{years} years ago_" : ["Hace {years} año","Hace {years} años","Hace {years} años"],
+    "View" : "Ver",
+    "Enable squared photos view" : "Habilitar vista de fotos cuadradas",
+    "This folder does not exist" : "Esta carpeta no existe",
+    "An error occurred" : "Ocurrió un error",
+    "No photos in here" : "No hay fotos aquí",
+    "No tags yet" : "Todavía no hay etiquetas",
+    "Photos with tags will show up here" : "Las fotos con etiquetas aparecerán aquí"
+},
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

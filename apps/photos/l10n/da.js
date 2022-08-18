@@ -1,0 +1,28 @@
+OC.L10N.register(
+    "photos",
+    {
+    "Photos" : "Billeder",
+    "Your memories under your control" : "Dine minder under din egen kontrol",
+    "Your photos" : "Dine billeder",
+    "Your videos" : "Dine videoer",
+    "Favorites" : "Favoritter",
+    "On this day" : "På denne dag",
+    "Your folders" : "Dine mapper",
+    "Shared with you" : "Shared with you",
+    "Tagged photos" : "Markerede billeder",
+    "Locations" : "Sted",
+    "Settings" : "Indstillinger",
+    "Open the full size \"{name}\" image" : "Åbn billedet \"{name}\" i fuld størrelse",
+    "Open the \"{name}\" sub-directory" : "Åbn \"{name}\" under direktoriet",
+    "Share this folder" : "Del denne mappe",
+    "Back to {folder}" : "Tilbage til {folder}",
+    "_{years} year ago_::_{years} years ago_" : ["{years} år siden","{years} år siden"],
+    "View" : "Vis",
+    "Enable squared photos view" : "Aktiver kvadratisk fotovisning",
+    "This folder does not exist" : "Denne mappe findes ikke",
+    "An error occurred" : "Der var en fejl",
+    "No photos in here" : "Ingen billeder her",
+    "No tags yet" : "Ingen tags endnu",
+    "Photos with tags will show up here" : "Billeder med tags vil vise sig her"
+},
+"nplurals=2; plural=(n != 1);");

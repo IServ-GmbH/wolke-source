@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../',
+        'aliases' => array(),
+        'reference' => '0bed61f949bc7a8c69cd154919e78b704e28c99e',
+        'name' => 'files_external/3rdparty',
+        'dev' => true,
+    ),
+    'versions' => array(
+        'files_external/3rdparty' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../',
+            'aliases' => array(),
+            'reference' => '0bed61f949bc7a8c69cd154919e78b704e28c99e',
+            'dev_requirement' => false,
+        ),
+        'icewind/smb' => array(
+            'pretty_version' => 'v3.5.2',
+            'version' => '3.5.2.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../icewind/smb',
+            'aliases' => array(),
+            'reference' => '0a425bd21acf7ae112b135dca34640e1b1a825c3',
+            'dev_requirement' => false,
+        ),
+        'icewind/streams' => array(
+            'pretty_version' => 'v0.7.4',
+            'version' => '0.7.4.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../icewind/streams',
+            'aliases' => array(),
+            'reference' => '93bce472202d36d9808c30eaa52a1dc72b39e04c',
+            'dev_requirement' => false,
+        ),
+    ),
+);

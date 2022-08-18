@@ -1,0 +1,11 @@
+{ "translations": {
+    "Groups" : "Խմբեր",
+    "Copy" : "պատճենահանել",
+    "Size:" : "Չափս.",
+    "Type:" : "Տիպ.",
+    "Size" : "Չափս",
+    "Files" : "Ֆայլեր",
+    "Version" : "Տարբերակ",
+    "Type" : "Տիպ"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
