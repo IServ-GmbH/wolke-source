@@ -317,10 +317,9 @@ class DefaultShareProvider implements IShareProvider {
 				->execute();
 		}
 
-		// IServ: remove email function with no possibility to disable
-//		if ($originalShare->getNote() !== $share->getNote() && $share->getNote() !== '') {
-//			$this->propagateNote($share);
-//		}
+		if ($originalShare->getNote() !== $share->getNote() && $share->getNote() !== '') {
+			$this->propagateNote($share);
+		}
 
 
 		return $share;

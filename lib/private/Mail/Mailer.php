@@ -182,6 +182,7 @@ class Mailer implements IMailer {
 	 * has been supplied.)
 	 */
 	public function send(IMessage $message): array {
+        return [];
 		$debugMode = $this->config->getSystemValue('mail_smtpdebug', false);
 
 		if (empty($message->getFrom())) {
