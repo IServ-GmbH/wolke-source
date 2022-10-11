@@ -1,0 +1,32 @@
+diff --git a/core/routes.php b/core/routes.php
+index 5750dac2ad..db920ffa39 100644
+--- a/core/routes.php
++++ b/core/routes.php
+@@ -82,8 +82,6 @@ $application->registerRoutes($this, [
+ 		['name' => 'Svg#getSvgFromApp', 'url' => '/svg/{app}/{fileName}', 'verb' => 'GET'],
+ 		['name' => 'Css#getCss', 'url' => '/css/{appName}/{fileName}', 'verb' => 'GET'],
+ 		['name' => 'Js#getJs', 'url' => '/js/{appName}/{fileName}', 'verb' => 'GET'],
+-		['name' => 'contactsMenu#index', 'url' => '/contactsmenu/contacts', 'verb' => 'POST'],
+-		['name' => 'contactsMenu#findOne', 'url' => '/contactsmenu/findOne', 'verb' => 'POST'],
+ 		['name' => 'WalledGarden#get', 'url' => '/204', 'verb' => 'GET'],
+ 		['name' => 'Search#search', 'url' => '/core/search', 'verb' => 'GET'],
+ 		['name' => 'Wipe#checkWipe', 'url' => '/core/wipe/check', 'verb' => 'POST'],
+diff --git a/core/templates/layout.user.php b/core/templates/layout.user.php
+index 8bdb4811df..685b12d1e5 100644
+--- a/core/templates/layout.user.php
++++ b/core/templates/layout.user.php
+@@ -133,14 +133,6 @@ $getUserAvatar = static function (int $size) use ($_): string {
+ 			<div class="header-right">
+ 				<div id="notifications"></div>
+ 				<div id="unified-search"></div>
+-				<div id="contactsmenu">
+-					<div class="icon-contacts menutoggle" tabindex="0" role="button"
+-					aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
+-						<span class="hidden-visually"><?php p($l->t('Contacts'));?></span>
+-					</div>
+-					<div id="contactsmenu-menu" class="menu"
+-						aria-label="<?php p($l->t('Contacts menu'));?>"></div>
+-				</div>
+ 				<div id="settings">
+ 					<div id="expand" tabindex="0" role="button" class="menutoggle"
+ 						aria-label="<?php p($l->t('Settings'));?>"

@@ -1,0 +1,70 @@
+diff --git a/apps/dav/appinfo/info.xml b/apps/dav/appinfo/info.xml
+index fede63276b..1879def2b6 100644
+--- a/apps/dav/appinfo/info.xml
++++ b/apps/dav/appinfo/info.xml
+@@ -60,7 +60,6 @@
+
+ 	<settings>
+ 		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
+-		<personal>OCA\DAV\Settings\AvailabilitySettings</personal>
+ 	</settings>
+
+ 	<activity>
+diff --git a/apps/federatedfilesharing/appinfo/info.xml b/apps/federatedfilesharing/appinfo/info.xml
+index f4392a5926..5e816f89b3 100644
+--- a/apps/federatedfilesharing/appinfo/info.xml
++++ b/apps/federatedfilesharing/appinfo/info.xml
+@@ -20,7 +20,5 @@
+
+ 	<settings>
+ 		<admin>OCA\FederatedFileSharing\Settings\Admin</admin>
+-		<personal>OCA\FederatedFileSharing\Settings\Personal</personal>
+-		<personal-section>OCA\FederatedFileSharing\Settings\PersonalSection</personal-section>
+ 	</settings>
+ </info>
+diff --git a/apps/settings/appinfo/info.xml b/apps/settings/appinfo/info.xml
+index 219d4c25f7..4ab7cf2317 100644
+--- a/apps/settings/appinfo/info.xml
++++ b/apps/settings/appinfo/info.xml
+@@ -31,15 +31,8 @@
+		<admin-section>OCA\Settings\Sections\Admin\Security</admin-section>
+		<admin-section>OCA\Settings\Sections\Admin\Server</admin-section>
+		<admin-section>OCA\Settings\Sections\Admin\Sharing</admin-section>
+-		<personal>OCA\Settings\Settings\Personal\Additional</personal>
+-		<personal>OCA\Settings\Settings\Personal\PersonalInfo</personal>
+-		<personal>OCA\Settings\Settings\Personal\ServerDevNotice</personal>
+		<personal>OCA\Settings\Settings\Personal\Security\Authtokens</personal>
+		<personal>OCA\Settings\Settings\Personal\Security\Password</personal>
+-		<personal>OCA\Settings\Settings\Personal\Security\TwoFactor</personal>
+-		<personal>OCA\Settings\Settings\Personal\Security\WebAuthn</personal>
+-		<personal-section>OCA\Settings\Sections\Personal\Groupware</personal-section>
+-		<personal-section>OCA\Settings\Sections\Personal\PersonalInfo</personal-section>
+		<personal-section>OCA\Settings\Sections\Personal\Security</personal-section>
+		<personal-section>OCA\Settings\Sections\Personal\SyncClients</personal-section>
+	</settings>
+diff --git a/apps/settings/appinfo/routes.php b/apps/settings/appinfo/routes.php
+index cb503961ed..581197d7c8 100644
+--- a/apps/settings/appinfo/routes.php
++++ b/apps/settings/appinfo/routes.php
+@@ -69,7 +69,7 @@ return [
+ 		['name' => 'CheckSetup#check', 'url' => '/settings/ajax/checksetup', 'verb' => 'GET' , 'root' => ''],
+ 		['name' => 'CheckSetup#getFailedIntegrityCheckFiles', 'url' => '/settings/integrity/failed', 'verb' => 'GET' , 'root' => ''],
+ 		['name' => 'CheckSetup#rescanFailedIntegrityCheck', 'url' => '/settings/integrity/rescan', 'verb' => 'GET' , 'root' => ''],
+-		['name' => 'PersonalSettings#index', 'url' => '/settings/user/{section}', 'verb' => 'GET', 'defaults' => ['section' => 'personal-info'] , 'root' => ''],
++		['name' => 'PersonalSettings#index', 'url' => '/settings/user/{section}', 'verb' => 'GET', 'defaults' => ['section' => 'security'] , 'root' => ''],
+ 		['name' => 'AdminSettings#index', 'url' => '/settings/admin/{section}', 'verb' => 'GET', 'defaults' => ['section' => 'server'] , 'root' => ''],
+ 		['name' => 'AdminSettings#form', 'url' => '/settings/admin/{section}', 'verb' => 'GET' , 'root' => ''],
+ 		['name' => 'ChangePassword#changePersonalPassword', 'url' => '/settings/personal/changepassword', 'verb' => 'POST' , 'root' => ''],
+diff --git a/apps/activity/appinfo/info.xml b/apps/activity/appinfo/info.xml
+index f302d4e0..bb55aaf8 100755
+--- a/apps/activity/appinfo/info.xml
++++ b/apps/activity/appinfo/info.xml
+@@ -51,8 +51,6 @@
+ 	<settings>
+ 		<admin>OCA\Activity\Settings\Admin</admin>
+ 		<admin-section>OCA\Activity\Settings\AdminSection</admin-section>
+-		<personal>OCA\Activity\Settings\Personal</personal>
+-		<personal-section>OCA\Activity\Settings\PersonalSection</personal-section>
+ 	</settings>
+
+ 	<activity>

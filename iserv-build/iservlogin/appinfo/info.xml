@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>iservlogin</id>
+    <name>IServ Login</name>
+    <summary>Interaktionsarme Authentifizierung mit IServ</summary>
+    <description><![CDATA[Anbindung von IServ, sodass IServ-Nutzer eine reibungslose Integration von Nextcloud in der Oberfläche erfahren können.]]></description>
+    <version>0.0.1</version>
+    <licence>agpl</licence>
+    <author mail="vertrieb@iserv.de" homepage="https://iserv.de">IServ</author>
+    <namespace>IServLogin</namespace>
+    <category>integration</category>
+    <bugs>https://redmine.iserv.eu</bugs>
+	<types>
+		<prelogin/>
+		<authentication/>
+	</types>
+    <dependencies>
+        <nextcloud min-version="22" max-version="24"/>
+    </dependencies>
+</info>

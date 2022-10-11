@@ -1,0 +1,20 @@
+diff --git a/apps/files_sharing/lib/Controller/ShareController.php b/apps/files_sharing/lib/Controller/ShareController.php
+--- a/apps/files_sharing/lib/Controller/ShareController.php	(revision 1debe060a87e1d50e18dd47b29ea32de3dc4bac6)
++++ b/apps/files_sharing/lib/Controller/ShareController.php	(date 1660562982398)
+@@ -365,13 +365,9 @@
+
+ 		$owner = $this->userManager->get($share->getShareOwner());
+ 		if ($owner instanceof IUser) {
+-			$ownerAccount = $this->accountManager->getAccount($owner);
+-
+-			$ownerName = $ownerAccount->getProperty(IAccountManager::PROPERTY_DISPLAYNAME);
+-			if ($ownerName->getScope() === IAccountManager::SCOPE_PUBLISHED) {
+-				$shareTmpl['owner'] = $owner->getUID();
+-				$shareTmpl['shareOwner'] = $owner->getDisplayName();
+-			}
++			// IServ: always show the share's owner
++			$shareTmpl['owner'] = $owner->getUID();
++			$shareTmpl['shareOwner'] = $owner->getDisplayName();
+ 		}
+
+ 		$shareTmpl['filename'] = $shareNode->getName();

@@ -1,0 +1,18 @@
+Index: apps/activity/appinfo/info.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/apps/activity/appinfo/info.xml b/apps/activity/appinfo/info.xml
+--- a/apps/activity/appinfo/info.xml	(revision 60a0daa0b4a0c927be107e08f2a70d4aff561701)
++++ b/apps/activity/appinfo/info.xml	(date 1664965823706)
+@@ -39,9 +39,7 @@
+ 	</dependencies>
+ 
+ 	<background-jobs>
+-		<job>OCA\Activity\BackgroundJob\EmailNotification</job>
+ 		<job>OCA\Activity\BackgroundJob\ExpireActivities</job>
+-		<job>OCA\Activity\BackgroundJob\DigestMail</job>
+ 	</background-jobs>
+ 
+ 	<commands>

@@ -1,0 +1,25 @@
+{
+    "name": "iserv/cloudfiles-login",
+    "description": "Interaktionsarme Authentifizierung mit IServ",
+    "type": "project",
+    "license": "AGPL",
+    "authors": [
+        {
+            "name": "IServ"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.iserv.eu"
+        }
+    ],
+    "require": {
+        "iserv/sessauth": "^1.0",
+        "psr/log": "^1.1.4"
+    },
+    "require-dev": {
+        "nextcloud/coding-standard": "^0.5.0",
+        "phpunit/phpunit": "^8"
+    }
+}
