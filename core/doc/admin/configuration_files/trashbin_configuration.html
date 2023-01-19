@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,9 +90,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>Deleted Items (trash bin)</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">Deleted Items (trash bin)</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/trashbin_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -104,7 +103,7 @@
            <div itemprop="articleBody">
              
   <section id="deleted-items-trash-bin">
-<h1>Deleted Items (trash bin)<a class="headerlink" href="#deleted-items-trash-bin" title="Permalink to this heading"></a></h1>
+<h1>Deleted Items (trash bin)<a class="headerlink" href="#deleted-items-trash-bin" title="Permalink to this headline"></a></h1>
 <p>If the trash bin app is enabled (default), this setting defines the policy
 for when files and folders in the trash bin will be permanently deleted.</p>
 <p>The app allows for two settings, a minimum time for trash bin retention,
@@ -155,7 +154,7 @@ delete when exceeds D2 days (note: files will not be deleted automatically if sp
 </li>
 </ul>
 <section id="background-job">
-<h2>Background job<a class="headerlink" href="#background-job" title="Permalink to this heading"></a></h2>
+<h2>Background job<a class="headerlink" href="#background-job" title="Permalink to this headline"></a></h2>
 <p>To permanently delete files a background jobs runs every 30 minutes.
 It’s possible to deactivate the background job and setup a (system) cron to expire the versions via occ.</p>
 <p>Deactivate background job: <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">config:app:set</span> <span class="pre">--value=no</span> <span class="pre">files_trashbin</span> <span class="pre">background_job_expire_trash</span></code></p>
@@ -197,11 +196,9 @@ It’s possible to deactivate the background job and setup a (system) cron to ex
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

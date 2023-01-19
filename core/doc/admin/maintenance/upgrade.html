@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,9 +90,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Maintenance</a> &raquo;</li>
-      <li>How to upgrade</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
+      <li class="breadcrumb-item active">How to upgrade</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/maintenance/upgrade.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -104,7 +103,7 @@
            <div itemprop="articleBody">
              
   <section id="how-to-upgrade">
-<h1>How to upgrade<a class="headerlink" href="#how-to-upgrade" title="Permalink to this heading"></a></h1>
+<h1>How to upgrade<a class="headerlink" href="#how-to-upgrade" title="Permalink to this headline"></a></h1>
 <p>There are three ways to upgrade your Nextcloud server:</p>
 <ul class="simple">
 <li><p>With the <a class="reference internal" href="update.html"><span class="doc">Updater</span></a>.</p></li>
@@ -145,7 +144,7 @@ file a support ticket (if you have paid support) or ask for help in the
 Nextcloud forums to see if your issue can be resolved without downgrading.</p>
 </div>
 <section id="update-notifications">
-<h2>Update notifications<a class="headerlink" href="#update-notifications" title="Permalink to this heading"></a></h2>
+<h2>Update notifications<a class="headerlink" href="#update-notifications" title="Permalink to this headline"></a></h2>
 <p>Nextcloud has an update notification app, that informs the administrator about
 the availability of an update. Then you decide which update method to use.</p>
 <figure class="align-default" id="id1">
@@ -160,7 +159,7 @@ also an CLI based updater available, that does exactly the same as the web
 based updater but on the command line.</p>
 </section>
 <section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline"></a></h2>
 <p>You should always maintain <a class="reference internal" href="backup.html"><span class="doc">regular backups</span></a> and make a fresh
 backup before every upgrade.</p>
 <p>Then review third-party apps, if you have any, for compatibility with the new
@@ -170,7 +169,7 @@ upgrade, all 3rd party apps must be disabled. After the upgrade is complete you
 may re-enable them.</p>
 </section>
 <section id="maintenance-mode">
-<h2>Maintenance mode<a class="headerlink" href="#maintenance-mode" title="Permalink to this heading"></a></h2>
+<h2>Maintenance mode<a class="headerlink" href="#maintenance-mode" title="Permalink to this headline"></a></h2>
 <p>You can put your Nextcloud server into maintenance mode before performing
 upgrades, or for performing troubleshooting or maintenance. Please see
 <a class="reference internal" href="../configuration_server/occ_command.html"><span class="doc">Using the occ command</span></a> to learn how to put your server into
@@ -194,12 +193,12 @@ Change <code class="docutils literal notranslate"><span class="pre">&quot;mainte
 <p>Then change it back to <code class="docutils literal notranslate"><span class="pre">false</span></code> when you are finished.</p>
 </section>
 <section id="manual-steps-during-upgrade">
-<h2>Manual steps during upgrade<a class="headerlink" href="#manual-steps-during-upgrade" title="Permalink to this heading"></a></h2>
+<h2>Manual steps during upgrade<a class="headerlink" href="#manual-steps-during-upgrade" title="Permalink to this headline"></a></h2>
 <p>Some operation can be quite time consuming. Therefore we decided not to add them
 to the normal upgrade process. We recommend to run them manually after the upgrade
 was completed. Below you find a list of this commands.</p>
 <section id="long-running-migration-steps">
-<h3>Long running migration steps<a class="headerlink" href="#long-running-migration-steps" title="Permalink to this heading"></a></h3>
+<h3>Long running migration steps<a class="headerlink" href="#long-running-migration-steps" title="Permalink to this headline"></a></h3>
 <p>From time to time we do some changes to the database layout that take a lot of time,
 but can be executed while Nextcloud stays online. Thus we moved them into a separate
 command that an administrator can execute on the CLI without the need to lock the
@@ -209,8 +208,10 @@ There is also always an hint in the setup checks of the admin settings web inter
 <p>Those include for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -u www-data php occ db:add-missing-columns
 $ sudo -u www-data php occ db:add-missing-indices
+$ sudo -u www-data php occ db:add-missing-primary-keys
 </pre></div>
 </div>
+<p>You can use the <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> option to output the SQL queries instead of executing them.</p>
 </section>
 </section>
 </section>
@@ -248,11 +249,9 @@ $ sudo -u www-data php occ db:add-missing-indices
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -94,9 +93,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>File Sharing</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">File Sharing</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/file_sharing_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -107,7 +106,7 @@
            <div itemprop="articleBody">
              
   <section id="file-sharing">
-<h1>File Sharing<a class="headerlink" href="#file-sharing" title="Permalink to this heading"></a></h1>
+<h1>File Sharing<a class="headerlink" href="#file-sharing" title="Permalink to this headline"></a></h1>
 <p>Nextcloud users can share files with their Nextcloud groups and other users on
 the same Nextcloud server, with Nextcloud users on <a class="reference internal" href="federated_cloud_sharing_configuration.html"><span class="doc">other Nextcloud servers</span></a>, and create public shares for people who are not
 Nextcloud users. You have control of a number of user permissions on file shares.</p>
@@ -199,11 +198,11 @@ directories, though it does update the mtimes on files. See
 <span class="xref std std-ref">Configuration Parameters</span></p>
 </div>
 <section id="distinguish-between-max-expiration-date-and-default-expiration-date">
-<span id="transfer-userfiles-label"></span><h2>Distinguish between max expiration date and default expiration date<a class="headerlink" href="#distinguish-between-max-expiration-date-and-default-expiration-date" title="Permalink to this heading"></a></h2>
+<span id="transfer-userfiles-label"></span><h2>Distinguish between max expiration date and default expiration date<a class="headerlink" href="#distinguish-between-max-expiration-date-and-default-expiration-date" title="Permalink to this headline"></a></h2>
 <p>The expiration date which can be set and enforced in the settings above are the hard limit and the
 default value at the same time. Sometimes admins want to have a moderate default expire date,
 for example 7 days but make sure that the user can’t extend it to more than 14 days.</p>
-<p>In order to do so the user can set a enforced expiration date in the settings as described above
+<p>In order to do so, set a enforced expiration date in the settings as described above
 and set the default value to something below the maximal possible expiration date with the following
 OCC commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="o">--</span><span class="n">value</span> <span class="o">&lt;</span><span class="n">DAYS</span><span class="o">&gt;</span> <span class="n">core</span> <span class="n">internal_defaultExpDays</span>
@@ -212,7 +211,7 @@ OCC commands:</p>
 </div>
 </section>
 <section id="get-a-notification-before-a-share-expires">
-<h2>Get a notification before a share expires<a class="headerlink" href="#get-a-notification-before-a-share-expires" title="Permalink to this heading"></a></h2>
+<h2>Get a notification before a share expires<a class="headerlink" href="#get-a-notification-before-a-share-expires" title="Permalink to this headline"></a></h2>
 <p>Users can get a notification before a share expires. In order to do so a cronjob need to be
 configured which calls the following OCC command once a day:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">sharing</span><span class="p">:</span><span class="n">expiration</span><span class="o">-</span><span class="n">notification</span>
@@ -221,7 +220,7 @@ configured which calls the following OCC command once a day:</p>
 <p>A notification will be send for all shares which expire within the next 24 hours.</p>
 </section>
 <section id="transferring-files-to-another-user">
-<h2>Transferring files to another user<a class="headerlink" href="#transferring-files-to-another-user" title="Permalink to this heading"></a></h2>
+<h2>Transferring files to another user<a class="headerlink" href="#transferring-files-to-another-user" title="Permalink to this headline"></a></h2>
 <p>You may transfer files from one user to another with <code class="docutils literal notranslate"><span class="pre">occ</span></code>. This is useful
 when you have to remove a user. Be sure to transfer the files before you delete
 the user!  This transfers all files from user1 to user2, and the shares and
@@ -236,7 +235,7 @@ reference.)</p>
 See <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 <section id="creating-persistent-file-shares">
-<h2>Creating persistent file Shares<a class="headerlink" href="#creating-persistent-file-shares" title="Permalink to this heading"></a></h2>
+<h2>Creating persistent file Shares<a class="headerlink" href="#creating-persistent-file-shares" title="Permalink to this headline"></a></h2>
 <p>When a user is deleted, their files are also deleted. As you can imagine, this
 is a problem if they created file shares that need to be preserved, because
 these disappear as well. In Nextcloud files are tied to their owners, so
@@ -285,11 +284,9 @@ edits them.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -5,6 +5,7 @@
  * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Julius Härtl <jus@bitgrid.net>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -46,7 +47,7 @@ abstract class LogDetails {
 		}
 		$time = \DateTime::createFromFormat("U.u", number_format(microtime(true), 4, ".", ""));
 		if ($time === false) {
-			$time = new \DateTime(null, $timezone);
+			$time = new \DateTime('now', $timezone);
 		} else {
 			// apply timezone if $time is created from UNIX timestamp
 			$time->setTimezone($timezone);
@@ -90,8 +91,9 @@ abstract class LogDetails {
 				$entry['exception'] = $message;
 				$entry['message'] = $message['CustomMessage'] !== '--' ? $message['CustomMessage'] : $message['Message'];
 			} else {
-				$entry['data'] = $message;
 				$entry['message'] = $message['message'] ?? '(no message provided)';
+				unset($message['message']);
+				$entry['data'] = $message;
 			}
 		}
 

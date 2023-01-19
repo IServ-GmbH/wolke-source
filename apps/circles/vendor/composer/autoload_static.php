@@ -71,6 +71,7 @@ class ComposerStaticInitCircles
         'OCA\\Circles\\Cron\\ContactsExistingShares' => __DIR__ . '/../..' . '/lib/Cron/ContactsExistingShares.php',
         'OCA\\Circles\\Cron\\GlobalSync' => __DIR__ . '/../..' . '/lib/Cron/GlobalSync.php',
         'OCA\\Circles\\Cron\\Maintenance' => __DIR__ . '/../..' . '/lib/Cron/Maintenance.php',
+        'OCA\\Circles\\Cron\\MaintenanceHeavy' => __DIR__ . '/../..' . '/lib/Cron/MaintenanceHeavy.php',
         'OCA\\Circles\\Db\\AccountsRequest' => __DIR__ . '/../..' . '/lib/Db/AccountsRequest.php',
         'OCA\\Circles\\Db\\AccountsRequestBuilder' => __DIR__ . '/../..' . '/lib/Db/AccountsRequestBuilder.php',
         'OCA\\Circles\\Db\\CircleProviderRequest' => __DIR__ . '/../..' . '/lib/Db/CircleProviderRequest.php',

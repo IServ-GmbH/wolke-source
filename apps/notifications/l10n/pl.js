@@ -13,14 +13,18 @@ OC.L10N.register(
     "This app provides a backend and frontend for the notification API available in Nextcloud.\n\t\tThe API is used by other apps to notify users in the web UI and sync clients about various things. Some examples are:\n\n📬 Federated file sharing: You received a new remote share\n\n📑 Comments: Another user mentioned you in a comment on a file\n\n🚢 Update notification: Available update for an app or nextcloud itself\n\n📣 Announcement center: An announcement was posted by an admin" : "Ta aplikacja zapewnia backend i frontend dla interfejsu API powiadomień dostępnego w Nextcloud.\nInterfejs API jest używany przez inne aplikacje do powiadamiania użytkowników w interfejsie internetowym i synchronizowania klientów z różnymi rzeczami. Oto kilka przykładów:\n\n📬 Udostępnianie plików we Federacji: Otrzymano nowe udostępnianie zdalne\n\n📑 Komentarze: inny użytkownik wspomniał o Tobie w komentarzu do pliku\n\n🚢 Powiadomienie o aktualizacji: dostępna aktualizacja dla samej aplikacji lub następnej\n\n📣 Centrum ogłoszeń: ogłoszenie zostało wysłane przez administratora",
     "Failed to perform action" : "Nie udało się wykonać działania",
     "Dismiss" : "Odrzuć",
+    "Contact Nextcloud GmbH" : "Kontakt z Nextcloud GmbH",
     "seconds ago" : "przed chwilą",
     "Failed to dismiss notification" : "Nie udało się usunąć powiadomienia",
     "in {path}" : "w {path}",
     "Dismiss all notifications" : "Usuń wszystkie powiadomienia",
     "Requesting browser permissions to show notifications" : "Żądanie uprawnień przeglądarki do wyświetlania powiadomień",
+    "Push notifications might be unreliable" : "Powiadomienia Push mogą być zawodne",
     "No notifications" : "Brak powiadomień",
+    "Nextcloud GmbH sponsors a free push notification gateway for private users. To ensure good service, the gateway limits the number of push notifications per server. For enterprise users, a more scalable gateway is available. Contact Nextcloud GmbH for more information." : "Nextcloud GmbH sponsoruje bezpłatną bramkę powiadomień Push dla użytkowników prywatnych. Aby zapewnić dobrą obsługę, brama ogranicza liczbę powiadomień Push na serwer. Dla użytkowników korporacyjnych dostępna jest bardziej skalowalna brama. Skontaktuj się z Nextcloud GmbH, aby uzyskać więcej informacji.",
     "Failed to dismiss all notifications" : "Nie udało się usunąć wszystkich powiadomień",
-    "You need to set up your email address before you can receive notification emails." : "Aby otrzymywać powiadomienia e-mail, musisz skonfigurować swój adres e-mail.",
+    "Notifications defaults" : "Domyślne ustawienia powiadomień",
+    "Configure the default notification settings for new users" : "Skonfiguruj domyślne ustawienia powiadomień dla nowych użytkowników",
     "Send email reminders about unhandled notifications after:" : "Wysyłaj przypomnienia e-mail o nieobsłużonych powiadomieniach po:",
     "Play sound when a new notification arrives" : "Odtwórz dźwięk, gdy nadejdzie nowe powiadomienie",
     "Play sound when a call started (requires Nextcloud Talk)" : "Odtwórz dźwięk po rozpoczęciu połączenia (wymaga Nextcloud Talk)",
@@ -30,6 +34,7 @@ OC.L10N.register(
     "1 day" : "1 dzień",
     "1 week" : "1 tydzień",
     "Your settings have been updated." : "Twoje ustawienia zostały zaktualizowane.",
-    "An error occurred while updating your settings." : "Wystąpił błąd podczas aktualizowania ustawień."
+    "An error occurred while updating your settings." : "Wystąpił błąd podczas aktualizowania ustawień.",
+    "You need to set up your email address before you can receive notification emails." : "Aby otrzymywać powiadomienia e-mail, musisz skonfigurować swój adres e-mail."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

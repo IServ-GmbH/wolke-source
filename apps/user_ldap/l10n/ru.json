@@ -58,8 +58,6 @@
     "Your password will expire today." : "Сегодня истекает срок действия пароля.",
     "_Your password will expire within %n day._::_Your password will expire within %n days._" : ["Срок действия пароля истекает через %n день.","Срок действия пароля истекает через %n дня.","Срок действия пароля истекает через %n дней.","Срок действия пароля истекает через %n день."],
     "LDAP/AD integration" : "LDAP/AD интеграция",
-    "_%s group found_::_%s groups found_" : ["%s группа найдена","%s группы найдены","%s групп найдено","%s групп найдено"],
-    "_%s user found_::_%s users found_" : ["%s пользователь найден","%s пользователя найдено","%s пользователей найдено","%s пользователей найдено"],
     "Could not detect user display name attribute. Please specify it yourself in advanced LDAP settings." : "Не удалось автоматически определить атрибут, содержащий отображаемое имя пользователя. Зайдите в расширенные настройки LDAP и укажите его вручную.",
     "Could not find the desired feature" : "Не удается найти требуемую функциональность",
     "Invalid Host" : "Недопустимый адрес сервера",

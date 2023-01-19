@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -92,9 +91,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Files &amp; synchronization</a> &raquo;</li>
-      <li>File Sharing</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Files &amp; synchronization</a></li>
+      <li class="breadcrumb-item active">File Sharing</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/user_manual/files/sharing.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -105,7 +104,7 @@
            <div itemprop="articleBody">
              
   <section id="file-sharing">
-<h1>File Sharing<a class="headerlink" href="#file-sharing" title="Permalink to this heading"></a></h1>
+<h1>File Sharing<a class="headerlink" href="#file-sharing" title="Permalink to this headline"></a></h1>
 <p>Nextcloud users can share files and folders. Possible targets are:</p>
 <ul class="simple">
 <li><p>public links</p></li>
@@ -118,10 +117,10 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some options may not be available due to administrative configuration.
-See <span class="xref std std-doc">administrator documentation</span> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/latest/admin_manual/configuration_files/file_sharing_configuration.html">administrator documentation</a> for details.</p>
 </div>
 <section id="public-link-shares">
-<h2>Public link shares<a class="headerlink" href="#public-link-shares" title="Permalink to this heading"></a></h2>
+<h2>Public link shares<a class="headerlink" href="#public-link-shares" title="Permalink to this headline"></a></h2>
 <p>You can share files and folders via public links.</p>
 <p>A random 15-digit token will be created. The link will look like <code class="docutils literal notranslate"><span class="pre">https://cloud.example.com/s/yxcFKRWBJqYYzp4</span></code>.</p>
 <p>A number of options are available for public <em>folder</em> shares:</p>
@@ -149,7 +148,7 @@ See <span class="xref std std-doc">administrator documentation</span> for detail
 </div>
 </section>
 <section id="internal-shares-with-users-and-groups">
-<h2>Internal shares with users and groups<a class="headerlink" href="#internal-shares-with-users-and-groups" title="Permalink to this heading"></a></h2>
+<h2>Internal shares with users and groups<a class="headerlink" href="#internal-shares-with-users-and-groups" title="Permalink to this headline"></a></h2>
 <p>When sharing with users, groups, circles or members of a Talk conversation, rights for the files or folder contents are adjustable:</p>
 <figure class="align-default">
 <img alt="../_images/sharing_internal.png" src="../_images/sharing_internal.png" />
@@ -165,7 +164,7 @@ want to be asked each time if you want to accept or decline the share.</p>
 </figure>
 </section>
 <section id="others-with-access">
-<h2>Others with access<a class="headerlink" href="#others-with-access" title="Permalink to this heading"></a></h2>
+<h2>Others with access<a class="headerlink" href="#others-with-access" title="Permalink to this headline"></a></h2>
 <p>In order to find out if a file or folder is accessible to others through sharing of a superior folder
 hierarchy level, click on <strong>Others with access</strong> in the sharing tab:</p>
 <figure class="align-default">
@@ -189,12 +188,12 @@ sharing of a superior folder in the hierarchy:</p>
 </section>
 </section>
 <section id="federated-shares">
-<h1>Federated Shares<a class="headerlink" href="#federated-shares" title="Permalink to this heading"></a></h1>
+<h1>Federated Shares<a class="headerlink" href="#federated-shares" title="Permalink to this headline"></a></h1>
 <p>Federation Sharing allows you to mount file shares from remote Nextcloud servers, in effect
 creating your own cloud of Nextclouds. You can create direct share links with
 users on other Nextcloud servers.</p>
 <section id="creating-a-new-federation-share">
-<h2>Creating a new Federation Share<a class="headerlink" href="#creating-a-new-federation-share" title="Permalink to this heading"></a></h2>
+<h2>Creating a new Federation Share<a class="headerlink" href="#creating-a-new-federation-share" title="Permalink to this headline"></a></h2>
 <p>Federation sharing is enabled by default. Follow these steps to create a new share with other Nextcloud or ownCloud servers:</p>
 <p>Go to your <code class="docutils literal notranslate"><span class="pre">Files</span></code> page and click the Share icon on the file or directory
 you want to share. In the sidebar enter the username and URL of the remote user
@@ -209,7 +208,7 @@ in this form: <code class="docutils literal notranslate"><span class="pre">&lt;u
 </figure>
 </section>
 <section id="adding-a-public-share-to-your-nextcloud">
-<h2>Adding a public share to your Nextcloud<a class="headerlink" href="#adding-a-public-share-to-your-nextcloud" title="Permalink to this heading"></a></h2>
+<h2>Adding a public share to your Nextcloud<a class="headerlink" href="#adding-a-public-share-to-your-nextcloud" title="Permalink to this headline"></a></h2>
 <p>Nextcloud public link share pages offer an option to add that file or folder as a federated share into your own Nextcloud instance.
 Just enter your <code class="docutils literal notranslate"><span class="pre">&lt;username&gt;&#64;&lt;nc-server-url&gt;</span></code> just like shown for outbound shares above:</p>
 <figure class="align-default">
@@ -257,11 +256,9 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/user_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/user_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

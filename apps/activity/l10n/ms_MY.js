@@ -20,16 +20,17 @@ OC.L10N.register(
     "Hello %s," : "Hai %s,",
     "Mail" : "Mel",
     "Activity" : "Aktiviti",
-    "No activity yet" : "Tiada aktiviti",
-    "Activities" : "Aktiviti",
-    "Activity feed" : "Suapan aktiviti",
-    "Default settings" : "Tetapan lalai",
+    "Send activity emails" : "Hantar emel aktiviti",
     "As soon as possible" : "Secepat yang boleh",
     "Hourly" : "Setiap jam",
     "Daily" : "Setiap hari",
     "Weekly" : "Setiap minggu",
-    "Settings" : "Tetapan",
+    "No activity yet" : "Tiada aktiviti",
+    "Activities" : "Aktiviti",
+    "Default settings" : "Tetapan lalai",
+    "Activity feed" : "Suapan aktiviti",
     "RSS feed" : "Suapan RSS",
-    "No more events to load" : "Tiada aktiviti untuk memuat"
+    "No more events to load" : "Tiada aktiviti untuk memuat",
+    "Settings" : "Tetapan"
 },
 "nplurals=1; plural=0;");

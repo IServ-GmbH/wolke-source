@@ -11,9 +11,9 @@ OC.L10N.register(
     "Could not write file to disk" : "No fue posible escribir a disco",
     "A PHP extension stopped the file upload" : "Una extensión de PHP detuvo la carga del archivo",
     "Text" : "Texto",
+    "Guest" : "Invitado",
     "Saved" : "Guardado",
     "Unsaved changes" : "Cambios no guardados",
-    "Guest" : "Invitado",
     "Formatting help" : "Ayuda de formato",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Unsupported image type" : "Tipo de imagen no soportado",
@@ -23,4 +23,4 @@ OC.L10N.register(
     "Warning" : "Advertencia",
     "Edit" : "Editar"
 },
-"nplurals=2; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

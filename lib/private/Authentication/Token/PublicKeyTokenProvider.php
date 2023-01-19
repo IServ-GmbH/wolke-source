@@ -36,12 +36,16 @@ use OC\Authentication\Exceptions\PasswordlessTokenException;
 use OC\Authentication\Exceptions\WipeTokenException;
 use OC\Cache\CappedMemoryCache;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\Security\ICrypto;
 use Psr\Log\LoggerInterface;
 
 class PublicKeyTokenProvider implements IProvider {
+	use TTransactional;
+
 	/** @var PublicKeyTokenMapper */
 	private $mapper;
 
@@ -50,6 +54,8 @@ class PublicKeyTokenProvider implements IProvider {
 
 	/** @var IConfig */
 	private $config;
+
+	private IDBConnection $db;
 
 	/** @var LoggerInterface */
 	private $logger;
@@ -63,11 +69,13 @@ class PublicKeyTokenProvider implements IProvider {
 	public function __construct(PublicKeyTokenMapper $mapper,
 								ICrypto $crypto,
 								IConfig $config,
+								IDBConnection $db,
 								LoggerInterface $logger,
 								ITimeFactory $time) {
 		$this->mapper = $mapper;
 		$this->crypto = $crypto;
 		$this->config = $config;
+		$this->db = $db;
 		$this->logger = $logger;
 		$this->time = $time;
 
@@ -158,31 +166,32 @@ class PublicKeyTokenProvider implements IProvider {
 	public function renewSessionToken(string $oldSessionId, string $sessionId): IToken {
 		$this->cache->clear();
 
-		$token = $this->getToken($oldSessionId);
+		return $this->atomic(function () use ($oldSessionId, $sessionId) {
+			$token = $this->getToken($oldSessionId);
 
-		if (!($token instanceof PublicKeyToken)) {
-			throw new InvalidTokenException("Invalid token type");
-		}
+			if (!($token instanceof PublicKeyToken)) {
+				throw new InvalidTokenException("Invalid token type");
+			}
 
-		$password = null;
-		if (!is_null($token->getPassword())) {
-			$privateKey = $this->decrypt($token->getPrivateKey(), $oldSessionId);
-			$password = $this->decryptPassword($token->getPassword(), $privateKey);
-		}
+			$password = null;
+			if (!is_null($token->getPassword())) {
+				$privateKey = $this->decrypt($token->getPrivateKey(), $oldSessionId);
+				$password = $this->decryptPassword($token->getPassword(), $privateKey);
+			}
+			$newToken = $this->generateToken(
+				$sessionId,
+				$token->getUID(),
+				$token->getLoginName(),
+				$password,
+				$token->getName(),
+				IToken::TEMPORARY_TOKEN,
+				$token->getRemember()
+			);
 
-		$newToken = $this->generateToken(
-			$sessionId,
-			$token->getUID(),
-			$token->getLoginName(),
-			$password,
-			$token->getName(),
-			IToken::TEMPORARY_TOKEN,
-			$token->getRemember()
-		);
+			$this->mapper->delete($token);
 
-		$this->mapper->delete($token);
-
-		return $newToken;
+			return $newToken;
+		}, $this->db);
 	}
 
 	public function invalidateToken(string $token) {
@@ -331,30 +340,6 @@ class PublicKeyTokenProvider implements IProvider {
 	}
 
 	/**
-	 * Convert a DefaultToken to a publicKeyToken
-	 * This will also be updated directly in the Database
-	 * @throws \RuntimeException when OpenSSL reports a problem
-	 */
-	public function convertToken(DefaultToken $defaultToken, string $token, $password): PublicKeyToken {
-		$this->cache->clear();
-
-		$pkToken = $this->newToken(
-			$token,
-			$defaultToken->getUID(),
-			$defaultToken->getLoginName(),
-			$password,
-			$defaultToken->getName(),
-			$defaultToken->getType(),
-			$defaultToken->getRemember()
-		);
-
-		$pkToken->setExpires($defaultToken->getExpires());
-		$pkToken->setId($defaultToken->getId());
-
-		return $this->mapper->update($pkToken);
-	}
-
-	/**
 	 * @throws \RuntimeException when OpenSSL reports a problem
 	 */
 	private function newToken(string $token,
@@ -370,7 +355,7 @@ class PublicKeyTokenProvider implements IProvider {
 
 		$config = array_merge([
 			'digest_alg' => 'sha512',
-			'private_key_bits' => 2048,
+			'private_key_bits' => $password !== null && strlen($password) > 250 ? 4096 : 2048,
 		], $this->config->getSystemValue('openssl', []));
 
 		// Generate new key
@@ -392,7 +377,10 @@ class PublicKeyTokenProvider implements IProvider {
 		$dbToken->setPublicKey($publicKey);
 		$dbToken->setPrivateKey($this->encrypt($privateKey, $token));
 
-		if (!is_null($password)) {
+		if (!is_null($password) && $this->config->getSystemValueBool('auth.storeCryptedPassword', true)) {
+			if (strlen($password) > 469) {
+				throw new \RuntimeException('Trying to save a password with more than 469 characters is not supported. If you want to use big passwords, disable the auth.storeCryptedPassword option in config.php');
+			}
 			$dbToken->setPassword($this->encryptPassword($password, $publicKey));
 		}
 
@@ -422,7 +410,7 @@ class PublicKeyTokenProvider implements IProvider {
 		$this->cache->clear();
 
 		// prevent setting an empty pw as result of pw-less-login
-		if ($password === '') {
+		if ($password === '' || !$this->config->getSystemValueBool('auth.storeCryptedPassword', true)) {
 			return;
 		}
 
@@ -430,9 +418,12 @@ class PublicKeyTokenProvider implements IProvider {
 		$tokens = $this->mapper->getTokenByUser($uid);
 		foreach ($tokens as $t) {
 			$publicKey = $t->getPublicKey();
-			$t->setPassword($this->encryptPassword($password, $publicKey));
-			$t->setPasswordInvalid(false);
-			$this->updateToken($t);
+			$encryptedPassword = $this->encryptPassword($password, $publicKey);
+			if ($t->getPassword() !== $encryptedPassword) {
+				$t->setPassword($encryptedPassword);
+				$t->setPasswordInvalid(false);
+				$this->updateToken($t);
+			}
 		}
 	}
 

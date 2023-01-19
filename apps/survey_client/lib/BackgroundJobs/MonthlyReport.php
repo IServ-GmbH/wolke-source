@@ -21,28 +21,34 @@
 
 namespace OCA\Survey_Client\BackgroundJobs;
 
-use OC\BackgroundJob\TimedJob;
-use OCA\Survey_Client\AppInfo\Application;
+use OCA\Survey_Client\Collector;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
+use Psr\Log\LoggerInterface;
 
 class MonthlyReport extends TimedJob {
+	protected Collector $collector;
+	protected LoggerInterface $logger;
 
-	/**
-	 * MonthlyReport constructor.
-	 */
-	public function __construct() {
+	public function __construct(ITimeFactory $time,
+								Collector $collector,
+								LoggerInterface $logger) {
+		parent::__construct($time);
+		$this->collector = $collector;
+		$this->logger = $logger;
 		// Run all 28 days
 		$this->setInterval(28 * 24 * 60 * 60);
+		// keeping time sensitive to not overload the target server at a single specific time of the day
+		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 	}
 
 	protected function run($argument) {
-		$application = new Application();
-		/** @var \OCA\Survey_Client\Collector $collector */
-		$collector = $application->getContainer()->query('OCA\Survey_Client\Collector');
-		$result = $collector->sendReport();
+		$result = $this->collector->sendReport();
 
 		if ($result->getStatus() !== Http::STATUS_OK) {
-			\OC::$server->getLogger()->info('Error while sending usage statistic');
+			$this->logger->info('Error while sending usage statistic');
 		}
 	}
 }

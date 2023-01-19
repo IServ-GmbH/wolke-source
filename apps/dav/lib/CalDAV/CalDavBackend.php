@@ -63,6 +63,8 @@ use OCA\DAV\Events\CalendarUpdatedEvent;
 use OCA\DAV\Events\SubscriptionCreatedEvent;
 use OCA\DAV\Events\SubscriptionDeletedEvent;
 use OCA\DAV\Events\SubscriptionUpdatedEvent;
+use OCP\Calendar\Exceptions\CalendarException;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -173,10 +175,25 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 		'{http://calendarserver.org/ns/}subscribed-strip-attachments' => ['stripattachments', 'string'],
 	];
 
-	/** @var array properties to index */
-	public static $indexProperties = ['CATEGORIES', 'COMMENT', 'DESCRIPTION',
-		'LOCATION', 'RESOURCES', 'STATUS', 'SUMMARY', 'ATTENDEE', 'CONTACT',
-		'ORGANIZER'];
+	/**
+	 * properties to index
+	 *
+	 * This list has to be kept in sync with ICalendarQuery::SEARCH_PROPERTY_*
+	 *
+	 * @see \OCP\Calendar\ICalendarQuery
+	 */
+	private const INDEXED_PROPERTIES = [
+		'CATEGORIES',
+		'COMMENT',
+		'DESCRIPTION',
+		'LOCATION',
+		'RESOURCES',
+		'STATUS',
+		'SUMMARY',
+		'ATTENDEE',
+		'CONTACT',
+		'ORGANIZER'
+	];
 
 	/** @var array parameters to index */
 	public static $indexParameters = [
@@ -793,8 +810,14 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 	 * @param string $calendarUri
 	 * @param array $properties
 	 * @return int
+	 *
+	 * @throws CalendarException
 	 */
 	public function createCalendar($principalUri, $calendarUri, array $properties) {
+		if (strlen($calendarUri) > 255) {
+			throw new CalendarException('URI too long. Calendar not created');
+		}
+
 		$values = [
 			'principaluri' => $this->convertPrincipal($principalUri, true),
 			'uri' => $calendarUri,
@@ -1082,7 +1105,7 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 	 *
 	 * @param string $principalUri
 	 * @return array
-	 * @throws \OCP\DB\Exception
+	 * @throws Exception
 	 */
 	public function getDeletedCalendarObjectsByPrincipal(string $principalUri): array {
 		$query = $this->db->getQueryBuilder();
@@ -1375,6 +1398,56 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 
 		return '"' . $extraData['etag'] . '"';
 	}
+
+	/**
+	 * Moves a calendar object from calendar to calendar.
+	 *
+	 * @param int $sourceCalendarId
+	 * @param int $targetCalendarId
+	 * @param int $objectId
+	 * @param string $principalUri
+	 * @param int $calendarType
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function moveCalendarObject(int $sourceCalendarId, int $targetCalendarId, int $objectId, string $principalUri, int $calendarType = self::CALENDAR_TYPE_CALENDAR): bool {
+		$object = $this->getCalendarObjectById($principalUri, $objectId);
+		if (empty($object)) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('calendarobjects')
+			->set('calendarid', $query->createNamedParameter($targetCalendarId, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($objectId, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT))
+			->andWhere($query->expr()->eq('calendartype', $query->createNamedParameter($calendarType, IQueryBuilder::PARAM_INT), IQueryBuilder::PARAM_INT))
+			->executeStatement();
+
+		$this->purgeProperties($sourceCalendarId, $objectId);
+		$this->updateProperties($targetCalendarId, $object['uri'], $object['calendardata'], $calendarType);
+
+		$this->addChange($sourceCalendarId, $object['uri'], 1, $calendarType);
+		$this->addChange($targetCalendarId, $object['uri'], 3, $calendarType);
+
+		$object = $this->getCalendarObjectById($principalUri, $objectId);
+		// Calendar Object wasn't found - possibly because it was deleted in the meantime by a different client
+		if (empty($object)) {
+			return false;
+		}
+
+		$calendarRow = $this->getCalendarById($targetCalendarId);
+		// the calendar this event is being moved to does not exist any longer
+		if (empty($calendarRow)) {
+			return false;
+		}
+
+		if ($calendarType === self::CALENDAR_TYPE_CALENDAR) {
+			$shares = $this->getShares($targetCalendarId);
+			$this->dispatcher->dispatchTyped(new CalendarObjectUpdatedEvent($targetCalendarId, $calendarRow, $shares, $object));
+		}
+		return true;
+	}
+
 
 	/**
 	 * @param int $calendarObjectId
@@ -2954,7 +3027,7 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 			}
 
 			foreach ($component->children() as $property) {
-				if (in_array($property->name, self::$indexProperties)) {
+				if (in_array($property->name, self::INDEXED_PROPERTIES, true)) {
 					$value = $property->getValue();
 					// is this a shitty db?
 					if (!$this->db->supports4ByteText()) {

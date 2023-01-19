@@ -63,10 +63,15 @@ class Memcached extends Cache implements IMemcache {
 				\Memcached::OPT_LIBKETAMA_COMPATIBLE => true,
 
 				// Enable Binary Protocol
-				//\Memcached::OPT_BINARY_PROTOCOL =>      true,
+				\Memcached::OPT_BINARY_PROTOCOL => true,
 			];
-			// by default enable igbinary serializer if available
-			/** @psalm-suppress RedundantCondition */
+			/**
+			 * By default enable igbinary serializer if available
+			 *
+			 * Psalm checks depend on if igbinary is installed or not with memcached
+			 * @psalm-suppress RedundantCondition
+			 * @psalm-suppress TypeDoesNotContainType
+			 */
 			if (\Memcached::HAVE_IGBINARY) {
 				$defaultOptions[\Memcached::OPT_SERIALIZER] =
 					\Memcached::SERIALIZER_IGBINARY;
@@ -114,10 +119,7 @@ class Memcached extends Cache implements IMemcache {
 		} else {
 			$result = self::$cache->set($this->getNameSpace() . $key, $value);
 		}
-		if ($result !== true) {
-			$this->verifyReturnCode();
-		}
-		return $result;
+		return $result || $this->isSuccess();
 	}
 
 	public function hasKey($key) {
@@ -127,10 +129,7 @@ class Memcached extends Cache implements IMemcache {
 
 	public function remove($key) {
 		$result = self::$cache->delete($this->getNameSpace() . $key);
-		if (self::$cache->getResultCode() !== \Memcached::RES_NOTFOUND) {
-			$this->verifyReturnCode();
-		}
-		return $result;
+		return $result || $this->isSuccess() || self::$cache->getResultCode() === \Memcached::RES_NOTFOUND;
 	}
 
 	public function clear($prefix = '') {
@@ -146,14 +145,10 @@ class Memcached extends Cache implements IMemcache {
 	 * @param mixed $value
 	 * @param int $ttl Time To Live in seconds. Defaults to 60*60*24
 	 * @return bool
-	 * @throws \Exception
 	 */
 	public function add($key, $value, $ttl = 0) {
 		$result = self::$cache->add($this->getPrefix() . $key, $value, $ttl);
-		if (self::$cache->getResultCode() !== \Memcached::RES_NOTSTORED) {
-			$this->verifyReturnCode();
-		}
-		return $result;
+		return $result || $this->isSuccess();
 	}
 
 	/**
@@ -191,19 +186,11 @@ class Memcached extends Cache implements IMemcache {
 		return $result;
 	}
 
-	public static function isAvailable() {
+	public static function isAvailable(): bool {
 		return extension_loaded('memcached');
 	}
 
-	/**
-	 * @throws \Exception
-	 */
-	private function verifyReturnCode() {
-		$code = self::$cache->getResultCode();
-		if ($code === \Memcached::RES_SUCCESS) {
-			return;
-		}
-		$message = self::$cache->getResultMessage();
-		throw new \Exception("Error $code interacting with memcached : $message");
+	private function isSuccess(): bool {
+		return self::$cache->getResultCode() === \Memcached::RES_SUCCESS;
 	}
 }

@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -83,9 +82,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Database configuration</a> &raquo;</li>
-      <li>Converting database type</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Database configuration</a></li>
+      <li class="breadcrumb-item active">Converting database type</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_database/db_conversion.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -96,13 +95,13 @@
            <div itemprop="articleBody">
              
   <section id="converting-database-type">
-<h1>Converting database type<a class="headerlink" href="#converting-database-type" title="Permalink to this heading"></a></h1>
+<h1>Converting database type<a class="headerlink" href="#converting-database-type" title="Permalink to this headline"></a></h1>
 <p>You can convert a SQLite database to a better performing MySQL, MariaDB or
 PostgreSQL database with the Nextcloud command line tool. SQLite is good for
 testing and simple single-user Nextcloud servers, but it does not scale for
-multiple-user production users.</p>
+multiple-user production servers.</p>
 <section id="run-the-conversion">
-<h2>Run the conversion<a class="headerlink" href="#run-the-conversion" title="Permalink to this heading"></a></h2>
+<h2>Run the conversion<a class="headerlink" href="#run-the-conversion" title="Permalink to this headline"></a></h2>
 <p>First set up the new database, here called “new_db_name”.
 In Nextcloud root folder call</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">convert</span><span class="o">-</span><span class="nb">type</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="nb">type</span> <span class="n">username</span> <span class="n">hostname</span> <span class="n">database</span>
@@ -129,7 +128,7 @@ with the question <code class="docutils literal notranslate"><span class="pre">C
 Nextcloud config <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
 </section>
 <section id="inconvertible-tables">
-<h2>Inconvertible tables<a class="headerlink" href="#inconvertible-tables" title="Permalink to this heading"></a></h2>
+<h2>Inconvertible tables<a class="headerlink" href="#inconvertible-tables" title="Permalink to this headline"></a></h2>
 <p>If you updated your Nextcloud instance, there might be remnants of old tables
 which are not used any more. The updater will tell you which ones these are.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">The</span> <span class="n">following</span> <span class="n">tables</span> <span class="n">will</span> <span class="ow">not</span> <span class="n">be</span> <span class="n">converted</span><span class="p">:</span>
@@ -192,11 +191,9 @@ Here is a list of known old tables:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

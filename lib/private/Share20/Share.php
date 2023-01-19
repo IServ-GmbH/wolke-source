@@ -37,6 +37,7 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\IllegalIDChangeException;
+use OCP\Share\IAttributes;
 use OCP\Share\IShare;
 
 class Share implements IShare {
@@ -65,6 +66,8 @@ class Share implements IShare {
 	private $shareOwner;
 	/** @var int */
 	private $permissions;
+	/** @var IAttributes */
+	private $attributes;
 	/** @var int */
 	private $status;
 	/** @var string */
@@ -73,6 +76,7 @@ class Share implements IShare {
 	private $expireDate;
 	/** @var string */
 	private $password;
+	private ?\DateTimeInterface $passwordExpirationTime = null;
 	/** @var bool */
 	private $sendPasswordByTalk = false;
 	/** @var string */
@@ -334,6 +338,28 @@ class Share implements IShare {
 	/**
 	 * @inheritdoc
 	 */
+	public function newAttributes(): IAttributes {
+		return new ShareAttributes();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setAttributes(?IAttributes $attributes) {
+		$this->attributes = $attributes;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getAttributes(): ?IAttributes {
+		return $this->attributes;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function setStatus(int $status): IShare {
 		$this->status = $status;
 		return $this;
@@ -464,6 +490,21 @@ class Share implements IShare {
 	/**
 	 * @inheritdoc
 	 */
+	public function setPasswordExpirationTime(?\DateTimeInterface $passwordExpirationTime = null): IShare {
+		$this->passwordExpirationTime = $passwordExpirationTime;
+		return $this;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getPasswordExpirationTime(): ?\DateTimeInterface {
+		return $this->passwordExpirationTime;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function setSendPasswordByTalk(bool $sendPasswordByTalk) {
 		$this->sendPasswordByTalk = $sendPasswordByTalk;
 		return $this;
@@ -495,7 +536,7 @@ class Share implements IShare {
 	 * Set the parent of this share
 	 *
 	 * @param int parent
-	 * @return \OCP\Share\IShare
+	 * @return IShare
 	 * @deprecated The new shares do not have parents. This is just here for legacy reasons.
 	 */
 	public function setParent($parent) {

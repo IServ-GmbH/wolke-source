@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -84,9 +83,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Groupware</a> &raquo;</li>
-      <li>Synchronizing with Thunderbird</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Groupware</a></li>
+      <li class="breadcrumb-item active">Synchronizing with Thunderbird</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/user_manual/groupware/sync_thunderbird.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -97,10 +96,10 @@
            <div itemprop="articleBody">
              
   <section id="synchronizing-with-thunderbird">
-<h1>Synchronizing with Thunderbird<a class="headerlink" href="#synchronizing-with-thunderbird" title="Permalink to this heading"></a></h1>
+<h1>Synchronizing with Thunderbird<a class="headerlink" href="#synchronizing-with-thunderbird" title="Permalink to this headline"></a></h1>
 <p><a class="reference external" href="https://www.thunderbird.net">Thunderbird</a> is a feature-rich and mature mail client that can be turned into a full-fledged PIM. However, it lacks support  for address book synchronisation via CardDAV and it also lacks the ability to automatically discover calendars and address books available on the server. Therefore, to synchronise with Nextcloud, add-ons are required, which can be easily installed through Thunderbird’s add-on manager.</p>
 <section id="recommended-method">
-<h2>Recommended method<a class="headerlink" href="#recommended-method" title="Permalink to this heading"></a></h2>
+<h2>Recommended method<a class="headerlink" href="#recommended-method" title="Permalink to this headline"></a></h2>
 <p>For this method, you need to have two add-ons installed:</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://addons.thunderbird.net/en/thunderbird/addon/tbsync/">TbSync</a>.</p></li>
@@ -118,7 +117,7 @@
 </ul>
 </section>
 <section id="alternative-using-the-cardbook-add-on-contacts-only">
-<h2>Alternative: Using the CardBook add-on (Contacts only)<a class="headerlink" href="#alternative-using-the-cardbook-add-on-contacts-only" title="Permalink to this heading"></a></h2>
+<h2>Alternative: Using the CardBook add-on (Contacts only)<a class="headerlink" href="#alternative-using-the-cardbook-add-on-contacts-only" title="Permalink to this headline"></a></h2>
 <p><a class="reference external" href="https://addons.thunderbird.net/en/thunderbird/addon/cardbook/">CardBook</a> is an advanced alternative to Thunderbird’s address book, which supports CardDAV. You can have TbSync and CardBook installed in parallel.</p>
 <ol class="arabic simple">
 <li><p>Click the CardBook icon in the upper right corner of Thunderbird:</p></li>
@@ -143,7 +142,7 @@
 <img alt="../_images/synchronize_cardbook.png" src="../_images/synchronize_cardbook.png" />
 </section>
 <section id="the-old-method-manually-subscribing-to-calendars">
-<h2>The old method: Manually subscribing to calendars<a class="headerlink" href="#the-old-method-manually-subscribing-to-calendars" title="Permalink to this heading"></a></h2>
+<h2>The old method: Manually subscribing to calendars<a class="headerlink" href="#the-old-method-manually-subscribing-to-calendars" title="Permalink to this headline"></a></h2>
 <p>This method is only needed if you don’t want to install TBSync.</p>
 <ol class="arabic">
 <li><p>Go to your Nextcloud Calendar and click on the 3 dotted menu for the calendar that you want to synchronize which will display an URL that looks something like this:</p>
@@ -159,7 +158,7 @@
 <img alt="../_images/CalDAV_calendar.png" src="../_images/CalDAV_calendar.png" />
 </section>
 <section id="fix-for-thunderbird-60">
-<h2>Fix for Thunderbird 60<a class="headerlink" href="#fix-for-thunderbird-60" title="Permalink to this heading"></a></h2>
+<h2>Fix for Thunderbird 60<a class="headerlink" href="#fix-for-thunderbird-60" title="Permalink to this headline"></a></h2>
 <p>If you are still using Thunderbird 60, you need to change a configuration setting to make CalDAV/CardDAV work around Thunderbird bug <a class="reference external" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1468912">#1468918</a> as described <a class="reference external" href="https://help.nextcloud.com/t/thunderbird-60-problems-with-address-and-calendar-sync/35773">here</a>.</p>
 </section>
 </section>
@@ -203,11 +202,9 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/user_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/user_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

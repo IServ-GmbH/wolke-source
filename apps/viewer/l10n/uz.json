@@ -1,5 +1,10 @@
 { "translations": {
-    "Download" : "Yuklab oling",
-    "Delete" : "O'chir"
+    "Download" : "Download",
+    "Delete" : "Delete",
+    "Name" : "Name",
+    "Save" : "Save",
+    "Cancel" : "Cancel",
+    "Continue" : "Continue",
+    "Size" : "Size"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

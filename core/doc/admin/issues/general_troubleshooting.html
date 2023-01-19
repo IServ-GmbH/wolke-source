@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -109,9 +108,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Issues and troubleshooting</a> &raquo;</li>
-      <li>General troubleshooting</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Issues and troubleshooting</a></li>
+      <li class="breadcrumb-item active">General troubleshooting</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/issues/general_troubleshooting.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -122,7 +121,7 @@
            <div itemprop="articleBody">
              
   <section id="general-troubleshooting">
-<h1>General troubleshooting<a class="headerlink" href="#general-troubleshooting" title="Permalink to this heading"></a></h1>
+<h1>General troubleshooting<a class="headerlink" href="#general-troubleshooting" title="Permalink to this headline"></a></h1>
 <p>If you have trouble installing, configuring or maintaining Nextcloud, please
 refer to our community support channels:</p>
 <ul class="simple">
@@ -140,7 +139,7 @@ Nextcloud healthy and sustainable!</p>
 <p>If you are using Nextcloud in a business or otherwise large scale deployment,
 note that Nextcloud GmbH offers commercial support options.</p>
 <section id="bugs">
-<h2>Bugs<a class="headerlink" href="#bugs" title="Permalink to this heading"></a></h2>
+<h2>Bugs<a class="headerlink" href="#bugs" title="Permalink to this headline"></a></h2>
 <p>If you think you have found a bug in Nextcloud, please:</p>
 <ul class="simple">
 <li><p>Search for a solution (see the options above)</p></li>
@@ -150,19 +149,19 @@ note that Nextcloud GmbH offers commercial support options.</p>
 configuration report with the <a class="reference internal" href="../configuration_server/occ_command.html#config-commands-label"><span class="std std-ref">occ config command</span></a>, with passwords automatically obscured.</p>
 </section>
 <section id="id1">
-<h2>General troubleshooting<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<h2>General troubleshooting<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
 <p>Check the Nextcloud <a class="reference internal" href="../installation/system_requirements.html"><span class="doc">System requirements</span></a>, especially
 supported browser versions.</p>
 <p>When you see warnings about <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">integrity</span></code>, refer to <a class="reference internal" href="code_signing.html"><span class="doc">Code signing</span></a>.</p>
 <section id="disable-3rdparty-non-shipped-apps">
-<h3>Disable 3rdparty / non-shipped apps<a class="headerlink" href="#disable-3rdparty-non-shipped-apps" title="Permalink to this heading"></a></h3>
+<h3>Disable 3rdparty / non-shipped apps<a class="headerlink" href="#disable-3rdparty-non-shipped-apps" title="Permalink to this headline"></a></h3>
 <p>It might be possible that 3rd party / non-shipped apps are causing various
 different issues. Always disable 3rd party apps before upgrades, and for
 troubleshooting. Please refer to the <a class="reference internal" href="../configuration_server/occ_command.html#apps-commands-label"><span class="std std-ref">Apps commands</span></a> on how
 to disable an app from command line.</p>
 </section>
 <section id="nextcloud-logfiles">
-<h3>Nextcloud logfiles<a class="headerlink" href="#nextcloud-logfiles" title="Permalink to this heading"></a></h3>
+<h3>Nextcloud logfiles<a class="headerlink" href="#nextcloud-logfiles" title="Permalink to this headline"></a></h3>
 <p>In a standard Nextcloud installation the log level is set to <code class="docutils literal notranslate"><span class="pre">Normal</span></code>. To find
 any issues you need to raise the log level to <code class="docutils literal notranslate"><span class="pre">All</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>
 file, or to <strong>Everything</strong> on your Nextcloud Admin page. Please see
@@ -181,7 +180,7 @@ usually access them by pressing F12.</p>
 </div>
 </section>
 <section id="php-version-and-information">
-<span id="label-phpinfo"></span><h3>PHP version and information<a class="headerlink" href="#php-version-and-information" title="Permalink to this heading"></a></h3>
+<span id="label-phpinfo"></span><h3>PHP version and information<a class="headerlink" href="#php-version-and-information" title="Permalink to this headline"></a></h3>
 <p>You will need to know your PHP version and configurations. To do this, create a
 plain-text file named <strong>phpinfo.php</strong> and place it in your Web root, for
 example <code class="docutils literal notranslate"><span class="pre">/var/www/html/phpinfo.php</span></code>. (Your Web root may be in a different
@@ -202,7 +201,7 @@ When you are finished reviewing your information you must delete
 security risk to expose such sensitive data.</p>
 </section>
 <section id="debugging-sync-issues">
-<h3>Debugging sync issues<a class="headerlink" href="#debugging-sync-issues" title="Permalink to this heading"></a></h3>
+<h3>Debugging sync issues<a class="headerlink" href="#debugging-sync-issues" title="Permalink to this headline"></a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The data directory on the server is exclusive to Nextcloud and must
@@ -218,7 +217,7 @@ command line client like <code class="docutils literal notranslate"><span class=
 <p><code class="docutils literal notranslate"><span class="pre">https://example.com/nextcloud/remote.php/dav</span></code></p>
 </section>
 <section id="common-problems-error-messages">
-<h3>Common problems / error messages<a class="headerlink" href="#common-problems-error-messages" title="Permalink to this heading"></a></h3>
+<h3>Common problems / error messages<a class="headerlink" href="#common-problems-error-messages" title="Permalink to this headline"></a></h3>
 <p>Some common problems / error messages found in your logfiles as described above:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">SQLSTATE[HY000]</span> <span class="pre">[1040]</span> <span class="pre">Too</span> <span class="pre">many</span> <span class="pre">connections</span></code> -&gt; You need to increase the
@@ -248,9 +247,9 @@ failing.</p></li>
 </section>
 </section>
 <section id="troubleshooting-web-server-and-php-problems">
-<h2>Troubleshooting Web server and PHP problems<a class="headerlink" href="#troubleshooting-web-server-and-php-problems" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting Web server and PHP problems<a class="headerlink" href="#troubleshooting-web-server-and-php-problems" title="Permalink to this headline"></a></h2>
 <section id="logfiles">
-<h3>Logfiles<a class="headerlink" href="#logfiles" title="Permalink to this heading"></a></h3>
+<h3>Logfiles<a class="headerlink" href="#logfiles" title="Permalink to this headline"></a></h3>
 <p>When having issues the first step is to check the logfiles provided by PHP, the
 Web server and Nextcloud itself.</p>
 <div class="admonition note">
@@ -270,14 +269,14 @@ need to restart your Web server.</p></li>
 </ul>
 </section>
 <section id="web-server-and-php-modules">
-<h3>Web server and PHP modules<a class="headerlink" href="#web-server-and-php-modules" title="Permalink to this heading"></a></h3>
+<h3>Web server and PHP modules<a class="headerlink" href="#web-server-and-php-modules" title="Permalink to this headline"></a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Lighttpd is not supported with Nextcloud, and some Nextcloud features
 may not work at all on Lighttpd.</p>
 </div>
 <p>There are some Web server or PHP modules which are known to cause various
-problems like broken up-/downloads. The following shows a draft overview of
+problems like broken uploads/downloads. The following shows a draft overview of
 these modules:</p>
 <ol class="arabic simple">
 <li><p>Apache</p></li>
@@ -312,7 +311,7 @@ correctly)</p></li>
 </section>
 </section>
 <section id="troubleshooting-webdav">
-<span id="trouble-webdav-label"></span><h2>Troubleshooting WebDAV<a class="headerlink" href="#troubleshooting-webdav" title="Permalink to this heading"></a></h2>
+<span id="trouble-webdav-label"></span><h2>Troubleshooting WebDAV<a class="headerlink" href="#troubleshooting-webdav" title="Permalink to this headline"></a></h2>
 <p>Nextcloud uses SabreDAV, and the SabreDAV documentation is comprehensive and
 helpful.</p>
 <p>See:</p>
@@ -333,7 +332,7 @@ clients, and possible problems with each one)</p></li>
 which contains various additional information about WebDAV problems.</p>
 </section>
 <section id="service-discovery">
-<span id="service-discovery-label"></span><h2>Service discovery<a class="headerlink" href="#service-discovery" title="Permalink to this heading"></a></h2>
+<span id="service-discovery-label"></span><h2>Service discovery<a class="headerlink" href="#service-discovery" title="Permalink to this headline"></a></h2>
 <p>Some clients - especially on iOS/macOS - have problems finding the proper
 sync URL, even when explicitly configured to use it.</p>
 <p>If you want to use CalDAV or CardDAV clients or other clients that require service discovery
@@ -358,10 +357,10 @@ you’re running Apache create or edit the <code class="file docutils literal no
 document root of your Web server and add the following lines:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">IfModule</span> <span class="n">mod_rewrite</span><span class="o">.</span><span class="n">c</span><span class="o">&gt;</span>
   <span class="n">RewriteEngine</span> <span class="n">on</span>
-  <span class="n">RewriteRule</span> <span class="o">^</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">carddav</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">remote</span><span class="o">.</span><span class="n">php</span><span class="o">/</span><span class="n">dav</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
-  <span class="n">RewriteRule</span> <span class="o">^</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">caldav</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">remote</span><span class="o">.</span><span class="n">php</span><span class="o">/</span><span class="n">dav</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
-  <span class="n">RewriteRule</span> <span class="o">^</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">webfinger</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">php</span><span class="o">/.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">webfinger</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
-  <span class="n">RewriteRule</span> <span class="o">^</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">nodeinfo</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">php</span><span class="o">/.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">nodeinfo</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
+  <span class="n">RewriteRule</span> <span class="o">^/</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">carddav</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">remote</span><span class="o">.</span><span class="n">php</span><span class="o">/</span><span class="n">dav</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
+  <span class="n">RewriteRule</span> <span class="o">^/</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">caldav</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">remote</span><span class="o">.</span><span class="n">php</span><span class="o">/</span><span class="n">dav</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
+  <span class="n">RewriteRule</span> <span class="o">^/</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">webfinger</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">php</span><span class="o">/.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">webfinger</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
+  <span class="n">RewriteRule</span> <span class="o">^/</span>\<span class="o">.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">nodeinfo</span> <span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">php</span><span class="o">/.</span><span class="n">well</span><span class="o">-</span><span class="n">known</span><span class="o">/</span><span class="n">nodeinfo</span> <span class="p">[</span><span class="n">R</span><span class="o">=</span><span class="mi">301</span><span class="p">,</span><span class="n">L</span><span class="p">]</span>
 <span class="o">&lt;/</span><span class="n">IfModule</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -375,9 +374,9 @@ document root of your Web server and add the following lines:</p>
 the <a class="reference external" href="http://sabre.io/dav/service-discovery/">Sabre DAV website</a>.</p>
 </section>
 <section id="troubleshooting-sharing">
-<h2>Troubleshooting sharing<a class="headerlink" href="#troubleshooting-sharing" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting sharing<a class="headerlink" href="#troubleshooting-sharing" title="Permalink to this headline"></a></h2>
 <section id="users-federated-cloud-ids-not-updated-after-a-domain-name-change">
-<h3>Users’ Federated Cloud IDs not updated after a domain name change<a class="headerlink" href="#users-federated-cloud-ids-not-updated-after-a-domain-name-change" title="Permalink to this heading"></a></h3>
+<h3>Users’ Federated Cloud IDs not updated after a domain name change<a class="headerlink" href="#users-federated-cloud-ids-not-updated-after-a-domain-name-change" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
 <li><p>run Database query</p></li>
 </ol>
@@ -394,9 +393,9 @@ the <a class="reference external" href="http://sabre.io/dav/service-discovery/">
 </section>
 </section>
 <section id="troubleshooting-contacts-calendar">
-<h2>Troubleshooting contacts &amp; calendar<a class="headerlink" href="#troubleshooting-contacts-calendar" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting contacts &amp; calendar<a class="headerlink" href="#troubleshooting-contacts-calendar" title="Permalink to this headline"></a></h2>
 <section id="unable-to-update-contacts-or-events">
-<h3>Unable to update contacts or events<a class="headerlink" href="#unable-to-update-contacts-or-events" title="Permalink to this heading"></a></h3>
+<h3>Unable to update contacts or events<a class="headerlink" href="#unable-to-update-contacts-or-events" title="Permalink to this headline"></a></h3>
 <p>If you get an error like:</p>
 <p><code class="docutils literal notranslate"><span class="pre">PATCH</span> <span class="pre">https://example.com/remote.php/dav</span> <span class="pre">HTTP/1.0</span> <span class="pre">501</span> <span class="pre">Not</span> <span class="pre">Implemented</span></code></p>
 <p>it is likely caused by one of the following reasons:</p>
@@ -412,7 +411,7 @@ Please refer to <a class="reference internal" href="#trouble-webdav-label"><span
 </section>
 </section>
 <section id="troubleshooting-data-directory">
-<h2>Troubleshooting data-directory<a class="headerlink" href="#troubleshooting-data-directory" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting data-directory<a class="headerlink" href="#troubleshooting-data-directory" title="Permalink to this headline"></a></h2>
 <p>If you have a fresh install, consider reinstalling with your preferred directory location.</p>
 <p>Unofficially moving the data directory can be done as follows:</p>
 <ol class="arabic simple">
@@ -435,9 +434,9 @@ Please refer to <a class="reference internal" href="#trouble-webdav-label"><span
 </ol>
 </section>
 <section id="troubleshooting-encryption">
-<h2>Troubleshooting encryption<a class="headerlink" href="#troubleshooting-encryption" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting encryption<a class="headerlink" href="#troubleshooting-encryption" title="Permalink to this headline"></a></h2>
 <section id="problems-when-downloading-or-decrypting-files">
-<h3>Problems when downloading or decrypting files<a class="headerlink" href="#problems-when-downloading-or-decrypting-files" title="Permalink to this heading"></a></h3>
+<h3>Problems when downloading or decrypting files<a class="headerlink" href="#problems-when-downloading-or-decrypting-files" title="Permalink to this headline"></a></h3>
 <p>In some rare cases it can happen that encrypted files cannot be downloaded
 and return a “500 Internal Server Error”. If the Nextcloud log contains an error about
 “Bad Signature”, then the following command can be used to repair affected files:</p>
@@ -449,7 +448,7 @@ The command will do a test decryption for all files and automatically repair the
 </section>
 </section>
 <section id="other-issues">
-<h2>Other issues<a class="headerlink" href="#other-issues" title="Permalink to this heading"></a></h2>
+<h2>Other issues<a class="headerlink" href="#other-issues" title="Permalink to this headline"></a></h2>
 <p>Some services like <em>Cloudflare</em> can cause issues by minimizing JavaScript
 and loading it only when needed. When having issues like a not working
 login button or creating new users make sure to disable such services
@@ -490,11 +489,9 @@ first.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

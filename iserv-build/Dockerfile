@@ -3,7 +3,7 @@
 # IMPORTANT: Update version in build.sh as well!
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-FROM nextcloud:23.0.7-apache
+FROM nextcloud:24.0.8-apache
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
@@ -18,12 +18,12 @@ RUN apt-get update \
 # https://apps.nextcloud.com/apps/user_saml
 # https://apps.nextcloud.com/apps/groupfolders
 RUN mkdir /iserv-apps \
-    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v11.1.5/groupfolders-v11.1.5.tar.gz" \
+    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud/groupfolders/releases/download/v12.0.2/groupfolders.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
     && rm groupfolders.tar.gz \
     \
-    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v5.0.2/user_saml-v5.0.2.tar.gz" \
+    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v5.1.2/user_saml-v5.1.2.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz
@@ -40,8 +40,7 @@ RUN cd /usr/src/nextcloud \
     && patch -p1 < /patches/cleanup_activity.patch \
     && patch -p1 < /patches/deactivate_send_mails.patch \
     && patch -p1 < /patches/deactivate_activity_jobs.patch \
-    && patch -p1 < /patches/show_share_owner.patch \
-    && patch -p1 < /patches/allow_public_upload_for_editing.patch
+    && patch -p1 < /patches/show_share_owner.patch
 
 # Apply frontend patches
 RUN cd /usr/src/nextcloud \

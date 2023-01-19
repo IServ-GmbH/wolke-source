@@ -37,6 +37,7 @@ use GuzzleHttp\Exception\RequestException;
 use OC\Files\Storage\DAV;
 use OC\ForbiddenException;
 use OCA\Files_Sharing\ISharedStorage;
+use OCA\Files_Sharing\External\Manager as ExternalShareManager;
 use OCP\AppFramework\Http;
 use OCP\Constants;
 use OCP\Federation\ICloudId;
@@ -46,6 +47,7 @@ use OCP\Files\Storage\IReliableEtagStorage;
 use OCP\Files\StorageInvalidException;
 use OCP\Files\StorageNotAvailableException;
 use OCP\Http\Client\LocalServerException;
+use OCP\Http\Client\IClientService;
 
 class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, IReliableEtagStorage {
 	/** @var ICloudId */
@@ -61,11 +63,12 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	/** @var bool */
 	private $updateChecked = false;
 
-	/**
-	 * @var \OCA\Files_Sharing\External\Manager
-	 */
+	/** @var ExternalShareManager */
 	private $manager;
 
+	/**
+	 * @param array{HttpClientService: IClientService, manager: ExternalShareManager, cloudId: ICloudId, mountpoint: string, token: string, password: ?string}|array $options
+	 */
 	public function __construct($options) {
 		$this->memcacheFactory = \OC::$server->getMemCacheFactory();
 		$this->httpClient = $options['HttpClientService'];
@@ -108,28 +111,28 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 		return $this->watcher;
 	}
 
-	public function getRemoteUser() {
+	public function getRemoteUser(): string {
 		return $this->cloudId->getUser();
 	}
 
-	public function getRemote() {
+	public function getRemote(): string {
 		return $this->cloudId->getRemote();
 	}
 
-	public function getMountPoint() {
+	public function getMountPoint(): string {
 		return $this->mountPoint;
 	}
 
-	public function getToken() {
+	public function getToken(): string {
 		return $this->token;
 	}
 
-	public function getPassword() {
+	public function getPassword(): ?string {
 		return $this->password;
 	}
 
 	/**
-	 * @brief get id of the mount point
+	 * Get id of the mount point.
 	 * @return string
 	 */
 	public function getId() {
@@ -159,7 +162,7 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	/**
-	 * check if a file or folder has been updated since $time
+	 * Check if a file or folder has been updated since $time
 	 *
 	 * @param string $path
 	 * @param int $time
@@ -220,22 +223,20 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 				// we remove the invalid storage
 				$this->manager->removeShare($this->mountPoint);
 				$this->manager->getMountManager()->removeMount($this->mountPoint);
-				throw new StorageInvalidException();
+				throw new StorageInvalidException("Remote share not found", 0, $e);
 			} else {
 				// Nextcloud instance is gone, likely to be a temporary server configuration error
-				throw new StorageNotAvailableException();
+				throw new StorageNotAvailableException("No nextcloud instance found at remote", 0, $e);
 			}
 		} catch (ForbiddenException $e) {
 			// auth error, remove share for now (provide a dialog in the future)
 			$this->manager->removeShare($this->mountPoint);
 			$this->manager->getMountManager()->removeMount($this->mountPoint);
-			throw new StorageInvalidException();
+			throw new StorageInvalidException("Auth error when getting remote share");
 		} catch (\GuzzleHttp\Exception\ConnectException $e) {
-			throw new StorageNotAvailableException();
+			throw new StorageNotAvailableException("Failed to connect to remote instance", 0, $e);
 		} catch (\GuzzleHttp\Exception\RequestException $e) {
-			throw new StorageNotAvailableException();
-		} catch (\Exception $e) {
-			throw $e;
+			throw new StorageNotAvailableException("Error while sending request to remote instance", 0, $e);
 		}
 	}
 
@@ -248,11 +249,11 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	/**
-	 * check if the configured remote is a valid federated share provider
+	 * Check if the configured remote is a valid federated share provider
 	 *
 	 * @return bool
 	 */
-	protected function testRemote() {
+	protected function testRemote(): bool {
 		try {
 			return $this->testRemoteUrl($this->getRemote() . '/ocs-provider/index.php')
 				|| $this->testRemoteUrl($this->getRemote() . '/ocs-provider/')
@@ -262,11 +263,7 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 		}
 	}
 
-	/**
-	 * @param string $url
-	 * @return bool
-	 */
-	private function testRemoteUrl($url) {
+	private function testRemoteUrl(string $url): bool {
 		$cache = $this->memcacheFactory->createDistributed('files_sharing_remote_url');
 		if ($cache->hasKey($url)) {
 			return (bool)$cache->get($url);
@@ -293,12 +290,12 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	/**
-	 * Whether the remote is an ownCloud/Nextcloud, used since some sharing features are not
-	 * standardized. Let's use this to detect whether to use it.
+	 * Check whether the remote is an ownCloud/Nextcloud. This is needed since some sharing
+	 * features are not standardized.
 	 *
-	 * @return bool
+	 * @throws LocalServerException
 	 */
-	public function remoteIsOwnCloud() {
+	public function remoteIsOwnCloud(): bool {
 		if (defined('PHPUNIT_RUN') || !$this->testRemoteUrl($this->getRemote() . '/status.php')) {
 			return false;
 		}
@@ -388,13 +385,13 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	/**
-	 * translate OCM Permissions to Nextcloud permissions
+	 * Translate OCM Permissions to Nextcloud permissions
 	 *
 	 * @param string $ocmPermissions json encoded OCM permissions
 	 * @param string $path path to file
 	 * @return int
 	 */
-	protected function ocmPermissions2ncPermissions($ocmPermissions, $path) {
+	protected function ocmPermissions2ncPermissions(string $ocmPermissions, string $path): int {
 		try {
 			$ocmPermissions = json_decode($ocmPermissions);
 			$ncPermissions = 0;
@@ -421,12 +418,9 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	/**
-	 * calculate default permissions in case no permissions are provided
-	 *
-	 * @param $path
-	 * @return int
+	 * Calculate the default permissions in case no permissions are provided
 	 */
-	protected function getDefaultPermissions($path) {
+	protected function getDefaultPermissions(string $path): int {
 		if ($this->is_dir($path)) {
 			$permissions = Constants::PERMISSION_ALL;
 		} else {

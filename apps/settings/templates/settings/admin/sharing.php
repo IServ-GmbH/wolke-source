@@ -130,8 +130,6 @@
 			</div>
 <?php } ?>
 
-			<input type="checkbox" name="shareapi_default_expire_date" id="shareapiDefaultExpireDate" class="checkbox" value="1" <?php if ($_['shareDefaultExpireDateSet'] === 'yes') { print_unescaped('checked="checked"'); } ?> />
-
 			<input type="checkbox" name="shareapi_default_expire_date" id="shareapiDefaultExpireDate" class="checkbox"
 				   value="1" <?php if ($_['shareDefaultExpireDateSet'] === 'yes') {
 	print_unescaped('checked="checked"');
@@ -245,7 +243,7 @@
 					<?php if ($_['restrictUserEnumerationFullMatch'] === 'yes') {
 	print_unescaped('checked="checked"');
 } ?> />
-			<label for="shareapi_restrict_user_enumeration_full_match"><?php p($l->t('Allow username autocompletion when entering the full name or email address (ignoring missing phonebook match and being in the same group)'));?></label><br />
+			<label for="shareapi_restrict_user_enumeration_full_match"><?php p($l->t('Allow autocompletion when entering the full name or email address (ignoring missing phonebook match and being in the same group)'));?></label><br />
 		</p>
 
 		<p>

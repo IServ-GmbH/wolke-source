@@ -68,6 +68,8 @@ return array(
     'OCA\\Files_Sharing\\Migration\\Version11300Date20201120141438' => $baseDir . '/../lib/Migration/Version11300Date20201120141438.php',
     'OCA\\Files_Sharing\\Migration\\Version21000Date20201223143245' => $baseDir . '/../lib/Migration/Version21000Date20201223143245.php',
     'OCA\\Files_Sharing\\Migration\\Version22000Date20210216084241' => $baseDir . '/../lib/Migration/Version22000Date20210216084241.php',
+    'OCA\\Files_Sharing\\Migration\\Version24000Date20220208195521' => $baseDir . '/../lib/Migration/Version24000Date20220208195521.php',
+    'OCA\\Files_Sharing\\Migration\\Version24000Date20220404142216' => $baseDir . '/../lib/Migration/Version24000Date20220404142216.php',
     'OCA\\Files_Sharing\\MountProvider' => $baseDir . '/../lib/MountProvider.php',
     'OCA\\Files_Sharing\\Notification\\Listener' => $baseDir . '/../lib/Notification/Listener.php',
     'OCA\\Files_Sharing\\Notification\\Notifier' => $baseDir . '/../lib/Notification/Notifier.php',
@@ -78,4 +80,5 @@ return array(
     'OCA\\Files_Sharing\\SharedMount' => $baseDir . '/../lib/SharedMount.php',
     'OCA\\Files_Sharing\\SharedStorage' => $baseDir . '/../lib/SharedStorage.php',
     'OCA\\Files_Sharing\\Updater' => $baseDir . '/../lib/Updater.php',
+    'OCA\\Files_Sharing\\ViewOnly' => $baseDir . '/../lib/ViewOnly.php',
 );

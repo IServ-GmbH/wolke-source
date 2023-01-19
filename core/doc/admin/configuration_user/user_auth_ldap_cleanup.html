@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -88,9 +87,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-      <li>LDAP user cleanup</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+      <li class="breadcrumb-item active">LDAP user cleanup</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/user_auth_ldap_cleanup.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -101,7 +100,7 @@
            <div itemprop="articleBody">
              
   <section id="ldap-user-cleanup">
-<h1>LDAP user cleanup<a class="headerlink" href="#ldap-user-cleanup" title="Permalink to this heading"></a></h1>
+<h1>LDAP user cleanup<a class="headerlink" href="#ldap-user-cleanup" title="Permalink to this headline"></a></h1>
 <p>LDAP User Cleanup is a new feature in the <code class="docutils literal notranslate"><span class="pre">LDAP</span> <span class="pre">user</span> <span class="pre">and</span> <span class="pre">group</span> <span class="pre">backend</span></code>
 application. LDAP User Cleanup is a background process that automatically
 searches the Nextcloud LDAP mappings table, and verifies if the LDAP users are
@@ -165,7 +164,7 @@ Nextcloud data directory.</p></li>
 <p>Then you can run <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">occ</span> <span class="pre">user:delete</span> <span class="pre">aaliyah_brown</span></code> to delete
 user aaliyah_brown. You must use the user’s Nextcloud name.</p>
 <section id="deleting-local-nextcloud-users">
-<h2>Deleting local Nextcloud users<a class="headerlink" href="#deleting-local-nextcloud-users" title="Permalink to this heading"></a></h2>
+<h2>Deleting local Nextcloud users<a class="headerlink" href="#deleting-local-nextcloud-users" title="Permalink to this headline"></a></h2>
 <p>You may also use <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">user:delete</span> <span class="pre">[user]</span></code> to remove a local Nextcloud user;
 this removes their user account and their data.</p>
 </section>
@@ -204,11 +203,9 @@ this removes their user account and their data.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -304,19 +304,24 @@ $CONFIG = [
 'auth.bruteforce.protection.enabled' => true,
 
 /**
- * Whether the authtoken v1 provider should be skipped
- *
- * The v1 provider is deprecated and removed in Nextcloud 24 onwards. It can be
- * disabled already when the instance was installed after Nextcloud 14.
- *
- * Defaults to ``false``
- */
-'auth.authtoken.v1.disabled' => false,
-
-/**
  * By default WebAuthn is available but it can be explicitly disabled by admins
  */
 'auth.webauthn.enabled' => true,
+
+/**
+ * Whether encrypted password should be stored in the database
+ *
+ * The passwords are only decrypted using the login token stored uniquely in the
+ * clients and allow to connect to external storages, autoconfigure mail account in
+ * the mail app and periodically check if the password it still valid.
+ *
+ * This might be desirable to disable this functionality when using one time
+ * passwords or when having a password policy enforcing long passwords (> 300
+ * characters).
+ *
+ * By default the passwords are stored encrypted in the database.
+ */
+'auth.storeCryptedPassword' => true,
 
 /**
  * By default the login form is always available. There are cases (SSO) where an
@@ -362,6 +367,13 @@ $CONFIG = [
  * In case you do not want to provide any link, replace the url with 'disabled'
  */
 'lost_password_link' => 'https://example.org/link/to/password/reset',
+
+/**
+ * URL to use as target for the logo link in the header (top-left logo)
+ *
+ * Defaults to the base URL of your Nextcloud instance
+ */
+'logo_url' => 'https://example.org',
 
 /**
  * Mail Parameters
@@ -823,11 +835,11 @@ $CONFIG = [
 
 /**
  * In certain environments it is desired to have a read-only configuration file.
- * When this switch is set to ``true`` Nextcloud will not verify whether the
- * configuration is writable. However, it will not be possible to configure
- * all options via the Web interface. Furthermore, when updating Nextcloud
- * it is required to make the configuration file writable again for the update
- * process.
+ * When this switch is set to ``true``, writing to the config file will be
+ * forbidden. Therefore, it will not be possible to configure all options via
+ * the Web interface. Furthermore, when updating Nextcloud it is required to
+ * make the configuration file writable again and to set this switch to ``false``
+ * for the update process.
  *
  * Defaults to ``false``
  */
@@ -965,6 +977,14 @@ $CONFIG = [
  */
 'log_rotate_size' => 100 * 1024 * 1024,
 
+/**
+ * Enable built-in profiler. Helpful when trying to debug performance
+ * issues.
+ *
+ * Note that this has a performance impact and shouldn't be enabled
+ * on production.
+ */
+'profiler' => false,
 
 /**
  * Alternate Code Locations
@@ -1074,9 +1094,10 @@ $CONFIG = [
 'preview_max_y' => 4096,
 
 /**
- * max file size for generating image previews with imagegd (default behavior)
+ * Max file size for generating image previews with imagegd (default behavior).
  * If the image is bigger, it'll try other preview generators, but will most
- * likely show the default mimetype icon. Set to -1 for no limit.
+ * likely either show the default mimetype icon or not display the image at all.
+ * Set to ``-1`` for no limit and try to generate image previews on all file sizes.
  *
  * Defaults to ``50`` megabytes
  */
@@ -1107,6 +1128,14 @@ $CONFIG = [
 'preview_office_cl_parameters' =>
 	' --headless --nologo --nofirststartwizard --invisible --norestore '.
 	'--convert-to png --outdir ',
+
+/**
+ * Set the URL of the Imaginary service to send image previews to.
+ * Also requires the OC\Preview\Imaginary provider to be enabled.
+ *
+ * See https://github.com/h2non/imaginary
+ */
+'preview_imaginary_url' => 'http://previews_hpb:8088/',
 
 /**
  * Only register providers that have been explicitly enabled
@@ -1527,6 +1556,18 @@ $CONFIG = [
 'sharing.managerFactory' => '\OC\Share20\ProviderFactory',
 
 /**
+ * Enables expiration for link share passwords sent by email (sharebymail).
+ * The passwords will expire after the configured interval, the users can
+ * still request a new one in the public link page.
+ */
+'sharing.enable_mail_link_password_expiration' => false,
+
+/**
+ * Expiration interval for passwords, in seconds.
+ */
+'sharing.mail_link_password_expiration_interval' => 3600,
+
+/**
  * Define max number of results returned by the search for auto-completion of
  * users, groups, etc. The value must not be lower than 0 (for unlimited).
  *
@@ -1630,7 +1671,7 @@ $CONFIG = [
  * Tables will be created with
  *  * character set: utf8mb4
  *  * collation:     utf8mb4_bin
- *  * row_format:    compressed
+ *  * row_format:    dynamic
  *
  * See:
  * https://dev.mysql.com/doc/refman/5.7/en/charset-unicode-utf8mb4.html
@@ -2092,9 +2133,36 @@ $CONFIG = [
 'ldap_log_file' => '',
 
 /**
+ * Enable diagnostics event logging
+ *
+ * If enabled the timings of common execution steps will be logged to the
+ * Nextcloud log at debug level. log.condition is useful to enable this on
+ * production systems to only log under some conditions
+ */
+'diagnostics.logging' => true,
+
+/**
+ * Limit diagnostics event logging to events longer than the configured threshold in ms
+ *
+ * when set to 0 no diagnostics events will be logged
+ */
+'diagnostics.logging.threshold' => 0,
+
+/**
  * Enable profile globally
  *
  * Defaults to ``true``
  */
 'profile.enabled' => true,
+
+/**
+ * Enable file metadata collection
+ *
+ * This is helpful for the mobile clients and will enable a few optimization in
+ * the future for the preview generation.
+ *
+ * Note that when enabled, this data will be stored in the database and might increase
+ * the database storage.
+ */
+'enable_file_metadata' => true,
 ];

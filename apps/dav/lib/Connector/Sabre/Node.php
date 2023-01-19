@@ -36,9 +36,13 @@
 namespace OCA\DAV\Connector\Sabre;
 
 use OC\Files\Mount\MoveableMount;
+use OC\Files\Node\File;
+use OC\Files\Node\Folder;
+use OC\Files\Storage\Wrapper\Wrapper;
 use OC\Files\View;
 use OCA\DAV\Connector\Sabre\Exception\InvalidPath;
 use OCP\Files\FileInfo;
+use OCP\Files\IRootFolder;
 use OCP\Files\StorageNotAvailableException;
 use OCP\Share\IShare;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -75,6 +79,8 @@ abstract class Node implements \Sabre\DAV\INode {
 	 */
 	protected $shareManager;
 
+	protected \OCP\Files\Node $node;
+
 	/**
 	 * Sets up the node, expects a full path name
 	 *
@@ -91,10 +97,26 @@ abstract class Node implements \Sabre\DAV\INode {
 		} else {
 			$this->shareManager = \OC::$server->getShareManager();
 		}
+		if ($info instanceof Folder || $info instanceof File) {
+			$this->node = $info;
+		} else {
+			$root = \OC::$server->get(IRootFolder::class);
+			if ($info->getType() === FileInfo::TYPE_FOLDER) {
+				$this->node = new Folder($root, $view, $this->path, $info);
+			} else {
+				$this->node = new File($root, $view, $this->path, $info);
+			}
+		}
 	}
 
 	protected function refreshInfo() {
 		$this->info = $this->fileView->getFileInfo($this->path);
+		$root = \OC::$server->get(IRootFolder::class);
+		if ($this->info->getType() === FileInfo::TYPE_FOLDER) {
+			$this->node = new Folder($root, $this->fileView, $this->path, $this->info);
+		} else {
+			$this->node = new File($root, $this->fileView, $this->path, $this->info);
+		}
 	}
 
 	/**
@@ -302,6 +324,31 @@ abstract class Node implements \Sabre\DAV\INode {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getShareAttributes(): array {
+		$attributes = [];
+
+		try {
+			$storage = $this->info->getStorage();
+		} catch (StorageNotAvailableException $e) {
+			$storage = null;
+		}
+
+		if ($storage && $storage->instanceOfStorage(\OCA\Files_Sharing\SharedStorage::class)) {
+			/** @var \OCA\Files_Sharing\SharedStorage $storage */
+			$attributes = $storage->getShare()->getAttributes();
+			if ($attributes === null) {
+				return [];
+			} else {
+				return $attributes->toArray();
+			}
+		}
+
+		return $attributes;
+	}
+
+	/**
 	 * @param string $user
 	 * @return string
 	 */
@@ -401,6 +448,10 @@ abstract class Node implements \Sabre\DAV\INode {
 
 	public function getFileInfo() {
 		return $this->info;
+	}
+
+	public function getNode(): \OCP\Files\Node {
+		return $this->node;
 	}
 
 	protected function sanitizeMtime($mtimeFromRequest) {

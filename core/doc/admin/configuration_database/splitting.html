@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -83,9 +82,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Database configuration</a> &raquo;</li>
-      <li>Splitting databases</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Database configuration</a></li>
+      <li class="breadcrumb-item active">Splitting databases</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_database/splitting.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -96,7 +95,7 @@
            <div itemprop="articleBody">
              
   <section id="splitting-databases">
-<h1>Splitting databases<a class="headerlink" href="#splitting-databases" title="Permalink to this heading"></a></h1>
+<h1>Splitting databases<a class="headerlink" href="#splitting-databases" title="Permalink to this headline"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>This is still proof-of-concept level. Use with care.</p>
@@ -127,7 +126,7 @@ for a split database. Also in case of MySQL and MariaDB the utf8mb4 option needs
 the same on both databases.</p>
 </div>
 <section id="initial-splitting">
-<h2>Initial splitting<a class="headerlink" href="#initial-splitting" title="Permalink to this heading"></a></h2>
+<h2>Initial splitting<a class="headerlink" href="#initial-splitting" title="Permalink to this headline"></a></h2>
 <p>For the initial split the affected tables have to be copied over to the new database,
 in case of the activity app these are:</p>
 <ul class="simple">
@@ -153,7 +152,7 @@ in case of the activity app these are:</p>
 4. Disable maintenance mode</p>
 </section>
 <section id="migrations-on-updates">
-<h2>Migrations on updates<a class="headerlink" href="#migrations-on-updates" title="Permalink to this heading"></a></h2>
+<h2>Migrations on updates<a class="headerlink" href="#migrations-on-updates" title="Permalink to this headline"></a></h2>
 <p>We will try to avoid migrations on those tables in the future, but it might be necessary at some point.
 We hope to have a dedicated plan by the time this happens. For now a potential way would be:</p>
 <ol class="arabic simple">
@@ -199,11 +198,9 @@ We hope to have a dedicated plan by the time this happens. For now a potential w
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

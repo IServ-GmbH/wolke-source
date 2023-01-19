@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -93,9 +92,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Office</a> &raquo;</li>
-      <li>Configuration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Office</a></li>
+      <li class="breadcrumb-item active">Configuration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/office/configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -106,46 +105,46 @@
            <div itemprop="articleBody">
              
   <section id="configuration">
-<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h1>
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h1>
 <section id="nextcloud-office-app-settings">
-<h2>Nextcloud Office App Settings<a class="headerlink" href="#nextcloud-office-app-settings" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud Office App Settings<a class="headerlink" href="#nextcloud-office-app-settings" title="Permalink to this headline"></a></h2>
 <section id="collabora-online-server">
-<h3>Collabora Online Server<a class="headerlink" href="#collabora-online-server" title="Permalink to this heading"></a></h3>
+<h3>Collabora Online Server<a class="headerlink" href="#collabora-online-server" title="Permalink to this headline"></a></h3>
 <p>URL (and port) of the Collabora Online server that provides the editing functionality as a WOPI client. Collabora Online should use the same protocol (<a class="reference external" href="http://">http://</a> or <a class="reference external" href="https://">https://</a>) as the server installation. Naturally, <a class="reference external" href="https://">https://</a> is recommended.</p>
 <p>Restrict usage to specific groups
 By default the app is enabled for all. When this setting is active, only members of specified groups can use Nextcloud Office.</p>
 </section>
 <section id="restrict-edit-to-specific-groups">
-<h3>Restrict edit to specific groups<a class="headerlink" href="#restrict-edit-to-specific-groups" title="Permalink to this heading"></a></h3>
+<h3>Restrict edit to specific groups<a class="headerlink" href="#restrict-edit-to-specific-groups" title="Permalink to this headline"></a></h3>
 <p>By default all users can edit documents with Nextcloud Office. When this setting is active, only the members of specified groups can edit, others can only view documents.</p>
 </section>
 <section id="use-ooxml-by-default-for-new-files">
-<h3>Use OOXML by default for new files<a class="headerlink" href="#use-ooxml-by-default-for-new-files" title="Permalink to this heading"></a></h3>
+<h3>Use OOXML by default for new files<a class="headerlink" href="#use-ooxml-by-default-for-new-files" title="Permalink to this headline"></a></h3>
 <p>By default new files created by users are in OpenDocument Format (ODF). When this setting is active, new files will be created in Office Open XML (OOXML) format.</p>
 </section>
 <section id="enable-access-for-external-apps">
-<h3>Enable access for external apps<a class="headerlink" href="#enable-access-for-external-apps" title="Permalink to this heading"></a></h3>
+<h3>Enable access for external apps<a class="headerlink" href="#enable-access-for-external-apps" title="Permalink to this headline"></a></h3>
 <p>Nextcloud internally passes an access token to Collabora Online that is used later by it to do various operations. By default, it’s not possible to generate this token by 3rd parties; only Nextcloud can generate and pass it to Collabora Online.</p>
 <p>In some applications, it might be necessary to generate the token by a 3rd party application. For this, one needs to add the 3rd party application (external apps) in this setting. You need to add an application identifier and a secret
 token. These credentials then can be used by the 3rd party application to make calls to <cite>wopi/extapp/data/{fileId}</cite> to fetch the access token and URL source for given fileId, both required to open a connection to Collabora Online.</p>
 </section>
 <section id="canonical-webroot">
-<h3>Canonical webroot<a class="headerlink" href="#canonical-webroot" title="Permalink to this heading"></a></h3>
+<h3>Canonical webroot<a class="headerlink" href="#canonical-webroot" title="Permalink to this headline"></a></h3>
 <p>Canonical webroot, in case there are multiple, for Collabora Online to use. Provide the one with least restrictions. E.g.: Use non-shibbolized webroot if this instance is accessed by both shibbolized and non-shibbolized webroots. You can ignore this setting if only one webroot is used to access this instance.</p>
 </section>
 </section>
 <section id="additional-configuration-options">
-<h2>Additional configuration options<a class="headerlink" href="#additional-configuration-options" title="Permalink to this heading"></a></h2>
+<h2>Additional configuration options<a class="headerlink" href="#additional-configuration-options" title="Permalink to this headline"></a></h2>
 <p>The coolwsd service allows additional configuration options which can be found in the <a class="reference external" href="https://sdk.collaboraonline.com/docs/installation/Configuration.html">Collabora Online documentation</a>.</p>
 <section id="previews">
-<h3>Previews<a class="headerlink" href="#previews" title="Permalink to this heading"></a></h3>
+<h3>Previews<a class="headerlink" href="#previews" title="Permalink to this headline"></a></h3>
 <p>In order to allow Nextcloud to use the coolwsd conversion API to generate previews, the Nextcloud host IP needs to be added to the allow list:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo coolconfig <span class="nb">set</span> net.post_allow.host <span class="m">10</span>.0.0.4
 </pre></div>
 </div>
 </section>
 <section id="custom-fonts">
-<h3>Custom fonts<a class="headerlink" href="#custom-fonts" title="Permalink to this heading"></a></h3>
+<h3>Custom fonts<a class="headerlink" href="#custom-fonts" title="Permalink to this headline"></a></h3>
 <p>When you install coolwsd package, the post-install script will look for additional fonts on your system, and install them in the systemplate. If you install fonts to your system after installing coolwsd, you need to update the systemplate manually.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>coolconfig update-system-template
 </pre></div>
@@ -191,11 +190,9 @@ token. These credentials then can be used by the 3rd party application to make c
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

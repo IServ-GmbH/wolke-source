@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -95,9 +94,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-      <li>User management</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+      <li class="breadcrumb-item active">User management</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/user_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -108,7 +107,7 @@
            <div itemprop="articleBody">
              
   <section id="user-management">
-<h1>User management<a class="headerlink" href="#user-management" title="Permalink to this heading"></a></h1>
+<h1>User management<a class="headerlink" href="#user-management" title="Permalink to this headline"></a></h1>
 <p>On the User management page of your Nextcloud Web UI you can:</p>
 <ul class="simple">
 <li><p>Create new users</p></li>
@@ -161,7 +160,7 @@ storage in user quotas.</p>
 </dd>
 </dl>
 <section id="creating-a-new-user">
-<h2>Creating a new user<a class="headerlink" href="#creating-a-new-user" title="Permalink to this heading"></a></h2>
+<h2>Creating a new user<a class="headerlink" href="#creating-a-new-user" title="Permalink to this headline"></a></h2>
 <p>To create a user account:</p>
 <ul class="simple">
 <li><p>Enter the new user’s <strong>Login Name</strong> and their initial <strong>Password</strong></p></li>
@@ -184,7 +183,7 @@ Admin page (see <a class="reference internal" href="../configuration_server/emai
 field empty. The user will get an activation-email to set their own password.</p>
 </section>
 <section id="reset-a-user-s-password">
-<h2>Reset a user’s password<a class="headerlink" href="#reset-a-user-s-password" title="Permalink to this heading"></a></h2>
+<h2>Reset a user’s password<a class="headerlink" href="#reset-a-user-s-password" title="Permalink to this headline"></a></h2>
 <p>You cannot recover a user’s password, but you can set a new one:</p>
 <ul class="simple">
 <li><p>Hover your cursor over the user’s <strong>Password</strong> field</p></li>
@@ -197,7 +196,7 @@ password resets. Please see
 <a class="reference internal" href="../configuration_files/encryption_configuration.html"><span class="doc">Encryption configuration</span></a>.</p>
 </section>
 <section id="renaming-a-user">
-<h2>Renaming a user<a class="headerlink" href="#renaming-a-user" title="Permalink to this heading"></a></h2>
+<h2>Renaming a user<a class="headerlink" href="#renaming-a-user" title="Permalink to this headline"></a></h2>
 <p>Each Nextcloud user has two names: a unique <strong>Login Name</strong> used for
 authentication, and a <strong>Full Name</strong>, which is their display name. You can edit
 the display name of a user, but you cannot change the login name of any user.</p>
@@ -209,7 +208,7 @@ the display name of a user, but you cannot change the login name of any user.</p
 </ul>
 </section>
 <section id="granting-administrator-privileges-to-a-user">
-<h2>Granting administrator privileges to a user<a class="headerlink" href="#granting-administrator-privileges-to-a-user" title="Permalink to this heading"></a></h2>
+<h2>Granting administrator privileges to a user<a class="headerlink" href="#granting-administrator-privileges-to-a-user" title="Permalink to this headline"></a></h2>
 <p>Nextcloud has two types of administrators: <strong>Super Administrators</strong> and <strong>Group
 Administrators</strong>. Group administrators have the rights to create, edit and
 delete users in their assigned groups. Group administrators cannot access
@@ -224,14 +223,14 @@ access and modify all settings. To assign the <strong>Super Administrators</stro
 a user, simply add them to the <code class="docutils literal notranslate"><span class="pre">admin</span></code> group.</p>
 </section>
 <section id="managing-groups">
-<h2>Managing groups<a class="headerlink" href="#managing-groups" title="Permalink to this heading"></a></h2>
+<h2>Managing groups<a class="headerlink" href="#managing-groups" title="Permalink to this headline"></a></h2>
 <p>You can assign new users to groups when you create them, and create new groups
 when you create new users. You may also use the <strong>Add Group</strong> button at the top
 of the left pane to create new groups. New group members will immediately
 have access to file shares that belong to their new groups.</p>
 </section>
 <section id="setting-storage-quotas">
-<h2>Setting Storage quotas<a class="headerlink" href="#setting-storage-quotas" title="Permalink to this heading"></a></h2>
+<h2>Setting Storage quotas<a class="headerlink" href="#setting-storage-quotas" title="Permalink to this headline"></a></h2>
 <p>Click the gear on the lower left pane to set a default storage quota. This is
 automatically applied to new users. You may assign a different quota to any user
 by selecting from the <strong>Quota</strong> dropdown, selecting either a preset value or
@@ -270,7 +269,7 @@ against quotas.</p>
 files count against that user’s quota.</p>
 </section>
 <section id="disable-and-enable-users">
-<h2>Disable and enable users<a class="headerlink" href="#disable-and-enable-users" title="Permalink to this heading"></a></h2>
+<h2>Disable and enable users<a class="headerlink" href="#disable-and-enable-users" title="Permalink to this headline"></a></h2>
 <figure class="align-default">
 <img alt="../_images/users-actions.png" src="../_images/users-actions.png" />
 </figure>
@@ -285,7 +284,7 @@ Enabling users is as easy as disabling them. Just click on the “…”-menu, a
 select <strong>Enable</strong>.</p>
 </section>
 <section id="deleting-users">
-<h2>Deleting users<a class="headerlink" href="#deleting-users" title="Permalink to this heading"></a></h2>
+<h2>Deleting users<a class="headerlink" href="#deleting-users" title="Permalink to this headline"></a></h2>
 <figure class="align-default">
 <img alt="../_images/users-actions.png" src="../_images/users-actions.png" />
 </figure>
@@ -336,11 +335,9 @@ persistent file shares that survive user deletions.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

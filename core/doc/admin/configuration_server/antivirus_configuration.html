@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -67,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right priviledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
 <li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
@@ -97,9 +96,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Nextcloud configuration</a> &raquo;</li>
-      <li>Antivirus scanner</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Nextcloud configuration</a></li>
+      <li class="breadcrumb-item active">Antivirus scanner</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_server/antivirus_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -110,7 +109,7 @@
            <div itemprop="articleBody">
              
   <section id="antivirus-scanner">
-<h1>Antivirus scanner<a class="headerlink" href="#antivirus-scanner" title="Permalink to this heading"></a></h1>
+<h1>Antivirus scanner<a class="headerlink" href="#antivirus-scanner" title="Permalink to this headline"></a></h1>
 <p>You can configure your Nextcloud server to automatically run a virus scan on
 newly-uploaded files with the Antivirus app for Files. The Antivirus app for
 Files integrates the open source anti-virus engine <a class="reference external" href="https://www.clamav.net/index.html">ClamAV</a>  with Nextcloud. ClamAV detects all forms
@@ -124,7 +123,7 @@ However, it has only been tested with Nextcloud on Linux, so these instructions
 are for Linux systems. You must first install ClamAV, and then install and
 configure the Antivirus app for Files on Nextcloud.</p>
 <section id="installing-clamav">
-<h2>Installing ClamAV<a class="headerlink" href="#installing-clamav" title="Permalink to this heading"></a></h2>
+<h2>Installing ClamAV<a class="headerlink" href="#installing-clamav" title="Permalink to this headline"></a></h2>
 <p>As always, the various Linux distributions manage installing and configuring
 ClamAV in different ways.</p>
 <dl>
@@ -205,7 +204,7 @@ This example is based on docker image from <a class="reference external" href="h
 </div>
 </section>
 <section id="enabling-the-antivirus-app-for-files">
-<h2>Enabling the antivirus app for files<a class="headerlink" href="#enabling-the-antivirus-app-for-files" title="Permalink to this heading"></a></h2>
+<h2>Enabling the antivirus app for files<a class="headerlink" href="#enabling-the-antivirus-app-for-files" title="Permalink to this headline"></a></h2>
 <p>Place the <code class="docutils literal notranslate"><span class="pre">files_antivirus</span></code> app into the <code class="docutils literal notranslate"><span class="pre">apps</span></code> directory of your Nextcloud
 server. Then the app shows up on the Nextcloud Apps page where it simply can be
 enabled.</p>
@@ -214,7 +213,7 @@ enabled.</p>
 </figure>
 </section>
 <section id="configuring-clamav-on-nextcloud">
-<h2>Configuring ClamAV on Nextcloud<a class="headerlink" href="#configuring-clamav-on-nextcloud" title="Permalink to this heading"></a></h2>
+<h2>Configuring ClamAV on Nextcloud<a class="headerlink" href="#configuring-clamav-on-nextcloud" title="Permalink to this headline"></a></h2>
 <p>Next, go to your Nextcloud Admin page and set your Nextcloud logging level to
 Everything.</p>
 <figure class="align-default">
@@ -307,11 +306,9 @@ back and change all of your logging to less verbose levels.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

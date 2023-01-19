@@ -1,26 +1,16 @@
 .community-support .columns {
-	display: flex;
-	flex-direction: row;
-	@media (max-width: 800px) {
-		flex-direction: column;
+	grid-template-columns: 1fr 1fr;
+	@media (max-width: 1000px) {
+		grid-template-columns: 1fr;
+		grid-template-rows: 1fr 1fr;
 	}
-	// headers images
-	section[style] {
-		display: flex;
-		flex-direction: column;
-		flex-basis: 100%;
-		background-position: top center;
-		background-repeat: no-repeat;
-		padding-top: 50px;
-		background-size: 50px;
-	}
-	section p {
+	p {
 		max-width: 550px;
 		margin-left: auto;
 		margin-right: auto;
 		padding-bottom: 16px;
 	}
-	section .button {
+	.button {
 		margin-top: auto;
 		margin-left: auto;
 		margin-right: auto;
@@ -44,6 +34,15 @@
 		height: 50px;
 		margin-top: 60px;
 		display: inline-block;
+
+		&:not(.account-manager-avatar) {
+			width: 50px;
+			// Dark theme
+			body.dark &, body.theme--dark & {
+				filter: invert(1);
+			}
+		}
+
 		&.account-manager-avatar {
 			margin-top: 10px;
 			height: 100px;
@@ -65,13 +64,19 @@
 @media only screen and (max-width: 1000px) {
 	.sidebyside-section {
 		grid-template-columns: 1fr;
-
 	}
 }
 
 
 .section {
 	text-align: center;
+
+	&.system-information img {
+		// Dark theme
+		body.dark &, body.theme--dark & {
+			filter: invert(1);
+		}
+	}
 }
 
 input[name="subscriptionKey"] {
@@ -120,7 +125,6 @@ ul.normal-list {
 }
 
 .badge {
-	background-position: left center;
 	background-position: 5px center;
 	border: 1px solid #555;
 	border-radius: 3px;
@@ -134,7 +138,7 @@ ul.normal-list {
 
 .overlimit {
 	border-color: $color-warning;
-    font-weight: 600;
+	font-weight: 600;
 }
 
 .supported {
@@ -151,19 +155,19 @@ p.text-center {
 
 .link-button {
 	border-radius: 21px;
-	background-color: #0082c9;
-	color: #fff;
-	border: 1px solid #0082c9;
+	background-color: #0082c9 !important;
+	color: #ffffff !important;
+	border: 1px solid #0082c9 !important;
 	padding: 10px 15px;
-	box-shadow: 0 2px 9px rgba(50, 50, 50, .2);
+	box-shadow: 0 2px 9px var(--color-box-shadow);
 	margin: 10px;
 	display: inline-block;
 
 	&:active,
 	&:hover,
 	&:focus {
-		color: #0082c9;
-		background-color: #fff;
+		color: #0082c9 !important;
+		background-color: #ffffff !important;
 		border-color: #0082c9 !important;
 	}
 }

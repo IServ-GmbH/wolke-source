@@ -280,12 +280,9 @@ abstract class AbstractMapping {
 	/**
 	 * Searches mapped names by the giving string in the name column
 	 *
-	 * @param string $search
-	 * @param string $prefixMatch
-	 * @param string $postfixMatch
 	 * @return string[]
 	 */
-	public function getNamesBySearch($search, $prefixMatch = "", $postfixMatch = "") {
+	public function getNamesBySearch(string $search, string $prefixMatch = "", string $postfixMatch = ""): array {
 		$statement = $this->dbc->prepare('
 			SELECT `owncloud_name`
 			FROM `' . $this->getTableName() . '`
@@ -358,9 +355,9 @@ abstract class AbstractMapping {
 	 * @return bool
 	 */
 	public function map($fdn, $name, $uuid) {
-		if (mb_strlen($fdn) > 4096) {
+		if (mb_strlen($fdn) > 4000) {
 			\OC::$server->getLogger()->error(
-				'Cannot map, because the DN exceeds 4096 characters: {dn}',
+				'Cannot map, because the DN exceeds 4000 characters: {dn}',
 				[
 					'app' => 'user_ldap',
 					'dn' => $fdn,

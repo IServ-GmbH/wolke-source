@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -98,9 +97,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Database configuration</a> &raquo;</li>
-      <li>Database configuration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Database configuration</a></li>
+      <li class="breadcrumb-item active">Database configuration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_database/linux_database_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,7 +110,7 @@
            <div itemprop="articleBody">
              
   <section id="database-configuration">
-<h1>Database configuration<a class="headerlink" href="#database-configuration" title="Permalink to this heading"></a></h1>
+<h1>Database configuration<a class="headerlink" href="#database-configuration" title="Permalink to this headline"></a></h1>
 <p>Nextcloud requires a database in which administrative data is stored. The following databases are currently supported:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.mysql.com/">MySQL</a> / <a class="reference external" href="https://mariadb.org/">MariaDB</a></p></li>
@@ -120,7 +119,7 @@
 </ul>
 <p>The MySQL or MariaDB databases are the recommended database engines.</p>
 <section id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline"></a></h2>
 <p>Choosing to use MySQL / MariaDB, PostgreSQL, or Oracle as your database
 requires that you install and set up the server software first.</p>
 <div class="admonition note">
@@ -130,7 +129,7 @@ scope of this document.  Please refer to the documentation for your specific
 database choice for instructions.</p>
 </div>
 <section id="database-read-committed-transaction-isolation-level">
-<span id="db-transaction-label"></span><h3>Database “READ COMMITTED” transaction isolation level<a class="headerlink" href="#database-read-committed-transaction-isolation-level" title="Permalink to this heading"></a></h3>
+<span id="db-transaction-label"></span><h3>Database “READ COMMITTED” transaction isolation level<a class="headerlink" href="#database-read-committed-transaction-isolation-level" title="Permalink to this headline"></a></h3>
 <p>As discussed above Nextcloud is using the <code class="docutils literal notranslate"><span class="pre">TRANSACTION_READ_COMMITTED</span></code> transaction isolation
 level. Some database configurations are enforcing other transaction isolation levels. To avoid
 data loss under high load scenarios (e.g. by using the sync client with many clients/users and
@@ -140,10 +139,10 @@ for detailed information.</p>
 </section>
 </section>
 <section id="parameters">
-<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline"></a></h2>
 <p>For setting up Nextcloud to use any database, use the instructions in <a class="reference internal" href="../installation/installation_wizard.html"><span class="doc">Installation wizard</span></a>. You should not have to edit the respective values in the <code class="file docutils literal notranslate"><span class="pre">config/config.php</span></code>.  However, in special cases (for example, if you want to connect your Nextcloud instance to a database created by a previous installation of Nextcloud), some modification might be required.</p>
 <section id="configuring-a-mysql-or-mariadb-database">
-<h3>Configuring a MySQL or MariaDB database<a class="headerlink" href="#configuring-a-mysql-or-mariadb-database" title="Permalink to this heading"></a></h3>
+<h3>Configuring a MySQL or MariaDB database<a class="headerlink" href="#configuring-a-mysql-or-mariadb-database" title="Permalink to this headline"></a></h3>
 <p>If you decide to use a MySQL or MariaDB database, ensure the following:</p>
 <ul>
 <li><p>The transaction isolation level is set to “READ-COMMITTED” in your MariaDB server configuration <code class="file docutils literal notranslate"><span class="pre">/etc/mysql/my.cnf</span></code> to persist even after a restart of your database server.</p>
@@ -259,7 +258,7 @@ this:</p>
 </div>
 </section>
 <section id="ssl-for-mysql-database">
-<h3>SSL for MySQL Database<a class="headerlink" href="#ssl-for-mysql-database" title="Permalink to this heading"></a></h3>
+<h3>SSL for MySQL Database<a class="headerlink" href="#ssl-for-mysql-database" title="Permalink to this headline"></a></h3>
 <p>Enabling SSL is only necessary if your database does not reside on the same server as your Nextcloud instance.
 If you do not connect over localhost and need to allow remote connections then you should enable SSL.
 This just covers the SSL database configuration on the Nextcloud server. First you need to configure your database server accordingly.</p>
@@ -274,7 +273,7 @@ This just covers the SSL database configuration on the Nextcloud server. First y
 <p>Adjust the paths to the pem files for your environment.</p>
 </section>
 <section id="postgresql-database">
-<h3>PostgreSQL database<a class="headerlink" href="#postgresql-database" title="Permalink to this heading"></a></h3>
+<h3>PostgreSQL database<a class="headerlink" href="#postgresql-database" title="Permalink to this headline"></a></h3>
 <p>If you decide to use a PostgreSQL database make sure that you have installed
 and enabled the PostgreSQL extension in PHP. The PHP configuration in <code class="file docutils literal notranslate"><span class="pre">/etc/php7/conf.d/pgsql.ini</span></code> could look
 like this:</p>
@@ -361,9 +360,9 @@ this:</p>
 </section>
 </section>
 <section id="troubleshooting">
-<span id="db-troubleshooting-label"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<span id="db-troubleshooting-label"></span><h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
 <section id="how-to-work-around-general-error-2006-mysql-server-has-gone-away">
-<h3>How to work around “general error: 2006 MySQL server has gone away”<a class="headerlink" href="#how-to-work-around-general-error-2006-mysql-server-has-gone-away" title="Permalink to this heading"></a></h3>
+<h3>How to work around “general error: 2006 MySQL server has gone away”<a class="headerlink" href="#how-to-work-around-general-error-2006-mysql-server-has-gone-away" title="Permalink to this headline"></a></h3>
 <p>The database request takes too long and therefore the MySQL server times out. It’s
 also possible that the server is dropping a packet that is too large. Please
 refer to the manual of your database for how to raise the configuration options
@@ -374,7 +373,7 @@ systems Nextcloud is providing a <code class="docutils literal notranslate"><spa
 Please refer to <a class="reference internal" href="../configuration_server/config_sample_php_parameters.html"><span class="doc">Configuration Parameters</span></a> for an example.</p>
 </section>
 <section id="how-can-i-find-out-if-my-mysql-postgresql-server-is-reachable">
-<h3>How can I find out if my MySQL/PostgreSQL server is reachable?<a class="headerlink" href="#how-can-i-find-out-if-my-mysql-postgresql-server-is-reachable" title="Permalink to this heading"></a></h3>
+<h3>How can I find out if my MySQL/PostgreSQL server is reachable?<a class="headerlink" href="#how-can-i-find-out-if-my-mysql-postgresql-server-is-reachable" title="Permalink to this headline"></a></h3>
 <p>To check the server’s network availability, use the ping command on
 the server’s host name (db.server.com in this example):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ping</span> <span class="n">db</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">com</span>
@@ -390,7 +389,7 @@ the server’s host name (db.server.com in this example):</p>
 itself works correctly, see the next question.</p>
 </section>
 <section id="how-can-i-find-out-if-a-created-user-can-access-a-database">
-<h3>How can I find out if a created user can access a database?<a class="headerlink" href="#how-can-i-find-out-if-a-created-user-can-access-a-database" title="Permalink to this heading"></a></h3>
+<h3>How can I find out if a created user can access a database?<a class="headerlink" href="#how-can-i-find-out-if-a-created-user-can-access-a-database" title="Permalink to this headline"></a></h3>
 <p>The easiest way to test if a database is accessible is by starting the
 command line interface:</p>
 <p><strong>MySQL</strong>:</p>
@@ -433,7 +432,7 @@ the respective host name:</p>
 </div>
 </section>
 <section id="useful-sql-commands">
-<h3>Useful SQL commands<a class="headerlink" href="#useful-sql-commands" title="Permalink to this heading"></a></h3>
+<h3>Useful SQL commands<a class="headerlink" href="#useful-sql-commands" title="Permalink to this headline"></a></h3>
 <p><strong>Show Database Users</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MySQL</span>     <span class="p">:</span> <span class="n">SELECT</span> <span class="n">User</span><span class="p">,</span><span class="n">Host</span> <span class="n">FROM</span> <span class="n">mysql</span><span class="o">.</span><span class="n">user</span><span class="p">;</span>
 <span class="n">PostgreSQL</span><span class="p">:</span> <span class="n">SELECT</span> <span class="o">*</span> <span class="n">FROM</span> <span class="n">pg_user</span><span class="p">;</span>
@@ -491,11 +490,9 @@ the respective host name:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

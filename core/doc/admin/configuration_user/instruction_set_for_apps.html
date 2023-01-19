@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -61,7 +60,7 @@
 <li class="toctree-l3"><a class="reference internal" href="instruction_set_for_users.html">Instruction set for users</a></li>
 <li class="toctree-l3"><a class="reference internal" href="instruction_set_for_groups.html">Instruction set for groups</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Instruction set for apps</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#getlist-of-apps">Getlist of apps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-list-of-apps">Get list of apps</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-app-info">Get app info</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enable-an-app">Enable an app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#disable-an-app">Disable an app</a></li>
@@ -96,10 +95,10 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-          <li><a href="user_provisioning_api.html">User provisioning API</a> &raquo;</li>
-      <li>Instruction set for apps</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+          <li class="breadcrumb-item"><a href="user_provisioning_api.html">User provisioning API</a></li>
+      <li class="breadcrumb-item active">Instruction set for apps</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/instruction_set_for_apps.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -110,9 +109,9 @@
            <div itemprop="articleBody">
              
   <section id="instruction-set-for-apps">
-<h1>Instruction set for apps<a class="headerlink" href="#instruction-set-for-apps" title="Permalink to this heading"></a></h1>
-<section id="getlist-of-apps">
-<h2>Getlist of apps<a class="headerlink" href="#getlist-of-apps" title="Permalink to this heading"></a></h2>
+<h1>Instruction set for apps<a class="headerlink" href="#instruction-set-for-apps" title="Permalink to this headline"></a></h1>
+<section id="get-list-of-apps">
+<h2>Get list of apps<a class="headerlink" href="#get-list-of-apps" title="Permalink to this headline"></a></h2>
 <p>Returns a list of apps installed on the Nextcloud server. Authentication is done
 by sending a Basic HTTP Authorization
 header.</p>
@@ -127,7 +126,7 @@ header.</p>
 <li><p>101 - invalid input data</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps?filter=enabled
 </pre></div>
 </div>
@@ -136,7 +135,7 @@ header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -155,7 +154,7 @@ header.</p>
 </section>
 </section>
 <section id="get-app-info">
-<h2>Get app info<a class="headerlink" href="#get-app-info" title="Permalink to this heading"></a></h2>
+<h2>Get app info<a class="headerlink" href="#get-app-info" title="Permalink to this headline"></a></h2>
 <p>Provides information on a specific application. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -167,7 +166,7 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps/files
 </pre></div>
 </div>
@@ -176,7 +175,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -210,7 +209,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="enable-an-app">
-<h2>Enable an app<a class="headerlink" href="#enable-an-app" title="Permalink to this heading"></a></h2>
+<h2>Enable an app<a class="headerlink" href="#enable-an-app" title="Permalink to this headline"></a></h2>
 <p>Enable an app.  Authentication is done by sending a Basic HTTP Authorization
 header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -222,7 +221,7 @@ header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
 </pre></div>
 </div>
@@ -231,7 +230,7 @@ header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -244,7 +243,7 @@ header.</p>
 </section>
 </section>
 <section id="disable-an-app">
-<h2>Disable an app<a class="headerlink" href="#disable-an-app" title="Permalink to this heading"></a></h2>
+<h2>Disable an app<a class="headerlink" href="#disable-an-app" title="Permalink to this headline"></a></h2>
 <p>Disables the specified app. Authentication is
 done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -256,7 +255,7 @@ done by sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id5">
-<h3>Example<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
 </pre></div>
 </div>
@@ -265,7 +264,7 @@ done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id6">
-<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -312,11 +311,9 @@ done by sending a Basic HTTP Authorization header.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

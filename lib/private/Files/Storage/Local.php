@@ -47,7 +47,9 @@ use OC\Files\Storage\Wrapper\Jail;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
 use OCP\Files\GenericFileException;
+use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
+use OCP\IConfig;
 use OCP\ILogger;
 
 /**
@@ -59,6 +61,10 @@ class Local extends \OC\Files\Storage\Common {
 	protected $dataDirLength;
 
 	protected $realDataDir;
+
+	private IConfig $config;
+
+	private IMimeTypeDetector $mimeTypeDetector;
 
 	public function __construct($arguments) {
 		if (!isset($arguments['datadir']) || !is_string($arguments['datadir'])) {
@@ -76,6 +82,8 @@ class Local extends \OC\Files\Storage\Common {
 			$this->datadir .= '/';
 		}
 		$this->dataDirLength = strlen($this->realDataDir);
+		$this->config = \OC::$server->get(IConfig::class);
+		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
 	}
 
 	public function __destruct() {
@@ -149,11 +157,17 @@ class Local extends \OC\Files\Storage\Common {
 	public function stat($path) {
 		$fullPath = $this->getSourcePath($path);
 		clearstatcache(true, $fullPath);
+		if (!file_exists($fullPath)) {
+			return false;
+		}
 		$statResult = @stat($fullPath);
 		if (PHP_INT_SIZE === 4 && $statResult && !$this->is_dir($path)) {
 			$filesize = $this->filesize($path);
 			$statResult['size'] = $filesize;
 			$statResult[7] = $filesize;
+		}
+		if (is_array($statResult)) {
+			$statResult['full_path'] = $fullPath;
 		}
 		return $statResult;
 	}
@@ -162,7 +176,11 @@ class Local extends \OC\Files\Storage\Common {
 	 * @inheritdoc
 	 */
 	public function getMetaData($path) {
-		$stat = $this->stat($path);
+		try {
+			$stat = $this->stat($path);
+		} catch (ForbiddenException $e) {
+			return null;
+		}
 		if (!$stat) {
 			return null;
 		}
@@ -181,15 +199,14 @@ class Local extends \OC\Files\Storage\Common {
 		}
 
 		if (!($path === '' || $path === '/')) { // deletable depends on the parents unix permissions
-			$fullPath = $this->getSourcePath($path);
-			$parent = dirname($fullPath);
+			$parent = dirname($stat['full_path']);
 			if (is_writable($parent)) {
 				$permissions += Constants::PERMISSION_DELETE;
 			}
 		}
 
 		$data = [];
-		$data['mimetype'] = $isDir ? 'httpd/unix-directory' : \OC::$server->getMimeTypeDetector()->detectPath($path);
+		$data['mimetype'] = $isDir ? 'httpd/unix-directory' : $this->mimeTypeDetector->detectPath($path);
 		$data['mtime'] = $stat['mtime'];
 		if ($data['mtime'] === false) {
 			$data['mtime'] = time();
@@ -359,8 +376,12 @@ class Local extends \OC\Files\Storage\Common {
 	}
 
 	public function fopen($path, $mode) {
+		$sourcePath = $this->getSourcePath($path);
+		if (!file_exists($sourcePath) && $mode === 'r') {
+			return false;
+		}
 		$oldMask = umask(022);
-		$result = fopen($this->getSourcePath($path), $mode);
+		$result = @fopen($sourcePath, $mode);
 		umask($oldMask);
 		return $result;
 	}
@@ -450,7 +471,7 @@ class Local extends \OC\Files\Storage\Common {
 
 		$fullPath = $this->datadir . $path;
 		$currentPath = $path;
-		$allowSymlinks = \OC::$server->getConfig()->getSystemValue('localstorage.allowsymlinks', false);
+		$allowSymlinks = $this->config->getSystemValue('localstorage.allowsymlinks', false);
 		if ($allowSymlinks || $currentPath === '') {
 			return $fullPath;
 		}

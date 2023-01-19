@@ -102,7 +102,7 @@
 		 * Number of files per page
 		 * Always show a minimum of 1
 		 *
-		 * @return {int} page size
+		 * @return {number} page size
 		 */
 		pageSize: function() {
 			var isGridView = this.$showGridView.is(':checked');
@@ -791,7 +791,7 @@
 			if (e && _.isString(e.dir)) {
 				var currentDir = this.getCurrentDirectory();
 				// this._currentDirectory is NULL when fileList is first initialised
-				if( (this._currentDirectory || this.$el.find('#dir').val()) && currentDir === e.dir) {
+				if(this._currentDirectory && currentDir === e.dir) {
 					return;
 				}
 				this.changeDirectory(e.dir, true, true, undefined, true);
@@ -803,7 +803,7 @@
 		 * the internal selection cache.
 		 *
 		 * @param {Object} $tr single file row element
-		 * @param {bool} state true to select, false to deselect
+		 * @param {boolean} state true to select, false to deselect
 		 */
 		_selectFileEl: function($tr, state) {
 			var $checkbox = $tr.find('td.selection>.selectCheckBox');
@@ -993,6 +993,8 @@
 			// Select only visible checkboxes to filter out unmatched file in search
 			this.$fileList.find('td.selection > .selectCheckBox:visible').prop('checked', checked)
 				.closest('tr').toggleClass('selected', checked);
+			// For prevents the selection of encrypted folders when clicking on the "Select all" checkbox
+			this.$fileList.find('tr[data-e2eencrypted="true"]').find('td.selection > .selectCheckBox:visible').prop('checked', false).closest('tr').toggleClass('selected', false);
 
 			if (checked) {
 				for (var i = 0; i < this.files.length; i++) {
@@ -1001,7 +1003,7 @@
 					var fileData = this.files[i];
 					var fileRow = this.$fileList.find('tr[data-id=' + fileData.id + ']');
 					// do not select already selected ones
-					if (!fileRow.hasClass('hidden') && _.isUndefined(this._selectedFiles[fileData.id])) {
+					if (!fileRow.hasClass('hidden') && _.isUndefined(this._selectedFiles[fileData.id]) && (!fileData.isEncrypted)) {
 						this._selectedFiles[fileData.id] = fileData;
 						this._selectionSummary.add(fileData);
 					}
@@ -1203,7 +1205,7 @@
 		/**
 		 * Custom code
 		 * Set tag for all selected files
-		 * @param tagModel
+		 * @param {any} tagModel -
 		 * @private
 		 */
 		_onSelectTag: function(tagModel) {
@@ -1221,7 +1223,7 @@
 		},
 		/**
 		 * remove tag from all selected files
-		 * @param tagId
+		 * @param {any} tagId -
 		 * @private
 		 */
 		_onDeselectTag: function(tagId) {
@@ -1436,6 +1438,10 @@
 					hidden = false;
 				}
 				tr = this._renderRow(fileData, {updateSummary: false, silent: true, hidden: hidden});
+				if (tr.attr('data-e2eencrypted') === 'true') {
+    					tr.toggleClass('selected', false);
+    					tr.find('td.selection > .selectCheckBox:visible').prop('checked', false);
+				}
 				this.$fileList.append(tr);
 				if (isAllSelected || this._selectedFiles[fileData.id]) {
 					tr.addClass('selected');
@@ -1957,7 +1963,7 @@
 		 *
 		 * @param {OC.Files.FileInfo} fileData map of file attributes
 		 * @param {Object} [options] map of attributes
-		 * @param {int} [options.index] index at which to insert the element
+		 * @param {number} [options.index] index at which to insert the element
 		 * @param {boolean} [options.updateSummary] true to update the summary
 		 * after adding (default), false otherwise. Defaults to true.
 		 * @param {boolean} [options.animate] true to animate the thumbnail image after load
@@ -2356,8 +2362,8 @@
 		/**
 		 * Generates a preview URL based on the URL space.
 		 * @param urlSpec attributes for the URL
-		 * @param {int} urlSpec.x width
-		 * @param {int} urlSpec.y height
+		 * @param {number} urlSpec.x width
+		 * @param {number} urlSpec.y height
 		 * @param {String} urlSpec.file path to the file
 		 * @return preview URL
 		 */
@@ -3180,7 +3186,7 @@
 		 *
 		 * @param {string} file file name
 		 *
-		 * @return {bool} true if the file exists in the list, false otherwise
+		 * @return {boolean} true if the file exists in the list, false otherwise
 		 */
 		inList:function(file) {
 			return this.findFile(file);
@@ -3190,7 +3196,7 @@
 		 * Shows busy state on a given file row or multiple
 		 *
 		 * @param {string|Array.<string>} files file name or array of file names
-		 * @param {bool} [busy=true] busy state, true for busy, false to remove busy state
+		 * @param {boolean} [busy=true] busy state, true for busy, false to remove busy state
 		 *
 		 * @since 8.2
 		 */
@@ -3362,7 +3368,7 @@
 		},
 		/**
 		 * hide files matching the given filter
-		 * @param filter
+		 * @param {any} filter -
 		 */
 		setFilter:function(filter) {
 			var total = 0;
@@ -3427,7 +3433,7 @@
 		},
 		/**
 		 * get the current filter
-		 * @param filter
+		 * @param {any} filter -
 		 */
 		getFilter:function(filter) {
 			return this._filter;
@@ -3966,7 +3972,7 @@
 		 *
 		 * @param {OC.Files.FileInfo} fileInfo1 file info
 		 * @param {OC.Files.FileInfo} fileInfo2 file info
-		 * @return {int} -1 if the first file must appear before the second one,
+		 * @return {number} -1 if the first file must appear before the second one,
 		 * 0 if they are identify, 1 otherwise.
 		 */
 		name: function(fileInfo1, fileInfo2) {
@@ -3983,7 +3989,7 @@
 		 *
 		 * @param {OC.Files.FileInfo} fileInfo1 file info
 		 * @param {OC.Files.FileInfo} fileInfo2 file info
-		 * @return {int} -1 if the first file must appear before the second one,
+		 * @return {number} -1 if the first file must appear before the second one,
 		 * 0 if they are identify, 1 otherwise.
 		 */
 		size: function(fileInfo1, fileInfo2) {
@@ -3994,7 +4000,7 @@
 		 *
 		 * @param {OC.Files.FileInfo} fileInfo1 file info
 		 * @param {OC.Files.FileInfo} fileInfo2 file info
-		 * @return {int} -1 if the first file must appear before the second one,
+		 * @return {number} -1 if the first file must appear before the second one,
 		 * 0 if they are identify, 1 otherwise.
 		 */
 		mtime: function(fileInfo1, fileInfo2) {

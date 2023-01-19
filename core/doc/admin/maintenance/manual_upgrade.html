@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -86,9 +85,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Maintenance</a> &raquo;</li>
-      <li>Upgrade manually</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
+      <li class="breadcrumb-item active">Upgrade manually</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/maintenance/manual_upgrade.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -99,7 +98,7 @@
            <div itemprop="articleBody">
              
   <section id="upgrade-manually">
-<h1>Upgrade manually<a class="headerlink" href="#upgrade-manually" title="Permalink to this heading"></a></h1>
+<h1>Upgrade manually<a class="headerlink" href="#upgrade-manually" title="Permalink to this headline"></a></h1>
 <p>Always start by making a fresh backup and disabling all 3rd party apps.</p>
 <ol class="arabic">
 <li><p>Back up your existing Nextcloud Server database, data directory, and
@@ -174,11 +173,11 @@ verify the version number. Check your other settings to make sure they’re
 correct. Go to the Apps page and review the core apps to make sure the right
 ones are enabled. Re-enable your third-party apps.</p>
 <section id="previous-nextcloud-releases">
-<h2>Previous Nextcloud releases<a class="headerlink" href="#previous-nextcloud-releases" title="Permalink to this heading"></a></h2>
+<h2>Previous Nextcloud releases<a class="headerlink" href="#previous-nextcloud-releases" title="Permalink to this headline"></a></h2>
 <p>You’ll find previous Nextcloud releases in the <a class="reference external" href="https://nextcloud.com/changelog/">Nextcloud Server Changelog</a>.</p>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
 <p>Occasionally, <em>files do not show up after a upgrade</em>. A rescan of the files can
 help:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">console</span><span class="o">.</span><span class="n">php</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">--</span><span class="nb">all</span>
@@ -236,11 +235,9 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

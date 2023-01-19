@@ -414,11 +414,11 @@ class ExpressionBuilder implements IExpressionBuilder {
 	 * Quotes a given input parameter.
 	 *
 	 * @param mixed $input The parameter to be quoted.
-	 * @param mixed|null $type One of the IQueryBuilder::PARAM_* constants
+	 * @param int $type One of the IQueryBuilder::PARAM_* constants
 	 *
 	 * @return ILiteral
 	 */
-	public function literal($input, $type = null): ILiteral {
+	public function literal($input, $type = IQueryBuilder::PARAM_STR): ILiteral {
 		return new Literal($this->expressionBuilder->literal($input, $type));
 	}
 
@@ -427,6 +427,7 @@ class ExpressionBuilder implements IExpressionBuilder {
 	 *
 	 * @param string|IQueryFunction $column
 	 * @param mixed $type One of IQueryBuilder::PARAM_*
+	 * @psalm-param IQueryBuilder::PARAM_* $type
 	 * @return IQueryFunction
 	 */
 	public function castColumn($column, $type): IQueryFunction {

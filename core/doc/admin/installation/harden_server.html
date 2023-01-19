@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -86,7 +85,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="server_tuning.html">Server tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -118,9 +117,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>Hardening and security guidance</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">Hardening and security guidance</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/harden_server.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -131,7 +130,7 @@
            <div itemprop="articleBody">
              
   <section id="hardening-and-security-guidance">
-<h1>Hardening and security guidance<a class="headerlink" href="#hardening-and-security-guidance" title="Permalink to this heading"></a></h1>
+<h1>Hardening and security guidance<a class="headerlink" href="#hardening-and-security-guidance" title="Permalink to this headline"></a></h1>
 <p>Nextcloud aims to ship with secure defaults that do not need to get modified by
 administrators. However, in some cases some additional security hardening can be
 applied in scenarios were the administrator has complete control over
@@ -144,9 +143,9 @@ critical security-relevant options are missing. However, it is still up to
 the server administrator to review and maintain system security.</p>
 </div>
 <section id="passwords">
-<h2>Passwords<a class="headerlink" href="#passwords" title="Permalink to this heading"></a></h2>
+<h2>Passwords<a class="headerlink" href="#passwords" title="Permalink to this headline"></a></h2>
 <section id="storage-of-access-tokens">
-<h3>Storage of access tokens<a class="headerlink" href="#storage-of-access-tokens" title="Permalink to this heading"></a></h3>
+<h3>Storage of access tokens<a class="headerlink" href="#storage-of-access-tokens" title="Permalink to this headline"></a></h3>
 <p>Upon successful authentication, Nextcloud issues an access token that clients will use for all future HTTP requests. This access token uniquely identifies a user and should not be stored on any system other than the client requesting it. The user password is also stored encrypted in the Nextcloud database. For encryption of the password, the token and an instance-specific secret is used.</p>
 <p>Leakage of the access token can have negative security consequences. Depending on the data access by the actor, the risk here is different:</p>
 <ul class="simple">
@@ -155,7 +154,7 @@ the server administrator to review and maintain system security.</p>
 </ul>
 </section>
 <section id="limit-on-password-length">
-<h3>Limit on password length<a class="headerlink" href="#limit-on-password-length" title="Permalink to this heading"></a></h3>
+<h3>Limit on password length<a class="headerlink" href="#limit-on-password-length" title="Permalink to this headline"></a></h3>
 <p>Nextcloud uses the bcrypt algorithm, and thus for security and performance
 reasons, e.g. Denial of Service as CPU demand increases exponentially, it only
 verifies the first 72 characters of passwords. This applies to all passwords
@@ -164,9 +163,9 @@ passwords on external shares.</p>
 </section>
 </section>
 <section id="operating-system">
-<h2>Operating system<a class="headerlink" href="#operating-system" title="Permalink to this heading"></a></h2>
+<h2>Operating system<a class="headerlink" href="#operating-system" title="Permalink to this headline"></a></h2>
 <section id="give-php-read-access-to-dev-urandom">
-<span id="dev-urandom-label"></span><h3>Give PHP read access to <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code><a class="headerlink" href="#give-php-read-access-to-dev-urandom" title="Permalink to this heading"></a></h3>
+<span id="dev-urandom-label"></span><h3>Give PHP read access to <code class="docutils literal notranslate"><span class="pre">/dev/urandom</span></code><a class="headerlink" href="#give-php-read-access-to-dev-urandom" title="Permalink to this headline"></a></h3>
 <p>Nextcloud uses a <a class="reference external" href="https://tools.ietf.org/html/rfc4086#section-5.2">RFC 4086 (“Randomness Requirements for Security”)</a> compliant
 mixer to generate cryptographically secure pseudo-random numbers. This means
 that when generating a random number Nextcloud will request multiple random
@@ -181,22 +180,22 @@ make sure to include <code class="docutils literal notranslate"><span class="pre
 </div>
 </section>
 <section id="enable-hardening-modules-such-as-selinux">
-<h3>Enable hardening modules such as SELinux<a class="headerlink" href="#enable-hardening-modules-such-as-selinux" title="Permalink to this heading"></a></h3>
+<h3>Enable hardening modules such as SELinux<a class="headerlink" href="#enable-hardening-modules-such-as-selinux" title="Permalink to this headline"></a></h3>
 <p>It is highly recommended to enable hardening modules such as SELinux where
 possible. See <a class="reference internal" href="selinux_configuration.html"><span class="doc">SELinux configuration</span></a> to learn more about
 SELinux.</p>
 </section>
 </section>
 <section id="deployment">
-<h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading"></a></h2>
+<h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline"></a></h2>
 <section id="place-data-directory-outside-of-the-web-root">
-<h3>Place data directory outside of the web root<a class="headerlink" href="#place-data-directory-outside-of-the-web-root" title="Permalink to this heading"></a></h3>
+<h3>Place data directory outside of the web root<a class="headerlink" href="#place-data-directory-outside-of-the-web-root" title="Permalink to this headline"></a></h3>
 <p>It is highly recommended to place your data directory outside of the Web root
 (i.e. outside of <code class="docutils literal notranslate"><span class="pre">/var/www</span></code>). It is easiest to do this on a new
 installation.</p>
 </section>
 <section id="disable-preview-image-generation">
-<h3>Disable preview image generation<a class="headerlink" href="#disable-preview-image-generation" title="Permalink to this heading"></a></h3>
+<h3>Disable preview image generation<a class="headerlink" href="#disable-preview-image-generation" title="Permalink to this headline"></a></h3>
 <p>Nextcloud is able to generate preview images of common filetypes such as images
 or text files. By default the preview generation for some file types that we
 consider secure enough for deployment is enabled by default. However,
@@ -209,7 +208,7 @@ modifying the <code class="docutils literal notranslate"><span class="pre">enabl
 </section>
 </section>
 <section id="use-https">
-<span id="use-https-label"></span><h2>Use HTTPS<a class="headerlink" href="#use-https" title="Permalink to this heading"></a></h2>
+<span id="use-https-label"></span><h2>Use HTTPS<a class="headerlink" href="#use-https" title="Permalink to this headline"></a></h2>
 <p>Using Nextcloud without using an encrypted HTTPS connection opens up your server
 to a man-in-the-middle (MITM) attack, and risks the interception of user data
 and passwords. It is a best practice, and highly recommended, to always use
@@ -217,7 +216,7 @@ HTTPS on production servers, and to never allow unencrypted HTTP.</p>
 <p>How to setup HTTPS on your Web server depends on your setup; please consult the
 documentation for your HTTP server. The following examples are for Apache.</p>
 <section id="redirect-all-unencrypted-traffic-to-https">
-<h3>Redirect all unencrypted traffic to HTTPS<a class="headerlink" href="#redirect-all-unencrypted-traffic-to-https" title="Permalink to this heading"></a></h3>
+<h3>Redirect all unencrypted traffic to HTTPS<a class="headerlink" href="#redirect-all-unencrypted-traffic-to-https" title="Permalink to this headline"></a></h3>
 <p>To redirect all HTTP traffic to HTTPS administrators are encouraged to issue a
 permanent redirect using the 301 status code. When using Apache this can be
 achieved by a setting such as the following in the Apache VirtualHosts
@@ -230,7 +229,7 @@ configuration:</p>
 </div>
 </section>
 <section id="enable-http-strict-transport-security">
-<span id="enable-hsts-label"></span><h3>Enable HTTP Strict Transport Security<a class="headerlink" href="#enable-http-strict-transport-security" title="Permalink to this heading"></a></h3>
+<span id="enable-hsts-label"></span><h3>Enable HTTP Strict Transport Security<a class="headerlink" href="#enable-http-strict-transport-security" title="Permalink to this headline"></a></h3>
 <p>While redirecting all traffic to HTTPS is good, it may not completely prevent
 man-in-the-middle attacks. Thus administrators are encouraged to set the HTTP
 Strict Transport Security header, which instructs browsers to not allow any
@@ -261,7 +260,7 @@ If you have subdomains not accessible via HTTPS, remove <code class="docutils li
 <p>This requires the <code class="docutils literal notranslate"><span class="pre">mod_headers</span></code> extension in Apache.</p>
 </section>
 <section id="proper-ssl-configuration">
-<h3>Proper SSL configuration<a class="headerlink" href="#proper-ssl-configuration" title="Permalink to this heading"></a></h3>
+<h3>Proper SSL configuration<a class="headerlink" href="#proper-ssl-configuration" title="Permalink to this headline"></a></h3>
 <p>Default SSL configurations by Web servers are often not state-of-the-art, and
 require fine-tuning for an optimal performance and security experience. The
 available SSL ciphers and options depend completely on your environment and
@@ -277,13 +276,13 @@ information about the TLS settings.</p>
 </section>
 </section>
 <section id="use-a-dedicated-domain-for-nextcloud">
-<h2>Use a dedicated domain for Nextcloud<a class="headerlink" href="#use-a-dedicated-domain-for-nextcloud" title="Permalink to this heading"></a></h2>
+<h2>Use a dedicated domain for Nextcloud<a class="headerlink" href="#use-a-dedicated-domain-for-nextcloud" title="Permalink to this headline"></a></h2>
 <p>Administrators are encouraged to install Nextcloud on a dedicated domain such as
 cloud.domain.tld instead of domain.tld to gain all the benefits offered by the
 Same-Origin-Policy.</p>
 </section>
 <section id="ensure-that-your-nextcloud-instance-is-installed-in-a-dmz">
-<h2>Ensure that your Nextcloud instance is installed in a DMZ<a class="headerlink" href="#ensure-that-your-nextcloud-instance-is-installed-in-a-dmz" title="Permalink to this heading"></a></h2>
+<h2>Ensure that your Nextcloud instance is installed in a DMZ<a class="headerlink" href="#ensure-that-your-nextcloud-instance-is-installed-in-a-dmz" title="Permalink to this headline"></a></h2>
 <p>As Nextcloud supports features such as Federated File Sharing we do not consider
 Server Side Request Forgery (SSRF) part of our threat model. In fact, given all our
 external storage adapters this can be considered a feature and not a vulnerability.</p>
@@ -293,7 +292,7 @@ ensure that your Nextcloud is properly installed in a segregated network and pro
 firewall rules are in place.</p>
 </section>
 <section id="serve-security-related-headers-by-the-web-server">
-<h2>Serve security related headers by the Web server<a class="headerlink" href="#serve-security-related-headers-by-the-web-server" title="Permalink to this heading"></a></h2>
+<h2>Serve security related headers by the Web server<a class="headerlink" href="#serve-security-related-headers-by-the-web-server" title="Permalink to this headline"></a></h2>
 <p>Basic security headers are served by Nextcloud already in a default environment.
 These include:</p>
 <ul class="simple">
@@ -348,7 +347,7 @@ static resource served by the Web server and verify that the above mentioned
 security headers are shipped.</p>
 </section>
 <section id="connections-to-remote-servers">
-<h2>Connections to remote servers<a class="headerlink" href="#connections-to-remote-servers" title="Permalink to this heading"></a></h2>
+<h2>Connections to remote servers<a class="headerlink" href="#connections-to-remote-servers" title="Permalink to this headline"></a></h2>
 <p>Some Nextcloud functionality requires connecting to remote servers. Depending on
 your server setup those are possible connections:</p>
 <ul class="simple">
@@ -362,7 +361,7 @@ your server setup those are possible connections:</p>
 </ul>
 </section>
 <section id="setup-fail2ban">
-<h2>Setup fail2ban<a class="headerlink" href="#setup-fail2ban" title="Permalink to this heading"></a></h2>
+<h2>Setup fail2ban<a class="headerlink" href="#setup-fail2ban" title="Permalink to this headline"></a></h2>
 <p>Exposing your server to the internet will inevitably lead to the exposure of the
 services running on the internet-exposed ports to brute force login attempts.</p>
 <p>Fail2ban is a service that uses iptables to automatically drop connections for a
@@ -374,7 +373,7 @@ page</a>. It is often available from most distributions’ package managers (e.g
 <code class="docutils literal notranslate"><span class="pre">apt-get</span></code>).</p>
 <p>The standard path for fail2ban’s configuration is <code class="docutils literal notranslate"><span class="pre">/etc/fail2ban</span></code>.</p>
 <section id="setup-a-filter-and-a-jail-for-nextcloud">
-<h3>Setup a filter and a jail for Nextcloud<a class="headerlink" href="#setup-a-filter-and-a-jail-for-nextcloud" title="Permalink to this heading"></a></h3>
+<h3>Setup a filter and a jail for Nextcloud<a class="headerlink" href="#setup-a-filter-and-a-jail-for-nextcloud" title="Permalink to this headline"></a></h3>
 <p>A filter defines regex rules to identify when users fail to authenticate on
 Nextcloud’s user interface, WebDAV, or use an untrusted domain to access the
 server.</p>
@@ -449,11 +448,9 @@ running:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

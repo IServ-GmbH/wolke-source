@@ -25,11 +25,11 @@ namespace OC\Encryption;
 
 use OC\Files\Filesystem;
 use OC\Files\View;
+use OC\Files\SetupManager;
 use Psr\Log\LoggerInterface;
 
 class HookManager {
-	/** @var ?Update */
-	private static $updater = null;
+	private static ?Update $updater = null;
 
 	public static function postShared($params): void {
 		self::getUpdate()->postShared($params);
@@ -65,7 +65,10 @@ class HookManager {
 				$uid = $user->getUID();
 			}
 
-			\OC_Util::setupFS($uid);
+			$setupManager = \OC::$server->get(SetupManager::class);
+			if (!$setupManager->isSetupComplete($user)) {
+				$setupManager->setupForUser($user);
+			}
 
 			self::$updater = new Update(
 				new View(),

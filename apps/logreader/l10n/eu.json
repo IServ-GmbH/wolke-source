@@ -1,5 +1,5 @@
 { "translations": {
-    "Logging" : "Arazten",
+    "Logging" : "Erregistroa",
     "Log Reader" : "Log irakurgailua",
     "A log reader for Nextcloud" : "Nextcloudentzat log fitxategien irakurlea",
     "Log reader for Nextcloud" : "Nextcloudentzat log fitxategien irakurlea",
@@ -25,7 +25,7 @@
     "Log levels" : "Log mailak",
     "Log content" : "Log edukia",
     "Live update" : "Etengabeko eguneraketa ",
-    "Download logs" : "Log fitxategiak jaitsi",
+    "Download logs" : "Deskargatu log fitxategiak",
     "Load log file …" : "Kargatu log fitxategia ..."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

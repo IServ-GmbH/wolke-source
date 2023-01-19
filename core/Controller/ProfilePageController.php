@@ -91,7 +91,7 @@ class ProfilePageController extends Controller {
 		);
 
 		$targetUser = $this->userManager->get($targetUserId);
-		if (!$targetUser instanceof IUser) {
+		if (!($targetUser instanceof IUser) || !$targetUser->isEnabled()) {
 			return $profileNotFoundTemplate;
 		}
 		$visitingUser = $this->userSession->getUser();
@@ -123,7 +123,7 @@ class ProfilePageController extends Controller {
 			$this->profileManager->getProfileParams($targetUser, $visitingUser),
 		);
 
-		\OCP\Util::addScript('core', 'dist/profile');
+		\OCP\Util::addScript('core', 'profile');
 
 		return new TemplateResponse(
 			'core',

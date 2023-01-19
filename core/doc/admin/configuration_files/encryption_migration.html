@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -94,9 +93,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>Encryption migration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">Encryption migration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/encryption_migration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -107,14 +106,14 @@
            <div itemprop="articleBody">
              
   <section id="encryption-migration">
-<h1>Encryption migration<a class="headerlink" href="#encryption-migration" title="Permalink to this heading"></a></h1>
+<h1>Encryption migration<a class="headerlink" href="#encryption-migration" title="Permalink to this headline"></a></h1>
 <section id="encryption-format">
-<h2>Encryption format<a class="headerlink" href="#encryption-format" title="Permalink to this heading"></a></h2>
+<h2>Encryption format<a class="headerlink" href="#encryption-format" title="Permalink to this headline"></a></h2>
 <p>Nextcloud still supports the legacy encryption scheme used for server side encryption where the encrypted files did not contain header information. This may still be used for installations that still have encrypted files from &lt;= ownCloud 6. Files will be updated to the new encryption format once they are written again. However it is recommended to check if you have to still support this scheme.</p>
 <p>Starting with version 20 for new installations the legacy encryption will be off by default.
 However if you are upgrading there is a migration path to check if you can disable legacy encryption.</p>
 <section id="checking-for-old-files">
-<h3>Checking for old files<a class="headerlink" href="#checking-for-old-files" title="Permalink to this heading"></a></h3>
+<h3>Checking for old files<a class="headerlink" href="#checking-for-old-files" title="Permalink to this headline"></a></h3>
 <p>On the command line run:</p>
 <blockquote>
 <div><p>occ encryption:scan:legacy-format</p>
@@ -158,11 +157,9 @@ If so set the <cite>encryption.legacy_format_support</cite> in your config.php t
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

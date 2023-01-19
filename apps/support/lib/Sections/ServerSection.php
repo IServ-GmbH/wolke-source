@@ -431,7 +431,7 @@ class ServerSection extends Section {
 			}
 		}
 
-		$config = $this->config->getAppValue('spreed', 'signaling_mode', 'internal');
+		$config = $this->config->getAppValue('spreed', 'signaling_mode', 'default');
 		$output .= PHP_EOL;
 		$output .= 'Signaling servers (mode: ' . $config . '):' . PHP_EOL;
 

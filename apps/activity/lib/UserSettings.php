@@ -72,6 +72,10 @@ class UserSettings {
 		}
 
 		$defaultSetting = $this->getAdminSetting($method, $type);
+		if (!$this->canModifySetting($method, $type)) {
+			return $defaultSetting;
+		}
+
 		if (is_bool($defaultSetting)) {
 			return (bool) $this->config->getUserValue(
 				$user,
@@ -145,6 +149,33 @@ class UserSettings {
 					return $setting->isDefaultEnabledMail();
 				case 'notification':
 					return $setting->isDefaultEnabledNotification();
+				default:
+					return false;
+			}
+		} catch (\InvalidArgumentException $e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Get a good default setting for a preference
+	 *
+	 * @param string $method Should be one of 'stream', 'email' or 'setting'
+	 * @param string $type One of the activity types, 'batchtime', 'self' or 'selfemail'
+	 * @return bool
+	 */
+	protected function canModifySetting($method, $type) {
+		if ($method === 'setting') {
+			return true;
+		}
+
+		try {
+			$setting = $this->manager->getSettingById($type);
+			switch ($method) {
+				case 'email':
+					return $setting->canChangeMail();
+				case 'notification':
+					return $setting->canChangeNotification();
 				default:
 					return false;
 			}

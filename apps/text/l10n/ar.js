@@ -1,6 +1,7 @@
 OC.L10N.register(
     "text",
     {
+    "New text file" : "ملف نصي جديد",
     "The file was uploaded" : "تم رفع الملف",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "حجم الملف المرفوع قد تجاوز  upload_max_filesize الموجودة في ملف php.ini ",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "حجم الملف الذي تريد رفعه أعلى من الحد المسموح به في واجهة ال HTML.",
@@ -13,21 +14,21 @@ OC.L10N.register(
     "text document" : "مستند نصي",
     "Readme" : "إقرأني",
     "Text" : "نص",
+    "Guest" : "ضيف",
+    "guest" : "ضيف ",
     "Saving …" : "جاري الحفظ…",
     "Saved" : "تم الحفظ",
-    "Guest" : "ضيف",
     "Formatting help" : "مساعدة التنسيق",
     "Keyboard shortcuts" : "إختصارات لوحة المفاتيح",
     "Bold" : "غامق",
     "Italic" : "مائل",
-    "guest" : "ضيف ",
     "Unsupported image type" : "صيغة الصورة غير مقبولة",
     "Undo" : "تراجع",
     "Redo" : "إعادة",
     "Info" : "معلومات",
     "Success" : "نجاح",
     "Warning" : "تحذير",
-    "Edit" : "تعديل",
-    "New text document" : "مستند نصي جديد"
+    "Command" : "الأمر",
+    "Edit" : "تعديل"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

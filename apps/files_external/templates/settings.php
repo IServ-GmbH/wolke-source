@@ -127,6 +127,11 @@ $canCreateMounts = $_['visibilityType'] === BackendService::VISIBILITY_ADMIN || 
 			</tr>
 		</thead>
 		<tbody>
+			<tr class="externalStorageLoading">
+				<td colspan="8">
+					<span id="externalStorageLoading" class="icon icon-loading"></span>
+				</td>
+			</tr>
 			<tr id="addMountPoint"
 			<?php if (!$canCreateMounts): ?>
 				style="display: none;"

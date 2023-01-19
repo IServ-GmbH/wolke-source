@@ -1,8 +1,14 @@
 OC.L10N.register(
     "photos",
     {
-    "Photos" : "Rasmlar",
-    "Shared with you" : "Siz bilan baham ko'rdim",
-    "Settings" : "Sozlamalar"
+    "Photos" : "Photos",
+    "Videos" : "Videos",
+    "Favorites" : "Favorites",
+    "Shared with you" : "Shared with you",
+    "Tags" : "Tags",
+    "Save" : "Save",
+    "Favorite" : "Favorite",
+    "Add" : "Add",
+    "Settings" : "Settings"
 },
 "nplurals=1; plural=0;");

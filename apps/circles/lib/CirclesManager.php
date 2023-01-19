@@ -70,8 +70,6 @@ use OCA\Circles\Tools\Exceptions\InvalidItemException;
  * @package OCA\Circles
  */
 class CirclesManager {
-
-
 	/** @var FederatedUserService */
 	private $federatedUserService;
 
@@ -324,14 +322,14 @@ class CirclesManager {
 	 * @throws InitiatorNotFoundException
 	 * @throws RequestBuilderException
 	 */
-	public function getCircles(?CircleProbe $probe = null): array {
+	public function getCircles(?CircleProbe $probe = null, bool $refreshCache = false): array {
 		if (is_null($probe)) {
 			$probe = new CircleProbe();
 			$probe->filterHiddenCircles()
 				  ->filterBackendCircles();
 		}
 
-		return $this->circleService->getCircles($probe);
+		return $this->circleService->getCircles($probe, !$refreshCache);
 	}
 
 

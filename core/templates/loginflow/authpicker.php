@@ -46,7 +46,7 @@ $urlGenerator = $_['urlGenerator'];
 	<br/>
 
 	<p id="redirect-link">
-		<a href="<?php p($urlGenerator->linkToRoute('core.ClientFlowLogin.grantPage', ['stateToken' => $_['stateToken'], 'clientIdentifier' => $_['clientIdentifier'], 'oauthState' => $_['oauthState'], 'direct' => $_['direct']])) ?>">
+		<a href="<?php p($urlGenerator->linkToRoute('core.ClientFlowLogin.grantPage', ['stateToken' => $_['stateToken'], 'clientIdentifier' => $_['clientIdentifier'], 'oauthState' => $_['oauthState'], 'user' => $_['user'], 'direct' => $_['direct']])) ?>">
 			<input type="submit" class="login primary icon-confirm-white" value="<?php p($l->t('Log in')) ?>">
 		</a>
 	</p>
@@ -67,8 +67,8 @@ $urlGenerator = $_['urlGenerator'];
 		<?php } ?>
 		<input id="submit-app-token-login" type="submit" class="login primary icon-confirm-white" value="<?php p($l->t('Grant access')) ?>">
 	</form>
-</div>
 
-<?php if (empty($_['oauthState'])): ?>
-<a id="app-token-login" class="warning" href="#"><?php p($l->t('Alternative log in using app token')) ?></a>
-<?php endif; ?>
+	<?php if (empty($_['oauthState'])): ?>
+		<a id="app-token-login" class="apptoken-link" href="#"><?php p($l->t('Alternative log in using app token')) ?></a>
+	<?php endif; ?>
+</div>

@@ -23,6 +23,7 @@ declare(strict_types=1);
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 namespace OCA\UserStatus\Db;
 
 use OCP\AppFramework\Db\QBMapper;
@@ -31,16 +32,7 @@ use OCP\IDBConnection;
 use OCP\UserStatus\IUserStatus;
 
 /**
- * Class UserStatusMapper
- *
- * @package OCA\UserStatus\Db
- *
- * @psalm-suppress MoreSpecificImplementedParamType
- *
- * @method UserStatus insert(UserStatus $entity)
- * @method UserStatus update(UserStatus $entity)
- * @method UserStatus insertOrUpdate(UserStatus $entity)
- * @method UserStatus delete(UserStatus $entity)
+ * @template-extends QBMapper<UserStatus>
  */
 class UserStatusMapper extends QBMapper {
 
@@ -118,7 +110,7 @@ class UserStatusMapper extends QBMapper {
 	 * @param array $userIds
 	 * @return array
 	 */
-	public function findByUserIds(array $userIds):array {
+	public function findByUserIds(array $userIds): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb
 			->select('*')
@@ -172,17 +164,22 @@ class UserStatusMapper extends QBMapper {
 	 *
 	 * @param string $userId
 	 * @param string $messageId
-	 * @param string $status
 	 * @return bool True if an entry was deleted
 	 */
-	public function deleteCurrentStatusToRestoreBackup(string $userId, string $messageId, string $status): bool {
+	public function deleteCurrentStatusToRestoreBackup(string $userId, string $messageId): bool {
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->tableName)
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
 			->andWhere($qb->expr()->eq('message_id', $qb->createNamedParameter($messageId)))
-			->andWhere($qb->expr()->eq('status', $qb->createNamedParameter($status)))
 			->andWhere($qb->expr()->eq('is_backup', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)));
 		return $qb->executeStatement() > 0;
+	}
+
+	public function deleteByIds(array $ids): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->delete($this->tableName)
+			->where($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		$qb->executeStatement();
 	}
 
 	/**
@@ -200,5 +197,15 @@ class UserStatusMapper extends QBMapper {
 			->set('user_id', $qb->createNamedParameter('_' . $userId))
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)));
 		return $qb->executeStatement() > 0;
+	}
+
+	public function restoreBackupStatuses(array $ids): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->tableName)
+			->set('is_backup', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL))
+			->set('user_id', $qb->func()->substring('user_id', $qb->createNamedParameter(2, IQueryBuilder::PARAM_INT)))
+			->where($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$qb->executeStatement();
 	}
 }

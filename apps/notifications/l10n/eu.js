@@ -13,14 +13,16 @@ OC.L10N.register(
     "This app provides a backend and frontend for the notification API available in Nextcloud.\n\t\tThe API is used by other apps to notify users in the web UI and sync clients about various things. Some examples are:\n\n📬 Federated file sharing: You received a new remote share\n\n📑 Comments: Another user mentioned you in a comment on a file\n\n🚢 Update notification: Available update for an app or nextcloud itself\n\n📣 Announcement center: An announcement was posted by an admin" : "Aplikazio honek Nextclouden jakinarazpenen APIaren backend eta frontend zerbitzua eskaintzen du.\n\t\tAPIa beste aplikazio batzuk erabiltzen dute erabiltzaileei webgunean edo sinkronizazio bezeroetan hainbat gauzaren inguruko jakinarazpenak bidaltzeko. Adibidez:\n\n📬 Federatutako partekatzea: urruneko partekatze bat jaso duzu\n\n📑 Iruzkinak: beste erabiltzaile batek fitxategi baten egin duen iruzkin baten aipatu egin zaitu\n\n🚢 Eguneraketen jakinarazpena: aplikazio baten edo Nextcloud beraren eguneraketa bat dago\n\n📣 Iragarpenen zentroa: kudeatzaile batek iragarpen bat argitaratu du",
     "Failed to perform action" : "Huts egin du ekintza burutzean",
     "Dismiss" : "Baztertu",
+    "Contact Nextcloud GmbH" : "Jarri harremanetan Nextcloud GmbH-rekin",
     "seconds ago" : "segundo lehenago",
     "Failed to dismiss notification" : "Huts egin du jakinarazpena baztertzean",
     "in {path}" : "{path} -en",
     "Dismiss all notifications" : "Baztertu jakinarazpen guztiak",
     "Requesting browser permissions to show notifications" : "Jakinarazpenak erakusteko nabigatzaileari baimena eskatzen",
+    "Push notifications might be unreliable" : "Push jakinarazpenak fidagarritasun gutxi izan ditzakete",
     "No notifications" : "Ez dago jakinarazpenik",
+    "Nextcloud GmbH sponsors a free push notification gateway for private users. To ensure good service, the gateway limits the number of push notifications per server. For enterprise users, a more scalable gateway is available. Contact Nextcloud GmbH for more information." : "Nextcloud GmbH-k erabiltzaile pribatuentzako doako push jakinarazpen-sarbide bat babesten du. Zerbitzu ona bermatzeko, sarbideak zerbitzari bakoitzeko push jakinarazpen kopurua mugatzen du. Enpresako erabiltzaileentzat sarbide zabalgarriagoa dago. Jarri harremanetan Nextcloud GmbH-rekin informazio gehiago lortzeko.",
     "Failed to dismiss all notifications" : "Huts egin du jakinarazpen guztiak baztertzean",
-    "You need to set up your email address before you can receive notification emails." : "Zure helbide elektronikoa konfiguratu behar duzu jakinarazpenak posta elektronikoz jasotzeko.",
     "Send email reminders about unhandled notifications after:" : "Bidali e-posta abisuak kudeatu gabeko jakinarazpenei buruz honen ondoren:",
     "Play sound when a new notification arrives" : "Erreproduzitu soinua jakinarazpen berri bat iristen denean",
     "Play sound when a call started (requires Nextcloud Talk)" : "Erreproduzitu soinua deia hasten denean (Nextcloud Talk behar da)",
@@ -30,6 +32,7 @@ OC.L10N.register(
     "1 day" : "egun 1",
     "1 week" : "Aste 1",
     "Your settings have been updated." : "Zure ezarpenak eguneratu dira.",
-    "An error occurred while updating your settings." : "Errore bat gertatu da ezarpenak eguneratzean."
+    "An error occurred while updating your settings." : "Errore bat gertatu da ezarpenak eguneratzean.",
+    "You need to set up your email address before you can receive notification emails." : "Zure helbide elektronikoa konfiguratu behar duzu jakinarazpenak posta elektronikoz jasotzeko."
 },
 "nplurals=2; plural=(n != 1);");

@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -82,9 +81,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Maintenance</a> &raquo;</li>
-      <li>Migrating to a different server</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
+      <li class="breadcrumb-item active">Migrating to a different server</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/maintenance/migrating.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -95,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="migrating-to-a-different-server">
-<h1>Migrating to a different server<a class="headerlink" href="#migrating-to-a-different-server" title="Permalink to this heading"></a></h1>
+<h1>Migrating to a different server<a class="headerlink" href="#migrating-to-a-different-server" title="Permalink to this headline"></a></h1>
 <p>If the need arises Nextcloud can be migrated to a different server. A typical
 use case would be a hardware change or a migration from the virtual Appliance
 to a physical server. All migrations have to be performed with Nextcloud
@@ -119,7 +118,7 @@ the new location. It is also assumed that the authentication method
 back to your existing installation and provide your users
 with a running Nextcloud while debugging the problem.</p>
 </div>
-<ol class="arabic">
+<ol class="arabic simple">
 <li><p>Set up the new machine with the desired OS, install and configure the
 Web server as well as PHP for Nextcloud (e.g. permissions or file upload size
 limits) and make sure the PHP version matches Nextcloud supported
@@ -144,12 +143,9 @@ appropriate locations. If you change any paths, make sure to adapt the paths
 in the Nextcloud config.php file. Note: This step might take several hours,
 depending on your installation.</p></li>
 <li><p>Check the config.php file of the <strong>ORIGINAL</strong> system to see if it has
-the <code class="docutils literal notranslate"><span class="pre">data-fingerprint</span></code> set to a non-empty value. If this is the case, make</p>
-<blockquote>
-<div><p>sure to also run the <code class="docutils literal notranslate"><span class="pre">maintenance:data-fingerprint</span></code> command on the <strong>NEW</strong>
-system, similarly to how it is required when performing a backup restoration (See <a class="reference internal" href="restore.html"><span class="doc">Restoring backup</span></a> for details).</p>
-</div></blockquote>
-</li>
+the <code class="docutils literal notranslate"><span class="pre">data-fingerprint</span></code> set to a non-empty value. If this is the case, make
+sure to also run the <code class="docutils literal notranslate"><span class="pre">maintenance:data-fingerprint</span></code> command on the <strong>NEW</strong>
+system, similarly to how it is required when performing a backup restoration (See <a class="reference internal" href="restore.html"><span class="doc">Restoring backup</span></a> for details).</p></li>
 <li><p>While still having Nextcloud in maintenance mode (confirm!) and <strong>BEFORE</strong>
 changing the <code class="docutils literal notranslate"><span class="pre">CNAME</span></code> record in the DNS start up the database, Web server /
 application server on the new machine and point your web browser to the
@@ -196,11 +192,9 @@ location.</p></li>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

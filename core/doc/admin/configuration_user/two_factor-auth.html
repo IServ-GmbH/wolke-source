@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -89,9 +88,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-      <li>Two-factor authentication</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+      <li class="breadcrumb-item active">Two-factor authentication</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/two_factor-auth.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -102,7 +101,7 @@
            <div itemprop="articleBody">
              
   <section id="two-factor-authentication">
-<h1>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Permalink to this heading"></a></h1>
+<h1>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Permalink to this headline"></a></h1>
 <p>Two-factor authentication adds an additional layer of security to user accounts. In order to log
 in on an account with two-factor authentication (2FA) enabled, it is necessary to provide both the
 login password and another factor. 2FA in Nextcloud is pluggable, meaning that they are not part
@@ -110,9 +109,9 @@ of the Nextcloud Server component but provided by featured and 3rd-party Nextclo
 <p>Several 2FA apps are already available including
 <a class="reference external" href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a>,
 a Telegram/Signal/SMS gateway and <a class="reference external" href="https://en.wikipedia.org/wiki/Universal_2nd_Factor">U2F</a>.</p>
-<p>Developers can <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app/two-factor-provider.html">build new two-factor provider apps</a>.</p>
+<p>Developers can <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/two-factor-provider.html">build new two-factor provider apps</a>.</p>
 <section id="enabling-two-factor-authentication">
-<h2>Enabling two-factor authentication<a class="headerlink" href="#enabling-two-factor-authentication" title="Permalink to this heading"></a></h2>
+<h2>Enabling two-factor authentication<a class="headerlink" href="#enabling-two-factor-authentication" title="Permalink to this headline"></a></h2>
 <p>You can enable 2FA by installing and enabling a 2FA app like TOTP which works
 with Google Authenticator and compatible apps. The apps are available in the
 Nextcloud App store so by navigating there and clicking <strong>enable</strong> for the app
@@ -123,7 +122,7 @@ you want, 2FA will be installed and enabled on your Nextcloud server.</p>
 <p>Once 2FA has been enabled, users have to <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/user_2fa.html">activate it in their personal settings.</a></p>
 </section>
 <section id="enforcing-two-factor-authentication">
-<h2>Enforcing two-factor authentication<a class="headerlink" href="#enforcing-two-factor-authentication" title="Permalink to this heading"></a></h2>
+<h2>Enforcing two-factor authentication<a class="headerlink" href="#enforcing-two-factor-authentication" title="Permalink to this headline"></a></h2>
 <p>By default 2FA is <em>optional</em>, hence users are given the choice whether to enable
 it for their account. Admins may enforce the use of 2FA.</p>
 <p>Enforcement is possible systemwide (all users), for selected groups only and can
@@ -175,11 +174,9 @@ selected <em>and</em> excluded group, the selected takes precedence and 2FA is e
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

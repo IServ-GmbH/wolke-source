@@ -34,6 +34,11 @@
  */
 namespace OCA\DAV;
 
+use OCA\DAV\Connector\Sabre\RequestIdHeaderPlugin;
+use OCP\Diagnostics\IEventLogger;
+use OCP\Profiler\IProfiler;
+use OCA\DAV\Profiler\ProfilerPlugin;
+use OCP\AppFramework\Http\Response;
 use Psr\Log\LoggerInterface;
 use OCA\DAV\AppInfo\PluginManager;
 use OCA\DAV\CalDAV\BirthdayService;
@@ -47,6 +52,7 @@ use OCA\DAV\Connector\Sabre\Auth;
 use OCA\DAV\Connector\Sabre\BearerAuth;
 use OCA\DAV\Connector\Sabre\BlockLegacyClientPlugin;
 use OCA\DAV\Connector\Sabre\CachingTree;
+use OCA\DAV\Connector\Sabre\ChecksumUpdatePlugin;
 use OCA\DAV\Connector\Sabre\CommentPropertiesPlugin;
 use OCA\DAV\Connector\Sabre\CopyEtagHeaderPlugin;
 use OCA\DAV\Connector\Sabre\DavAclPlugin;
@@ -60,6 +66,7 @@ use OCA\DAV\Connector\Sabre\SharesPlugin;
 use OCA\DAV\Connector\Sabre\TagsPlugin;
 use OCA\DAV\DAV\CustomPropertiesBackend;
 use OCA\DAV\DAV\PublicAuth;
+use OCA\DAV\DAV\ViewOnlyPlugin;
 use OCA\DAV\Events\SabrePluginAuthInitEvent;
 use OCA\DAV\Files\BrowserErrorPagePlugin;
 use OCA\DAV\Files\LazySearchBackend;
@@ -76,17 +83,19 @@ use Sabre\DAV\UUIDUtil;
 use SearchDAV\DAV\SearchPlugin;
 
 class Server {
+	private IRequest $request;
+	private string $baseUri;
+	public Connector\Sabre\Server $server;
+	private IProfiler $profiler;
 
-	/** @var IRequest */
-	private $request;
+	public function __construct(IRequest $request, string $baseUri) {
+		$this->profiler = \OC::$server->get(IProfiler::class);
+		if ($this->profiler->isEnabled()) {
+			/** @var IEventLogger $eventLogger */
+			$eventLogger = \OC::$server->get(IEventLogger::class);
+			$eventLogger->start('runtime', 'DAV Runtime');
+		}
 
-	/** @var  string */
-	private $baseUri;
-
-	/** @var Connector\Sabre\Server  */
-	public $server;
-
-	public function __construct(IRequest $request, $baseUri) {
 		$this->request = $request;
 		$this->baseUri = $baseUri;
 		$logger = \OC::$server->getLogger();
@@ -113,6 +122,7 @@ class Server {
 		$this->server->httpRequest->setUrl($this->request->getRequestUri());
 		$this->server->setBaseUri($this->baseUri);
 
+		$this->server->addPlugin(new ProfilerPlugin($this->request));
 		$this->server->addPlugin(new BlockLegacyClientPlugin(\OC::$server->getConfig()));
 		$this->server->addPlugin(new AnonymousOptionsPlugin());
 		$authPlugin = new Plugin();
@@ -154,7 +164,6 @@ class Server {
 			'principals/calendar-resources',
 			'principals/calendar-rooms',
 		];
-		$acl->defaultUsernamePath = 'principals/users';
 		$this->server->addPlugin($acl);
 
 		// calendar plugins
@@ -205,6 +214,7 @@ class Server {
 		));
 
 		$this->server->addPlugin(new CopyEtagHeaderPlugin());
+		$this->server->addPlugin(new RequestIdHeaderPlugin(\OC::$server->get(IRequest::class)));
 		$this->server->addPlugin(new ChunkingPlugin());
 
 		// allow setup of additional plugins
@@ -219,6 +229,11 @@ class Server {
 		])) {
 			$this->server->addPlugin(new FakeLockerPlugin());
 		}
+
+		// Allow view-only plugin for webdav requests
+		$this->server->addPlugin(new ViewOnlyPlugin(
+			\OC::$server->get(LoggerInterface::class)
+		));
 
 		if (BrowserErrorPagePlugin::isBrowserRequest($request)) {
 			$this->server->addPlugin(new BrowserErrorPagePlugin());
@@ -245,6 +260,7 @@ class Server {
 						!\OC::$server->getConfig()->getSystemValue('debug', false)
 					)
 				);
+				$this->server->addPlugin(new ChecksumUpdatePlugin());
 
 				$this->server->addPlugin(
 					new \Sabre\DAV\PropertyStorage\Plugin(
@@ -336,7 +352,16 @@ class Server {
 	}
 
 	public function exec() {
+		/** @var IEventLogger $eventLogger */
+		$eventLogger = \OC::$server->get(IEventLogger::class);
+		$eventLogger->start('dav_server_exec', '');
 		$this->server->exec();
+		$eventLogger->end('dav_server_exec');
+		if ($this->profiler->isEnabled()) {
+			$eventLogger->end('runtime');
+			$profile = $this->profiler->collect(\OC::$server->get(IRequest::class), new Response());
+			$this->profiler->saveProfile($profile);
+		}
 	}
 
 	private function requestIsForSubtree(array $subTrees): bool {

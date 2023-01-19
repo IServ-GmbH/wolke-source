@@ -1,3 +1,5 @@
+@use "sass:selector";
+
 /* Document rendering styles */
 div.ProseMirror {
 	margin-top: 44px;
@@ -24,6 +26,13 @@ div.ProseMirror {
 		-webkit-user-select: text;
 		user-select: text;
 		font-size: 14px;
+	}
+
+	&[contenteditable=true],
+	[contenteditable=true] {
+		* {
+			-webkit-user-modify: read-write-plaintext-only;
+		}
 	}
 
 	.checkbox-item {
@@ -190,6 +199,132 @@ div.ProseMirror {
 		margin-right: 0;
 	}
 
+	// Callout Block
+	.callout {
+		background-color: var(--callout-background, var(--color-background-hover));
+		border-left-color: var(--callout-border, var(--color-primary-element));
+		border-radius: var(--border-radius);
+		padding: 1em;
+		padding-left: 2em;
+		border-left-width: 0.3em;
+		border-left-style: solid;
+		position: relative;
+		margin-bottom: 0.5em;
+		+ & {
+			margin-top: 0.5em;
+		}
+
+		// Block icon
+		&::before {
+			content: '';
+			background-image: var(--callout-icon, var(--icon-info-000));
+			background-size: contain;
+			position: absolute;
+			top: calc(50% - 8px);
+			left: 0.4em;
+			height: 16px;
+			width: 16px;
+		}
+
+		> p {
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		// Info (default) variables
+		&, &-info {
+			// --callout-background: var(--color-primary-light);
+			--callout-border: var(--color-primary-element);
+			--callout-icon: var(--icon-info-000);
+		}
+
+		// Warn variables
+		&-warn {
+			// --callout-background: var(--color-warning-hover);
+			--callout-border: var(--color-warning);
+			--callout-icon: var(--icon-text-warn-000);
+		}
+
+		// Error variables
+		&-error {
+			// --callout-background: var(--color-error-hover);
+			--callout-border: var(--color-error);
+			--callout-icon: var(--icon-error-000);
+		}
+
+		// Success variables
+		&-success {
+			// --callout-background: var(--color-success-hover);
+			--callout-border: var(--color-success);
+			--callout-icon: var(--icon-text-success-000);
+		}
+	}
+
+	// table variables
+	@at-root :root {
+		--table-color-border: var(--color-border);
+		--table-color-heading: var(--color-text-maxcontrast);
+		--table-color-heading-border: var(--color-border-dark);
+		--table-color-background: var(--color-main-background);
+		--table-color-background-hover: var(--color-primary-light);
+		--table-border-radius: var(--border-radius);
+	}
+
+	table {
+		border-spacing: 0;
+		width: calc(100% - 50px);
+		table-layout: auto;
+		white-space: normal; // force text to wrapping
+		margin-bottom: 1em;
+		+ & {
+			margin-top: 1em;
+		}
+
+
+		td, th {
+			border: 1px solid var(--table-color-border);
+			border-left: 0;
+			vertical-align: top;
+			max-width: 100%;
+			&:first-child {
+				border-left: 1px solid var(--table-color-border);
+			}
+		}
+		td {
+			padding: 0.5em 0.75em;
+			border-top: 0;
+			color: var(--color-main-text);
+		}
+		th {
+			padding: 0 0 0 0.75em;
+			font-weight: normal;
+			border-bottom-color: var(--table-color-heading-border);
+			color: var(--table-color-heading);
+
+			& > div {
+				display: flex;
+			}
+		}
+		tr {
+			background-color: var(--table-color-background);
+			&:hover, &:active, &:focus {
+				background-color: var(--table-color-background-hover);
+			}
+		}
+
+		tr:first-child {
+			th:first-child { border-top-left-radius: var(--table-border-radius); }
+			th:last-child { border-top-right-radius: var(--table-border-radius); }
+		}
+
+		tr:last-child {
+			td:first-child { border-bottom-left-radius: var(--table-border-radius); }
+			td:last-child { border-bottom-right-radius: var(--table-border-radius); }
+		}
+
+	}
+
 }
 
 .ProseMirror-focused .ProseMirror-gapcursor {
@@ -197,13 +332,13 @@ div.ProseMirror {
 }
 
 .editor__content p.is-empty:first-child::before {
-	content: attr(data-empty-text);
+	content: attr(data-placeholder);
 	float: left;
 	color: var(--color-text-maxcontrast);
 	pointer-events: none;
 	height: 0;
 }
 
-.editor__content { 
-	tab-size: 4; 
+.editor__content {
+	tab-size: 4;
 }

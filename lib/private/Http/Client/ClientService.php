@@ -28,12 +28,10 @@ namespace OC\Http\Client;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Handler\CurlHandler;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\ICertificateManager;
 use OCP\IConfig;
-use OCP\ILogger;
 
 /**
  * Class ClientService
@@ -43,8 +41,6 @@ use OCP\ILogger;
 class ClientService implements IClientService {
 	/** @var IConfig */
 	private $config;
-	/** @var ILogger */
-	private $logger;
 	/** @var ICertificateManager */
 	private $certificateManager;
 	/** @var DnsPinMiddleware */
@@ -53,12 +49,10 @@ class ClientService implements IClientService {
 	private $localAddressChecker;
 
 	public function __construct(IConfig $config,
-								ILogger $logger,
 								ICertificateManager $certificateManager,
 								DnsPinMiddleware $dnsPinMiddleware,
 								LocalAddressChecker $localAddressChecker) {
 		$this->config = $config;
-		$this->logger = $logger;
 		$this->certificateManager = $certificateManager;
 		$this->dnsPinMiddleware = $dnsPinMiddleware;
 		$this->localAddressChecker = $localAddressChecker;
@@ -68,15 +62,13 @@ class ClientService implements IClientService {
 	 * @return Client
 	 */
 	public function newClient(): IClient {
-		$handler = new CurlHandler();
-		$stack = HandlerStack::create($handler);
+		$stack = HandlerStack::create();
 		$stack->push($this->dnsPinMiddleware->addDnsPinning());
 
 		$client = new GuzzleClient(['handler' => $stack]);
 
 		return new Client(
 			$this->config,
-			$this->logger,
 			$this->certificateManager,
 			$client,
 			$this->localAddressChecker

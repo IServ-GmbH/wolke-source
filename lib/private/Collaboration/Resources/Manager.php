@@ -93,7 +93,7 @@ class Manager implements IManager {
 	 */
 	public function getCollectionForUser(int $id, ?IUser $user): ICollection {
 		$query = $this->connection->getQueryBuilder();
-		$userId = $user !== null ? $user->getUID() : '';
+		$userId = $user instanceof IUser ? $user->getUID() : '';
 
 		$query->select('*')
 			->from(self::TABLE_COLLECTIONS, 'c')
@@ -114,7 +114,7 @@ class Manager implements IManager {
 		}
 
 		$access = $row['access'] === null ? null : (bool) $row['access'];
-		if ($user !== null) {
+		if ($user instanceof IUser) {
 			return new Collection($this, $this->connection, (int) $row['id'], (string) $row['name'], $user, $access);
 		}
 

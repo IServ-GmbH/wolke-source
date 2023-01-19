@@ -1,5 +1,11 @@
 { "translations": {
+    "Videos" : "Tividyutin",
     "Favorites" : "Imenyafen",
+    "Tags" : "Tibzimin",
+    "Back" : "Retour",
+    "Save" : "Sekles",
+    "Favorite" : "Menyif",
+    "Add" : "Rnu",
     "Settings" : "Iɣewwaṛen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

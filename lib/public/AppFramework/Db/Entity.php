@@ -113,12 +113,19 @@ abstract class Entity {
 				$type = $this->_fieldTypes[$name];
 				if ($type === 'blob') {
 					// (B)LOB is treated as string when we read from the DB
+					if (is_resource($args[0])) {
+						$args[0] = stream_get_contents($args[0]);
+					}
 					$type = 'string';
 				}
 
 				if ($type === 'datetime') {
 					if (!$args[0] instanceof \DateTime) {
 						$args[0] = new \DateTime($args[0]);
+					}
+				} elseif ($type === 'json') {
+					if (!is_array($args[0])) {
+						$args[0] = json_decode($args[0], true);
 					}
 				} else {
 					settype($args[0], $type);
@@ -260,6 +267,7 @@ abstract class Entity {
 	 * @param string $attributeName the name of the attribute, which value should be slugified
 	 * @return string slugified value
 	 * @since 7.0.0
+	 * @deprecated 24.0.0
 	 */
 	public function slugify($attributeName) {
 		// toSlug should only work for existing attributes

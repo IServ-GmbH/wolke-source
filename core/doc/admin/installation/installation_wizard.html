@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -61,7 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server_tuning.html">Server tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -93,9 +92,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>Installation wizard</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">Installation wizard</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/installation_wizard.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -106,9 +105,9 @@
            <div itemprop="articleBody">
              
   <section id="installation-wizard">
-<h1>Installation wizard<a class="headerlink" href="#installation-wizard" title="Permalink to this heading"></a></h1>
+<h1>Installation wizard<a class="headerlink" href="#installation-wizard" title="Permalink to this headline"></a></h1>
 <section id="quick-start">
-<h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this heading"></a></h2>
+<h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline"></a></h2>
 <p>When Nextcloud prerequisites are fulfilled and all Nextcloud files are installed,
 the last step to completing the installation is running the Installation
 Wizard.
@@ -132,7 +131,7 @@ installation and post-installation steps.</p>
 </ul>
 </section>
 <section id="data-directory-location">
-<span id="data-directory-location-label"></span><h2>Data directory location<a class="headerlink" href="#data-directory-location" title="Permalink to this heading"></a></h2>
+<span id="data-directory-location-label"></span><h2>Data directory location<a class="headerlink" href="#data-directory-location" title="Permalink to this headline"></a></h2>
 <p>Click <strong>Storage and Database</strong> to expose additional installation configuration
 options for your Nextcloud data directory and database.</p>
 <figure class="align-default">
@@ -147,7 +146,7 @@ example is it located in <code class="docutils literal notranslate"><span class=
 and must be owned by your HTTP user.</p>
 </section>
 <section id="database-choice">
-<span id="database-choice-label"></span><h2>Database choice<a class="headerlink" href="#database-choice" title="Permalink to this heading"></a></h2>
+<span id="database-choice-label"></span><h2>Database choice<a class="headerlink" href="#database-choice" title="Permalink to this headline"></a></h2>
 <p>SQLite is the default database for Nextcloud Server and it is good only for
 testing and lightweight single-user setups without client synchronization.
 Supported databases are MySQL, MariaDB, Oracle 11g, and PostgreSQL, and we
@@ -177,12 +176,14 @@ database user and password are written into <code class="docutils literal notran
 <p>Now we will look at some important post-installation steps.</p>
 </section>
 <section id="trusted-domains">
-<span id="trusted-domains-label"></span><h2>Trusted domains<a class="headerlink" href="#trusted-domains" title="Permalink to this heading"></a></h2>
+<span id="trusted-domains-label"></span><h2>Trusted domains<a class="headerlink" href="#trusted-domains" title="Permalink to this headline"></a></h2>
 <p>All URLs used to access your Nextcloud server must be whitelisted in your
 <code class="docutils literal notranslate"><span class="pre">config.php</span></code> file, under the <code class="docutils literal notranslate"><span class="pre">trusted_domains</span></code> setting. Users
 are allowed to log into Nextcloud only when they point their browsers to a
-URL that is listed in the <code class="docutils literal notranslate"><span class="pre">trusted_domains</span></code> setting. You may use IP addresses
-and domain names. A typical configuration looks like this:</p>
+URL that is listed in the <code class="docutils literal notranslate"><span class="pre">trusted_domains</span></code> setting. This is not a
+list of allowed client-side domains or IP addresses.
+You may use IP addresses and domain names.
+A typical configuration looks like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;trusted_domains&#39;</span> <span class="o">=&gt;</span>
   <span class="n">array</span> <span class="p">(</span>
    <span class="mi">0</span> <span class="o">=&gt;</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
@@ -192,6 +193,7 @@ and domain names. A typical configuration looks like this:</p>
 <span class="p">),</span>
 </pre></div>
 </div>
+<p>Note:</p>
 <p>The loopback address, <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code>, is automatically whitelisted, so as long
 as you have access to the physical server you can always log in. In the event
 that a load balancer is in place there will be no issues as long as it sends
@@ -236,11 +238,9 @@ is not whitelisted the following error appears:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

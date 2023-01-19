@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -64,6 +63,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#create-a-group">Create a group</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-members-of-a-group">Get members of a group</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#get-subadmins-of-a-group">Get subadmins of a group</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#edit-data-of-a-single-group">Edit data of a single group</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#delete-a-group">Delete a group</a></li>
 </ul>
 </li>
@@ -97,10 +97,10 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-          <li><a href="user_provisioning_api.html">User provisioning API</a> &raquo;</li>
-      <li>Instruction set for groups</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+          <li class="breadcrumb-item"><a href="user_provisioning_api.html">User provisioning API</a></li>
+      <li class="breadcrumb-item active">Instruction set for groups</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/instruction_set_for_groups.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,9 +111,9 @@
            <div itemprop="articleBody">
              
   <section id="instruction-set-for-groups">
-<h1>Instruction set for groups<a class="headerlink" href="#instruction-set-for-groups" title="Permalink to this heading"></a></h1>
+<h1>Instruction set for groups<a class="headerlink" href="#instruction-set-for-groups" title="Permalink to this headline"></a></h1>
 <section id="search-get-groups">
-<h2>Search/get groups<a class="headerlink" href="#search-get-groups" title="Permalink to this heading"></a></h2>
+<h2>Search/get groups<a class="headerlink" href="#search-get-groups" title="Permalink to this headline"></a></h2>
 <p>Retrieves a list of groups from the Nextcloud server. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups</strong></p>
@@ -128,7 +128,7 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups?search=adm
 </pre></div>
 </div>
@@ -137,7 +137,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -155,7 +155,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="create-a-group">
-<h2>Create a group<a class="headerlink" href="#create-a-group" title="Permalink to this heading"></a></h2>
+<h2>Create a group<a class="headerlink" href="#create-a-group" title="Permalink to this headline"></a></h2>
 <p>Adds a new group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups</strong></p>
@@ -171,7 +171,7 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>103 - failed to add the group</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/groups -d groupid=&quot;newgroup&quot;
 </pre></div>
 </div>
@@ -180,7 +180,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -194,7 +194,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-members-of-a-group">
-<h2>Get members of a group<a class="headerlink" href="#get-members-of-a-group" title="Permalink to this heading"></a></h2>
+<h2>Get members of a group<a class="headerlink" href="#get-members-of-a-group" title="Permalink to this headline"></a></h2>
 <p>Retrieves a list of group members. Authentication is done by sending a Basic
 HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
@@ -206,7 +206,7 @@ HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups/admin
 </pre></div>
 </div>
@@ -215,7 +215,7 @@ HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -233,7 +233,7 @@ HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-subadmins-of-a-group">
-<h2>Get subadmins of a group<a class="headerlink" href="#get-subadmins-of-a-group" title="Permalink to this heading"></a></h2>
+<h2>Get subadmins of a group<a class="headerlink" href="#get-subadmins-of-a-group" title="Permalink to this headline"></a></h2>
 <p>Returns subadmins of the group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}/subadmins</strong></p>
@@ -247,7 +247,7 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>102 - unknown failure</p></li>
 </ul>
 <section id="id5">
-<h3>Example<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup/subadmins
 </pre></div>
 </div>
@@ -256,7 +256,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id6">
-<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -272,8 +272,50 @@ sending a Basic HTTP Authorization header.</p>
 </div>
 </section>
 </section>
+<section id="edit-data-of-a-single-group">
+<h2>Edit data of a single group<a class="headerlink" href="#edit-data-of-a-single-group" title="Permalink to this headline"></a></h2>
+<p>Edits attributes related to a group. Authentication
+is done by sending a Basic HTTP Authorization header.</p>
+<p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
+<ul class="simple">
+<li><p>HTTP method: PUT</p></li>
+<li><p>PUT argument: key, string - the field to edit:</p>
+<ul>
+<li><p>displayname</p></li>
+</ul>
+</li>
+<li><p>PUT argument: value, string - the new value for the field</p></li>
+</ul>
+<p>Status codes:</p>
+<ul class="simple">
+<li><p>100 - successful</p></li>
+<li><p>101 - not supported by backend</p></li>
+</ul>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup -d key=&quot;displayname&quot; -d value=&quot;My Group Name&quot;
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Updates the display name for the group <code class="docutils literal notranslate"><span class="pre">mygroup</span></code></p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>XML output<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+<span class="nt">&lt;ocs&gt;</span>
+  <span class="nt">&lt;meta&gt;</span>
+    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+  <span class="nt">&lt;/meta&gt;</span>
+  <span class="nt">&lt;data/&gt;</span>
+<span class="nt">&lt;/ocs&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
 <section id="delete-a-group">
-<h2>Delete a group<a class="headerlink" href="#delete-a-group" title="Permalink to this heading"></a></h2>
+<h2>Delete a group<a class="headerlink" href="#delete-a-group" title="Permalink to this headline"></a></h2>
 <p>Removes a group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
@@ -286,8 +328,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>101 - group does not exist</p></li>
 <li><p>102 - failed to delete group</p></li>
 </ul>
-<section id="id7">
-<h3>Example<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<section id="id8">
+<h3>Example<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup
 </pre></div>
 </div>
@@ -295,8 +337,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>Delete the group <code class="docutils literal notranslate"><span class="pre">mygroup</span></code></p></li>
 </ul>
 </section>
-<section id="id8">
-<h3>XML output<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<section id="id9">
+<h3>XML output<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
   <span class="nt">&lt;meta&gt;</span>
@@ -344,11 +386,9 @@ sending a Basic HTTP Authorization header.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

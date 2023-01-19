@@ -23,10 +23,6 @@ echo "Back-upping version.php"
 # backup edited version.php again for it to be persisted
 cp /var/www/html/version.php /version/version.php
 
-echo "Disabling config editing"
-# disable config editing again since the update is done
-php /var/www/html/occ config:system:set config_is_read_only --value="true" --type=boolean
-
 php /var/www/html/occ app:enable groupfolders
 # php /var/www/html/occ app:enable iservlogin
 
@@ -54,6 +50,10 @@ echo "Configured saml."
 
 echo "Disabling unwanted apps"
 /disable-unwanted-apps.sh
+
+echo "Disabling config editing"
+# disable config editing again since the update is done
+php /var/www/html/occ config:system:set config_is_read_only --value="true" --type=boolean
 
 echo "Done! Starting apache..."
 # start apache2 and begin servicing requests (taken from original Dockerfile)

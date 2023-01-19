@@ -54,7 +54,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
@@ -64,6 +63,7 @@ use OCP\Security\ISecureRandom;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 use OCP\User\Events\PostLoginEvent;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -114,29 +114,18 @@ class Session implements IUserSession, Emitter {
 	/** @var ILockdownManager  */
 	private $lockdownManager;
 
-	/** @var ILogger */
-	private $logger;
+	private LoggerInterface $logger;
 	/** @var IEventDispatcher */
 	private $dispatcher;
 
-	/**
-	 * @param Manager $manager
-	 * @param ISession $session
-	 * @param ITimeFactory $timeFactory
-	 * @param IProvider $tokenProvider
-	 * @param IConfig $config
-	 * @param ISecureRandom $random
-	 * @param ILockdownManager $lockdownManager
-	 * @param ILogger $logger
-	 */
 	public function __construct(Manager $manager,
 								ISession $session,
 								ITimeFactory $timeFactory,
-								$tokenProvider,
+								?IProvider $tokenProvider,
 								IConfig $config,
 								ISecureRandom $random,
 								ILockdownManager $lockdownManager,
-								ILogger $logger,
+								LoggerInterface $logger,
 								IEventDispatcher $dispatcher
 	) {
 		$this->manager = $manager;
@@ -461,6 +450,9 @@ class Session implements IUserSession, Emitter {
 		if (!$this->login($user, $password)) {
 
 			// Failed, maybe the user used their email address
+			if (!filter_var($user, FILTER_VALIDATE_EMAIL)) {
+				return false;
+			}
 			$users = $this->manager->getByEmail($user);
 			if (!(\count($users) === 1 && $this->login($users[0]->getUID(), $password))) {
 				$this->logger->warning('Login failed: \'' . $user . '\' (Remote IP: \'' . \OC::$server->getRequest()->getRemoteAddress() . '\')', ['app' => 'core']);
@@ -533,9 +525,8 @@ class Session implements IUserSession, Emitter {
 		} catch (ExpiredTokenException $e) {
 			throw $e;
 		} catch (InvalidTokenException $ex) {
-			$this->logger->logException($ex, [
-				'level' => ILogger::DEBUG,
-				'message' => 'Token is not valid: ' . $ex->getMessage(),
+			$this->logger->debug('Token is not valid: ' . $ex->getMessage(), [
+				'exception' => $ex,
 			]);
 			return false;
 		}
@@ -548,11 +539,11 @@ class Session implements IUserSession, Emitter {
 			\OC::$server->getCsrfTokenManager()->refreshToken();
 		}
 
-		//we need to pass the user name, which may differ from login name
-		$user = $this->getUser()->getUID();
-		OC_Util::setupFS($user);
-
 		if ($firstTimeLogin) {
+			//we need to pass the user name, which may differ from login name
+			$user = $this->getUser()->getUID();
+			OC_Util::setupFS($user);
+
 			// TODO: lock necessary?
 			//trigger creation of user home and /files folder
 			$userFolder = \OC::$server->getUserFolder($user);
@@ -877,6 +868,10 @@ class Session implements IUserSession, Emitter {
 		$tokens = $this->config->getUserKeys($uid, 'login_token');
 		// test cookies token against stored tokens
 		if (!in_array($currentToken, $tokens, true)) {
+			$this->logger->info('Tried to log in {uid} but could not verify token', [
+				'app' => 'core',
+				'uid' => $uid,
+			]);
 			return false;
 		}
 		// replace successfully used token with a new one
@@ -888,9 +883,13 @@ class Session implements IUserSession, Emitter {
 			$sessionId = $this->session->getId();
 			$token = $this->tokenProvider->renewSessionToken($oldSessionId, $sessionId);
 		} catch (SessionNotAvailableException $ex) {
+			$this->logger->warning('Could not renew session token for {uid} because the session is unavailable', [
+				'app' => 'core',
+				'uid' => $uid,
+			]);
 			return false;
 		} catch (InvalidTokenException $ex) {
-			\OC::$server->getLogger()->warning('Renewing session token failed', ['app' => 'core']);
+			$this->logger->warning('Renewing session token failed', ['app' => 'core']);
 			return false;
 		}
 

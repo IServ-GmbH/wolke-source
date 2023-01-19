@@ -34,9 +34,11 @@ use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Config\IMountProvider;
 use OCP\Files\Storage\IStorageFactory;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IUser;
+use OCP\Share\IAttributes;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 
@@ -59,6 +61,9 @@ class MountProvider implements IMountProvider {
 	/** @var IEventDispatcher */
 	protected $eventDispatcher;
 
+	/** @var ICacheFactory */
+	protected $cacheFactory;
+
 	/**
 	 * @param \OCP\IConfig $config
 	 * @param IManager $shareManager
@@ -68,12 +73,14 @@ class MountProvider implements IMountProvider {
 		IConfig $config,
 		IManager $shareManager,
 		ILogger $logger,
-		IEventDispatcher $eventDispatcher
+		IEventDispatcher $eventDispatcher,
+		ICacheFactory $cacheFactory
 	) {
 		$this->config = $config;
 		$this->shareManager = $shareManager;
 		$this->logger = $logger;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->cacheFactory = $cacheFactory;
 	}
 
 
@@ -134,7 +141,10 @@ class MountProvider implements IMountProvider {
 					],
 					$loader,
 					$view,
-					$foldersExistCache
+					$foldersExistCache,
+					$this->eventDispatcher,
+					$user,
+					$this->cacheFactory->createLocal('share-valid-mountpoint')
 				);
 
 				$event = new ShareMountedEvent($mount);
@@ -219,14 +229,32 @@ class MountProvider implements IMountProvider {
 				->setTarget($shares[0]->getTarget());
 
 			// use most permissive permissions
-			$permissions = 0;
+			// this covers the case where there are multiple shares for the same
+			// file e.g. from different groups and different permissions
+			$superPermissions = 0;
+			$superAttributes = $this->shareManager->newShare()->newAttributes();
 			$status = IShare::STATUS_PENDING;
 			foreach ($shares as $share) {
-				$permissions |= $share->getPermissions();
+				$superPermissions |= $share->getPermissions();
 				$status = max($status, $share->getStatus());
+				// update permissions
+				$superPermissions |= $share->getPermissions();
 
+				// update share permission attributes
+				$attributes = $share->getAttributes();
+				if ($attributes !== null) {
+					foreach ($attributes->toArray() as $attribute) {
+						if ($superAttributes->getAttribute($attribute['scope'], $attribute['key']) === true) {
+							// if super share attribute is already enabled, it is most permissive
+							continue;
+						}
+						// update supershare attributes with subshare attribute
+						$superAttributes->setAttribute($attribute['scope'], $attribute['key'], $attribute['enabled']);
+					}
+				}
+
+				// adjust target, for database consistency if needed
 				if ($share->getTarget() !== $superShare->getTarget()) {
-					// adjust target, for database consistency
 					$share->setTarget($superShare->getTarget());
 					try {
 						$this->shareManager->moveShare($share, $user->getUID());
@@ -251,8 +279,9 @@ class MountProvider implements IMountProvider {
 				}
 			}
 
-			$superShare->setPermissions($permissions)
-				->setStatus($status);
+			$superShare->setPermissions($superPermissions);
+			$superShare->setStatus($status);
+			$superShare->setAttributes($superAttributes);
 
 			$result[] = [$superShare, $shares];
 		}

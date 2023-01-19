@@ -187,7 +187,7 @@
 		 * they have initialized themselves. Therefore the files list needs to call this
 		 * method manually
 		 *
-		 * @param {OCA.Files.FileList} newFileList
+		 * @param {OCA.Files.FileList} newFileList -
 		 */
 		updateCurrentFileList: function(newFileList) {
 			this.currentFileList = newFileList;
@@ -307,8 +307,9 @@
 					dir: e.dir ? e.dir : '/'
 				};
 				this._changeUrl(params.view, params.dir);
-				OC.Apps.hideAppSidebar($('.detailsView'));
+				OCA.Files.Sidebar.close();
 				this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
+				window._nc_event_bus.emit('files:navigation:changed')
 			}
 		},
 
@@ -337,7 +338,7 @@
 		_onChangeViewerMode: function(e) {
 			var state = !!e.viewerModeEnabled;
 			if (e.viewerModeEnabled) {
-				OC.Apps.hideAppSidebar($('.detailsView'));
+				OCA.Files.Sidebar.close();
 			}
 			$('#app-navigation').toggleClass('hidden', state);
 			$('.app-files').toggleClass('viewer-mode no-sidebar', state);
@@ -360,6 +361,7 @@
 				this.navigation.getActiveContainer().trigger(new $.Event('show'));
 			}
 			this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
+			window._nc_event_bus.emit('files:navigation:changed')
 		},
 
 		/**

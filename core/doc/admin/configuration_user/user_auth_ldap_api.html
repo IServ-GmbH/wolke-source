@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -108,9 +107,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-      <li>The LDAP configuration API</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+      <li class="breadcrumb-item active">The LDAP configuration API</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/user_auth_ldap_api.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -121,10 +120,10 @@
            <div itemprop="articleBody">
              
   <section id="the-ldap-configuration-api">
-<h1>The LDAP configuration API<a class="headerlink" href="#the-ldap-configuration-api" title="Permalink to this heading"></a></h1>
+<h1>The LDAP configuration API<a class="headerlink" href="#the-ldap-configuration-api" title="Permalink to this headline"></a></h1>
 <p>All methods require that the “OCS-APIREQUEST” header be set to “true”.  Methods take an optional “format” parameter, which may be “xml” (the default) or “json”.</p>
 <section id="creating-a-configuration">
-<h2>Creating a configuration<a class="headerlink" href="#creating-a-configuration" title="Permalink to this heading"></a></h2>
+<h2>Creating a configuration<a class="headerlink" href="#creating-a-configuration" title="Permalink to this headline"></a></h2>
 <p>Creates a new and empty LDAP configuration. It returns its ID. Authentication is done by sending a
 basic HTTP authentication header.</p>
 <p><strong>Syntax: ocs/v2.php/apps/user_ldap/api/v1/config</strong></p>
@@ -132,7 +131,7 @@ basic HTTP authentication header.</p>
 <li><p>HTTP method: POST</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://admin:secret@example.com/ocs/v2.php/apps/user_ldap/api/v1/config -H &quot;OCS-APIREQUEST: true&quot;
 </pre></div>
 </div>
@@ -141,7 +140,7 @@ basic HTTP authentication header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
  <span class="nt">&lt;meta&gt;</span>
@@ -158,14 +157,14 @@ basic HTTP authentication header.</p>
 </section>
 </section>
 <section id="deleting-a-configuration">
-<h2>Deleting a configuration<a class="headerlink" href="#deleting-a-configuration" title="Permalink to this heading"></a></h2>
+<h2>Deleting a configuration<a class="headerlink" href="#deleting-a-configuration" title="Permalink to this headline"></a></h2>
 <p>Deletes a given LDAP configuration. Authentication is done by sending a basic HTTP authentication header.</p>
 <p><strong>Syntax: ocs/v2.php/apps/user_ldap/api/v1/config/{configID}</strong></p>
 <ul class="simple">
 <li><p>HTTP method: DELETE</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE ``https://admin:secret@example.com/ocs/v2.php/apps/user_ldap/api/v1/config/s02 -H &quot;OCS-APIREQUEST: true&quot;
 </pre></div>
 </div>
@@ -174,7 +173,7 @@ basic HTTP authentication header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
  <span class="nt">&lt;meta&gt;</span>
@@ -189,7 +188,7 @@ basic HTTP authentication header.</p>
 </section>
 </section>
 <section id="reading-a-configuration">
-<h2>Reading a configuration<a class="headerlink" href="#reading-a-configuration" title="Permalink to this heading"></a></h2>
+<h2>Reading a configuration<a class="headerlink" href="#reading-a-configuration" title="Permalink to this headline"></a></h2>
 <p>Returns all keys and values of the specified LDAP configuration. Authentication is done by sending a basic HTTP authentication header.</p>
 <p><strong>Syntax: ocs/v2.php/apps/user_ldap/api/v1/config/{configID}</strong></p>
 <ul class="simple">
@@ -197,7 +196,7 @@ basic HTTP authentication header.</p>
 <li><p>url argument: showPassword - int, optional, default 0, whether to return the password in clear text</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v2.php/apps/user_ldap/api/v1/config/s02?showPassword=1 -H &quot;OCS-APIREQUEST: true&quot;
 </pre></div>
 </div>
@@ -206,7 +205,7 @@ basic HTTP authentication header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
  <span class="nt">&lt;meta&gt;</span>
@@ -276,7 +275,7 @@ basic HTTP authentication header.</p>
 </section>
 </section>
 <section id="modifying-a-configuration">
-<h2>Modifying a configuration<a class="headerlink" href="#modifying-a-configuration" title="Permalink to this heading"></a></h2>
+<h2>Modifying a configuration<a class="headerlink" href="#modifying-a-configuration" title="Permalink to this headline"></a></h2>
 <p>Updates a configuration with the provided values. Authentication is done by sending a basic HTTP authentication header.</p>
 <p><strong>Syntax: ocs/v2.php/apps/user_ldap/api/v1/config/{configID}</strong></p>
 <ul class="simple">
@@ -284,7 +283,7 @@ basic HTTP authentication header.</p>
 <li><p>url argument: configData - array, see table below for the fields. All fields are optional. The values must be url-encoded.</p></li>
 </ul>
 <section id="id5">
-<h3>Example<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT https://admin:secret@example.com/ocs/v2.php/apps/user_ldap/api/v1/config/s01 -H &quot;OCS-APIREQUEST: true&quot; -d &quot;configData[ldapHost]=ldap%3A%2F%2Fldap.server.tld &amp;configData[ldapPort]=389&quot;
 </pre></div>
 </div>
@@ -293,7 +292,7 @@ basic HTTP authentication header.</p>
 </ul>
 </section>
 <section id="id6">
-<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
  <span class="nt">&lt;meta&gt;</span>
@@ -308,7 +307,7 @@ basic HTTP authentication header.</p>
 </section>
 </section>
 <section id="configuration-keys">
-<h2>Configuration keys<a class="headerlink" href="#configuration-keys" title="Permalink to this heading"></a></h2>
+<h2>Configuration keys<a class="headerlink" href="#configuration-keys" title="Permalink to this headline"></a></h2>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
@@ -637,11 +636,9 @@ basic HTTP authentication header.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -188,7 +188,7 @@ class UserPlugin implements ISearchPlugin {
 				$lowerSearch !== '' && (strtolower($uid) === $lowerSearch ||
 				strtolower($userDisplayName) === $lowerSearch ||
 				($this->shareeEnumerationFullMatchIgnoreSecondDisplayName && trim(strtolower(preg_replace('/ \(.*\)$/', '', $userDisplayName))) === $lowerSearch) ||
-				($this->shareeEnumerationFullMatchEmail && strtolower($userEmail) === $lowerSearch))
+				($this->shareeEnumerationFullMatchEmail && strtolower($userEmail ?? '') === $lowerSearch))
 			) {
 				if (strtolower($uid) === $lowerSearch) {
 					$foundUserById = true;

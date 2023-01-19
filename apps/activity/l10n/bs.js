@@ -8,6 +8,7 @@ OC.L10N.register(
     "Mail" : "E-Pošta",
     "Activity" : "Aktivnost",
     "Notifications" : "Notifikacija",
+    "Send email" : "Pošalji e-poštu",
     "Hourly" : "Svakog sata",
     "Daily" : "Dnevno",
     "Weekly" : "Sedmično",

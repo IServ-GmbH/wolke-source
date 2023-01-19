@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -53,7 +52,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#desktop-client">Desktop client</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mobile-apps">Mobile apps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mobile-apps">Mobile apps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#files-app">Files App</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#talk-app">Talk App</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#web-browser">Web browser</a></li>
 </ul>
 </li>
@@ -66,7 +69,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server_tuning.html">Server tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -98,9 +101,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>System requirements</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">System requirements</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/system_requirements.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,9 +114,9 @@
            <div itemprop="articleBody">
              
   <section id="system-requirements">
-<h1>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this heading"></a></h1>
+<h1>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline"></a></h1>
 <section id="server">
-<h2>Server<a class="headerlink" href="#server" title="Permalink to this heading"></a></h2>
+<h2>Server<a class="headerlink" href="#server" title="Permalink to this headline"></a></h2>
 <p>For best performance, stability and functionality we have documented some recommendations for running a Nextcloud server.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -139,15 +142,15 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <li><p>Debian 10 (Buster)</p></li>
 <li><p>SUSE Linux Enterprise Server 15</p></li>
 <li><p>openSUSE Leap 42.1+</p></li>
-<li><p>CentOS 8</p></li>
+<li><p>CentOS Stream</p></li>
 </ul>
 </td>
 </tr>
 <tr class="row-odd"><td><p>Database</p></td>
 <td><ul class="simple">
-<li><p><strong>MySQL 8.0+ or MariaDB 10.2/10.3/10.4/10.5</strong> (recommended)</p></li>
+<li><p><strong>MySQL 8.0+ or MariaDB 10.2/10.3/10.4/10.5/10.6</strong> (recommended)</p></li>
 <li><p>Oracle Database 11g (<em>only as part of an enterprise subscription</em>)</p></li>
-<li><p>PostgreSQL 9.6/10/11/12/13</p></li>
+<li><p>PostgreSQL 10/11/12/13/14</p></li>
 <li><p>SQLite (<em>only recommended for testing and minimal-instances</em>)</p></li>
 </ul>
 </td>
@@ -161,9 +164,9 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </tr>
 <tr class="row-odd"><td><p>PHP Runtime</p></td>
 <td><ul class="simple">
-<li><p>7.3</p></li>
 <li><p>7.4</p></li>
 <li><p><strong>8.0</strong> (<em>recommended</em>)</p></li>
+<li><p>8.1</p></li>
 </ul>
 </td>
 </tr>
@@ -171,17 +174,17 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </table>
 <p>See <a class="reference internal" href="source_installation.html"><span class="doc">Installation on Linux</span></a> for minimum PHP-modules and additional software for installing Nextcloud.</p>
 <section id="cpu-architecture-and-os">
-<h3>CPU Architecture and OS<a class="headerlink" href="#cpu-architecture-and-os" title="Permalink to this heading"></a></h3>
+<h3>CPU Architecture and OS<a class="headerlink" href="#cpu-architecture-and-os" title="Permalink to this headline"></a></h3>
 <p>A 64bit CPU and 64bit OS is required for Nextcloud to run well.</p>
 </section>
 <section id="memory">
-<h3>Memory<a class="headerlink" href="#memory" title="Permalink to this heading"></a></h3>
+<h3>Memory<a class="headerlink" href="#memory" title="Permalink to this headline"></a></h3>
 <p>Memory requirements for running a Nextcloud server are greatly variable,
 depending on the numbers of users, apps, files and volume of server activity.</p>
 <p>Nextcloud needs a minimum of <strong>128MB</strong> RAM per process, and we recommend a minimum of <strong>512MB</strong> RAM per process.</p>
 </section>
 <section id="database-requirements-for-mysql-mariadb">
-<h3>Database requirements for MySQL / MariaDB<a class="headerlink" href="#database-requirements-for-mysql-mariadb" title="Permalink to this heading"></a></h3>
+<h3>Database requirements for MySQL / MariaDB<a class="headerlink" href="#database-requirements-for-mysql-mariadb" title="Permalink to this headline"></a></h3>
 <p>The following is currently required if you’re running Nextcloud together with a MySQL / MariaDB database:</p>
 <ul class="simple">
 <li><p>InnoDB storage engine (MyISAM is not supported)</p></li>
@@ -192,7 +195,7 @@ depending on the numbers of users, apps, files and volume of server activity.</p
 </section>
 </section>
 <section id="desktop-client">
-<h2>Desktop client<a class="headerlink" href="#desktop-client" title="Permalink to this heading"></a></h2>
+<h2>Desktop client<a class="headerlink" href="#desktop-client" title="Permalink to this headline"></a></h2>
 <p>We strongly recommend using the latest version of your operating system to get the full and most stable experience out
 of our clients.</p>
 <ul class="simple">
@@ -203,20 +206,32 @@ Enterprise Linux 7)</p></li>
 </ul>
 </section>
 <section id="mobile-apps">
-<h2>Mobile apps<a class="headerlink" href="#mobile-apps" title="Permalink to this heading"></a></h2>
+<h2>Mobile apps<a class="headerlink" href="#mobile-apps" title="Permalink to this headline"></a></h2>
 <p>We strongly recommend using the latest version of your mobile operating system to get the full and most stable experience out
 of our mobile apps.</p>
+<section id="files-app">
+<h3>Files App<a class="headerlink" href="#files-app" title="Permalink to this headline"></a></h3>
 <ul class="simple">
-<li><p><strong>iOS</strong> 11.x+</p></li>
+<li><p><strong>iOS</strong> 12.1+</p></li>
 <li><p><strong>Android</strong> 4.x+</p></li>
+</ul>
+</section>
+<section id="talk-app">
+<h3>Talk App<a class="headerlink" href="#talk-app" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p><strong>iOS</strong> 12.0+</p></li>
+<li><p><strong>Android</strong> 5.0+</p></li>
+<li><p><strong>Nextcloud Server</strong> 14.0+</p></li>
+<li><p><strong>Nextcloud Talk</strong> 4.0+</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The separate Nextcloud Talk app requires iOS 10.x+ or Android 5.x+.</p>
+<p>When using Nextcloud Talk 12.0+ please update the Android Talk App to the newest version (or at least to v12.1).</p>
 </div>
 </section>
+</section>
 <section id="web-browser">
-<h2>Web browser<a class="headerlink" href="#web-browser" title="Permalink to this heading"></a></h2>
+<h2>Web browser<a class="headerlink" href="#web-browser" title="Permalink to this headline"></a></h2>
 <p>For the best experience with the Nextcloud web interface, we recommend that you use the latest and supported version
 of a browser from this list, or one based on those:</p>
 <ul class="simple">
@@ -267,11 +282,9 @@ screensharing.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

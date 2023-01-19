@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -89,10 +88,10 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Office</a> &raquo;</li>
-          <li><a href="installation.html">Installation</a> &raquo;</li>
-      <li>Installation example on Ubuntu 20.04</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Office</a></li>
+          <li class="breadcrumb-item"><a href="installation.html">Installation</a></li>
+      <li class="breadcrumb-item active">Installation example on Ubuntu 20.04</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/office/example-ubuntu.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -103,27 +102,27 @@
            <div itemprop="articleBody">
              
   <section id="installation-example-on-ubuntu-20-04">
-<h1>Installation example on Ubuntu 20.04<a class="headerlink" href="#installation-example-on-ubuntu-20-04" title="Permalink to this heading"></a></h1>
+<h1>Installation example on Ubuntu 20.04<a class="headerlink" href="#installation-example-on-ubuntu-20-04" title="Permalink to this headline"></a></h1>
 <section id="import-signing-keys">
-<h2>Import signing keys:<a class="headerlink" href="#import-signing-keys" title="Permalink to this heading"></a></h2>
+<h2>Import signing keys:<a class="headerlink" href="#import-signing-keys" title="Permalink to this headline"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> /usr/share/keyrings <span class="o">&amp;&amp;</span> sudo wget https://collaboraoffice.com/downloads/gpg/collaboraonline-release-keyring.gpg
 </pre></div>
 </div>
 </section>
 <section id="add-repository">
-<h2>Add repository:<a class="headerlink" href="#add-repository" title="Permalink to this heading"></a></h2>
+<h2>Add repository:<a class="headerlink" href="#add-repository" title="Permalink to this headline"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo <span class="nb">echo</span> <span class="s2">&quot;deb https://www.collaboraoffice.com/repos/CollaboraOnline/CODE-ubuntu2004 ./&quot;</span> &gt; /etc/apt/sources.list.d/collaboraonline.sources
 </pre></div>
 </div>
 </section>
 <section id="install-packages">
-<h2>Install packages<a class="headerlink" href="#install-packages" title="Permalink to this heading"></a></h2>
+<h2>Install packages<a class="headerlink" href="#install-packages" title="Permalink to this headline"></a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt update <span class="o">&amp;&amp;</span> sudo apt install coolwsd code-brand
 </pre></div>
 </div>
 </section>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
 <p>Edit /etc/coolwsd/coolwsd.xml. Collabora Online (coolwsd) service runs via systemd. After editing the configuration file, you have to restart the service:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo systemctl restart coolwsd
 </pre></div>
@@ -178,11 +177,9 @@ systemctl status coolwsd
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

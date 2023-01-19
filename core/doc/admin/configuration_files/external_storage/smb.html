@@ -15,7 +15,6 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -109,10 +108,10 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">File sharing and management</a> &raquo;</li>
-          <li><a href="../external_storage_configuration_gui.html">Configuring External Storage (GUI)</a> &raquo;</li>
-      <li>SMB/CIFS</li>
+      <li><a href="../../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">File sharing and management</a></li>
+          <li class="breadcrumb-item"><a href="../external_storage_configuration_gui.html">Configuring External Storage (GUI)</a></li>
+      <li class="breadcrumb-item active">SMB/CIFS</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/external_storage/smb.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -123,7 +122,7 @@
            <div itemprop="articleBody">
              
   <section id="smb-cifs">
-<h1>SMB/CIFS<a class="headerlink" href="#smb-cifs" title="Permalink to this heading"></a></h1>
+<h1>SMB/CIFS<a class="headerlink" href="#smb-cifs" title="Permalink to this headline"></a></h1>
 <p>Nextcloud can connect to Windows file servers or other SMB-compatible servers
 with the SMB/CIFS backend.</p>
 <div class="admonition note">
@@ -167,7 +166,7 @@ SMB servers.</p>
 options and information.</p>
 <p>See <a class="reference internal" href="auth_mechanisms.html"><span class="doc">External Storage authentication mechanisms</span></a> for more information on authentication schemes.</p>
 <section id="smb-update-notifications">
-<h2>SMB update notifications<a class="headerlink" href="#smb-update-notifications" title="Permalink to this heading"></a></h2>
+<h2>SMB update notifications<a class="headerlink" href="#smb-update-notifications" title="Permalink to this headline"></a></h2>
 <p>Nextcloud can use smb update notifications to
 listen for changes made to a configured SMB/CIFS storage and detect external
 changes made to the storage in near real-time.</p>
@@ -190,21 +189,21 @@ is required even when using the PHP module.</p>
 <p>On default this command shows no output, can you see the list of detected changes by
 passing the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option to the command.</p>
 <section id="smb-authentication">
-<h3>SMB authentication<a class="headerlink" href="#smb-authentication" title="Permalink to this heading"></a></h3>
+<h3>SMB authentication<a class="headerlink" href="#smb-authentication" title="Permalink to this headline"></a></h3>
 <p>Update notifications are not supported when using ‘Login credentials, save in session’ authentication.
-Using login credentials is only supported with ‘Login credentials, save in database’.</p>
+Using update notifications is only supported with ‘Login credentials, save in database’.</p>
 <p>Even when using ‘Login credentials, save in database’ or ‘User entered, stored in database’ authentication the notify process
 can not use the credentials saved to attach to the smb shares because the notify process does not run in the context of a specific user
 in those cases you can provide the username and password using the <code class="docutils literal notranslate"><span class="pre">--username</span></code> and <code class="docutils literal notranslate"><span class="pre">--password</span></code> arguments.</p>
 </section>
 <section id="decrease-sync-delay">
-<h3>Decrease sync delay<a class="headerlink" href="#decrease-sync-delay" title="Permalink to this heading"></a></h3>
+<h3>Decrease sync delay<a class="headerlink" href="#decrease-sync-delay" title="Permalink to this headline"></a></h3>
 <p>Any updates detected by the notify command will only be synced to the client after the Nextcloud cron job has been executed
 (usually every 15 minutes). If this interval is too high for your use case, you can decrease it by running <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">files:scan</span> <span class="pre">--unscanned</span> <span class="pre">--all</span></code>
 at the desired interval. Note that this might increase the server load and you’ll need to ensure that there is no overlap between runs.</p>
 </section>
 <section id="hidden-files-upload-failure-or-not-shown">
-<h3>Hidden files upload failure or not shown<a class="headerlink" href="#hidden-files-upload-failure-or-not-shown" title="Permalink to this heading"></a></h3>
+<h3>Hidden files upload failure or not shown<a class="headerlink" href="#hidden-files-upload-failure-or-not-shown" title="Permalink to this headline"></a></h3>
 <p>If you have the configuration <code class="docutils literal notranslate"><span class="pre">hide</span> <span class="pre">dot</span> <span class="pre">files</span> <span class="pre">=</span> <span class="pre">Yes</span></code>, you will not be able to upload a hidden file (dot file) nor will you be able to show hidden files on your filelist (even if the ‘show hidden file’ option is checked on the nextcloud settings.
 Make sure you have the following option in your configuration: <code class="docutils literal notranslate"><span class="pre">hide</span> <span class="pre">dot</span> <span class="pre">files</span> <span class="pre">=</span> <span class="pre">No</span></code></p>
 </section>
@@ -244,11 +243,9 @@ Make sure you have the following option in your configuration: <code class="docu
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

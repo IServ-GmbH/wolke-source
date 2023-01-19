@@ -9,13 +9,14 @@
     "Mail" : "Məktub",
     "Activity" : "Fəallıq",
     "Notifications" : "Xəbərdarlıqlar",
-    "Activity feed" : "Fəaliyyətin ötürülməsi",
+    "Send email" : "Email yolla",
     "You need to set up your email address before you can receive notification emails." : "Xəbərdarlıq məktubları almazdan öncə, siz mail ünvanınızı təyin etməlisiniz.",
     "Hourly" : "Saatlıq",
     "Daily" : "Günlük",
     "Weekly" : "Həftəlik",
-    "Settings" : "Quraşdırmalar",
+    "Activity feed" : "Fəaliyyətin ötürülməsi",
     "Enable RSS feed" : "RSS ötürməsinin işə salinmaslı",
-    "No more events to load" : "Yüklənə biləcək digər səbəb yoxdur"
+    "No more events to load" : "Yüklənə biləcək digər səbəb yoxdur",
+    "Settings" : "Quraşdırmalar"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

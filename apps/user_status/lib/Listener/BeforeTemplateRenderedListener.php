@@ -97,7 +97,7 @@ class BeforeTemplateRenderedListener implements IEventListener {
 			return ['profileEnabled' => $this->profileManager->isProfileEnabled($user)];
 		});
 
-		\OCP\Util::addScript('user_status', 'user-status-menu');
+		\OCP\Util::addScript('user_status', 'menu');
 		\OCP\Util::addStyle('user_status', 'user-status-menu');
 	}
 }

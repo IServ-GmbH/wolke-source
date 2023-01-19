@@ -120,25 +120,11 @@ class Wizard extends LDAPUtility {
 		return (int)$result;
 	}
 
-	/**
-	 * formats the return value of a count operation to the string to be
-	 * inserted.
-	 *
-	 * @param int $count
-	 * @return string
-	 */
-	private function formatCountResult(int $count): string {
-		if ($count > 1000) {
-			return '> 1000';
-		}
-		return (string)$count;
-	}
-
 	public function countGroups() {
 		$filter = $this->configuration->ldapGroupFilter;
 
 		if (empty($filter)) {
-			$output = self::$l->n('%s group found', '%s groups found', 0, [0]);
+			$output = self::$l->n('%n group found', '%n groups found', 0);
 			$this->result->addChange('ldap_group_count', $output);
 			return $this->result;
 		}
@@ -152,12 +138,16 @@ class Wizard extends LDAPUtility {
 			}
 			return false;
 		}
-		$output = self::$l->n(
-			'%s group found',
-			'%s groups found',
-			$groupsTotal,
-			[$this->formatCountResult($groupsTotal)]
-		);
+
+		if ($groupsTotal > 1000) {
+			$output = self::$l->t('> 1000 groups found');
+		} else {
+			$output = self::$l->n(
+				'%n group found',
+				'%n groups found',
+				$groupsTotal
+			);
+		}
 		$this->result->addChange('ldap_group_count', $output);
 		return $this->result;
 	}
@@ -170,12 +160,15 @@ class Wizard extends LDAPUtility {
 		$filter = $this->access->getFilterForUserCount();
 
 		$usersTotal = $this->countEntries($filter, 'users');
-		$output = self::$l->n(
-			'%s user found',
-			'%s users found',
-			$usersTotal,
-			[$this->formatCountResult($usersTotal)]
-		);
+		if ($usersTotal > 1000) {
+			$output = self::$l->t('> 1000 users found');
+		} else {
+			$output = self::$l->n(
+				'%n user found',
+				'%n users found',
+				$usersTotal
+			);
+		}
 		$this->result->addChange('ldap_user_count', $output);
 		return $this->result;
 	}
@@ -382,8 +375,8 @@ class Wizard extends LDAPUtility {
 	 */
 	public function determineGroupsForGroups() {
 		return $this->determineGroups('ldap_groupfilter_groups',
-									  'ldapGroupFilterGroups',
-									  false);
+			'ldapGroupFilterGroups',
+			false);
 	}
 
 	/**
@@ -392,7 +385,7 @@ class Wizard extends LDAPUtility {
 	 */
 	public function determineGroupsForUsers() {
 		return $this->determineGroups('ldap_userfilter_groups',
-									  'ldapUserFilterGroups');
+			'ldapUserFilterGroups');
 	}
 
 	/**
@@ -519,10 +512,10 @@ class Wizard extends LDAPUtility {
 
 		$obclasses = ['groupOfNames', 'groupOfUniqueNames', 'group', 'posixGroup', '*'];
 		$this->determineFeature($obclasses,
-								'objectclass',
-								'ldap_groupfilter_objectclass',
-								'ldapGroupFilterObjectclass',
-								false);
+			'objectclass',
+			'ldap_groupfilter_objectclass',
+			'ldapGroupFilterObjectclass',
+			false);
 
 		return $this->result;
 	}
@@ -550,10 +543,10 @@ class Wizard extends LDAPUtility {
 		//if filter is empty, it is probably the first time the wizard is called
 		//then, apply suggestions.
 		$this->determineFeature($obclasses,
-								'objectclass',
-								'ldap_userfilter_objectclass',
-								'ldapUserFilterObjectclass',
-								empty($filter));
+			'objectclass',
+			'ldap_userfilter_objectclass',
+			'ldapUserFilterObjectclass',
+			empty($filter));
 
 		return $this->result;
 	}
@@ -574,7 +567,7 @@ class Wizard extends LDAPUtility {
 		if ($displayName === '') {
 			$d = $this->configuration->getDefaults();
 			$this->applyFind('ldap_group_display_name',
-							 $d['ldap_group_display_name']);
+				$d['ldap_group_display_name']);
 		}
 		$filter = $this->composeLdapFilter(self::LFILTER_GROUP_LIST);
 
@@ -820,7 +813,7 @@ class Wizard extends LDAPUtility {
 			return false;
 		}
 		$er = $this->ldap->firstEntry($cr, $rr);
-		while (is_resource($er)) {
+		while ($this->ldap->isResource($er)) {
 			$this->ldap->getDN($cr, $er);
 			$attrs = $this->ldap->getAttributes($cr, $er);
 			$result = [];
@@ -1066,7 +1059,7 @@ class Wizard extends LDAPUtility {
 			['app' => 'user_ldap']
 		);
 		$cr = $this->ldap->connect($host, $port);
-		if (!is_resource($cr)) {
+		if (!$this->ldap->isResource($cr)) {
 			throw new \Exception(self::$l->t('Invalid Host'));
 		}
 
@@ -1100,7 +1093,6 @@ class Wizard extends LDAPUtility {
 		}
 
 		if ($login === true) {
-			$this->ldap->unbind($cr);
 			$this->logger->debug(
 				'Wiz: Bind successful to Port '. $port . ' TLS ' . (int)$tls,
 				['app' => 'user_ldap']
@@ -1205,8 +1197,8 @@ class Wizard extends LDAPUtility {
 					}
 					$newItems = [];
 					$state = $this->getAttributeValuesFromEntry($attributes,
-																$attr,
-																$newItems);
+						$attr,
+						$newItems);
 					$dnReadCount++;
 					$foundItems = array_merge($foundItems, $newItems);
 					$this->resultCache[$dn][$attr] = $newItems;
@@ -1249,7 +1241,7 @@ class Wizard extends LDAPUtility {
 
 		$availableFeatures =
 			$this->cumulativeSearchOnAttribute($objectclasses, $attr,
-											   $dig, $maxEntryObjC);
+				$dig, $maxEntryObjC);
 		if (is_array($availableFeatures)
 		   && count($availableFeatures) > 0) {
 			natcasesort($availableFeatures);
@@ -1276,7 +1268,7 @@ class Wizard extends LDAPUtility {
 
 	/**
 	 * appends a list of values fr
-	 * @param resource $result the return value from ldap_get_attributes
+	 * @param array $result the return value from ldap_get_attributes
 	 * @param string $attribute the attribute values to look for
 	 * @param array &$known new values will be appended here
 	 * @return int, state on of the class constants LRESULT_PROCESSED_OK,
@@ -1328,8 +1320,8 @@ class Wizard extends LDAPUtility {
 		}
 
 		$lo = @$this->ldap->bind($cr,
-								 $this->configuration->ldapAgentName,
-								 $this->configuration->ldapAgentPassword);
+			$this->configuration->ldapAgentName,
+			$this->configuration->ldapAgentPassword);
 		if ($lo === true) {
 			$this->cr = $cr;
 			return $cr;
@@ -1377,7 +1369,7 @@ class Wizard extends LDAPUtility {
 
 		//default ports
 		$portSettings = array_merge($portSettings,
-									$this->getDefaultLdapPortSettings());
+			$this->getDefaultLdapPortSettings());
 
 		return $portSettings;
 	}

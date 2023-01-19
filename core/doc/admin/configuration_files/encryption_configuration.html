@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -103,9 +102,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>Encryption configuration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">Encryption configuration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/encryption_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -116,7 +115,7 @@
            <div itemprop="articleBody">
              
   <section id="encryption-configuration">
-<h1>Encryption configuration<a class="headerlink" href="#encryption-configuration" title="Permalink to this heading"></a></h1>
+<h1>Encryption configuration<a class="headerlink" href="#encryption-configuration" title="Permalink to this headline"></a></h1>
 <p>The primary purpose of the Nextcloud server-side encryption is to protect users’
 files on remote storage, such as Dropbox and Google Drive, and to do it easily
 and seamlessly from within Nextcloud.</p>
@@ -185,7 +184,7 @@ also potentially exploitable by anyone with administrator access to your
 server. Read <a class="reference external" href="https://nextcloud.com/blog/encryption-in-nextcloud/">How Nextcloud uses encryption to protect your data</a> for more information.</p>
 </div>
 <section id="before-enabling-encryption">
-<h2>Before enabling encryption<a class="headerlink" href="#before-enabling-encryption" title="Permalink to this heading"></a></h2>
+<h2>Before enabling encryption<a class="headerlink" href="#before-enabling-encryption" title="Permalink to this headline"></a></h2>
 <p>Plan very carefully before enabling encryption because it is not reversible via
 the Nextcloud Web interface. If you lose your encryption keys your files are not
 recoverable. Always have backups of your encryption keys stored in a safe
@@ -193,7 +192,7 @@ location, and consider enabling all recovery options.</p>
 <p>You have more options via the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command (see <a class="reference internal" href="#occ-encryption-label"><span class="std std-ref">occ encryption commands</span></a>)</p>
 </section>
 <section id="enabling-encryption">
-<span id="enable-encryption-label"></span><h2>Enabling encryption<a class="headerlink" href="#enabling-encryption" title="Permalink to this heading"></a></h2>
+<span id="enable-encryption-label"></span><h2>Enabling encryption<a class="headerlink" href="#enabling-encryption" title="Permalink to this headline"></a></h2>
 <p>Nextcloud encryption consists of two parts. The base encryption system is
 enabled and disabled on your Admin page. First you must enable this, and then
 select an encryption module to load. Currently the only available encryption
@@ -223,7 +222,7 @@ storage.</p>
 </figure>
 </section>
 <section id="sharing-encrypted-files">
-<h2>Sharing encrypted files<a class="headerlink" href="#sharing-encrypted-files" title="Permalink to this heading"></a></h2>
+<h2>Sharing encrypted files<a class="headerlink" href="#sharing-encrypted-files" title="Permalink to this headline"></a></h2>
 <p>After encryption is enabled your users must also log out and log back in to
 generate their personal encryption keys. They will see a yellow warning banner
 that says “Encryption App is enabled but your keys are not initialized, please
@@ -239,7 +238,7 @@ individual shares.</p>
 </figure>
 </section>
 <section id="encrypting-external-mountpoints">
-<h2>Encrypting external mountpoints<a class="headerlink" href="#encrypting-external-mountpoints" title="Permalink to this heading"></a></h2>
+<h2>Encrypting external mountpoints<a class="headerlink" href="#encrypting-external-mountpoints" title="Permalink to this headline"></a></h2>
 <p>You and your users can encrypt individual external mountpoints. You must have
 external storage enabled on your Admin page, and enabled for your users.</p>
 <p>Encryption settings can be configured in the mount options for an external
@@ -247,7 +246,7 @@ storage mount, see <a class="reference internal" href="external_storage_configur
 (<a class="reference internal" href="external_storage_configuration_gui.html"><span class="doc">Configuring External Storage (GUI)</span></a>)</p>
 </section>
 <section id="enabling-users-file-recovery-keys">
-<span id="enable-file-recovery-key"></span><h2>Enabling users file recovery keys<a class="headerlink" href="#enabling-users-file-recovery-keys" title="Permalink to this heading"></a></h2>
+<span id="enable-file-recovery-key"></span><h2>Enabling users file recovery keys<a class="headerlink" href="#enabling-users-file-recovery-keys" title="Permalink to this headline"></a></h2>
 <p>If you lose your Nextcloud password, then you lose access to your encrypted
 files. If one of your users loses their Nextcloud password their files are
 unrecoverable. You cannot reset their password in the normal way; you’ll see a
@@ -275,7 +274,7 @@ Users page.</p>
 </figure>
 </section>
 <section id="occ-encryption-commands">
-<span id="occ-encryption-label"></span><h2>occ encryption commands<a class="headerlink" href="#occ-encryption-commands" title="Permalink to this heading"></a></h2>
+<span id="occ-encryption-label"></span><h2>occ encryption commands<a class="headerlink" href="#occ-encryption-commands" title="Permalink to this headline"></a></h2>
 <p>If you have shell access you may use the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command to perform encryption
 operations, and you have additional options such as decryption and creating a
 single master encryption key. See <a class="reference internal" href="../configuration_server/occ_command.html#encryption-label"><span class="std std-ref">Encryption</span></a>  for detailed
@@ -354,10 +353,10 @@ disable it:</p>
 </div>
 </section>
 <section id="disabling-encryption">
-<h2>Disabling encryption<a class="headerlink" href="#disabling-encryption" title="Permalink to this heading"></a></h2>
+<h2>Disabling encryption<a class="headerlink" href="#disabling-encryption" title="Permalink to this headline"></a></h2>
 <p>You may disable encryption only with <code class="docutils literal notranslate"><span class="pre">occ</span></code>. Make sure you have backups of all
 encryption keys, including users’. Put your Nextcloud server into
-maintenance mode, and then disable your encryption module with this command:</p>
+maintenance mode, and then disable your encryption module with these commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">mode</span> <span class="o">--</span><span class="n">on</span>
 <span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">disable</span>
 <span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">decrypt</span><span class="o">-</span><span class="nb">all</span>
@@ -377,7 +376,7 @@ maintenance mode, and then disable your encryption module with this command:</p>
 </div>
 </section>
 <section id="files-not-encrypted">
-<h2>Files not encrypted<a class="headerlink" href="#files-not-encrypted" title="Permalink to this heading"></a></h2>
+<h2>Files not encrypted<a class="headerlink" href="#files-not-encrypted" title="Permalink to this headline"></a></h2>
 <p>Only the data in the files in <code class="docutils literal notranslate"><span class="pre">data/user/files</span></code> are encrypted, and not the
 filenames or folder structures. These files are never encrypted:</p>
 <ul class="simple">
@@ -393,7 +392,7 @@ encryption is enabled are encrypted.</p></li>
 third-party storage providers are guaranteed to be encrypted.</p>
 </section>
 <section id="ldap-and-other-external-user-back-ends">
-<h2>LDAP and other external user back-ends<a class="headerlink" href="#ldap-and-other-external-user-back-ends" title="Permalink to this heading"></a></h2>
+<h2>LDAP and other external user back-ends<a class="headerlink" href="#ldap-and-other-external-user-back-ends" title="Permalink to this headline"></a></h2>
 <p>If you use an external user back-end, such as an LDAP or Samba server, and you
 change a user’s password on the back-end, the user will be prompted to change
 their Nextcloud login to match on their next Nextcloud login. The user will need
@@ -403,9 +402,9 @@ their back-end password, and then, of course, notify the user and give them
 their new password.</p>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
 <section id="invalid-private-key-for-encryption-app">
-<h3>Invalid private key for encryption app<a class="headerlink" href="#invalid-private-key-for-encryption-app" title="Permalink to this heading"></a></h3>
+<h3>Invalid private key for encryption app<a class="headerlink" href="#invalid-private-key-for-encryption-app" title="Permalink to this headline"></a></h3>
 <p>This <a class="reference external" href="https://github.com/nextcloud/server/issues/8546">issue</a> is being worked
 on. In the meantime there is a
 <a class="reference external" href="https://github.com/nextcloud/server/issues/8546#issuecomment-514139714">workaround</a>
@@ -448,11 +447,9 @@ command line.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

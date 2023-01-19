@@ -56,6 +56,7 @@ return array(
     'OCA\\Circles\\Cron\\ContactsExistingShares' => $baseDir . '/lib/Cron/ContactsExistingShares.php',
     'OCA\\Circles\\Cron\\GlobalSync' => $baseDir . '/lib/Cron/GlobalSync.php',
     'OCA\\Circles\\Cron\\Maintenance' => $baseDir . '/lib/Cron/Maintenance.php',
+    'OCA\\Circles\\Cron\\MaintenanceHeavy' => $baseDir . '/lib/Cron/MaintenanceHeavy.php',
     'OCA\\Circles\\Db\\AccountsRequest' => $baseDir . '/lib/Db/AccountsRequest.php',
     'OCA\\Circles\\Db\\AccountsRequestBuilder' => $baseDir . '/lib/Db/AccountsRequestBuilder.php',
     'OCA\\Circles\\Db\\CircleProviderRequest' => $baseDir . '/lib/Db/CircleProviderRequest.php',

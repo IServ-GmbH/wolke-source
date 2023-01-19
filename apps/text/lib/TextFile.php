@@ -82,6 +82,10 @@ class TextFile implements ISimpleFile {
 		return 'text/plain;encoding=utf-8';
 	}
 
+	public function getExtension(): string {
+		return $this->file->getExtension();
+	}
+
 	public function read() {
 		return $this->file->read();
 	}

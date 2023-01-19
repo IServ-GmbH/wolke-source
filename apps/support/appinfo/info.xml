@@ -4,7 +4,7 @@
 	<name>Support</name>
 	<summary>Getting support and help for your Nextcloud</summary>
 	<description>The support app covers you with direct access to help and consulting resources, dedicated contact options to your account manager and an overview of your enterprise subscription.</description>
-	<version>1.6.0</version>
+	<version>1.7.0</version>
 	<licence>agpl</licence>
 	<author>Morris Jobke</author>
 	<namespace>Support</namespace>
@@ -15,7 +15,7 @@
 		<session />
 	</types>
 	<dependencies>
-		<nextcloud min-version="23" max-version="23" />
+		<nextcloud min-version="24" max-version="24" />
 	</dependencies>
 	<settings>
 		<admin>OCA\Support\Settings\Admin</admin>

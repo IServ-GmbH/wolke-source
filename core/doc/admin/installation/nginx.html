@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -66,7 +65,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server_tuning.html">Server tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -98,9 +97,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>NGINX configuration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">NGINX configuration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/nginx.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,7 +110,7 @@
            <div itemprop="articleBody">
              
   <section id="nginx-configuration">
-<h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this heading"></a></h1>
+<h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Please note that webservers other than Apache 2.x are not officially supported.</p>
@@ -134,7 +133,7 @@ broken for page formatting.</p></li>
 <code class="docutils literal notranslate"><span class="pre">php.ini</span></code>.</p></li>
 </ul>
 <section id="nextcloud-in-the-webroot-of-nginx">
-<h2>Nextcloud in the webroot of NGINX<a class="headerlink" href="#nextcloud-in-the-webroot-of-nginx" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud in the webroot of NGINX<a class="headerlink" href="#nextcloud-in-the-webroot-of-nginx" title="Permalink to this headline"></a></h2>
 <p>The following configuration should be used when Nextcloud is placed in the
 webroot of your nginx installation. In this example it is
 <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud</span></code> and it is accessed via <code class="docutils literal notranslate"><span class="pre">http(s)://cloud.example.com/</span></code></p>
@@ -143,10 +142,20 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1">#server unix:/var/run/php/php7.4-fpm.sock;</span>
 <span class="p">}</span><span class="w"></span>
 
+<span class="c1"># Set the `immutable` cache control options only for assets with a cache busting `v` argument</span>
+<span class="k">map</span><span class="w"> </span><span class="nv">$arg_v</span><span class="w"> </span><span class="nv">$asset_immutable</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kn">&quot;&quot;</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;immutable&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+
 <span class="k">server</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:80</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Prevent nginx HTTP Server Detection</span>
+<span class="w">    </span><span class="kn">server_tokens</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1"># Enforce HTTPS</span>
 <span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$server_name$request_uri</span><span class="p">;</span><span class="w"></span>
@@ -157,10 +166,16 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span><span class="w"></span>
 
+<span class="w">    </span><span class="c1"># Path to the root of your installation</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/nextcloud</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">    </span><span class="c1"># Use Mozilla&#39;s guidelines for SSL/TLS settings</span>
 <span class="w">    </span><span class="c1"># https://mozilla.github.io/server-side-tls/ssl-config-generator/</span>
 <span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/ssl/nginx/cloud.example.com.crt</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/ssl/nginx/cloud.example.com.key</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Prevent nginx HTTP Server Detection</span>
+<span class="w">    </span><span class="kn">server_tokens</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1"># HSTS settings</span>
 <span class="w">    </span><span class="c1"># WARNING: Only add the preload option once you read about</span>
@@ -168,7 +183,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># will add the domain to a hardcoded list that is shipped</span>
 <span class="w">    </span><span class="c1"># in all major browsers and getting removed from this list</span>
 <span class="w">    </span><span class="c1"># could take several months.</span>
-<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload;&quot; always;</span>
+<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload&quot; always;</span>
 
 <span class="w">    </span><span class="c1"># set max upload size and increase upload timeout:</span>
 <span class="w">    </span><span class="kn">client_max_body_size</span><span class="w"> </span><span class="s">512M</span><span class="p">;</span><span class="w"></span>
@@ -198,9 +213,6 @@ webroot of your nginx installation. In this example it is
 
 <span class="w">    </span><span class="c1"># Remove X-Powered-By, which is an information leak</span>
 <span class="w">    </span><span class="kn">fastcgi_hide_header</span><span class="w"> </span><span class="s">X-Powered-By</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">    </span><span class="c1"># Path to the root of your installation</span>
-<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www/nextcloud</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1"># Specify how to handle directories -- specifying `/index.php$request_uri`</span>
 <span class="w">    </span><span class="c1"># here as the fallback means that Nginx always exhibits the desired behaviour</span>
@@ -280,7 +292,7 @@ webroot of your nginx installation. In this example it is
 
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="kn">expires</span><span class="w"> </span><span class="s">6M</span><span class="p">;</span><span class="w">         </span><span class="c1"># Cache-Control policy borrowed from `.htaccess`</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span><span class="w"></span>
 <span class="w">        </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
 
 <span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.wasm$</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -307,7 +319,7 @@ webroot of your nginx installation. In this example it is
 </div>
 </section>
 <section id="nextcloud-in-a-subdir-of-the-nginx-webroot">
-<h2>Nextcloud in a subdir of the NGINX webroot<a class="headerlink" href="#nextcloud-in-a-subdir-of-the-nginx-webroot" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud in a subdir of the NGINX webroot<a class="headerlink" href="#nextcloud-in-a-subdir-of-the-nginx-webroot" title="Permalink to this headline"></a></h2>
 <p>The following config should be used when Nextcloud is placed within a subdir of
 the webroot of your nginx installation.
 In this example the Nextcloud files are located at
@@ -325,10 +337,19 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="c1">#server unix:/var/run/php/php7.4-fpm.sock;</span>
 <span class="p">}</span><span class="w"></span>
 
+<span class="c1"># Set the `immutable` cache control options only for assets with a cache busting `v` argument</span>
+<span class="k">map</span><span class="w"> </span><span class="nv">$arg_v</span><span class="w"> </span><span class="nv">$asset_immutable</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kn">&quot;&quot;</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;immutable&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
 <span class="k">server</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:80</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Prevent nginx HTTP Server Detection</span>
+<span class="w">    </span><span class="kn">server_tokens</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1"># Enforce HTTPS just for `/nextcloud`</span>
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/nextcloud</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -341,10 +362,16 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span><span class="w"></span>
 
+<span class="w">    </span><span class="c1"># Path to the root of the domain</span>
+<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">    </span><span class="c1"># Use Mozilla&#39;s guidelines for SSL/TLS settings</span>
 <span class="w">    </span><span class="c1"># https://mozilla.github.io/server-side-tls/ssl-config-generator/</span>
 <span class="w">    </span><span class="kn">ssl_certificate</span><span class="w">     </span><span class="s">/etc/ssl/nginx/cloud.example.com.crt</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="kn">ssl_certificate_key</span><span class="w"> </span><span class="s">/etc/ssl/nginx/cloud.example.com.key</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1"># Prevent nginx HTTP Server Detection</span>
+<span class="w">    </span><span class="kn">server_tokens</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">    </span><span class="c1"># HSTS settings</span>
 <span class="w">    </span><span class="c1"># WARNING: Only add the preload option once you read about</span>
@@ -352,10 +379,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="c1"># will add the domain to a hardcoded list that is shipped</span>
 <span class="w">    </span><span class="c1"># in all major browsers and getting removed from this list</span>
 <span class="w">    </span><span class="c1"># could take several months.</span>
-<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload;&quot; always;</span>
-
-<span class="w">    </span><span class="c1"># Path to the root of the domain</span>
-<span class="w">    </span><span class="kn">root</span><span class="w"> </span><span class="s">/var/www</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload&quot; always;</span>
 
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/robots.txt</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="kn">allow</span><span class="w"> </span><span class="s">all</span><span class="p">;</span><span class="w"></span>
@@ -461,7 +485,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 
 <span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">            </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="kn">expires</span><span class="w"> </span><span class="s">6M</span><span class="p">;</span><span class="w">         </span><span class="c1"># Cache-Control policy borrowed from `.htaccess`</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span><span class="w"></span>
 <span class="w">            </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
 
 <span class="w">            </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.wasm$</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
@@ -489,9 +513,9 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 </div>
 </section>
 <section id="tips-and-tricks">
-<h2>Tips and tricks<a class="headerlink" href="#tips-and-tricks" title="Permalink to this heading"></a></h2>
+<h2>Tips and tricks<a class="headerlink" href="#tips-and-tricks" title="Permalink to this headline"></a></h2>
 <section id="suppressing-log-messages">
-<h3>Suppressing log messages<a class="headerlink" href="#suppressing-log-messages" title="Permalink to this heading"></a></h3>
+<h3>Suppressing log messages<a class="headerlink" href="#suppressing-log-messages" title="Permalink to this headline"></a></h3>
 <p>If you’re seeing meaningless messages in your logfile, for example <code class="docutils literal notranslate"><span class="pre">client</span>
 <span class="pre">denied</span> <span class="pre">by</span> <span class="pre">server</span> <span class="pre">configuration:</span> <span class="pre">/var/www/data/htaccesstest.txt</span></code>, add this section to
 your nginx configuration to suppress them:</p>
@@ -504,7 +528,7 @@ your nginx configuration to suppress them:</p>
 </div>
 </section>
 <section id="javascript-js-or-css-css-files-not-served-properly">
-<h3>JavaScript (.js) or CSS (.css) files not served properly<a class="headerlink" href="#javascript-js-or-css-css-files-not-served-properly" title="Permalink to this heading"></a></h3>
+<h3>JavaScript (.js) or CSS (.css) files not served properly<a class="headerlink" href="#javascript-js-or-css-css-files-not-served-properly" title="Permalink to this headline"></a></h3>
 <p>A common issue with custom nginx configs is that JavaScript (.js)
 or CSS (.css) files are not served properly leading to a 404 (File not found)
 error on those files and a broken webinterface.</p>
@@ -522,7 +546,7 @@ or CSS (.css) files via gzip could also cause such issues.</p>
 http block, as shown <a class="reference external" href="https://www.nginx.com/resources/wiki/start/topics/examples/full/">here.</a></p>
 </section>
 <section id="upload-of-files-greater-than-10-mib-fails">
-<h3>Upload of files greater than 10 MiB fails<a class="headerlink" href="#upload-of-files-greater-than-10-mib-fails" title="Permalink to this heading"></a></h3>
+<h3>Upload of files greater than 10 MiB fails<a class="headerlink" href="#upload-of-files-greater-than-10-mib-fails" title="Permalink to this headline"></a></h3>
 <p>If you configure nginx (globally) to block all requests to (hidden) dot files,
 it may be not possible to upload files greater than 10 MiB using the webpage
 due to Nextclouds requirement to upload the file to an url ending with <code class="docutils literal notranslate"><span class="pre">/.file</span></code>.</p>
@@ -537,7 +561,7 @@ due to Nextclouds requirement to upload the file to an url ending with <code cla
 <p>See <cite>issue #8802 on nextcloud/server &lt;https://github.com/nextcloud/server/issues/8802&gt;</cite> for more information.</p>
 </section>
 <section id="login-loop-without-any-clue-in-access-log-error-log-nor-nextcloud-log">
-<h3>Login loop without any clue in access.log, error.log, nor nextcloud.log<a class="headerlink" href="#login-loop-without-any-clue-in-access-log-error-log-nor-nextcloud-log" title="Permalink to this heading"></a></h3>
+<h3>Login loop without any clue in access.log, error.log, nor nextcloud.log<a class="headerlink" href="#login-loop-without-any-clue-in-access-log-error-log-nor-nextcloud-log" title="Permalink to this headline"></a></h3>
 <p>If you after fresh installation (Centos 7 with nginx) have problem with first login, you should as first check these files:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tail /var/www/nextcloud/data/nextcloud.log
 tail /var/log/nginx/access.log
@@ -587,11 +611,9 @@ chown root:nginx /var/lib/php/opcache/
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

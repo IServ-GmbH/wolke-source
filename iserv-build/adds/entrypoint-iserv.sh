@@ -18,8 +18,9 @@ if [ -f /var/www/html/config/config.php ]; then
   echo "Enable config editing (required for nextcloud upgrades)"
   # Set config to be writable to allow being updated
   # https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html#nextcloud-verifications
-  # We set NEXTCLOUD_CONFIG_DIR in Dockerfile so occ uses the correct config folder even though it's in a different path
-  php /usr/src/nextcloud/occ config:system:set config_is_read_only --value="false" --type=boolean || true # do not fail on failing config system
+  # We have to use sed instead of occ because occ does not support editing config file if it's read-only
+  # Same as: php /var/www/html/occ config:system:set config_is_read_only --value="false" --type=boolean
+  sed -i'' "s/'config_is_read_only'\s*=>\s*true/'config_is_read_only' => false/" /var/www/html/config/config.php
 fi
 echo "Running upstream nextcloud upgrade procedure"
 # run the normal nextcloud update

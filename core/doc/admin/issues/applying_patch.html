@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -86,9 +85,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Issues and troubleshooting</a> &raquo;</li>
-      <li>Patching Nextcloud</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Issues and troubleshooting</a></li>
+      <li class="breadcrumb-item active">Patching Nextcloud</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/issues/applying_patch.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -99,11 +98,11 @@
            <div itemprop="articleBody">
              
   <section id="patching-nextcloud">
-<h1>Patching Nextcloud<a class="headerlink" href="#patching-nextcloud" title="Permalink to this heading"></a></h1>
+<h1>Patching Nextcloud<a class="headerlink" href="#patching-nextcloud" title="Permalink to this headline"></a></h1>
 <section id="applying-a-patch">
-<h2>Applying a patch<a class="headerlink" href="#applying-a-patch" title="Permalink to this heading"></a></h2>
+<h2>Applying a patch<a class="headerlink" href="#applying-a-patch" title="Permalink to this headline"></a></h2>
 <section id="patching-server">
-<h3>Patching server<a class="headerlink" href="#patching-server" title="Permalink to this heading"></a></h3>
+<h3>Patching server<a class="headerlink" href="#patching-server" title="Permalink to this headline"></a></h3>
 <ol class="arabic">
 <li><p>Navigate into your Nextcloud server’s root directory (contains the <code class="docutils literal notranslate"><span class="pre">status.php</span></code> file)</p></li>
 <li><p>Now apply the patch with the following command:</p>
@@ -118,7 +117,7 @@
 </div>
 </section>
 <section id="patching-apps">
-<h3>Patching apps<a class="headerlink" href="#patching-apps" title="Permalink to this heading"></a></h3>
+<h3>Patching apps<a class="headerlink" href="#patching-apps" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
 <li><p>Navigate to the root of this app (mostly <code class="docutils literal notranslate"><span class="pre">apps/[APPID]/</span></code>), if you can not find the app there use the <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">occ</span> <span class="pre">app:getpath</span> <span class="pre">APPID</span></code> command to find the path.</p></li>
 <li><p>Now apply the patch with the same command as in <a class="reference internal" href="#patching-server">Patching server</a></p></li>
@@ -126,7 +125,7 @@
 </section>
 </section>
 <section id="reverting-a-patch">
-<h2>Reverting a patch<a class="headerlink" href="#reverting-a-patch" title="Permalink to this heading"></a></h2>
+<h2>Reverting a patch<a class="headerlink" href="#reverting-a-patch" title="Permalink to this headline"></a></h2>
 <ol class="arabic">
 <li><p>Navigate to the directory where you applied the patch.</p></li>
 <li><p>Now revert the patch with the <code class="docutils literal notranslate"><span class="pre">-R</span></code> option:</p>
@@ -137,7 +136,7 @@
 </ol>
 </section>
 <section id="getting-a-patch-from-a-github-pull-request">
-<h2>Getting a patch from a GitHub pull request<a class="headerlink" href="#getting-a-patch-from-a-github-pull-request" title="Permalink to this heading"></a></h2>
+<h2>Getting a patch from a GitHub pull request<a class="headerlink" href="#getting-a-patch-from-a-github-pull-request" title="Permalink to this headline"></a></h2>
 <p>If you found a related pull request on GitHub that solves your issue, or you want to help developers and verify a fix works, you can get a patch for the pull request.</p>
 <ol class="arabic simple">
 <li><p>Using <a class="reference external" href="https://github.com/nextcloud/server/pull/26396">https://github.com/nextcloud/server/pull/26396</a> as an example.</p></li>
@@ -185,11 +184,9 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

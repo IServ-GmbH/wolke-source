@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -91,7 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right priviledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
 <li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
@@ -121,9 +120,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Nextcloud configuration</a> &raquo;</li>
-      <li>Configuration Parameters</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Nextcloud configuration</a></li>
+      <li class="breadcrumb-item active">Configuration Parameters</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_server/config_sample_php_parameters.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -134,7 +133,7 @@
            <div itemprop="articleBody">
              
   <section id="configuration-parameters">
-<h1>Configuration Parameters<a class="headerlink" href="#configuration-parameters" title="Permalink to this heading"></a></h1>
+<h1>Configuration Parameters<a class="headerlink" href="#configuration-parameters" title="Permalink to this headline"></a></h1>
 <p>Nextcloud uses the <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code> file to control server operations.
 <code class="docutils literal notranslate"><span class="pre">config/config.sample.php</span></code> lists all the configurable parameters within
 Nextcloud, along with example or default values. This document provides a more
@@ -148,7 +147,7 @@ use a special value for a parameter. <strong>Do not copy everything from</strong
 <code class="docutils literal notranslate"><span class="pre">config/config.sample.php</span></code> <strong>. Only enter the parameters you wish to modify!</strong></p>
 </div>
 <section id="multiple-config-php-file">
-<h2>Multiple config.php file<a class="headerlink" href="#multiple-config-php-file" title="Permalink to this heading"></a></h2>
+<h2>Multiple config.php file<a class="headerlink" href="#multiple-config-php-file" title="Permalink to this headline"></a></h2>
 <p>Nextcloud supports loading configuration parameters from multiple files.
 You can add arbitrary files ending with <code class="file docutils literal notranslate"><span class="pre">.config.php</span></code> in the <code class="file docutils literal notranslate"><span class="pre">config/</span></code>
 directory, for example you could place your email server configuration
@@ -158,7 +157,7 @@ into a set of smaller files. These custom files are not overwritten by
 Nextcloud, and the values in these files take precedence over <code class="file docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
 </section>
 <section id="default-parameters">
-<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading"></a></h2>
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this headline"></a></h2>
 <p>These parameters are configured by the Nextcloud installer, and are required
 for your Nextcloud server to operate.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;instanceid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
@@ -260,7 +259,7 @@ installation.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="default-config-php-examples">
-<h2>Default config.php Examples<a class="headerlink" href="#default-config-php-examples" title="Permalink to this heading"></a></h2>
+<h2>Default config.php Examples<a class="headerlink" href="#default-config-php-examples" title="Permalink to this headline"></a></h2>
 <p>When you use SQLite as your Nextcloud database, your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> looks like
 this after installation. The SQLite database is stored in your Nextcloud
 <code class="docutils literal notranslate"><span class="pre">data/</span></code> directory. SQLite is a simple, lightweight embedded database that
@@ -307,7 +306,7 @@ $CONFIG = array (
 </div>
 </section>
 <section id="user-experience">
-<h2>User Experience<a class="headerlink" href="#user-experience" title="Permalink to this heading"></a></h2>
+<h2>User Experience<a class="headerlink" href="#user-experience" title="Permalink to this headline"></a></h2>
 <p>These optional parameters control some aspects of the user interface. Default
 values, where present, are shown.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;default_language&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
@@ -426,17 +425,21 @@ max value: 300</p>
 <p>Whether the bruteforce protection shipped with Nextcloud should be enabled or not.</p>
 <p>Disabling this is discouraged for security reasons.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.authtoken.v1.disabled&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
-</pre></div>
-</div>
-<p>Whether the authtoken v1 provider should be skipped</p>
-<p>The v1 provider is deprecated and removed in Nextcloud 24 onwards. It can be
-disabled already when the instance was installed after Nextcloud 14.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.webauthn.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
 <p>By default WebAuthn is available but it can be explicitly disabled by admins</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.storeCryptedPassword&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Whether encrypted password should be stored in the database</p>
+<p>The passwords are only decrypted using the login token stored uniquely in the
+clients and allow to connect to external storages, autoconfigure mail account in
+the mail app and periodically check if the password it still valid.</p>
+<p>This might be desirable to disable this functionality when using one time
+passwords or when having a password policy enforcing long passwords (&gt; 300
+characters).</p>
+<p>By default the passwords are stored encrypted in the database.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;hide_login_form&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
@@ -474,9 +477,14 @@ read-only user backend like LDAP), you can specify a custom link, where the
 user is redirected to, when clicking the “reset password” link after a failed
 login-attempt.</p>
 <p>In case you do not want to provide any link, replace the url with ‘disabled’</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;logo_url&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://example.org&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>URL to use as target for the logo link in the header (top-left logo)</p>
+<p>Defaults to the base URL of your Nextcloud instance</p>
 </section>
 <section id="mail-parameters">
-<h2>Mail Parameters<a class="headerlink" href="#mail-parameters" title="Permalink to this heading"></a></h2>
+<h2>Mail Parameters<a class="headerlink" href="#mail-parameters" title="Permalink to this headline"></a></h2>
 <p>These configure the email settings for Nextcloud notifications and password
 resets.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;mail_domain&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;example.com&#39;</span><span class="p">,</span>
@@ -590,7 +598,7 @@ will be passed to underlying Swift mailer implementation.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">smtp</span></code></p>
 </section>
 <section id="proxy-configurations">
-<h2>Proxy Configurations<a class="headerlink" href="#proxy-configurations" title="Permalink to this heading"></a></h2>
+<h2>Proxy Configurations<a class="headerlink" href="#proxy-configurations" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;overwritehost&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
@@ -691,7 +699,7 @@ value with the global NO_PROXY option.</p>
 <p>Defaults to false</p>
 </section>
 <section id="deleted-items-trash-bin">
-<h2>Deleted Items (trash bin)<a class="headerlink" href="#deleted-items-trash-bin" title="Permalink to this heading"></a></h2>
+<h2>Deleted Items (trash bin)<a class="headerlink" href="#deleted-items-trash-bin" title="Permalink to this headline"></a></h2>
 <p>These parameters control the Deleted files app.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;trashbin_retention_obligation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
 </pre></div>
@@ -743,7 +751,7 @@ delete when exceeds D2 days (note: files will not be deleted automatically if sp
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 </section>
 <section id="file-versions">
-<h2>File versions<a class="headerlink" href="#file-versions" title="Permalink to this heading"></a></h2>
+<h2>File versions<a class="headerlink" href="#file-versions" title="Permalink to this headline"></a></h2>
 <p>These parameters control the Versions app.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;versions_retention_obligation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
 </pre></div>
@@ -794,7 +802,7 @@ other versions according to expire rules</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">auto</span></code></p>
 </section>
 <section id="nextcloud-verifications">
-<h2>Nextcloud Verifications<a class="headerlink" href="#nextcloud-verifications" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud Verifications<a class="headerlink" href="#nextcloud-verifications" title="Permalink to this headline"></a></h2>
 <p>Nextcloud performs several verification checks. There are two options,
 <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;appcodechecker&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
@@ -888,15 +896,15 @@ adjusted accordingly. Changing the flag is discouraged.</p>
 </pre></div>
 </div>
 <p>In certain environments it is desired to have a read-only configuration file.</p>
-<p>When this switch is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> Nextcloud will not verify whether the
-configuration is writable. However, it will not be possible to configure
-all options via the Web interface. Furthermore, when updating Nextcloud
-it is required to make the configuration file writable again for the update
-process.</p>
+<p>When this switch is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, writing to the config file will be
+forbidden. Therefore, it will not be possible to configure all options via
+the Web interface. Furthermore, when updating Nextcloud it is required to
+make the configuration file writable again and to set this switch to <code class="docutils literal notranslate"><span class="pre">false</span></code>
+for the update process.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="logging">
-<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading"></a></h2>
+<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;log_type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;file&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
@@ -1012,9 +1020,16 @@ no rotation. Specify a size in bytes, for example 104857600 (100 megabytes
 old logfile reaches your limit. If a rotated log file is already present, it
 will be overwritten.</p>
 <p>Defaults to 100 MB</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiler&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable built-in profiler. Helpful when trying to debug performance
+issues.</p>
+<p>Note that this has a performance impact and shouldn’t be enabled
+on production.</p>
 </section>
 <section id="alternate-code-locations">
-<h2>Alternate Code Locations<a class="headerlink" href="#alternate-code-locations" title="Permalink to this heading"></a></h2>
+<h2>Alternate Code Locations<a class="headerlink" href="#alternate-code-locations" title="Permalink to this headline"></a></h2>
 <p>Some of the Nextcloud code may be stored in alternate locations.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;customclient_desktop&#39;</span> <span class="o">=&gt;</span>
         <span class="s1">&#39;https://nextcloud.com/install/#install-clients&#39;</span><span class="p">,</span>
@@ -1039,7 +1054,7 @@ seen in the first-run wizard and on Personal pages.</p>
 </dl>
 </section>
 <section id="apps">
-<h2>Apps<a class="headerlink" href="#apps" title="Permalink to this heading"></a></h2>
+<h2>Apps<a class="headerlink" href="#apps" title="Permalink to this headline"></a></h2>
 <p>Options for the Apps folder, Apps store, and App code checker.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;appstoreenabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
@@ -1081,7 +1096,7 @@ enable apps that pass this check.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="previews">
-<h2>Previews<a class="headerlink" href="#previews" title="Permalink to this heading"></a></h2>
+<h2>Previews<a class="headerlink" href="#previews" title="Permalink to this headline"></a></h2>
 <p>Nextcloud supports previews of image files, the covers of MP3 files, and text
 files. These options control enabling and disabling previews, and thumbnail
 size.</p>
@@ -1112,9 +1127,10 @@ is no limit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_max_filesize_image&#39;</span> <span class="o">=&gt;</span> <span class="mi">50</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>max file size for generating image previews with imagegd (default behavior)
-If the image is bigger, it’ll try other preview generators, but will most
-likely show the default mimetype icon. Set to -1 for no limit.</p>
+<p>Max file size for generating image previews with imagegd (default behavior).</p>
+<p>If the image is bigger, it’ll try other preview generators, but will most
+likely either show the default mimetype icon or not display the image at all.
+Set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> for no limit and try to generate image previews on all file sizes.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">50</span></code> megabytes</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_max_memory&#39;</span> <span class="o">=&gt;</span> <span class="mi">128</span><span class="p">,</span>
 </pre></div>
@@ -1136,6 +1152,12 @@ be disabled and the default mimetype icon is shown. Set to -1 for no limit.</p>
 </div>
 <p>Use this if LibreOffice/OpenOffice requires additional arguments.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_imaginary_url&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://previews_hpb:8088/&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Set the URL of the Imaginary service to send image previews to.</p>
+<p>Also requires the OC\Preview\Imaginary provider to be enabled.</p>
+<p>See <a class="reference external" href="https://github.com/h2non/imaginary">https://github.com/h2non/imaginary</a></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enabledPreviewProviders&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;OC\Preview\PNG&#39;</span><span class="p">,</span>
         <span class="s1">&#39;OC\Preview\JPEG&#39;</span><span class="p">,</span>
@@ -1187,7 +1209,7 @@ concerns:</p>
 </div></blockquote>
 </section>
 <section id="ldap">
-<h2>LDAP<a class="headerlink" href="#ldap" title="Permalink to this heading"></a></h2>
+<h2>LDAP<a class="headerlink" href="#ldap" title="Permalink to this headline"></a></h2>
 <p>Global settings used by LDAP User and Group Backend</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;ldapUserCleanupInterval&#39;</span> <span class="o">=&gt;</span> <span class="mi">51</span><span class="p">,</span>
 </pre></div>
@@ -1204,7 +1226,7 @@ minutes. Setting it to 0 disables the feature.</p>
 <p>By enabling this the user count beside the group name is disabled as well.</p>
 </section>
 <section id="comments">
-<h2>Comments<a class="headerlink" href="#comments" title="Permalink to this heading"></a></h2>
+<h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline"></a></h2>
 <p>Global settings for the Comments infrastructure</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;comments.managerFactory&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;\OC\Comments\ManagerFactory&#39;</span><span class="p">,</span>
 </pre></div>
@@ -1222,7 +1244,7 @@ filesystem instead of the database to keep the tags.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">\OC\SystemTag\ManagerFactory</span></code></p>
 </section>
 <section id="maintenance">
-<h2>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this heading"></a></h2>
+<h2>Maintenance<a class="headerlink" href="#maintenance" title="Permalink to this headline"></a></h2>
 <p>These options are for halting user activity when you are performing server
 maintenance.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;maintenance&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
@@ -1246,7 +1268,7 @@ This is e.g. used for activity expiration, suspicious login training and update 
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code> which disables the feature</p>
 </section>
 <section id="ssl">
-<h2>SSL<a class="headerlink" href="#ssl" title="Permalink to this heading"></a></h2>
+<h2>SSL<a class="headerlink" href="#ssl" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;openssl&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;config&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/absolute/location/of/openssl.cnf&#39;</span><span class="p">,</span>
 <span class="p">],</span>
@@ -1256,7 +1278,7 @@ This is e.g. used for activity expiration, suspicious login training and update 
 <p>Defaults to an empty array.</p>
 </section>
 <section id="memory-caching-backend-configuration">
-<h2>Memory caching backend configuration<a class="headerlink" href="#memory-caching-backend-configuration" title="Permalink to this heading"></a></h2>
+<h2>Memory caching backend configuration<a class="headerlink" href="#memory-caching-backend-configuration" title="Permalink to this headline"></a></h2>
 <p>Available cache backends:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">\OC\Memcache\APCu</span></code>       APC user backend</p></li>
@@ -1404,7 +1426,7 @@ completed within one day.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">60*60*24</span></code> (1 day)</p>
 </section>
 <section id="using-object-store-with-nextcloud">
-<h2>Using Object Store with Nextcloud<a class="headerlink" href="#using-object-store-with-nextcloud" title="Permalink to this heading"></a></h2>
+<h2>Using Object Store with Nextcloud<a class="headerlink" href="#using-object-store-with-nextcloud" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">Swift&#39;</span><span class="p">,</span>
         <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
@@ -1490,7 +1512,7 @@ previews that were generated before Nextcloud 19 in the flat
 <code class="docutils literal notranslate"><span class="pre">appdata_INSTANCEID/previews/FILEID</span></code> folder structure.</p>
 </section>
 <section id="sharing">
-<h2>Sharing<a class="headerlink" href="#sharing" title="Permalink to this heading"></a></h2>
+<h2>Sharing<a class="headerlink" href="#sharing" title="Permalink to this headline"></a></h2>
 <p>Global settings for Sharing</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.managerFactory&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;\OC\Share20\ProviderFactory&#39;</span><span class="p">,</span>
 </pre></div>
@@ -1499,6 +1521,16 @@ previews that were generated before Nextcloud 19 in the flat
 own or 3rdParty Share Providers are used that – for instance – use the
 filesystem instead of the database to keep the share information.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">\OC\Share20\ProviderFactory</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.enable_mail_link_password_expiration&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enables expiration for link share passwords sent by email (sharebymail).</p>
+<p>The passwords will expire after the configured interval, the users can
+still request a new one in the public link page.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.mail_link_password_expiration_interval&#39;</span> <span class="o">=&gt;</span> <span class="mi">3600</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Expiration interval for passwords, in seconds.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.maxAutocompleteResults&#39;</span> <span class="o">=&gt;</span> <span class="mi">25</span><span class="p">,</span>
 </pre></div>
 </div>
@@ -1544,7 +1576,7 @@ when running “occ files:transfer-ownership”.</p>
 by a command line argument.</p>
 </section>
 <section id="all-other-configuration-options">
-<h2>All other configuration options<a class="headerlink" href="#all-other-configuration-options" title="Permalink to this heading"></a></h2>
+<h2>All other configuration options<a class="headerlink" href="#all-other-configuration-options" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;dbdriveroptions&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="n">PDO</span><span class="p">::</span><span class="n">MYSQL_ATTR_SSL_CA</span> <span class="o">=&gt;</span> <span class="s1">&#39;/file/path/to/ca_cert.pem&#39;</span><span class="p">,</span>
         <span class="n">PDO</span><span class="p">::</span><span class="n">MYSQL_ATTR_SSL_KEY</span> <span class="o">=&gt;</span> <span class="s1">&#39;/file/path/to/mysql-client-key.pem&#39;</span><span class="p">,</span>
@@ -1587,7 +1619,7 @@ innodb_file_per_table=ON</p>
 <dt>Tables will be created with</dt><dd><ul class="simple">
 <li><p>character set: utf8mb4</p></li>
 <li><p>collation:     utf8mb4_bin</p></li>
-<li><p>row_format:    compressed</p></li>
+<li><p>row_format:    dynamic</p></li>
 </ul>
 </dd>
 </dl>
@@ -1644,7 +1676,7 @@ use.</p>
 <p>The Web server user must have write access to this directory.</p>
 </section>
 <section id="hashing">
-<h2>Hashing<a class="headerlink" href="#hashing" title="Permalink to this heading"></a></h2>
+<h2>Hashing<a class="headerlink" href="#hashing" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;hashing_default_password&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
@@ -1953,16 +1985,36 @@ Also, it might log sensitive data into a plain text file.</p>
 <p>Warning: This heavily decreases the performance of the server and is only
 meant to debug/profile the LDAP interaction manually.
 Also, it might log sensitive data into a plain text file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;diagnostics.logging&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable diagnostics event logging</p>
+<p>If enabled the timings of common execution steps will be logged to the
+Nextcloud log at debug level. log.condition is useful to enable this on
+production systems to only log under some conditions</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;diagnostics.logging.threshold&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Limit diagnostics event logging to events longer than the configured threshold in ms</p>
+<p>when set to 0 no diagnostics events will be logged</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profile.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
 <p>Enable profile globally</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enable_file_metadata&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable file metadata collection</p>
+<p>This is helpful for the mobile clients and will enable a few optimization in
+the future for the preview generation.</p>
+<p>Note that when enabled, this data will be stored in the database and might increase
+the database storage.</p>
 </section>
 <section id="app-config-options">
-<h2>App config options<a class="headerlink" href="#app-config-options" title="Permalink to this heading"></a></h2>
+<h2>App config options<a class="headerlink" href="#app-config-options" title="Permalink to this headline"></a></h2>
 <section id="activity-app">
-<span id="label-activity-app-config"></span><h3>Activity app<a class="headerlink" href="#activity-app" title="Permalink to this heading"></a></h3>
+<span id="label-activity-app-config"></span><h3>Activity app<a class="headerlink" href="#activity-app" title="Permalink to this headline"></a></h3>
 <p>Retention for activities of the activity app:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;activity_expire_days&#39;</span> <span class="o">=&gt;</span> <span class="mi">365</span><span class="p">,</span>
 </pre></div>
@@ -1975,7 +2027,7 @@ which are older then the number of days that is set for <code class="docutils li
 <p>Before enabling this, read the warning in <a class="reference internal" href="activity_configuration.html#label-activities-groupfolders"><span class="std std-ref">Activities in groupfolders or external storages</span></a></p>
 </section>
 <section id="settings-app">
-<h3>Settings app<a class="headerlink" href="#settings-app" title="Permalink to this heading"></a></h3>
+<h3>Settings app<a class="headerlink" href="#settings-app" title="Permalink to this headline"></a></h3>
 <p>If an email address of a user is changed by an admin, then it triggers an email
 to the user that states “Your email address on URL was changed by an
 administrator.”. In some cases this should not be triggered, because it was a
@@ -2025,11 +2077,9 @@ normal maintenance change. To disable this specific email the appconfig option
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

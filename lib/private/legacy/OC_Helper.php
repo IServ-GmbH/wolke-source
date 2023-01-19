@@ -44,8 +44,11 @@
  *
  */
 use bantu\IniGetWrapper\IniGetWrapper;
+use OC\Files\Filesystem;
 use OCP\Files\Mount\IMountPoint;
+use OCP\ICacheFactory;
 use OCP\IUser;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**
@@ -417,11 +420,11 @@ class OC_Helper {
 	 */
 	public static function uploadLimit() {
 		$ini = \OC::$server->get(IniGetWrapper::class);
-		$upload_max_filesize = OCP\Util::computerFileSize($ini->get('upload_max_filesize'));
-		$post_max_size = OCP\Util::computerFileSize($ini->get('post_max_size'));
-		if ((int)$upload_max_filesize === 0 and (int)$post_max_size === 0) {
+		$upload_max_filesize = (int)OCP\Util::computerFileSize($ini->get('upload_max_filesize'));
+		$post_max_size = (int)OCP\Util::computerFileSize($ini->get('post_max_size'));
+		if ($upload_max_filesize === 0 && $post_max_size === 0) {
 			return INF;
-		} elseif ((int)$upload_max_filesize === 0 or (int)$post_max_size === 0) {
+		} elseif ($upload_max_filesize === 0 || $post_max_size === 0) {
 			return max($upload_max_filesize, $post_max_size); //only the non 0 value counts
 		} else {
 			return min($upload_max_filesize, $post_max_size);
@@ -482,12 +485,27 @@ class OC_Helper {
 	 *
 	 * @param string $path
 	 * @param \OCP\Files\FileInfo $rootInfo (optional)
+	 * @param bool $includeMountPoints whether to include mount points in the size calculation
+	 * @param bool $useCache whether to use the cached quota values
 	 * @return array
 	 * @throws \OCP\Files\NotFoundException
 	 */
-	public static function getStorageInfo($path, $rootInfo = null, $includeMountPoints = true) {
+	public static function getStorageInfo($path, $rootInfo = null, $includeMountPoints = true, $useCache = true) {
+		/** @var ICacheFactory $cacheFactory */
+		$cacheFactory = \OC::$server->get(ICacheFactory::class);
+		$memcache = $cacheFactory->createLocal('storage_info');
+
 		// return storage info without adding mount points
 		$includeExtStorage = \OC::$server->getSystemConfig()->getValue('quota_include_external_storage', false);
+
+		$fullPath = Filesystem::getView()->getAbsolutePath($path);
+		$cacheKey = $fullPath. '::' . ($includeMountPoints ? 'include' : 'exclude');
+		if ($useCache) {
+			$cached = $memcache->get($cacheKey);
+			if ($cached) {
+				return $cached;
+			}
+		}
 
 		if (!$rootInfo) {
 			$rootInfo = \OC\Files\Filesystem::getFileInfo($path, $includeExtStorage ? 'ext' : false);
@@ -505,10 +523,6 @@ class OC_Helper {
 		$sourceStorage = $storage;
 		if ($storage->instanceOfStorage('\OCA\Files_Sharing\SharedStorage')) {
 			$includeExtStorage = false;
-			$sourceStorage = $storage->getSourceStorage();
-			$internalPath = $storage->getUnjailedPath($rootInfo->getInternalPath());
-		} else {
-			$internalPath = $rootInfo->getInternalPath();
 		}
 		if ($includeExtStorage) {
 			if ($storage->instanceOfStorage('\OC\Files\Storage\Home')
@@ -531,7 +545,19 @@ class OC_Helper {
 			/** @var \OC\Files\Storage\Wrapper\Quota $storage */
 			$quota = $sourceStorage->getQuota();
 		}
-		$free = $sourceStorage->free_space($internalPath);
+		try {
+			$free = $sourceStorage->free_space($rootInfo->getInternalPath());
+		} catch (\Exception $e) {
+			if ($path === "") {
+				throw $e;
+			}
+			/** @var LoggerInterface $logger */
+			$logger = \OC::$server->get(LoggerInterface::class);
+			$logger->warning("Error while getting quota info, using root quota", ['exception' => $e]);
+			$rootInfo = self::getStorageInfo("");
+			$memcache->set($cacheKey, $rootInfo, 5 * 60);
+			return $rootInfo;
+		}
 		if ($free >= 0) {
 			$total = $free + $used;
 		} else {
@@ -559,7 +585,7 @@ class OC_Helper {
 			[,,,$mountPoint] = explode('/', $mount->getMountPoint(), 4);
 		}
 
-		return [
+		$info = [
 			'free' => $free,
 			'used' => $used,
 			'quota' => $quota,
@@ -570,12 +596,16 @@ class OC_Helper {
 			'mountType' => $mount->getMountType(),
 			'mountPoint' => trim($mountPoint, '/'),
 		];
+
+		$memcache->set($cacheKey, $info, 5 * 60);
+
+		return $info;
 	}
 
 	/**
 	 * Get storage info including all mount points and quota
 	 */
-	private static function getGlobalStorageInfo(int $quota, IUser $user, IMountPoint $mount): array {
+	private static function getGlobalStorageInfo(float $quota, IUser $user, IMountPoint $mount): array {
 		$rootInfo = \OC\Files\Filesystem::getFileInfo('', 'ext');
 		$used = $rootInfo['size'];
 		if ($used < 0) {

@@ -587,8 +587,8 @@ class DAV extends Common {
 				return false;
 			}
 			return [
-				'mtime' => strtotime($response['{DAV:}getlastmodified']),
-				'size' => (int)isset($response['{DAV:}getcontentlength']) ? $response['{DAV:}getcontentlength'] : 0,
+				'mtime' => isset($response['{DAV:}getlastmodified']) ? strtotime($response['{DAV:}getlastmodified']) : null,
+				'size' => (int)($response['{DAV:}getcontentlength'] ?? 0),
 			];
 		} catch (\Exception $e) {
 			$this->convertException($e, $path);
@@ -792,11 +792,8 @@ class DAV extends Common {
 			}
 			if (isset($response['{DAV:}getetag'])) {
 				$cachedData = $this->getCache()->get($path);
-				$etag = null;
-				if (isset($response['{DAV:}getetag'])) {
-					$etag = trim($response['{DAV:}getetag'], '"');
-				}
-				if (!empty($etag) && $cachedData['etag'] !== $etag) {
+				$etag = trim($response['{DAV:}getetag'], '"');
+				if (($cachedData === false) || (!empty($etag) && ($cachedData['etag'] !== $etag))) {
 					return true;
 				} elseif (isset($response['{http://open-collaboration-services.org/ns}share-permissions'])) {
 					$sharePermissions = (int)$response['{http://open-collaboration-services.org/ns}share-permissions'];
@@ -807,9 +804,12 @@ class DAV extends Common {
 				} else {
 					return false;
 				}
-			} else {
+			} elseif (isset($response['{DAV:}getlastmodified'])) {
 				$remoteMtime = strtotime($response['{DAV:}getlastmodified']);
 				return $remoteMtime > $time;
+			} else {
+				// neither `getetag` nor `getlastmodified` is set
+				return false;
 			}
 		} catch (ClientHttpException $e) {
 			if ($e->getHttpStatus() === 405) {

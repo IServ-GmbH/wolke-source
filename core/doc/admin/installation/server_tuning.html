@@ -15,12 +15,11 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Example installation on Ubuntu 20.04 LTS" href="example_ubuntu.html" />
+    <link rel="next" title="Example installation on Ubuntu 22.04 LTS" href="example_ubuntu.html" />
     <link rel="prev" title="Hardening and security guidance" href="harden_server.html" /> 
 </head>
 
@@ -64,9 +63,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#enable-http-2-for-faster-loading">Enable HTTP/2 for faster loading</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tune-php-fpm">Tune PHP-FPM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enable-php-opcache">Enable PHP OPcache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#previews">Previews</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -98,9 +98,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>Server tuning</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">Server tuning</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/server_tuning.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,14 +111,14 @@
            <div itemprop="articleBody">
              
   <section id="server-tuning">
-<h1>Server tuning<a class="headerlink" href="#server-tuning" title="Permalink to this heading"></a></h1>
+<h1>Server tuning<a class="headerlink" href="#server-tuning" title="Permalink to this headline"></a></h1>
 <section id="using-cron-to-perform-background-jobs">
-<h2>Using cron to perform background jobs<a class="headerlink" href="#using-cron-to-perform-background-jobs" title="Permalink to this heading"></a></h2>
+<h2>Using cron to perform background jobs<a class="headerlink" href="#using-cron-to-perform-background-jobs" title="Permalink to this headline"></a></h2>
 <p>See <a class="reference internal" href="../configuration_server/background_jobs_configuration.html"><span class="doc">Background jobs</span></a> for a description and the
 benefits.</p>
 </section>
 <section id="reducing-system-load">
-<h2>Reducing system load<a class="headerlink" href="#reducing-system-load" title="Permalink to this heading"></a></h2>
+<h2>Reducing system load<a class="headerlink" href="#reducing-system-load" title="Permalink to this headline"></a></h2>
 <p>High system load will slow down Nextcloud and might also lead to other unwanted
 side effects. To reduce load you should first identify the source of the problem.
 Tools such as htop, iotop, <a class="reference external" href="https://my-netdata.io">netdata</a> or
@@ -130,13 +130,13 @@ store it inside a VM image file. Better put it on a dedicated block device to
 reduce latency due to multiple abstraction layers.</p>
 </section>
 <section id="caching">
-<span id="id1"></span><h2>Caching<a class="headerlink" href="#caching" title="Permalink to this heading"></a></h2>
+<span id="id1"></span><h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline"></a></h2>
 <p>Caching improves performance by storing data, code, and other objects in memory.
 Memory cache configuration for the Nextcloud server must be installed and configured.
 See <a class="reference internal" href="../configuration_server/caching_configuration.html"><span class="doc">Memory caching</span></a>.</p>
 </section>
 <section id="using-mariadb-mysql-instead-of-sqlite">
-<h2>Using MariaDB/MySQL instead of SQLite<a class="headerlink" href="#using-mariadb-mysql-instead-of-sqlite" title="Permalink to this heading"></a></h2>
+<h2>Using MariaDB/MySQL instead of SQLite<a class="headerlink" href="#using-mariadb-mysql-instead-of-sqlite" title="Permalink to this headline"></a></h2>
 <p>MySQL or MariaDB are preferred because of the <a class="reference external" href="https://www.sqlite.org/whentouse.html">performance limitations of
 SQLite with highly concurrent applications</a>, like Nextcloud.</p>
 <p>See the section <a class="reference internal" href="../configuration_database/linux_database_configuration.html"><span class="doc">Database configuration</span></a> for how to
@@ -146,14 +146,14 @@ in <a class="reference internal" href="../configuration_database/db_conversion.h
 <p>For more details and help tuning your database, check <a class="reference external" href="https://mariadb.com/kb/en/optimization-and-tuning/">this article at MariaDB</a>.</p>
 </section>
 <section id="using-redis-based-transactional-file-locking">
-<h2>Using Redis-based transactional file locking<a class="headerlink" href="#using-redis-based-transactional-file-locking" title="Permalink to this heading"></a></h2>
+<h2>Using Redis-based transactional file locking<a class="headerlink" href="#using-redis-based-transactional-file-locking" title="Permalink to this headline"></a></h2>
 <p>File locking is enabled by default, using the database locking backend. This
 places a significant load on your database. See the section
 <a class="reference internal" href="../configuration_files/files_locking_transactional.html"><span class="doc">Transactional file locking</span></a> for how to
 configure Nextcloud to use Redis-based Transactional File Locking.</p>
 </section>
 <section id="tls-encryption-app">
-<h2>TLS / encryption app<a class="headerlink" href="#tls-encryption-app" title="Permalink to this heading"></a></h2>
+<h2>TLS / encryption app<a class="headerlink" href="#tls-encryption-app" title="Permalink to this headline"></a></h2>
 <p>TLS (HTTPS) and file encryption/decryption can be offloaded to a processor’s
 AES-NI extension. This can both speed up these operations while lowering
 processing overhead. This requires a processor with the <a class="reference external" href="https://wikipedia.org/wiki/AES_instruction_set">AES-NI instruction set</a>.</p>
@@ -177,11 +177,11 @@ support.</p></li>
 </ul>
 </section>
 <section id="enable-http-2-for-faster-loading">
-<h2>Enable HTTP/2 for faster loading<a class="headerlink" href="#enable-http-2-for-faster-loading" title="Permalink to this heading"></a></h2>
+<h2>Enable HTTP/2 for faster loading<a class="headerlink" href="#enable-http-2-for-faster-loading" title="Permalink to this headline"></a></h2>
 <p>HTTP/2 has <a class="reference external" href="https://www.troyhunt.com/i-wanna-go-fast-https-massive-speed-advantage/">huge speed improvements</a> over HTTP with multiple request. Most <a class="reference external" href="https://caniuse.com/#feat=http2">browsers already support HTTP/2 over TLS (HTTPS)</a>. Refer to your web server manual for guides on how to enable HTTP/2.</p>
 </section>
 <section id="tune-php-fpm">
-<h2>Tune PHP-FPM<a class="headerlink" href="#tune-php-fpm" title="Permalink to this heading"></a></h2>
+<h2>Tune PHP-FPM<a class="headerlink" href="#tune-php-fpm" title="Permalink to this headline"></a></h2>
 <p>If you are using a default installation of PHP-FPM you might have noticed
 excessive load times on the web interface or even sync issues. This is due
 to the fact that each simultaneous request of an element is handled by a
@@ -190,7 +190,7 @@ more processes to run in parallel to handle the requests.</p>
 <p><a class="reference external" href="https://spot13.com/pmcalculator/">This link</a> can help you calculate the good values for your system.</p>
 </section>
 <section id="enable-php-opcache">
-<h2>Enable PHP OPcache<a class="headerlink" href="#enable-php-opcache" title="Permalink to this heading"></a></h2>
+<h2>Enable PHP OPcache<a class="headerlink" href="#enable-php-opcache" title="Permalink to this headline"></a></h2>
 <p>The <a class="reference external" href="https://php.net/manual/en/intro.opcache.php">OPcache</a> improves the performance of PHP applications by caching precompiled bytecode. The default OPcache settings are usually sufficient for Nextcloud code to be fully cached. If any cache size limit is reached by more than 90%, the admin panel will show a related warning. Nextcloud strictly requires code comments to be preserved in opcode, which is the default. But in case PHP settings are changed on your system, you may need set the following:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">opcache.save_comments</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span><span class="w"></span>
 </pre></div>
@@ -206,6 +206,36 @@ more processes to run in parallel to handle the requests.</p>
 <p>Any change to <code class="docutils literal notranslate"><span class="pre">config.php</span></code> will then require either restarting PHP, manually clearing the cache, or invalidating this particular script.</p>
 <p>For more details check out the <a class="reference external" href="https://php.net/manual/en/opcache.configuration.php">official documentation</a>. To monitor OPcache usage, clear individual or all cache entries, <a class="reference external" href="https://github.com/amnuts/opcache-gui">opcache-gui</a> can be used.</p>
 </section>
+<section id="previews">
+<h2>Previews<a class="headerlink" href="#previews" title="Permalink to this headline"></a></h2>
+<p>It is possible to speed up preview generation using an
+external microservice: <a class="reference external" href="https://github.com/h2non/imaginary">Imaginary</a>.</p>
+<p>We strongly recommend running our custom docker image that is more up to date than the official image.
+You can find the image at <cite>docker.io/nextcloud/aio-imaginary:latest</cite> for x64-architecture. For arm64-architecture, there is the <cite>docker.io/nextcloud/aio-imaginary:latest-arm64</cite> image.</p>
+<p>To do so, you will need to deploy the service and make sure that it is
+not accessible from outside of your servers. Then you can configure
+Nextcloud to use Imaginary by editing your <cite>config.php</cite>:</p>
+<div class="highlight-php notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?php</span>
+<span class="s1">&#39;enabledPreviewProviders&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;OC\Preview\MP3&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OC\Preview\TXT&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OC\Preview\MarkDown&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OC\Preview\OpenDocument&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OC\Preview\Krita&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OC\Preview\Imaginary&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+<span class="s1">&#39;preview_imaginary_url&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;http://&lt;url of imaginary&gt;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure to start Imaginary with the <cite>-return-size</cite> command line parameter. Otherwise, there will be a minor performance impact. The flag requires a recent version of Imaginary (newer than v1.2.4) and is by default added to the <cite>aio-imaginary</cite> container.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For large instance, you should follow <a class="reference external" href="https://github.com/h2non/imaginary#scalability">Imaginary’s scability recommandation</a>.</p>
+</div>
+</section>
 </section>
 
 
@@ -213,7 +243,7 @@ more processes to run in parallel to handle the requests.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="harden_server.html" class="btn btn-neutral float-left" title="Hardening and security guidance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="example_ubuntu.html" class="btn btn-neutral float-right" title="Example installation on Ubuntu 20.04 LTS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="example_ubuntu.html" class="btn btn-neutral float-right" title="Example installation on Ubuntu 22.04 LTS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -241,11 +271,9 @@ more processes to run in parallel to handle the requests.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

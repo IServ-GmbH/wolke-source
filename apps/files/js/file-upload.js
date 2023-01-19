@@ -76,6 +76,11 @@ OC.FileUpload.prototype = {
 	id: null,
 
 	/**
+	 * Upload data structure
+	 */
+	data: null,
+
+	/**
 	 * Upload element
 	 *
 	 * @type Object
@@ -163,7 +168,7 @@ OC.FileUpload.prototype = {
 	/**
 	 * Returns conflict resolution mode.
 	 *
-	 * @return {int} conflict mode
+	 * @return {number} conflict mode
 	 */
 	getConflictMode: function() {
 		return this._conflictMode || OC.FileUpload.CONFLICT_MODE_DETECT;
@@ -173,7 +178,7 @@ OC.FileUpload.prototype = {
 	 * Set conflict resolution mode.
 	 * See CONFLICT_MODE_* constants.
 	 *
-	 * @param {int} mode conflict mode
+	 * @param {number} mode conflict mode
 	 */
 	setConflictMode: function(mode) {
 		this._conflictMode = mode;
@@ -337,6 +342,10 @@ OC.FileUpload.prototype = {
 			return
 		}
 		this.aborted = true;
+		if (this.data) {
+			// abort running XHR
+			this.data.abort();
+		}
 		this._delete();
 	},
 
@@ -389,7 +398,7 @@ OC.FileUpload.prototype = {
 	/**
 	 * Returns the status code from the response
 	 *
-	 * @return {int} status code
+	 * @return {number} status code
 	 */
 	getResponseStatus: function() {
 		if (this.uploader.isXHRUpload()) {
@@ -521,7 +530,7 @@ OC.Uploader.prototype = _.extend({
 	/**
 	 * Returns whether an XHR upload will be used
 	 *
-	 * @return {bool} true if XHR upload will be used,
+	 * @return {boolean} true if XHR upload will be used,
 	 * false for iframe upload
 	 */
 	isXHRUpload: function () {
@@ -662,7 +671,7 @@ OC.Uploader.prototype = _.extend({
 	/**
 	 * Returns an upload by id
 	 *
-	 * @param {int} data uploadId
+	 * @param {number} data uploadId
 	 * @return {OC.FileUpload} file upload
 	 */
 	getUpload: function(data) {
@@ -885,7 +894,7 @@ OC.Uploader.prototype = _.extend({
 	 * Returns whether the given file is known to be a received shared file
 	 *
 	 * @param {Object} file file
-	 * @return {bool} true if the file is a shared file
+	 * @return {boolean} true if the file is a shared file
 	 */
 	_isReceivedSharedFile: function(file) {
 		if (!window.FileList) {

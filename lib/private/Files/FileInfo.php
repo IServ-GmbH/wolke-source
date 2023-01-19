@@ -101,21 +101,29 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		$this->data = $data;
 		$this->mount = $mount;
 		$this->owner = $owner;
-		$this->rawSize = $this->data['size'] ?? 0;
+		if (isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] !== 0) {
+			$this->rawSize = $this->data['unencrypted_size'];
+		} else {
+			$this->rawSize = $this->data['size'] ?? 0;
+		}
 	}
 
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value): void {
 		$this->data[$offset] = $value;
 	}
 
-	public function offsetExists($offset) {
+	public function offsetExists($offset): bool {
 		return isset($this->data[$offset]);
 	}
 
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset): void {
 		unset($this->data[$offset]);
 	}
 
+	/**
+	 * @return mixed
+	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
 		if ($offset === 'type') {
 			return $this->getType();
@@ -204,7 +212,12 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	public function getSize($includeMounts = true) {
 		if ($includeMounts) {
 			$this->updateEntryfromSubMounts();
-			return isset($this->data['size']) ? 0 + $this->data['size'] : 0;
+
+			if (isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] > 0) {
+				return $this->data['unencrypted_size'];
+			} else {
+				return isset($this->data['size']) ? 0 + $this->data['size'] : 0;
+			}
 		} else {
 			return $this->rawSize;
 		}
@@ -250,7 +263,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 */
 	public function getType() {
 		if (!isset($this->data['type'])) {
-			$this->data['type'] = ($this->getMimetype() === 'httpd/unix-directory') ? self::TYPE_FOLDER : self::TYPE_FILE;
+			$this->data['type'] = ($this->getMimetype() === self::MIMETYPE_FOLDER) ? self::TYPE_FOLDER : self::TYPE_FILE;
 		}
 		return $this->data['type'];
 	}
@@ -382,7 +395,19 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @param string $entryPath full path of the child entry
 	 */
 	public function addSubEntry($data, $entryPath) {
-		$this->data['size'] += isset($data['size']) ? $data['size'] : 0;
+		if (!$data) {
+			return;
+		}
+		$hasUnencryptedSize = isset($data['unencrypted_size']) && $data['unencrypted_size'] > 0;
+		if ($hasUnencryptedSize) {
+			$subSize = $data['unencrypted_size'];
+		} else {
+			$subSize = $data['size'] ?: 0;
+		}
+		$this->data['size'] += $subSize;
+		if ($hasUnencryptedSize) {
+			$this->data['unencrypted_size'] += $subSize;
+		}
 		if (isset($data['mtime'])) {
 			$this->data['mtime'] = max($this->data['mtime'], $data['mtime']);
 		}

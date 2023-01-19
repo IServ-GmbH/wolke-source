@@ -49,6 +49,7 @@ class LogController extends Controller {
 	}
 
 	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 * @param int $count
 	 * @param int $offset
 	 * @param string $levels
@@ -71,11 +72,12 @@ class LogController extends Controller {
 	}
 
 	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 * @brief polls for a new log message since $lastReqId.
 	 * This method will sleep for maximum 20 seconds before returning an empty
 	 * result.
 	 *
-	 * Note that there is a race condition possible: when the user loads the
+	 * @note There is a possible race condition, when the user loads the
 	 * logging page when a request isn't finished and this specific request
 	 * is the last request in the log, then new messages of this request
 	 * won't be polled. This is because there is no reliable way to identify
@@ -84,20 +86,19 @@ class LogController extends Controller {
 	 *  - a combination of reqid and counting the messages for that specific reqid
 	 *  will work in some cases but not when there are more than 50 messages of that
 	 *  request.
-	 * @param $lastReqId
-	 * @param string $levels
-	 * @return JSONResponse
 	 */
-	public function poll($lastReqId, $levels = '11111') {
+	public function poll(string $lastReqId, string $levels = '11111'): JSONResponse {
 		$cycles = 0;
 		$maxCycles = 20;
 
-		while ($this->getLastItem($levels)['reqId'] === $lastReqId) {
+		$lastItem = $this->getLastItem($levels);
+		while ($lastItem === null || $lastItem['reqId'] === $lastReqId) {
 			sleep(1);
 			$cycles++;
 			if ($cycles === $maxCycles) {
 				return new JSONResponse([]);
 			}
+			$lastItem = $this->getLastItem($levels);
 		}
 		$iterator = $this->logIteratorFactory->getLogIterator($levels);
 		$iterator->next();
@@ -122,6 +123,7 @@ class LogController extends Controller {
 	}
 
 	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 * @param string $query
 	 * @param int $count
 	 * @param int $offset
@@ -139,11 +141,17 @@ class LogController extends Controller {
 		return $this->responseFromIterator($iterator, $count, $offset);
 	}
 
-	public function getLevels() {
+	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
+	 */
+	public function getLevels(): JSONResponse {
 		return new JSONResponse($this->config->getAppValue('logreader', 'levels', '11111'));
 	}
 
-	public function getSettings() {
+	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
+	 */
+	public function getSettings(): JSONResponse {
 		return new JSONResponse([
 			'levels' => $this->config->getAppValue('logreader', 'levels', '11111'),
 			'dateformat' => $this->config->getSystemValue('logdateformat', \DateTime::ISO8601),
@@ -154,6 +162,7 @@ class LogController extends Controller {
 	}
 
 	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 * @param bool $relative
 	 */
 	public function setRelative($relative) {
@@ -161,13 +170,17 @@ class LogController extends Controller {
 	}
 
 	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 * @param bool $live
 	 */
 	public function setLive($live) {
 		$this->config->setAppValue('logreader', 'live', $live);
 	}
 
-	public function setLevels($levels) {
+	/**
+	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
+	 */
+	public function setLevels(string $levels): int {
 		$intLevels = array_map('intval', str_split($levels));
 		$minLevel = 4;
 		foreach ($intLevels as $level => $log) {

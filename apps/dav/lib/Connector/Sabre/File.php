@@ -43,6 +43,7 @@ use OC\AppFramework\Http\Request;
 use OC\Files\Filesystem;
 use OC\Files\Stream\HashWrapper;
 use OC\Files\View;
+use OC\Metadata\FileMetadata;
 use OCA\DAV\AppInfo\Application;
 use OCA\DAV\Connector\Sabre\Exception\EntityTooLarge;
 use OCA\DAV\Connector\Sabre\Exception\FileLocked;
@@ -78,8 +79,10 @@ use Sabre\DAV\IFile;
 class File extends Node implements IFile {
 	protected $request;
 
-	/** @var IL10N */
-	protected $l10n;
+	protected IL10N $l10n;
+
+	/** @var array<string, FileMetadata> */
+	private array $metadata = [];
 
 	/**
 	 * Sets up the node, expects a full path name
@@ -400,11 +403,9 @@ class File extends Node implements IFile {
 
 			if (isset($this->request->server['HTTP_OC_CHECKSUM'])) {
 				$checksum = trim($this->request->server['HTTP_OC_CHECKSUM']);
-				$this->fileView->putFileInfo($this->path, ['checksum' => $checksum]);
-				$this->refreshInfo();
+				$this->setChecksum($checksum);
 			} elseif ($this->getChecksum() !== null && $this->getChecksum() !== '') {
-				$this->fileView->putFileInfo($this->path, ['checksum' => '']);
-				$this->refreshInfo();
+				$this->setChecksum('');
 			}
 		} catch (StorageNotAvailableException $e) {
 			throw new ServiceUnavailable($this->l10n->t('Failed to check file size: %1$s', [$e->getMessage()]), 0, $e);
@@ -753,9 +754,34 @@ class File extends Node implements IFile {
 		return $this->info->getChecksum();
 	}
 
+	public function setChecksum(string $checksum) {
+		$this->fileView->putFileInfo($this->path, ['checksum' => $checksum]);
+		$this->refreshInfo();
+	}
+
 	protected function header($string) {
 		if (!\OC::$CLI) {
 			\header($string);
 		}
+	}
+
+	public function hash(string $type) {
+		return $this->fileView->hash($type, $this->path);
+	}
+
+	public function getNode(): \OCP\Files\File {
+		return $this->node;
+	}
+
+	public function getMetadata(string $group): FileMetadata {
+		return $this->metadata[$group];
+	}
+
+	public function setMetadata(string $group, FileMetadata $metadata): void {
+		$this->metadata[$group] = $metadata;
+	}
+
+	public function hasMetadata(string $group) {
+		return array_key_exists($group, $this->metadata);
 	}
 }

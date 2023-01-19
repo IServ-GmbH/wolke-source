@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -68,7 +67,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server_tuning.html">Server tuning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 20.04 LTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
 </ul>
@@ -100,9 +99,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Installation and server configuration</a> &raquo;</li>
-      <li>SELinux configuration</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
+      <li class="breadcrumb-item active">SELinux configuration</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/installation/selinux_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -113,7 +112,7 @@
            <div itemprop="articleBody">
              
   <section id="selinux-configuration">
-<span id="selinux-config-label"></span><h1>SELinux configuration<a class="headerlink" href="#selinux-configuration" title="Permalink to this heading"></a></h1>
+<span id="selinux-config-label"></span><h1>SELinux configuration<a class="headerlink" href="#selinux-configuration" title="Permalink to this headline"></a></h1>
 <p>When you have SELinux enabled on your Linux distribution, you may run into
 permissions problems after a new Nextcloud installation, and see <code class="docutils literal notranslate"><span class="pre">permission</span>
 <span class="pre">denied</span></code> errors in your Nextcloud logs.</p>
@@ -150,7 +149,7 @@ HTTP server write access to these directories:</p>
 </pre></div>
 </div>
 <section id="enable-updates-via-the-web-interface">
-<h2>Enable updates via the web interface<a class="headerlink" href="#enable-updates-via-the-web-interface" title="Permalink to this heading"></a></h2>
+<h2>Enable updates via the web interface<a class="headerlink" href="#enable-updates-via-the-web-interface" title="Permalink to this headline"></a></h2>
 <p>To enable updates via the web interface, you may need this to enable writing to the directories:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="n">httpd_unified</span> <span class="n">on</span>
 </pre></div>
@@ -161,28 +160,28 @@ HTTP server write access to these directories:</p>
 </div>
 </section>
 <section id="disallow-write-access-to-the-whole-web-directory">
-<h2>Disallow write access to the whole web directory<a class="headerlink" href="#disallow-write-access-to-the-whole-web-directory" title="Permalink to this heading"></a></h2>
+<h2>Disallow write access to the whole web directory<a class="headerlink" href="#disallow-write-access-to-the-whole-web-directory" title="Permalink to this headline"></a></h2>
 <p>For security reasons it’s suggested to disable write access to all folders in /var/www/ (default):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span>  <span class="n">httpd_unified</span>  <span class="n">off</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-a-remote-database">
-<h2>Allow access to a remote database<a class="headerlink" href="#allow-access-to-a-remote-database" title="Permalink to this heading"></a></h2>
+<h2>Allow access to a remote database<a class="headerlink" href="#allow-access-to-a-remote-database" title="Permalink to this headline"></a></h2>
 <p>An additional setting is needed if your installation is connecting to a remote database:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_can_network_connect_db</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-ldap-server">
-<h2>Allow access to LDAP server<a class="headerlink" href="#allow-access-to-ldap-server" title="Permalink to this heading"></a></h2>
+<h2>Allow access to LDAP server<a class="headerlink" href="#allow-access-to-ldap-server" title="Permalink to this headline"></a></h2>
 <p>Use this setting to allow LDAP connections:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_can_connect_ldap</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-remote-network">
-<h2>Allow access to remote network<a class="headerlink" href="#allow-access-to-remote-network" title="Permalink to this heading"></a></h2>
+<h2>Allow access to remote network<a class="headerlink" href="#allow-access-to-remote-network" title="Permalink to this headline"></a></h2>
 <p>Nextcloud requires access to remote networks for functions such as Server-to-Server sharing, external storages or
 the app store. To allow this access use the following setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_can_network_connect</span> <span class="n">on</span>
@@ -190,14 +189,14 @@ the app store. To allow this access use the following setting:</p>
 </div>
 </section>
 <section id="allow-access-to-network-memcache">
-<h2>Allow access to network memcache<a class="headerlink" href="#allow-access-to-network-memcache" title="Permalink to this heading"></a></h2>
+<h2>Allow access to network memcache<a class="headerlink" href="#allow-access-to-network-memcache" title="Permalink to this headline"></a></h2>
 <p>This setting is not required if <code class="docutils literal notranslate"><span class="pre">httpd_can_network_connect</span></code> is already on:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_can_network_memcache</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-smtp-sendmail">
-<h2>Allow access to SMTP/sendmail<a class="headerlink" href="#allow-access-to-smtp-sendmail" title="Permalink to this heading"></a></h2>
+<h2>Allow access to SMTP/sendmail<a class="headerlink" href="#allow-access-to-smtp-sendmail" title="Permalink to this headline"></a></h2>
 <p>If you want to allow Nextcloud to send out e-mail notifications via sendmail you need
 to use the following setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_can_sendmail</span> <span class="n">on</span>
@@ -205,28 +204,28 @@ to use the following setting:</p>
 </div>
 </section>
 <section id="allow-access-to-cifs-smb">
-<h2>Allow access to CIFS/SMB<a class="headerlink" href="#allow-access-to-cifs-smb" title="Permalink to this heading"></a></h2>
+<h2>Allow access to CIFS/SMB<a class="headerlink" href="#allow-access-to-cifs-smb" title="Permalink to this headline"></a></h2>
 <p>If you have placed your datadir on a CIFS/SMB share use the following setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_use_cifs</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-fusefs">
-<h2>Allow access to FuseFS<a class="headerlink" href="#allow-access-to-fusefs" title="Permalink to this heading"></a></h2>
+<h2>Allow access to FuseFS<a class="headerlink" href="#allow-access-to-fusefs" title="Permalink to this headline"></a></h2>
 <p>If your data folder resides on a Fuse Filesystem (e.g. EncFS etc), this setting is required as well:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_use_fusefs</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="allow-access-to-gpg-for-rainloop">
-<h2>Allow access to GPG for Rainloop<a class="headerlink" href="#allow-access-to-gpg-for-rainloop" title="Permalink to this heading"></a></h2>
+<h2>Allow access to GPG for Rainloop<a class="headerlink" href="#allow-access-to-gpg-for-rainloop" title="Permalink to this headline"></a></h2>
 <p>If you use a the rainloop webmail client app which supports GPG/PGP, you might need this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setsebool</span> <span class="o">-</span><span class="n">P</span> <span class="n">httpd_use_gpg</span> <span class="n">on</span>
 </pre></div>
 </div>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
 <p>For general Troubleshooting of SELinux and its profiles try to install the
 package <code class="docutils literal notranslate"><span class="pre">setroubleshoot</span></code> and run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sealert</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">audit</span><span class="o">/</span><span class="n">audit</span><span class="o">.</span><span class="n">log</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">mylogfile</span><span class="o">.</span><span class="n">txt</span>
@@ -279,11 +278,9 @@ systems.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

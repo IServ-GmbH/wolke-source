@@ -23,16 +23,17 @@ OC.L10N.register(
     "Mail" : "තැපෑල",
     "Activity" : "ක්‍රියාකාරකම",
     "Notifications" : "දැනුම්දීම්",
-    "No activity yet" : "තවම ක්‍රියාකාරකමක් නොමැත",
-    "No activities" : "ක්‍රියාකාරකම් නැත",
-    "Enable notification emails" : "දැනුම්දීම් විද්‍යුත් තැපෑල සබල කරන්න",
-    "Default settings" : "සාමාන්‍ය සැකසුම්",
+    "Send activity emails" : "ක්‍රියාකාරකම් විද්‍යුත් තැපෑල යවන්න",
     "As soon as possible" : "හැකි ඉක්මනින්",
     "Daily" : "දිනපතා",
     "Weekly" : "සතිපතා",
-    "Settings" : "සැකසුම්",
+    "No activity yet" : "තවම ක්‍රියාකාරකමක් නොමැත",
+    "Enable notification emails" : "දැනුම්දීම් විද්‍යුත් තැපෑල සබල කරන්න",
+    "No activities" : "ක්‍රියාකාරකම් නැත",
+    "Default settings" : "සාමාන්‍ය සැකසුම්",
     "No more events to load" : "පූරණය කිරීමට තවත් සිදුවීම් නොමැත",
     "Activity notification for %s" : "%s සඳහා ක්‍රියාකාරකම් දැනුම්දීම",
-    "activities" : "ක්‍රියාකාරකම්"
+    "activities" : "ක්‍රියාකාරකම්",
+    "Settings" : "සැකසුම්"
 },
 "nplurals=2; plural=(n != 1);");

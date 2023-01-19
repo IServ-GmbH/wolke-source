@@ -187,7 +187,7 @@ class JSConfigHelper {
 			$lastConfirmTimestamp = 0;
 		}
 
-		$capabilities = $this->capabilitiesManager->getCapabilities();
+		$capabilities = $this->capabilitiesManager->getCapabilities(false, true);
 
 		$config = [
 			'session_lifetime' => min($this->config->getSystemValue('session_lifetime', $this->iniWrapper->getNumeric('session.gc_maxlifetime')), $this->iniWrapper->getNumeric('session.gc_maxlifetime')),
@@ -301,8 +301,6 @@ class JSConfigHelper {
 				'docPlaceholderUrl' => $this->defaults->buildDocLinkToKey('PLACEHOLDER'),
 				'slogan' => $this->defaults->getSlogan(),
 				'logoClaim' => '',
-				'shortFooter' => $this->defaults->getShortFooter(),
-				'longFooter' => $this->defaults->getLongFooter(),
 				'folder' => \OC_Util::getTheme(),
 			]),
 		];

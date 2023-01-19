@@ -27,6 +27,7 @@ declare(strict_types=1);
  */
 namespace OC\Core\Controller;
 
+use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Core\Db\LoginFlowV2;
 use OC\Core\Exception\LoginFlowV2NotFoundException;
 use OC\Core\Service\LoginFlowV2Service;
@@ -106,7 +107,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * @PublicPage
 	 * @UseSession
 	 */
-	public function landing(string $token): Response {
+	public function landing(string $token, $user = ''): Response {
 		if (!$this->loginFlowV2Service->startLoginFlow($token)) {
 			return $this->loginTokenForbiddenResponse();
 		}
@@ -114,7 +115,7 @@ class ClientFlowLoginV2Controller extends Controller {
 		$this->session->set(self::TOKEN_NAME, $token);
 
 		return new RedirectResponse(
-			$this->urlGenerator->linkToRouteAbsolute('core.ClientFlowLoginV2.showAuthPickerPage')
+			$this->urlGenerator->linkToRouteAbsolute('core.ClientFlowLoginV2.showAuthPickerPage', ['user' => $user])
 		);
 	}
 
@@ -123,7 +124,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * @PublicPage
 	 * @UseSession
 	 */
-	public function showAuthPickerPage(): StandaloneTemplateResponse {
+	public function showAuthPickerPage($user = ''): StandaloneTemplateResponse {
 		try {
 			$flow = $this->getFlowByLoginToken();
 		} catch (LoginFlowV2NotFoundException $e) {
@@ -144,6 +145,7 @@ class ClientFlowLoginV2Controller extends Controller {
 				'instanceName' => $this->defaults->getName(),
 				'urlGenerator' => $this->urlGenerator,
 				'stateToken' => $stateToken,
+				'user' => $user,
 			],
 			'guest'
 		);
@@ -185,6 +187,48 @@ class ClientFlowLoginV2Controller extends Controller {
 	}
 
 	/**
+	 * @PublicPage
+	 */
+	public function apptokenRedirect(string $stateToken, string $user, string $password) {
+		if (!$this->isValidStateToken($stateToken)) {
+			return $this->stateTokenForbiddenResponse();
+		}
+
+		try {
+			$this->getFlowByLoginToken();
+		} catch (LoginFlowV2NotFoundException $e) {
+			return $this->loginTokenForbiddenResponse();
+		}
+
+		$loginToken = $this->session->get(self::TOKEN_NAME);
+
+		// Clear session variables
+		$this->session->remove(self::TOKEN_NAME);
+		$this->session->remove(self::STATE_NAME);
+
+		try {
+			$token = \OC::$server->get(\OC\Authentication\Token\IProvider::class)->getToken($password);
+			if ($token->getLoginName() !== $user) {
+				throw new InvalidTokenException('login name does not match');
+			}
+		} catch (InvalidTokenException $e) {
+			$response = new StandaloneTemplateResponse(
+				$this->appName,
+				'403',
+				[
+					'message' => $this->l10n->t('Invalid app password'),
+				],
+				'guest'
+			);
+			$response->setStatus(Http::STATUS_FORBIDDEN);
+			return $response;
+		}
+
+		$result = $this->loginFlowV2Service->flowDoneWithAppPassword($loginToken, $this->getServerPath(), $this->userId, $password);
+		return $this->handleFlowDone($result);
+	}
+
+	/**
 	 * @NoAdminRequired
 	 * @UseSession
 	 */
@@ -207,7 +251,10 @@ class ClientFlowLoginV2Controller extends Controller {
 		$sessionId = $this->session->getId();
 
 		$result = $this->loginFlowV2Service->flowDone($loginToken, $sessionId, $this->getServerPath(), $this->userId);
+		return $this->handleFlowDone($result);
+	}
 
+	private function handleFlowDone(bool $result): StandaloneTemplateResponse {
 		if ($result) {
 			return new StandaloneTemplateResponse(
 				$this->appName,

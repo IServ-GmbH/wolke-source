@@ -48,8 +48,8 @@ use OC\Security\CSRF\CsrfTokenManager;
 use OC\Security\TrustedDomainHelper;
 use OCP\IConfig;
 use OCP\IRequest;
+use OCP\IRequestId;
 use OCP\Security\ICrypto;
-use OCP\Security\ISecureRandom;
 
 /**
  * Class for accessing variables in the request.
@@ -92,12 +92,10 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 		'method',
 		'requesttoken',
 	];
-	/** @var ISecureRandom */
-	protected $secureRandom;
+	/** @var RequestId */
+	protected $requestId;
 	/** @var IConfig */
 	protected $config;
-	/** @var string */
-	protected $requestId = '';
 	/** @var ICrypto */
 	protected $crypto;
 	/** @var CsrfTokenManager|null */
@@ -117,20 +115,20 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 *        - array 'cookies' the $_COOKIE array
 	 *        - string 'method' the request method (GET, POST etc)
 	 *        - string|false 'requesttoken' the requesttoken or false when not available
-	 * @param ISecureRandom $secureRandom
+	 * @param IRequestId $requestId
 	 * @param IConfig $config
 	 * @param CsrfTokenManager|null $csrfTokenManager
 	 * @param string $stream
 	 * @see https://www.php.net/manual/en/reserved.variables.php
 	 */
 	public function __construct(array $vars,
-								ISecureRandom $secureRandom,
+								IRequestId $requestId,
 								IConfig $config,
 								CsrfTokenManager $csrfTokenManager = null,
 								string $stream = 'php://input') {
 		$this->inputStream = $stream;
 		$this->items['params'] = [];
-		$this->secureRandom = $secureRandom;
+		$this->requestId = $requestId;
 		$this->config = $config;
 		$this->csrfTokenManager = $csrfTokenManager;
 
@@ -199,6 +197,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @param string $offset
 	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
 		return isset($this->items['parameters'][$offset])
 			? $this->items['parameters'][$offset]
@@ -210,7 +209,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @param string $offset
 	 * @param mixed $value
 	 */
-	public function offsetSet($offset, $value) {
+	public function offsetSet($offset, $value): void {
 		throw new \RuntimeException('You cannot change the contents of the request object');
 	}
 
@@ -218,7 +217,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @see offsetExists
 	 * @param string $offset
 	 */
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset): void {
 		throw new \RuntimeException('You cannot change the contents of the request object');
 	}
 
@@ -570,16 +569,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @return string
 	 */
 	public function getId(): string {
-		if (isset($this->server['UNIQUE_ID'])) {
-			return $this->server['UNIQUE_ID'];
-		}
-
-		if (empty($this->requestId)) {
-			$validChars = ISecureRandom::CHAR_ALPHANUMERIC;
-			$this->requestId = $this->secureRandom->generate(20, $validChars);
-		}
-
-		return $this->requestId;
+		return $this->requestId->getId();
 	}
 
 	/**
@@ -794,17 +784,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 */
 	public function getPathInfo() {
 		$pathInfo = $this->getRawPathInfo();
-		// following is taken from \Sabre\HTTP\URLUtil::decodePathSegment
-		$pathInfo = rawurldecode($pathInfo);
-		$encoding = mb_detect_encoding($pathInfo, ['UTF-8', 'ISO-8859-1']);
-
-		switch ($encoding) {
-			case 'ISO-8859-1':
-				$pathInfo = utf8_encode($pathInfo);
-		}
-		// end copy
-
-		return $pathInfo;
+		return \Sabre\HTTP\decodePath($pathInfo);
 	}
 
 	/**

@@ -1,28 +1,6 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-### 23.1.0
-
-- support Oracle,
-- lighten most SQL requests,
-- allow configuration of a Single password per Circle,
-- fixing an issue with circles as members displayed name
-
-
-### 23.0.1
-
-- lighten multiple SQL request
-- caching local data about current session
-- mail address are now in lower case to avoid duplicate entries
-- Enforcing password where sharing file to an external member
-- better display of members when using command line
-- fix an issue with 'members can invite new people'
-- allow admin to limit to type of members allowed in a Circle
-
-
-### 23.0.0 (NC23)
-
-- compat nc23
 
 
 ### 22.0.0 (NC22)
@@ -30,9 +8,23 @@ All notable changes to this project will be documented in this file.
 - Full rewrite of the app for Nextcloud 22
 - Type of Circles are gone, replaced by config flags  
 - first implementation of federated circles (2.0)
-- first implementation of new ExtendedQueryBuilder
-  
-  (changelog in progress)
+- first implementation of new ExtendedQueryBuilder  
+- Important: Circles and Circle memberships will be migrated with cron jobs.
+  However, this can take a long time with large databases. The process can
+  be speed up by executing the migrations manually. This can still take a
+  couple of days. To migrate the Circles and memberships, use `occ`:
+  ```bash
+  occ circles:sync --migration [--force]
+  occ circles:memberships --all
+  ```
+  It may happen that the `circles:sync` command does not migrate all Circles
+  in the first run. Re-run this command until all Circle are migrated. You can
+  check if all Circles are migrated with the following SQL query:
+  ```sql
+  SELECT COUNT(unique_id) FROM nc_circle_circles WHERE unique_id NOT IN (SELECT unique_id FROM nc_circles_circle);
+  ```
+
+(changelog in progress)
   
 
 ### 0.20.6

@@ -12,18 +12,17 @@ OC.L10N.register(
     "Text" : "Text",
     "Use current version" : "Folosește versiunea curentă",
     "Use the saved version" : "Folosește versiuna salvată",
+    "Guest" : "Invitat",
+    "guest" : "invitat",
     "Saving …" : "Se salvează",
     "Saved" : "Salvat",
     "Unsaved changes" : "Modificări nesalvate",
-    "Guest" : "Invitat",
     "Keyboard shortcuts" : "Scurtături din tastatură",
-    "guest" : "invitat",
     "Undo" : "Anulează ultima acțiune",
     "Info" : "Info",
     "Success" : "Succes",
     "Warning" : "Atenție",
-    "Insert image" : "Introdu imagine",
     "Edit" : "Editează",
-    "New text document" : "Nou document text"
+    "Insert image" : "Introdu imagine"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

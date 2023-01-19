@@ -48,10 +48,11 @@ use OC;
 use OC\Cache\CappedMemoryCache;
 use OC\ServerNotAvailableException;
 use OCP\Group\Backend\IGetDisplayNameBackend;
+use OCP\Group\Backend\IDeleteGroupBackend;
 use OCP\GroupInterface;
 use Psr\Log\LoggerInterface;
 
-class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend {
+class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend, IDeleteGroupBackend {
 	protected $enabled = false;
 
 	/** @var string[][] $cachedGroupMembers array of users with gid as key */
@@ -83,7 +84,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 		$this->cachedNestedGroups = new CappedMemoryCache();
 		$this->groupPluginManager = $groupPluginManager;
 		$this->logger = OC::$server->get(LoggerInterface::class);
-		$this->ldapGroupMemberAssocAttr = strtolower($gAssoc);
+		$this->ldapGroupMemberAssocAttr = strtolower((string)$gAssoc);
 	}
 
 	/**
@@ -202,7 +203,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	 * @throws ServerNotAvailableException
 	 */
 	public function getDynamicGroupMembers(string $dnGroup): array {
-		$dynamicGroupMemberURL = strtolower($this->access->connection->ldapDynamicGroupMemberURL);
+		$dynamicGroupMemberURL = strtolower((string)$this->access->connection->ldapDynamicGroupMemberURL);
 
 		if (empty($dynamicGroupMemberURL)) {
 			return [];
@@ -863,20 +864,18 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 
 		$groups = $this->access->fetchListOfGroups($filter,
 			[strtolower($this->access->connection->ldapGroupMemberAssocAttr), $this->access->connection->ldapGroupDisplayName, 'dn']);
-		if (is_array($groups)) {
-			$fetcher = function ($dn) use (&$seen) {
-				if (is_array($dn) && isset($dn['dn'][0])) {
-					$dn = $dn['dn'][0];
-				}
-				return $this->getGroupsByMember($dn, $seen);
-			};
-
-			if (empty($dn)) {
-				$dn = "";
+		$fetcher = function ($dn) use (&$seen) {
+			if (is_array($dn) && isset($dn['dn'][0])) {
+				$dn = $dn['dn'][0];
 			}
+			return $this->getGroupsByMember($dn, $seen);
+		};
 
-			$allGroups = $this->walkNestedGroups($dn, $fetcher, $groups, $seen);
+		if (empty($dn)) {
+			$dn = "";
 		}
+
+		$allGroups = $this->walkNestedGroups($dn, $fetcher, $groups, $seen);
 		$visibleGroups = $this->filterValidGroups($allGroups);
 		return array_intersect_key($allGroups, $visibleGroups);
 	}
@@ -1206,6 +1205,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	 */
 	public function implementsActions($actions) {
 		return (bool)((GroupInterface::COUNT_USERS |
+				GroupInterface::DELETE_GROUP |
 				$this->groupPluginManager->getImplementedActions()) & $actions);
 	}
 
@@ -1251,19 +1251,32 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	 * delete a group
 	 *
 	 * @param string $gid gid of the group to delete
-	 * @return bool
 	 * @throws Exception
 	 */
-	public function deleteGroup($gid) {
-		if ($this->groupPluginManager->implementsActions(GroupInterface::DELETE_GROUP)) {
+	public function deleteGroup(string $gid): bool {
+		if ($this->groupPluginManager->canDeleteGroup()) {
 			if ($ret = $this->groupPluginManager->deleteGroup($gid)) {
-				#delete group in nextcloud internal db
+				// Delete group in nextcloud internal db
 				$this->access->getGroupMapper()->unmap($gid);
 				$this->access->connection->writeToCache("groupExists" . $gid, false);
 			}
 			return $ret;
 		}
-		throw new Exception('Could not delete group in LDAP backend.');
+
+		// Getting dn, if false the group is not mapped
+		$dn = $this->access->groupname2dn($gid);
+		if (!$dn) {
+			throw new Exception('Could not delete unknown group '.$gid.' in LDAP backend.');
+		}
+
+		if (!$this->groupExists($gid)) {
+			// The group does not exist in the LDAP, remove the mapping
+			$this->access->getGroupMapper()->unmap($gid);
+			$this->access->connection->writeToCache("groupExists" . $gid, false);
+			return true;
+		}
+
+		throw new Exception('Could not delete existing group '.$gid.' in LDAP backend.');
 	}
 
 	/**
@@ -1324,7 +1337,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	 * of the current access.
 	 *
 	 * @param string $gid
-	 * @return resource of the LDAP connection
+	 * @return resource|\LDAP\Connection The LDAP connection
 	 * @throws ServerNotAvailableException
 	 */
 	public function getNewLDAPConnection($gid) {

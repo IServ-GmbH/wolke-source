@@ -37,6 +37,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\IConfig;
+use OCP\IUser;
 use OCP\UserStatus\IUserStatus;
 
 /**
@@ -504,7 +505,7 @@ class StatusService {
 		}
 	}
 
-	public function revertUserStatus(string $userId, ?string $messageId, string $status): void {
+	public function revertUserStatus(string $userId, string $messageId): void {
 		try {
 			/** @var UserStatus $userStatus */
 			$backupUserStatus = $this->mapper->findByUserId($userId, true);
@@ -513,7 +514,7 @@ class StatusService {
 			return;
 		}
 
-		$deleted = $this->mapper->deleteCurrentStatusToRestoreBackup($userId, $messageId ?? '', $status);
+		$deleted = $this->mapper->deleteCurrentStatusToRestoreBackup($userId, $messageId);
 		if (!$deleted) {
 			// Another status is set automatically or no status, do nothing
 			return;
@@ -523,5 +524,37 @@ class StatusService {
 		// Remove the underscore prefix added when creating the backup
 		$backupUserStatus->setUserId(substr($backupUserStatus->getUserId(), 1));
 		$this->mapper->update($backupUserStatus);
+	}
+
+	public function revertMultipleUserStatus(array $userIds, string $messageId): void {
+		// Get all user statuses and the backups
+		$findById = $userIds;
+		foreach ($userIds as $userId) {
+			$findById[] = '_' . $userId;
+		}
+		$userStatuses = $this->mapper->findByUserIds($findById);
+
+		$backups = $restoreIds = $statuesToDelete = [];
+		foreach ($userStatuses as $userStatus) {
+			if (!$userStatus->getIsBackup()
+				&& $userStatus->getMessageId() === $messageId) {
+				$statuesToDelete[$userStatus->getUserId()] = $userStatus->getId();
+			} else if ($userStatus->getIsBackup()) {
+				$backups[$userStatus->getUserId()] = $userStatus->getId();
+			}
+		}
+
+		// For users with both (normal and backup) delete the status when matching
+		foreach ($statuesToDelete as $userId => $statusId) {
+			$backupUserId = '_' . $userId;
+			if (isset($backups[$backupUserId])) {
+				$restoreIds[] = $backups[$backupUserId];
+			}
+		}
+
+		$this->mapper->deleteByIds(array_values($statuesToDelete));
+
+		// For users that matched restore the previous status
+		$this->mapper->restoreBackupStatuses($restoreIds);
 	}
 }

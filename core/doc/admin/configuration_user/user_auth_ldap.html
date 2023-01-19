@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -125,9 +124,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">User management</a> &raquo;</li>
-      <li>User authentication with LDAP</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">User management</a></li>
+      <li class="breadcrumb-item active">User authentication with LDAP</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_user/user_auth_ldap.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -138,7 +137,7 @@
            <div itemprop="articleBody">
              
   <section id="user-authentication-with-ldap">
-<h1>User authentication with LDAP<a class="headerlink" href="#user-authentication-with-ldap" title="Permalink to this heading"></a></h1>
+<h1>User authentication with LDAP<a class="headerlink" href="#user-authentication-with-ldap" title="Permalink to this headline"></a></h1>
 <p>Nextcloud ships with an LDAP application to allow LDAP users (including Active
 Directory) to appear in your Nextcloud user listings. These users will
 authenticate to Nextcloud with their LDAP credentials, so you don’t have to
@@ -171,7 +170,7 @@ supported)</p></li>
 for the LDAP backend to work. Please refer to the <a class="reference internal" href="../installation/selinux_configuration.html#selinux-config-label"><span class="std std-ref">SELinux configuration</span></a>.</p>
 </div>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
 <p>First enable the <code class="docutils literal notranslate"><span class="pre">LDAP</span> <span class="pre">user</span> <span class="pre">and</span> <span class="pre">group</span> <span class="pre">backend</span></code> app on the Apps page in
 Nextcloud. Then go to your Admin page to configure it.</p>
 <p>The LDAP configuration panel has four tabs. A correctly completed first tab
@@ -179,7 +178,7 @@ Nextcloud. Then go to your Admin page to configure it.</p>
 the configuration is correct. Hover your cursor over the fields to see some
 pop-up tooltips.</p>
 <section id="server-tab">
-<h3>Server tab<a class="headerlink" href="#server-tab" title="Permalink to this heading"></a></h3>
+<h3>Server tab<a class="headerlink" href="#server-tab" title="Permalink to this headline"></a></h3>
 <p>Start with the Server tab. You may configure multiple servers if you have them.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -238,7 +237,7 @@ Host, and you must enter it manually if Nextcloud does not detect it.</p>
 </dl>
 </section>
 <section id="users-tab">
-<h3>Users tab<a class="headerlink" href="#users-tab" title="Permalink to this heading"></a></h3>
+<h3>Users tab<a class="headerlink" href="#users-tab" title="Permalink to this headline"></a></h3>
 <p>Use this to control which LDAP users are listed as Nextcloud users on your
 Nextcloud server. In order to control which LDAP users can login to your Nextcloud
 server use the <strong>Login Attributes</strong> tab. Those LDAP users who have access but are not listed
@@ -273,7 +272,7 @@ listed in Nextcloud. The number updates automatically after any changes.</p>
 </dl>
 </section>
 <section id="login-attributes-tab">
-<h3>Login attributes tab<a class="headerlink" href="#login-attributes-tab" title="Permalink to this heading"></a></h3>
+<h3>Login attributes tab<a class="headerlink" href="#login-attributes-tab" title="Permalink to this headline"></a></h3>
 <p>The settings in the Login Attributes tab determine which LDAP users can log in to
 your Nextcloud system and which attribute or attributes the provided login name
 is matched against (e.g. LDAP/AD username, email address). You may select
@@ -320,7 +319,7 @@ user upon login.</p>
 </dl>
 </section>
 <section id="groups-tab">
-<h3>Groups tab<a class="headerlink" href="#groups-tab" title="Permalink to this heading"></a></h3>
+<h3>Groups tab<a class="headerlink" href="#groups-tab" title="Permalink to this headline"></a></h3>
 <p>By default, no LDAP groups will be available in Nextcloud. The settings in the
 Groups tab determine which groups will be available in Nextcloud. You may
 also elect to enter a raw LDAP filter instead.</p>
@@ -352,7 +351,7 @@ The number updates automatically after any change.</p>
 </section>
 </section>
 <section id="advanced-settings">
-<span id="advanced-settings-label"></span><h2>Advanced settings<a class="headerlink" href="#advanced-settings" title="Permalink to this heading"></a></h2>
+<span id="advanced-settings-label"></span><h2>Advanced settings<a class="headerlink" href="#advanced-settings" title="Permalink to this headline"></a></h2>
 <p>The LDAP Advanced Setting section contains options that are not needed for a
 working connection. This provides controls to disable the current
 configuration,
@@ -364,7 +363,7 @@ configure replica hosts, and various performance-enhancing options.</p>
 <li><p>Special Attributes</p></li>
 </ul>
 <section id="connection-settings">
-<h3>Connection settings<a class="headerlink" href="#connection-settings" title="Permalink to this heading"></a></h3>
+<h3>Connection settings<a class="headerlink" href="#connection-settings" title="Permalink to this headline"></a></h3>
 <figure class="align-default">
 <img alt="Advanced settings" src="../_images/ldap-advanced-1-connection.png" />
 </figure>
@@ -393,7 +392,7 @@ but only a host, then the main port (as specified above) will be used.</p>
 the backup server. This is useful for planned downtimes.</p>
 </dd>
 <dt>Turn off SSL certificate validation:</dt><dd><p>Turns off SSL certificate checking. Use it for testing only!
-<em>Note</em>: The effect of this setting depdends on the PHP system configuration.
+<em>Note</em>: The effect of this setting depends on the PHP system configuration.
 It does for example not work with the
 [official Nextcloud container image](<a class="reference external" href="https://github.com/nextcloud/docker">https://github.com/nextcloud/docker</a>).
 To disable certificate verification for a particular use, append the following
@@ -420,7 +419,7 @@ lifetime of 15s or so, rather than completely eliminating the cache.</p>
 operates.</p>
 </section>
 <section id="directory-settings">
-<span id="ldap-directory-settings"></span><h3>Directory settings<a class="headerlink" href="#directory-settings" title="Permalink to this heading"></a></h3>
+<span id="ldap-directory-settings"></span><h3>Directory settings<a class="headerlink" href="#directory-settings" title="Permalink to this headline"></a></h3>
 <figure class="align-default">
 <img alt="Directory settings." src="../_images/ldap-advanced-2-directory.png" />
 </figure>
@@ -548,7 +547,7 @@ Tricks</strong>.</p>
 </dl>
 </section>
 <section id="special-attributes">
-<span id="ldap-special-attributes"></span><h3>Special attributes<a class="headerlink" href="#special-attributes" title="Permalink to this heading"></a></h3>
+<span id="ldap-special-attributes"></span><h3>Special attributes<a class="headerlink" href="#special-attributes" title="Permalink to this headline"></a></h3>
 <figure class="align-default">
 <img alt="Special Attributes." src="../_images/ldap-advanced-3-attributes.png" />
 </figure>
@@ -590,7 +589,7 @@ attribute value. The attribute can also return an absolute path, e.g.
 </section>
 </section>
 <section id="expert-settings">
-<h2>Expert settings<a class="headerlink" href="#expert-settings" title="Permalink to this heading"></a></h2>
+<h2>Expert settings<a class="headerlink" href="#expert-settings" title="Permalink to this headline"></a></h2>
 <figure class="align-default">
 <img alt="Expert settings." src="../_images/ldap-expert.png" />
 </figure>
@@ -655,7 +654,7 @@ configurations!</p>
 </div>
 </section>
 <section id="testing-the-configuration">
-<h2>Testing the configuration<a class="headerlink" href="#testing-the-configuration" title="Permalink to this heading"></a></h2>
+<h2>Testing the configuration<a class="headerlink" href="#testing-the-configuration" title="Permalink to this headline"></a></h2>
 <p>The <strong>Test Configuration</strong> button checks the values as currently given in the
 input fields. You do not need to save before testing. By clicking on the
 button, Nextcloud will try to bind to the Nextcloud server using the
@@ -666,10 +665,10 @@ a look at the logs for further details.”</p>
 users and groups are fetched correctly on the Users page.</p>
 </section>
 <section id="additional-configuration-options-via-occ">
-<h2>Additional configuration options via occ<a class="headerlink" href="#additional-configuration-options-via-occ" title="Permalink to this heading"></a></h2>
+<h2>Additional configuration options via occ<a class="headerlink" href="#additional-configuration-options-via-occ" title="Permalink to this headline"></a></h2>
 <p>Few configuration settings can only be set on command line via <code class="docutils literal notranslate"><span class="pre">occ</span></code>.</p>
 <section id="attribute-update-interval">
-<h3>Attribute update interval<a class="headerlink" href="#attribute-update-interval" title="Permalink to this heading"></a></h3>
+<h3>Attribute update interval<a class="headerlink" href="#attribute-update-interval" title="Permalink to this headline"></a></h3>
 <p>The LDAP backend will update user information that is used within Nextcloud
 with the values provided by the LDAP server. For instance these are email,
 quota or the avatar. This happens on every login, the first detection of a user
@@ -687,7 +686,7 @@ It is not a per-configuration option.</p>
 </section>
 </section>
 <section id="nextcloud-avatar-integration">
-<h2>Nextcloud avatar integration<a class="headerlink" href="#nextcloud-avatar-integration" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud avatar integration<a class="headerlink" href="#nextcloud-avatar-integration" title="Permalink to this headline"></a></h2>
 <p>Nextcloud supports user profile pictures, which are also called avatars. If a user
 has a photo stored in the <em>jpegPhoto</em> or <em>thumbnailPhoto</em> attribute on your LDAP
 server, it will be used as their avatar. In this case the user cannot alter their
@@ -706,7 +705,7 @@ Nextcloud avatar replaces it.</p>
 <p>Photos served from LDAP are automatically cropped and resized in Nextcloud. This
 affects only the presentation, and the original image is not changed.</p>
 <section id="use-a-specific-attribute-or-turn-off-loading-of-images">
-<h3>Use a specific attribute or turn off loading of images<a class="headerlink" href="#use-a-specific-attribute-or-turn-off-loading-of-images" title="Permalink to this heading"></a></h3>
+<h3>Use a specific attribute or turn off loading of images<a class="headerlink" href="#use-a-specific-attribute-or-turn-off-loading-of-images" title="Permalink to this headline"></a></h3>
 <p>It is possible to turn off the avatar integration or specify a single,
 different attribute to read the image from. It is expected to contain image
 data just like <em>jpegPhoto</em> or <em>thumbnailPhoto</em> do.</p>
@@ -728,9 +727,9 @@ those options are available:</p>
 </section>
 </section>
 <section id="troubleshooting-tips-and-tricks">
-<h2>Troubleshooting, tips and tricks<a class="headerlink" href="#troubleshooting-tips-and-tricks" title="Permalink to this heading"></a></h2>
+<h2>Troubleshooting, tips and tricks<a class="headerlink" href="#troubleshooting-tips-and-tricks" title="Permalink to this headline"></a></h2>
 <section id="ssl-certificate-verification-ldaps-tls">
-<h3>SSL certificate verification (LDAPS, TLS)<a class="headerlink" href="#ssl-certificate-verification-ldaps-tls" title="Permalink to this heading"></a></h3>
+<h3>SSL certificate verification (LDAPS, TLS)<a class="headerlink" href="#ssl-certificate-verification-ldaps-tls" title="Permalink to this headline"></a></h3>
 <p>A common mistake with SSL certificates is that they may not be known to PHP.
 If you have trouble with certificate validation make sure that</p>
 <ul class="simple">
@@ -742,19 +741,19 @@ If you have trouble with certificate validation make sure that</p>
 </ul>
 </section>
 <section id="microsoft-active-directory">
-<h3>Microsoft Active Directory<a class="headerlink" href="#microsoft-active-directory" title="Permalink to this heading"></a></h3>
+<h3>Microsoft Active Directory<a class="headerlink" href="#microsoft-active-directory" title="Permalink to this headline"></a></h3>
 <p>Compared to earlier Nextcloud versions, no further tweaks need to be done to
 make Nextcloud work with Active Directory. Nextcloud will automatically find the
 correct configuration in the set-up process.</p>
 </section>
 <section id="memberof-read-memberof-permissions">
-<h3>memberOf / read memberof permissions<a class="headerlink" href="#memberof-read-memberof-permissions" title="Permalink to this heading"></a></h3>
+<h3>memberOf / read memberof permissions<a class="headerlink" href="#memberof-read-memberof-permissions" title="Permalink to this headline"></a></h3>
 <p>If you want to use <code class="docutils literal notranslate"><span class="pre">memberOf</span></code> within your filter you might need to give your
 querying user the permissions to use it. For Microsoft Active Directory this
 is described <a class="reference external" href="https://serverfault.com/questions/167371/what-permissions-are-required-for-enumerating-users-groups-in-active-directory/167401#167401">here</a>.</p>
 </section>
 <section id="user-listing-and-login-per-nested-groups">
-<h3>User listing and login per nested groups<a class="headerlink" href="#user-listing-and-login-per-nested-groups" title="Permalink to this heading"></a></h3>
+<h3>User listing and login per nested groups<a class="headerlink" href="#user-listing-and-login-per-nested-groups" title="Permalink to this headline"></a></h3>
 <p>When it is intended to allow user listing and login based on a specific group
 having subgroups (“nested groups”), checking <strong>Nested groups</strong> on <strong>Directory
 Settings</strong> is not enough. Also the User (and Login) filter need to be changed,
@@ -773,7 +772,7 @@ filter parts containing the <em>memberof</em> condition according to this exampl
 </div></blockquote>
 </section>
 <section id="duplicating-server-configurations">
-<h3>Duplicating server configurations<a class="headerlink" href="#duplicating-server-configurations" title="Permalink to this heading"></a></h3>
+<h3>Duplicating server configurations<a class="headerlink" href="#duplicating-server-configurations" title="Permalink to this headline"></a></h3>
 <p>In case you have a working configuration and want to create a similar one or
 “snapshot” configurations before modifying them you can do the following:</p>
 <ol class="arabic simple">
@@ -789,10 +788,10 @@ in the <em>Connection Settings</em>, so the new configuration is not used on Sav
 </section>
 </section>
 <section id="nextcloud-ldap-internals">
-<h2>Nextcloud LDAP internals<a class="headerlink" href="#nextcloud-ldap-internals" title="Permalink to this heading"></a></h2>
+<h2>Nextcloud LDAP internals<a class="headerlink" href="#nextcloud-ldap-internals" title="Permalink to this headline"></a></h2>
 <p>Some parts of how the LDAP backend works are described here.</p>
 <section id="user-and-group-mapping">
-<h3>User and group mapping<a class="headerlink" href="#user-and-group-mapping" title="Permalink to this heading"></a></h3>
+<h3>User and group mapping<a class="headerlink" href="#user-and-group-mapping" title="Permalink to this headline"></a></h3>
 <p>In Nextcloud the user or group name is used to have all relevant information in
 the database assigned. To work reliably a permanent internal user name and
 group name is created and mapped to the LDAP DN and UUID. If the DN changes in
@@ -814,7 +813,7 @@ login for this user or can be fetched manually via the occ command
 <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">ldap:check-user</span> <span class="pre">--update</span> <span class="pre">USERID</span></code> where <code class="docutils literal notranslate"><span class="pre">USERID</span></code> is Nextcloud’s user id.</p>
 </section>
 <section id="caching">
-<h3>Caching<a class="headerlink" href="#caching" title="Permalink to this heading"></a></h3>
+<h3>Caching<a class="headerlink" href="#caching" title="Permalink to this headline"></a></h3>
 <p>The LDAP information is cached in Nextcloud memory cache, and you must install
 and configure the memory cache (see
 <a class="reference internal" href="../configuration_server/caching_configuration.html"><span class="doc">Memory caching</span></a>). The Nextcloud  <strong>Cache</strong>
@@ -843,7 +842,7 @@ defunct, for example due to a server migration or unreachable server. In this
 case the other servers will also receive the request.</p>
 </section>
 <section id="handling-with-backup-server">
-<h3>Handling with backup server<a class="headerlink" href="#handling-with-backup-server" title="Permalink to this heading"></a></h3>
+<h3>Handling with backup server<a class="headerlink" href="#handling-with-backup-server" title="Permalink to this headline"></a></h3>
 <p>When Nextcloud is not able to contact the main LDAP server, Nextcloud assumes it
 is offline and will not try to connect again for the time specified in <strong>Cache
 Time-To-Live</strong>. If you have a backup server configured Nextcloud will connect to
@@ -852,7 +851,7 @@ avoid unnecessary connection attempts.</p>
 </section>
 </section>
 <section id="note">
-<h2>Note<a class="headerlink" href="#note" title="Permalink to this heading"></a></h2>
+<h2>Note<a class="headerlink" href="#note" title="Permalink to this headline"></a></h2>
 <p>When a LDAP object’s name or surname, that is display name attribute, by default
 “displayname”, is left empty, Nextcloud will treat it as an empty object, therefore
 no results from this user or AD-Object will be shown to avoid gathering of
@@ -893,11 +892,9 @@ technical accounts.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

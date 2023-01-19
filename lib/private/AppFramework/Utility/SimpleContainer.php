@@ -38,6 +38,7 @@ use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionParameter;
+use ReflectionNamedType;
 use function class_exists;
 
 /**
@@ -78,12 +79,13 @@ class SimpleContainer implements ArrayAccess, ContainerInterface, IContainer {
 			$resolveName = $parameter->getName();
 
 			// try to find out if it is a class or a simple parameter
-			if ($parameterType !== null && !$parameterType->isBuiltin()) {
+			if ($parameterType !== null && ($parameterType instanceof ReflectionNamedType) && !$parameterType->isBuiltin()) {
 				$resolveName = $parameterType->getName();
 			}
 
 			try {
-				$builtIn = $parameter->hasType() && $parameter->getType()->isBuiltin();
+				$builtIn = $parameter->hasType() && ($parameter->getType() instanceof ReflectionNamedType)
+					&& $parameter->getType()->isBuiltin();
 				return $this->query($resolveName, !$builtIn);
 			} catch (QueryException $e) {
 				// Service not found, use the default value when available
@@ -91,7 +93,7 @@ class SimpleContainer implements ArrayAccess, ContainerInterface, IContainer {
 					return $parameter->getDefaultValue();
 				}
 
-				if ($parameterType !== null && !$parameterType->isBuiltin()) {
+				if ($parameterType !== null && ($parameterType instanceof ReflectionNamedType) && !$parameterType->isBuiltin()) {
 					$resolveName = $parameter->getName();
 					try {
 						return $this->query($resolveName);
@@ -197,13 +199,15 @@ class SimpleContainer implements ArrayAccess, ContainerInterface, IContainer {
 	/**
 	 * @deprecated 20.0.0 use \Psr\Container\ContainerInterface::has
 	 */
-	public function offsetExists($id) {
+	public function offsetExists($id): bool {
 		return $this->container->offsetExists($id);
 	}
 
 	/**
 	 * @deprecated 20.0.0 use \Psr\Container\ContainerInterface::get
+	 * @return mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet($id) {
 		return $this->container->offsetGet($id);
 	}
@@ -211,14 +215,14 @@ class SimpleContainer implements ArrayAccess, ContainerInterface, IContainer {
 	/**
 	 * @deprecated 20.0.0 use \OCP\IContainer::registerService
 	 */
-	public function offsetSet($id, $service) {
+	public function offsetSet($id, $service): void {
 		$this->container->offsetSet($id, $service);
 	}
 
 	/**
 	 * @deprecated 20.0.0
 	 */
-	public function offsetUnset($offset) {
+	public function offsetUnset($offset): void {
 		$this->container->offsetUnset($offset);
 	}
 }

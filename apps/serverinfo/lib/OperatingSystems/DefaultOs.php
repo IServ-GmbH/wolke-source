@@ -27,10 +27,6 @@ use OCA\ServerInfo\Resources\Disk;
 use OCA\ServerInfo\Resources\Memory;
 
 class DefaultOs implements IOperatingSystem {
-
-	/**
-	 * @return bool
-	 */
 	public function supported(): bool {
 		return true;
 	}
@@ -54,7 +50,7 @@ class DefaultOs implements IOperatingSystem {
 
 		foreach ($matches['Key'] as $i => $key) {
 			// Value is always in KB: https://github.com/torvalds/linux/blob/c70672d8d316ebd46ea447effadfe57ab7a30a50/fs/proc/meminfo.c#L58-L60
-			$value = (int)($matches['Value'][$i] / 1024);
+			$value = (int)((int)$matches['Value'][$i] / 1024);
 
 			switch ($key) {
 				case 'MemTotal':
@@ -92,10 +88,19 @@ class DefaultOs implements IOperatingSystem {
 
 		$result = preg_match_all($pattern, $cpuinfo, $matches);
 		if ($result === 0 || $result === false) {
-			return $data;
+			// For Raspberry Pi 4B
+			$pattern = '/Model\s+:\s(.+)/';
+			$result = preg_match_all($pattern, $cpuinfo, $matches);
+			if ($result === 0 || $result === false) {
+				return $data;
+			}
 		}
 
 		$model = $matches[1][0];
+
+		$pattern = '/processor\s+:\s(.+)/';
+
+		$result = preg_match_all($pattern, $cpuinfo, $matches);
 		$cores = count($matches[1]);
 
 		if ($cores === 1) {
@@ -107,12 +112,8 @@ class DefaultOs implements IOperatingSystem {
 		return $data;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getTime(): string {
-		$date = shell_exec('date');
-		return $date;
+		return (string)shell_exec('date');
 	}
 
 	public function getUptime(): int {
@@ -129,9 +130,6 @@ class DefaultOs implements IOperatingSystem {
 		return $uptimeInSeconds;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getNetworkInfo(): array {
 		$result = [];
 		$result['hostname'] = \gethostname();
@@ -142,28 +140,28 @@ class DefaultOs implements IOperatingSystem {
 		return $result;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function getNetworkInterfaces(): array {
 		$interfaces = glob('/sys/class/net/*');
 		$result = [];
 
 		foreach ($interfaces as $interface) {
-			$iface              = [];
+			$iface = [];
 			$iface['interface'] = basename($interface);
-			$iface['mac']       = shell_exec('ip addr show dev ' . $iface['interface'] . ' | grep "link/ether " | cut -d \' \' -f 6  | cut -f 1 -d \'/\'');
-			$iface['ipv4']      = shell_exec('ip addr show dev ' . $iface['interface'] . ' | grep "inet " | cut -d \' \' -f 6  | cut -f 1 -d \'/\'');
-			$iface['ipv6']      = shell_exec('ip -o -6 addr show ' . $iface['interface'] . ' | sed -e \'s/^.*inet6 \([^ ]\+\).*/\1/\'');
+			$iface['mac'] = shell_exec('ip addr show dev ' . $iface['interface'] . ' | grep "link/ether " | cut -d \' \' -f 6  | cut -f 1 -d \'/\'');
+			$iface['ipv4'] = shell_exec('ip addr show dev ' . $iface['interface'] . ' | grep "inet " | cut -d \' \' -f 6  | cut -f 1 -d \'/\'');
+			$iface['ipv6'] = shell_exec('ip -o -6 addr show ' . $iface['interface'] . ' | sed -e \'s/^.*inet6 \([^ ]\+\).*/\1/\'');
 			if ($iface['interface'] !== 'lo') {
 				$iface['status'] = shell_exec('cat /sys/class/net/' . $iface['interface'] . '/operstate');
-				$iface['speed']  = shell_exec('cat /sys/class/net/' . $iface['interface'] . '/speed');
-				if (isset($iface['speed']) && $iface['speed'] !== '') {
-					$iface['speed'] = $iface['speed'] . 'Mbps';
+				$iface['speed'] = (int)shell_exec('cat /sys/class/net/' . $iface['interface'] . '/speed');
+				if (isset($iface['speed']) && $iface['speed'] > 0) {
+					if ($iface['speed'] >= 1000) {
+						$iface['speed'] = $iface['speed'] / 1000 . ' Gbps';
+					} else {
+						$iface['speed'] = $iface['speed'] . ' Mbps';
+					}
 				} else {
 					$iface['speed'] = 'unknown';
 				}
-
 				$duplex = shell_exec('cat /sys/class/net/' . $iface['interface'] . '/duplex');
 				if (isset($duplex) && $duplex !== '') {
 					$iface['duplex'] = 'Duplex: ' . $duplex;
@@ -172,7 +170,7 @@ class DefaultOs implements IOperatingSystem {
 				}
 			} else {
 				$iface['status'] = 'up';
-				$iface['speed']  = 'unknown';
+				$iface['speed'] = 'unknown';
 				$iface['duplex'] = '';
 			}
 			$result[] = $iface;
@@ -206,8 +204,8 @@ class DefaultOs implements IOperatingSystem {
 			$disk = new Disk();
 			$disk->setDevice($filesystem);
 			$disk->setFs($matches['Type'][$i]);
-			$disk->setUsed((int)($matches['Used'][$i] / 1024));
-			$disk->setAvailable((int)($matches['Available'][$i] / 1024));
+			$disk->setUsed((int)((int)$matches['Used'][$i] / 1024));
+			$disk->setAvailable((int)((int)$matches['Available'][$i] / 1024));
 			$disk->setPercent($matches['Capacity'][$i]);
 			$disk->setMount($matches['Mounted'][$i]);
 

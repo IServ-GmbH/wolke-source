@@ -267,7 +267,8 @@ if ($_['showCommunitySupportSection']) {
 		<h2><?php p($l->t('Community support')); ?></h2>
 
 		<div class="columns">
-			<section style="background-image: url(<?php p(\OCP\Template::image_path('support', 'discourse.svg')); ?>)">
+			<div>
+				<img src="<?php p(\OCP\Template::image_path('support', 'discourse.svg')) ?>">
 				<h3><?php p($l->t('Forum')); ?></h3>
 				<p>
 					<?php p(
@@ -276,8 +277,9 @@ if ($_['showCommunitySupportSection']) {
 				</p>
 				<a href="https://help.nextcloud.com"
 					target="blank" rel="no" class="button link-button"><?php p($l->t('Nextcloud forum')); ?></a>
-			</section>
-			<section style="background-image: url(<?php p(\OCP\Template::image_path('support', 'github.svg')); ?>)">
+			</div>
+			<div>
+				<img src="<?php p(\OCP\Template::image_path('support', 'github.svg')) ?>">
 				<h3>
 					<?php p($l->t('GitHub')); ?>
 				</h3>
@@ -288,7 +290,7 @@ if ($_['showCommunitySupportSection']) {
 				</p>
 				<a href="https://github.com/nextcloud/"
 					target="blank" rel="no" class="button link-button"><?php p($l->t('Nextcloud at GitHub')); ?></a>
-			</section>
+			</div>
 		</div>
 	</div>
 	<?php

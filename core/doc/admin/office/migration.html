@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -83,9 +82,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Office</a> &raquo;</li>
-      <li>Migration from Collabora Online</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Office</a></li>
+      <li class="breadcrumb-item active">Migration from Collabora Online</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/office/migration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -96,14 +95,14 @@
            <div itemprop="articleBody">
              
   <section id="migration-from-collabora-online">
-<h1>Migration from Collabora Online<a class="headerlink" href="#migration-from-collabora-online" title="Permalink to this heading"></a></h1>
+<h1>Migration from Collabora Online<a class="headerlink" href="#migration-from-collabora-online" title="Permalink to this headline"></a></h1>
 <p>Nextcloud Office is based on Collabora Online so for enabling all Nextcloud Office functionality it would be enough to update to the most recent release. Nextcloud Office is available since CODE 21.11.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This upgrade guide is aimed for upgrading from CODE 6.4 to CODE 21.11.</p>
 </div>
 <section id="update-the-reverse-proxy-configuration">
-<h2>Update the reverse proxy configuration<a class="headerlink" href="#update-the-reverse-proxy-configuration" title="Permalink to this heading"></a></h2>
+<h2>Update the reverse proxy configuration<a class="headerlink" href="#update-the-reverse-proxy-configuration" title="Permalink to this headline"></a></h2>
 <p>Due to naming changes in the Collabora Online releases it may be required to adjust reverse proxy configurations that are already in use for previously existing setups.</p>
 <ul class="simple">
 <li><p>Paths with <code class="docutils literal notranslate"><span class="pre">lool</span></code> have been renamed to <code class="docutils literal notranslate"><span class="pre">cool</span></code></p></li>
@@ -112,7 +111,7 @@
 <p>Fully detailed reverse proxy configration guides for various solutions can be found at <a class="reference external" href="https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html">https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html</a></p>
 </section>
 <section id="upgrade-distribution-packages">
-<h2>Upgrade distribution packages<a class="headerlink" href="#upgrade-distribution-packages" title="Permalink to this heading"></a></h2>
+<h2>Upgrade distribution packages<a class="headerlink" href="#upgrade-distribution-packages" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>The main service has been renamed from <code class="docutils literal notranslate"><span class="pre">loolwsd</span></code> to <code class="docutils literal notranslate"><span class="pre">coolwsd</span></code></p></li>
 <li><p>The service rename also affects the location of the configuration file <code class="docutils literal notranslate"><span class="pre">/etc/coolwsd/coolwsd.xml</span></code></p></li>
@@ -129,7 +128,7 @@
 </ul>
 </section>
 <section id="upgrade-the-docker-image">
-<h2>Upgrade the docker image<a class="headerlink" href="#upgrade-the-docker-image" title="Permalink to this heading"></a></h2>
+<h2>Upgrade the docker image<a class="headerlink" href="#upgrade-the-docker-image" title="Permalink to this headline"></a></h2>
 <p>For upgrading the docker images it is enough to pull the latest CODE image from Docker Hub.</p>
 </section>
 </section>
@@ -167,11 +166,9 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

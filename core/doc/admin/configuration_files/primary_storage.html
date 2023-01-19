@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -97,9 +96,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>Configuring Object Storage as Primary Storage</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">Configuring Object Storage as Primary Storage</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/primary_storage.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -110,7 +109,7 @@
            <div itemprop="articleBody">
              
   <section id="configuring-object-storage-as-primary-storage">
-<h1>Configuring Object Storage as Primary Storage<a class="headerlink" href="#configuring-object-storage-as-primary-storage" title="Permalink to this heading"></a></h1>
+<h1>Configuring Object Storage as Primary Storage<a class="headerlink" href="#configuring-object-storage-as-primary-storage" title="Permalink to this headline"></a></h1>
 <p>Nextcloud allows to configure object storages like OpenStack Swift or
 Amazon Simple Storage Service (S3) or any compatible S3-implementation
 (e.g. Minio or Ceph Object Gateway) as primary storage replacing the default
@@ -119,7 +118,7 @@ storage of files.</p>
 in the <code class="code docutils literal notranslate"><span class="pre">config.php</span></code> of your Nextcloud instance. This data directory might
 still be used for compatibility reasons)</p>
 <section id="implications">
-<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this heading"></a></h2>
+<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline"></a></h2>
 <p>When using an object store as primary storage, Nextcloud assumes exclusive access
 over the bucket being used.</p>
 <p>Contrary to using an object store as external storage, when an object store is used
@@ -131,7 +130,7 @@ object store as external storage but it restricts being able to access the files
 outside of Nextcloud.</p>
 </section>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
 <p>Primary object stores need to be configured in <code class="code docutils literal notranslate"><span class="pre">config.php</span></code> by specifying
 the objectstore backend and any backend specific configuration.</p>
 <div class="admonition note">
@@ -149,10 +148,10 @@ make all existing files on the instance inaccessible.</p>
 </pre></div>
 </div>
 <section id="openstack-swift">
-<h3>OpenStack Swift<a class="headerlink" href="#openstack-swift" title="Permalink to this heading"></a></h3>
+<h3>OpenStack Swift<a class="headerlink" href="#openstack-swift" title="Permalink to this headline"></a></h3>
 <p>The OpenStack Swift backend mounts a container on an OpenStack Object Storage
 server into the virtual filesystem.</p>
-<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\OC\Files\ObjectStore\Swift</span></code></p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\Swift</span></code></p>
 <p>Both openstack v2 and v3 authentication are supported,</p>
 <p>V2 Authentication:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
@@ -205,11 +204,11 @@ server into the virtual filesystem.</p>
 </div>
 </section>
 <section id="simple-storage-service-s3">
-<h3>Simple Storage Service (S3)<a class="headerlink" href="#simple-storage-service-s3" title="Permalink to this heading"></a></h3>
+<h3>Simple Storage Service (S3)<a class="headerlink" href="#simple-storage-service-s3" title="Permalink to this headline"></a></h3>
 <p>The simple storage service (S3) backend mounts a bucket on an Amazon S3 object
 storage or compatible implementation (e.g. Minio or Ceph Object Gateway) into the
 virtual filesystem.</p>
-<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\OC\Files\ObjectStore\S3</span></code></p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\S3</span></code></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">S3&#39;</span><span class="p">,</span>
         <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
@@ -244,7 +243,7 @@ requests are made with <a class="reference external" href="http://hostname.domai
 </section>
 </section>
 <section id="multibucket-object-store">
-<h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Permalink to this heading"></a></h2>
+<h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Permalink to this headline"></a></h2>
 <p>It’s possible to configure Nextcloud to distribute the data over multiple buckets
 for scalability purposes.</p>
 <p>To setup multiple buckets, use <code class="code docutils literal notranslate"><span class="pre">'objectstore_multibucket'</span></code> storage backend
@@ -307,11 +306,9 @@ users will be mapped to the updated range of buckets.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

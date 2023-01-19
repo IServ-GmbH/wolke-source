@@ -15,7 +15,6 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -79,8 +78,8 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="contents.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Apps management</li>
+      <li><a href="contents.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Apps management</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/apps_management.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -91,7 +90,7 @@
            <div itemprop="articleBody">
              
   <section id="apps-management">
-<h1>Apps management<a class="headerlink" href="#apps-management" title="Permalink to this heading"></a></h1>
+<h1>Apps management<a class="headerlink" href="#apps-management" title="Permalink to this headline"></a></h1>
 <p>Nextcloud apps can enhance, customize or even restrict the features and experience
 you and your users has with the Nextcloud server. Next to default enabled functions
 like Files, Activity and Photos there are other apps like Calendar, Contacts,
@@ -100,7 +99,7 @@ Talk and more which are enhancing the features of your Nextcloud server.</p>
 disabling or even restricting some apps to groups depending on your and your users’
 needs.</p>
 <section id="apps">
-<h2>Apps<a class="headerlink" href="#apps" title="Permalink to this heading"></a></h2>
+<h2>Apps<a class="headerlink" href="#apps" title="Permalink to this headline"></a></h2>
 <figure class="align-default">
 <img alt="Apps page for enabling and disabling apps." src="_images/apps_overview.png" />
 </figure>
@@ -126,7 +125,7 @@ more information in our <a class="reference external" href="https://docs.nextclo
 <p>All apps must be licensed under AGPLv3+ or any compatible license.</p>
 </section>
 <section id="managing-apps">
-<h2>Managing apps<a class="headerlink" href="#managing-apps" title="Permalink to this heading"></a></h2>
+<h2>Managing apps<a class="headerlink" href="#managing-apps" title="Permalink to this headline"></a></h2>
 <figure class="align-default">
 <img alt="App store page for installing, enabling and disabling apps." src="_images/apps_store.png" />
 </figure>
@@ -151,12 +150,12 @@ switching your Nextcloud to the beta channel in the admin overview.</p>
 </div>
 </section>
 <section id="using-private-api">
-<h2>Using private API<a class="headerlink" href="#using-private-api" title="Permalink to this heading"></a></h2>
+<h2>Using private API<a class="headerlink" href="#using-private-api" title="Permalink to this headline"></a></h2>
 <p>If private API, rather than the public APIs are used in a third-party app, the
 installation fails, if <code class="docutils literal notranslate"><span class="pre">'appcodechecker'</span> <span class="pre">=&gt;</span> <span class="pre">true,</span></code> is set in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
 </section>
 <section id="using-custom-app-directories">
-<h2>Using custom app directories<a class="headerlink" href="#using-custom-app-directories" title="Permalink to this heading"></a></h2>
+<h2>Using custom app directories<a class="headerlink" href="#using-custom-app-directories" title="Permalink to this headline"></a></h2>
 <p>Use the <strong>apps_paths</strong> array in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> to set any custom apps directory
 locations. The key <strong>path</strong> defines the absolute file system path to the app
 folder. The key <strong>url</strong> defines the HTTP web path to that folder, starting at
@@ -193,7 +192,7 @@ is <code class="docutils literal notranslate"><span class="pre">/apps2</span></c
 </div>
 </section>
 <section id="using-a-self-hosted-apps-store">
-<h2>Using a self hosted apps store<a class="headerlink" href="#using-a-self-hosted-apps-store" title="Permalink to this heading"></a></h2>
+<h2>Using a self hosted apps store<a class="headerlink" href="#using-a-self-hosted-apps-store" title="Permalink to this headline"></a></h2>
 <p>Enables the installation of apps from a self hosted apps store. Requires that at least one of the configured apps directories is writeable.</p>
 <p>To enable a self hosted apps store:</p>
 <ol class="arabic">
@@ -246,11 +245,9 @@ is <code class="docutils literal notranslate"><span class="pre">/apps2</span></c
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

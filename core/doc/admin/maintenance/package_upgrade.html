@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -89,9 +88,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Maintenance</a> &raquo;</li>
-      <li>Upgrade via packages</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
+      <li class="breadcrumb-item active">Upgrade via packages</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/maintenance/package_upgrade.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -102,9 +101,9 @@
            <div itemprop="articleBody">
              
   <section id="upgrade-via-packages">
-<h1>Upgrade via packages<a class="headerlink" href="#upgrade-via-packages" title="Permalink to this heading"></a></h1>
+<h1>Upgrade via packages<a class="headerlink" href="#upgrade-via-packages" title="Permalink to this headline"></a></h1>
 <section id="upgrade-quickstart">
-<h2>Upgrade quickstart<a class="headerlink" href="#upgrade-quickstart" title="Permalink to this heading"></a></h2>
+<h2>Upgrade quickstart<a class="headerlink" href="#upgrade-quickstart" title="Permalink to this headline"></a></h2>
 <p>One effective, if unofficial method for keeping Nextcloud current on Linux servers is by configuring
 your system to use Nextcloud via a self contained “Snap” package, A technology allowing users to
 always have the latest version of an “app”.</p>
@@ -116,7 +115,7 @@ more.</p>
 maintained independently of Nextcloud.</p>
 </section>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
 <p><strong>Ubuntu</strong>
 $ sudo snap install nextcloud</p>
 <p><strong>All other distros</strong>
@@ -125,7 +124,7 @@ Type the command to install snapd
 Install Nextcloud $ sudo snap install nextcloud</p>
 </section>
 <section id="st-login">
-<h2>1st login<a class="headerlink" href="#st-login" title="Permalink to this heading"></a></h2>
+<h2>1st login<a class="headerlink" href="#st-login" title="Permalink to this headline"></a></h2>
 <p>After a successful install, assuming you and the device on which it was installed are on the
 same network, you should be able to reach the Nextcloud installation by visiting .local in
 your browser. If your hostname is localhost or localhost.localdomain, like on an Ubuntu Base
@@ -143,7 +142,7 @@ using Snappy Base 16.04 as it’s currently unreleased.</p>
 </ul>
 </section>
 <section id="upgrade-tips">
-<h2>Upgrade tips<a class="headerlink" href="#upgrade-tips" title="Permalink to this heading"></a></h2>
+<h2>Upgrade tips<a class="headerlink" href="#upgrade-tips" title="Permalink to this headline"></a></h2>
 <p>Upgrading Nextcloud from a Snap is just like upgrading any snap package.
 For example:</p>
 <blockquote>
@@ -166,7 +165,7 @@ user. This example is for Debian/Ubuntu:</p>
 </div>
 </section>
 <section id="upgrading-across-skipped-releases">
-<span id="skipped-release-upgrade-label"></span><h2>Upgrading across skipped releases<a class="headerlink" href="#upgrading-across-skipped-releases" title="Permalink to this heading"></a></h2>
+<span id="skipped-release-upgrade-label"></span><h2>Upgrading across skipped releases<a class="headerlink" href="#upgrading-across-skipped-releases" title="Permalink to this headline"></a></h2>
 <p>It is best to update your Nextcloud installation with every new point release,
 and to never skip any major releases. While this requirement is being worked on,
 for the moment If you have skipped any major releases you can bring your
@@ -219,11 +218,9 @@ sudo snap refresh nextcloud</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

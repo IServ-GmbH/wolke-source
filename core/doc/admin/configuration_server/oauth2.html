@@ -15,12 +15,11 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Admin right priviledge" href="admin_delegation_configuration.html" />
+    <link rel="next" title="Admin right privilege" href="admin_delegation_configuration.html" />
     <link rel="prev" title="Theming" href="theming.html" /> 
 </head>
 
@@ -67,7 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#security-considerations">Security considerations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right priviledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
 <li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
@@ -97,9 +96,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Nextcloud configuration</a> &raquo;</li>
-      <li>OAuth2</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Nextcloud configuration</a></li>
+      <li class="breadcrumb-item active">OAuth2</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_server/oauth2.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -110,7 +109,7 @@
            <div itemprop="articleBody">
              
   <section id="oauth2">
-<h1>OAuth2<a class="headerlink" href="#oauth2" title="Permalink to this heading"></a></h1>
+<h1>OAuth2<a class="headerlink" href="#oauth2" title="Permalink to this headline"></a></h1>
 <p>Nextcloud allows connecting external services (for example Moodle) to your Nextcloud.
 This is done via <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code>. See <a class="reference external" href="https://tools.ietf.org/html/rfc6749">RFC6749</a> for the
 OAuth2 specification.</p>
@@ -119,7 +118,7 @@ OAuth2 specification.</p>
 <p>Nextcloud does only support confidential clients.</p>
 </div>
 <section id="add-an-oauth2-application">
-<h2>Add an OAuth2 Application<a class="headerlink" href="#add-an-oauth2-application" title="Permalink to this heading"></a></h2>
+<h2>Add an OAuth2 Application<a class="headerlink" href="#add-an-oauth2-application" title="Permalink to this headline"></a></h2>
 <p>Head over to your Administrator Security Settings. Here you can add a new <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> client.</p>
 <figure class="align-default">
 <img alt="../_images/oauth2-settings.png" src="../_images/oauth2-settings.png" />
@@ -134,14 +133,14 @@ You should now have a Client Identifier and Secret. Enter those into your <code 
 <p>Note that you must include <code class="docutils literal notranslate"><span class="pre">index.php</span></code> if pretty URL is not configured - i.e. <code class="docutils literal notranslate"><span class="pre">https://cloud.example.org/index.php/apps/oauth2/api/v1/token</span></code>.</p>
 </section>
 <section id="the-access-token">
-<h2>The access token<a class="headerlink" href="#the-access-token" title="Permalink to this heading"></a></h2>
+<h2>The access token<a class="headerlink" href="#the-access-token" title="Permalink to this headline"></a></h2>
 <p>The access token obtained is a so called Bearer token. Which means that for request to the
 Nextcloud server you will have to send the proper authorization header.</p>
 <p>Authorization: Bearer &lt;TOKEN&gt;</p>
 <p>Note that apache by default strips this. Make sure you have <code class="docutils literal notranslate"><span class="pre">mod_headers</span></code>, <code class="docutils literal notranslate"><span class="pre">mod_rewrite</span></code> and <code class="docutils literal notranslate"><span class="pre">mod_env</span></code> enabled.</p>
 </section>
 <section id="security-considerations">
-<h2>Security considerations<a class="headerlink" href="#security-considerations" title="Permalink to this heading"></a></h2>
+<h2>Security considerations<a class="headerlink" href="#security-considerations" title="Permalink to this headline"></a></h2>
 <p>Nextcloud <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> implementation currently does not support scoped access. This means that every token has full access to the complete account including read and write permission to the stored files. It is essential to store the <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> tokens in a safe way!</p>
 <p>Without scopes and restrictable access it is not recommended to use a Nextcloud instance as a user authentication service.</p>
 </section>
@@ -152,7 +151,7 @@ Nextcloud server you will have to send the proper authorization header.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="theming.html" class="btn btn-neutral float-left" title="Theming" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="admin_delegation_configuration.html" class="btn btn-neutral float-right" title="Admin right priviledge" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="admin_delegation_configuration.html" class="btn btn-neutral float-right" title="Admin right privilege" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -180,11 +179,9 @@ Nextcloud server you will have to send the proper authorization header.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

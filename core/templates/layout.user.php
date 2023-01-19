@@ -22,7 +22,6 @@ $getUserAvatar = static function (int $size) use ($_): string {
 				p($theme->getTitle());
 			?>
 		</title>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 		<?php if ($theme->getiTunesAppId() !== '') { ?>
 		<meta name="apple-itunes-app" content="app-id=<?php p($theme->getiTunesAppId()); ?>">
@@ -56,7 +55,7 @@ $getUserAvatar = static function (int $size) use ($_): string {
 		</div>
 		<header role="banner" id="header">
 			<div class="header-left">
-				<a href="<?php print_unescaped(link_to('', 'index.php')); ?>"
+				<a href="<?php print_unescaped($_['logoUrl'] ?: link_to('', 'index.php')); ?>"
 					id="nextcloud">
 					<div class="logo logo-icon">
 						<h1 class="hidden-visually">
@@ -69,6 +68,7 @@ $getUserAvatar = static function (int $size) use ($_): string {
 					<?php foreach ($_['navigation'] as $entry): ?>
 						<li data-id="<?php p($entry['id']); ?>" class="hidden" tabindex="-1">
 							<a href="<?php print_unescaped($entry['href']); ?>"
+								<?php if (isset($entry['target']) && $entry['target']): ?> target="_blank" rel="noreferrer noopener"<?php endif; ?>
 								<?php if ($entry['active']): ?> class="active"<?php endif; ?>
 								aria-label="<?php p($entry['name']); ?>">
 									<svg width="24" height="20" viewBox="0 0 24 20" alt=""<?php if ($entry['unread'] !== 0) { ?> class="has-unread"<?php } ?>>
@@ -105,6 +105,7 @@ $getUserAvatar = static function (int $size) use ($_): string {
 								<?php foreach ($_['navigation'] as $entry): ?>
 									<li data-id="<?php p($entry['id']); ?>">
 									<a href="<?php print_unescaped($entry['href']); ?>"
+										<?php if (isset($entry['target']) && $entry['target']): ?> target="_blank" rel="noreferrer noopener"<?php endif; ?>
 										<?php if ($entry['active']): ?> class="active"<?php endif; ?>
 										aria-label="<?php p($entry['name']); ?>">
 										<svg width="20" height="20" viewBox="0 0 20 20" alt=""<?php if ($entry['unread'] !== 0) { ?> class="has-unread"<?php } ?>>
@@ -144,11 +145,7 @@ $getUserAvatar = static function (int $size) use ($_): string {
 			} ?>"
 							 data-user="<?php p($_['user_uid']); ?>"
 							 data-displayname="<?php p($_['user_displayname']); ?>"
-			<?php if ($_['userStatus'] !== false) { ?>
-				data-userstatus="<?php p($_['userStatus']->getStatus()); ?>"
-				data-userstatus_message="<?php p($_['userStatus']->getMessage()); ?>"
-				data-userstatus_icon="<?php p($_['userStatus']->getIcon()); ?>"
-			<?php }
+			<?php
 			if ($_['userAvatarSet']) {
 				$avatar32 = $getUserAvatar(32); ?> data-avatar="<?php p($avatar32); ?>"
 			<?php
@@ -193,6 +190,6 @@ $getUserAvatar = static function (int $size) use ($_): string {
 		<div id="content" class="app-<?php p($_['appid']) ?>" role="main">
 			<?php print_unescaped($_['content']); ?>
 		</div>
-
+		<div id="profiler-toolbar"></div>
 	</body>
 </html>

@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -56,6 +55,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#configuring-your-web-server">Configuring your Web server</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#apache">Apache</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#apache-with-mod-fcgid">Apache with mod_fcgid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache-with-mod-proxy-fcgi">Apache with mod_proxy_fcgi</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nginx">nginx</a></li>
 </ul>
 </li>
@@ -101,9 +101,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">File sharing and management</a> &raquo;</li>
-      <li>Uploading big files &gt; 512MB</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
+      <li class="breadcrumb-item active">Uploading big files &gt; 512MB</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/big_file_upload_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -114,7 +114,7 @@
            <div itemprop="articleBody">
              
   <section id="uploading-big-files-512mb">
-<h1>Uploading big files &gt; 512MB<a class="headerlink" href="#uploading-big-files-512mb" title="Permalink to this heading"></a></h1>
+<h1>Uploading big files &gt; 512MB<a class="headerlink" href="#uploading-big-files-512mb" title="Permalink to this headline"></a></h1>
 <p>The default maximum file size for uploads is 512MB. You can increase this
 limit up to what your filesystem and operating system allows. There are certain
 hard limits that cannot be exceeded:</p>
@@ -128,11 +128,11 @@ filesystem.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The Nextcloud sync client is not affected by these upload limits
-as it is uploading files in smaller chunks. See <a class="reference external" href="https://docs.nextcloud.com/desktop/3.0/advancedusage.html">Client documentation</a>
+as it is uploading files in smaller chunks. See <a class="reference external" href="https://docs.nextcloud.com/desktop/latest/advancedusage.html">Client documentation</a>
 for more information on configuration options.</p>
 </div>
 <section id="system-configuration">
-<h2>System configuration<a class="headerlink" href="#system-configuration" title="Permalink to this heading"></a></h2>
+<h2>System configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>Make sure that the latest version of PHP is installed</p></li>
 <li><p>Disable user quotas, which makes them unlimited</p></li>
@@ -143,7 +143,7 @@ to hold at least 10x100 GB</p></li>
 </ul>
 </section>
 <section id="configuring-your-web-server">
-<h2>Configuring your Web server<a class="headerlink" href="#configuring-your-web-server" title="Permalink to this heading"></a></h2>
+<h2>Configuring your Web server<a class="headerlink" href="#configuring-your-web-server" title="Permalink to this headline"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Nextcloud comes with its own <code class="docutils literal notranslate"><span class="pre">nextcloud/.htaccess</span></code> file. Because <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code>
@@ -174,14 +174,15 @@ config or raise the configured <code class="docutils literal notranslate"><span 
 could prevent the upload of larger files. Please see the manual of your Web server
 for how to configure those values correctly:</p>
 <section id="apache">
-<h3>Apache<a class="headerlink" href="#apache" title="Permalink to this heading"></a></h3>
+<h3>Apache<a class="headerlink" href="#apache" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody">LimitRequestBody</a></p></li>
 <li><p><a class="reference external" href="https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize">SSLRenegBufferSize</a></p></li>
+<li><p><a class="reference external" href="https://httpd.apache.org/docs/current/mod/core.html#timeout">Timeout</a></p></li>
 </ul>
 </section>
 <section id="apache-with-mod-fcgid">
-<h3>Apache with mod_fcgid<a class="headerlink" href="#apache-with-mod-fcgid" title="Permalink to this heading"></a></h3>
+<h3>Apache with mod_fcgid<a class="headerlink" href="#apache-with-mod-fcgid" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestinmem">FcgidMaxRequestInMem</a></p></li>
 <li><p><a class="reference external" href="https://httpd.apache.org/mod_fcgid/mod/mod_fcgid.html#fcgidmaxrequestlen">FcgidMaxRequestLen</a></p></li>
@@ -196,8 +197,14 @@ setting but serves as a workaround for <a class="reference external" href="https
 necessary, once bug #51747 is fixed.</p>
 </div>
 </section>
+<section id="apache-with-mod-proxy-fcgi">
+<h3>Apache with mod_proxy_fcgi<a class="headerlink" href="#apache-with-mod-proxy-fcgi" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://httpd.apache.org/docs/current/mod/mod_proxy.html#proxytimeout">ProxyTimeout</a></p></li>
+</ul>
+</section>
 <section id="nginx">
-<h3>nginx<a class="headerlink" href="#nginx" title="Permalink to this heading"></a></h3>
+<h3>nginx<a class="headerlink" href="#nginx" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size">client_max_body_size</a></p></li>
 <li><p><a class="reference external" href="https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_read_timeout">fastcgi_read_timeout</a></p></li>
@@ -224,7 +231,7 @@ swap and temp storage.</p>
 </section>
 </section>
 <section id="configuring-php">
-<h2>Configuring PHP<a class="headerlink" href="#configuring-php" title="Permalink to this heading"></a></h2>
+<h2>Configuring PHP<a class="headerlink" href="#configuring-php" title="Permalink to this headline"></a></h2>
 <p>If you don’t want to use the Nextcloud <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> or <code class="docutils literal notranslate"><span class="pre">.user.ini</span></code> file, you may
 configure PHP instead. Make sure to comment out any lines <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code>
 pertaining to upload size, if you entered any.</p>
@@ -247,7 +254,7 @@ will return memory-related errors:</p>
 </ul>
 </section>
 <section id="configuring-nextcloud">
-<h2>Configuring Nextcloud<a class="headerlink" href="#configuring-nextcloud" title="Permalink to this heading"></a></h2>
+<h2>Configuring Nextcloud<a class="headerlink" href="#configuring-nextcloud" title="Permalink to this headline"></a></h2>
 <p>As an alternative to the <code class="docutils literal notranslate"><span class="pre">upload_tmp_dir</span></code> of PHP (e.g. if you don’t have access to your
 <code class="docutils literal notranslate"><span class="pre">php.ini</span></code>) you can also configure a temporary location for uploaded files by using the
 <code class="docutils literal notranslate"><span class="pre">tempdirectory</span></code> setting in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> (See <a class="reference internal" href="../configuration_server/config_sample_php_parameters.html"><span class="doc">Configuration Parameters</span></a>).</p>
@@ -259,7 +266,7 @@ the longest upload will take. If unsure remove this completely from your
 configuration to reset it to the default shown in the <code class="docutils literal notranslate"><span class="pre">config.sample.php</span></code>.</p>
 </section>
 <section id="adjust-chunk-size-on-nextcloud-side">
-<h2>Adjust chunk size on Nextcloud side<a class="headerlink" href="#adjust-chunk-size-on-nextcloud-side" title="Permalink to this heading"></a></h2>
+<h2>Adjust chunk size on Nextcloud side<a class="headerlink" href="#adjust-chunk-size-on-nextcloud-side" title="Permalink to this headline"></a></h2>
 <p>For upload performance improvements in environments with high upload bandwidth, the server’s upload chunk size may be adjusted:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">files</span> <span class="n">max_chunk_size</span> <span class="o">--</span><span class="n">value</span> <span class="mi">20971520</span>
 </pre></div>
@@ -268,7 +275,7 @@ configuration to reset it to the default shown in the <code class="docutils lite
 <p>Default is 10485760 (10 MiB).</p>
 </section>
 <section id="large-file-upload-on-object-storage">
-<h2>Large file upload on object storage<a class="headerlink" href="#large-file-upload-on-object-storage" title="Permalink to this heading"></a></h2>
+<h2>Large file upload on object storage<a class="headerlink" href="#large-file-upload-on-object-storage" title="Permalink to this headline"></a></h2>
 <p><a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 do have a larger space consumption on the temporary folder when processing those uploads
 on object storage as the individual chunks get downloaded from the storage and will be assembled
@@ -311,11 +318,9 @@ enough for PHP, webservers or any load balancers involved.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

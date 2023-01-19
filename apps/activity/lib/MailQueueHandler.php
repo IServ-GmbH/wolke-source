@@ -4,6 +4,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license AGPL-3.0
  *
@@ -164,11 +165,11 @@ class MailQueueHandler {
 				if ($this->sendEmailToUser($user, $email, $language, $timezone, $sendTime)) {
 					$deleteItemsForUsers[] = $user;
 				} else {
-					$this->logger->debug("Failed sending activity email to user '{user}'.", ['user' => $user, 'app' => 'activity']);
+					$this->logger->warning("Failed sending activity email to user '{user}'.", ['user' => $user, 'app' => 'activity']);
 				}
 			} catch (\Exception $e) {
 				$this->logger->logException($e, [
-					'message' => 'Failed sending activity email to user "{user}"',
+					'message' => 'Failed creating activity email for user "{user}"',
 					'user' => $user,
 					'app' => 'activity',
 				]);
@@ -274,6 +275,14 @@ class MailQueueHandler {
 		return [$activities, 0];
 	}
 
+	public function purgeItemsForUser(string $affectedUser): void {
+		$queryBuilder = $this->connection->getQueryBuilder();
+
+		$queryBuilder->delete('activity_mq')
+			->where($queryBuilder->expr()->eq('amq_affecteduser', $queryBuilder->createNamedParameter($affectedUser)));
+		$queryBuilder->executeStatement();
+	}
+
 	/**
 	 * Get a language object for a specific language
 	 *
@@ -373,9 +382,9 @@ class MailQueueHandler {
 			'activityEvents' => $activityEvents,
 			'skippedCount' => $skippedCount,
 		]);
-		$template->setSubject($l->t('Activity notification for %s', $this->getSenderData('name')));
+		$template->setSubject($l->t('Activity at %s', $this->getSenderData('name')));
 		$template->addHeader();
-		$template->addHeading($l->t('Hello %s',[$user->getDisplayName()]), $l->t('Hello %s,',[$user->getDisplayName()]));
+		$template->addHeading($l->t('Hello %s', [$user->getDisplayName()]), $l->t('Hello %s,', [$user->getDisplayName()]));
 
 		$homeLink = '<a href="' . $this->urlGenerator->getAbsoluteURL('/') . '">' . htmlspecialchars($this->getSenderData('name')) . '</a>';
 		$template->addBodyText(
@@ -405,6 +414,11 @@ class MailQueueHandler {
 		try {
 			$this->mailer->send($message);
 		} catch (\Exception $e) {
+			$this->logger->logException($e, [
+				'message' => 'Failed sending activity email to user "{user}"',
+				'user' => $userName,
+				'app' => 'activity',
+			]);
 			return false;
 		}
 

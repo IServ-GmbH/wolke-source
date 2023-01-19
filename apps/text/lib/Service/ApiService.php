@@ -28,6 +28,7 @@ namespace OCA\Text\Service;
 
 use Exception;
 use OC\Files\Node\File;
+use OCA\Text\AppInfo\Application;
 use OCA\Text\DocumentHasUnsavedChangesException;
 use OCA\Text\DocumentSaveConflictException;
 use OCA\Text\TextFile;
@@ -38,6 +39,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\Constants;
+use OCP\Files\Lock\ILock;
 use OCP\Files\NotFoundException;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -48,19 +50,25 @@ class ApiService {
 	protected $sessionService;
 	protected $documentService;
 	protected $logger;
+	private $imageService;
 	private $encodingService;
 
-	public function __construct(IRequest $request, SessionService $sessionService, DocumentService $documentService, ILogger $logger, EncodingService $encodingService) {
+	public function __construct(IRequest $request,
+								SessionService $sessionService,
+								DocumentService $documentService,
+								ImageService $imageService,
+								EncodingService $encodingService,
+								ILogger $logger) {
 		$this->request = $request;
 		$this->sessionService = $sessionService;
 		$this->documentService = $documentService;
 		$this->logger = $logger;
+		$this->imageService = $imageService;
 		$this->encodingService = $encodingService;
 	}
 
 	public function create($fileId = null, $filePath = null, $token = null, $guestName = null, bool $forceRecreate = false): DataResponse {
 		try {
-			$readOnly = true;
 			/** @var File $file */
 			if ($token) {
 				$file = $this->documentService->getFileByShareToken($token, $this->request->getParam('filePath'));
@@ -74,18 +82,13 @@ class ApiService {
 				} catch (NotFoundException $e) {
 					return new DataResponse([], Http::STATUS_NOT_FOUND);
 				}
-
-				try {
-					$this->documentService->checkSharePermissions($token, Constants::PERMISSION_UPDATE);
-					$readOnly = false;
-				} catch (NotFoundException $e) {
-				}
 			} elseif ($fileId) {
 				$file = $this->documentService->getFileById($fileId);
-				$readOnly = !$file->isUpdateable();
 			} else {
 				return new DataResponse('No valid file argument provided', 500);
 			}
+
+			$readOnly = $this->documentService->isReadOnly($file, $token);
 
 			$this->sessionService->removeInactiveSessions($file->getId());
 			$activeSessions = $this->sessionService->getActiveSessions($file->getId());
@@ -103,10 +106,35 @@ class ApiService {
 		}
 
 		$session = $this->sessionService->initSession($document->getId(), $guestName);
+		try {
+			$baseFile = $this->documentService->getBaseFile($document->getId());
+			$content = $baseFile->getContent();
+
+			$content = $this->encodingService->encodeToUtf8($content);
+			if ($content === null) {
+				$this->logger->log(ILogger::WARN, 'Failed to encode file to UTF8. File ID: ' . $file->getId());
+			}
+		} catch (NotFoundException $e) {
+			$this->logger->logException($e, ['level' => ILogger::INFO]);
+			$content = null;
+		}
+
+		$lockInfo = $this->documentService->getLockInfo($file);
+		if ($lockInfo && $lockInfo->getType() === ILock::TYPE_APP && $lockInfo->getOwner() === Application::APP_NAME) {
+			$lockInfo = null;
+		}
+
+		$isLocked = $this->documentService->lock($file->getId());
+		if (!$isLocked) {
+			$readOnly = true;
+		}
+
 		return new DataResponse([
 			'document' => $document,
 			'session' => $session,
-			'readOnly' => $readOnly
+			'readOnly' => $readOnly,
+			'content' => $content,
+			'lock' => $lockInfo,
 		]);
 	}
 
@@ -130,6 +158,7 @@ class ApiService {
 		if (count($activeSessions) === 0) {
 			try {
 				$this->documentService->resetDocument($documentId);
+				$this->imageService->cleanupAttachments($documentId);
 			} catch (DocumentHasUnsavedChangesException $e) {
 			}
 		}

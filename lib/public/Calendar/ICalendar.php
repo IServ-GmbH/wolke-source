@@ -40,6 +40,12 @@ interface ICalendar {
 	public function getKey();
 
 	/**
+	 * In comparison to getKey() this function returns a unique uri within the scope of the principal
+	 * @since 24.0.0
+	 */
+	public function getUri(): string;
+
+	/**
 	 * In comparison to getKey() this function returns a human readable (maybe translated) name
 	 * @return null|string
 	 * @since 13.0.0

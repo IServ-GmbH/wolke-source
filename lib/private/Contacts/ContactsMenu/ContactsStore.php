@@ -107,7 +107,7 @@ class ContactsStore implements IContactsStore {
 		}
 
 		$allContacts = $this->contactsManager->search(
-			$filter ?: '',
+			$filter ?? '',
 			[
 				'FN',
 				'EMAIL'
@@ -146,7 +146,7 @@ class ContactsStore implements IContactsStore {
 	 *
 	 * @param IUser $self
 	 * @param Entry[] $entries
-	 * @param string $filter
+	 * @param string|null $filter
 	 * @return Entry[] the filtered contacts
 	 */
 	private function filterContacts(
@@ -312,8 +312,11 @@ class ContactsStore implements IContactsStore {
 	private function contactArrayToEntry(array $contact) {
 		$entry = new Entry();
 
-		if (isset($contact['id'])) {
-			$entry->setId($contact['id']);
+		if (isset($contact['UID'])) {
+			$uid = $contact['UID'];
+			$entry->setId($uid);
+			$avatar = $this->urlGenerator->linkToRouteAbsolute('core.avatar.getAvatar', ['userId' => $uid, 'size' => 64]);
+			$entry->setAvatar($avatar);
 		}
 
 		if (isset($contact['FN'])) {

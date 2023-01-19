@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -68,7 +67,7 @@
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right priviledge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
 <li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
@@ -98,9 +97,9 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Nextcloud configuration</a> &raquo;</li>
-      <li>Activity app</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Nextcloud configuration</a></li>
+      <li class="breadcrumb-item active">Activity app</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_server/activity_configuration.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -111,7 +110,7 @@
            <div itemprop="articleBody">
              
   <section id="activity-app">
-<h1>Activity app<a class="headerlink" href="#activity-app" title="Permalink to this heading"></a></h1>
+<h1>Activity app<a class="headerlink" href="#activity-app" title="Permalink to this headline"></a></h1>
 <p>You can configure your Nextcloud server to automatically send out e-mail notifications
 to your users for various events like:</p>
 <ul class="simple">
@@ -123,12 +122,12 @@ to your users for various events like:</p>
 <p>Users can see actions (delete, add, modify) that happen to files they have access to.
 Sharing actions are only visible to the sharer and sharee.</p>
 <section id="enabling-the-activity-app">
-<h2>Enabling the activity app<a class="headerlink" href="#enabling-the-activity-app" title="Permalink to this heading"></a></h2>
+<h2>Enabling the activity app<a class="headerlink" href="#enabling-the-activity-app" title="Permalink to this headline"></a></h2>
 <p>The Activity App is shipped and enabled by default. If it is not enabled
 simply go to your Nextcloud Apps page to enable it.</p>
 </section>
 <section id="configuring-your-nextcloud-for-the-activity-app">
-<h2>Configuring your Nextcloud for the activity app<a class="headerlink" href="#configuring-your-nextcloud-for-the-activity-app" title="Permalink to this heading"></a></h2>
+<h2>Configuring your Nextcloud for the activity app<a class="headerlink" href="#configuring-your-nextcloud-for-the-activity-app" title="Permalink to this headline"></a></h2>
 <p>To configure your Nextcloud to send out e-mail notifications a working
 <a class="reference internal" href="email_configuration.html"><span class="doc">Email</span></a> is mandatory.</p>
 <p>Furthermore it is recommended to configure the background job <code class="docutils literal notranslate"><span class="pre">Webcron</span></code> or
@@ -138,7 +137,7 @@ simply go to your Nextcloud Apps page to enable it.</p>
 you to clean-up older activities from the database.</p>
 </section>
 <section id="activities-in-groupfolders-or-external-storages">
-<span id="label-activities-groupfolders"></span><h2>Activities in groupfolders or external storages<a class="headerlink" href="#activities-in-groupfolders-or-external-storages" title="Permalink to this heading"></a></h2>
+<span id="label-activities-groupfolders"></span><h2>Activities in groupfolders or external storages<a class="headerlink" href="#activities-in-groupfolders-or-external-storages" title="Permalink to this headline"></a></h2>
 <p>By default activities in groupfolders or external storages are only generated for the current user.
 This is due to the logic of groupfolders and external storages. There is a config flag
 <code class="docutils literal notranslate"><span class="pre">activity_use_cached_mountpoints</span></code> that makes activities in groupfolders and external storages work
@@ -147,13 +146,14 @@ like in normal shares when set to <code class="docutils literal notranslate"><sp
 <p class="admonition-title">Warning</p>
 <p>This config option comes with the following limitations:</p>
 <ol class="arabic simple">
+<li><p>If “Advanced Permissions” (ACLs) are enabled in a groupfolder, the activities don’t respect the permissions and therefore all users see all activities, even for files and directories they don’t have access to. <strong>This potentially leaks sensitive information!</strong> See <a class="reference external" href="https://github.com/nextcloud/groupfolders/issues/1057">this issue</a> for more information.</p></li>
 <li><p>Users that had access to a groupfolder, share or external storage can see activities in their stream and emails that happen after they are removed until they login again</p></li>
 <li><p>Users that are newly added to a groupfolder, share or external storage can not see activities in their stream nor emails that happen after they are added until they login again</p></li>
 </ol>
 </div>
 </section>
 <section id="better-scheduling-of-activity-emails">
-<h2>Better scheduling of activity emails<a class="headerlink" href="#better-scheduling-of-activity-emails" title="Permalink to this heading"></a></h2>
+<h2>Better scheduling of activity emails<a class="headerlink" href="#better-scheduling-of-activity-emails" title="Permalink to this headline"></a></h2>
 <p>In certain scenarios it makes sense to send the activity emails out more regularly,
 e.g. you want to send the hourly emails always at the full hour, daily emails before
 people start to work in the morning and weekly mails shall be send on monday morning,
@@ -207,11 +207,9 @@ on scheduling.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

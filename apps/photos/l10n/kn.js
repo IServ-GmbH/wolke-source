@@ -4,6 +4,10 @@ OC.L10N.register(
     "Photos" : "Photos",
     "Favorites" : "ಅಚ್ಚುಮೆಚ್ಚಿನ",
     "Shared with you" : "Shared with you",
+    "Save" : "﻿ಉಳಿಸಿ",
+    "Favorite" : "ಅಚ್ಚುಮೆಚ್ಚಿನ",
+    "Remove from favorites" : "Remove from favorites",
+    "Add" : "﻿ಸೇರಿಸಿ",
     "Settings" : "ಆಯ್ಕೆ"
 },
 "nplurals=2; plural=(n > 1);");

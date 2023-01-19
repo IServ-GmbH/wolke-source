@@ -4,6 +4,7 @@
  *
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Thomas Citharel <nextcloud@tcit.fr>
  *
  * @license AGPL-3.0
  *
@@ -30,8 +31,9 @@ use OCA\Activity\Capabilities;
 use OCA\Activity\Consumer;
 use OCA\Activity\Data;
 use OCA\Activity\FilesHooksStatic;
-use OCA\Activity\Hooks;
 use OCA\Activity\Listener\LoadSidebarScripts;
+use OCA\Activity\Listener\SetUserDefaults;
+use OCA\Activity\Listener\UserDeleted;
 use OCA\Activity\MailQueueHandler;
 use OCA\Activity\NotificationGenerator;
 use OCA\Activity\Dashboard\ActivityWidget;
@@ -50,6 +52,8 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\RichObjectStrings\IValidator;
+use OCP\User\Events\PostLoginEvent;
+use OCP\User\Events\UserDeletedEvent;
 use OCP\Util;
 use Psr\Container\ContainerInterface;
 
@@ -129,12 +133,14 @@ class Application extends App implements IBootstrap {
 
 		$context->registerCapability(Capabilities::class);
 		$context->registerEventListener(LoadSidebar::class, LoadSidebarScripts::class);
+		$context->registerEventListener(UserDeletedEvent::class, UserDeleted::class);
+		$context->registerEventListener(PostLoginEvent::class, SetUserDefaults::class);
 		$context->registerDashboardWidget(ActivityWidget::class);
 	}
 
 	public function boot(IBootContext $context): void {
 		$this->registerActivityConsumer();
-		$this->registerHooksAndEvents();
+		$this->registerFilesActivity();
 		$this->registerNotifier();
 	}
 
@@ -154,16 +160,6 @@ class Application extends App implements IBootstrap {
 	public function registerNotifier() {
 		$server = $this->getContainer()->getServer();
 		$server->getNotificationManager()->registerNotifierService(NotificationGenerator::class);
-	}
-
-	/**
-	 * Register the hooks and events
-	 */
-	private function registerHooksAndEvents() {
-		Util::connectHook('OC_User', 'post_deleteUser', Hooks::class, 'deleteUser');
-		Util::connectHook('OC_User', 'post_login', Hooks::class, 'setDefaultsForUser');
-
-		$this->registerFilesActivity();
 	}
 
 	/**

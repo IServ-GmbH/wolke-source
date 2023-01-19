@@ -38,12 +38,12 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
-use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -58,8 +58,6 @@ class Push {
 	protected $tokenProvider;
 	/** @var Manager */
 	private $keyManager;
-	/** @var IUserManager */
-	private $userManager;
 	/** @var IClientService */
 	protected $clientService;
 	/** @var ICache */
@@ -74,15 +72,38 @@ class Push {
 	protected $output;
 	/** @var array */
 	protected $payloadsToSend = [];
+
+	/** @var bool */
+	protected $deferPreparing = false;
 	/** @var bool */
 	protected $deferPayloads = false;
+	/** @var array[] */
+	protected $deletesToPush = [];
+	/** @var INotification[] */
+	protected $notificationsToPush = [];
+
+	/** @var null[]|IUserStatus[] */
+	protected $userStatuses = [];
+	/** @var array[] */
+	protected $userDevices = [];
+	/** @var string[] */
+	protected $loadDevicesForUsers = [];
+	/** @var string[] */
+	protected $loadStatusForUsers = [];
+
+	/**
+	 * A very small and privileged list of apps that are allowed to push during DND.
+	 * @var bool[]
+	 */
+	protected $allowedDNDPushList = [
+		'twofactor_nextcloud_notification' => true,
+	];
 
 	public function __construct(IDBConnection $connection,
 								INotificationManager $notificationManager,
 								IConfig $config,
 								IProvider $tokenProvider,
 								Manager $keyManager,
-								IUserManager $userManager,
 								IClientService $clientService,
 								ICacheFactory $cacheFactory,
 								IUserStatusManager $userStatusManager,
@@ -93,7 +114,6 @@ class Push {
 		$this->config = $config;
 		$this->tokenProvider = $tokenProvider;
 		$this->keyManager = $keyManager;
-		$this->userManager = $userManager;
 		$this->clientService = $clientService;
 		$this->cache = $cacheFactory->createDistributed('pushtokens');
 		$this->userStatusManager = $userStatusManager;
@@ -116,10 +136,47 @@ class Push {
 	}
 
 	public function deferPayloads(): void {
+		$this->deferPreparing = true;
 		$this->deferPayloads = true;
 	}
 
 	public function flushPayloads(): void {
+		$this->deferPreparing = false;
+
+		if (!empty($this->loadDevicesForUsers)) {
+			$this->loadDevicesForUsers = array_unique($this->loadDevicesForUsers);
+			$missingDevicesFor = array_diff($this->loadDevicesForUsers, array_keys($this->userDevices));
+			$newUserDevices = $this->getDevicesForUsers($missingDevicesFor);
+			foreach ($missingDevicesFor as $userId) {
+				$this->userDevices[$userId] = $newUserDevices[$userId] ?? [];
+			}
+			$this->loadDevicesForUsers = [];
+		}
+
+		if (!empty($this->loadStatusForUsers)) {
+			$this->loadStatusForUsers = array_unique($this->loadStatusForUsers);
+			$missingStatusFor = array_diff($this->loadStatusForUsers, array_keys($this->userStatuses));
+			$newUserStatuses = $this->userStatusManager->getUserStatuses($missingStatusFor);
+			foreach ($missingStatusFor as $userId) {
+				$this->userStatuses[$userId] = $newUserStatuses[$userId] ?? null;
+			}
+			$this->loadStatusForUsers = [];
+		}
+
+		if (!empty($this->notificationsToPush)) {
+			foreach ($this->notificationsToPush as $id => $notification) {
+				$this->pushToDevice($id, $notification);
+			}
+			$this->notificationsToPush = [];
+		}
+
+		if (!empty($this->deletesToPush)) {
+			foreach ($this->deletesToPush as $id => $data) {
+				$this->pushDeleteToDevice($data['userId'], $id, $data['app']);
+			}
+			$this->deletesToPush = [];
+		}
+
 		$this->deferPayloads = false;
 		$this->sendNotificationsToProxies();
 	}
@@ -158,24 +215,38 @@ class Push {
 			return;
 		}
 
-		$user = $this->userManager->get($notification->getUser());
-		if (!($user instanceof IUser)) {
+		if ($this->deferPreparing) {
+			$this->notificationsToPush[$id] = clone $notification;
+			$this->loadDevicesForUsers[] = $notification->getUser();
+			$this->loadStatusForUsers[] = $notification->getUser();
 			return;
 		}
 
-		$userStatus = $this->userStatusManager->getUserStatuses([
-			$notification->getUser(),
-		]);
+		$user = $this->createFakeUserObject($notification->getUser());
 
-		if (isset($userStatus[$notification->getUser()])) {
-			$userStatus = $userStatus[$notification->getUser()];
-			if ($userStatus->getStatus() === IUserStatus::DND) {
+		if (!array_key_exists($notification->getUser(), $this->userStatuses)) {
+			$userStatus = $this->userStatusManager->getUserStatuses([
+				$notification->getUser(),
+			]);
+
+			$this->userStatuses[$notification->getUser()] = $userStatus[$notification->getUser()] ?? null;
+		}
+
+		if (isset($this->userStatuses[$notification->getUser()])) {
+			$userStatus = $this->userStatuses[$notification->getUser()];
+			if ($userStatus->getStatus() === IUserStatus::DND && empty($this->allowedDNDPushList[$notification->getApp()])) {
 				$this->printInfo('<error>User status is set to DND - no push notifications will be sent</error>');
 				return;
 			}
 		}
 
-		$devices = $this->getDevicesForUser($notification->getUser());
+		if (!array_key_exists($notification->getUser(), $this->userDevices)) {
+			$devices = $this->getDevicesForUser($notification->getUser());
+			$this->userDevices[$notification->getUser()] = $devices;
+		} else {
+			$devices = $this->userDevices[$notification->getUser()];
+		}
+
 		if (empty($devices)) {
 			$this->printInfo('No devices found for user');
 			return;
@@ -244,12 +315,21 @@ class Push {
 			return;
 		}
 
-		$user = $this->userManager->get($userId);
-		if (!($user instanceof IUser)) {
+		if ($this->deferPreparing) {
+			$this->deletesToPush[$notificationId] = ['userId' => $userId, 'app' => $app];
+			$this->loadDevicesForUsers[] = $userId;
 			return;
 		}
 
-		$devices = $this->getDevicesForUser($userId);
+		$user = $this->createFakeUserObject($userId);
+
+		if (!array_key_exists($userId, $this->userDevices)) {
+			$devices = $this->getDevicesForUser($userId);
+			$this->userDevices[$userId] = $devices;
+		} else {
+			$devices = $this->userDevices[$userId];
+		}
+
 		if ($notificationId !== 0 && $app !== '') {
 			// Only filter when it's not a single delete
 			$devices = $this->filterDeviceList($devices, $app);
@@ -307,11 +387,20 @@ class Push {
 		$client = $this->clientService->newClient();
 		foreach ($pushNotifications as $proxyServer => $notifications) {
 			try {
-				$response = $client->post($proxyServer . '/notifications', [
+				$requestData = [
 					'body' => [
 						'notifications' => $notifications,
 					],
-				]);
+				];
+
+				if ($proxyServer === 'https://push-notifications.nextcloud.com') {
+					$subscriptionKey = $this->config->getAppValue('support', 'subscription_key');
+					if ($subscriptionKey) {
+						$requestData['headers']['X-Nextcloud-Subscription-Key'] = $subscriptionKey;
+					}
+				}
+
+				$response = $client->post($proxyServer . '/notifications', $requestData);
 				$status = $response->getStatusCode();
 				$body = $response->getBody();
 				$bodyData = json_decode($body, true);
@@ -424,8 +513,9 @@ class Push {
 		];
 
 		// Max length of encryption is ~240, so we need to make sure the subject is shorter.
-		$maxDataLength = 200 - strlen(json_encode($data));
-		$data['subject'] = $this->shortenJsonEncodedMultibyte($notification->getParsedSubject(), $maxDataLength);
+		// Also, subtract two for encapsulating quotes will be added.
+		$maxDataLength = 200 - strlen(json_encode($data)) - 2;
+		$data['subject'] = Util::shortenMultibyteString($notification->getParsedSubject(), $maxDataLength);
 		if ($notification->getParsedSubject() !== $data['subject']) {
 			$data['subject'] .= '…';
 		}
@@ -467,27 +557,6 @@ class Push {
 			'priority' => $priority,
 			'type' => $type,
 		];
-	}
-
-	/**
-	 * json_encode is messing with multibyte characters a lot,
-	 * replacing them with something along "\u1234".
-	 * The data length in our encryption is a hard limit, but we don't want to
-	 * make non-utf8 subjects unnecessary short. So this function tries to cut
-	 * it off first.
-	 * If that is not enough it always cuts off 5 characters in multibyte-safe
-	 * fashion until the json_encode-d string is shorter then the given limit.
-	 *
-	 * @param string $subject
-	 * @param int $dataLength
-	 * @return string
-	 */
-	protected function shortenJsonEncodedMultibyte(string $subject, int $dataLength): string {
-		$temp = mb_substr($subject, 0, $dataLength);
-		while (strlen(json_encode($temp)) > $dataLength) {
-			$temp = mb_substr($temp, 0, -5);
-		}
-		return $temp;
 	}
 
 	/**
@@ -547,6 +616,30 @@ class Push {
 	}
 
 	/**
+	 * @param string[] $userIds
+	 * @return array[]
+	 */
+	protected function getDevicesForUsers(array $userIds): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('notifications_pushhash')
+			->where($query->expr()->in('uid', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
+
+		$devices = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			if (!isset($devices[$row['uid']])) {
+				$devices[$row['uid']] = [];
+			}
+			$devices[$row['uid']][] = $row;
+		}
+
+		$result->closeCursor();
+
+		return $devices;
+	}
+
+	/**
 	 * @param int $tokenId
 	 * @return bool
 	 */
@@ -568,5 +661,9 @@ class Push {
 			->where($query->expr()->eq('deviceidentifier', $query->createNamedParameter($deviceIdentifier)));
 
 		return $query->executeStatement() !== 0;
+	}
+
+	protected function createFakeUserObject(string $userId): IUser {
+		return new FakeUser($userId);
 	}
 }

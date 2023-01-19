@@ -40,6 +40,7 @@ occ command Directory
 * :ref:`command_line_upgrade_label`
 * :ref:`two_factor_auth_label`
 * :ref:`disable_user_label`
+* :ref:`system_tags_commands_label`
 * `Debugging`_
 
 .. _http_user_label:
@@ -330,7 +331,7 @@ These commands set the value of a single app or system configuration::
   System config value logtimezone set to Europe/Berlin
 
   sudo -u www-data php occ config:app:set files_sharing
-  incoming_server2server_share_enabled --value="yes" --type=boolean
+  incoming_server2server_share_enabled --value="yes"
   Config value incoming_server2server_share_enabled for app files_sharing set to yes
 
 The ``config:system:set`` command creates the value, if it does not already
@@ -1019,12 +1020,18 @@ Run the ``maintenance:theme:update`` command if the icons of your custom theme a
 Security
 --------
 
-Use these commands to manage server-wide SSL certificates. These are useful when you create federation shares with other Nextcloud servers that use self-signed certificates::
+Use these commands to manage server-wide SSL certificates or reset brute-force slow-downs. These are useful when you create federation shares with other Nextcloud servers that use self-signed certificates::
 
  security
+  security:bruteforce:reset     resets brute-force attemps for given IP address
   security:certificates         list trusted certificates
   security:certificates:import  import trusted certificate
   security:certificates:remove  remove trusted certificate
+  
+Reset an IP::
+
+ sudo -u www-data php occ security:bruteforce:reset [IP address]
+
 
 This example lists your installed certificates::
 
@@ -1082,9 +1089,11 @@ report showing how many users you have, and when a user was last logged in::
 
  user
   user:add                            adds a user
+  user:add-app-password               adds a app password named "cli"
   user:delete                         deletes the specified user
   user:disable                        disables the specified user
   user:enable                         enables the specified user
+  user:info                           shows information about the specific user
   user:lastseen                       shows when the user was logged in last time
   user:list                           shows list of all registered users
   user:report                         shows how many users have access
@@ -1482,6 +1491,43 @@ Use the following command to enable the user again::
  sudo -u www-data php occ user:enable <username>
 
 Note that once users are disabled, their connected browsers will be disconnected.
+
+
+.. _system_tags_commands_label:
+
+System Tags
+-----------
+
+List tags::
+
+  sudo -u www-data php occ tag:list
+
+Add a tag::
+
+  sudo -u www-data php occ tag:add <name> <access>
+
+Edit a tag::
+
+  sudo -u www-data php occ tag:edit --name <name> --access <access> <id>
+
+`--name` and `--access` are optional. 
+
+Delete a tag::
+
+  sudo -u www-data php occ tag:delete <id>
+
+Access level
+
+========== ======== ==========
+Level      Visible¹ Assignable²    
+========== ======== ==========
+public     Yes      Yes
+restricted Yes      No
+invisible  No       No
+========== ======== ==========
+
+| ¹ User can see the tag
+| ² User can assign the tag to a file 
 
 .. _occ_debugging:
 

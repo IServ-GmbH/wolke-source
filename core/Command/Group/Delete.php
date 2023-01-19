@@ -27,7 +27,9 @@ declare(strict_types=1);
 namespace OC\Core\Command\Group;
 
 use OC\Core\Command\Base;
+use OCP\IGroup;
 use OCP\IGroupManager;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -61,7 +63,7 @@ class Delete extends Base {
 			$output->writeln('<error>Group "' . $gid . '" could not be deleted.</error>');
 			return 1;
 		}
-		if (! $this->groupManager->groupExists($gid)) {
+		if (!$this->groupManager->groupExists($gid)) {
 			$output->writeln('<error>Group "' . $gid . '" does not exist.</error>');
 			return 1;
 		}
@@ -73,5 +75,17 @@ class Delete extends Base {
 			return 1;
 		}
 		return 0;
+	}
+
+	/**
+	 * @param string $argumentName
+	 * @param CompletionContext $context
+	 * @return string[]
+	 */
+	public function completeArgumentValues($argumentName, CompletionContext $context) {
+		if ($argumentName === 'groupid') {
+			return array_map(static fn (IGroup $group) => $group->getGID(), $this->groupManager->search($context->getCurrentWord()));
+		}
+		return [];
 	}
 }

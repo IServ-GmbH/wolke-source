@@ -235,14 +235,13 @@ class Auth extends AbstractBasic {
 				\OC_User::handleApacheAuth()
 			) {
 				$user = $this->userSession->getUser()->getUID();
-				\OC_Util::setupFS($user);
 				$this->currentUser = $user;
 				$this->session->close();
 				return [true, $this->principalPrefix . $user];
 			}
 		}
 
-		if (!$this->userSession->isLoggedIn() && in_array('XMLHttpRequest', explode(',', $request->getHeader('X-Requested-With')))) {
+		if (!$this->userSession->isLoggedIn() && in_array('XMLHttpRequest', explode(',', $request->getHeader('X-Requested-With') ?? ''))) {
 			// do not re-authenticate over ajax, use dummy auth name to prevent browser popup
 			$response->addHeader('WWW-Authenticate','DummyBasic realm="' . $this->realm . '"');
 			$response->setStatus(401);

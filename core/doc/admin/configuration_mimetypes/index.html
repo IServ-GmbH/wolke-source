@@ -15,7 +15,6 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -77,8 +76,8 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Mimetypes management</li>
+      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Mimetypes management</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_mimetypes/index.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -89,9 +88,9 @@
            <div itemprop="articleBody">
              
   <section id="mimetypes-management">
-<h1>Mimetypes management<a class="headerlink" href="#mimetypes-management" title="Permalink to this heading"></a></h1>
+<h1>Mimetypes management<a class="headerlink" href="#mimetypes-management" title="Permalink to this headline"></a></h1>
 <section id="mimetype-aliases">
-<h2>Mimetype aliases<a class="headerlink" href="#mimetype-aliases" title="Permalink to this heading"></a></h2>
+<h2>Mimetype aliases<a class="headerlink" href="#mimetype-aliases" title="Permalink to this headline"></a></h2>
 <p>Nextcloud allows you to create aliases for mimetypes, so that you can display
 custom icons for files. For example, you might want a nice audio icon for audio
 files instead of the default file icon.</p>
@@ -129,7 +128,7 @@ Ubuntu Linux:</p>
 </dl>
 </section>
 <section id="mimetype-mapping">
-<h2>Mimetype mapping<a class="headerlink" href="#mimetype-mapping" title="Permalink to this heading"></a></h2>
+<h2>Mimetype mapping<a class="headerlink" href="#mimetype-mapping" title="Permalink to this headline"></a></h2>
 <p>Nextcloud allows administrators to specify the mapping of a file extension to a
 mimetype. For example files ending in <code class="docutils literal notranslate"><span class="pre">mp3</span></code> map to <code class="docutils literal notranslate"><span class="pre">audio/mpeg</span></code>. Which
 then in turn allows Nextcloud to show the audio icon.</p>
@@ -140,7 +139,7 @@ of Nextcloud. Instead the file <code class="docutils literal notranslate"><span 
 modified, this file has precedence over the shipped file.</p>
 </section>
 <section id="icon-retrieval">
-<h2>Icon retrieval<a class="headerlink" href="#icon-retrieval" title="Permalink to this heading"></a></h2>
+<h2>Icon retrieval<a class="headerlink" href="#icon-retrieval" title="Permalink to this headline"></a></h2>
 <p>When an icon is retrieved for a mimetype, if the full mimetype cannot be found,
 the search will fallback to looking for the part before the slash. Given a file
 with the mimetype ‘image/my-custom-image’, if no icon exists for the full
@@ -182,11 +181,9 @@ mimetypes to fallback to generic icons when the relevant icons are unavailable.<
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/20/admin_manual">20</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/21/admin_manual">21</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

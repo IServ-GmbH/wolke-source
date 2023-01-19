@@ -249,7 +249,7 @@ class Component extends Node
         $result = [];
         foreach ($this->children as $childGroup) {
             foreach ($childGroup as $child) {
-                if ($child instanceof Property && strtoupper($child->group) === $group) {
+                if ($child instanceof Property && $child->group && strtoupper($child->group) === $group) {
                     $result[] = $child;
                 }
             }
@@ -339,6 +339,7 @@ class Component extends Node
      *
      * @return array
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         $components = [];

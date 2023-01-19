@@ -61,6 +61,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\ILogger;
@@ -160,7 +161,11 @@ class OC {
 				'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
 			],
 		];
-		$fakeRequest = new \OC\AppFramework\Http\Request($params, new \OC\Security\SecureRandom(), new \OC\AllConfig(new \OC\SystemConfig(self::$config)));
+		$fakeRequest = new \OC\AppFramework\Http\Request(
+			$params,
+			new \OC\AppFramework\Http\RequestId($_SERVER['UNIQUE_ID'] ?? '', new \OC\Security\SecureRandom()),
+			new \OC\AllConfig(new \OC\SystemConfig(self::$config))
+		);
 		$scriptName = $fakeRequest->getScriptName();
 		if (substr($scriptName, -1) == '/') {
 			$scriptName .= 'index.php';
@@ -250,7 +255,7 @@ class OC {
 
 			if (self::$CLI) {
 				echo $l->t('Cannot write into "config" directory!')."\n";
-				echo $l->t('This can usually be fixed by giving the webserver write access to the config directory.')."\n";
+				echo $l->t('This can usually be fixed by giving the web server write access to the config directory.')."\n";
 				echo "\n";
 				echo $l->t('But, if you prefer to keep config.php file read only, set the option "config_is_read_only" to true in it.')."\n";
 				echo $l->t('See %s', [ $urlGenerator->linkToDocs('admin-config') ])."\n";
@@ -258,7 +263,7 @@ class OC {
 			} else {
 				OC_Template::printErrorPage(
 					$l->t('Cannot write into "config" directory!'),
-					$l->t('This can usually be fixed by giving the webserver write access to the config directory.') . ' '
+					$l->t('This can usually be fixed by giving the web server write access to the config directory.') . ' '
 					. $l->t('But, if you prefer to keep config.php file read only, set the option "config_is_read_only" to true in it.') . ' '
 					. $l->t('See %s', [ $urlGenerator->linkToDocs('admin-config') ]),
 					503
@@ -292,8 +297,8 @@ class OC {
 
 			// render error page
 			$template = new OC_Template('', 'update.user', 'guest');
-			OC_Util::addScript('dist/maintenance');
-			OC_Util::addStyle('core', 'guest');
+			\OCP\Util::addScript('core', 'maintenance');
+			\OCP\Util::addStyle('core', 'guest');
 			$template->printPage();
 			die();
 		}
@@ -365,7 +370,10 @@ class OC {
 
 		$oldTheme = $systemConfig->getValue('theme');
 		$systemConfig->setValue('theme', '');
-		OC_Util::addScript('update');
+		\OCP\Util::addScript('core', 'common');
+		\OCP\Util::addScript('core', 'main');
+		\OCP\Util::addTranslations('core');
+		\OCP\Util::addScript('core', 'update');
 
 		/** @var \OC\App\AppManager $appManager */
 		$appManager = \OC::$server->getAppManager();
@@ -592,9 +600,15 @@ class OC {
 		// setup the basic server
 		self::$server = new \OC\Server(\OC::$WEBROOT, self::$config);
 		self::$server->boot();
+
 		$eventLogger = \OC::$server->getEventLogger();
 		$eventLogger->log('autoloader', 'Autoloader', $loaderStart, $loaderEnd);
+		$eventLogger->start('request', 'Full request after autoloading');
+		register_shutdown_function(function () use ($eventLogger) {
+			$eventLogger->end('request');
+		});
 		$eventLogger->start('boot', 'Initialize');
+		$eventLogger->start('runtime', 'Runtime (total - autoloader)');
 
 		// Override php.ini and log everything if we're troubleshooting
 		if (self::$config->getValue('loglevel') === ILogger::DEBUG) {
@@ -609,16 +623,23 @@ class OC {
 			throw new \RuntimeException('Could not set timezone to UTC');
 		}
 
+
 		//try to configure php to enable big file uploads.
 		//this doesn´t work always depending on the webserver and php configuration.
-		//Let´s try to overwrite some defaults anyway
+		//Let´s try to overwrite some defaults if they are smaller than 1 hour
 
-		//try to set the maximum execution time to 60min
-		if (strpos(@ini_get('disable_functions'), 'set_time_limit') === false) {
-			@set_time_limit(3600);
+		if (intval(@ini_get('max_execution_time') ?? 0) < 3600) {
+			@ini_set('max_execution_time', strval(3600));
 		}
-		@ini_set('max_execution_time', '3600');
-		@ini_set('max_input_time', '3600');
+
+		if (intval(@ini_get('max_input_time') ?? 0) < 3600) {
+			@ini_set('max_input_time', strval(3600));
+		}
+
+		//try to set the maximum execution time to the largest time limit we have
+		if (strpos(@ini_get('disable_functions'), 'set_time_limit') === false) {
+			@set_time_limit(max(intval(@ini_get('max_execution_time')), intval(@ini_get('max_input_time'))));
+		}
 
 		self::setRequiredIniValues();
 		self::handleAuthHeaders();
@@ -791,6 +812,7 @@ class OC {
 			}
 		}
 		$eventLogger->end('boot');
+		$eventLogger->log('init', 'OC::init', $loaderStart, microtime(true));
 	}
 
 	/**
