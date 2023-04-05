@@ -14,7 +14,6 @@ OC.L10N.register(
     "On this day" : "A mai napon",
     "Shared with you" : "Megosztva Önnel",
     "Tags" : "Címkék",
-    "Locations" : "Helyek",
     "Photos settings" : "Fényképek beállításai",
     "Mark selection as favorite" : "Kiválasztás megjelölése kedvencként",
     "Add selection to favorites" : "Kiválasztás hozzáadása a kedvencekhez",
@@ -93,6 +92,7 @@ OC.L10N.register(
     "Remove person" : "Személy eltávolítása",
     "Name of this person" : "A személy neve",
     "Merge person" : "Személy egyesítése",
+    "_Move photo to a different person_::_Move photos to a different person_" : ["Fénykép áthelyezése egy másik személyhez","Fényképek áthelyezése egy másik személyhez"],
     "_Remove photo from person_::_Remove photos from person_" : ["Fénykép eltávolítása a személytől","Fényképek eltávolítása a személytől"],
     "This might take some time depending on the size of your photo library." : "Ez a fényképkönyvtár méretétől függően eltarthat egy darabig.",
     "Recognized people will show up here" : "A felismert emberek itt fognak megjelenni",
@@ -133,6 +133,7 @@ OC.L10N.register(
     "Your photos" : "Saját fényképek",
     "Your videos" : "Saját videók",
     "Your folders" : "Saját mappák",
+    "Locations" : "Helyek",
     "Settings" : "Beállítások"
 },
 "nplurals=2; plural=(n != 1);");

@@ -18,7 +18,7 @@ OC.L10N.register(
     "No server logs" : "Žádné záznamy událostí ze serveru",
     "One or more entries are hidden by the log level filter" : "Jeden nebo více záznamů je skryto filtrem stupně závažnosti",
     "Everything is working fine" : "Všechno funguje správně",
-    "Level" : "Úroveň",
+    "Level" : "Stupeň podrobnosti/závažnosti",
     "App" : "Aplikace",
     "Message" : "Zpráva",
     "Time" : "Čas",
@@ -27,7 +27,6 @@ OC.L10N.register(
     "Log levels" : "Stupně podrobností záznamu událostí",
     "Log content" : "Obsah záznamu událostí",
     "Live update" : "Průběžně donačítat",
-    "Download logs" : "Stáhnout si záznamy událostí",
-    "Load log file …" : "Načíst soubor se záznamem událostí…"
+    "Download logs" : "Stáhnout si záznamy událostí"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

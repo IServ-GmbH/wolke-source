@@ -35,7 +35,7 @@ $subject = (string)$_POST['ldap_clear_mapping'];
 $mapping = null;
 try {
 	if ($subject === 'user') {
-		$mapping = \OC::$server->get(UserMapping::class);
+		$mapping = \OCP\Server::get(UserMapping::class);
 		$result = $mapping->clearCb(
 			function ($uid) {
 				\OC::$server->getUserManager()->emit('\OC\User', 'preUnassignedUserId', [$uid]);

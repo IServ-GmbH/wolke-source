@@ -5,6 +5,8 @@ OC.L10N.register(
     "guest" : "gost",
     "Bold" : "Podebljano",
     "Italic" : "Kurziv",
+    "Translate" : "Prevedi",
+    "Replace" : "Zameni postojeću",
     "Undo" : "Opozovi",
     "Info" : "Info",
     "Warning" : "Upozorenje",

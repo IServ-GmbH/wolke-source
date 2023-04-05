@@ -49,28 +49,16 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 
 class ChangePasswordController extends Controller {
-
-	/** @var string */
-	private $userId;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var IL10N */
-	private $l;
-
-	/** @var GroupManager */
-	private $groupManager;
-
-	/** @var Session */
-	private $userSession;
-
-	/** @var IAppManager */
-	private $appManager;
+	private ?string $userId;
+	private IUserManager $userManager;
+	private IL10N $l;
+	private GroupManager $groupManager;
+	private Session $userSession;
+	private IAppManager $appManager;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								string $userId,
+								?string $userId,
 								IUserManager $userManager,
 								IUserSession $userSession,
 								IGroupManager $groupManager,
@@ -109,7 +97,10 @@ class ChangePasswordController extends Controller {
 		try {
 			if ($newpassword === null || strlen($newpassword) > 469 || $user->setPassword($newpassword) === false) {
 				return new JSONResponse([
-					'status' => 'error'
+					'status' => 'error',
+					'data' => [
+						'message' => $this->l->t('Unable to change personal password'),
+					],
 				]);
 			}
 			// password policy app throws exception
@@ -163,7 +154,6 @@ class ChangePasswordController extends Controller {
 				],
 			]);
 		}
-
 
 		$currentUser = $this->userSession->getUser();
 		$targetUser = $this->userManager->get($username);
@@ -250,7 +240,7 @@ class ChangePasswordController extends Controller {
 					return new JSONResponse([
 						'status' => 'error',
 						'data' => [
-							'message' => $this->l->t('Backend doesn\'t support password change, but the user\'s encryption key was updated.'),
+							'message' => $this->l->t('Backend does not support password change, but the user\'s encryption key was updated.'),
 						]
 					]);
 				} elseif (!$result && !$recoveryEnabledForUser) {

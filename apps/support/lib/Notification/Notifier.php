@@ -34,18 +34,10 @@ use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 
 class Notifier implements INotifier {
-
-	/** @var IURLGenerator */
-	protected $url;
-
-	/** @var IConfig */
-	protected $config;
-
-	/** @var IManager */
-	protected $notificationManager;
-
-	/** @var IFactory */
-	protected $l10nFactory;
+	protected IURLGenerator $url;
+	protected IConfig $config;
+	protected IManager $notificationManager;
+	protected IFactory $l10nFactory;
 
 	public function __construct(IURLGenerator $url, IConfig $config, IManager $notificationManager, IFactory $l10nFactory) {
 		$this->url = $url;

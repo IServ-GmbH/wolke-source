@@ -6,6 +6,7 @@ OC.L10N.register(
     "Missing a temporary folder" : "Müvəqqəti qovluq çatışmır",
     "guest" : "Qonaq",
     "Saved" : "Saxlanıldı",
+    "Translate" : "Translate",
     "Info" : "Info",
     "Warning" : "Xəbərdarlıq",
     "Edit" : "Dəyişiklik et"

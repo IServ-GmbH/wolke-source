@@ -64,8 +64,7 @@ class SessionMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
-			->execute();
+			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)));
 
 		return $this->findEntities($qb);
 	}
@@ -75,8 +74,7 @@ class SessionMapper extends QBMapper {
 		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
-			->andWhere($qb->expr()->gt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)))
-			->execute();
+			->andWhere($qb->expr()->gt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)));
 
 		return $this->findEntities($qb);
 	}
@@ -85,8 +83,7 @@ class SessionMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
-			->where($qb->expr()->lt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)))
-			->execute();
+			->where($qb->expr()->lt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)));
 
 		return $this->findEntities($qb);
 	}
@@ -119,5 +116,23 @@ class SessionMapper extends QBMapper {
 		$qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)));
 		return $qb->execute();
+	}
+
+	public function isUserInDocument($documentId, $userId): bool {
+		$qb = $this->db->getQueryBuilder();
+		$result = $qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
+			->andWhere($qb->expr()->eq('user_id', $qb->createNamedParameter($userId)))
+			->setMaxResults(1)
+			->executeQuery();
+
+		$data = $result->fetch();
+		$result->closeCursor();
+		if ($data === false) {
+			return false;
+		}
+
+		return true;
 	}
 }

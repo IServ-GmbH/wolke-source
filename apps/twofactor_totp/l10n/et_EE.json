@@ -1,0 +1,6 @@
+{ "translations": {
+    "Enable TOTP" : "Lülita TOTP sisse",
+    "Authentication code" : "Autentimiskood",
+    "Verify" : "Kontrolli"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

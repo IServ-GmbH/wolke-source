@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Photos\Controller;
 
 use OCA\Photos\AppInfo\Application;
+use OCA\Photos\Service\UserConfigService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
@@ -36,16 +37,14 @@ use OCP\IRequest;
 use OCP\IUserSession;
 
 class ApiController extends Controller {
+	private IConfig $config;
+	private IUserSession $userSession;
 
-	/** @var IConfig */
-	private $config;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	public function __construct(IRequest $request,
-								IConfig $config,
-								IUserSession $userSession) {
+	public function __construct(
+		IRequest $request,
+		IConfig $config,
+		IUserSession $userSession
+	) {
 		parent::__construct(Application::APP_ID, $request);
 
 		$this->config = $config;
@@ -68,8 +67,11 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		$userId = $user->getUid();
-		$this->config->setUserValue($userId, Application::APP_ID, $key, $value);
+		if (!in_array($key, array_keys(UserConfigService::DEFAULT_CONFIGS))) {
+			return new JSONResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$this->config->setUserValue($user->getUid(), Application::APP_ID, $key, $value);
 		return new JSONResponse([], Http::STATUS_OK);
 	}
 

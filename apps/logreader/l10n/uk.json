@@ -1,5 +1,5 @@
 { "translations": {
-    "Logging" : "Логування",
+    "Logging" : "Журналювання",
     "Log Reader" : "Читач журналів",
     "A log reader for Nextcloud" : "Програма для читання журналів для Nextcloud",
     "Log reader for Nextcloud" : "Читач журналів для Nextcloud",
@@ -24,8 +24,7 @@
     "Invalid log file" : "Недійсний файл журналу",
     "Log levels" : "Рівні журналу",
     "Log content" : "Вміст журналу",
-    "Live update" : "Оновлення в реальному часі",
-    "Download logs" : "Звантажити журнали",
-    "Load log file …" : "Завантажити файл журналу…"
+    "Live update" : "В реальному часі",
+    "Download logs" : "Звантажити журнали"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

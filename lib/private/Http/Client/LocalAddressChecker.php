@@ -30,7 +30,7 @@ use IPLib\Factory;
 use IPLib\ParseStringFlag;
 use OCP\Http\Client\LocalServerException;
 use Psr\Log\LoggerInterface;
-use OC\Http\IpUtils;
+use Symfony\Component\HttpFoundation\IpUtils;
 
 class LocalAddressChecker {
 	private LoggerInterface $logger;

@@ -28,7 +28,7 @@
  */
 namespace OCA\User_LDAP\User;
 
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OCA\User_LDAP\Access;
 use OCA\User_LDAP\FilesystemHelper;
 use OCP\IAvatarManager;
@@ -47,43 +47,20 @@ use Psr\Log\LoggerInterface;
  * cache
  */
 class Manager {
-	/** @var Access */
-	protected $access;
-
-	/** @var IConfig */
-	protected $ocConfig;
-
-	/** @var IDBConnection */
-	protected $db;
-
-	/** @var IUserManager */
-	protected $userManager;
-
-	/** @var INotificationManager */
-	protected $notificationManager;
-
-	/** @var FilesystemHelper */
-	protected $ocFilesystem;
-
-	/** @var LoggerInterface */
-	protected $logger;
-
-	/** @var Image */
-	protected $image;
-
-	/** @param \OCP\IAvatarManager */
-	protected $avatarManager;
-
-	/**
-	 * @var CappedMemoryCache $usersByDN
-	 */
-	protected $usersByDN;
-	/**
-	 * @var CappedMemoryCache $usersByUid
-	 */
-	protected $usersByUid;
-	/** @var IManager */
-	private $shareManager;
+	protected ?Access $access = null;
+	protected IConfig $ocConfig;
+	protected IDBConnection $db;
+	protected IUserManager $userManager;
+	protected INotificationManager $notificationManager;
+	protected FilesystemHelper $ocFilesystem;
+	protected LoggerInterface $logger;
+	protected Image $image;
+	protected IAvatarManager $avatarManager;
+	/** @var CappedMemoryCache<User> $usersByDN */
+	protected CappedMemoryCache $usersByDN;
+	/** @var CappedMemoryCache<User> $usersByUid */
+	protected CappedMemoryCache $usersByUid;
+	private IManager $shareManager;
 
 	public function __construct(
 		IConfig $ocConfig,
@@ -232,7 +209,7 @@ class Manager {
 	}
 
 	/**
-	 * @brief returns a User object by it's Nextcloud username
+	 * @brief returns a User object by its Nextcloud username
 	 * @param string $id the DN or username of the user
 	 * @return \OCA\User_LDAP\User\User|\OCA\User_LDAP\User\OfflineUser|null
 	 */
@@ -249,7 +226,7 @@ class Manager {
 	}
 
 	/**
-	 * @brief returns a User object by it's DN or Nextcloud username
+	 * @brief returns a User object by its DN or Nextcloud username
 	 * @param string $id the DN or username of the user
 	 * @return \OCA\User_LDAP\User\User|\OCA\User_LDAP\User\OfflineUser|null
 	 * @throws \Exception when connection could not be established

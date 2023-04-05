@@ -54,6 +54,7 @@ use OC\Files\View;
 use OCA\Files_Trashbin\AppInfo\Application;
 use OCA\Files_Trashbin\Command\Expire;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\App\IAppManager;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
@@ -66,13 +67,6 @@ class Trashbin {
 
 	// unit: percentage; 50% of available disk space/quota
 	public const DEFAULTMAXSIZE = 50;
-
-	/**
-	 * Whether versions have already be rescanned during this PHP request
-	 *
-	 * @var bool
-	 */
-	private static $scannedVersions = false;
 
 	/**
 	 * Ensure we don't need to scan the file during the move to trash
@@ -255,8 +249,15 @@ class Trashbin {
 		}
 
 		$ownerView = new View('/' . $owner);
+
 		// file has been deleted in between
-		if (is_null($ownerPath) || $ownerPath === '' || !$ownerView->file_exists('/files/' . $ownerPath)) {
+		if (is_null($ownerPath) || $ownerPath === '') {
+			return true;
+		}
+
+		$sourceInfo = $ownerView->getFileInfo('/files/' . $ownerPath);
+
+		if ($sourceInfo === false) {
 			return true;
 		}
 
@@ -297,9 +298,8 @@ class Trashbin {
 			}
 		}
 
-		/** @var \OC\Files\Storage\Storage $sourceStorage */
-		[$sourceStorage, $sourceInternalPath] = $ownerView->resolvePath('/files/' . $ownerPath);
-
+		$sourceStorage = $sourceInfo->getStorage();
+		$sourceInternalPath = $sourceInfo->getInternalPath();
 
 		if ($trashStorage->file_exists($trashInternalPath)) {
 			$trashStorage->unlink($trashInternalPath);
@@ -309,7 +309,7 @@ class Trashbin {
 		$systemTrashbinSize = (int)$config->getAppValue('files_trashbin', 'trashbin_size', '-1');
 		$userTrashbinSize = (int)$config->getUserValue($owner, 'files_trashbin', 'trashbin_size', '-1');
 		$configuredTrashbinSize = ($userTrashbinSize < 0) ? $systemTrashbinSize : $userTrashbinSize;
-		if ($configuredTrashbinSize >= 0 && $sourceStorage->filesize($sourceInternalPath) >= $configuredTrashbinSize) {
+		if ($configuredTrashbinSize >= 0 && $sourceInfo->getSize() >= $configuredTrashbinSize) {
 			return false;
 		}
 
@@ -389,7 +389,7 @@ class Trashbin {
 	 * @param integer $timestamp when the file was deleted
 	 */
 	private static function retainVersions($filename, $owner, $ownerPath, $timestamp) {
-		if (\OCP\App::isEnabled('files_versions') && !empty($ownerPath)) {
+		if (\OCP\Server::get(IAppManager::class)->isEnabledForUser('files_versions') && !empty($ownerPath)) {
 			$user = OC_User::getUser();
 			$rootView = new View('/');
 
@@ -537,7 +537,7 @@ class Trashbin {
 	 * @return false|null
 	 */
 	private static function restoreVersions(View $view, $file, $filename, $uniqueFilename, $location, $timestamp) {
-		if (\OCP\App::isEnabled('files_versions')) {
+		if (\OCP\Server::get(IAppManager::class)->isEnabledForUser('files_versions')) {
 			$user = OC_User::getUser();
 			$rootView = new View('/');
 
@@ -698,7 +698,7 @@ class Trashbin {
 	 */
 	private static function deleteVersions(View $view, $file, $filename, $timestamp, $user) {
 		$size = 0;
-		if (\OCP\App::isEnabled('files_versions')) {
+		if (\OCP\Server::get(IAppManager::class)->isEnabledForUser('files_versions')) {
 			if ($view->is_dir('files_trashbin/versions/' . $file)) {
 				$size += self::calculateSize(new View('/' . $user . '/files_trashbin/versions/' . $file));
 				$view->unlink('files_trashbin/versions/' . $file);
@@ -925,7 +925,7 @@ class Trashbin {
 	 * recursive copy to copy a whole directory
 	 *
 	 * @param string $source source path, relative to the users files directory
-	 * @param string $destination destination path relative to the users root directoy
+	 * @param string $destination destination path relative to the users root directory
 	 * @param View $view file view for the users root directory
 	 * @return int
 	 * @throws Exceptions\CopyRecursiveException
@@ -972,23 +972,6 @@ class Trashbin {
 
 		/** @var \OC\Files\Storage\Storage $storage */
 		[$storage,] = $view->resolvePath('/');
-
-		//force rescan of versions, local storage may not have updated the cache
-		$waitstart = time();
-		while (!self::$scannedVersions) {
-			try {
-				$storage->getScanner()->scan('files_trashbin/versions');
-				self::$scannedVersions = true;
-			} catch (LockedException $e) {
-				/* a concurrent remove/restore from trash occurred,
-				 * retry with a maximum wait time of approx. 15 seconds
-				 */
-				if (time() - $waitstart > 15) {
-					throw $e;
-				}
-				usleep(50000 + rand(0, 10000));
-			}
-		}
 
 		$pattern = \OC::$server->getDatabaseConnection()->escapeLikeParameter(basename($filename));
 		if ($timestamp) {

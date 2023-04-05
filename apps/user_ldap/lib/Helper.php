@@ -29,21 +29,16 @@
  */
 namespace OCA\User_LDAP;
 
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 
 class Helper {
-
-	/** @var IConfig */
-	private $config;
-
-	/** @var IDBConnection */
-	private $connection;
-
-	/** @var CappedMemoryCache */
-	protected $sanitizeDnCache;
+	private IConfig $config;
+	private IDBConnection $connection;
+	/** @var CappedMemoryCache<string> */
+	protected CappedMemoryCache $sanitizeDnCache;
 
 	public function __construct(IConfig $config,
 								IDBConnection $connection) {

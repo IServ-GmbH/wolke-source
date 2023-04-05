@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Prywatność",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Centrum prywatności pokazuje, gdzie są przechowywane Twoje dane i kto może uzyskać do nich dostęp, ponieważ udostępniłeś je lub jesteś administratorem.",
-    "Remove external admin" : "Usuń zewnętrznego administratora",
+    "Remove external {propertyName} admin" : "Usuń zewnętrznego administratora {propertyName}",
     "Add external admin" : "Dodaj zewnętrznego administratora",
     "Name of external admin" : "Nazwa zewnętrznego administratora",
+    "Adapt encryption" : "Dostosuj szyfrowanie",
     "This server is using full-disk-encryption." : "Ten serwer używa full-disk-encryption.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Twój magazyn główny jest zaszyfrowany przy użyciu {linkopen}server-side-encryption ↗{linkclose} z kluczem głównym.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Twój magazyn główny jest szyfrowany przy użyciu {linkopen}szyfrowania po stronie serwera ↗{linkclose} z kluczem głównym. Oznacza to, że administratorzy mogą uzyskać dostęp do Twoich plików, ale nie mogą czytać ich zawartości.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Twoje pliki na magazynach zewnętrznych mogą być zaszyfrowane przy użyciu {linkopen}server-side-encryption ↗{linkclose} z kluczem głównym opartym na ich konfiguracji.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Twój magazyn główny jest zaszyfrowany przy użyciu {linkopen}server-side-encryption ↗{linkclose} z indywidualnym kluczem użytkownika.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Twój magazyn główny jest szyfrowany przy użyciu {linkopen}szyfrowania po stronie serwera ↗{linkclose} z indywidualnym kluczem użytkownika. Oznacza to, że administratorzy mogą uzyskać dostęp do Twoich plików, ale nie mogą czytać ich zawartości.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Twoje pliki na magazynach zewnętrznych mogą być zaszyfrowane przy użyciu {linkopen}server-side-encryption ↗{linkclose} z indywidualnym kluczem opartym na ich konfiguracji.",
     "Additionally, this server is protected with full-disk-encryption." : "Dodatkowo ten serwer jest chroniony szyfrowaniem full-disk-encryption.",
     "This server is protected with full-disk-encryption." : "Ten serwer jest chroniony za pomocą full-disk-encryption.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Polityka prywatności",
     "Read the privacy policy." : "Przeczytaj politykę prywatności.",
     "Encryption" : "Szyfrowanie",
-    "The admin hasn't selected the location of the server yet." : "Administrator nie wybrał jeszcze lokalizacji serwera."
+    "Remove external admin" : "Usuń zewnętrznego administratora",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Twój magazyn główny jest zaszyfrowany przy użyciu {linkopen}server-side-encryption ↗{linkclose} z kluczem głównym.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Twój magazyn główny jest zaszyfrowany przy użyciu {linkopen}server-side-encryption ↗{linkclose} z indywidualnym kluczem użytkownika."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

@@ -415,15 +415,6 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		}
 	}
 
-
-	/**
-	 * @param string $field
-	 * @param string $value
-	 * @param string $alias
-	 * @param bool $cs
-	 *
-	 * @return string
-	 */
 	public function exprLimit(string $field, string $value, string $alias = '', bool $cs = true): string {
 		if ($this->getType() === DBALQueryBuilder::SELECT) {
 			$field = (($alias === '') ? $this->getDefaultSelectAlias() : $alias) . '.' . $field;
@@ -442,14 +433,6 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		}
 	}
 
-
-	/**
-	 * @param string $field
-	 * @param int $value
-	 * @param string $alias
-	 *
-	 * @return string
-	 */
 	public function exprLimitInt(string $field, int $value, string $alias = ''): string {
 		if ($this->getType() === DBALQueryBuilder::SELECT) {
 			$field = (($alias === '') ? $this->getDefaultSelectAlias() : $alias) . '.' . $field;

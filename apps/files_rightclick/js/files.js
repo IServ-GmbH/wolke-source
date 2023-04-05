@@ -8,7 +8,7 @@
 
     var appName = RightClick.appName;
 
-    new RightClick.Menu($('tbody[id=fileList]'), function (event, context, delimiter) {
+    new RightClick.Menu($('tbody[class=files-fileList]'), function (event, context, delimiter) {
         var options = new RightClick.Options();
         var currentFile = $(event.target).closest('tr');
         var selectedActions = '.selectedActions .menu-center li';
@@ -87,7 +87,7 @@
                 });
             }
 
-            if (!$('#selectedActionsList').hasClass('hidden')) {
+            if (!$('.selectedActions').hasClass('hidden')) {
                 addNewOption('Check', 'category-enabled', t(appName, 'Select'), function () {
                     $(currentFile.find('input.selectCheckBox')).click();
                 });
@@ -116,7 +116,7 @@
         }, 100);
 
         return options;
-    }, $('#app-content-files #fileList'), function () {
+    }, $('#app-content-files .files-fileList'), function () {
         $('.filesSelectMenu').css('visibility', 'visible');
     });
 })(window, jQuery, RightClick);

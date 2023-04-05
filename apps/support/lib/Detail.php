@@ -24,31 +24,31 @@
 namespace OCA\Support;
 
 class Detail implements IDetail {
-	private $section;
-	private $title;
-	private $information;
-	private $type;
+	private string $section;
+	private string $title;
+	private string $information;
+	private int $type;
 
-	public function __construct($section, $title, $information, $type) {
+	public function __construct(string $section, string $title, string $information, int $type) {
 		$this->section = $section;
 		$this->title = $title;
 		$this->information = $information;
 		$this->type = $type;
 	}
 
-	public function getTitle() {
+	public function getTitle(): string {
 		return $this->title;
 	}
 
-	public function getType() {
+	public function getType(): string {
 		return $this->type;
 	}
 
-	public function getInformation() {
+	public function getInformation(): string {
 		return $this->information;
 	}
 
-	public function getSection() {
+	public function getSection(): int {
 		return $this->section;
 	}
 }

@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -106,7 +110,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">User management</a></li>
           <li class="breadcrumb-item"><a href="user_provisioning_api.html">User provisioning API</a></li>
       <li class="breadcrumb-item active">Instruction set for users</li>
@@ -165,12 +169,12 @@ basic HTTP authentication header.</p>
 <h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message/&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data/&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message/&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -204,15 +208,15 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data&gt;</span>
-    <span class="nt">&lt;users&gt;</span>
-      <span class="nt">&lt;element&gt;</span>Frank<span class="nt">&lt;/element&gt;</span>
-     <span class="nt">&lt;/users&gt;</span>
-  <span class="nt">&lt;/data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data&gt;</span>
+<span class="w">    </span><span class="nt">&lt;users&gt;</span>
+<span class="w">      </span><span class="nt">&lt;element&gt;</span>Frank<span class="nt">&lt;/element&gt;</span>
+<span class="w">     </span><span class="nt">&lt;/users&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -243,25 +247,25 @@ Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data&gt;</span>
-    <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
-    <span class="nt">&lt;id&gt;</span>Frank<span class="nt">&lt;/id&gt;</span>
-    <span class="nt">&lt;quota&gt;</span>0<span class="nt">&lt;/quota&gt;</span>
-    <span class="nt">&lt;email&gt;</span>frank@example.org<span class="nt">&lt;/email&gt;</span>
-    <span class="nt">&lt;displayname&gt;</span>Frank K.<span class="nt">&lt;/displayname&gt;</span>
-    <span class="nt">&lt;phone&gt;</span>0123 / 456 789<span class="nt">&lt;/phone&gt;</span>
-    <span class="nt">&lt;address&gt;</span>Foobar 12, 12345 Town<span class="nt">&lt;/address&gt;</span>
-    <span class="nt">&lt;website&gt;</span>https://nextcloud.com<span class="nt">&lt;/website&gt;</span>
-    <span class="nt">&lt;twitter&gt;</span>Nextcloud<span class="nt">&lt;/twitter&gt;</span>
-    <span class="nt">&lt;groups&gt;</span>
-     <span class="nt">&lt;element&gt;</span>group1<span class="nt">&lt;/element&gt;</span>
-     <span class="nt">&lt;element&gt;</span>group2<span class="nt">&lt;/element&gt;</span>
-    <span class="nt">&lt;/groups&gt;</span>
-  <span class="nt">&lt;/data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data&gt;</span>
+<span class="w">    </span><span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+<span class="w">    </span><span class="nt">&lt;id&gt;</span>Frank<span class="nt">&lt;/id&gt;</span>
+<span class="w">    </span><span class="nt">&lt;quota&gt;</span>0<span class="nt">&lt;/quota&gt;</span>
+<span class="w">    </span><span class="nt">&lt;email&gt;</span>frank@example.org<span class="nt">&lt;/email&gt;</span>
+<span class="w">    </span><span class="nt">&lt;displayname&gt;</span>Frank<span class="w"> </span>K.<span class="nt">&lt;/displayname&gt;</span>
+<span class="w">    </span><span class="nt">&lt;phone&gt;</span>0123<span class="w"> </span>/<span class="w"> </span>456<span class="w"> </span>789<span class="nt">&lt;/phone&gt;</span>
+<span class="w">    </span><span class="nt">&lt;address&gt;</span>Foobar<span class="w"> </span>12,<span class="w"> </span>12345<span class="w"> </span>Town<span class="nt">&lt;/address&gt;</span>
+<span class="w">    </span><span class="nt">&lt;website&gt;</span>https://nextcloud.com<span class="nt">&lt;/website&gt;</span>
+<span class="w">    </span><span class="nt">&lt;twitter&gt;</span>Nextcloud<span class="nt">&lt;/twitter&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groups&gt;</span>
+<span class="w">     </span><span class="nt">&lt;element&gt;</span>group1<span class="nt">&lt;/element&gt;</span>
+<span class="w">     </span><span class="nt">&lt;element&gt;</span>group2<span class="nt">&lt;/element&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/groups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -316,11 +320,11 @@ is done by sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -352,19 +356,19 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data&gt;</span>
-  <span class="nt">&lt;element&gt;</span>displayname<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;element&gt;</span>email<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;element&gt;</span>phone<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;element&gt;</span>address<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;element&gt;</span>website<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;element&gt;</span>twitter<span class="nt">&lt;/element&gt;</span>
- <span class="nt">&lt;/data&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>displayname<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>email<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>phone<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>address<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>website<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;element&gt;</span>twitter<span class="nt">&lt;/element&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -396,12 +400,12 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;message/&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;message/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -433,12 +437,12 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;message/&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;message/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -470,11 +474,11 @@ Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id13" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -505,16 +509,16 @@ done by sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id15" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data&gt;</span>
-    <span class="nt">&lt;groups&gt;</span>
-      <span class="nt">&lt;element&gt;</span>admin<span class="nt">&lt;/element&gt;</span>
-      <span class="nt">&lt;element&gt;</span>group1<span class="nt">&lt;/element&gt;</span>
-    <span class="nt">&lt;/groups&gt;</span>
-  <span class="nt">&lt;/data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data&gt;</span>
+<span class="w">    </span><span class="nt">&lt;groups&gt;</span>
+<span class="w">      </span><span class="nt">&lt;element&gt;</span>admin<span class="nt">&lt;/element&gt;</span>
+<span class="w">      </span><span class="nt">&lt;element&gt;</span>group1<span class="nt">&lt;/element&gt;</span>
+<span class="w">    </span><span class="nt">&lt;/groups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -551,11 +555,11 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id17" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -592,11 +596,11 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id19" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -632,11 +636,11 @@ subadmin</p></li>
 <h3>XML output<a class="headerlink" href="#id21" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -672,11 +676,11 @@ subadmin rights</p></li>
 <h3>XML output<a class="headerlink" href="#id23" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-    <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">    </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -709,14 +713,14 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id25" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-      <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-      <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;message/&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data&gt;</span>
-    <span class="nt">&lt;element&gt;</span>testgroup<span class="nt">&lt;/element&gt;</span>
-  <span class="nt">&lt;/data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">      </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">      </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;message/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data&gt;</span>
+<span class="w">    </span><span class="nt">&lt;element&gt;</span>testgroup<span class="nt">&lt;/element&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -748,12 +752,12 @@ sending a Basic HTTP Authorization header.</p>
 <h3>XML output<a class="headerlink" href="#id27" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
-  <span class="nt">&lt;meta&gt;</span>
-      <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-      <span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
-    <span class="nt">&lt;message/&gt;</span>
-  <span class="nt">&lt;/meta&gt;</span>
-  <span class="nt">&lt;data/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">      </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">      </span><span class="nt">&lt;statuscode&gt;</span>100<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">    </span><span class="nt">&lt;message/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -772,7 +776,7 @@ sending a Basic HTTP Authorization header.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -797,6 +801,8 @@ sending a Basic HTTP Authorization header.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

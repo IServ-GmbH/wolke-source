@@ -21,17 +21,17 @@
 
 namespace OCA\Support\BackgroundJobs;
 
-use OC\BackgroundJob\TimedJob;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 use OCA\Support\Service\SubscriptionService;
 use OCP\IConfig;
 
 class CheckSubscription extends TimedJob {
-	/** @var IConfig */
-	private $config;
-	/** @var SubscriptionService */
-	private $subscriptionService;
+	private IConfig $config;
+	private SubscriptionService $subscriptionService;
 
-	public function __construct(IConfig $config, SubscriptionService $subscriptionService) {
+	public function __construct(IConfig $config, SubscriptionService $subscriptionService, ITimeFactory $factory) {
+		parent::__construct($factory);
 		// Run every 5 minutes
 		$this->setInterval(60 * 5);
 

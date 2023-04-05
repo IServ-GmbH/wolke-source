@@ -64,7 +64,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Metadata cache for a storage
  *
- * The cache stores the metadata for all files and folders in a storage and is kept up to date trough the following mechanisms:
+ * The cache stores the metadata for all files and folders in a storage and is kept up to date through the following mechanisms:
  *
  * - Scanner: scans the storage and updates the cache where needed
  * - Watcher: checks for changes made to the filesystem outside of the Nextcloud instance and rescans files and folder when a change is detected
@@ -582,7 +582,7 @@ class Cache implements ICache {
 		$parentIds = [$entry->getId()];
 		$queue = [$entry->getId()];
 
-		// we walk depth first trough the file tree, removing all filecache_extended attributes while we walk
+		// we walk depth first through the file tree, removing all filecache_extended attributes while we walk
 		// and collecting all folder ids to later use to delete the filecache entries
 		while ($entryId = array_pop($queue)) {
 			$children = $this->getFolderContentsById($entryId);
@@ -962,7 +962,7 @@ class Cache implements ICache {
 	 * use the one with the highest id gives the best result with the background scanner, since that is most
 	 * likely the folder where we stopped scanning previously
 	 *
-	 * @return string|bool the path of the folder or false when no folder matched
+	 * @return string|false the path of the folder or false when no folder matched
 	 */
 	public function getIncomplete() {
 		$query = $this->getQueryBuilder();

@@ -3,12 +3,11 @@
 	"type": "project",
 	"require-dev": {
 		"roave/security-advisories": "dev-master",
-		"jakub-onderka/php-parallel-lint": "^1.0.0",
 		"nextcloud/coding-standard": "^1.0.0",
 		"psalm/phar": "^4.3",
 		"phpunit/phpunit": "^9.5",
 		"ext-mbstring": "*",
-		"nextcloud/ocp": "dev-stable24"
+		"nextcloud/ocp": "dev-stable25"
 	},
 	"license": "AGPLv3",
 	"authors": [
@@ -18,7 +17,7 @@
 		}
 	],
 	"require": {
-		"php": "^7.3|^8.0"
+		"php": "^7.4|^8.0"
 	},
 	"scripts": {
 		"lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",

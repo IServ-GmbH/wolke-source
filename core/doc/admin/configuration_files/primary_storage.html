@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,6 +61,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#openstack-swift">OpenStack Swift</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simple-storage-service-s3">Simple Storage Service (S3)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#microsoft-azure-blob-storage">Microsoft Azure Blob Storage</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#multibucket-object-store">Multibucket Object Store</a></li>
@@ -96,7 +101,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
       <li class="breadcrumb-item active">Configuring Object Storage as Primary Storage</li>
       <li class="wy-breadcrumbs-aside">
@@ -241,6 +246,23 @@ will be made with <a class="reference external" href="http://bucket.hostname.dom
 requests are made with <a class="reference external" href="http://hostname.domain/bucket">http://hostname.domain/bucket</a> instead.</p>
 </div>
 </section>
+<section id="microsoft-azure-blob-storage">
+<h3>Microsoft Azure Blob Storage<a class="headerlink" href="#microsoft-azure-blob-storage" title="Permalink to this headline"></a></h3>
+<p>The Azure Blob Storage backend mounts a container on Microsoft’s Azure Blob Storage into the
+virtual filesystem.</p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\Azure</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">Azure&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+                <span class="s1">&#39;container&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;autocreate&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+                <span class="s1">&#39;account_name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;account_name&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;account_key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;xxxxxxxxxx&#39;</span>
+        <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="multibucket-object-store">
 <h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Permalink to this headline"></a></h2>
@@ -284,7 +306,7 @@ users will be mapped to the updated range of buckets.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -309,6 +331,8 @@ users will be mapped to the updated range of buckets.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

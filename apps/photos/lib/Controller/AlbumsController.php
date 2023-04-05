@@ -30,6 +30,7 @@ use OCA\Photos\AppInfo\Application;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\Constants;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -40,20 +41,16 @@ use OCP\IPreview;
 use OCP\IRequest;
 
 class AlbumsController extends Controller {
+	private string $userId;
+	private IRootFolder $rootFolder;
+	private IPreview $previewManager;
 
-	/** @var string */
-	private $userId;
-
-	/** @var IRootFolder */
-	private $rootFolder;
-
-	/** @var IPreview */
-	private $previewManager;
-
-	public function __construct(string $userId,
-								IRequest $request,
-								IRootFolder $rootFolder,
-								IPreview $previewManager) {
+	public function __construct(
+		string $userId,
+		IRequest $request,
+		IRootFolder $rootFolder,
+		IPreview $previewManager
+	) {
 		parent::__construct(Application::APP_ID, $request);
 
 		$this->userId = $userId;
@@ -113,11 +110,34 @@ class AlbumsController extends Controller {
 				'mime' => $node->getMimetype(),
 				'size' => $node->getSize(),
 				'type' => $node->getType(),
+				'permissions' => $this->formatPermissions($node->getPermissions()),
 				'hasPreview' => $this->previewManager->isAvailable($node),
 			];
 		}
 
 		return $result;
+	}
+
+	private function formatPermissions(int $permissions): string {
+		$strPermissions = '';
+		if ($permissions) {
+			if ($permissions & Constants::PERMISSION_CREATE) {
+				$strPermissions .= 'CK';
+			}
+			if ($permissions & Constants::PERMISSION_READ) {
+				$strPermissions .= 'G';
+			}
+			if ($permissions & Constants::PERMISSION_UPDATE) {
+				$strPermissions .= 'W';
+			}
+			if ($permissions & Constants::PERMISSION_DELETE) {
+				$strPermissions .= 'D';
+			}
+			if ($permissions & Constants::PERMISSION_SHARE) {
+				$strPermissions .= 'R';
+			}
+		}
+		return $strPermissions;
 	}
 
 	private function scanCurrentFolder(Folder $folder, bool $shared): iterable {

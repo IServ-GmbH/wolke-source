@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Datenschutz",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Das Zentrum für Datenschutz zeigt Ihnen, wo deine Daten gespeichert werden und wer darauf Zugriff hat. Egal ob du Daten freigegeben hast oder es Administratoren sind.",
-    "Remove external admin" : "Externen Administrator entfernen",
+    "Remove external {propertyName} admin" : "Externe {propertyName}-Administration entfernt",
     "Add external admin" : "Einen externen Administrator hinzufügen",
     "Name of external admin" : "Name des externen Administrators",
+    "Adapt encryption" : "Verschlüsselung anpassen",
     "This server is using full-disk-encryption." : "Dieser Server verwendet Festplattenverschlüsselung.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Dein Speicher ist mit einem Hauptschlüssel mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose} verschlüsselt.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Dein Heimspeicher wird mit {linkopen}serverseitiger Verschlüsselung ↗{linkclose} mit einem Hauptschlüssel verschlüsselt. Dies bedeutet, dass Administratoren auf deine Dateien zugreifen, aber nicht deren Inhalt lesen können.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Deine Dateien auf externen Speichern können mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose}  und einem Hauptschlüssel verschlüsselt werden.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Dein Speicher ist mit einem individuellen Benutzerschlüssel mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose} verschlüsselt.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Dein Heimspeicher wird mit {linkopen}serverseitiger Verschlüsselung ↗{linkclose} mit einem individuellen Benutzerschlüssel verschlüsselt. Dies bedeutet, dass Administratoren auf deine Dateien zugreifen, aber nicht deren Inhalt lesen können.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Deine Dateien auf externen Speichern können mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose}  und einem individuellen Benutzerschlüssel verschlüsselt werden.",
     "Additionally, this server is protected with full-disk-encryption." : "Zusätzlich ist dieser Server mit einer Festplattenverschlüsselung geschützt.",
     "This server is protected with full-disk-encryption." : "Dieser Server ist mittels Festplattenverschlüsselung geschützt.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Datenschutz",
     "Read the privacy policy." : "Lese hier die Datenschutzerklärung.",
     "Encryption" : "Verschlüsselung",
-    "The admin hasn't selected the location of the server yet." : "Der Administrator hat den Standort des Servers noch nicht ausgewählt."
+    "Remove external admin" : "Externen Administrator entfernen",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Dein Speicher ist mit einem Hauptschlüssel mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose} verschlüsselt.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Dein Speicher ist mit einem individuellen Benutzerschlüssel mittels der {linkopen}serverseitigen Verschlüsselung ↗{linkclose} verschlüsselt."
 },
 "nplurals=2; plural=(n != 1);");

@@ -31,10 +31,10 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\ILogger;
 use OCP\Notification\IManager;
 use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
 use OCP\Support\Subscription\IRegistry;
+use Psr\Log\LoggerInterface;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'support';
@@ -50,12 +50,14 @@ class Application extends App implements IBootstrap {
 		$container = $context->getAppContainer();
 
 		/* @var $registry IRegistry */
-		$registry = $container->query(IRegistry::class);
+		$registry = $container->get(IRegistry::class);
 		try {
 			$registry->registerService(SubscriptionAdapter::class);
 		} catch (AlreadyRegisteredException $e) {
-			$logger = $context->getServerContainer()->query(ILogger::class);
-			$logger->logException($e, ['message' => 'Multiple subscription adapters are registered.', 'app' => 'support']);
+			$logger = $container->get(LoggerInterface::class);
+			$logger->critical('Multiple subscription adapters are registered.', [
+				'exception' => $e,
+			]);
 		}
 
 		$context->injectFn(\Closure::fromCallable([$this, 'registerNotifier']));

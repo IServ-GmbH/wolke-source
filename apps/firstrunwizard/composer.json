@@ -13,7 +13,7 @@
 		"phpunit/phpunit": "^9.5",
 		"nextcloud/coding-standard": "^1.0.0",
 		"vimeo/psalm": "^4.3.2",
-		"nextcloud/ocp": "dev-stable24"
+		"nextcloud/ocp": "dev-stable25"
 	},
 	"scripts": {
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -print0 | xargs -0 -n1 php -l",

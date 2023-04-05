@@ -158,7 +158,7 @@ class OC_Util {
 	 * Get the quota of a user
 	 *
 	 * @param IUser|null $user
-	 * @return float Quota bytes
+	 * @return float|\OCP\Files\FileInfo::SPACE_UNLIMITED|false Quota bytes
 	 */
 	public static function getUserQuota(?IUser $user) {
 		if (is_null($user)) {
@@ -719,6 +719,15 @@ class OC_Util {
 				'error' => $l->t('PHP modules have been installed, but they are still listed as missing?'),
 				'hint' => $l->t('Please ask your server administrator to restart the web server.')
 			];
+		}
+
+		foreach (['secret', 'instanceid', 'passwordsalt'] as $requiredConfig) {
+			if ($config->getValue($requiredConfig, '') === '' && !\OC::$CLI && $config->getValue('installed', false)) {
+				$errors[] = [
+					'error' => $l->t('The required %s config variable is not configured in the config.php file.', [$requiredConfig]),
+					'hint' => $l->t('Please ask your server administrator to check the Nextcloud configuration.')
+				];
+			}
 		}
 
 		$errors = array_merge($errors, self::checkDatabaseVersion());

@@ -15,6 +15,7 @@
  * @author Jörn Friedrich Dreyer <jfd@butonic.de>
  * @author Klaas Freitag <freitag@owncloud.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Martin Brugnara <martin@0x6d62.eu>
  * @author Michael Gapczynski <GapczynskiM@gmail.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
@@ -43,6 +44,7 @@
 namespace OC\Files\Storage;
 
 use OC\Files\Filesystem;
+use OC\Files\Storage\Wrapper\Encryption;
 use OC\Files\Storage\Wrapper\Jail;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
@@ -50,7 +52,7 @@ use OCP\Files\GenericFileException;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
 use OCP\IConfig;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * for local filestore, we only have to map the paths
@@ -65,6 +67,10 @@ class Local extends \OC\Files\Storage\Common {
 	private IConfig $config;
 
 	private IMimeTypeDetector $mimeTypeDetector;
+
+	private $defUMask;
+
+	protected bool $unlinkOnTruncate;
 
 	public function __construct($arguments) {
 		if (!isset($arguments['datadir']) || !is_string($arguments['datadir'])) {
@@ -84,6 +90,10 @@ class Local extends \OC\Files\Storage\Common {
 		$this->dataDirLength = strlen($this->realDataDir);
 		$this->config = \OC::$server->get(IConfig::class);
 		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
+		$this->defUMask = $this->config->getSystemValue('localstorage.umask', 0022);
+
+		// support Write-Once-Read-Many file systems
+		$this->unlinkOnTruncate = $this->config->getSystemValue('localstorage.unlink_on_truncate', false);
 	}
 
 	public function __destruct() {
@@ -95,7 +105,7 @@ class Local extends \OC\Files\Storage\Common {
 
 	public function mkdir($path) {
 		$sourcePath = $this->getSourcePath($path);
-		$oldMask = umask(022);
+		$oldMask = umask($this->defUMask);
 		$result = @mkdir($sourcePath, 0777, true);
 		umask($oldMask);
 		return $result;
@@ -276,7 +286,7 @@ class Local extends \OC\Files\Storage\Common {
 		if ($this->file_exists($path) and !$this->isUpdatable($path)) {
 			return false;
 		}
-		$oldMask = umask(022);
+		$oldMask = umask($this->defUMask);
 		if (!is_null($mtime)) {
 			$result = @touch($this->getSourcePath($path), $mtime);
 		} else {
@@ -295,7 +305,10 @@ class Local extends \OC\Files\Storage\Common {
 	}
 
 	public function file_put_contents($path, $data) {
-		$oldMask = umask(022);
+		$oldMask = umask($this->defUMask);
+		if ($this->unlinkOnTruncate) {
+			$this->unlink($path);
+		}
 		$result = file_put_contents($this->getSourcePath($path), $data);
 		umask($oldMask);
 		return $result;
@@ -326,17 +339,17 @@ class Local extends \OC\Files\Storage\Common {
 		$dstParent = dirname($path2);
 
 		if (!$this->isUpdatable($srcParent)) {
-			\OCP\Util::writeLog('core', 'unable to rename, source directory is not writable : ' . $srcParent, ILogger::ERROR);
+			\OC::$server->get(LoggerInterface::class)->error('unable to rename, source directory is not writable : ' . $srcParent, ['app' => 'core']);
 			return false;
 		}
 
 		if (!$this->isUpdatable($dstParent)) {
-			\OCP\Util::writeLog('core', 'unable to rename, destination directory is not writable : ' . $dstParent, ILogger::ERROR);
+			\OC::$server->get(LoggerInterface::class)->error('unable to rename, destination directory is not writable : ' . $dstParent, ['app' => 'core']);
 			return false;
 		}
 
 		if (!$this->file_exists($path1)) {
-			\OCP\Util::writeLog('core', 'unable to rename, file does not exists : ' . $path1, ILogger::ERROR);
+			\OC::$server->get(LoggerInterface::class)->error('unable to rename, file does not exists : ' . $path1, ['app' => 'core']);
 			return false;
 		}
 
@@ -368,7 +381,10 @@ class Local extends \OC\Files\Storage\Common {
 		if ($this->is_dir($path1)) {
 			return parent::copy($path1, $path2);
 		} else {
-			$oldMask = umask(022);
+			$oldMask = umask($this->defUMask);
+			if ($this->unlinkOnTruncate) {
+				$this->unlink($path2);
+			}
 			$result = copy($this->getSourcePath($path1), $this->getSourcePath($path2));
 			umask($oldMask);
 			return $result;
@@ -380,7 +396,10 @@ class Local extends \OC\Files\Storage\Common {
 		if (!file_exists($sourcePath) && $mode === 'r') {
 			return false;
 		}
-		$oldMask = umask(022);
+		$oldMask = umask($this->defUMask);
+		if (($mode === 'w' || $mode === 'w+') && $this->unlinkOnTruncate) {
+			$this->unlink($path);
+		}
 		$result = @fopen($sourcePath, $mode);
 		umask($oldMask);
 		return $result;
@@ -491,7 +510,7 @@ class Local extends \OC\Files\Storage\Common {
 			return $fullPath;
 		}
 
-		\OCP\Util::writeLog('core', "Following symlinks is not allowed ('$fullPath' -> '$realPath' not inside '{$this->realDataDir}')", ILogger::ERROR);
+		\OC::$server->get(LoggerInterface::class)->error("Following symlinks is not allowed ('$fullPath' -> '$realPath' not inside '{$this->realDataDir}')", ['app' => 'core']);
 		throw new ForbiddenException('Following symlinks is not allowed', false);
 	}
 
@@ -538,6 +557,16 @@ class Local extends \OC\Files\Storage\Common {
 		}
 	}
 
+	private function canDoCrossStorageMove(IStorage $sourceStorage) {
+		return $sourceStorage->instanceOfStorage(Local::class)
+			// Don't treat ACLStorageWrapper like local storage where copy can be done directly.
+			// Instead, use the slower recursive copying in php from Common::copyFromStorage with
+			// more permissions checks.
+			&& !$sourceStorage->instanceOfStorage('OCA\GroupFolders\ACL\ACLStorageWrapper')
+			// when moving encrypted files we have to handle keys and the target might not be encrypted
+			&& !$sourceStorage->instanceOfStorage(Encryption::class);
+	}
+
 	/**
 	 * @param IStorage $sourceStorage
 	 * @param string $sourceInternalPath
@@ -546,10 +575,7 @@ class Local extends \OC\Files\Storage\Common {
 	 * @return bool
 	 */
 	public function copyFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath, $preserveMtime = false) {
-		// Don't treat ACLStorageWrapper like local storage where copy can be done directly.
-		// Instead use the slower recursive copying in php from Common::copyFromStorage with
-		// more permissions checks.
-		if ($sourceStorage->instanceOfStorage(Local::class) && !$sourceStorage->instanceOfStorage('OCA\GroupFolders\ACL\ACLStorageWrapper')) {
+		if ($this->canDoCrossStorageMove($sourceStorage)) {
 			if ($sourceStorage->instanceOfStorage(Jail::class)) {
 				/**
 				 * @var \OC\Files\Storage\Wrapper\Jail $sourceStorage
@@ -573,7 +599,7 @@ class Local extends \OC\Files\Storage\Common {
 	 * @return bool
 	 */
 	public function moveFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath) {
-		if ($sourceStorage->instanceOfStorage(Local::class)) {
+		if ($this->canDoCrossStorageMove($sourceStorage)) {
 			if ($sourceStorage->instanceOfStorage(Jail::class)) {
 				/**
 				 * @var \OC\Files\Storage\Wrapper\Jail $sourceStorage
@@ -591,6 +617,7 @@ class Local extends \OC\Files\Storage\Common {
 	}
 
 	public function writeStream(string $path, $stream, int $size = null): int {
+		/** @var int|false $result We consider here that returned size will never be a float because we write less than 4GB */
 		$result = $this->file_put_contents($path, $stream);
 		if (is_resource($stream)) {
 			fclose($stream);

@@ -29,22 +29,8 @@ interface IDetail {
 	public const TYPE_COLLAPSIBLE = 3;
 	public const TYPE_COLLAPSIBLE_PREFORMAT = 4;
 
-	/**
-	 * @return string
-	 */
-	public function getTitle();
-	/**
-	 * @return string
-	 */
-	public function getType();
-
-	/**
-	 * @return string
-	 */
-	public function getInformation();
-
-	/**
-	 * @return int
-	 */
-	public function getSection();
+	public function getTitle(): string;
+	public function getType(): string;
+	public function getInformation(): string;
+	public function getSection(): int;
 }

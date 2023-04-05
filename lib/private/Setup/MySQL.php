@@ -80,7 +80,7 @@ class MySQL extends AbstractDatabase {
 			$user = $this->dbUser;
 			//we can't use OC_DB functions here because we need to connect as the administrative user.
 			$characterSet = $this->config->getValue('mysql.utf8mb4', false) ? 'utf8mb4' : 'utf8';
-			$query = "CREATE DATABASE IF NOT EXISTS `$name` CHARACTER SET $characterSet COLLATE ${characterSet}_bin;";
+			$query = "CREATE DATABASE IF NOT EXISTS `$name` CHARACTER SET $characterSet COLLATE {$characterSet}_bin;";
 			$connection->executeUpdate($query);
 		} catch (\Exception $ex) {
 			$this->logger->error('Database creation failed.', [
@@ -136,9 +136,8 @@ class MySQL extends AbstractDatabase {
 	/**
 	 * @param $username
 	 * @param IDBConnection $connection
-	 * @return array
 	 */
-	private function createSpecificUser($username, $connection) {
+	private function createSpecificUser($username, $connection): void {
 		$rootUser = $this->dbUser;
 		$rootPassword = $this->dbPassword;
 
@@ -184,6 +183,9 @@ class MySQL extends AbstractDatabase {
 						$i++;
 					}
 				}
+			} else {
+				// Reuse existing password if a database config is already present
+				$this->dbPassword = $rootPassword;
 			}
 		} catch (\Exception $ex) {
 			$this->logger->info('Can not create a new MySQL user, will continue with the provided user.', [

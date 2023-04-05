@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Privacy",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators.",
-    "Remove external admin" : "Remove external admin",
+    "Remove external {propertyName} admin" : "Remove external {propertyName} admin",
     "Add external admin" : "Add external admin",
     "Name of external admin" : "Name of external admin",
+    "Adapt encryption" : "Adapt encryption",
     "This server is using full-disk-encryption." : "This server is using full-disk-encryption.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration.",
     "Additionally, this server is protected with full-disk-encryption." : "Additionally, this server is protected with full-disk-encryption.",
     "This server is protected with full-disk-encryption." : "This server is protected with full-disk-encryption.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Privacy policy",
     "Read the privacy policy." : "Read the privacy policy.",
     "Encryption" : "Encryption",
-    "The admin hasn't selected the location of the server yet." : "The admin hasn't selected the location of the server yet."
+    "Remove external admin" : "Remove external admin",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key."
 },
 "nplurals=2; plural=(n != 1);");

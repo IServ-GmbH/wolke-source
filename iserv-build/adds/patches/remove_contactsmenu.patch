@@ -1,9 +1,10 @@
+# Removing the div does not cause errors because nextcloud checks if it exists before initializing vue
 diff --git a/core/routes.php b/core/routes.php
-index 5750dac2ad..db920ffa39 100644
+index 820db44bf90..3e8e1d763bd 100644
 --- a/core/routes.php
 +++ b/core/routes.php
-@@ -82,8 +82,6 @@ $application->registerRoutes($this, [
- 		['name' => 'Svg#getSvgFromApp', 'url' => '/svg/{app}/{fileName}', 'verb' => 'GET'],
+@@ -84,8 +84,6 @@ $application->registerRoutes($this, [
+ 		['name' => 'Reference#preview', 'url' => '/core/references/preview/{referenceId}', 'verb' => 'GET'],
  		['name' => 'Css#getCss', 'url' => '/css/{appName}/{fileName}', 'verb' => 'GET'],
  		['name' => 'Js#getJs', 'url' => '/js/{appName}/{fileName}', 'verb' => 'GET'],
 -		['name' => 'contactsMenu#index', 'url' => '/contactsmenu/contacts', 'verb' => 'POST'],
@@ -12,21 +13,14 @@ index 5750dac2ad..db920ffa39 100644
  		['name' => 'Search#search', 'url' => '/core/search', 'verb' => 'GET'],
  		['name' => 'Wipe#checkWipe', 'url' => '/core/wipe/check', 'verb' => 'POST'],
 diff --git a/core/templates/layout.user.php b/core/templates/layout.user.php
-index 8bdb4811df..685b12d1e5 100644
+index 11f7656cc91..6ca5575eca3 100644
 --- a/core/templates/layout.user.php
 +++ b/core/templates/layout.user.php
-@@ -133,14 +133,6 @@ $getUserAvatar = static function (int $size) use ($_): string {
+@@ -76,7 +76,6 @@ $getUserAvatar = static function (int $size) use ($_): string {
  			<div class="header-right">
- 				<div id="notifications"></div>
  				<div id="unified-search"></div>
--				<div id="contactsmenu">
--					<div class="icon-contacts menutoggle" tabindex="0" role="button"
--					aria-haspopup="true" aria-controls="contactsmenu-menu" aria-expanded="false">
--						<span class="hidden-visually"><?php p($l->t('Contacts'));?></span>
--					</div>
--					<div id="contactsmenu-menu" class="menu"
--						aria-label="<?php p($l->t('Contacts menu'));?>"></div>
--				</div>
- 				<div id="settings">
- 					<div id="expand" tabindex="0" role="button" class="menutoggle"
- 						aria-label="<?php p($l->t('Settings'));?>"
+ 				<div id="notifications"></div>
+-				<div id="contactsmenu"></div>
+ 				<div id="user-menu"></div>
+ 			</div>
+ 		</header>

@@ -1,7 +1,6 @@
 OC.L10N.register(
     "firstrunwizard",
     {
-    "Copy to clipboard" : "Kopijuoti į iškarpinę",
     "Copied!" : "Nukopijuota!",
     "Not supported!" : "Nepalaikoma!",
     "Press ⌘-C to copy." : "Norėdami nukopijuoti, paspauskite ⌘-C.",
@@ -67,10 +66,9 @@ OC.L10N.register(
     "Server address" : "Serverio adresas",
     "Use this link to connect your apps and desktop client to this server:" : "Naudokite šią nuorodą norėdami prijungti savo programėles bei darbalaukio kliento programas prie šio serverio:",
     "Copy link" : "Kopijuoti nuorodą",
+    "Copy to clipboard" : "Kopijuoti į iškarpinę",
     "App recommendation: Notes" : "Programėlės rekomendacija: Nextcloud užrašai",
     "Distraction-free notes and writing." : "Neblaškantys užrašai ir rašymas.",
-    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC pokalbių kanale, freenode.net serveryje",
-    "Open Standards and Interoperability" : "Atviri standartai ir funkcinis suderinamumas",
-    "100%% Open Source & community-focused" : "100%% atvirojo kodo ir sutelkta į bendruomenę"
+    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC pokalbių kanale, freenode.net serveryje"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

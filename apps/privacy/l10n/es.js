@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "El centro de privacidad muestra dónde están almacenados sus datos y quién puede acceder a ellos, debido a que los haya compartido o porque sean administradores del sistema.",
-    "Remove external admin" : "Quitar administrador externo",
+    "Remove external {propertyName} admin" : "Quitar administrador externo de {propertyName}",
     "Add external admin" : "Añadir administrador externo",
     "Name of external admin" : "Nombre del administrador externo",
+    "Adapt encryption" : "Adaptar cifrado",
     "This server is using full-disk-encryption." : "Este servidor está usando cifrado de disco completo.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Tu nube doméstica está cifrada usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una llave maestra.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Su almacenamiento home está encriptado usando {linkopen} encriptación del lado del servidor↗{linkclose} con una llave maestra. Esto significa que los administradores tienen acceso a sus archivos, mas no podrán leer su contenido.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Sus archivos en almacenamientos externos pueden ser cifrados usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una llave maestra basada en su configuración.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Tu nube doméstica está cifrada usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una clave de usuario individual.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Su almacenamiento home está encriptado usando {linkopen} encriptación del lado del servidor↗{linkclose} con una llave individual de usuario. Esto significa que los administradores tienen acceso a sus archivos, mas no podrán leer su contenido.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Sus archivos en almacenamientos externos pueden ser cifrados usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una clave de usuario individual basada en su configuración.",
     "Additionally, this server is protected with full-disk-encryption." : "Además, este servidor está protegido con un cifrado de disco completo.",
     "This server is protected with full-disk-encryption." : "Este servidor está protegido con cifrado de disco completo.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Política de privacidad",
     "Read the privacy policy." : "Leer la política de privacidad.",
     "Encryption" : "Cifrado",
-    "The admin hasn't selected the location of the server yet." : "Los administradores no han seleccionado todavía la localización del servidor."
+    "Remove external admin" : "Quitar administrador externo",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Tu nube doméstica está cifrada usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una llave maestra.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Tu nube doméstica está cifrada usando el {linkopen}cifrado en el lado del servidor ↗{linkclose} con una clave de usuario individual."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

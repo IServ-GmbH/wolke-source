@@ -10,7 +10,6 @@ if [ ! -f /var/www/html/status.php ]; then
 fi
 
 echo "enable provided apps (to allow upgrading)"
-cp -r /iserv-apps/groupfolders /var/www/html/apps/
 cp -r /iserv-apps/user_saml /var/www/html/apps/
 # cp -r /iserv-apps/iservlogin /var/www/html/apps/
 
@@ -23,7 +22,6 @@ echo "Back-upping version.php"
 # backup edited version.php again for it to be persisted
 cp /var/www/html/version.php /version/version.php
 
-php /var/www/html/occ app:enable groupfolders
 # php /var/www/html/occ app:enable iservlogin
 
 echo "configure options not available in config file"

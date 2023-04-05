@@ -22,6 +22,7 @@ OC.L10N.register(
     "Guest" : "Invitado",
     "Save guest name" : "Guardar nombre de invitado",
     "guest" : "invitado",
+    "Offline" : "Sin conexión",
     "Saved" : "Guardado",
     "Unsaved changes" : "Cambios no guardados",
     "Formatting help" : "Ayuda de formato",
@@ -35,8 +36,10 @@ OC.L10N.register(
     "Ordered list" : "Lista ordenada",
     "Blockquote" : "Cita",
     "Code block" : "Bloque de código",
+    "Remove link" : "Eliminar enlace",
+    "Translate" : "Traducir",
+    "Replace" : "Reemplazar",
     "Unsupported image type" : "Tipo de imagen no soportado",
-    "Add notes, lists or links …" : "Agregar notas, listas o ligas ...",
     "Undo" : "Deshacer",
     "Redo" : "Rehacer",
     "Headings" : "Títulos",
@@ -47,10 +50,10 @@ OC.L10N.register(
     "Info" : "Info",
     "Success" : "Éxito",
     "Warning" : "Advertencia",
+    "Add notes, lists or links …" : "Agregar notas, listas o ligas ...",
     "Edit" : "Editar",
     "Enter your name so other users can see who is editing" : "Introduce tu nombre para que otros usuarios puedan ver quién está editando",
-    "Insert image" : "Añadir imagen",
-    "_and %n other editor_::_and %n other editors_" : ["Y otro %n editor","Y otros %n editores","Y otros %n editores"],
-    "ToDo list" : "Lista de penditentes"
+    "ToDo list" : "Lista de penditentes",
+    "Insert image" : "Añadir imagen"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

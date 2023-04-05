@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -85,7 +89,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
       <li class="breadcrumb-item active">Upgrade manually</li>
       <li class="wy-breadcrumbs-aside">
@@ -140,6 +144,8 @@ the new <code class="docutils literal notranslate"><span class="pre">nextcloud/a
 backed-up/old <code class="docutils literal notranslate"><span class="pre">nextcloud/apps/</span></code> folder. If you find 3rd party apps in the
 old folder that needs to be in the new/upgraded instance, simply copy them over
 and ensure the permissions are set up as shown below.</p></li>
+<li><p>If you have additional apps folders like for example <code class="docutils literal notranslate"><span class="pre">nextcloud/apps-extras</span></code> or <code class="docutils literal notranslate"><span class="pre">nextcloud/apps-external</span></code>,
+make sure to also transfer/keep these in the upgraded folder.</p></li>
 <li><p>If you are using 3rd party theme make sure to copy it from your <code class="docutils literal notranslate"><span class="pre">themes/</span></code>
 directory to your new one. It is possible you will have to make some
 modifications to it after the upgrade.</p></li>
@@ -161,7 +167,7 @@ example on Ubuntu Linux:</p>
 <li><p>The upgrade operation takes a few minutes to a few hours, depending on the
 size of your installation. When it is finished you will see a success
 message, or an error message that will tell where it went wrong.</p></li>
-<li><p>Reenable the nextcloud cron-job. (See step 4 above.)</p>
+<li><p>Re-enable the nextcloud cron-job. (See step 4 above.)</p>
 <blockquote>
 <div><p>crontab -u www-data -e</p>
 </div></blockquote>
@@ -213,7 +219,7 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -238,6 +244,8 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

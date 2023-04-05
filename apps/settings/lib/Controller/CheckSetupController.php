@@ -317,7 +317,7 @@ class CheckSetupController extends Controller {
 					'app' => 'settings',
 					'exception' => $e,
 				]);
-				return $this->l10n->t('Could not determine if TLS version of cURL is outdated or not because an error happened during the HTTPS request against https://nextcloud.com. Please check the nextcloud log file for more details.');
+				return $this->l10n->t('Could not determine if TLS version of cURL is outdated or not because an error happened during the HTTPS request against https://nextcloud.com. Please check the Nextcloud log file for more details.');
 			}
 		}
 
@@ -330,7 +330,7 @@ class CheckSetupController extends Controller {
 	 * @return bool
 	 */
 	protected function isPhpOutdated(): bool {
-		return PHP_VERSION_ID < 70400;
+		return PHP_VERSION_ID < 80000;
 	}
 
 	/**
@@ -499,6 +499,8 @@ Raw output
 			}
 		} elseif (!$isPermitted) {
 			$recommendations[] = $this->l10n->t('Nextcloud is not allowed to use the OPcache API. It is highly recommended to include all Nextcloud directories with <code>opcache.restrict_api</code> or unset this setting to disable OPcache API restrictions, to prevent errors during Nextcloud core or app upgrades.');
+		} elseif ($this->iniGetWrapper->getBool('opcache.file_cache_only')) {
+			$recommendations[] = $this->l10n->t('The shared memory based OPcache is disabled. For better performance, it is recommended to apply <code>opcache.file_cache_only=0</code> to your PHP configuration and use the file cache as second level cache only.');
 		} else {
 			// Check whether opcache_get_status has been explicitly disabled an in case skip usage based checks
 			$disabledFunctions = $this->iniGetWrapper->getString('disable_functions');
@@ -513,7 +515,7 @@ Raw output
 				empty($status['opcache_statistics']['max_cached_keys']) ||
 				($status['opcache_statistics']['num_cached_keys'] / $status['opcache_statistics']['max_cached_keys'] > 0.9)
 			) {
-				$recommendations[] = $this->l10n->t('The maximum number of OPcache keys is nearly exceeded. To assure that all scripts can be hold in cache, it is recommended to apply <code>opcache.max_accelerated_files</code> to your PHP configuration with a value higher than <code>%s</code>.', [($this->iniGetWrapper->getNumeric('opcache.max_accelerated_files') ?: 'currently')]);
+				$recommendations[] = $this->l10n->t('The maximum number of OPcache keys is nearly exceeded. To assure that all scripts can be kept in the cache, it is recommended to apply <code>opcache.max_accelerated_files</code> to your PHP configuration with a value higher than <code>%s</code>.', [($this->iniGetWrapper->getNumeric('opcache.max_accelerated_files') ?: 'currently')]);
 			}
 
 			if (
@@ -524,11 +526,11 @@ Raw output
 			}
 
 			if (
-				empty($status['interned_strings_usage']['free_memory']) ||
+				// Do not recommend to raise the interned strings buffer size above a quarter of the total OPcache size
+				($this->iniGetWrapper->getNumeric('opcache.interned_strings_buffer') < $this->iniGetWrapper->getNumeric('opcache.memory_consumption') / 4) &&
 				(
-					($status['interned_strings_usage']['used_memory'] / $status['interned_strings_usage']['free_memory'] > 9) &&
-					// Do not recommend to raise the interned strings buffer size above a quarter of the total OPcache size
-					($this->iniGetWrapper->getNumeric('opcache.interned_strings_buffer') < $this->iniGetWrapper->getNumeric('opcache.memory_consumption') / 4)
+					empty($status['interned_strings_usage']['free_memory']) ||
+					($status['interned_strings_usage']['used_memory'] / $status['interned_strings_usage']['free_memory'] > 9)
 				)
 			) {
 				$recommendations[] = $this->l10n->t('The OPcache interned strings buffer is nearly full. To assure that repeating strings can be effectively cached, it is recommended to apply <code>opcache.interned_strings_buffer</code> to your PHP configuration with a value higher than <code>%s</code>.', [($this->iniGetWrapper->getNumeric('opcache.interned_strings_buffer') ?: 'currently')]);
@@ -747,6 +749,14 @@ Raw output
 		return true;
 	}
 
+	protected function is64bit(): bool {
+		if (PHP_INT_SIZE < 8) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	protected function isMysqlUsedWithoutUTF8MB4(): bool {
 		return ($this->config->getSystemValue('dbtype', 'sqlite') === 'mysql') && ($this->config->getSystemValue('mysql.utf8mb4', false) === false);
 	}
@@ -761,6 +771,7 @@ Raw output
 			'federated_reshares' => ['share_id'],
 			'filecache' => ['fileid', 'storage', 'parent', 'mimetype', 'mimepart', 'mtime', 'storage_mtime'],
 			'filecache_extended' => ['fileid'],
+			'files_trash' => ['auto_id'],
 			'file_locks' => ['id'],
 			'file_metadata' => ['id'],
 			'jobs' => ['id'],
@@ -881,6 +892,7 @@ Raw output
 				'appDirsWithDifferentOwner' => $this->getAppDirsWithDifferentOwner(),
 				'isImagickEnabled' => $this->isImagickEnabled(),
 				'areWebauthnExtensionsEnabled' => $this->areWebauthnExtensionsEnabled(),
+				'is64bit' => $this->is64bit(),
 				'recommendedPHPModules' => $this->hasRecommendedPHPModules(),
 				'pendingBigIntConversionColumns' => $this->hasBigIntConversionPendingColumns(),
 				'isMysqlUsedWithoutUTF8MB4' => $this->isMysqlUsedWithoutUTF8MB4(),

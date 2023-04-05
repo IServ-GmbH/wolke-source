@@ -35,8 +35,9 @@ OC.L10N.register(
     "Ordered list" : "Ordigita listo",
     "Blockquote" : "Citaĵo",
     "Code block" : "Kodbloko",
+    "Translate" : "Traduku",
+    "Replace" : "Anstataŭigi",
     "Unsupported image type" : "Nesubtenata bildotipo",
-    "Add notes, lists or links …" : "Aldoni notojn, listojn aŭ ligilojn...",
     "Undo" : "Malfari",
     "Redo" : "Refari",
     "Headings" : "Titolaro",
@@ -48,9 +49,9 @@ OC.L10N.register(
     "Warning" : "Averto",
     "Insert attachment" : "Enmeti aldonitan dosieron",
     "Control" : "Kontrolo",
+    "Add notes, lists or links …" : "Aldoni notojn, listojn aŭ ligilojn...",
     "Edit" : "Modifi",
     "Enter your name so other users can see who is editing" : "Entajpu vian nomon, por ke aliuloj videblu, kiu modifas",
-    "Insert image" : "Enmeti bildon",
-    "_and %n other editor_::_and %n other editors_" : ["kaj %n alia redaktanto","kaj %naliaj redaktantoj"]
+    "Insert image" : "Enmeti bildon"
 },
 "nplurals=2; plural=(n != 1);");

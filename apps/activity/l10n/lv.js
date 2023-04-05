@@ -13,6 +13,7 @@ OC.L10N.register(
     "There are no events for this filter" : "Šim filtram nav notikumu",
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
+    "Activity" : "Darbības",
     "Personal activity feed for %s" : "%s personīgā darbību plūsma ",
     "Your feed URL is invalid" : "Jūsu plūsmas URL nav derīgs.",
     "Your settings have been updated." : "Jūsu uzstādījumi ir atjaunoti.",
@@ -25,7 +26,6 @@ OC.L10N.register(
     "Hello %s," : "Sveiki, %s,",
     "There was some activity at %s" : "%s bija kaut kādas darbības",
     "Mail" : "E-pasts",
-    "Activity" : "Darbības",
     "Notifications" : "Paziņojumi",
     "Send email" : "Sūtīt e-pastu",
     "You need to set up your email address before you can receive notification emails." : "Lai saņemtu paziņojumus e-pastā, jūsu profilā ir nepieciešams uzstādīt e-pasta adresi.",
@@ -48,7 +48,6 @@ OC.L10N.register(
     "RSS feed" : "RSS plūsma",
     "Personal notification settings" : "Personisko paziņojumu iestatījumi",
     "No more events to load" : "Nav vairs notikumu, ko ielādēt",
-    "Activity notification for %s" : "Brīdinājumi par darbībām %s",
     "This application enables users to view actions related to their files in Nextcloud.\n\t\tOnce enabled, users will see a new icon “Activity” in their apps menu.\n\t\tWhen clicked, a new page appears for users to track the activity related to files – from new files, to deleted files, move, rename, updates and shared activity.\n\t\tThe user can configure their individual activity settings in their personal menu.\n\t\tThis sets the type of activity to record, as well as whether to the user sees their own activities,\n\t\twhether these are only available online, and whether they get an email digest on a regular basis.\n\t\tMore information is available in the Activity documentation." : "Šī lietotne sniedz iespēju lietotājiem paraudzīt darbības ar viņu Nextcloud datnēm.\n\t\tKad iespējota, lietotājs redzēs jaunu ikonu “Darbības” lietotņu joslā.\n\t\tKlikšķinot, parādīsies jauna lapa ar notikušajām izmaiņām saistībā ar lietotāja datnēm – tai skaitā jaunās, dzēstās, mainītās datnes, atjauninājumus un kopīgošanas statistiku.\n\t\tLietotājs var iestatīt individuāli izmaiņu iestatījumus viņa personīgajā izvēlnē.\n\t\tŠis iespējo izmaiņu veidu ko saglabāt, kā arī vai lietotājs redz savas izmaiņas,\n\t\tvai tās ir piejamas tikai tiešsastē, un vai tie saņems regulāru e-pasta atskaiti. \n\t\tVairāk informācijas pieejams Darbības dokumentācijā.",
     "Settings" : "Iestatījumi",
     "Configure the default notification settings for new users." : "Konfigurējiet jauno lietotāju noklusējuma paziņojumu iestatījumus."

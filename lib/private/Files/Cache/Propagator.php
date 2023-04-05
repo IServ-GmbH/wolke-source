@@ -69,7 +69,7 @@ class Propagator implements IPropagator {
 	 * @param int $sizeDifference number of bytes the file has grown
 	 */
 	public function propagateChange($internalPath, $time, $sizeDifference = 0) {
-		// Do not propogate changes in ignored paths
+		// Do not propagate changes in ignored paths
 		foreach ($this->ignore as $ignore) {
 			if (strpos($internalPath, $ignore) === 0) {
 				return;
@@ -138,7 +138,7 @@ class Propagator implements IPropagator {
 				break;
 			} catch (RetryableException $e) {
 				/** @var LoggerInterface $loggerInterface */
-				$loggerInterface = \OC::$server->get(LoggerInterface::class);
+				$loggerInterface = \OCP\Server::get(LoggerInterface::class);
 				$loggerInterface->warning('Retrying propagation query after retryable exception.', [ 'exception' => $e ]);
 			}
 		}

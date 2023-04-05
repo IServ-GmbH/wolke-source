@@ -31,26 +31,26 @@
 <?php foreach ($_['initialStates'] as $app => $initialState) { ?>
 	<input type="hidden" id="initial-state-<?php p($app); ?>" value="<?php p(base64_encode($initialState)); ?>">
 <?php }?>
-	<div id="notification-container">
-		<div id="notification"></div>
+	<div id="skip-actions">
+		<?php if ($_['id-app-content'] !== null) { ?><a href="<?php p($_['id-app-content']); ?>" class="button primary skip-navigation skip-content"><?php p($l->t('Skip to main content')); ?></a><?php } ?>
+		<?php if ($_['id-app-navigation'] !== null) { ?><a href="<?php p($_['id-app-navigation']); ?>" class="button primary skip-navigation"><?php p($l->t('Skip to navigation of app')); ?></a><?php } ?>
 	</div>
+
 	<header id="header">
 		<div class="header-left">
-			<span id="nextcloud">
-				<div class="logo logo-icon svg"></div>
-				<h1 class="header-appname">
-					<?php if (isset($template) && $template->getHeaderTitle() !== '') { ?>
-						<?php p($template->getHeaderTitle()); ?>
-					<?php } else { ?>
-						<?php	p($theme->getName()); ?>
-					<?php } ?>
-				</h1>
-				<?php if (isset($template) && $template->getHeaderDetails() !== '') { ?>
+			<div class="logo logo-icon svg"></div>
+			<span id="nextcloud" class="header-appname">
+				<?php if (isset($template) && $template->getHeaderTitle() !== '') { ?>
+					<?php p($template->getHeaderTitle()); ?>
+				<?php } else { ?>
+					<?php	p($theme->getName()); ?>
+				<?php } ?>
+			</span>
+			<?php if (isset($template) && $template->getHeaderDetails() !== '') { ?>
 				<div class="header-shared-by">
 					<?php p($template->getHeaderDetails()); ?>
 				</div>
-				<?php } ?>
-			</span>
+			<?php } ?>
 		</div>
 
 		<div class="header-right">
@@ -85,9 +85,16 @@
 		} ?>
 		</div>
 	</header>
-	<div id="content" class="app-<?php p($_['appid']) ?>" role="main">
+	<main id="content" class="app-<?php p($_['appid']) ?>">
+		<h1 class="hidden-visually">
+			<?php if (isset($template) && $template->getHeaderTitle() !== '') { ?>
+				<?php p($template->getHeaderTitle()); ?>
+			<?php } else { ?>
+				<?php	p($theme->getName()); ?>
+			<?php } ?>
+		</h1>
 		<?php print_unescaped($_['content']); ?>
-	</div>
+	</main>
 	<?php if (isset($template) && $template->getFooterVisible()) { ?>
 	<footer>
 		<p><?php print_unescaped($theme->getLongFooter()); ?></p>

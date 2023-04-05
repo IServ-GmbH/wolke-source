@@ -7,9 +7,11 @@ OC.L10N.register(
     "Log reader for Nextcloud" : "Nextcloudin lokilukija",
     "Error parsing log" : "Virhe jäsentäessä lokia",
     "Caused by " : "Aiheuttanut",
+    "Debug" : "Vianjäljitys",
     "Info" : "Tietoa",
     "Warning" : "Varoitus",
     "Error" : "Virhe",
+    "Fatal" : "Kriittinen",
     "Copy" : "Kopioi",
     "Copy raw" : "Kopioi raakatekstinä",
     "Copy formatted" : "Kopioi muotoiltuna",
@@ -25,7 +27,6 @@ OC.L10N.register(
     "Log levels" : "Lokitasot",
     "Log content" : "Lokin sisältö",
     "Live update" : "Live-päivitys",
-    "Download logs" : "Lataa lokit",
-    "Load log file …" : "Lataa lokitiedosto…"
+    "Download logs" : "Lataa lokit"
 },
 "nplurals=2; plural=(n != 1);");

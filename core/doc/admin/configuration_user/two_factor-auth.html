@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -88,7 +92,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">User management</a></li>
       <li class="breadcrumb-item active">Two-factor authentication</li>
       <li class="wy-breadcrumbs-aside">
@@ -109,7 +113,7 @@ of the Nextcloud Server component but provided by featured and 3rd-party Nextclo
 <p>Several 2FA apps are already available including
 <a class="reference external" href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a>,
 a Telegram/Signal/SMS gateway and <a class="reference external" href="https://en.wikipedia.org/wiki/Universal_2nd_Factor">U2F</a>.</p>
-<p>Developers can <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/two-factor-provider.html">build new two-factor provider apps</a>.</p>
+<p>Developers can <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/digging_deeper/two-factor-provider.html">build new two-factor provider apps</a>.</p>
 <section id="enabling-two-factor-authentication">
 <h2>Enabling two-factor authentication<a class="headerlink" href="#enabling-two-factor-authentication" title="Permalink to this headline"></a></h2>
 <p>You can enable 2FA by installing and enabling a 2FA app like TOTP which works
@@ -119,13 +123,13 @@ you want, 2FA will be installed and enabled on your Nextcloud server.</p>
 <figure class="align-default">
 <img alt="../_images/2fa-app-install.png" src="../_images/2fa-app-install.png" />
 </figure>
-<p>Once 2FA has been enabled, users have to <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/user_2fa.html">activate it in their personal settings.</a></p>
+<p>Once 2FA has been enabled, users have to <a class="reference external" href="https://docs.nextcloud.com/server/25/user_manual/en/user_2fa.html">activate it in their personal settings.</a></p>
 </section>
 <section id="enforcing-two-factor-authentication">
 <h2>Enforcing two-factor authentication<a class="headerlink" href="#enforcing-two-factor-authentication" title="Permalink to this headline"></a></h2>
 <p>By default 2FA is <em>optional</em>, hence users are given the choice whether to enable
 it for their account. Admins may enforce the use of 2FA.</p>
-<p>Enforcement is possible systemwide (all users), for selected groups only and can
+<p>Enforcement is possible system-wide (all users), for selected groups only and can
 also be excluded for certain groups.</p>
 <p>These settings can be found in the administrator’s security settings.</p>
 <figure class="align-default">
@@ -152,7 +156,7 @@ selected <em>and</em> excluded group, the selected takes precedence and 2FA is e
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -177,6 +181,8 @@ selected <em>and</em> excluded group, the selected takes precedence and 2FA is e
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -69,6 +73,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#scan">Scan</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scan-appdata">Scan appdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cleanup">Cleanup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repair-tree">Repair-Tree</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#transfer">Transfer</a></li>
 </ul>
 </li>
@@ -104,6 +109,7 @@
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
@@ -136,7 +142,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Nextcloud configuration</a></li>
       <li class="breadcrumb-item active">Using the occ command</li>
       <li class="wy-breadcrumbs-aside">
@@ -763,9 +769,10 @@ to synchronize federated servers:</p>
 <span id="file-operations-label"></span><h2>File operations<a class="headerlink" href="#file-operations" title="Permalink to this headline"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">occ</span></code> has three commands for managing files in Nextcloud:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files</span>
- <span class="n">files</span><span class="p">:</span><span class="n">cleanup</span>              <span class="n">cleanup</span> <span class="n">filecache</span>
- <span class="n">files</span><span class="p">:</span><span class="n">scan</span>                 <span class="n">rescan</span> <span class="n">filesystem</span>
- <span class="n">files</span><span class="p">:</span><span class="n">scan</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">data</span>        <span class="n">rescan</span> <span class="n">the</span> <span class="n">AppData</span> <span class="n">folder</span>
+ <span class="n">files</span><span class="p">:</span><span class="n">cleanup</span>              <span class="n">Cleanup</span> <span class="n">filecache</span>
+ <span class="n">files</span><span class="p">:</span><span class="n">repair</span><span class="o">-</span><span class="n">tree</span>          <span class="n">Try</span> <span class="ow">and</span> <span class="n">repair</span> <span class="n">malformed</span> <span class="n">filesystem</span> <span class="n">tree</span> <span class="n">structures</span>
+ <span class="n">files</span><span class="p">:</span><span class="n">scan</span>                 <span class="n">Rescan</span> <span class="n">filesystem</span>
+ <span class="n">files</span><span class="p">:</span><span class="n">scan</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">data</span>        <span class="n">Rescan</span> <span class="n">the</span> <span class="n">AppData</span> <span class="n">folder</span>
  <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span>   <span class="n">All</span> <span class="n">files</span><span class="s1">&#39; and folders&#39;</span> <span class="n">ownerships</span> <span class="n">are</span> <span class="n">moved</span> <span class="n">to</span> <span class="n">another</span>
                             <span class="n">user</span><span class="o">.</span> <span class="n">Outgoing</span> <span class="n">shares</span> <span class="n">are</span> <span class="n">moved</span> <span class="k">as</span> <span class="n">well</span><span class="o">.</span>
                             <span class="n">Incoming</span> <span class="n">shares</span> <span class="n">are</span> <span class="ow">not</span> <span class="n">moved</span> <span class="n">by</span> <span class="n">default</span> <span class="n">because</span> <span class="n">the</span>
@@ -780,20 +787,30 @@ may rescan all files, per-user, a space-delimited list of users, and limit the
 search path. If not using <code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, statistics will be shown at the end of
 the scan:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">--</span><span class="n">help</span>
-  <span class="n">Usage</span><span class="p">:</span>
-  <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span><span class="o">|--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">q</span><span class="o">|--</span><span class="n">quiet</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="o">|</span><span class="n">vv</span><span class="o">|</span><span class="n">vvv</span> <span class="o">--</span><span class="n">verbose</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">user_id1</span><span class="p">]</span> <span class="o">...</span> <span class="p">[</span><span class="n">user_idN</span><span class="p">]</span>
+<span class="n">Description</span><span class="p">:</span>
+  <span class="n">rescan</span> <span class="n">filesystem</span>
+
+<span class="n">Usage</span><span class="p">:</span>
+  <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>
 
 <span class="n">Arguments</span><span class="p">:</span>
-  <span class="n">user_id</span>               <span class="n">will</span> <span class="n">rescan</span> <span class="nb">all</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">given</span> <span class="n">user</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+  <span class="n">user_id</span>                  <span class="n">will</span> <span class="n">rescan</span> <span class="nb">all</span> <span class="n">files</span> <span class="n">of</span> <span class="n">the</span> <span class="n">given</span> <span class="n">user</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 <span class="n">Options</span><span class="p">:</span>
-  <span class="o">--</span><span class="n">path</span>                <span class="n">limit</span> <span class="n">rescan</span> <span class="n">to</span> <span class="n">the</span> <span class="n">user</span><span class="o">/</span><span class="n">path</span> <span class="n">given</span>
-  <span class="o">--</span><span class="nb">all</span>                 <span class="n">will</span> <span class="n">rescan</span> <span class="nb">all</span> <span class="n">files</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">known</span> <span class="n">users</span>
-  <span class="o">--</span><span class="n">quiet</span>               <span class="n">suppress</span> <span class="nb">any</span> <span class="n">output</span>
-  <span class="o">--</span><span class="n">verbose</span>             <span class="n">files</span> <span class="ow">and</span> <span class="n">directories</span> <span class="n">being</span> <span class="n">processed</span> <span class="n">are</span> <span class="n">shown</span>
-                        <span class="n">additionally</span> <span class="n">during</span> <span class="n">scanning</span>
-  <span class="o">--</span><span class="n">unscanned</span>           <span class="n">scan</span> <span class="n">only</span> <span class="n">previously</span> <span class="n">unscanned</span> <span class="n">files</span>
+      <span class="o">--</span><span class="n">output</span><span class="p">[</span><span class="o">=</span><span class="n">OUTPUT</span><span class="p">]</span>    <span class="n">Output</span> <span class="nb">format</span> <span class="p">(</span><span class="n">plain</span><span class="p">,</span> <span class="n">json</span> <span class="ow">or</span> <span class="n">json_pretty</span><span class="p">,</span> <span class="n">default</span> <span class="ow">is</span> <span class="n">plain</span><span class="p">)</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="s2">&quot;plain&quot;</span><span class="p">]</span>
+  <span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="n">PATH</span>          <span class="n">limit</span> <span class="n">rescan</span> <span class="n">to</span> <span class="n">this</span> <span class="n">path</span><span class="p">,</span> <span class="n">eg</span><span class="o">.</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;/alice/files/Music&quot;</span><span class="p">,</span> <span class="n">the</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="n">determined</span> <span class="n">by</span> <span class="n">the</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">user_id</span> <span class="n">parameter</span> <span class="ow">and</span> <span class="o">--</span><span class="nb">all</span> <span class="n">are</span> <span class="n">ignored</span>
+      <span class="o">--</span><span class="n">generate</span><span class="o">-</span><span class="n">metadata</span>  <span class="n">Generate</span> <span class="n">metadata</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">scanned</span> <span class="n">files</span>
+      <span class="o">--</span><span class="nb">all</span>                <span class="n">will</span> <span class="n">rescan</span> <span class="nb">all</span> <span class="n">files</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">known</span> <span class="n">users</span>
+      <span class="o">--</span><span class="n">unscanned</span>          <span class="n">only</span> <span class="n">scan</span> <span class="n">files</span> <span class="n">which</span> <span class="n">are</span> <span class="n">marked</span> <span class="k">as</span> <span class="ow">not</span> <span class="n">fully</span> <span class="n">scanned</span>
+      <span class="o">--</span><span class="n">shallow</span>            <span class="n">do</span> <span class="ow">not</span> <span class="n">scan</span> <span class="n">folders</span> <span class="n">recursively</span>
+      <span class="o">--</span><span class="n">home</span><span class="o">-</span><span class="n">only</span>          <span class="n">only</span> <span class="n">scan</span> <span class="n">the</span> <span class="n">home</span> <span class="n">storage</span><span class="p">,</span> <span class="n">ignoring</span> <span class="nb">any</span> <span class="n">mounted</span> <span class="n">external</span> <span class="n">storage</span> <span class="ow">or</span> <span class="n">share</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>               <span class="n">Display</span> <span class="n">help</span> <span class="k">for</span> <span class="n">the</span> <span class="n">given</span> <span class="n">command</span><span class="o">.</span> <span class="n">When</span> <span class="n">no</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">given</span> <span class="n">display</span> <span class="n">help</span> <span class="k">for</span> <span class="n">the</span> <span class="nb">list</span> <span class="n">command</span>
+  <span class="o">-</span><span class="n">q</span><span class="p">,</span> <span class="o">--</span><span class="n">quiet</span>              <span class="n">Do</span> <span class="ow">not</span> <span class="n">output</span> <span class="nb">any</span> <span class="n">message</span>
+  <span class="o">-</span><span class="n">V</span><span class="p">,</span> <span class="o">--</span><span class="n">version</span>            <span class="n">Display</span> <span class="n">this</span> <span class="n">application</span> <span class="n">version</span>
+      <span class="o">--</span><span class="n">ansi</span><span class="o">|--</span><span class="n">no</span><span class="o">-</span><span class="n">ansi</span>     <span class="n">Force</span> <span class="p">(</span><span class="ow">or</span> <span class="n">disable</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">ansi</span><span class="p">)</span> <span class="n">ANSI</span> <span class="n">output</span>
+  <span class="o">-</span><span class="n">n</span><span class="p">,</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">interaction</span>     <span class="n">Do</span> <span class="ow">not</span> <span class="n">ask</span> <span class="nb">any</span> <span class="n">interactive</span> <span class="n">question</span>
+      <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">warnings</span>        <span class="n">Skip</span> <span class="k">global</span> <span class="n">warnings</span><span class="p">,</span> <span class="n">show</span> <span class="n">command</span> <span class="n">output</span> <span class="n">only</span>
+  <span class="o">-</span><span class="n">v</span><span class="o">|</span><span class="n">vv</span><span class="o">|</span><span class="n">vvv</span><span class="p">,</span> <span class="o">--</span><span class="n">verbose</span>     <span class="n">Increase</span> <span class="n">the</span> <span class="n">verbosity</span> <span class="n">of</span> <span class="n">messages</span><span class="p">:</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">normal</span> <span class="n">output</span><span class="p">,</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">more</span> <span class="n">verbose</span> <span class="n">output</span> <span class="ow">and</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">debug</span>
 </pre></div>
 </div>
 <p>Verbosity levels of <code class="docutils literal notranslate"><span class="pre">-vv</span></code> or <code class="docutils literal notranslate"><span class="pre">-vvv</span></code> are automatically reset to <code class="docutils literal notranslate"><span class="pre">-v</span></code></p>
@@ -840,14 +857,47 @@ with the files on the actual storage.:</p>
 <p><code class="docutils literal notranslate"><span class="pre">files:cleanup</span></code> tidies up the server’s file cache by deleting all file
 entries that have no matching entries in the storage table.</p>
 </section>
+<section id="repair-tree">
+<h3>Repair-Tree<a class="headerlink" href="#repair-tree" title="Permalink to this headline"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">files:repair-tree</span></code> try and repair malformed filesystem tree structures.
+If for any reason the path of an entry in the filecache doesn’t match with
+it’s expected path, based on the path of it’s parent node, you end up with an
+entry in the filecache that exists in different places based on how the entry
+is generated. For example, if while listing folder <code class="docutils literal notranslate"><span class="pre">/foo</span></code> it contains a file
+<code class="docutils literal notranslate"><span class="pre">bar.txt</span></code>, but when trying to do anything with <code class="docutils literal notranslate"><span class="pre">/foo/bar.txt</span></code> the file
+doesn’t exists.</p>
+<p>This command attempts to repair such entries by querying for entries where the path
+doesn’t match the expected path based on it’s parent path and filename and resets it’s
+path to the expected one.</p>
+</section>
 <section id="transfer">
 <h3>Transfer<a class="headerlink" href="#transfer" title="Permalink to this headline"></a></h3>
+<p>The command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">files:transfer-ownership</span></code> can be used to transfer files from one user to another:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span>
+  <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
+
+<span class="n">Arguments</span><span class="p">:</span>
+  <span class="n">source</span><span class="o">-</span><span class="n">user</span>                                                <span class="n">owner</span> <span class="n">of</span> <span class="n">files</span> <span class="n">which</span> <span class="n">shall</span> <span class="n">be</span> <span class="n">moved</span>
+  <span class="n">destination</span><span class="o">-</span><span class="n">user</span>                                           <span class="n">user</span> <span class="n">who</span> <span class="n">will</span> <span class="n">be</span> <span class="n">the</span> <span class="n">new</span> <span class="n">owner</span> <span class="n">of</span> <span class="n">the</span> <span class="n">files</span>
+
+<span class="n">Options</span><span class="p">:</span>
+      <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="n">PATH</span>                                            <span class="n">selectively</span> <span class="n">provide</span> <span class="n">the</span> <span class="n">path</span> <span class="n">to</span> <span class="n">transfer</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;folder_name&quot;</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+      <span class="o">--</span><span class="n">move</span>                                                 <span class="n">move</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">source</span> <span class="n">user</span> <span class="n">to</span> <span class="n">root</span> <span class="n">directory</span> <span class="n">of</span> <span class="n">destination</span> <span class="n">user</span><span class="p">,</span> <span class="n">which</span> <span class="n">must</span> <span class="n">be</span> <span class="n">empty</span>
+      <span class="o">--</span><span class="n">transfer</span><span class="o">-</span><span class="n">incoming</span><span class="o">-</span><span class="n">shares</span><span class="p">[</span><span class="o">=</span><span class="n">TRANSFER</span><span class="o">-</span><span class="n">INCOMING</span><span class="o">-</span><span class="n">SHARES</span><span class="p">]</span>  <span class="n">transfer</span> <span class="n">incoming</span> <span class="n">user</span> <span class="n">file</span> <span class="n">shares</span> <span class="n">to</span> <span class="n">destination</span> <span class="n">user</span><span class="o">.</span> <span class="n">Usage</span><span class="p">:</span> <span class="o">--</span><span class="n">transfer</span><span class="o">-</span><span class="n">incoming</span><span class="o">-</span><span class="n">shares</span><span class="o">=</span><span class="mi">1</span> <span class="p">(</span><span class="n">value</span> <span class="n">required</span><span class="p">)</span> <span class="p">[</span><span class="n">default</span><span class="p">:</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
 <p>You may transfer all files and shares from one user to another. This is useful
 before removing a user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>It is also possible to transfer only one directory along with it’s contents. This can be useful to restructure your organization or quotas. The <code class="docutils literal notranslate"><span class="pre">--path</span></code> argument is given as the path to the directory as seen from the source user:</p>
+<p>The transferred files will appear inside a new sub-directory in the destination user’s home.</p>
+<p>If the destination user has no files at all (empty home), it is possible to also transfer all the source user’s files by passing <code class="docutils literal notranslate"><span class="pre">--move</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">--</span><span class="n">move</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>In this case no sub-directory is created and all files will appear directly in the root of the user’s home.</p>
+<p>It is also possible to transfer only one directory along with its contents. This can be useful to restructure your organization or quotas. The <code class="docutils literal notranslate"><span class="pre">--path</span></code> argument is given as the path to the directory as seen from the source user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;path_to_dir&quot;</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -861,7 +911,7 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>Users may also transfer files or folders selectively by themselves.
-See <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/25/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 </section>
 <section id="files-sharing">
@@ -921,7 +971,7 @@ and to copy external mount configurations to another Nextcloud server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">pathto</span><span class="o">/</span><span class="n">app</span> <span class="n">appname</span>
 </pre></div>
 </div>
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
+<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">integrity:sign-core</span></code> is for Nextcloud core developers only.</p>
 <p>See <a class="reference internal" href="../issues/code_signing.html"><span class="doc">Code signing</span></a> to learn more.</p>
 </section>
@@ -1118,6 +1168,11 @@ change to existing files.</p>
 </section>
 <section id="trashbin">
 <span id="trashbin-label"></span><h2>Trashbin<a class="headerlink" href="#trashbin" title="Permalink to this headline"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trashbin</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Restore</span> <span class="n">deleted</span> <span class="n">files</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This command is only available when the “Deleted files” app
@@ -1125,10 +1180,6 @@ change to existing files.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">trashbin:cleanup</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command removes the deleted files of the specified
 users in a space-delimited list, or all users if –all-users is specified.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trashbin</span>
- <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span>
-</pre></div>
-</div>
 <p>This example removes the deleted files of all users:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span>
 <span class="n">Remove</span> <span class="nb">all</span> <span class="n">deleted</span> <span class="n">files</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">users</span>
@@ -1144,6 +1195,16 @@ users in a space-delimited list, or all users if –all-users is specified.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span> <span class="n">molly</span> <span class="n">freda</span>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">of</span>   <span class="n">molly</span>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">of</span>   <span class="n">freda</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">trashbin:restore</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command restores the deleted files of the specified
+users in a space-delimited list, or all users if –all-users is specified.</p>
+<p>This example restores the deleted files of all users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span>
+</pre></div>
+</div>
+<p>This example restores the deleted files of users molly and freda:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="n">molly</span> <span class="n">freda</span>
 </pre></div>
 </div>
 </section>
@@ -1334,6 +1395,7 @@ enabled.</p>
 when none are specified:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">versions</span>
  <span class="n">versions</span><span class="p">:</span><span class="n">cleanup</span>   <span class="n">Delete</span> <span class="n">versions</span>
+ <span class="n">versions</span><span class="p">:</span><span class="n">expire</span>    <span class="n">Expires</span> <span class="n">the</span> <span class="n">users</span> <span class="n">file</span> <span class="n">versions</span>
 </pre></div>
 </div>
 <p>This example deletes all versions for all users:</p>
@@ -1614,7 +1676,7 @@ check for that user via the occ command:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -1639,6 +1701,8 @@ check for that user via the occ command:</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

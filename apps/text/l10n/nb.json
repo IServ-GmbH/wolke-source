@@ -22,9 +22,9 @@
     "Guest" : "Gjest",
     "Save guest name" : "Lagre gjestenavn",
     "guest" : "gjest",
+    "Offline" : "Frakoblet",
     "Saving …" : "Lagrer ...",
     "Saved" : "Lagret",
-    "Last saved {lastSaved}" : "Sist lagret {lastSaved}",
     "Unsaved changes" : "Ulagrede endringer",
     "Formatting help" : "Formateringshjelp",
     "Keyboard shortcuts" : "Tastatursnarveier",
@@ -38,9 +38,10 @@
     "Blockquote" : "Sitat",
     "Quoted text" : "Sitert tekst",
     "Code block" : "Kode",
+    "Translate" : "Oversett",
+    "Replace" : "Erstatt",
     "Unsupported image type" : "Filtypen støttes ikke",
     "Show rich workspaces" : "Vis arbeidsområde",
-    "Add notes, lists or links …" : "Legg til notater, lister eller lenker ...",
     "Undo" : "Angre",
     "Redo" : "Gjør om",
     "Headings" : "Overskrifter",
@@ -54,10 +55,11 @@
     "Insert attachment" : "Legg til vedlegg",
     "Command" : "Kommando",
     "Control" : "Kontroll",
+    "Add notes, lists or links …" : "Legg til notater, lister eller lenker ...",
     "Edit" : "Rediger",
+    "Last saved {lastSaved}" : "Sist lagret {lastSaved}",
     "Enter your name so other users can see who is editing" : "Skriv inn navnet ditt slik at andre brukere kan se hvem som redigerer",
-    "Insert image" : "Sett inn bilde",
-    "_and %n other editor_::_and %n other editors_" : ["og %nannet redigeringsprogram","og %n andre redigeringsprogrammer"],
-    "ToDo list" : "Gjøreliste"
+    "ToDo list" : "Gjøreliste",
+    "Insert image" : "Sett inn bilde"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

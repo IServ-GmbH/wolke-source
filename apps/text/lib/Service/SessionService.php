@@ -32,24 +32,19 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IRequest;
+use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class SessionService {
 	public const SESSION_VALID_TIME = 5 * 60;
 
-	/** @var SessionMapper */
-	private $sessionMapper;
+	private SessionMapper $sessionMapper;
+	private ISecureRandom $secureRandom;
+	private ITimeFactory $timeFactory;
+	private IUserManager $userManager;
+	private IAvatarManager $avatarManager;
 
-	/** @var ISecureRandom */
-	private $secureRandom;
-
-	/** @var ITimeFactory */
-	private $timeFactory;
-
-	/** @var IAvatarManager */
-	private $avatarManager;
-
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 
 	/** @var Session cache current session in the request */
@@ -62,6 +57,7 @@ class SessionService {
 		SessionMapper $sessionMapper,
 		ISecureRandom $secureRandom,
 		ITimeFactory $timeFactory,
+		IUserManager $userManager,
 		IAvatarManager $avatarManager,
 		IRequest $request,
 		IManager $directManager,
@@ -71,6 +67,7 @@ class SessionService {
 		$this->sessionMapper = $sessionMapper;
 		$this->secureRandom = $secureRandom;
 		$this->timeFactory = $timeFactory;
+		$this->userManager = $userManager;
 		$this->avatarManager = $avatarManager;
 		$this->userId = $userId;
 
@@ -94,9 +91,7 @@ class SessionService {
 		$userName = $this->userId ? $this->userId : $guestName;
 		$session->setUserId($this->userId);
 		$session->setToken($this->secureRandom->generate(64));
-		$color = $this->avatarManager->getGuestAvatar($userName)->avatarBackgroundColor($userName);
-		$color = sprintf("#%02x%02x%02x", $color->r, $color->g, $color->b);
-		$session->setColor($color);
+		$session->setColor($this->getColorForGuestName($guestName));
 		if ($this->userId === null) {
 			$session->setGuestName($guestName);
 		}
@@ -121,10 +116,8 @@ class SessionService {
 		$sessions = $this->sessionMapper->findAll($documentId);
 		return array_map(function (Session $session) {
 			$result = $session->jsonSerialize();
-			$userManager = \OC::$server->getUserManager();
-			$user = $userManager->get($session->getUserId());
-			if ($user) {
-				$result['displayName'] = $user->getDisplayName();
+			if ($session->getUserId() !== null) {
+				$result['displayName'] = $this->userManager->getDisplayName($session->getUserId());
 			}
 			return $result;
 		}, $sessions);
@@ -134,10 +127,8 @@ class SessionService {
 		$sessions = $this->sessionMapper->findAllActive($documentId);
 		return array_map(function (Session $session) {
 			$result = $session->jsonSerialize();
-			$userManager = \OC::$server->getUserManager();
-			$user = $userManager->get($session->getUserId());
-			if ($user) {
-				$result['displayName'] = $user->getDisplayName();
+			if ($session->getUserId() !== null) {
+				$result['displayName'] = $this->userManager->getDisplayName($session->getUserId());
 			}
 			return $result;
 		}, $sessions);
@@ -222,9 +213,18 @@ class SessionService {
 		}
 		$session = $this->sessionMapper->find($documentId, $sessionId, $sessionToken);
 		$session->setGuestName($guestName);
-		$color = $this->avatarManager->getGuestAvatar($guestName)->avatarBackgroundColor($guestName);
-		$color = sprintf("#%02x%02x%02x", $color->r, $color->g, $color->b);
-		$session->setColor($color);
+		$session->setColor($this->getColorForGuestName($guestName));
 		return $this->sessionMapper->update($session);
+	}
+
+	private function getColorForGuestName(string $guestName = null): string {
+		$guestName = $this->userId ?? $guestName;
+		$uniqueGuestId = !empty($guestName) ? $guestName : $this->secureRandom->generate(12);
+		$color = $this->avatarManager->getGuestAvatar($uniqueGuestId)->avatarBackgroundColor($uniqueGuestId);
+		return $color->name();
+	}
+
+	public function isUserInDocument(int $documentId, string $mention): bool {
+		return $this->sessionMapper->isUserInDocument($documentId, $mention);
 	}
 }

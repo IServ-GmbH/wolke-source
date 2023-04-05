@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Adatvédelem",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Az adatvédelmi központ megmutatja, hogy az adatait hol tárolják és ki férhet hozzájuk, vagy mert megosztotta velük vagy mert rendszergazdák.",
-    "Remove external admin" : "Külső rendszergazda eltávolítása",
+    "Remove external {propertyName} admin" : "Külső {propertyName} rendszergazda eltávolítása",
     "Add external admin" : "Külső rendszergazda hozzáadása",
     "Name of external admin" : "Külső rendszergazda neve",
+    "Adapt encryption" : "Titkosítás módosítása",
     "This server is using full-disk-encryption." : "Ez a kiszolgáló teljes lemeztitkosítást használ.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "A saját tárolója mesterkulcsot használó {linkopen}kiszolgáló oldali titkosítással ↗{linkclose} védett.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "A saját tárolója mesterkulcsot használó {linkopen}kiszolgálóoldali titkosítással ↗{linkclose} védett. Ez azt jelenti, hogy a rendszergazdák elérhetik a fájljait, de nem tudják olvasni a tartalmukat.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "A konfiguráció alapján a külső tárolókon lévő adatait mesterkulcsot használó {linkopen}kiszolgáló oldali titkosítás ↗{linkclose} védheti.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "A saját tárolója egyéni felhasználó kulcsot használó {linkopen}kiszolgáló oldali titkosítással ↗{linkclose} védett.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "A saját tárolója egyéni felhasználói kulcsot használó {linkopen}kiszolgálóoldali titkosítással ↗{linkclose} védett. Ez azt jelenti, hogy a rendszergazdák elérhetik a fájljait, de nem tudják olvasni a tartalmukat.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "A konfiguráció alapján a külső tárolókon lévő adatait egyéni kulcsot használó {linkopen}kiszolgáló oldali titkosítás ↗{linkclose} védheti.",
     "Additionally, this server is protected with full-disk-encryption." : "Továbbá a kiszolgáló teljes lemeztitkosítással védett.",
     "This server is protected with full-disk-encryption." : "Ez a kiszolgáló teljes lemeztitkosítással védett.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Adatvédelmi irányelvek",
     "Read the privacy policy." : "Az adatvédelmi irányelvek elolvasása.",
     "Encryption" : "Titkosítás",
-    "The admin hasn't selected the location of the server yet." : "A rendszergazda még nem állította be a kiszolgáló helyét."
+    "Remove external admin" : "Külső rendszergazda eltávolítása",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "A saját tárolója mesterkulcsot használó {linkopen}kiszolgáló oldali titkosítással ↗{linkclose} védett.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "A saját tárolója egyéni felhasználó kulcsot használó {linkopen}kiszolgáló oldali titkosítással ↗{linkclose} védett."
 },
 "nplurals=2; plural=(n != 1);");

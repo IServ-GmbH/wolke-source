@@ -26,29 +26,20 @@ namespace OCA\Support\Settings;
 use OCA\Support\Service\SubscriptionService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Settings\IDelegatedSettings;
 
 class Admin implements IDelegatedSettings {
-	/** @var IL10N */
-	private $l10n;
-	/** @var IConfig */
-	private $config;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var SubscriptionService */
-	private $subscriptionService;
+	private IConfig $config;
+	private IUserManager $userManager;
+	private IURLGenerator $urlGenerator;
+	private SubscriptionService $subscriptionService;
 
-	public function __construct(IL10N $l10n,
-								IConfig $config,
+	public function __construct(IConfig $config,
 								IUserManager $userManager,
 								IURLGenerator $urlGenerator,
 								SubscriptionService $subscriptionService) {
-		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;

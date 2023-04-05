@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -49,6 +53,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#cpu-architecture-and-os">CPU Architecture and OS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#memory">Memory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#database-requirements-for-mysql-mariadb">Database requirements for MySQL / MariaDB</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-we-drop-old-php-versions">Why we drop old PHP versions</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#desktop-client">Desktop client</a></li>
@@ -101,7 +106,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
       <li class="breadcrumb-item active">System requirements</li>
       <li class="wy-breadcrumbs-aside">
@@ -135,13 +140,14 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Operating System
-(64bit)</p></td>
+(64-bit)</p></td>
 <td><ul class="simple">
-<li><p><strong>Ubuntu 20.04 LTS</strong> (recommended)</p></li>
+<li><p><strong>Ubuntu 22.04 LTS</strong> (recommended)</p></li>
+<li><p>Ubuntu 20.04 LTS</p></li>
 <li><p><strong>Red Hat Enterprise Linux 8</strong> (recommended)</p></li>
-<li><p>Debian 10 (Buster)</p></li>
+<li><p>Debian 11 (Bullseye)</p></li>
 <li><p>SUSE Linux Enterprise Server 15</p></li>
-<li><p>openSUSE Leap 42.1+</p></li>
+<li><p>openSUSE Leap 15.4</p></li>
 <li><p>CentOS Stream</p></li>
 </ul>
 </td>
@@ -150,7 +156,7 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <td><ul class="simple">
 <li><p><strong>MySQL 8.0+ or MariaDB 10.2/10.3/10.4/10.5/10.6</strong> (recommended)</p></li>
 <li><p>Oracle Database 11g (<em>only as part of an enterprise subscription</em>)</p></li>
-<li><p>PostgreSQL 10/11/12/13/14</p></li>
+<li><p>PostgreSQL 10/11/12/13/14/15</p></li>
 <li><p>SQLite (<em>only recommended for testing and minimal-instances</em>)</p></li>
 </ul>
 </td>
@@ -164,9 +170,9 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </tr>
 <tr class="row-odd"><td><p>PHP Runtime</p></td>
 <td><ul class="simple">
-<li><p>7.4</p></li>
-<li><p><strong>8.0</strong> (<em>recommended</em>)</p></li>
-<li><p>8.1</p></li>
+<li><p>7.4  (<em>deprecated</em>)</p></li>
+<li><p>8.0</p></li>
+<li><p><strong>8.1</strong> (<em>recommended</em>)</p></li>
 </ul>
 </td>
 </tr>
@@ -175,7 +181,7 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <p>See <a class="reference internal" href="source_installation.html"><span class="doc">Installation on Linux</span></a> for minimum PHP-modules and additional software for installing Nextcloud.</p>
 <section id="cpu-architecture-and-os">
 <h3>CPU Architecture and OS<a class="headerlink" href="#cpu-architecture-and-os" title="Permalink to this headline"></a></h3>
-<p>A 64bit CPU and 64bit OS is required for Nextcloud to run well.</p>
+<p>A 64-bit CPU, OS and PHP is required for Nextcloud to run well.</p>
 </section>
 <section id="memory">
 <h3>Memory<a class="headerlink" href="#memory" title="Permalink to this headline"></a></h3>
@@ -188,10 +194,31 @@ depending on the numbers of users, apps, files and volume of server activity.</p
 <p>The following is currently required if you’re running Nextcloud together with a MySQL / MariaDB database:</p>
 <ul class="simple">
 <li><p>InnoDB storage engine (MyISAM is not supported)</p></li>
-<li><p>“READ COMMITED” transaction isolation level (See: <a class="reference internal" href="../configuration_database/linux_database_configuration.html#db-transaction-label"><span class="std std-ref">Database “READ COMMITTED” transaction isolation level</span></a>)</p></li>
+<li><p>“READ COMMITTED” transaction isolation level (See: <a class="reference internal" href="../configuration_database/linux_database_configuration.html#db-transaction-label"><span class="std std-ref">Database “READ COMMITTED” transaction isolation level</span></a>)</p></li>
 <li><p>Disabled or BINLOG_FORMAT = ROW configured Binary Logging (See: <a class="reference external" href="https://dev.mysql.com/doc/refman/5.7/en/binary-log-formats.html">https://dev.mysql.com/doc/refman/5.7/en/binary-log-formats.html</a>)</p></li>
 <li><p>For <strong>Emoji (UTF8 4-byte) support</strong> see <a class="reference internal" href="../configuration_database/mysql_4byte_support.html"><span class="doc">Enabling MySQL 4-byte support</span></a></p></li>
 </ul>
+</section>
+<section id="why-we-drop-old-php-versions">
+<h3>Why we drop old PHP versions<a class="headerlink" href="#why-we-drop-old-php-versions" title="Permalink to this headline"></a></h3>
+<p>Every year, a new PHP version is added and old PHP versions are deprecated. This also affects our documented recommended PHP version.</p>
+<p>We try to support old PHP versions for as long as reasonably possible. However the list of security, performance, and bug fixes will only increase, some of those fixes might be considered critical and thus at some point the deprecation will be inevitable.</p>
+<p>Thus it is recommended to keep your PHP version up to date.</p>
+<section id="advantages-of-upgrading-php">
+<h4>Advantages of upgrading PHP<a class="headerlink" href="#advantages-of-upgrading-php" title="Permalink to this headline"></a></h4>
+<ul>
+<li><p><strong>Security</strong></p>
+<p>PHP deprecates security fixes of old versions. Nextcloud cannot implement security fixes that come with new PHP versions as long as we support deprecated PHP versions, since the syntax that we are allowed to use must be the lowest one of the supported versions, thus the upstream packages of third parties break because they dropped this support.</p>
+</li>
+<li><p><strong>Performance</strong></p>
+<p>The language continuously improves over time which makes it possible to do more requests in significantly less time.</p>
+</li>
+</ul>
+</section>
+<section id="long-term-support">
+<h4>Long term support<a class="headerlink" href="#long-term-support" title="Permalink to this headline"></a></h4>
+<p>If you are running Nextcloud for an organisation-critical use case, you could consider upgrading your subscription to a premium subscription which comes with 5 years of long term support. This means you continue to receive maintenance releases for high and critical security issues, data loss fixes, and regressions within version over this extended period of time.</p>
+</section>
 </section>
 </section>
 <section id="desktop-client">
@@ -212,14 +239,14 @@ of our mobile apps.</p>
 <section id="files-app">
 <h3>Files App<a class="headerlink" href="#files-app" title="Permalink to this headline"></a></h3>
 <ul class="simple">
-<li><p><strong>iOS</strong> 12.1+</p></li>
-<li><p><strong>Android</strong> 4.x+</p></li>
+<li><p><strong>iOS</strong> 14.0+</p></li>
+<li><p><strong>Android</strong> 6.0+</p></li>
 </ul>
 </section>
 <section id="talk-app">
 <h3>Talk App<a class="headerlink" href="#talk-app" title="Permalink to this headline"></a></h3>
 <ul class="simple">
-<li><p><strong>iOS</strong> 12.0+</p></li>
+<li><p><strong>iOS</strong> 14.0+</p></li>
 <li><p><strong>Android</strong> 5.0+</p></li>
 <li><p><strong>Nextcloud Server</strong> 14.0+</p></li>
 <li><p><strong>Nextcloud Talk</strong> 4.0+</p></li>
@@ -260,7 +287,7 @@ screensharing.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -285,6 +312,8 @@ screensharing.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

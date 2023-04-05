@@ -50,22 +50,14 @@ class ClientFlowLoginV2Controller extends Controller {
 	public const TOKEN_NAME = 'client.flow.v2.login.token';
 	public const STATE_NAME = 'client.flow.v2.state.token';
 
-	/** @var LoginFlowV2Service */
-	private $loginFlowV2Service;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var ISession */
-	private $session;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var ISecureRandom */
-	private $random;
-	/** @var Defaults */
-	private $defaults;
-	/** @var string */
-	private $userId;
-	/** @var IL10N */
-	private $l10n;
+	private LoginFlowV2Service $loginFlowV2Service;
+	private IURLGenerator $urlGenerator;
+	private IUserSession $userSession;
+	private ISession $session;
+	private ISecureRandom $random;
+	private Defaults $defaults;
+	private ?string $userId;
+	private IL10N $l10n;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -157,7 +149,10 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * @NoCSRFRequired
 	 * @NoSameSiteCookieRequired
 	 */
-	public function grantPage(string $stateToken): StandaloneTemplateResponse {
+	public function grantPage(?string $stateToken): StandaloneTemplateResponse {
+		if ($stateToken === null) {
+			return $this->stateTokenMissingResponse();
+		}
 		if (!$this->isValidStateToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -189,7 +184,11 @@ class ClientFlowLoginV2Controller extends Controller {
 	/**
 	 * @PublicPage
 	 */
-	public function apptokenRedirect(string $stateToken, string $user, string $password) {
+	public function apptokenRedirect(?string $stateToken, string $user, string $password) {
+		if ($stateToken === null) {
+			return $this->stateTokenMissingResponse();
+		}
+
 		if (!$this->isValidStateToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -224,7 +223,7 @@ class ClientFlowLoginV2Controller extends Controller {
 			return $response;
 		}
 
-		$result = $this->loginFlowV2Service->flowDoneWithAppPassword($loginToken, $this->getServerPath(), $this->userId, $password);
+		$result = $this->loginFlowV2Service->flowDoneWithAppPassword($loginToken, $this->getServerPath(), $token->getLoginName(), $password);
 		return $this->handleFlowDone($result);
 	}
 
@@ -232,7 +231,10 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * @NoAdminRequired
 	 * @UseSession
 	 */
-	public function generateAppPassword(string $stateToken): Response {
+	public function generateAppPassword(?string $stateToken): Response {
+		if ($stateToken === null) {
+			return $this->stateTokenMissingResponse();
+		}
 		if (!$this->isValidStateToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -303,6 +305,19 @@ class ClientFlowLoginV2Controller extends Controller {
 			return false;
 		}
 		return hash_equals($currentToken, $stateToken);
+	}
+
+	private function stateTokenMissingResponse(): StandaloneTemplateResponse {
+		$response = new StandaloneTemplateResponse(
+			$this->appName,
+			'403',
+			[
+				'message' => $this->l10n->t('State token missing'),
+			],
+			'guest'
+		);
+		$response->setStatus(Http::STATUS_FORBIDDEN);
+		return $response;
 	}
 
 	private function stateTokenForbiddenResponse(): StandaloneTemplateResponse {

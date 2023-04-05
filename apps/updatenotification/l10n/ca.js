@@ -8,7 +8,7 @@ OC.L10N.register(
     "The update server could not be reached since %d days to check for new updates." : "No s’ha pogut accedir al servidor d’actualitzacions des de fa %d dies per comprovar si hi ha actualitzacions noves.",
     "Please check the Nextcloud and server log files for errors." : "Si us plau, comproveu els fitxers de registre del servidor i del Nextcloud per detectar errors.",
     "Update to %1$s is available." : "Hi ha disponible l'actualització a %1$s.",
-    "Update for %1$s to version %2$s is available." : "Hi ha disponible l'actualització a la versió %2$s per a %1$s.",
+    "Update to {serverAndVersion} is available." : "L'actualització a {serverAndVersion} està disponible.",
     "Update for {app} to version %s is available." : "Hi ha disponible l'actualització a la versió %s per a {app}.",
     "Update notification" : "Notificació d'actualització",
     "Displays update notifications for Nextcloud and provides the SSO for the updater." : "Mostra les notificacions d’actualització de Nextcloud i proporciona l’SSO de l’actualitzador.",
@@ -17,6 +17,7 @@ OC.L10N.register(
     "Apps missing compatible version" : "Aplicacions sense versió compatible",
     "View in store" : "Mostra-ho al magatzem",
     "Apps with compatible version" : "Aplicacions amb una versió compatible",
+    "Please note that the web updater is not recommended with more than 100 users! Please use the command line updater instead!" : "Tingueu en compte que no es recomana l'actualització web amb més de 100 usuaris! Si us plau, utilitzeu l'actualitzador de la línia d'ordres!",
     "Open updater" : "Obre l'actualitzador",
     "Download now" : "Descarrega-ho ara",
     "Please use the command line updater to update." : "Utilitzeu l'actualitzador de línia d'ordres per actualitzar.",
@@ -24,6 +25,7 @@ OC.L10N.register(
     "The update check is not yet finished. Please refresh the page." : "La comprovació de l’actualització encara no ha finalitzat. Si us plau, actualitzeu la pàgina.",
     "Your version is up to date." : "La vostra versió està actualitzada.",
     "A non-default update server is in use to be checked for updates:" : "Es fa servir un servidor d’actualització no predeterminat per comprovar si hi ha actualitzacions:",
+    "You can change the update channel below which also affects the apps management page. E.g. after switching to the beta channel, beta app updates will be offered to you in the apps management page." : "Podeu canviar el canal d'actualització a continuació, que també afecta la pàgina de gestió d'aplicacions. Per exemple. després de canviar al canal beta, se us oferiran actualitzacions de l'aplicació beta a la pàgina de gestió d'aplicacions.",
     "Update channel:" : "Canal d'actualitzacions:",
     "You can always update to a newer version. But you can never downgrade to a more stable version." : "Sempre podeu actualitzar a una versió més recent. Però mai no podeu baixar a una versió més estable.",
     "Notify members of the following groups about available updates:" : "Notifica als membres dels següents grups sobre les actualitzacions disponibles:",
@@ -45,7 +47,6 @@ OC.L10N.register(
     "Beta" : "Beta",
     "A pre-release version only for testing new features, not for production environments." : "Una versió prèvia a la publicació només per provar noves funcions, no per a entorns de producció.",
     "_<strong>%n</strong> app has no compatible version for this Nextcloud version available._::_<strong>%n</strong> apps have no compatible version for this Nextcloud version available._" : ["<strong>%n</strong> aplicació no té cap versió compatible per a aquesta versió de Nextcloud disponible.","<strong>%n</strong> aplicacions no tenen cap versió compatible per a aquesta versió de Nextcloud disponible."],
-    "<strong>All</strong> apps have a compatible version for this Nextcloud version available" : "<strong>Totes</strong> les aplicacions tenen una versió compatible per aquesta versió de Nextcloud",
-    "_<strong>%n</strong> app has no compatible version for this Nextcloud version available_::_<strong>%n</strong> apps have no compatible version for this Nextcloud version available_" : ["<strong>%n</strong> aplicació no té cap versió compatible per a aquesta versió de Nextcloud disponible","<strong>%n</strong> aplicacions no tenen cap versió compatible per a aquesta versió de Nextcloud disponible"]
+    "Update for %1$s to version %2$s is available." : "Hi ha disponible l'actualització a la versió %2$s per a %1$s."
 },
 "nplurals=2; plural=(n != 1);");

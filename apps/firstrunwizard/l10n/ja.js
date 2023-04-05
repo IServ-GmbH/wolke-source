@@ -1,7 +1,6 @@
 OC.L10N.register(
     "firstrunwizard",
     {
-    "Copy to clipboard" : "クリップボードにコピー",
     "Copied!" : "コピーしました！",
     "Not supported!" : "サポートされていません！",
     "Press ⌘-C to copy." : "⌘+Cを押してコピーします。",
@@ -82,12 +81,11 @@ OC.L10N.register(
     "Server address" : "サーバーアドレス",
     "Use this link to connect your apps and desktop client to this server:" : "アプリやデスクトップクライアントをこのサーバーに接続するには、このリンクを使用してください:",
     "Copy link" : "リンクをコピー",
+    "Copy to clipboard" : "クリップボードにコピー",
     "App recommendation: Notes" : "アプリのおすすめ：ノート",
     "Distraction-free notes and writing." : "集中モードのノートと執筆",
     "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Nextcloud を大勢のユーザーと大量のデータを扱うミッションクリティカルな環境で運用し、Nextcloud 技術の裏側にいる専門家による確実なサポートが必要であれば、Nextcloud からの法人向けサブスクリプションがメールと電話サポートで利用できます。",
     "Get enterprise support" : "法人向けサポートを取得",
-    "the Nextcloud IRC chat channel on freenode.net" : "freenode.net の Nextcloud IRC チャットチャンネル",
-    "Open Standards and Interoperability" : "オープンな規格と相互運用性",
-    "100%% Open Source & community-focused" : "100 %%オープンソースかつコミュニティ主体の開発"
+    "the Nextcloud IRC chat channel on freenode.net" : "freenode.net の Nextcloud IRC チャットチャンネル"
 },
 "nplurals=1; plural=0;");

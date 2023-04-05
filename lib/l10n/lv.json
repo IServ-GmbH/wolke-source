@@ -23,6 +23,7 @@
     "Unknown filetype" : "Nezināms datnes tips",
     "Invalid image" : "Nederīgs attēls",
     "Avatar image is not square" : "Avatar attēls nav kvadrāts",
+    "Files" : "Datnes",
     "View profile" : "Skatīt profilu",
     "today" : "šodien",
     "yesterday" : "vakar",
@@ -60,7 +61,6 @@
     "Oracle connection could not be established" : "Nevar izveidot savienojumu ar Oracle",
     "Oracle username and/or password not valid" : "Nav derīga Oracle parole un/vai lietotājvārds",
     "PostgreSQL username and/or password not valid" : "Nav derīga PostgreSQL parole un/vai lietotājvārds",
-    "Please switch to 64-bit PHP." : "Lūdzu, pārejiet uz 64 bitu PHP.",
     "Set an admin username." : "Iestatiet administratora lietotājvārdu.",
     "Set an admin password." : "Iestatiet administratora paroli.",
     "Open »%s«" : "Atvērt »%s«",
@@ -111,9 +111,9 @@
     "Oct." : "Okt.",
     "Nov." : "Nov.",
     "Dec." : "Dec.",
-    "A valid username must be provided" : "Jānorāda derīgs lietotājvārds",
     "A valid password must be provided" : "Jānorāda derīga parole",
     "The username is already being used" : "Šāds lietotājvārds jau tiek izmantots",
+    "A valid username must be provided" : "Jānorāda derīgs lietotājvārds",
     "User disabled" : "Lietotājs deaktivizēts",
     "Login canceled by app" : "Pieteikšanos atcelā lietotne",
     "a safe home for all your data" : "droša vieta visiem jūsu datiem",
@@ -133,8 +133,6 @@
     "Storage connection timeout. %s" : "Datu savienojuma taimauts. %s",
     "%s enter the database username." : "%s ievadiet datubāzes lietotājvārdu.",
     "%s enter the database name." : "%s ievadiet datubāzes nosaukumu.",
-    "%s you may not use dots in the database name" : "%s datubāžu nosaukumos nedrīkst izmantot punktus",
-    "PostgreSQL >= 9 required" : "PostgreSQL >= 9 nepieciešams",
-    "Please upgrade your database version" : "Lūdzu, atjauniniet datu bāzes versiju"
+    "%s you may not use dots in the database name" : "%s datubāžu nosaukumos nedrīkst izmantot punktus"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

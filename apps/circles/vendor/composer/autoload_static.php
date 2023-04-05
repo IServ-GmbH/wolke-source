@@ -68,8 +68,6 @@ class ComposerStaticInitCircles
         'OCA\\Circles\\Controller\\EventWrapperController' => __DIR__ . '/../..' . '/lib/Controller/EventWrapperController.php',
         'OCA\\Circles\\Controller\\LocalController' => __DIR__ . '/../..' . '/lib/Controller/LocalController.php',
         'OCA\\Circles\\Controller\\RemoteController' => __DIR__ . '/../..' . '/lib/Controller/RemoteController.php',
-        'OCA\\Circles\\Cron\\ContactsExistingShares' => __DIR__ . '/../..' . '/lib/Cron/ContactsExistingShares.php',
-        'OCA\\Circles\\Cron\\GlobalSync' => __DIR__ . '/../..' . '/lib/Cron/GlobalSync.php',
         'OCA\\Circles\\Cron\\Maintenance' => __DIR__ . '/../..' . '/lib/Cron/Maintenance.php',
         'OCA\\Circles\\Cron\\MaintenanceHeavy' => __DIR__ . '/../..' . '/lib/Cron/MaintenanceHeavy.php',
         'OCA\\Circles\\Db\\AccountsRequest' => __DIR__ . '/../..' . '/lib/Db/AccountsRequest.php',

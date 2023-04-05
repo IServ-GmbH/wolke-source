@@ -12,7 +12,6 @@
     "On this day" : "W tym dniu",
     "Shared with you" : "Udostępnione Tobie",
     "Tags" : "Etykiety",
-    "Locations" : "Lokalizacje",
     "Photos settings" : "Ustawienia Zdjęć",
     "Mark selection as favorite" : "Oznacz wybrane jako ulubione",
     "Add selection to favorites" : "Dodaj wybrane do ulubionych",
@@ -91,6 +90,7 @@
     "Remove person" : "Usuń osobę",
     "Name of this person" : "Nazwa tej osoby",
     "Merge person" : "Połącz osobę",
+    "_Move photo to a different person_::_Move photos to a different person_" : ["Przenieś zdjęcie do innej osoby","Przenieś zdjęcia do innej osoby","Przenieś zdjęcia do innej osoby","Przenieś zdjęcia do innej osoby"],
     "_Remove photo from person_::_Remove photos from person_" : ["Usuń zdjęcie od osoby","Usuń zdjęcia od osoby","Usuń zdjęcia od osoby","Usuń zdjęcia od osoby"],
     "This might take some time depending on the size of your photo library." : "Może to zająć trochę czasu, w zależności od rozmiaru biblioteki zdjęć.",
     "Recognized people will show up here" : "Rozpoznane osoby pojawią się tutaj",
@@ -113,7 +113,13 @@
     "No photos or videos in here" : "Nie ma tu zdjęć ani filmów",
     "Failed to fetch faces list." : "Nie udało się pobrać listy twarzy.",
     "All your media" : "Wszystkie Twoje media",
+    "Album {title}" : "Album {title}",
+    "Shared Albums" : "Albumy udostępnione",
+    "Shared album {title}" : "Udostępniony album {title}",
+    "Public album {title}" : "Publiczny album {title}",
     "Tagged photos" : "Oznaczone zdjęcia",
+    "Tagged photo {title}" : "Zdjęcie oznaczone etykietą {title}",
+    "{title}'s face" : "Twarz {title}",
     "Failed to create {albumName}." : "Nie udało się utworzyć {albumName}.",
     "Failed to rename {currentAlbumName} to {newAlbumName}." : "Nie udało się zmienić nazwy {currentAlbumName} na {newAlbumName}.",
     "Failed to rename {oldName} to {faceName}." : "Nie udało się zmienić nazwy {oldName} na {faceName}.",
@@ -125,6 +131,7 @@
     "Your photos" : "Zdjęcia",
     "Your videos" : "Twoje filmy",
     "Your folders" : "Twoje katalogi",
+    "Locations" : "Lokalizacje",
     "Settings" : "Ustawienia"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

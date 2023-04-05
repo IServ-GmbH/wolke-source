@@ -349,7 +349,7 @@ function parseMimeType(string $str): array
         // The quality parameter, if it appears, also marks the end of
         // the parameter list. Anything after the q= counts as an
         // 'accept extension' and could introduce new semantics in
-        // content-negotiation.
+        // content-negotation.
         if ('q' !== $partName) {
             $parameters[$partName] = $part;
         } else {

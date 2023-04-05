@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -97,7 +101,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Database configuration</a></li>
       <li class="breadcrumb-item active">Database configuration</li>
       <li class="wy-breadcrumbs-aside">
@@ -274,6 +278,10 @@ This just covers the SSL database configuration on the Nextcloud server. First y
 </section>
 <section id="postgresql-database">
 <h3>PostgreSQL database<a class="headerlink" href="#postgresql-database" title="Permalink to this headline"></a></h3>
+<p>In order to run Nextcloud securely on PostgreSQL, it is assumed that only
+Nextcloud uses this database and thus only one user accesses the database.
+For further services and users, we recommend to create a separate
+database or PostgreSQL instance.</p>
 <p>If you decide to use a PostgreSQL database make sure that you have installed
 and enabled the PostgreSQL extension in PHP. The PHP configuration in <code class="file docutils literal notranslate"><span class="pre">/etc/php7/conf.d/pgsql.ini</span></code> could look
 like this:</p>
@@ -297,7 +305,8 @@ To start the postgres command line mode use:</p>
 </div>
 <p>Then a <strong>template1=#</strong> prompt will appear. Now enter the following lines and confirm them with the enter key:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CREATE</span> <span class="n">USER</span> <span class="n">username</span> <span class="n">CREATEDB</span><span class="p">;</span>
-<span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">OWNER</span> <span class="n">username</span><span class="p">;</span>
+<span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">OWNER</span> <span class="n">username</span> <span class="n">TEMPLATE</span> <span class="n">template0</span> <span class="n">ENCODING</span> <span class="s1">&#39;UTF8&#39;</span><span class="p">;</span>
+<span class="n">GRANT</span> <span class="n">CREATE</span> <span class="n">ON</span> <span class="n">SCHEMA</span> <span class="n">public</span> <span class="n">TO</span> <span class="n">username</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>You can quit the prompt by entering:</p>
@@ -332,10 +341,11 @@ Nextcloud when you login for the first time.</p>
 </pre></div>
 </div>
 <p>Then a <strong>postgres=#</strong> prompt will appear. Now enter the following lines and confirm them with the enter key:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CREATE</span> <span class="n">USER</span> <span class="n">username</span> <span class="n">WITH</span> <span class="n">PASSWORD</span> <span class="s1">&#39;password&#39;</span><span class="p">;</span>
-<span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">TEMPLATE</span> <span class="n">template0</span> <span class="n">ENCODING</span> <span class="s1">&#39;UNICODE&#39;</span><span class="p">;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CREATE</span> <span class="n">USER</span> <span class="n">username</span> <span class="n">WITH</span> <span class="n">PASSWORD</span> <span class="s1">&#39;password&#39;</span> <span class="n">CREATEDB</span><span class="p">;</span>
+<span class="n">CREATE</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">TEMPLATE</span> <span class="n">template0</span> <span class="n">ENCODING</span> <span class="s1">&#39;UTF8&#39;</span><span class="p">;</span>
 <span class="n">ALTER</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">OWNER</span> <span class="n">TO</span> <span class="n">username</span><span class="p">;</span>
 <span class="n">GRANT</span> <span class="n">ALL</span> <span class="n">PRIVILEGES</span> <span class="n">ON</span> <span class="n">DATABASE</span> <span class="n">nextcloud</span> <span class="n">TO</span> <span class="n">username</span><span class="p">;</span>
+<span class="n">GRANT</span> <span class="n">ALL</span> <span class="n">PRIVILEGES</span> <span class="n">ON</span> <span class="n">SCHEMA</span> <span class="n">public</span> <span class="n">TO</span> <span class="n">username</span><span class="p">;</span>
 </pre></div>
 </div>
 <p>You can quit the prompt by entering:</p>
@@ -468,7 +478,7 @@ the respective host name:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -493,6 +503,8 @@ the respective host name:</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

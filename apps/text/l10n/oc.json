@@ -21,9 +21,9 @@
     "Save guest name" : "Enregistrar lo nom de convidat",
     "guest" : "convidat",
     "Show author colors" : "Afichar las colors dels utilizaires",
+    "Offline" : "Fòra linha",
     "Saving …" : "Enregistrament...",
     "Saved" : "Enregistrat",
-    "Last saved {lastSaved}" : "Darrièr enregistrament {lastSaved}",
     "Unsaved changes" : "Modificacions pas enregistradas",
     "Keyboard shortcuts" : "Acorchis de clavièr",
     "Bold" : "Gras",
@@ -34,7 +34,7 @@
     "Ordered list" : "Lista ordenada",
     "Blockquote" : "Citacion",
     "Code block" : "Còdi",
-    "Add notes, lists or links …" : "Apondre nòtas, listas o ligamas…",
+    "Translate" : "Translate",
     "Undo" : "Anullar",
     "Redo" : "Refar",
     "Headings" : "Títols",
@@ -47,14 +47,15 @@
     "Warning" : "Avertiment",
     "Insert emoji" : "Inserir emoji",
     "Command" : "Comanda",
+    "Add notes, lists or links …" : "Apondre nòtas, listas o ligamas…",
     "Edit" : "Modificar",
+    "Last saved {lastSaved}" : "Darrièr enregistrament {lastSaved}",
     "Enter your name so other users can see who is editing" : "Picatz vòstre nom per que los autres utilizaires vejan qual es a modificar",
-    "Insert image" : "Inserir imatge",
     "Insert an image" : "Inserir un imatge",
     "Link file" : "Ligam fichièr",
-    "Currently active users:" : "Utilizaires actius :",
+    "Remove Link" : "Suprimir ligam",
     "ToDo list" : "Lista a far",
     "Emoji picker" : "Selector emoji",
-    "Remove Link" : "Suprimir ligam"
+    "Insert image" : "Inserir imatge"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

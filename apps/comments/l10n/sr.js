@@ -3,13 +3,14 @@ OC.L10N.register(
     {
     "Comments" : "Коментари",
     "You commented" : "Искоментарисали сте",
-    "%1$s commented" : "%1$s коментарисао",
     "{author} commented" : "{author} коментарисао",
     "You commented on %1$s" : "Коментарисали сте на %1$s",
     "You commented on {file}" : "Коментаристали сте на {file}",
     "%1$s commented on %2$s" : "%1$s коментарисао на %2$s",
     "{author} commented on {file}" : "{author} коментарисао на {file}",
     "<strong>Comments</strong> for files" : "<strong>Коментари</strong> на фајлове",
+    "You were mentioned on \"{file}\", in a comment by a user that has since been deleted" : "Поменути сте за „{file}”, у коментару корисника које је од тада обрисан",
+    "{user} mentioned you in a comment on \"{file}\"" : "{user} вас је поменуо у коментару за „{file}",
     "Files app plugin to add comments to files" : "Додатак апликацији за фајлове да додајете коментаре на фајлове",
     "Edit comment" : "Измени коментар",
     "Delete comment" : "Обриши коментар",
@@ -26,7 +27,6 @@ OC.L10N.register(
     "Comment deleted" : "Коментар обрисан",
     "An error occurred while trying to delete the comment" : "Грешка приликом покушаја брисања коментара",
     "An error occurred while trying to create the comment" : "Грешка приликом покушаја креирања коментара",
-    "You were mentioned on “{file}”, in a comment by a user that has since been deleted" : "Поменути сте на фајлу \"{file}\", у коментару који је оставио корисник који је од тада избрисан",
-    "{user} mentioned you in a comment on “{file}”" : "{user} Вас је поменуо у коментару на “{file}”"
+    "%1$s commented" : "%1$s коментарисао"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

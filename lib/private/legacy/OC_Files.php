@@ -147,26 +147,31 @@ class OC_Files {
 			}
 
 			self::lockFiles($view, $dir, $files);
+			$numberOfFiles = 0;
+			$fileSize = 0;
 
 			/* Calculate filesize and number of files */
 			if ($getType === self::ZIP_FILES) {
 				$fileInfos = [];
-				$fileSize = 0;
 				foreach ($files as $file) {
 					$fileInfo = \OC\Files\Filesystem::getFileInfo($dir . '/' . $file);
-					$fileSize += $fileInfo->getSize();
-					$fileInfos[] = $fileInfo;
+					if ($fileInfo) {
+						$fileSize += $fileInfo->getSize();
+						$fileInfos[] = $fileInfo;
+					}
 				}
 				$numberOfFiles = self::getNumberOfFiles($fileInfos);
 			} elseif ($getType === self::ZIP_DIR) {
 				$fileInfo = \OC\Files\Filesystem::getFileInfo($dir . '/' . $files);
-				$fileSize = $fileInfo->getSize();
-				$numberOfFiles = self::getNumberOfFiles([$fileInfo]);
+				if ($fileInfo) {
+					$fileSize = $fileInfo->getSize();
+					$numberOfFiles = self::getNumberOfFiles([$fileInfo]);
+				}
 			}
 
 			//Dispatch an event to see if any apps have problem with download
 			$event = new BeforeZipCreatedEvent($dir, is_array($files) ? $files : [$files]);
-			$dispatcher = \OC::$server->get(IEventDispatcher::class);
+			$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 			$dispatcher->dispatchTyped($event);
 			if ((!$event->isSuccessful()) || $event->getErrorMessage() !== null) {
 				throw new \OC\ForbiddenException($event->getErrorMessage());

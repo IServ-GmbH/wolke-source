@@ -13,12 +13,13 @@
  * @license GNU AGPL version 3 or any later version
  *
  */
+@use 'sass:math';
+@use 'variables';
 
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, img, q, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, dialog, figure, footer, header, hgroup, nav, section {
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, img, q, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, dialog, figure, footer, header, hgroup, nav, section, main {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	outline: 0;
 	font-weight: inherit;
 	font-size: 100%;
 	font-family: inherit;
@@ -26,6 +27,17 @@ html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pr
 	cursor: default;
 	scrollbar-color: var(--color-border-dark) transparent;
 	scrollbar-width: thin;
+}
+
+.js-focus-visible :focus:not(.focus-visible) {
+	outline: none;
+}
+
+/** Let vue apps handle the focus themselves */
+.content:not(#content-vue) :focus-visible,
+.app-navigation:not(#app-navigation-vue) :focus-visible {
+	box-shadow: inset 0 0 0 2px var(--color-primary);
+	outline: none;
 }
 
 html, body {
@@ -86,7 +98,6 @@ ul {
 }
 
 body {
-	background-color: var(--color-main-background);
 	font-weight: normal;
 	/* bring the default font size up to 15px */
 	font-size: var(--default-font-size);
@@ -155,12 +166,16 @@ body {
 	height: 12px
 }
 
+::-webkit-scrollbar-corner {
+	background-color: transparent;
+}
+
 ::-webkit-scrollbar-track-piece {
 	background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-	background: var(--color-border-dark);
+	background: var(--color-scrollbar);
 	border-radius: var(--border-radius-large);
 	border: 2px solid transparent;
 	background-clip: content-box;
@@ -177,49 +192,8 @@ body {
 
 /* CONTENT ------------------------------------------------------------------ */
 
-#controls {
-	box-sizing: border-box;
-	@include position('sticky');
-	height: 44px;
-	padding: 0;
-	margin: 0;
-	background-color: var(--color-main-background-translucent);
-	z-index: 62; /* must be above the filelist sticky header and texteditor menubar */
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	display: flex;
-	top: $header-height;
-}
-
-/* position controls for apps with app-navigation */
-
-.viewer-mode #app-navigation + #app-content #controls {
-	left: 0;
-}
-
 #app-navigation * {
 	box-sizing: border-box;
-}
-
-#controls .actions {
-	> div,
-	& {
-		> .button, button {
-			box-sizing: border-box;
-			display: inline-block;
-			display: flex;
-			height: 36px;
-			width: 36px;
-			padding: 9px; // width - border - icon width = 18px
-			align-items: center;
-			justify-content: center;
-		}
-		.button.hidden {
-			display: none;
-		}
-	}
 }
 
 /* EMPTY CONTENT DISPLAY ------------------------------------------------------------ */
@@ -291,12 +265,17 @@ body {
 #show:checked + label, #dbpassword:checked + label, #personal-show:checked + label {
 	opacity: .8;
 }
+#show:focus-visible + label, #dbpassword-toggle:focus-visible + label, #personal-show:focus-visible + label {
+	box-shadow: var(--color-primary) 0 0 0 2px;
+	opacity: 1;
+	border-radius: 9999px;
+}
 
 #show + label, #dbpassword + label, #personal-show + label {
 	position: absolute !important;
 	height: 20px;
 	width: 24px;
-	background-image: var(--icon-toggle-000);
+	background-image: var(--icon-toggle-dark);
 	background-repeat: no-repeat;
 	background-position: center;
 	opacity: .3;
@@ -341,13 +320,12 @@ body {
 	margin-top: 8px;
 	padding: 5px;
 	border-radius: var(--border-radius);
-	color: var(--color-primary-text);
-	background-color: var(--color-warning);
+	color: var(--color-main-text);
+	background-color: rgba(var(--color-warning-rgb), 0.2);
 }
 
 .warning {
 	legend, a {
-		color: var(--color-primary-text) !important;
 		font-weight: bold !important;
 	}
 }
@@ -398,51 +376,6 @@ body {
 
 td.avatar {
 	border-radius: 0;
-}
-
-#notification-container {
-	left: 50%;
-	max-width: 60%;
-	position: fixed;
-	top: 0;
-	text-align: center;
-	transform: translateX(-50%);
-	z-index: 8000;
-}
-
-#notification {
-	margin: 0 auto;
-	z-index: 8000;
-	background-color: var(--color-main-background);
-	border: 0;
-	padding: 1px 8px;
-	display: none;
-	position: relative;
-	top: 0;
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-	opacity: .9;
-	span {
-		cursor: pointer;
-		margin-left: 1em;
-	}
-	overflow-x: hidden;
-	overflow-y: auto;
-	max-height: 100px;
-	.row {
-		position: relative;
-		.close {
-			display: inline-block;
-			vertical-align: middle;
-			position: absolute;
-			right: 0;
-			top: 0;
-			margin-top: 2px;
-		}
-		&.closeable {
-			padding-right: 20px;
-		}
-	}
 }
 
 tr .action:not(.permanent), .selectedActions > a {
@@ -718,7 +651,8 @@ code {
 		padding-right: 140px;
 
 		div:first-child a {
-			background-image: var(--icon-home-000);
+			font-size: 0px;
+			background-image: var(--icon-home-dark);
 			background-repeat: no-repeat;
 			background-position: left center;
 		}
@@ -736,8 +670,7 @@ code {
 		}
 	}
 
-	/* Grid view toggle */
-	#picker-view-toggle {
+	#picker-showgridview {
 		position: absolute;
 		background-color: transparent;
 		border: none;
@@ -748,14 +681,11 @@ code {
 		top: 0;
 
 		&:hover,
+		&:active,
 		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary);
 			opacity: 1;
 		}
-	}
-
-	// keyboard focus
-	#picker-showgridview:focus + #picker-view-toggle {
-		opacity: 1;
 	}
 
 	.actions.creatable {
@@ -775,7 +705,7 @@ code {
 		order:1;
 
 		.icon.icon-add{
-			background-image: var(--icon-add-000);
+			background-image: var(--icon-add-dark);
 			background-size: 16px 16px;
 			width: 34px;
 			height: 34px;
@@ -943,7 +873,7 @@ code {
 							}
 						}
 						&.filesize {
-							line-height: $name-height / 3;
+							line-height: math.div($name-height, 3);
 							width: 100%;
 						}
 						&.date {
@@ -966,125 +896,6 @@ code {
 span.ui-icon {
 	float: left;
 	margin: 3px 7px 30px 0;
-}
-
-/* ---- CONTACTS MENU ---- */
-
-#contactsmenu {
-	.menutoggle {
-		background-size: 20px 20px;
-		padding: 14px;
-		cursor: pointer;
-
-		&:hover,
-		&:focus,
-		&:active {
-			opacity: 1 !important;
-		}
-	}
-}
-
-#header .header-right > div#contactsmenu > .menu {
-	/* show 2.5 to 4.5 entries depending on the screen height */
-	height: calc(100vh - 50px * 3);
-	max-height: calc(50px * 4.5 + 50px);
-	min-height: calc(50px * 3.5);
-	width: 350px;
-
-	.emptycontent {
-		margin-top: 5vh !important;
-		margin-bottom: 2vh;
-		.icon-loading,
-		.icon-search {
-			display: inline-block;
-		}
-	}
-
-	.content {
-		/* fixed max height of the parent container without the search input */
-		height: calc(100vh - 50px * 3 - 50px);
-		max-height: calc(50px * 4.5);
-		min-height: calc(50px * 3.5 - 50px);
-		overflow-y: auto;
-
-		.footer {
-			text-align: center;
-
-			a {
-				display: block;
-				width: 100%;
-				padding: 12px 0;
-				opacity: .5;
-			}
-		}
-	}
-
-	.contact {
-		display: flex;
-		position: relative;
-		align-items: center;
-		padding: 3px 3px 3px 10px;
-		border-bottom: 1px solid var(--color-border);
-
-		:last-of-type {
-			border-bottom: none;
-		}
-
-		.avatar {
-			height: 32px;
-			width: 32px;
-			display: inline-block;
-		}
-
-		.body {
-			flex-grow: 1;
-			padding-left: 8px;
-
-			div {
-				position: relative;
-				width: 100%;
-			}
-
-			.full-name, .last-message {
-				/* TODO: don't use fixed width */
-				max-width: 204px;
-				overflow: hidden;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-			}
-			.last-message {
-				opacity: .5;
-			}
-		}
-
-		.top-action, .second-action, .other-actions {
-			width: 16px;
-			height: 16px;
-			padding: 14px;
-			opacity: .5;
-			cursor: pointer;
-
-			:hover {
-				opacity: 1;
-			}
-		}
-
-		/* actions menu */
-		.menu {
-			top: 47px;
-			margin-right: 13px;
-		}
-		.popovermenu::after {
-			right: 2px;
-		}
-	}
-}
-
-
-#contactsmenu-search {
-	width: calc(100% - 16px);
-	margin: 8px;
-	height: 34px;
 }
 
 /* ---- TOOLTIPS ---- */

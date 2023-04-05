@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -81,8 +85,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#troubleshooting-data-directory">Troubleshooting data-directory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-encryption">Troubleshooting encryption</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#problems-when-downloading-or-decrypting-files">Problems when downloading or decrypting files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-quota-or-size-issues">Troubleshooting quota or size issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-downloading-or-decrypting-files">Troubleshooting downloading or decrypting files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bad-signature-error">Bad signature error</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#encryption-key-cannot-be-found">Encryption key cannot be found</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#encryption-key-cannot-be-found-with-external-storage-or-group-folders">Encryption key cannot be found with external storage or group folders</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#other-issues">Other issues</a></li>
@@ -108,7 +115,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Issues and troubleshooting</a></li>
       <li class="breadcrumb-item active">General troubleshooting</li>
       <li class="wy-breadcrumbs-aside">
@@ -145,7 +152,7 @@ note that Nextcloud GmbH offers commercial support options.</p>
 <li><p>Search for a solution (see the options above)</p></li>
 <li><p>Double-check your configuration</p></li>
 </ul>
-<p>If you can’t find a solution, please use our <a class="reference external" href="https://github.com/nextcloud/server/issueshttps://docs.nextcloud.com/server/latest/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
+<p>If you can’t find a solution, please use our <a class="reference external" href="https://github.com/nextcloud/server/issueshttps://docs.nextcloud.com/server/25/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
 configuration report with the <a class="reference internal" href="../configuration_server/occ_command.html#config-commands-label"><span class="std std-ref">occ config command</span></a>, with passwords automatically obscured.</p>
 </section>
 <section id="id1">
@@ -433,18 +440,72 @@ Please refer to <a class="reference internal" href="#trouble-webdav-label"><span
 <li><p>Restart apache</p></li>
 </ol>
 </section>
-<section id="troubleshooting-encryption">
-<h2>Troubleshooting encryption<a class="headerlink" href="#troubleshooting-encryption" title="Permalink to this headline"></a></h2>
-<section id="problems-when-downloading-or-decrypting-files">
-<h3>Problems when downloading or decrypting files<a class="headerlink" href="#problems-when-downloading-or-decrypting-files" title="Permalink to this headline"></a></h3>
+<section id="troubleshooting-quota-or-size-issues">
+<h2>Troubleshooting quota or size issues<a class="headerlink" href="#troubleshooting-quota-or-size-issues" title="Permalink to this headline"></a></h2>
+<p>Sometimes it can happen that the used space reported in the web UI or with <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">user:info</span> <span class="pre">$userId</span></code>
+does not match the actual data stored in the user’s <code class="docutils literal notranslate"><span class="pre">data/$userId/files</span></code> directory.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Metadata, versions, trashbin and encryption keys are not counted in the used space above.
+Please refer to the <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/quota.html">quota documentation</a> for details.</p>
+</div>
+<p>Running the following command can help fix the sizes and quota for a given user:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">-</span><span class="n">vvv</span> <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>If <strong>encryption was enabled earlier on the instance and disabled later on</strong>, it is likely that some
+size values in the database did not correctly get reset upon decrypting.
+You can run the following SQL query to reset those after <strong>backing up the database</strong>:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">UPDATE</span><span class="w"> </span><span class="n">oc_filecache</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">unencrypted_size</span><span class="o">=</span><span class="mi">0</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">encrypted</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting-downloading-or-decrypting-files">
+<h2>Troubleshooting downloading or decrypting files<a class="headerlink" href="#troubleshooting-downloading-or-decrypting-files" title="Permalink to this headline"></a></h2>
+<section id="bad-signature-error">
+<h3>Bad signature error<a class="headerlink" href="#bad-signature-error" title="Permalink to this headline"></a></h3>
 <p>In some rare cases it can happen that encrypted files cannot be downloaded
 and return a “500 Internal Server Error”. If the Nextcloud log contains an error about
 “Bad Signature”, then the following command can be used to repair affected files:</p>
-<div class="line-block">
-<div class="line"><code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">encryption:fix-encrypted-version</span> <span class="pre">userId</span> <span class="pre">--path=/path/to/broken/file.txt</span></code></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">version</span> <span class="n">userId</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">broken</span><span class="o">/</span><span class="n">file</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
 </div>
 <p>Replace “userId” and the path accordingly.
 The command will do a test decryption for all files and automatically repair the ones with a signature error.</p>
+</section>
+<section id="encryption-key-cannot-be-found">
+<span id="troubleshooting-encryption-key-not-found"></span><h3>Encryption key cannot be found<a class="headerlink" href="#encryption-key-cannot-be-found" title="Permalink to this headline"></a></h3>
+<p>If the logs contain an error stating that the encryption key cannot be found, you can manually search the data directory for a folder that has the same name as the file name.
+For example if a file “example.md” cannot be decrypted, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">find</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">datadir</span> <span class="o">-</span><span class="n">name</span> <span class="n">example</span><span class="o">.</span><span class="n">md</span> <span class="o">-</span><span class="nb">type</span> <span class="n">d</span>
+</pre></div>
+</div>
+<p>Then check the results located in the <code class="docutils literal notranslate"><span class="pre">files_encryption</span></code> folder.
+If the key folder is in the wrong location, you can move it to the correct folder and try again.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">data/files_encryption</span></code> folder contains encryption keys for group folders and system-wide external storages
+while <code class="docutils literal notranslate"><span class="pre">data/$userid/files_encryption</span></code> contains the keys for specific user storage files.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This can happen if encryption was disabled at some point but the <a class="reference internal" href="../configuration_files/encryption_configuration.html#occ-disable-encryption-label"><span class="std std-ref">occ command for decrypt-all</span></a> was not run, and
+then someone moved the files to another location. Since encryption was disabled, the keys did not get moved.</p>
+</div>
+</section>
+<section id="encryption-key-cannot-be-found-with-external-storage-or-group-folders">
+<h3>Encryption key cannot be found with external storage or group folders<a class="headerlink" href="#encryption-key-cannot-be-found-with-external-storage-or-group-folders" title="Permalink to this headline"></a></h3>
+<p>To resolve this issue, please run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">key</span><span class="o">-</span><span class="n">location</span> <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This will attempt to recover keys that were not moved properly.</p>
+<p>If this doesn’t resolve the problem, please refer to the section <a class="reference internal" href="#troubleshooting-encryption-key-not-found"><span class="std std-ref">Encryption key cannot be found</span></a> for a manual procedure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There were two known issues where:</p>
+<ul class="simple">
+<li><p>moving files between an encrypted and non-encrypted storage like external storage or group folder <a class="reference external" href="https://github.com/nextcloud/groupfolders/issues/1896">would not move the keys with the files</a>.</p></li>
+<li><p>putting files on system-wide external storage would store the keys in the <a class="reference external" href="https://github.com/nextcloud/server/pull/32690">wrong location</a>.</p></li>
+</ul>
+</div>
 </section>
 </section>
 <section id="other-issues">
@@ -467,7 +528,7 @@ first.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -492,6 +553,8 @@ first.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

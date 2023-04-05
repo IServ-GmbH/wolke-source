@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -92,7 +96,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Office</a></li>
       <li class="breadcrumb-item active">Configuration</li>
       <li class="wy-breadcrumbs-aside">
@@ -139,14 +143,14 @@ token. These credentials then can be used by the 3rd party application to make c
 <section id="previews">
 <h3>Previews<a class="headerlink" href="#previews" title="Permalink to this headline"></a></h3>
 <p>In order to allow Nextcloud to use the coolwsd conversion API to generate previews, the Nextcloud host IP needs to be added to the allow list:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo coolconfig <span class="nb">set</span> net.post_allow.host <span class="m">10</span>.0.0.4
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>coolconfig<span class="w"> </span><span class="nb">set</span><span class="w"> </span>net.post_allow.host<span class="w"> </span><span class="m">10</span>.0.0.4
 </pre></div>
 </div>
 </section>
 <section id="custom-fonts">
 <h3>Custom fonts<a class="headerlink" href="#custom-fonts" title="Permalink to this headline"></a></h3>
 <p>When you install coolwsd package, the post-install script will look for additional fonts on your system, and install them in the systemplate. If you install fonts to your system after installing coolwsd, you need to update the systemplate manually.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>coolconfig update-system-template
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>coolconfig<span class="w"> </span>update-system-template
 </pre></div>
 </div>
 <div class="admonition seealso">
@@ -168,7 +172,7 @@ token. These credentials then can be used by the 3rd party application to make c
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -193,6 +197,8 @@ token. These credentials then can be used by the 3rd party application to make c
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

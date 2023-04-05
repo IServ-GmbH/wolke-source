@@ -261,7 +261,9 @@
 					}
 					if (!data.isFairUseOfFreePushService) {
 						messages.push({
-							msg: t('core', 'This is the unsupported community build of Nextcloud. Given the size of this instance, performance, reliability and scalability cannot be guaranteed. Push notifications have been disabled to avoid overloading our free service. Learn more about the benefits of Nextcloud Enterprise at nextcloud.com/enterprise.'),
+							msg: t('core', 'This is the unsupported community build of Nextcloud. Given the size of this instance, performance, reliability and scalability cannot be guaranteed. Push notifications are limited to avoid overloading our free service. Learn more about the benefits of Nextcloud Enterprise at {linkstart}https://nextcloud.com/enterprise{linkend}.')
+								.replace('{linkstart}', '<a target="_blank" rel="noreferrer noopener" class="external" href="https://nextcloud.com/enterprise">')
+								.replace('{linkend}', '</a>'),
 							type: OC.SetupChecks.MESSAGE_TYPE_ERROR
 						});
 					}
@@ -298,12 +300,6 @@
 							msg: t('core', 'You are currently running PHP {version}. Upgrade your PHP version to take advantage of {linkstart}performance and security updates provided by the PHP Group ↗{linkend} as soon as your distribution supports it.', { version: data.phpSupported.version })
 								.replace('{linkstart}', '<a target="_blank" rel="noreferrer noopener" class="external" href="https://secure.php.net/supported-versions.php">')
 								.replace('{linkend}', '</a>'),
-							type: OC.SetupChecks.MESSAGE_TYPE_INFO
-						})
-					}
-					if (data.phpSupported && data.phpSupported.version.substr(0, 3) === '7.3') {
-						messages.push({
-							msg: t('core', 'Nextcloud 23 is the last release supporting PHP 7.3. Nextcloud 24 requires at least PHP 7.4.'),
 							type: OC.SetupChecks.MESSAGE_TYPE_INFO
 						})
 					}
@@ -419,6 +415,17 @@
 								'The PHP modules "gmp" and/or "bcmath" are not enabled. If you use WebAuthn passwordless authentication, these modules are required.'
 							),
 							type: OC.SetupChecks.MESSAGE_TYPE_INFO
+						})
+					}
+					if (!data.is64bit) {
+						messages.push({
+							msg: t(
+								'core',
+								'It seems like you are running a 32-bit PHP version. Nextcloud needs 64-bit to run well. Please upgrade your OS and PHP to 64-bit! For further details read {linkstart}the documentation page about this ↗{linkend}.'
+								.replace('{linkstart}', '<a target="_blank" rel="noreferrer noopener" class="external" href="' + OC.theme.docPlaceholderUrl.replace('PLACEHOLDER', 'admin-system-requirements') + '">')
+								.replace('{linkend}', '</a>'),
+							),
+							type: OC.SetupChecks.MESSAGE_TYPE_WARNING
 						})
 					}
 					if (data.imageMagickLacksSVGSupport) {
@@ -621,13 +628,13 @@
 			if (xhr.status === 200) {
 				var securityHeaders = {
 					'X-Content-Type-Options': ['nosniff'],
-					'X-Robots-Tag': ['none'],
+					'X-Robots-Tag': ['noindex, nofollow'],
 					'X-Frame-Options': ['SAMEORIGIN', 'DENY'],
 					'X-Permitted-Cross-Domain-Policies': ['none'],
 				};
 				for (var header in securityHeaders) {
 					var option = securityHeaders[header][0];
-					if(!xhr.getResponseHeader(header) || xhr.getResponseHeader(header).toLowerCase() !== option.toLowerCase()) {
+					if(!xhr.getResponseHeader(header) || xhr.getResponseHeader(header).replace(/, /, ',').toLowerCase() !== option.replace(/, /, ',').toLowerCase()) {
 						var msg = t('core', 'The "{header}" HTTP header is not set to "{expected}". This is a potential security or privacy risk, as it is recommended to adjust this setting accordingly.', {header: header, expected: option});
 						if(xhr.getResponseHeader(header) && securityHeaders[header].length > 1 && xhr.getResponseHeader(header).toLowerCase() === securityHeaders[header][1].toLowerCase()) {
 							msg = t('core', 'The "{header}" HTTP header is not set to "{expected}". Some features might not work correctly, as it is recommended to adjust this setting accordingly.', {header: header, expected: option});
@@ -642,7 +649,7 @@
 				var xssfields = xhr.getResponseHeader('X-XSS-Protection') ? xhr.getResponseHeader('X-XSS-Protection').split(';').map(function(item) { return item.trim(); }) : [];
 				if (xssfields.length === 0 || xssfields.indexOf('1') === -1 || xssfields.indexOf('mode=block') === -1) {
 					messages.push({
-						msg: t('core', 'The "{header}" HTTP header doesn\'t contain "{expected}". This is a potential security or privacy risk, as it is recommended to adjust this setting accordingly.',
+						msg: t('core', 'The "{header}" HTTP header does not contain "{expected}". This is a potential security or privacy risk, as it is recommended to adjust this setting accordingly.',
 							{
 								header: 'X-XSS-Protection',
 								expected: '1; mode=block'

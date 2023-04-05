@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Конфиденциальность",
     "-" : "—",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Центр конфиденциальности показывает вам, где хранятся ваши данные и кто может получить к ним доступ: администраторы и те, с кем вы поделились этими данными.",
-    "Remove external admin" : "Удалить внешнего администратора",
+    "Remove external {propertyName} admin" : "Удалить внешнего администратора {propertyName}",
     "Add external admin" : "Добавить внешнего администратора",
     "Name of external admin" : "Имя внешнего администратора",
+    "Adapt encryption" : "Использование шифрования",
     "This server is using full-disk-encryption." : "Этот сервер использует шифрование диска.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Ваше домашнее хранилище зашифровано с помощью {linkopen}server-side-encryption {linkclose} с мастер-ключом.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Для шифрования вашего основного хранилища используется  {linkopen}серверное шифрование  ↗{linkclose} с единым ключом. Это означает, что администраторы сервера могут получить доступ к вашим файлам, но не смогут прочитать их содержимое.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Ваши файлы на внешних хранилищах могут быть зашифрованы с помощью {linkopen}server-side-encryption {linkclose} с мастер-ключом, основанным на их конфигурации.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Ваше домашнее хранилище шифруется с помощью {linkopen}server-side-encryption {linkclose} с индивидуальным ключом пользователя.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Для шифрования вашего основного хранилища используется  {linkopen}серверное шифрование  ↗{linkclose} с индивидуальными ключами пользователей. Это означает, что администраторы сервера могут получить доступ к вашим файлам, но не смогут прочитать их содержимое.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Ваши файлы на внешних хранилищах могут быть зашифрованы с помощью {linkopen}server-side-encryption {linkclose} с индивидуальным ключом в зависимости от их конфигурации.",
     "Additionally, this server is protected with full-disk-encryption." : "Кроме того, этот сервер защищён шифрованием всего диска.",
     "This server is protected with full-disk-encryption." : "Этот сервер защищён шифрованием диска.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Политика конфиденциальности",
     "Read the privacy policy." : "Ознакомиться с политикой конфиденциальности.",
     "Encryption" : "Шифрование",
-    "The admin hasn't selected the location of the server yet." : "Место размещения сервера ещё не указано администратором."
+    "Remove external admin" : "Удалить внешнего администратора",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Ваше домашнее хранилище зашифровано с помощью {linkopen}server-side-encryption {linkclose} с мастер-ключом.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Ваше домашнее хранилище шифруется с помощью {linkopen}server-side-encryption {linkclose} с индивидуальным ключом пользователя."
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

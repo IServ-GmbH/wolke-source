@@ -14,12 +14,15 @@ OC.L10N.register(
     "Guest" : "Külaline",
     "guest" : "külaline",
     "Saved" : "Salvestatud",
-    "Last saved {lastSaved}" : "Viimati salvestatud {lastSaved}",
     "Unsaved changes" : "Salvestamata muutused",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
+    "Translate" : "Tõlgi",
+    "Replace" : "Asenda",
     "Unsupported image type" : "Pildi tüüp pole toetatud",
+    "Undo" : "Tühista",
     "Info" : "Info",
     "Warning" : "Hoiatus",
-    "Edit" : "Redigeeri"
+    "Edit" : "Redigeeri",
+    "Last saved {lastSaved}" : "Viimati salvestatud {lastSaved}"
 },
 "nplurals=2; plural=(n != 1);");

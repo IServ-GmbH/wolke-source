@@ -36,6 +36,9 @@ use OCP\IUser;
 /**
  * Interface IAppManager
  *
+ * @warning This interface shouldn't be included with dependency injection in
+ *          classes used for installing Nextcloud.
+ *
  * @since 8.0.0
  */
 interface IAppManager {
@@ -79,6 +82,17 @@ interface IAppManager {
 	 * @since 8.0.0
 	 */
 	public function isInstalled($appId);
+
+	/**
+	 * Check if an app should be enabled by default
+	 *
+	 * Notice: This actually checks if the app should be enabled by default
+	 * and not if currently installed/enabled
+	 *
+	 * @param string $appId ID of the app
+	 * @since 25.0.0
+	 */
+	public function isDefaultEnabled(string $appId):bool;
 
 	/**
 	 * Enable an app for every user
@@ -174,6 +188,12 @@ interface IAppManager {
 	 * @since 9.0.0
 	 */
 	public function getAlwaysEnabledApps();
+
+	/**
+	 * @return string[] app IDs
+	 * @since 25.0.0
+	 */
+	public function getDefaultEnabledApps(): array;
 
 	/**
 	 * @param \OCP\IGroup $group

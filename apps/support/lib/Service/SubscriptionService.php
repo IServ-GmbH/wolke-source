@@ -29,13 +29,13 @@ use OC\User\Backend;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IGroupManager;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Notification\IManager;
+use Psr\Log\LoggerInterface;
 
 class SubscriptionService {
 	public const ERROR_FAILED_RETRY = 1;
@@ -46,45 +46,24 @@ class SubscriptionService {
 	public const THRESHOLD_MEDIUM = 500;
 	public const THRESHOLD_LARGE = 1000;
 
-	/** @var IConfig */
-	private $config;
-
-	/** @var IClientService */
-	private $clientService;
-
-	/** @var ILogger */
-	private $log;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var int */
-	private $userCount;
-
-	/** @var int */
-	private $activeUserCount;
-
-	/** @var IManager */
-	private $notifications;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-	/** @var IGroupManager */
-	private $groupManager;
-
-	/** @var IMailer */
-	private $mailer;
-
-	/** @var IFactory */
-	private $l10nFactory;
+	private IConfig $config;
+	private IClientService $clientService;
+	private LoggerInterface $log;
+	private IUserManager $userManager;
+	private int $userCount = -1;
+	private int $activeUserCount = -1;
+	private IManager $notifications;
+	private IURLGenerator $urlGenerator;
+	private IGroupManager $groupManager;
+	private IMailer $mailer;
+	private IFactory $l10nFactory;
 
 	private $subscriptionInfoCache = null;
 
 	public function __construct(
 		IConfig $config,
 		IClientService $clientService,
-		ILogger $log,
+		LoggerInterface $log,
 		IUserManager $userManager,
 		IManager $notifications,
 		IURLGenerator $urlGenerator,
@@ -129,7 +108,7 @@ class SubscriptionService {
 				} catch (\Exception $e) {
 					$backendUsers = false;
 
-					$this->log->logException($e, ['app' => 'support']);
+					$this->log->error($e->getMessage(), ['exception' => $e]);
 				}
 				if ($backendUsers !== false) {
 					$userCount += $backendUsers;
@@ -160,7 +139,6 @@ class SubscriptionService {
 		}
 
 		$this->activeUserCount = $this->userManager->countSeenUsers();
-		;
 
 		return $this->activeUserCount;
 	}
@@ -245,7 +223,7 @@ class SubscriptionService {
 			$this->log->info('Renewal of subscription info returned invalid data. URL: ' . $backendURL . ' Status: ' . $response->getStatusCode() . ' Body: ' . $response->getBody());
 			$error = self::ERROR_FAILED_RETRY;
 		} catch (ConnectException $e) {
-			$this->log->logException($e, ['app' => 'support', 'level' => ILogger::INFO, 'message' => 'Renew of subscription info failed due to connect exception - retrying later. URL: ' . $backendURL]);
+			$this->log->info('Renew of subscription info failed due to connect exception - retrying later. URL: ' . $backendURL, ['app' => 'support', 'exception' => $e]);
 			$error = self::ERROR_FAILED_RETRY;
 		} catch (RequestException $e) {
 			$response = $e->getResponse();
@@ -255,11 +233,11 @@ class SubscriptionService {
 				$this->config->deleteAppValue('support', 'potential_subscription_key');
 				$error = self::ERROR_FAILED_INVALID;
 			} else {
-				$this->log->logException($e, ['app' => 'support', 'level' => ILogger::INFO, 'message' => 'Renew of subscription info failed. URL: ' . $backendURL]);
+				$this->log->info('Renew of subscription info failed. URL: ' . $backendURL, ['app' => 'support', 'exception' => $e]);
 				$error = self::ERROR_FAILED_RETRY;
 			}
 		} catch (\Exception $e) {
-			$this->log->logException($e, ['app' => 'support', 'level' => ILogger::INFO, 'message' => 'Renew of subscription info failed. URL: ' . $backendURL]);
+			$this->log->info('Renew of subscription info failed. URL: ' . $backendURL, ['app' => 'support', 'exception' => $e]);
 			$error = self::ERROR_FAILED_RETRY;
 		}
 

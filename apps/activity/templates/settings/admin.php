@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Carl Schwan <carl@carlschwan.eu>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -18,33 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-script('activity', 'admin');
-style('activity', 'settings');
-/** @var array $_ */
-/** @var \OCP\IL10N $l */
+\OCP\Util::addScript('activity', 'activity-adminSettings');
 ?>
 
-<div class="section">
+<div id="activity-admin-settings"></div>
 
-	<h2><?php p($l->t('Notifications')); ?></h2>
-
-	<input id="activity_email_enabled" name="activity_email_enabled" type="checkbox" class="checkbox"
-		   value="1" <?php if ($_['email_enabled']) {
-	print_unescaped('checked="checked"');
-} ?> />
-	<label for="activity_email_enabled"><?php p($l->t('Enable notification emails')); ?></label>
-
-</div>
-
-<form class="section" id="activity_notifications">
-
-	<h2><?php p($l->t('Default settings')); ?></h2>
-
-	<p class="settings-hint">
-		<?php p($l->t('Configure the default notification settings.')); ?>
-	</p>
-
-	<?php print_unescaped($this->inc('settings/form')); ?>
-
-</form>
-
+<div id="activity-default-settings"></div>

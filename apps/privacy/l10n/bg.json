@@ -2,13 +2,14 @@
     "Privacy" : "Защита на лични данни",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Центърът за поверителност ви показва къде се съхраняват вашите данни и кой може да има достъп до тях, или защото сте споделили с тях, или защото те са администратори.",
-    "Remove external admin" : "Премахване на външен администратор",
+    "Remove external {propertyName} admin" : "Премахване на външен администратор {propertyName}",
     "Add external admin" : "Добавяне на външен администратор",
     "Name of external admin" : "Име на външен администратор",
+    "Adapt encryption" : "Адаптиране на криптирането",
     "This server is using full-disk-encryption." : "Този сървър използва шифроване на пълен диск.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Домашното ви хранилище е криптирано чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с главен ключ.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Базовото ви хранилище е криптирано с помощта на {linkkopen} сървърно криптиране {linkclose} с главен ключ. Това означава, че администраторите имат достъп до вашите файлове, но не и да четат съдържанието им.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Вашите файлове във външни хранилища може да бъдат криптирани чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с главен ключ въз основа на тяхната конфигурация.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Домашното ви хранилище е криптирано чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с индивидуален потребителски ключ.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Базовото ви хранилище е криптирано с помощта на {linkopen} сървърно криптиране {linkclose} с индивидуален потребителски ключ. Това означава, че администраторите имат достъп до вашите файлове, но не и да четат съдържанието им.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Вашите файлове във външни хранилища може да бъдат криптирани чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с индивидуален ключ въз основа на тяхната конфигурация.",
     "Additionally, this server is protected with full-disk-encryption." : "Освен това този сървър е защитен с пълно дисково криптиране.",
     "This server is protected with full-disk-encryption." : "Този сървър е криптиран",
@@ -286,6 +287,8 @@
     "Privacy policy" : "Политика за поверителност",
     "Read the privacy policy." : "Прочетете политиката за поверителност",
     "Encryption" : "Криптиране",
-    "The admin hasn't selected the location of the server yet." : "Администраторът все още не е избрал местоположението на сървъра."
+    "Remove external admin" : "Премахване на външен администратор",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Домашното ви хранилище е криптирано чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с главен ключ.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Домашното ви хранилище е криптирано чрез {linkopen}криптиране от страна на сървъра ↗{linkclose} с индивидуален потребителски ключ."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

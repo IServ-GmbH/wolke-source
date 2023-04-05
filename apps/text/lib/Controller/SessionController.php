@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Text\Controller;
 
 use OCA\Text\Service\ApiService;
+use OCA\Text\Service\NotificationService;
 use OCA\Text\Service\SessionService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
@@ -35,32 +36,17 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 
 class SessionController extends Controller {
+	private ApiService $apiService;
+	private SessionService $sessionService;
+	private NotificationService $notificationService;
+	private IUserManager $userManager;
+	private IUserSession $userSession;
 
-	/**
-	 * @var ApiService
-	 */
-	private $apiService;
-
-	/**
-	 * @var SessionService
-	 */
-	private $sessionService;
-
-	/**
-	 * @var IUserManager
-	 */
-	private $userManager;
-
-	/**
-	 * @var IUserSession
-	 */
-	private $userSession;
-
-
-	public function __construct(string $appName, IRequest $request, ApiService $apiService, SessionService $sessionService, IUserManager $userManager, IUserSession $userSession) {
+	public function __construct(string $appName, IRequest $request, ApiService $apiService, SessionService $sessionService, NotificationService $notificationService, IUserManager $userManager, IUserSession $userSession) {
 		parent::__construct($appName, $request);
 		$this->apiService = $apiService;
 		$this->sessionService = $sessionService;
+		$this->notificationService = $notificationService;
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
 	}
@@ -106,11 +92,32 @@ class SessionController extends Controller {
 		return $this->apiService->sync($documentId, $sessionId, $sessionToken, $version, $autosaveContent, $force, $manualSave);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 * @PublicPage
+	 * @UserRateThrottle(limit=5, period=120)
+	 */
+	public function mention(int $documentId, int $sessionId, string $sessionToken, string $mention): DataResponse {
+		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
+			return new DataResponse([], 403);
+		}
+
+		$currentSession = $this->sessionService->getSession($documentId, $sessionId, $sessionToken);
+
+		if ($currentSession->getUserId() === null && !$this->sessionService->isUserInDocument($documentId, $mention)) {
+			return new DataResponse([], 403);
+		}
+
+		return new DataResponse($this->notificationService->mention($documentId, $mention));
+	}
+
 	private function loginSessionUser(int $documentId, int $sessionId, string $sessionToken) {
 		$currentSession = $this->sessionService->getSession($documentId, $sessionId, $sessionToken);
-		$user = $this->userManager->get($currentSession->getUserId());
-		if ($user !== null) {
-			$this->userSession->setUser($user);
+		if ($currentSession !== false) {
+			$user = $this->userManager->get($currentSession->getUserId());
+			if ($user !== null) {
+				$this->userSession->setUser($user);
+			}
 		}
 	}
 }

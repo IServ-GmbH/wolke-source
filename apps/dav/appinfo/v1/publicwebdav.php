@@ -30,6 +30,8 @@
  *
  */
 
+use OCP\BeforeSabrePubliclyLoadedEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 use Psr\Log\LoggerInterface;
 
 // load needed apps
@@ -51,7 +53,6 @@ $authPlugin = new \Sabre\DAV\Auth\Plugin($authBackend);
 
 $serverFactory = new OCA\DAV\Connector\Sabre\ServerFactory(
 	\OC::$server->getConfig(),
-	\OC::$server->getLogger(),
 	\OC::$server->get(LoggerInterface::class),
 	\OC::$server->getDatabaseConnection(),
 	\OC::$server->getUserSession(),
@@ -99,7 +100,7 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 	$fileInfo = $ownerView->getFileInfo($path);
 	$linkCheckPlugin->setFileInfo($fileInfo);
 
-	// If not readble (files_drop) enable the filesdrop plugin
+	// If not readable (files_drop) enable the filesdrop plugin
 	if (!$isReadable) {
 		$filesDropPlugin->enable();
 	}
@@ -112,6 +113,11 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 
 $server->addPlugin($linkCheckPlugin);
 $server->addPlugin($filesDropPlugin);
+// allow setup of additional plugins
+$event = new BeforeSabrePubliclyLoadedEvent($server);
+/** @var IEventDispatcher $eventDispatcher */
+$eventDispatcher = \OC::$server->get(IEventDispatcher::class);
+$eventDispatcher->dispatchTyped($event);
 
 // And off we go!
 $server->exec();

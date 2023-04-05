@@ -118,7 +118,7 @@ class Generator {
 	 * Generates previews of a file
 	 *
 	 * @param File $file
-	 * @param array $specifications
+	 * @param non-empty-array $specifications
 	 * @param string $mimeType
 	 * @return ISimpleFile the last preview that was generated
 	 * @throws NotFoundException
@@ -216,10 +216,11 @@ class Generator {
 				throw new NotFoundException('Cached preview size 0, invalid!');
 			}
 		}
+		assert($preview !== null);
 
 		// Free memory being used by the embedded image resource.  Without this the image is kept in memory indefinitely.
 		// Garbage Collection does NOT free this memory.  We have to do it ourselves.
-		if ($maxPreviewImage instanceof \OC_Image) {
+		if ($maxPreviewImage instanceof \OCP\Image) {
 			$maxPreviewImage->destroy();
 		}
 
@@ -229,8 +230,10 @@ class Generator {
 	/**
 	 * Generate a small image straight away without generating a max preview first
 	 * Preview generated is 256x256
+	 *
+	 * @throws NotFoundException
 	 */
-	private function getSmallImagePreview(ISimpleFolder $previewFolder, File $file, string $mimeType, string $prefix, bool $crop) {
+	private function getSmallImagePreview(ISimpleFolder $previewFolder, File $file, string $mimeType, string $prefix, bool $crop): ISimpleFile {
 		$nodes = $previewFolder->getDirectoryListing();
 
 		foreach ($nodes as $node) {
@@ -295,6 +298,8 @@ class Generator {
 				return $file;
 			}
 		}
+
+		throw new NotFoundException('No provider successfully handled the preview generation');
 	}
 
 	/**

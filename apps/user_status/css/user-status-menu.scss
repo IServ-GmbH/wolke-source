@@ -19,13 +19,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+@use 'variables';
+@import 'functions';
 
 .icon-user-status {
-	@include icon-color('app', 'user_status', $color-black, 1);
+	background-image: url("../img/app.svg");
 }
 
-body.theme--dark .icon-user-status {
-	@include icon-color('app', 'user_status', $color-white, 1);
+.icon-user-status-dark {
+	background-image: url("../img/app-dark.svg");
+
 }
 
 .icon-user-status-online {
@@ -40,11 +43,7 @@ body.theme--dark .icon-user-status {
 	background-image: url('../img/user-status-dnd.svg');
 }
 
-// TODO: debug why icon-black-white does not work here
 .icon-user-status-invisible {
-	@include icon-color('user-status-invisible', 'user_status', $color-black, 1);
-}
-
-body.theme--dark .icon-user-status-invisible {
-	@include icon-color('user-status-invisible', 'user_status', $color-white, 1);
+	background-image: url('../img/user-status-invisible.svg');
+	filter: var(--background-invert-if-dark);
 }

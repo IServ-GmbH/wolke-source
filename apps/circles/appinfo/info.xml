@@ -4,11 +4,11 @@
 	<id>circles</id>
 	<name>Circles</name>
 	<summary>Bring cloud-users closer together.</summary>
-	<description><![CDATA[Circles allows your users to create their own groups of users/colleagues/friends.
-Those groups of users (or "circles") can then be used by any other app for sharing purpose.
+	<description><![CDATA[Circles allows people to create their own groups of people/colleagues/friends.
+Those groups of people (or "circles") can then be used by any other app for sharing purpose.
 		]]>
 	</description>
-	<version>24.0.1</version>
+	<version>25.0.0</version>
 	<licence>agpl</licence>
 	<author>Maxence Lange</author>
 	<types>
@@ -27,9 +27,8 @@ Those groups of users (or "circles") can then be used by any other app for shari
 	<repository>https://github.com/nextcloud/circles.git</repository>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/circles/master/screenshots/0.12.0.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="24" max-version="24"/>
+		<nextcloud min-version="25" max-version="25"/>
 	</dependencies>
-	<default_enable/>
 	<background-jobs>
 		<job>OCA\Circles\Cron\Maintenance</job>
 	</background-jobs>

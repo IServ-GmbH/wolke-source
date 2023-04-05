@@ -76,10 +76,15 @@ class UserStatusMapper extends QBMapper {
 			->select('*')
 			->from($this->tableName)
 			->orderBy('status_timestamp', 'DESC')
-			->where($qb->expr()->notIn('status', $qb->createNamedParameter([IUserStatus::ONLINE, IUserStatus::AWAY, IUserStatus::OFFLINE], IQueryBuilder::PARAM_STR_ARRAY)))
-			->orWhere($qb->expr()->isNotNull('message_id'))
-			->orWhere($qb->expr()->isNotNull('custom_icon'))
-			->orWhere($qb->expr()->isNotNull('custom_message'));
+			->where($qb->expr()->andX(
+				$qb->expr()->orX(
+					$qb->expr()->notIn('status', $qb->createNamedParameter([IUserStatus::ONLINE, IUserStatus::AWAY, IUserStatus::OFFLINE], IQueryBuilder::PARAM_STR_ARRAY)),
+					$qb->expr()->isNotNull('message_id'),
+					$qb->expr()->isNotNull('custom_icon'),
+					$qb->expr()->isNotNull('custom_message'),
+				),
+				$qb->expr()->notLike('user_id', $qb->createNamedParameter($this->db->escapeLikeParameter('_') . '%'))
+			));
 
 		if ($limit !== null) {
 			$qb->setMaxResults($limit);
@@ -145,13 +150,9 @@ class UserStatusMapper extends QBMapper {
 	 *
 	 * @param int $timestamp
 	 */
-	public function clearMessagesOlderThan(int $timestamp): void {
+	public function clearOlderThanClearAt(int $timestamp): void {
 		$qb = $this->db->getQueryBuilder();
-		$qb->update($this->tableName)
-			->set('message_id', $qb->createNamedParameter(null))
-			->set('custom_icon', $qb->createNamedParameter(null))
-			->set('custom_message', $qb->createNamedParameter(null))
-			->set('clear_at', $qb->createNamedParameter(null))
+		$qb->delete($this->tableName)
 			->where($qb->expr()->isNotNull('clear_at'))
 			->andWhere($qb->expr()->lte('clear_at', $qb->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT)));
 

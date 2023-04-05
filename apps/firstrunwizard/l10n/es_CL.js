@@ -1,7 +1,6 @@
 OC.L10N.register(
     "firstrunwizard",
     {
-    "Copy to clipboard" : "Copiar al portapapeles",
     "Copied!" : "¡Copiado!",
     "Not supported!" : "¡No soportado!",
     "Press ⌘-C to copy." : "Presiona ⌘-C para copiar.",
@@ -42,9 +41,8 @@ OC.L10N.register(
     "Connect other apps to %s" : "Conectar otras aplicaciones a %s",
     "Server address" : "Dirección del servidor",
     "Copy link" : "Copiar liga",
+    "Copy to clipboard" : "Copiar al portapapeles",
     "Get enterprise support" : "Obten soporte empresarial",
-    "the Nextcloud IRC chat channel on freenode.net" : "el canal del chat de IRC para Nextcloud en freenode.net",
-    "Open Standards and Interoperability" : "Estándares Abiertos e Interoperabilidad",
-    "100%% Open Source & community-focused" : "100%% Código Abierto & orientado a la comunidad"
+    "the Nextcloud IRC chat channel on freenode.net" : "el canal del chat de IRC para Nextcloud en freenode.net"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

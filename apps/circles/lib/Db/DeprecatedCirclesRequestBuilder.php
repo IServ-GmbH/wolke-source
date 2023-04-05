@@ -194,7 +194,7 @@ class DeprecatedCirclesRequestBuilder extends DeprecatedRequestBuilder {
 	 * @param IQueryBuilder $qb
 	 * @param int $type
 	 *
-	 * @return string
+	 * @return null|string
 	 */
 	private function generateLimitClosed(IQueryBuilder $qb, $type) {
 		if (!(DeprecatedCircle::CIRCLES_CLOSED & (int)$type)) {
@@ -213,7 +213,7 @@ class DeprecatedCirclesRequestBuilder extends DeprecatedRequestBuilder {
 	 * @param IQueryBuilder $qb
 	 * @param int $type
 	 *
-	 * @return string
+	 * @return null|string
 	 */
 	private function generateLimitPublic(IQueryBuilder $qb, $type) {
 		if (!(DeprecatedCircle::CIRCLES_PUBLIC & (int)$type)) {

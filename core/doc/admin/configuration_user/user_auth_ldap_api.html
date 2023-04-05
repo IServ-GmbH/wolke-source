@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -107,7 +111,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">User management</a></li>
       <li class="breadcrumb-item active">The LDAP configuration API</li>
       <li class="wy-breadcrumbs-aside">
@@ -143,14 +147,14 @@ basic HTTP authentication header.</p>
 <h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data&gt;</span>
-  <span class="nt">&lt;configID&gt;</span>s01<span class="nt">&lt;/configID&gt;</span>
- <span class="nt">&lt;/data&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;configID&gt;</span>s01<span class="nt">&lt;/configID&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -176,12 +180,12 @@ basic HTTP authentication header.</p>
 <h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data/&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -208,67 +212,67 @@ basic HTTP authentication header.</p>
 <h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data&gt;</span>
-  <span class="nt">&lt;ldapHost&gt;</span>ldap://ldap.server.tld<span class="nt">&lt;/ldapHost&gt;</span>
-  <span class="nt">&lt;ldapPort&gt;</span>389<span class="nt">&lt;/ldapPort&gt;</span>
-  <span class="nt">&lt;ldapBackupHost&gt;&lt;/ldapBackupHost&gt;</span>
-  <span class="nt">&lt;ldapBackupPort&gt;&lt;/ldapBackupPort&gt;</span>
-  <span class="nt">&lt;ldapBase&gt;</span>ou=Department XLII,dc=example,dc=com<span class="nt">&lt;/ldapBase&gt;</span>
-  <span class="nt">&lt;ldapBaseUsers&gt;</span>ou=users,ou=Department XLII,dc=example,dc=com<span class="nt">&lt;/ldapBaseUsers&gt;</span>
-  <span class="nt">&lt;ldapBaseGroups&gt;</span>ou=Department XLII,dc=example,dc=com<span class="nt">&lt;/ldapBaseGroups&gt;</span>
-  <span class="nt">&lt;ldapAgentName&gt;</span>cn=root,dc=example,dc=com<span class="nt">&lt;/ldapAgentName&gt;</span>
-  <span class="nt">&lt;ldapAgentPassword&gt;</span>Secret<span class="nt">&lt;/ldapAgentPassword&gt;</span>
-  <span class="nt">&lt;ldapTLS&gt;</span>1<span class="nt">&lt;/ldapTLS&gt;</span>
-  <span class="nt">&lt;turnOffCertCheck&gt;</span>0<span class="nt">&lt;/turnOffCertCheck&gt;</span>
-  <span class="nt">&lt;ldapIgnoreNamingRules/&gt;</span>
-  <span class="nt">&lt;ldapUserDisplayName&gt;</span>displayname<span class="nt">&lt;/ldapUserDisplayName&gt;</span>
-  <span class="nt">&lt;ldapUserDisplayName2&gt;</span>uid<span class="nt">&lt;/ldapUserDisplayName2&gt;</span>
-  <span class="nt">&lt;ldapGidNumber&gt;</span>gidNumber<span class="nt">&lt;/ldapGidNumber&gt;</span>
-  <span class="nt">&lt;ldapUserFilterObjectclass&gt;</span>inetOrgPerson<span class="nt">&lt;/ldapUserFilterObjectclass&gt;</span>
-  <span class="nt">&lt;ldapUserFilterGroups&gt;&lt;/ldapUserFilterGroups&gt;</span>
-  <span class="nt">&lt;ldapUserFilter&gt;</span>(<span class="ni">&amp;amp;</span>(objectclass=nextcloudUser)(nextcloudEnabled=TRUE))<span class="nt">&lt;/ldapUserFilter&gt;</span>
-  <span class="nt">&lt;ldapUserFilterMode&gt;</span>1<span class="nt">&lt;/ldapUserFilterMode&gt;</span>
-  <span class="nt">&lt;ldapGroupFilter&gt;</span>(<span class="ni">&amp;amp;</span>(|(objectclass=nextcloudGroup)))<span class="nt">&lt;/ldapGroupFilter&gt;</span>
-  <span class="nt">&lt;ldapGroupFilterMode&gt;</span>0<span class="nt">&lt;/ldapGroupFilterMode&gt;</span>
-  <span class="nt">&lt;ldapGroupFilterObjectclass&gt;</span>nextcloudGroup<span class="nt">&lt;/ldapGroupFilterObjectclass&gt;</span>
-  <span class="nt">&lt;ldapGroupFilterGroups&gt;&lt;/ldapGroupFilterGroups&gt;</span>
-  <span class="nt">&lt;ldapGroupMemberAssocAttr&gt;</span>memberUid<span class="nt">&lt;/ldapGroupMemberAssocAttr&gt;</span>
-  <span class="nt">&lt;ldapGroupDisplayName&gt;</span>cn<span class="nt">&lt;/ldapGroupDisplayName&gt;</span>
-  <span class="nt">&lt;ldapLoginFilter&gt;</span>(<span class="ni">&amp;amp;</span>(|(objectclass=inetOrgPerson))(uid=%uid))<span class="nt">&lt;/ldapLoginFilter&gt;</span>
-  <span class="nt">&lt;ldapLoginFilterMode&gt;</span>0<span class="nt">&lt;/ldapLoginFilterMode&gt;</span>
-  <span class="nt">&lt;ldapLoginFilterEmail&gt;</span>0<span class="nt">&lt;/ldapLoginFilterEmail&gt;</span>
-  <span class="nt">&lt;ldapLoginFilterUsername&gt;</span>1<span class="nt">&lt;/ldapLoginFilterUsername&gt;</span>
-  <span class="nt">&lt;ldapLoginFilterAttributes&gt;&lt;/ldapLoginFilterAttributes&gt;</span>
-  <span class="nt">&lt;ldapQuotaAttribute&gt;&lt;/ldapQuotaAttribute&gt;</span>
-  <span class="nt">&lt;ldapQuotaDefault&gt;</span>20 MB<span class="nt">&lt;/ldapQuotaDefault&gt;</span>
-  <span class="nt">&lt;ldapEmailAttribute&gt;</span>mail<span class="nt">&lt;/ldapEmailAttribute&gt;</span>
-  <span class="nt">&lt;ldapCacheTTL&gt;</span>600<span class="nt">&lt;/ldapCacheTTL&gt;</span>
-  <span class="nt">&lt;ldapUuidUserAttribute&gt;</span>auto<span class="nt">&lt;/ldapUuidUserAttribute&gt;</span>
-  <span class="nt">&lt;ldapUuidGroupAttribute&gt;</span>auto<span class="nt">&lt;/ldapUuidGroupAttribute&gt;</span>
-  <span class="nt">&lt;ldapOverrideMainServer&gt;&lt;/ldapOverrideMainServer&gt;</span>
-  <span class="nt">&lt;ldapConfigurationActive&gt;</span>1<span class="nt">&lt;/ldapConfigurationActive&gt;</span>
-  <span class="nt">&lt;ldapAttributesForUserSearch&gt;</span>uid;sn;givenname<span class="nt">&lt;/ldapAttributesForUserSearch&gt;</span>
-  <span class="nt">&lt;ldapAttributesForGroupSearch&gt;&lt;/ldapAttributesForGroupSearch&gt;</span>
-  <span class="nt">&lt;ldapExperiencedAdmin&gt;</span>0<span class="nt">&lt;/ldapExperiencedAdmin&gt;</span>
-  <span class="nt">&lt;homeFolderNamingRule&gt;</span>attr:mail<span class="nt">&lt;/homeFolderNamingRule&gt;</span>
-  <span class="nt">&lt;hasPagedResultSupport&gt;&lt;/hasPagedResultSupport&gt;</span>
-  <span class="nt">&lt;hasMemberOfFilterSupport&gt;</span>1<span class="nt">&lt;/hasMemberOfFilterSupport&gt;</span>
-  <span class="nt">&lt;useMemberOfToDetectMembership&gt;</span>1<span class="nt">&lt;/useMemberOfToDetectMembership&gt;</span>
-  <span class="nt">&lt;ldapExpertUsernameAttr&gt;&lt;/ldapExpertUsernameAttr&gt;</span>
-  <span class="nt">&lt;ldapExpertUUIDUserAttr&gt;&lt;/ldapExpertUUIDUserAttr&gt;</span>
-  <span class="nt">&lt;ldapExpertUUIDGroupAttr&gt;&lt;/ldapExpertUUIDGroupAttr&gt;</span>
-  <span class="nt">&lt;lastJpegPhotoLookup&gt;</span>0<span class="nt">&lt;/lastJpegPhotoLookup&gt;</span>
-  <span class="nt">&lt;ldapNestedGroups&gt;</span>0<span class="nt">&lt;/ldapNestedGroups&gt;</span>
-  <span class="nt">&lt;ldapPagingSize&gt;</span>500<span class="nt">&lt;/ldapPagingSize&gt;</span>
-  <span class="nt">&lt;turnOnPasswordChange&gt;</span>1<span class="nt">&lt;/turnOnPasswordChange&gt;</span>
-  <span class="nt">&lt;ldapDynamicGroupMemberURL&gt;&lt;/ldapDynamicGroupMemberURL&gt;</span>
-  <span class="nt">&lt;ldapDefaultPPolicyDN&gt;&lt;/ldapDefaultPPolicyDN&gt;</span>
- <span class="nt">&lt;/data&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapHost&gt;</span>ldap://ldap.server.tld<span class="nt">&lt;/ldapHost&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapPort&gt;</span>389<span class="nt">&lt;/ldapPort&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapBackupHost&gt;&lt;/ldapBackupHost&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapBackupPort&gt;&lt;/ldapBackupPort&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapBase&gt;</span>ou=Department<span class="w"> </span>XLII,dc=example,dc=com<span class="nt">&lt;/ldapBase&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapBaseUsers&gt;</span>ou=users,ou=Department<span class="w"> </span>XLII,dc=example,dc=com<span class="nt">&lt;/ldapBaseUsers&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapBaseGroups&gt;</span>ou=Department<span class="w"> </span>XLII,dc=example,dc=com<span class="nt">&lt;/ldapBaseGroups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapAgentName&gt;</span>cn=root,dc=example,dc=com<span class="nt">&lt;/ldapAgentName&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapAgentPassword&gt;</span>Secret<span class="nt">&lt;/ldapAgentPassword&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapTLS&gt;</span>1<span class="nt">&lt;/ldapTLS&gt;</span>
+<span class="w">  </span><span class="nt">&lt;turnOffCertCheck&gt;</span>0<span class="nt">&lt;/turnOffCertCheck&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapIgnoreNamingRules/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserDisplayName&gt;</span>displayname<span class="nt">&lt;/ldapUserDisplayName&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserDisplayName2&gt;</span>uid<span class="nt">&lt;/ldapUserDisplayName2&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGidNumber&gt;</span>gidNumber<span class="nt">&lt;/ldapGidNumber&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserFilterObjectclass&gt;</span>inetOrgPerson<span class="nt">&lt;/ldapUserFilterObjectclass&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserFilterGroups&gt;&lt;/ldapUserFilterGroups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserFilter&gt;</span>(<span class="ni">&amp;amp;</span>(objectclass=nextcloudUser)(nextcloudEnabled=TRUE))<span class="nt">&lt;/ldapUserFilter&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUserFilterMode&gt;</span>1<span class="nt">&lt;/ldapUserFilterMode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupFilter&gt;</span>(<span class="ni">&amp;amp;</span>(|(objectclass=nextcloudGroup)))<span class="nt">&lt;/ldapGroupFilter&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupFilterMode&gt;</span>0<span class="nt">&lt;/ldapGroupFilterMode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupFilterObjectclass&gt;</span>nextcloudGroup<span class="nt">&lt;/ldapGroupFilterObjectclass&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupFilterGroups&gt;&lt;/ldapGroupFilterGroups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupMemberAssocAttr&gt;</span>memberUid<span class="nt">&lt;/ldapGroupMemberAssocAttr&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapGroupDisplayName&gt;</span>cn<span class="nt">&lt;/ldapGroupDisplayName&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapLoginFilter&gt;</span>(<span class="ni">&amp;amp;</span>(|(objectclass=inetOrgPerson))(uid=%uid))<span class="nt">&lt;/ldapLoginFilter&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapLoginFilterMode&gt;</span>0<span class="nt">&lt;/ldapLoginFilterMode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapLoginFilterEmail&gt;</span>0<span class="nt">&lt;/ldapLoginFilterEmail&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapLoginFilterUsername&gt;</span>1<span class="nt">&lt;/ldapLoginFilterUsername&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapLoginFilterAttributes&gt;&lt;/ldapLoginFilterAttributes&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapQuotaAttribute&gt;&lt;/ldapQuotaAttribute&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapQuotaDefault&gt;</span>20<span class="w"> </span>MB<span class="nt">&lt;/ldapQuotaDefault&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapEmailAttribute&gt;</span>mail<span class="nt">&lt;/ldapEmailAttribute&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapCacheTTL&gt;</span>600<span class="nt">&lt;/ldapCacheTTL&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUuidUserAttribute&gt;</span>auto<span class="nt">&lt;/ldapUuidUserAttribute&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapUuidGroupAttribute&gt;</span>auto<span class="nt">&lt;/ldapUuidGroupAttribute&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapOverrideMainServer&gt;&lt;/ldapOverrideMainServer&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapConfigurationActive&gt;</span>1<span class="nt">&lt;/ldapConfigurationActive&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapAttributesForUserSearch&gt;</span>uid;sn;givenname<span class="nt">&lt;/ldapAttributesForUserSearch&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapAttributesForGroupSearch&gt;&lt;/ldapAttributesForGroupSearch&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapExperiencedAdmin&gt;</span>0<span class="nt">&lt;/ldapExperiencedAdmin&gt;</span>
+<span class="w">  </span><span class="nt">&lt;homeFolderNamingRule&gt;</span>attr:mail<span class="nt">&lt;/homeFolderNamingRule&gt;</span>
+<span class="w">  </span><span class="nt">&lt;hasPagedResultSupport&gt;&lt;/hasPagedResultSupport&gt;</span>
+<span class="w">  </span><span class="nt">&lt;hasMemberOfFilterSupport&gt;</span>1<span class="nt">&lt;/hasMemberOfFilterSupport&gt;</span>
+<span class="w">  </span><span class="nt">&lt;useMemberOfToDetectMembership&gt;</span>1<span class="nt">&lt;/useMemberOfToDetectMembership&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapExpertUsernameAttr&gt;&lt;/ldapExpertUsernameAttr&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapExpertUUIDUserAttr&gt;&lt;/ldapExpertUUIDUserAttr&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapExpertUUIDGroupAttr&gt;&lt;/ldapExpertUUIDGroupAttr&gt;</span>
+<span class="w">  </span><span class="nt">&lt;lastJpegPhotoLookup&gt;</span>0<span class="nt">&lt;/lastJpegPhotoLookup&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapNestedGroups&gt;</span>0<span class="nt">&lt;/ldapNestedGroups&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapPagingSize&gt;</span>500<span class="nt">&lt;/ldapPagingSize&gt;</span>
+<span class="w">  </span><span class="nt">&lt;turnOnPasswordChange&gt;</span>1<span class="nt">&lt;/turnOnPasswordChange&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapDynamicGroupMemberURL&gt;&lt;/ldapDynamicGroupMemberURL&gt;</span>
+<span class="w">  </span><span class="nt">&lt;ldapDefaultPPolicyDN&gt;&lt;/ldapDefaultPPolicyDN&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/data&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -295,12 +299,12 @@ basic HTTP authentication header.</p>
 <h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
- <span class="nt">&lt;meta&gt;</span>
-  <span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
-  <span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
-  <span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
- <span class="nt">&lt;/meta&gt;</span>
- <span class="nt">&lt;data/&gt;</span>
+<span class="w"> </span><span class="nt">&lt;meta&gt;</span>
+<span class="w">  </span><span class="nt">&lt;status&gt;</span>ok<span class="nt">&lt;/status&gt;</span>
+<span class="w">  </span><span class="nt">&lt;statuscode&gt;</span>200<span class="nt">&lt;/statuscode&gt;</span>
+<span class="w">  </span><span class="nt">&lt;message&gt;</span>OK<span class="nt">&lt;/message&gt;</span>
+<span class="w"> </span><span class="nt">&lt;/meta&gt;</span>
+<span class="w"> </span><span class="nt">&lt;data/&gt;</span>
 <span class="nt">&lt;/ocs&gt;</span>
 </pre></div>
 </div>
@@ -598,6 +602,11 @@ basic HTTP authentication header.</p>
 <td><p>no</p></td>
 <td><p>PPolicy DN for password rules</p></td>
 </tr>
+<tr class="row-odd"><td><p>ldapConnectionTimeout</p></td>
+<td><p>rw</p></td>
+<td><p>no</p></td>
+<td><p>Set the <code class="docutils literal notranslate"><span class="pre">LDAP_OPT_NETWORK_TIMEOUT</span></code> connection options. Default to 15 sec.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -614,7 +623,7 @@ basic HTTP authentication header.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -639,6 +648,8 @@ basic HTTP authentication header.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

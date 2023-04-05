@@ -32,12 +32,8 @@ use OCP\Migration\IRepairStep;
 use OCP\Support\Subscription\IRegistry;
 
 class SwitchUpdaterServer implements IRepairStep {
-
-	/** @var IConfig */
-	private $config;
-
-	/** @var IRegistry */
-	private $subscriptionRegistry;
+	private IConfig $config;
+	private IRegistry $subscriptionRegistry;
 
 	public function __construct(IConfig $config, IRegistry $subscriptionRegistry) {
 		$this->config = $config;

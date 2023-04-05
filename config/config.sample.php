@@ -257,6 +257,17 @@ $CONFIG = [
 'session_lifetime' => 60 * 60 * 24,
 
 /**
+ * `true` enabled a relaxed session timeout, where the session timeout would no longer be
+ * handled by Nextcloud but by either the PHP garbage collection or the expiration of
+ * potential other session backends like redis.
+ *
+ * This may lead to sessions being available for longer than what session_lifetime uses but
+ * comes with performance benefits as sessions are no longer a locking operation for concurrent
+ * requests.
+ */
+'session_relaxed_expiry' => false,
+
+/**
  * Enable or disable session keep-alive when a user is logged in to the Web UI.
  * Enabling this sends a "heartbeat" to the server to keep it from timing out.
  *
@@ -656,25 +667,39 @@ $CONFIG = [
  * for when files and folders in the trash bin will be permanently deleted.
  * The app allows for two settings, a minimum time for trash bin retention,
  * and a maximum time for trash bin retention.
+ *
  * Minimum time is the number of days a file will be kept, after which it
- * may be deleted. Maximum time is the number of days at which it is guaranteed
- * to be deleted.
+ * _may be_ deleted. A file may be deleted after the minimum number of days
+ * is expired if space is needed. The file will not be deleted if space is
+ * not needed.
+ *
+ * Whether "space is needed" depends on whether a user quota is defined or not:
+ *
+ *  * If no user quota is defined, the available space on the Nextcloud data
+ *    partition sets the limit for the trashbin
+ *    (issues: see https://github.com/nextcloud/server/issues/28451).
+ *  * If a user quota is defined, 50% of the user's remaining quota space sets
+ *    the limit for the trashbin.
+ *
+ * Maximum time is the number of days at which it is _guaranteed
+ * to be_ deleted. There is no further dependency on the available space.
+ *
  * Both minimum and maximum times can be set together to explicitly define
  * file and folder deletion. For migration purposes, this setting is installed
  * initially set to "auto", which is equivalent to the default setting in
  * Nextcloud.
  *
- * Available values:
+ * Available values (D1 and D2 are configurable numbers):
  *
  * * ``auto``
  *     default setting. keeps files and folders in the trash bin for 30 days
  *     and automatically deletes anytime after that if space is needed (note:
  *     files may not be deleted if space is not needed).
- * * ``D, auto``
- *     keeps files and folders in the trash bin for D+ days, delete anytime if
+ * * ``D1, auto``
+ *     keeps files and folders in the trash bin for D1+ days, delete anytime if
  *     space needed (note: files may not be deleted if space is not needed)
- * * ``auto, D``
- *     delete all files in the trash bin that are older than D days
+ * * ``auto, D2``
+ *     delete all files in the trash bin that are older than D2 days
  *     automatically, delete other files anytime if space needed
  * * ``D1, D2``
  *     keep files and folders in the trash bin for at least D1 days and
@@ -904,6 +929,15 @@ $CONFIG = [
 'loglevel' => 2,
 
 /**
+ * Loglevel used by the frontend to start logging at. The same values as
+ * for ``loglevel`` can be used. If not set it defaults to the value
+ * configured for ``loglevel`` or Warning if that is not set either.
+ *
+ * Defaults to ``2``
+ */
+'loglevel_frontend' => 2,
+
+/**
  * If you maintain different instances and aggregate the logs, you may want
  * to distinguish between them. ``syslog_tag`` can be set per instance
  * with a unique id. Only available if ``log_type`` is set to ``syslog`` or
@@ -1109,9 +1143,9 @@ $CONFIG = [
  * If creating the image would allocate more memory, preview generation will
  * be disabled and the default mimetype icon is shown. Set to -1 for no limit.
  *
- * Defaults to ``128`` megabytes
+ * Defaults to ``256`` megabytes
  */
-'preview_max_memory' => 128,
+'preview_max_memory' => 256,
 
 /**
  * custom path for LibreOffice/OpenOffice binary
@@ -1391,7 +1425,8 @@ $CONFIG = [
  * Server details for one or more memcached servers to use for memory caching.
  */
 'memcached_servers' => [
-	// hostname, port and optional weight. Also see:
+	// hostname, port and optional weight
+	// or path and port 0 for unix socket. Also see:
 	// https://www.php.net/manual/en/memcached.addservers.php
 	// https://www.php.net/manual/en/memcached.addserver.php
 	['localhost', 11211],
@@ -1482,6 +1517,8 @@ $CONFIG = [
 		'region' => 'RegionOne',
 		// The Identity / Keystone endpoint
 		'url' => 'http://8.21.28.222:5000/v2.0',
+		// uploadPartSize: size of the uploaded chunks, defaults to 524288000
+		'uploadPartSize' => 524288000,
 		// required on dev-/trystack
 		'tenantName' => 'facebook100000123456789',
 		// dev-/trystack uses swift by default, the lib defaults to 'cloudFiles'
@@ -1732,6 +1769,15 @@ $CONFIG = [
 'tempdirectory' => '/tmp/nextcloudtemp',
 
 /**
+ * Override where Nextcloud stores update files while updating. Useful in situations
+ * where the default `datadirectory` is on network disk like NFS, or is otherwise
+ * restricted. Defaults to the value of `datadirectory` if unset.
+ *
+ * The Web server user must have write access to this directory.
+ */
+'updatedirectory' => '',
+
+/**
  * Hashing
  */
 
@@ -1803,6 +1849,13 @@ $CONFIG = [
 'theme' => '',
 
 /**
+ * Enforce the user theme. This will disable the user theming settings
+ * This must be a valid ITheme ID.
+ * E.g. light, dark, highcontrast, dark-highcontrast...
+ */
+'enforce_theme' => '',
+
+/**
  * The default cipher for encrypting files. Currently supported are:
  *  - AES-256-CTR
  *  - AES-128-CTR
@@ -1812,6 +1865,15 @@ $CONFIG = [
  * Defaults to ``AES-256-CTR``
  */
 'cipher' => 'AES-256-CTR',
+
+/**
+ * Use the legacy base64 format for encrypted files instead of the more space-efficient
+ * binary format. The option affects only newly written files, existing encrypted files
+ * will not be touched and will remain readable whether they use the new format or not.
+ *
+ * Defaults to ``false``
+ */
+'encryption.use_legacy_base64_encoding' => false,
 
 /**
  * The minimum Nextcloud desktop client version that will be allowed to sync with
@@ -1835,6 +1897,26 @@ $CONFIG = [
  * Defaults to ``false``
  */
 'localstorage.allowsymlinks' => false,
+
+/**
+ * Nextcloud overrides umask to ensure suitable access permissions
+ * regardless of webserver/php-fpm configuration and worker state.
+ * WARNING: Modifying this value has security implications and
+ * may soft-break the installation.
+ *
+ * Most installs shall not modify this value.
+ *
+ * Defaults to ``0022``
+ */
+'localstorage.umask' => 0022,
+
+/**
+ * This options allows storage systems that don't allow to modify existing files
+ * to overcome this limitation by removing the files before overwriting.
+ *
+ * Defaults to ``false``
+ */
+'localstorage.unlink_on_truncate' => false,
 
 /**
  * EXPERIMENTAL: option whether to include external storage in quota
@@ -1923,9 +2005,7 @@ $CONFIG = [
  * - IPv4 addresses, e.g. `192.168.2.123`
  * - IPv4 ranges in CIDR notation, e.g. `192.168.2.0/24`
  * - IPv6 addresses, e.g. `fd9e:21a7:a92c:2323::1`
- *
- * _(CIDR notation for IPv6 is currently work in progress and thus not
- * available as of yet)_
+ * - IPv6 ranges in CIDR notation, e.g. `2001:db8:85a3:8d3:1319:8a20::/95`
  *
  * When an incoming request's `REMOTE_ADDR` matches any of the IP addresses
  * specified here, it is assumed to be a proxy instead of a client. Thus, the
@@ -2101,7 +2181,7 @@ $CONFIG = [
  * scan to sync filesystem and database. Only users with unscanned files
  * (size < 0 in filecache) are included. Maximum 500 users per job.
  *
- * Defaults to ``true``
+ * Defaults to ``false``
  */
 'files_no_background_scan' => false,
 
@@ -2165,4 +2245,40 @@ $CONFIG = [
  * the database storage.
  */
 'enable_file_metadata' => true,
+
+/**
+ * Allows to override the default scopes for Account data.
+ * The list of overridable properties and valid values for scopes are in
+ * OCP\Accounts\IAccountManager. Values added here are merged with
+ * default values, which are in OC\Accounts\AccountManager
+ *
+ * For instance, if the phone property should default to the private scope
+ * instead of the local one:
+ * [
+ *   \OCP\Accounts\IAccountManager::PROPERTY_PHONE => \OCP\Accounts\IAccountManager::SCOPE_PRIVATE
+ * ]
+ */
+'account_manager.default_property_scope' => [],
+
+/**
+ * Enable the deprecated Projects feature,
+ * superseded by Related resources as of Nextcloud 25
+ *
+ * Defaults to ``false``
+ */
+'projects.enabled' => false,
+
+/**
+ * Enable the bulk upload feature.
+ *
+ * Defaults to ``true``
+ */
+'bulkupload.enabled' => true,
+
+/**
+ * Enables fetching open graph metadata from remote urls
+ *
+ * Defaults to ``true``
+ */
+'reference_opengraph' => true,
 ];

@@ -19,9 +19,9 @@ OC.L10N.register(
     "guest" : "gas",
     "Show author colors" : "Toon outeurkleure",
     "Author colors are only shown until everyone has closed the document." : "Outeurkleure word slegs getoon tot almal die dokument toegemaak het.",
+    "Offline" : "Vanlyn",
     "Saving …" : "Bewaar tans…",
     "Saved" : "Bewaar",
-    "Last saved {lastSaved}" : "Laas bewaar {lastSaved}",
     "Unsaved changes" : "Onbewaarde veranderinge",
     "Keyboard shortcuts" : "Sneltoetse",
     "Bold" : "Vet",
@@ -42,12 +42,12 @@ OC.L10N.register(
     "Success" : "Sukses",
     "Warning" : "Waarskuwing",
     "Edit" : "Wysig",
+    "Last saved {lastSaved}" : "Laas bewaar {lastSaved}",
     "Enter your name so other users can see who is editing" : "Voer u naam in sodat andere kan weet wie hieraan werk",
-    "Insert image" : "Voer beeld in",
     "Insert an image" : "Voer ’n beeld in",
     "Link file" : "Koppel lêer",
     "Select file to link to" : "Kies lêer om na te koppel",
-    "Currently active users:" : "Gebruikers wat tans aktief is:",
-    "ToDo list" : "Moet-doen-lys"
+    "ToDo list" : "Moet-doen-lys",
+    "Insert image" : "Voer beeld in"
 },
 "nplurals=2; plural=(n != 1);");

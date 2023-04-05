@@ -14,6 +14,7 @@ OC.L10N.register(
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
     "Open {filename}" : "Digeriñ {filename}",
+    "Activity" : "Obererezh",
     "Personal activity feed for %s" : "Froud obererezhioù personel evit %s ",
     "Your feed URL is invalid" : "Direizh eo URL ho froud",
     "Your settings have been updated." : "Nevesaet eo bet hoc'h arventennoù",
@@ -27,7 +28,6 @@ OC.L10N.register(
     "There was some activity at %s" : "Tammoù obererezhioù zo bet da %s",
     "Mail" : "Postel",
     "Push" : "Kas war-raok",
-    "Activity" : "Obererezh",
     "Notifications" : "Kemennadennoù",
     "Send email" : "Kas postel",
     "You need to set up your email address before you can receive notification emails." : "Ret eo dec'h merkañ ho chomlec'h postel a-raok gallout resev kemennadennoù dre bostel.",
@@ -48,7 +48,6 @@ OC.L10N.register(
     "Enable RSS feed" : "Aotren al lanvad RSS",
     "RSS feed" : "Lanvad RSS",
     "No more events to load" : "Darvoud all ebet da gargañ",
-    "Activity notification for %s" : "Kemennadenn obererezh evit %s",
     "This application enables users to view actions related to their files in Nextcloud.\n\t\tOnce enabled, users will see a new icon “Activity” in their apps menu.\n\t\tWhen clicked, a new page appears for users to track the activity related to files – from new files, to deleted files, move, rename, updates and shared activity.\n\t\tThe user can configure their individual activity settings in their personal menu.\n\t\tThis sets the type of activity to record, as well as whether to the user sees their own activities,\n\t\twhether these are only available online, and whether they get an email digest on a regular basis.\n\t\tMore information is available in the Activity documentation." : "Gant an arload-mañ e c'hall an implijerien gwelet an obererezhioù liammet gant o restroù Nextcloud.\n\t\tUr wech aotreet, e welo an implijerien un arlun nevez \"Obererezh\" en o rollad arloadoù.\n\t\tPa vez kliket warni e teuio ur bajenn nevez war wel evit ma c'hallfe an implierien heuliañ an obererezh liammet ouzh ar restroù - eus ar restroù nevez d'ar re dilamet, fiñvet, adanvet, nevesaet pe d'an obererezh rannet gant tud all.\n\t\tGallout a ra an implijerien kefluniañ arventennoù ho obererezh hiniennel en o roll-meuzioù personel.\n\t\tKement-mañ a verk an doare obererezh da vezañ enrollet hag hag-eñ e c'hall an implijerien gwelet o obererezh dezho o-unan,\n\t\tdaoust ha hegerz int enlinennm, daoust ha resev a reont un diverrañ ingal dre bostel.\n\t\tGouzout hiroc'h a c'haller war teuliadur Activity.",
     "Settings" : "Arventennoù",
     "Configure the default notification settings for new users." : "Kefluniañ arventennoù dre ziouer ar c'hemennadennoù evit an implijerien nevez."

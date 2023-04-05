@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -81,7 +85,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Maintenance</a></li>
       <li class="breadcrumb-item active">Migrating from ownCloud</li>
       <li class="wy-breadcrumbs-aside">
@@ -116,23 +120,11 @@ See the table below for a version map, where migrating is easily possible:</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>10.0.5 or later</p></td>
+<tr class="row-even"><td><p>10.11.x</p></td>
+<td><p>25.0.x (but at least 25.0.2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>10.0.5 or later</p></td>
 <td><p>20.0.x (but at least 20.0.5)</p></td>
-</tr>
-<tr class="row-odd"><td><p>10.0.1 - 10.0.5</p></td>
-<td><p>12.0.x (but at least 12.0.1)</p></td>
-</tr>
-<tr class="row-even"><td><p>10.0.0</p></td>
-<td><p>12.0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p>9.1.x</p></td>
-<td><p>10.0.x</p></td>
-</tr>
-<tr class="row-even"><td><p>9.0.x</p></td>
-<td><p>10.0.x</p></td>
-</tr>
-<tr class="row-odd"><td><p>9.0.x</p></td>
-<td><p>9.0.x</p></td>
 </tr>
 </tbody>
 </table>
@@ -163,6 +155,9 @@ migrate your production instance.</p>
 <li><p>If system cron was used, please verify if crontab entry was using the command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">system:cron</span></code>. If yes, please adjust it to use the <code class="docutils literal notranslate"><span class="pre">php</span></code> command instead according to <a class="reference internal" href="../configuration_server/background_jobs_configuration.html#system-cron-configuration-label"><span class="std std-ref">the background jobs configuration documentation</span></a></p></li>
 <li><p>Use the <a class="reference internal" href="update.html"><span class="doc">Nextcloud built-in updater</span></a> to update your instance to the newest version.</p></li>
 <li><p>Make sure to also verify the “Security &amp; setup warnings” in the “Overview” section on the settings page.</p></li>
+<li><p>In some cases, apps installed from the ownCloud Market might have been disabled as incompatible
+(ex: calendar and contacts), so you should reinstall the Nextcloud ones using
+<code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">app:enable</span> <span class="pre">calendar</span></code>, <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">app:enable</span> <span class="pre">contacts</span></code>, etc</p></li>
 </ol>
 </section>
 
@@ -177,7 +172,7 @@ migrate your production instance.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -202,6 +197,8 @@ migrate your production instance.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

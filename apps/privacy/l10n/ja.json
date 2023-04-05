@@ -2,13 +2,12 @@
     "Privacy" : "プライバシー",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "プライバシーセンターでは、あなたのデータがどこに保存され、誰がそれにアクセスできるか、あなたがどういうデータを共有しているのか、それとも管理者からであるのかのを示します。",
-    "Remove external admin" : "外部管理者を削除",
     "Add external admin" : "外部管理者を追加",
     "Name of external admin" : "外部管理者名",
     "This server is using full-disk-encryption." : "このサーバーはフルディスク暗号化を使用しています。",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "あなたのホームストレージは、マスターキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "あなたのストレージデータは、マスターキーを使用して{linkopen}サーバーサイド暗号化{linkclose}で暗号化されています。あなたのつまり、管理者はあなたのファイルにアクセスすることはできますが、その内容を読むことはできません。",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "外部ストレージ上に存在するあなたのファイルは、設定によりマスターキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "あなたのホームストレージは、個別のユーザーキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "あなたのストレージデータは、個別のユーザーキーを使用して {linkopen} サーバーサイド暗号化↗{linkclose} を使用して暗号化されています。つまり、管理者はファイルにアクセスできますが、内容を読み取ることはできません。",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "外部ストレージ上に存在するあなたのファイルは、設定により個別のユーザーキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。",
     "Additionally, this server is protected with full-disk-encryption." : "更にこのサーバーは、ディスク全体の暗号化により保護されています。",
     "This server is protected with full-disk-encryption." : "このサーバーはフルディスク暗号化で保護されています。",
@@ -286,6 +285,8 @@
     "Privacy policy" : "個人情報保護方針",
     "Read the privacy policy." : "個人情報保護方針を読んでください。",
     "Encryption" : "暗号化",
-    "The admin hasn't selected the location of the server yet." : "管理者はまだサーバーの場所を選択していません。"
+    "Remove external admin" : "外部管理者を削除",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "あなたのホームストレージは、マスターキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "あなたのホームストレージは、個別のユーザーキーによる {linkopen}サーバーサイド暗号化 ↗{linkclose} で暗号化されています。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

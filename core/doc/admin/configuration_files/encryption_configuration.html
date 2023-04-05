@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -102,7 +106,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
       <li class="breadcrumb-item active">Encryption configuration</li>
       <li class="wy-breadcrumbs-aside">
@@ -351,9 +355,19 @@ disable it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">enable</span><span class="o">-</span><span class="n">master</span><span class="o">-</span><span class="n">key</span>
 </pre></div>
 </div>
+<p>Fix Bad signature errors:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">--</span><span class="nb">all</span>
+<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span>
+<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">p</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Fix key not found errors:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">key</span><span class="o">-</span><span class="n">location</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 </section>
 <section id="disabling-encryption">
-<h2>Disabling encryption<a class="headerlink" href="#disabling-encryption" title="Permalink to this headline"></a></h2>
+<span id="occ-disable-encryption-label"></span><h2>Disabling encryption<a class="headerlink" href="#disabling-encryption" title="Permalink to this headline"></a></h2>
 <p>You may disable encryption only with <code class="docutils literal notranslate"><span class="pre">occ</span></code>. Make sure you have backups of all
 encryption keys, including users’. Put your Nextcloud server into
 maintenance mode, and then disable your encryption module with these commands:</p>
@@ -425,7 +439,7 @@ command line.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -450,6 +464,8 @@ command line.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace OC\Core\Controller;
 
 use OC\Profile\ProfileManager;
+use OCP\Profile\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -36,26 +37,16 @@ use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Share\IManager as IShareManager;
 use OCP\UserStatus\IManager as IUserStatusManager;
+use OCP\EventDispatcher\IEventDispatcher;
 
 class ProfilePageController extends Controller {
-
-	/** @var IInitialState */
-	private $initialStateService;
-
-	/** @var ProfileManager */
-	private $profileManager;
-
-	/** @var IShareManager */
-	private $shareManager;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	/** @var IUserStatusManager */
-	private $userStatusManager;
+	private IInitialState $initialStateService;
+	private ProfileManager $profileManager;
+	private IShareManager $shareManager;
+	private IUserManager $userManager;
+	private IUserSession $userSession;
+	private IUserStatusManager $userStatusManager;
+	private IEventDispatcher $eventDispatcher;
 
 	public function __construct(
 		$appName,
@@ -65,7 +56,8 @@ class ProfilePageController extends Controller {
 		IShareManager $shareManager,
 		IUserManager $userManager,
 		IUserSession $userSession,
-		IUserStatusManager $userStatusManager
+		IUserStatusManager $userStatusManager,
+		IEventDispatcher $eventDispatcher
 	) {
 		parent::__construct($appName, $request);
 		$this->initialStateService = $initialStateService;
@@ -74,6 +66,7 @@ class ProfilePageController extends Controller {
 		$this->userManager = $userManager;
 		$this->userSession = $userSession;
 		$this->userStatusManager = $userStatusManager;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -122,6 +115,8 @@ class ProfilePageController extends Controller {
 			'profileParameters',
 			$this->profileManager->getProfileParams($targetUser, $visitingUser),
 		);
+
+		$this->eventDispatcher->dispatchTyped(new BeforeTemplateRenderedEvent($targetUserId));
 
 		\OCP\Util::addScript('core', 'profile');
 

@@ -661,9 +661,12 @@ class DefaultShareProvider implements IShareProvider {
 		return $share;
 	}
 
-	public function getSharesInFolder($userId, Folder $node, $reshares) {
+	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true) {
 		$qb = $this->dbConn->getQueryBuilder();
-		$qb->select('*')
+		$qb->select('s.*',
+				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum')
 			->from('share', 's')
 			->andWhere($qb->expr()->orX(
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
@@ -691,29 +694,49 @@ class DefaultShareProvider implements IShareProvider {
 		}
 
 		// todo? maybe get these from the oc_mounts table
-		$childMountNodes = array_filter($node->getDirectoryListing(), function (Node $node) {
+		$childMountNodes = array_filter($node->getDirectoryListing(), function (Node $node): bool {
 			return $node->getInternalPath() === '';
 		});
-		$childMountRootIds = array_map(function (Node $node) {
+		$childMountRootIds = array_map(function (Node $node): int {
 			return $node->getId();
 		}, $childMountNodes);
 
 		$qb->innerJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'));
-		$qb->andWhere(
-			$qb->expr()->orX(
-				$qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())),
-				$qb->expr()->in('f.fileid', $qb->createNamedParameter($childMountRootIds, IQueryBuilder::PARAM_INT_ARRAY))
-			)
-		);
+		if ($shallow) {
+			$qb->andWhere(
+				$qb->expr()->orX(
+					$qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())),
+					$qb->expr()->in('f.fileid', $qb->createParameter('chunk'))
+				)
+			);
+		} else {
+			$qb->andWhere(
+				$qb->expr()->orX(
+					$qb->expr()->like('f.path', $qb->createNamedParameter($this->dbConn->escapeLikeParameter($node->getInternalPath()) . '/%')),
+					$qb->expr()->in('f.fileid', $qb->createParameter('chunk'))
+				)
+			);
+		}
 
 		$qb->orderBy('id');
 
-		$cursor = $qb->execute();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
-			$shares[$data['fileid']][] = $this->createShare($data);
+
+		$chunks = array_chunk($childMountRootIds, 1000);
+
+		// Force the request to be run when there is 0 mount.
+		if (count($chunks) === 0) {
+			$chunks = [[]];
 		}
-		$cursor->closeCursor();
+
+		foreach ($chunks as $chunk) {
+			$qb->setParameter('chunk', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+			$cursor = $qb->executeQuery();
+			while ($data = $cursor->fetch()) {
+				$shares[$data['fileid']][] = $this->createShare($data);
+			}
+			$cursor->closeCursor();
+		}
 
 		return $shares;
 	}
@@ -931,8 +954,8 @@ class DefaultShareProvider implements IShareProvider {
 
 			$start = 0;
 			while (true) {
-				$groups = array_slice($allGroups, $start, 100);
-				$start += 100;
+				$groups = array_slice($allGroups, $start, 1000);
+				$start += 1000;
 
 				if ($groups === []) {
 					break;
@@ -1064,6 +1087,10 @@ class DefaultShareProvider implements IShareProvider {
 			}
 		} elseif ($share->getShareType() === IShare::TYPE_GROUP) {
 			$share->setSharedWith($data['share_with']);
+			$group = $this->groupManager->get($data['share_with']);
+			if ($group !== null) {
+				$share->setSharedWithDisplayName($group->getDisplayName());
+			}
 		} elseif ($share->getShareType() === IShare::TYPE_LINK) {
 			$share->setPassword($data['password']);
 			$share->setSendPasswordByTalk((bool)$data['password_by_talk']);
@@ -1293,7 +1320,7 @@ class DefaultShareProvider implements IShareProvider {
 			$chunks = array_chunk($ids, 100);
 			foreach ($chunks as $chunk) {
 				/*
-				 * Delete all special shares wit this users for the found group shares
+				 * Delete all special shares with this users for the found group shares
 				 */
 				$qb->delete('share')
 					->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_USERGROUP)))

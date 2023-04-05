@@ -22,6 +22,7 @@ $(function(){
 
 	OCA.Activity.Filter = {
 		filter: undefined,
+		defaultPageTitle: undefined,
 		$navigation: $('#app-navigation'),
 
 
@@ -38,7 +39,11 @@ $(function(){
 				return;
 			}
 
-			this.$navigation.find('a[data-navigation=' + this.filter + ']').parent().removeClass('active');
+			if (!this.defaultPageTitle) {
+				this.defaultPageTitle = window.document.title
+			}
+
+			this.$navigation.find('a[data-navigation=' + this.filter + ']').parent().removeClass('active').removeAttr('aria-current');
 			OCA.Activity.InfinitScrolling.firstKnownId = 0;
 			OCA.Activity.InfinitScrolling.lastGivenId = 0;
 
@@ -51,8 +56,10 @@ $(function(){
 			$('#loading_activities').removeClass('hidden');
 			OCA.Activity.InfinitScrolling.ignoreScroll = 0;
 
-			this.$navigation.find('a[data-navigation=' + filter + ']').parent().addClass('active');
-
+			var navigationLink = this.$navigation.find('a[data-navigation=' + filter + ']');
+			navigationLink.parent().addClass('active').attr('aria-current', 'page');
+			window.document.title = navigationLink.text().trim() + ' - ' + this.defaultPageTitle;
+			OCP.Accessibility.setPageHeading(navigationLink.text().trim());
 			OCA.Activity.InfinitScrolling.prefill();
 		}
 	};
@@ -61,7 +68,7 @@ $(function(){
 		ignoreScroll: 0,
 		$container: $('#container'),
 		lastDateGroup: null,
-		$content: $(document),
+		$content: $('#app-content'),
 		firstKnownId: 0,
 		lastGivenId: 0,
 		activities: {},
@@ -195,13 +202,13 @@ $(function(){
 					}
 				}
 
-				var content = '<div class="section activity-section group" data-date="' + escapeHTML(dayOfYear) + '">' + "\n"
-					+'	<h2>'+"\n"
-					+'		<span class="has-tooltip" title="' + escapeHTML(dateOfDay) + '">' + escapeHTML(displayDate) + '</span>' + "\n"
-					+'	</h2>' + "\n"
-					+'	<div class="boxcontainer">' + "\n"
-					+'	</div>' + "\n"
-					+'</div>';
+				var header = '<h2 class="section-header" title="' + escapeHTML(dateOfDay) + '">' + escapeHTML(displayDate) + '</h2>'
+					+'	<span class="hidden-visually">' + escapeHTML(dateOfDay) + '</span>' + "\n";
+				var content = '<ul class="section activity-section group" data-date="' + escapeHTML(dayOfYear) + '">' + '</ul>';
+				var $header = $(header);
+				this.processElements($header);
+				this.$container.append($header);
+
 				var $content = $(content);
 				this.processElements($content);
 				this.$container.append($content);
@@ -225,7 +232,7 @@ $(function(){
 			var monochromeIcon = activity.type !== 'file_created' && activity.type !== 'file_deleted' && activity.type !== 'favorite' && !activity.icon.endsWith('-color.svg');
 
 			var content = ''
-				+ '<div class="activity box" data-activity-id="' + activity.activity_id + '">' + "\n"
+				+ '<li class="activity box" data-activity-id="' + activity.activity_id + '">' + "\n"
 				+ '	<div class="messagecontainer">' + "\n"
 
 				+ '		<div class="activity-icon' + ((monochromeIcon) ? ' monochrome' : '') +'">'
@@ -238,7 +245,11 @@ $(function(){
 				+ ((activity.link) ? '			</a>' + "\n" : '')
 				+ '		</div>' + "\n"
 
-				+'		<span class="activitytime has-tooltip live-relative-timestamp" data-timestamp="' + activity.timestamp + '" title="' + escapeHTML(OC.Util.formatDate(activity.timestamp)) + '">' + "\n"
+				+'		<span class="hidden-visually">' + "\n"
+				+ '			' + escapeHTML(OC.Util.formatDate(activity.timestamp)) + "\n"
+				+'		</span>' + "\n"
+
+				+'		<span class="activitytime live-relative-timestamp" data-timestamp="' + activity.timestamp + '" title="' + escapeHTML(OC.Util.formatDate(activity.timestamp)) + '">' + "\n"
 				+ '			' + escapeHTML(OC.Util.relativeModifiedDate(activity.timestamp)) + "\n"
 				+'		</span>' + "\n";
 
@@ -260,7 +271,7 @@ $(function(){
 			}
 
 			content += '	</div>' + "\n"
-				+'</div>';
+				+'</li>';
 
 			var $content = $(content);
 			this.processElements($content);
@@ -297,9 +308,6 @@ $(function(){
 				self.processElements($subject);
 			});
 
-			$element.find('.has-tooltip').tooltip({
-				placement: 'bottom'
-			});
 		}
 	};
 

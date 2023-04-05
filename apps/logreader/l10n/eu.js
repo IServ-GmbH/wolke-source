@@ -5,11 +5,11 @@ OC.L10N.register(
     "Log Reader" : "Log irakurgailua",
     "A log reader for Nextcloud" : "Nextcloudentzat log fitxategien irakurlea",
     "Log reader for Nextcloud" : "Nextcloudentzat log fitxategien irakurlea",
-    "Error parsing log" : "Log fitxategia irakurtzean errorea",
+    "Error parsing log" : "Errorea log fitxategia irakurtzean",
     "Caused by " : "Arrazoia",
     "Debug" : "Arazketa",
     "Info" : "Informazioa",
-    "Warning" : "Oharra",
+    "Warning" : "Abisua",
     "Error" : "Errorea",
     "Fatal" : "Larria",
     "Copy" : "Kopiatu",
@@ -17,7 +17,7 @@ OC.L10N.register(
     "Copy formatted" : "Kopiatu formatuarekin",
     "No server logs" : "Ez dago zerbitzariaren log fitxategirik",
     "One or more entries are hidden by the log level filter" : "Log mailaren filtroak sarrera bat edo gehiago ezkutatzen du",
-    "Everything is working fine" : "Dena ondo doa",
+    "Everything is working fine" : "Dena ondo dabil",
     "Level" : "Maila",
     "App" : "App",
     "Message" : "Mezua",
@@ -27,7 +27,6 @@ OC.L10N.register(
     "Log levels" : "Log mailak",
     "Log content" : "Log edukia",
     "Live update" : "Etengabeko eguneraketa ",
-    "Download logs" : "Deskargatu log fitxategiak",
-    "Load log file …" : "Kargatu log fitxategia ..."
+    "Download logs" : "Deskargatu log fitxategiak"
 },
 "nplurals=2; plural=(n != 1);");

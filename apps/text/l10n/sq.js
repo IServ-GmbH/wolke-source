@@ -16,12 +16,15 @@ OC.L10N.register(
     "Guest" : "I ftuar",
     "Save guest name" : "Ruaj emrin e të ftuarit",
     "guest" : "vizitor",
+    "Offline" : "Jashtë linje",
     "Saved" : "Ruajtur",
     "Unsaved changes" : "Ndryshime të paruajtura",
     "Formatting help" : "Ndihmë formatimi",
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Bold" : "I theksuar",
     "Italic" : "I pjerrët",
+    "Translate" : "Përkthe",
+    "Replace" : "Mbishkruaj",
     "Unsupported image type" : "Lloj imazhi i pa suportuar",
     "Undo" : "Ktheje pas",
     "Redo" : "Ribëj",
@@ -29,7 +32,6 @@ OC.L10N.register(
     "Success" : "Sukses",
     "Warning" : "Kujdes",
     "Edit" : "Përpuno",
-    "Enter your name so other users can see who is editing" : "Vendosni emrin tuaj që përdoruesit e tjerë mund të shikojnë kush është duke bërë ndryshime",
-    "_and %n other editor_::_and %n other editors_" : ["shto %nredaktor tjetër","shto %nredaktorë të tjerë"]
+    "Enter your name so other users can see who is editing" : "Vendosni emrin tuaj që përdoruesit e tjerë mund të shikojnë kush është duke bërë ndryshime"
 },
 "nplurals=2; plural=(n != 1);");

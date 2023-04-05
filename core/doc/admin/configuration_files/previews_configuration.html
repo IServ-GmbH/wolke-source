@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -96,7 +100,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
       <li class="breadcrumb-item active">Previews configuration</li>
       <li class="wy-breadcrumbs-aside">
@@ -136,6 +140,7 @@ them, and they are not documented.</p>
 <p>Please notice that the Nextcloud preview system comes already with sensible
 defaults, and therefore it is usually unnecessary to adjust those configuration
 values.</p>
+<p>But deemed necessary, following changes have to be made in <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code> file. As a best practice, take a backup of this config file before making a lot of changes.</p>
 <section id="disabling-previews">
 <h3>Disabling previews:<a class="headerlink" href="#disabling-previews" title="Permalink to this headline"></a></h3>
 <p>Under certain circumstances, for example if the server has limited
@@ -143,7 +148,7 @@ resources, you might want to consider disabling the generation of previews.
 Note that if you do this all previews in all apps are disabled, including
 the Gallery app, and will display generic icons instead of
 thumbnails.</p>
-<p>Set the configuration option <code class="docutils literal notranslate"><span class="pre">enable_previews</span></code> in config.php to <code class="docutils literal notranslate"><span class="pre">false</span></code>:</p>
+<p>Set the configuration option <code class="docutils literal notranslate"><span class="pre">enable_previews</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?php
   &#39;enable_previews&#39; =&gt; false,
 </pre></div>
@@ -209,7 +214,7 @@ to ‘null’:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -234,6 +239,8 @@ to ‘null’:</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

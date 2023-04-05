@@ -39,7 +39,6 @@ use OCP\Files\Mount\IMountManager;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IPreview;
 use OCP\IRequest;
 use OCP\ITagManager;
@@ -50,44 +49,20 @@ use Sabre\DAV\Auth\Plugin;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ServerFactory {
-	/** @var IConfig */
-	private $config;
-	/** @var ILogger */
-	private $logger;
-	/** @var LoggerInterface */
-	private $psrLogger;
-	/** @var IDBConnection */
-	private $databaseConnection;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var IMountManager */
-	private $mountManager;
-	/** @var ITagManager */
-	private $tagManager;
-	/** @var IRequest */
-	private $request;
-	/** @var IPreview  */
-	private $previewManager;
-	/** @var EventDispatcherInterface */
-	private $eventDispatcher;
-	/** @var IL10N */
-	private $l10n;
+	private IConfig $config;
+	private LoggerInterface $logger;
+	private IDBConnection $databaseConnection;
+	private IUserSession $userSession;
+	private IMountManager $mountManager;
+	private ITagManager $tagManager;
+	private IRequest $request;
+	private IPreview $previewManager;
+	private EventDispatcherInterface $eventDispatcher;
+	private IL10N $l10n;
 
-	/**
-	 * @param IConfig $config
-	 * @param ILogger $logger
-	 * @param LoggerInterface $psrLogger
-	 * @param IDBConnection $databaseConnection
-	 * @param IUserSession $userSession
-	 * @param IMountManager $mountManager
-	 * @param ITagManager $tagManager
-	 * @param IRequest $request
-	 * @param IPreview $previewManager
-	 */
 	public function __construct(
 		IConfig $config,
-		ILogger $logger,
-		LoggerInterface $psrLogger,
+		LoggerInterface $logger,
 		IDBConnection $databaseConnection,
 		IUserSession $userSession,
 		IMountManager $mountManager,
@@ -99,7 +74,6 @@ class ServerFactory {
 	) {
 		$this->config = $config;
 		$this->logger = $logger;
-		$this->psrLogger = $psrLogger;
 		$this->databaseConnection = $databaseConnection;
 		$this->userSession = $userSession;
 		$this->mountManager = $mountManager;
@@ -111,16 +85,12 @@ class ServerFactory {
 	}
 
 	/**
-	 * @param string $baseUri
-	 * @param string $requestUri
-	 * @param Plugin $authPlugin
 	 * @param callable $viewCallBack callback that should return the view for the dav endpoint
-	 * @return Server
 	 */
-	public function createServer($baseUri,
-								 $requestUri,
+	public function createServer(string $baseUri,
+								 string $requestUri,
 								 Plugin $authPlugin,
-								 callable $viewCallBack) {
+								 callable $viewCallBack): Server {
 		// Fire up server
 		$objectTree = new \OCA\DAV\Connector\Sabre\ObjectTree();
 		$server = new \OCA\DAV\Connector\Sabre\Server($objectTree);
@@ -191,7 +161,7 @@ class ServerFactory {
 
 			// Allow view-only plugin for webdav requests
 			$server->addPlugin(new ViewOnlyPlugin(
-				$this->psrLogger
+				$this->logger
 			));
 
 			if ($this->userSession->isLoggedIn()) {

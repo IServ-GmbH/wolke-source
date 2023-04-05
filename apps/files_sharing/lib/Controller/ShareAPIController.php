@@ -366,26 +366,34 @@ class ShareAPIController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $id
+	 * @param bool $includeTags
 	 * @return DataResponse
 	 * @throws OCSNotFoundException
 	 */
-	public function getShare(string $id): DataResponse {
+	public function getShare(string $id, bool $includeTags = false): DataResponse {
 		try {
 			$share = $this->getShareById($id);
 		} catch (ShareNotFound $e) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		try {
 			if ($this->canAccessShare($share)) {
 				$share = $this->formatShare($share);
-				return new DataResponse([$share]);
+
+				if ($includeTags) {
+					$share = Helper::populateTags([$share], 'file_source', \OC::$server->getTagManager());
+				} else {
+					$share = [$share];
+				}
+
+				return new DataResponse($share);
 			}
 		} catch (NotFoundException $e) {
-			// Fall trough
+			// Fall through
 		}
 
-		throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+		throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 	}
 
 	/**
@@ -401,7 +409,7 @@ class ShareAPIController extends OCSController {
 		try {
 			$share = $this->getShareById($id);
 		} catch (ShareNotFound $e) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		try {
@@ -411,7 +419,7 @@ class ShareAPIController extends OCSController {
 		}
 
 		if (!$this->canAccessShare($share)) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		// if it's a group share or a room share
@@ -1073,13 +1081,13 @@ class ShareAPIController extends OCSController {
 		try {
 			$share = $this->getShareById($id);
 		} catch (ShareNotFound $e) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		$this->lock($share->getNode());
 
 		if (!$this->canAccessShare($share, false)) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		if (!$this->canEditShare($share)) {
@@ -1173,7 +1181,9 @@ class ShareAPIController extends OCSController {
 				}
 
 				// normalize to correct public upload permissions
-				$newPermissions = Constants::PERMISSION_READ | Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE | Constants::PERMISSION_DELETE;
+				if ($publicUpload === 'true') {
+					$newPermissions = Constants::PERMISSION_READ | Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE | Constants::PERMISSION_DELETE;
+				}
 			}
 
 			if ($newPermissions !== null) {
@@ -1205,7 +1215,7 @@ class ShareAPIController extends OCSController {
 
 			if ($label !== null) {
 				if (strlen($label) > 255) {
-					throw new OCSBadRequestException("Maxmimum label length is 255");
+					throw new OCSBadRequestException("Maximum label length is 255");
 				}
 				$share->setLabel($label);
 			}
@@ -1314,11 +1324,11 @@ class ShareAPIController extends OCSController {
 		try {
 			$share = $this->getShareById($id);
 		} catch (ShareNotFound $e) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		if (!$this->canAccessShare($share)) {
-			throw new OCSNotFoundException($this->l->t('Wrong share ID, share doesn\'t exist'));
+			throw new OCSNotFoundException($this->l->t('Wrong share ID, share does not exist'));
 		}
 
 		try {
@@ -1527,7 +1537,7 @@ class ShareAPIController extends OCSController {
 	 */
 	private function parseDate(string $expireDate): \DateTime {
 		try {
-			$date = new \DateTime($expireDate);
+			$date = new \DateTime(trim($expireDate, "\""));
 		} catch (\Exception $e) {
 			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
 		}

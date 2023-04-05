@@ -1,7 +1,6 @@
 OC.L10N.register(
     "firstrunwizard",
     {
-    "Copy to clipboard" : "Copy to clipboard",
     "Copied!" : "Copied!",
     "Not supported!" : "Not supported!",
     "Press ⌘-C to copy." : "Press ⌘-C to copy.",
@@ -24,7 +23,7 @@ OC.L10N.register(
     "Kanban style organization for personal planning and team projects." : "Kanban style organization for personal planning and team projects.",
     "App recommendation: Forms" : "App recommendation: Forms",
     "Simple surveys and questionnaires, self-hosted" : "Simple surveys and questionnaires, self-hosted",
-    "App recommendation: Recognize" : "App recommendation: Recognize",
+    "App recommendation: Recognize" : "App recommendation: Recognise",
     "Smart media tagging for Nextcloud" : "Smart media tagging for Nextcloud",
     "App recommendation: Group folders" : "App recommendation: Group folders",
     "Admin-configured folders shared by everyone in a group." : "Admin-configured folders shared by everyone in a group.",
@@ -82,12 +81,11 @@ OC.L10N.register(
     "Server address" : "Server address",
     "Use this link to connect your apps and desktop client to this server:" : "Use this link to connect your apps and desktop client to this server:",
     "Copy link" : "Copy link",
+    "Copy to clipboard" : "Copy to clipboard",
     "App recommendation: Notes" : "App recommendation: Notes",
     "Distraction-free notes and writing." : "Distraction-free notes and writing.",
     "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support.",
     "Get enterprise support" : "Get enterprise support",
-    "the Nextcloud IRC chat channel on freenode.net" : "the Nextcloud IRC chat channel on freenode.net",
-    "Open Standards and Interoperability" : "Open Standards and Interoperability",
-    "100%% Open Source & community-focused" : "100%% Open Source & community-focused"
+    "the Nextcloud IRC chat channel on freenode.net" : "the Nextcloud IRC chat channel on freenode.net"
 },
 "nplurals=2; plural=(n != 1);");

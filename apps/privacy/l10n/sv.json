@@ -2,13 +2,14 @@
     "Privacy" : "Integritet",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Sekretesscentret visar var din data lagras och vem som kan komma åt den, antingen för att du delade med dem eller för att de är administratörer.",
-    "Remove external admin" : "Ta bort extern administratör",
+    "Remove external {propertyName} admin" : "Ta bort extern {propertyName} admin",
     "Add external admin" : "Lägg till extern administratör",
     "Name of external admin" : "Namn på extern administratör",
+    "Adapt encryption" : "Anpassa kryptering",
     "This server is using full-disk-encryption." : "Servern använder fullständig disk-kryptering.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Din hemkatalog är krypterad med {linkopen}serverkryptering ↗{linkclose} med en huvudnyckel.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Dina filer krypteras med {linkopen}serverkryptering ↗{linkclose} med en huvudnyckel. Det betyder att administratörer kan komma åt dina filer, men inte läsa deras innehåll.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Dina filer på externa lagringsutrymmen kan krypteras med {linkopen}serverkryptering ↗{linkclose} med en huvudnyckel baserad på deras konfiguration.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Din hemkatalog är krypterad med {linkopen}serverkryptering ↗{linkclose} med en individuell nyckel per användare.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Dina filer krypteras med {linkopen}serverkryptering ↗{linkclose} som använder individuell användarnyckel. Det betyder att administratörer kan komma åt dina filer, men inte läsa deras innehåll.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Dina filer på externa lagringsutrymmen kan krypteras med {linkopen}serverkryptering ↗{linkclose} med en individuell nyckel baserad på deras konfiguration.",
     "Additionally, this server is protected with full-disk-encryption." : "Dessutom är servern skyddad med fullständig diskkryptering.",
     "This server is protected with full-disk-encryption." : "Servern är skyddad med fullständig disk-kryptering.",
@@ -286,6 +287,8 @@
     "Privacy policy" : "Integritetspolicy",
     "Read the privacy policy." : "Läs integritetspolicy.",
     "Encryption" : "Kryptering",
-    "The admin hasn't selected the location of the server yet." : "Administratören har inte valt någon plats för servern än."
+    "Remove external admin" : "Ta bort extern administratör",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Din hemkatalog är krypterad med {linkopen}serverkryptering ↗{linkclose} med en huvudnyckel.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Din hemkatalog är krypterad med {linkopen}serverkryptering ↗{linkclose} med en individuell nyckel per användare."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

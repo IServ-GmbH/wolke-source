@@ -4,7 +4,6 @@ OC.L10N.register(
     "Privacy" : "Privateco",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "La privatecejo montras, kie viaj datumoj konserviĝas, kaj kiu povas aliri al ili, ĉar vi kunhavigis kun ili aŭ ili estas administrantoj.",
-    "Remove external admin" : "Forigi eksteran administranton",
     "Add external admin" : "Aldoni eksteran administranton",
     "This server is using full-disk-encryption." : "Tiu servilo uzas ĉifradon de la tuta disko.",
     "This server is protected with full-disk-encryption." : "Tiu servilo estas protektita per ĉifrado de la tuta disko.",
@@ -273,6 +272,6 @@ OC.L10N.register(
     "Privacy policy" : "Privateca regularo",
     "Read the privacy policy." : "Legi la regularon pri privateco.",
     "Encryption" : "Ĉifrado",
-    "The admin hasn't selected the location of the server yet." : "La administranto ankoraŭ ne elektis la lokon de tiu servilo."
+    "Remove external admin" : "Forigi eksteran administranton"
 },
 "nplurals=2; plural=(n != 1);");

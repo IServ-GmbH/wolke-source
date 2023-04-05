@@ -311,9 +311,9 @@ class OC_Defaults {
 	/**
 	 * @return array scss variables to overwrite
 	 */
-	public function getScssVariables(bool $brightBackground = true) {
+	public function getScssVariables() {
 		if ($this->themeExist('getScssVariables')) {
-			return $this->theme->getScssVariables($brightBackground);
+			return $this->theme->getScssVariables();
 		}
 		return [];
 	}

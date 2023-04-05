@@ -28,6 +28,7 @@ use OCP\ICache;
  *
  * Uses a simple FIFO expiry mechanism
  * @template T
+ * @deprecated use OCP\Cache\CappedMemoryCache instead
  */
 class CappedMemoryCache implements ICache, \ArrayAccess {
 	private $capacity;
@@ -88,7 +89,7 @@ class CappedMemoryCache implements ICache, \ArrayAccess {
 	}
 
 	/**
-	 * @param string $key
+	 * @param string $offset
 	 * @param T $value
 	 * @return void
 	 */

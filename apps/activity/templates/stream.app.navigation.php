@@ -22,10 +22,10 @@
  *
  */
 ?>
-<div id="app-navigation">
+<div id="app-navigation" role="navigation">
 	<ul>
 	<?php foreach ($_['navigations'] as $navigation) { ?>
-		<li<?php if ($_['activeNavigation'] === $navigation['id']): ?> class="active"<?php endif; ?>>
+		<li<?php if ($_['activeNavigation'] === $navigation['id']): ?> class="active" aria-current="page"<?php endif; ?>>
 			<a data-navigation="<?php p($navigation['id']) ?>"
 			   href="<?php p($navigation['url']) ?>">
 				<?php if (!empty($navigation['icon'])) { ?>
@@ -41,7 +41,7 @@
 
 	<div id="app-settings">
 		<div id="app-settings-header">
-			<button class="settings-button" data-apps-slide-toggle="#app-settings-content"><?php p($l->t('Settings'));?></button>
+			<button class="settings-button" data-apps-slide-toggle="#app-settings-content"><?php p($l->t('Activity settings'));?></button>
 		</div>
 
 		<div id="app-settings-content">

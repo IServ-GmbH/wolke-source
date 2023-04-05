@@ -1,7 +1,6 @@
 OC.L10N.register(
     "firstrunwizard",
     {
-    "Copy to clipboard" : "In die Zwischenablage kopieren",
     "Copied!" : "Kopiert!",
     "Not supported!" : "Nicht unterstützt!",
     "Press ⌘-C to copy." : "Zum Kopieren ⌘-C drücken.",
@@ -22,6 +21,9 @@ OC.L10N.register(
     "Sync tasks from various devices with your Nextcloud and edit them online." : "Synchronisiere Aufgaben von verschiedenen Geräten mit deiner Nextcloud und bearbeite sie online.",
     "App recommendation: Deck" : "App-Empfehlung: Deck",
     "Kanban style organization for personal planning and team projects." : "Kanban-ähnliche Organisation für persönliche Planung und Teamprojekte.",
+    "App recommendation: Forms" : "App-Empfehlung: Formulare",
+    "Simple surveys and questionnaires, self-hosted" : "Einfache Umfragen und Fragebögen, selbst gehostet",
+    "App recommendation: Recognize" : "App-Empfehlung: Recognize",
     "Smart media tagging for Nextcloud" : "Intelligentes Media-Tagging für Nextcloud",
     "App recommendation: Group folders" : "App-Empfehlung: Group folders",
     "Admin-configured folders shared by everyone in a group." : "Vom Administrator konfigurierte Ordner, die mit jedem Gruppenmitglied geteilt sind.",
@@ -56,6 +58,8 @@ OC.L10N.register(
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Willst du eine bestimmte Verbesserung in Nextcloud? Hast du ein Problem gefunden? Willst du uns beim Übersetzen, Werben oder der Dokumentation helfen?",
     "Become part of the Community" : "Werde Teil der Community",
     "Enterprise support" : "Support für Firmen",
+    "If you run Nextcloud in a mission critical environment where security and compliance are important, you need the certainty of Nextcloud Enterprise." : "Wenn du Nextcloud in einer geschäftskritischen Umgebung betreibst, in der Sicherheit und Compliance wichtig sind, benötigst du die Sicherheit von Nextcloud Enterprise.",
+    "Learn more about Nextcloud Enterprise" : "Erfahre mehr über Nextcloud Enterprise",
     "Get more information" : "Bekomme mehr Informationen",
     "The Nextcloud documentation for home users:" : "Die Nextcloud-Dokumentation für Heimnutzer:",
     "User manual" : "Benutzerhandbuch",
@@ -77,12 +81,11 @@ OC.L10N.register(
     "Server address" : "Serveradresse",
     "Use this link to connect your apps and desktop client to this server:" : "Verwende diesen Link, um deine Apps und deinen Desktop-Clienten mit diesem Server zu verbinden:",
     "Copy link" : "Link kopieren",
+    "Copy to clipboard" : "In die Zwischenablage kopieren",
     "App recommendation: Notes" : "App-Empfehlung: Notes",
     "Distraction-free notes and writing." : "Ablenkungsfreie Notizen und Schreiben.",
     "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Wenn du Nextcloud in einer missionskritischen Umgebung mit einer hohen Anzahl Nutzern und großen Datenmengen betreibst und die Sicherheit und Unterstützung der Experten hinter der Nextcloud-Technologie benötigst, dann kannst du ein Enterprise-Abo von der Nextcloud GmbH kaufen. Dies beinhaltet Unterstützung via E-Mail und Telefon.",
     "Get enterprise support" : "Enterprise Support erhalten",
-    "the Nextcloud IRC chat channel on freenode.net" : "Der Nextcloud IRC Chat Channel auf freenode.net",
-    "Open Standards and Interoperability" : "Offene Standards und Interoperabilität",
-    "100%% Open Source & community-focused" : "100%% Open Source & Community-fokussiert"
+    "the Nextcloud IRC chat channel on freenode.net" : "Der Nextcloud IRC Chat Channel auf freenode.net"
 },
 "nplurals=2; plural=(n != 1);");

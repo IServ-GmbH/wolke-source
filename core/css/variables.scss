@@ -19,8 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
- // SCSS darken/lighten function override
+// SCSS darken/lighten function override
 @function nc-darken($color, $value) {
 	@return darken($color, $value);
 }
@@ -57,7 +56,6 @@ $color-primary-text-dark: darken($color-primary-text, 7%) !default;
 $color-primary-element: $color-primary !default;
 $color-primary-element-hover: mix($color-primary-element, $color-main-background, 80%) !default;
 $color-primary-element-light: lighten($color-primary-element, 15%) !default;
-$color-primary-element-lighter: mix($color-primary-element, $color-main-background, 15%) !default;
 
 $color-error: #e9322d;
 $color-error-hover: mix($color-error, $color-main-background, 80%) !default;
@@ -117,3 +115,4 @@ $header-menu-profile-item-height: 66px;
 
 // mobile. Keep in sync with core/js/js.js
 $breakpoint-mobile: 1024px;
+

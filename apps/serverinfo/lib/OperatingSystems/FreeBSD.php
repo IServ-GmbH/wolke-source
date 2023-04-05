@@ -41,12 +41,12 @@ class FreeBSD implements IOperatingSystem {
 		}
 
 		$matches = [];
-		$pattern = '/(?>\/dev\/\w+)\s+(?>\d+)\s+(?<Used>\d+)\s+(?<Avail>\d+)\s+(?<Capacity>\d+)/';
+		$pattern = '/(?>\/dev\/\S+)\s+(?>\d+)\s+(?<Used>\d+)\s+(?<Avail>\d+)\s+(?<Capacity>\d+)/';
 
 		$result = preg_match_all($pattern, $swapinfo, $matches);
-		if ($result === 1) {
-			$data->setSwapTotal((int)((int)$matches['Avail'][0] / 1024));
-			$data->setSwapFree(($data->getSwapTotal() - (int)((int)$matches['Used'][0] / 1024)));
+		if ($result !== 0) {
+			$data->setSwapTotal((int)((int)array_sum($matches['Avail']) / 1024));
+			$data->setSwapFree(($data->getSwapTotal() - (int)((int)array_sum($matches['Used']) / 1024)));
 		}
 
 		unset($matches, $result);
@@ -211,15 +211,16 @@ class FreeBSD implements IOperatingSystem {
 		}
 
 		$matches = [];
-		$pattern = '/^(?<Filesystem>[\w\/-]+)\s*(?<Type>\w+)\s*(?<Blocks>\d+)\s*(?<Used>\d+)\s*(?<Available>\d+)\s*(?<Capacity>\d+%)\s*(?<Mounted>[\w\/-]+)$/m';
+		$pattern = '/^(?<Filesystem>[\S]+)\s*(?<Type>[\S]+)\s*(?<Blocks>\d+)\s*(?<Used>\d+)\s*(?<Available>\d+)\s*(?<Capacity>\d+%)\s*(?<Mounted>[\w\/-]+)$/m';
 
 		$result = preg_match_all($pattern, $disks, $matches);
 		if ($result === 0 || $result === false) {
 			return $data;
 		}
 
+		$excluded = ['devfs', 'fdescfs', 'tmpfs', 'devtmpfs', 'procfs', 'linprocfs', 'linsysfs'];
 		foreach ($matches['Filesystem'] as $i => $filesystem) {
-			if (in_array($matches['Type'][$i], ['tmpfs', 'devtmpfs'], false)) {
+			if (in_array($matches['Type'][$i], $excluded, false)) {
 				continue;
 			}
 
@@ -235,6 +236,10 @@ class FreeBSD implements IOperatingSystem {
 		}
 
 		return $data;
+	}
+
+	public function getThermalZones(): array {
+		return [];
 	}
 
 	protected function executeCommand(string $command): string {

@@ -13,6 +13,7 @@ OC.L10N.register(
     "There are no events for this filter" : "Нема догађаја за овај филтер",
     "Today" : "данас",
     "Yesterday" : "јуче",
+    "Activity" : "Активност",
     "Personal activity feed for %s" : "Довод личних активности корисника %s",
     "Your feed URL is invalid" : "УРЛ вашег довода није исправан",
     "Your settings have been updated." : "Ваше поставке су ажуриране.",
@@ -25,7 +26,6 @@ OC.L10N.register(
     "Hello %s," : "Здраво %s,",
     "There was some activity at %s" : "Било је активности у %s ",
     "Mail" : "поштом",
-    "Activity" : "Активност",
     "Notifications" : "Obaveštenja",
     "You need to set up your email address before you can receive notification emails." : "Морате поставити адресу е-поште пре почетка пријема обавештења.",
     "Send activity emails" : "Шаљи е-пошту са активностима",
@@ -40,7 +40,6 @@ OC.L10N.register(
     "Enable RSS feed" : "Укључи РСС довод",
     "RSS feed" : "РСС довод",
     "No more events to load" : "Нема више догађаја за приказ",
-    "Activity notification for %s" : "Обавештења о активностима за %s",
     "This application enables users to view actions related to their files in Nextcloud.\n\t\tOnce enabled, users will see a new icon “Activity” in their apps menu.\n\t\tWhen clicked, a new page appears for users to track the activity related to files – from new files, to deleted files, move, rename, updates and shared activity.\n\t\tThe user can configure their individual activity settings in their personal menu.\n\t\tThis sets the type of activity to record, as well as whether to the user sees their own activities,\n\t\twhether these are only available online, and whether they get an email digest on a regular basis.\n\t\tMore information is available in the Activity documentation." : "Ова апликација омогућава корисницима да виде радње везане за њихове Некстклауд фајлове.\n\t\tКада се укључи, корисници ће видети нову иконицу \"Активности\" у главном менију.\n\t\tКада се она кликне, појављује се нова страна где корисник прати активности везане за фајлове – од нових фајлова, до брисања фајлова, премештања, преименовања, ажурирања и радњи дељења.\n\t\tКорисник може подесити појединачне поставке активности у личном менију.\n\t\tОвим се подешава које се активности бележе и да ли корисник види сопствене активности,\n\t\tда ли су активности доступне само на интернету и да ли се редовно добија е-пошта са сажетком.\n\t\tВише информација је доступно у документацији за Активности.",
     "Settings" : "Поставке"
 },

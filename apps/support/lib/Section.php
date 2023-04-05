@@ -24,54 +24,34 @@
 namespace OCA\Support;
 
 class Section implements ISection {
-
-	/** @var string */
-	private $identifier;
-	/** @var string */
-	private $title;
+	private string $identifier;
+	private string $title;
 	/** @var IDetail[]  */
-	private $details = [];
+	private array $details = [];
 
-	public function __construct($identifier, $title, $order = 0) {
+	public function __construct(string $identifier, string $title, int $order = 0) {
 		$this->identifier = $identifier;
 		$this->title = $title;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getIdentifier() {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getTitle() {
+	public function getTitle(): string {
 		return $this->title;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function addDetail(IDetail $details) {
+	public function addDetail(IDetail $details): void {
 		$this->details[] = $details;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function getDetails() {
+	/** @inheritdoc */
+	public function getDetails(): array {
 		return $this->details;
 	}
 
-	/**
-	 * @inheritdoc
-	 */
-	public function createDetail($title, $information, $type = IDetail::TYPE_SINGLE_LINE) {
-		if (!is_string($information)) {
-			$information = print_r($information, true);
-		}
+	public function createDetail(string $title, string $information, int $type = IDetail::TYPE_SINGLE_LINE): IDetail {
 		$detail = new Detail($this->getIdentifier(), $title, $information, $type);
 		$this->addDetail($detail);
 		return $detail;

@@ -30,9 +30,9 @@ namespace OCA\DAV\CardDAV;
 
 use OC\Accounts\AccountManager;
 use OCP\AppFramework\Http;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 use Sabre\DAV\Client;
 use Sabre\DAV\Xml\Response\MultiStatus;
 use Sabre\DAV\Xml\Service;
@@ -40,34 +40,17 @@ use Sabre\HTTP\ClientHttpException;
 use Sabre\VObject\Reader;
 
 class SyncService {
+	private CardDavBackend $backend;
+	private IUserManager $userManager;
+	private LoggerInterface $logger;
+	private ?array $localSystemAddressBook = null;
+	private Converter $converter;
+	protected string $certPath;
 
-	/** @var CardDavBackend */
-	private $backend;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var ILogger */
-	private $logger;
-
-	/** @var array */
-	private $localSystemAddressBook;
-
-	/** @var Converter */
-	private $converter;
-
-	/** @var string */
-	protected $certPath;
-
-	/**
-	 * SyncService constructor.
-	 *
-	 * @param CardDavBackend $backend
-	 * @param IUserManager $userManager
-	 * @param ILogger $logger
-	 * @param AccountManager $accountManager
-	 */
-	public function __construct(CardDavBackend $backend, IUserManager $userManager, ILogger $logger, Converter $converter) {
+	public function __construct(CardDavBackend $backend,
+								IUserManager $userManager,
+								LoggerInterface $logger,
+								Converter $converter) {
 		$this->backend = $backend;
 		$this->userManager = $userManager;
 		$this->logger = $logger;
@@ -76,20 +59,11 @@ class SyncService {
 	}
 
 	/**
-	 * @param string $url
-	 * @param string $userName
-	 * @param string $addressBookUrl
-	 * @param string $sharedSecret
-	 * @param string $syncToken
-	 * @param int $targetBookId
-	 * @param string $targetPrincipal
-	 * @param array $targetProperties
-	 * @return string
 	 * @throws \Exception
 	 */
-	public function syncRemoteAddressBook($url, $userName, $addressBookUrl, $sharedSecret, $syncToken, $targetBookId, $targetPrincipal, $targetProperties) {
+	public function syncRemoteAddressBook(string $url, string $userName, string $addressBookUrl, string $sharedSecret, ?string $syncToken, string $targetBookHash, string $targetPrincipal, array $targetProperties): string {
 		// 1. create addressbook
-		$book = $this->ensureSystemAddressBookExists($targetPrincipal, $targetBookId, $targetProperties);
+		$book = $this->ensureSystemAddressBookExists($targetPrincipal, $targetBookHash, $targetProperties);
 		$addressBookId = $book['id'];
 
 		// 2. query changes
@@ -125,28 +99,23 @@ class SyncService {
 	}
 
 	/**
-	 * @param string $principal
-	 * @param string $id
-	 * @param array $properties
-	 * @return array|null
 	 * @throws \Sabre\DAV\Exception\BadRequest
 	 */
-	public function ensureSystemAddressBookExists($principal, $id, $properties) {
-		$book = $this->backend->getAddressBooksByUri($principal, $id);
+	public function ensureSystemAddressBookExists(string $principal, string $uri, array $properties): ?array {
+		$book = $this->backend->getAddressBooksByUri($principal, $uri);
 		if (!is_null($book)) {
 			return $book;
 		}
-		$this->backend->createAddressBook($principal, $id, $properties);
+		// FIXME This might break in clustered DB setup
+		$this->backend->createAddressBook($principal, $uri, $properties);
 
-		return $this->backend->getAddressBooksByUri($principal, $id);
+		return $this->backend->getAddressBooksByUri($principal, $uri);
 	}
 
 	/**
 	 * Check if there is a valid certPath we should use
-	 *
-	 * @return string
 	 */
-	protected function getCertPath() {
+	protected function getCertPath(): string {
 
 		// we already have a valid certPath
 		if ($this->certPath !== '') {
@@ -162,14 +131,7 @@ class SyncService {
 		return $this->certPath;
 	}
 
-	/**
-	 * @param string $url
-	 * @param string $userName
-	 * @param string $addressBookUrl
-	 * @param string $sharedSecret
-	 * @return Client
-	 */
-	protected function getClient($url, $userName, $sharedSecret) {
+	protected function getClient(string $url, string $userName, string $sharedSecret): Client {
 		$settings = [
 			'baseUri' => $url . '/',
 			'userName' => $userName,
@@ -186,15 +148,7 @@ class SyncService {
 		return $client;
 	}
 
-	/**
-	 * @param string $url
-	 * @param string $userName
-	 * @param string $addressBookUrl
-	 * @param string $sharedSecret
-	 * @param string $syncToken
-	 * @return array
-	 */
-	protected function requestSyncReport($url, $userName, $addressBookUrl, $sharedSecret, $syncToken) {
+	protected function requestSyncReport(string $url, string $userName, string $addressBookUrl, string $sharedSecret, ?string $syncToken): array {
 		$client = $this->getClient($url, $userName, $sharedSecret);
 
 		$body = $this->buildSyncCollectionRequestBody($syncToken);
@@ -206,23 +160,12 @@ class SyncService {
 		return $this->parseMultiStatus($response['body']);
 	}
 
-	/**
-	 * @param string $url
-	 * @param string $userName
-	 * @param string $sharedSecret
-	 * @param string $resourcePath
-	 * @return array
-	 */
-	protected function download($url, $userName, $sharedSecret, $resourcePath) {
+	protected function download(string $url, string $userName, string $sharedSecret, string $resourcePath): array {
 		$client = $this->getClient($url, $userName, $sharedSecret);
 		return $client->request('GET', $resourcePath);
 	}
 
-	/**
-	 * @param string|null $syncToken
-	 * @return string
-	 */
-	private function buildSyncCollectionRequestBody($syncToken) {
+	private function buildSyncCollectionRequestBody(?string $syncToken): string {
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		$dom->formatOutput = true;
 		$root = $dom->createElementNS('DAV:', 'd:sync-collection');
@@ -268,12 +211,12 @@ class SyncService {
 		$userId = $user->getUID();
 
 		$cardId = "$name:$userId.vcf";
-		$card = $this->backend->getCard($addressBookId, $cardId);
 		if ($user->isEnabled()) {
+			$card = $this->backend->getCard($addressBookId, $cardId);
 			if ($card === false) {
 				$vCard = $this->converter->createCardFromUser($user);
 				if ($vCard !== null) {
-					$this->backend->createCard($addressBookId, $cardId, $vCard->serialize());
+					$this->backend->createCard($addressBookId, $cardId, $vCard->serialize(), false);
 				}
 			} else {
 				$vCard = $this->converter->createCardFromUser($user);

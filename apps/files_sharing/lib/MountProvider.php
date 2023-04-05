@@ -28,7 +28,7 @@
  */
 namespace OCA\Files_Sharing;
 
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OC\Files\View;
 use OCA\Files_Sharing\Event\ShareMountedEvent;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -110,6 +110,7 @@ class MountProvider implements IMountProvider {
 		$view = new View('/' . $user->getUID() . '/files');
 		$ownerViews = [];
 		$sharingDisabledForUser = $this->shareManager->sharingDisabledForUser($user->getUID());
+		/** @var CappedMemoryCache<bool> $folderExistCache */
 		$foldersExistCache = new CappedMemoryCache();
 		foreach ($superShares as $share) {
 			try {
@@ -227,6 +228,13 @@ class MountProvider implements IMountProvider {
 				->setNodeId($shares[0]->getNodeId())
 				->setShareType($shares[0]->getShareType())
 				->setTarget($shares[0]->getTarget());
+
+			// Gather notes from all the shares.
+			// Since these are readly available here, storing them
+			// enables the DAV FilesPlugin to avoid executing many
+			// DB queries to retrieve the same information.
+			$allNotes = implode("\n", array_map(function ($sh) { return $sh->getNote(); }, $shares));
+			$superShare->setNote($allNotes);
 
 			// use most permissive permissions
 			// this covers the case where there are multiple shares for the same

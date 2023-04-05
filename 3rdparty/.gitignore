@@ -58,6 +58,20 @@ doctrine/inflector/tests
 doctrine/lexer/composer.json
 doctrine/lexer/LICENSE
 
+fusonic/linq/examples/
+fusonic/linq/tests/
+fusonic/linq/composer.json
+fusonic/linq/.gitignore
+fusonic/linq/README.md
+
+fusonic/opengraph/examples/
+fusonic/opengraph/.gitattributes
+fusonic/opengraph/.gitignore
+fusonic/opengraph/.scrutinizer.yml
+fusonic/opengraph/composer.json
+fusonic/opengraph/phpunit.xml
+fusonic/opengraph/README.md
+
 giggsey/libphonenumber-for-php/METADATA-VERSION.txt
 
 giggsey/locale/CLDR-VERSION.txt
@@ -124,11 +138,17 @@ james-heinrich/getid3/helperapps
 league/flysystem/SECURITY.md
 league/flysystem/deprecations.md
 
+mexitek/phpcolors/demo
+mexitek/phpcolors/tests
+mexitek/phpcolors/.gitignore
+mexitek/phpcolors/.phpcs.xml
+mexitek/phpcolors/composer.json
+mexitek/phpcolors/README.md
+
 mikey179/vfsstream
 
 mlocati/ip-lib/README.md
 mlocati/ip-lib/composer.json
-mlocati/ip-lib/ip-lib.php
 
 mtdowling/jmespath.php/tests
 

@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -105,7 +109,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Installation and server configuration</a></li>
       <li class="breadcrumb-item active">Installation on Linux</li>
       <li class="wy-breadcrumbs-aside">
@@ -131,7 +135,7 @@ Red Hat Enterprise Linux may need to set new rules to enable installing
 Nextcloud. See <a class="reference internal" href="#selinux-tips-label"><span class="std std-ref">SELinux configuration tips</span></a> for a suggested configuration.</p>
 </div>
 <p>If you prefer a more automated installation of Nextcloud and there are no packages for your Linux distribution, you have the option to
-install the community <a class="reference external" href="https://snapcraft.io/nextcloud">Snap Package</a>. This includes a full production-ready stack, will maintain your HTTPS certificates for you, and will automatically update as needed to stay secure. You can also use the <a class="reference external" href="https://github.com/nextcloud/vm/">Nextcloud VM scripts</a> to install directly on a clean Ubuntu Server. It will setup everything for you and include scripts for automated installation of apps like; Collabora, OnlyOffice, Talk and so on. Please note that those two options are not officially supported by Nextcloud GmbH.</p>
+install the community <a class="reference external" href="https://snapcraft.io/nextcloud">Snap Package</a>. This includes a full production-ready stack, will maintain your HTTPS certificates for you, and will automatically update as needed to stay secure. You can also use the <a class="reference external" href="https://github.com/nextcloud/vm/">Nextcloud VM scripts</a> to install directly on a clean Ubuntu Server or <a class="reference external" href="https://nextcloudpi.com/">NextcloudPi scripts</a> (similar project based on Debian). It will setup everything for you and include scripts for automated installation of apps like; Collabora, OnlyOffice, Talk and so on. Please note that those three options are not officially supported by Nextcloud GmbH.</p>
 <p>This installation guide is giving a general overview of required dependencies and their configuration. For a distribution specific setup guide have a look at the <a class="reference internal" href="example_ubuntu.html"><span class="doc">Example installation on Ubuntu 22.04 LTS</span></a> and <a class="reference internal" href="example_centos.html"><span class="doc">Example installation on CentOS 8</span></a>.</p>
 <section id="prerequisites-for-manual-installation">
 <span id="prerequisites-label"></span><h2>Prerequisites for manual installation<a class="headerlink" href="#prerequisites-for-manual-installation" title="Permalink to this headline"></a></h2>
@@ -142,7 +146,7 @@ check the presence of a module by typing <code class="docutils literal notransla
 If you get a result, the module is present.</p>
 <p>Required:</p>
 <ul class="simple">
-<li><p>PHP 7.3, 7.4 or <strong>8.0</strong> (<em>recommended</em>)</p></li>
+<li><p>PHP (see <a class="reference internal" href="system_requirements.html"><span class="doc">System requirements</span></a> for a list of supported versions)</p></li>
 <li><p>PHP module ctype</p></li>
 <li><p>PHP module curl</p></li>
 <li><p>PHP module dom</p></li>
@@ -150,10 +154,10 @@ If you get a result, the module is present.</p>
 <li><p>PHP module filter (only on Mageia and FreeBSD)</p></li>
 <li><p>PHP module GD</p></li>
 <li><p>PHP module hash (only on FreeBSD)</p></li>
-<li><p>PHP module JSON</p></li>
+<li><p>PHP module JSON (included with PHP &gt;= 8.0)</p></li>
 <li><p>PHP module libxml (Linux package libxml2 must be &gt;=2.7.0)</p></li>
 <li><p>PHP module mbstring</p></li>
-<li><p>PHP module openssl</p></li>
+<li><p>PHP module openssl (included with PHP &gt;= 8.0)</p></li>
 <li><p>PHP module posix</p></li>
 <li><p>PHP module session</p></li>
 <li><p>PHP module SimpleXML</p></li>
@@ -204,10 +208,20 @@ and configure a memcache.</p>
 <li><p>avconv or ffmpeg</p></li>
 <li><p>OpenOffice or LibreOffice</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the preview generation of PDF files fails with a “not authorized” error message, you must adjust the imagick policy file.
+See <a class="reference external" href="https://cromwell-intl.com/open-source/pdf-not-authorized.html">https://cromwell-intl.com/open-source/pdf-not-authorized.html</a></p>
+</div>
 <p>For command line processing (<em>optional</em>):</p>
 <ul class="simple">
 <li><p>PHP module pcntl (enables command interruption by pressing <code class="docutils literal notranslate"><span class="pre">ctrl-c</span></code>)</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You also need to ensure that pcntl_signal and pcntl_signal_dispatch are not disabled
+in your php.ini file.</p>
+</div>
 <p>For command line updater (<em>optional</em>):</p>
 <ul class="simple">
 <li><p>PHP module phar (upgrades Nextcloud by running <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">/var/www/nextcloud/updater/updater.phar</span></code>)</p></li>
@@ -357,10 +371,10 @@ the default site. Open a terminal and run:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Self-signed certificates have their drawbacks - especially when you
-plan to make your Nextcloud server publicly accessible. You might
-want to consider getting a certificate signed by a commercial signing
-authority. Check with your domain name registrar or hosting service
-for good deals on commercial certificates.</p>
+plan to make your Nextcloud server publicly accessible. Consider getting
+a certificate signed by a signing authority. Check with your domain name
+registrar or hosting service for good deals on commercial certificates.
+Or use a free <a class="reference external" href="https://letsencrypt.org/">Let’s Encrypt</a> ones.</p>
 </div>
 </section>
 <section id="installation-wizard">
@@ -566,11 +580,20 @@ spread the deployment of new major releases out over time.</p>
 </section>
 <section id="installation-via-install-script">
 <h2>Installation via install script<a class="headerlink" href="#installation-via-install-script" title="Permalink to this headline"></a></h2>
-<p>One of the easiest ways of installing is to use the Nextcloud VM scripts. It’s basically just two steps:</p>
+<p>One of the easiest ways of installing is to use the Nextcloud VM or NextcloudPI scripts. It’s basically just two steps:</p>
 <ol class="arabic">
 <li><p>Download the latest <a class="reference external" href="https://github.com/nextcloud/vm/blob/master/nextcloud_install_production.sh/">installation script</a>.</p></li>
 <li><p>Run the script with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">bash</span> <span class="n">nextcloud_install_production</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>or</p>
+<ol class="arabic">
+<li><p>Download the latest <a class="reference external" href="https://raw.githubusercontent.com/nextcloud/nextcloudpi/master/install.sh/">installation script</a>.</p></li>
+<li><p>Run the script with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">bash</span> <span class="n">install</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
 </li>
@@ -590,7 +613,7 @@ spread the deployment of new major releases out over time.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -615,6 +638,8 @@ spread the deployment of new major releases out over time.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

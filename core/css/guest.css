@@ -1,4 +1,5 @@
 /* Copyright (c) 2011, Jan-Christoph Borchardt, http://jancborchardt.net
+ * SPDX-FileCopyrightText: 2022 Carl Schwan <carl@carlschwan.eu>
  This file is licensed under the Affero General Public License version 3 or later.
  See the COPYING-README file. */
 
@@ -10,43 +11,38 @@ body { line-height:1.5; }
 table { border-collapse:separate; border-spacing:0; white-space:nowrap; }
 caption, th, td { text-align:left; font-weight:normal; }
 table, td, th { vertical-align:middle; }
-a { border:0; color:#000; text-decoration:none;}
+a { border:0; color: var(--color-main-text); text-decoration:none;}
 a, a *, input, input *, select, .button span, label { cursor:pointer; }
 ul { list-style:none; }
 
 body {
-	background-color: #ffffff;
 	font-weight: normal;
 	/* bring the default font size up to 14px */
 	font-size: .875em;
 	line-height: 1.6em;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-	color: #000;
+	color: var(--color-text);
 	text-align: center;
-	background-color: #0082c9;
-	background-image: url('../img/background.png?v=2');
-	background-image: url('../img/background.png?v=2'), linear-gradient(40deg, #0082c9 0%, rgba(28,175,255,1) 100%);
-	background-position: 50% 50%;
-	background-repeat: repeat;
-	background-size: 275px, contain;
-	background-attachment: fixed; /* fix background gradient */
+	background-color: var(--color-primary-default, var(--color-primary));
+	background-image: var(--image-background-plain, var(--image-background, url('../../../core/img/app-background.jpg'), linear-gradient(40deg, #0082c9 0%, #30b6ff 100%)));
+    background-attachment: fixed;
 	min-height: 100%; /* fix sticky footer */
 	height: auto;
+	overflow: auto;
+	position: static;
 }
 
 /* Various fonts settings */
 #body-login a {
-	color: #fff;
 	font-weight: 600;
+}
+#body-login footer a {
+    color: var(--color-text);
 }
 #body-login a:not(.button):hover,
 #body-login a:not(.button):focus {
 	text-decoration: underline;
 	text-decoration-skip-ink: auto;
-}
-
-#showAdvanced {
-	color: #fff;
 }
 
 em {
@@ -80,13 +76,12 @@ body {
 }
 
 #header .logo {
-	background-image: url('../img/logo/logo.svg?v=1');
+	background-image: var(--image-logo, url('../../core/img/logo/logo.svg'));
 	background-repeat: no-repeat;
-	background-size: 175px;
+	background-size: contain;
 	background-position: center;
-	width: 256px;
-	min-height: 128px;
-	max-height: 200px;
+	width: 175px;
+	height: 130px;
 	margin: 0 auto;
 	position: relative;
 	left: unset;
@@ -110,20 +105,39 @@ form {
 	margin: auto;
 	padding: 0;
 }
-form fieldset {
-	width: 260px;
-	margin: auto auto 20px;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+form.install-form {
+	max-width: 300px;
 }
+
+form.install-form fieldset,
+form.install-form fieldset input {
+	width: 100%;
+}
+form.install-form .strengthify-wrapper {
+	bottom: 17px;
+	width: calc(100% - 8px);
+	left: 4px;
+	top: unset;
+}
+
+form.install-form #show {
+	top: 18px;
+}
+
 form #sqliteInformation {
-	margin-top: -20px;
+	margin-top: 0.5rem;
 	margin-bottom: 20px;
 }
-form #adminaccount {
+form #adminaccount, form #use_other_db {
 	margin-bottom: 15px;
+	text-align: left;
+}
+form #adminaccount > legend,
+form #adminlogin {
+	margin-bottom: 1rem;
+}
+form #advancedHeader {
+	width: 100%;
 }
 form fieldset legend, #datadirContent label {
 	width: 100%;
@@ -145,9 +159,7 @@ form #datadirField legend {
 }
 
 /* Buttons and input */
-#submit-wrapper,
-#reset-password-wrapper,
-.alternative-logins {
+#submit-wrapper {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -156,57 +168,14 @@ form #datadirField legend {
 						   absolutely positioned descendant icons */
 }
 
-.alternative-logins {
-	margin: auto;
-	display: block;
-	min-width: 260px;
-	max-width: 400px;
-	overflow: hidden;
-}
-
-.alternative-logins a.button {
-	margin: 0;
-	display: block;
-	font-size: 15px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.alternative-logins a.button::before {
-	content: "";
-	background-repeat: no-repeat;
-	background-size: contain;
-	width: 0;
-	margin-right: 0;
-	height: 18px;
-	display: inline-block;
-	vertical-align: bottom;
-}
-
-.alternative-logins .button {
-	color: #ffffff;
-	padding: 12px 20px;
-}
-
-
-.alternative-logins .button.single-alt-login-option {
-	 width: 260px;
-	 margin: 0 auto;
- }
-
 @media only screen and (max-width: 1024px) {
 	.wrapper {
 		margin-top: 0;
 	}
-	.alternative-logins {
-		margin: auto;
-	}
 }
 
 
-#submit-wrapper .submit-icon,
-#reset-password-wrapper .submit-icon {
+#submit-wrapper .submit-icon {
 	position: absolute;
 	right: 24px;
 	transition: right 100ms ease-in-out;
@@ -226,12 +195,6 @@ form #datadirField legend {
 	right: 20px;
 }
 
-#reset-password-submit {
-	padding: 10px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
 #submit-wrapper .icon-loading-small {
 	position: absolute;
 	top: 22px;
@@ -244,14 +207,26 @@ input, textarea, select, button, div[contenteditable=true] {
 }
 input,
 input:not([type='range']),
+input:not([type='text']),
+input:not([type='password']),
 a.button {
 	font-size: 20px;
 	margin: 5px;
-	padding: 11px 10px 9px;
+	padding: 5px;
 	outline: none;
 	border-radius: 3px; /* --border-radius */
 	-webkit-appearance: none;
 }
+
+input:not([type='radio']),
+input:not([type='range']) {
+    border-width: 2px;
+}
+
+input:not([type='range']):focus-visible {
+    box-shadow: none !important;
+}
+
 input[type='submit'],
 input[type='submit'].icon-confirm,
 input[type='button'],
@@ -263,46 +238,39 @@ select {
 	width: auto;
 	min-width: 25px;
 	padding: 12px;
-	background-color: white;
+	background-color: var(--color-main-background);
 	font-weight: bold;
-	color: #555;
+	color: var(--color-text);
 	border: none;
 	border-radius: 100px; /* --border-radius-pill */
 	cursor: pointer;
 }
+
+.icon-confirm.input-button-inline {
+	position: absolute;
+	right: 3px;
+	top: 5px;
+}
+
 input[type='submit']:focus {
-	border: 2px solid black !important;
-	padding: 8px;
+	box-shadow: 0 0 0 2px inset var(--color-main-text) !important;
 }
 input[type='text'],
 input[type='tel'],
 input[type='password'],
 input[type='email'] {
-	width: 249px;
-	background: #fff;
-	color: #555;
+	width: 266px;
+	padding: 5px 10px;
+	color: var(--color-text-lighter);
 	cursor: text;
 	font-family: inherit;
-	-webkit-appearance: textfield;
-	-moz-appearance: textfield;
-	box-sizing: content-box;
-	border: none;
 	font-weight: normal;
+	margin-left: 0;
+	margin-right: 0;
 }
 input[type='password'].password-with-toggle, input[type='text'].password-with-toggle {
-	width: 219px;
-	padding-right: 40px;
-}
-.toggle-password {
-	position: absolute;
-	top: 1px;
-	right: 5px;
-	padding: 14px;
-	height: 16px;
-}
-.toggle-password:hover,
-.toggle-password:focus {
-	opacity: .6;
+	width: 238px;
+	padding-right: 40px !important;
 }
 input.login {
 	width: 260px;
@@ -317,31 +285,11 @@ input.update-continue {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
-.updateAnyways a.updateAnywaysButton {
-	font-size: 14px;
-	padding: 10px 20px;
-	color: #666 !important;
-	display: inline-block;
-	border-radius: 100px; /* --border-radius-pill */
-	margin: 15px 5px;
-}
-.updateAnyways a.updateAnywaysButton:hover {
-	color: #222 !important;
-}
 
 /* Get rid of the inside dotted line in Firefox */
 button::-moz-focus-inner,
 input::-moz-focus-inner {
 	border: 0;
-}
-
-input.primary,
-button.primary,
-a.primary {
-	border: 1px solid #fff;
-	background-color: #0082c9;
-	color: #fff;
-	transition: color 100ms ease-in-out;
 }
 
 input.primary:not(:disabled):hover,
@@ -350,9 +298,7 @@ button.primary:not(:disabled):hover,
 button.primary:not(:disabled):focus,
 a.primary:not(:disabled):hover,
 a.primary:not(:disabled):focus {
-	color: rgba(255, 255, 255, 1);
-	background-image: linear-gradient(40deg, #0082c9 0%, #30b6ff 100%);
-	background-position: initial;
+	color: var(--color-primary-text);
 }
 
 /* Checkboxes - white only for login */
@@ -413,14 +359,13 @@ input[type='checkbox'].checkbox--white:checked + label:before {
 	display: inline-block;
 	position: relative;
 	top: -20px;
-	width: 269px;
+	width: 250px;
 	border-radius: 0 0 3px 3px;
 	overflow: hidden;
 	height: 3px;
 }
 .tooltip-inner {
 	font-weight: bold;
-	color: #ccc;
 	padding: 3px 6px;
 	text-align: center;
 }
@@ -428,36 +373,15 @@ input[type='checkbox'].checkbox--white:checked + label:before {
 /* Show password toggle */
 #show, #dbpassword-toggle {
 	position: absolute;
-	right: 1em;
-	top: .8em;
-	float: right;
+	right: 2px;
+	top: -3px;
+	display: flex;
+	justify-content: center;
+	width: 44px;
+	align-content: center;
+	padding: 13px;
 }
-#show + label, #dbpassword-toggle + label {
-	right: 21px;
-	top: 15px !important;
-	margin: -14px !important;
-	padding: 14px !important;
-}
-#show:checked + label, #dbpassword-toggle:checked + label, #personal-show:checked + label {
-	opacity: .8;
-}
-#show + label, #dbpassword-toggle + label, #personal-show + label {
-	position: absolute !important;
-	height: 20px;
-	width: 24px;
-	background-image: url('../img/actions/toggle.svg?v=1');
-	background-repeat: no-repeat;
-	background-position: center;
-	opacity: .3;
-}
-#show + label:before, #dbpassword-toggle + label:before, #personal-show + label:before {
-	display: none;
-}
-/* Feedback for keyboard focus and mouse hover */
-#show:focus + label, #dbpassword-toggle:focus + label, #personal-show:focus + label,
-#show + label:hover, #dbpassword-toggle + label:hover, #personal-show + label:hover {
-  opacity: 1;
-}
+
 #pass2, input[name='personal-password-clone'] {
 	padding: .6em 2.5em .4em .4em;
 	width: 8em;
@@ -479,13 +403,12 @@ form fieldset legend,
 form fieldset .warning-info,
 form input[type='checkbox']+label {
 	text-align: center;
-	color: #fff;
 }
 /* overrides another !important statement that sets this to unreadable black */
 form .warning input[type='checkbox']:hover+label,
 form .warning input[type='checkbox']:focus+label,
 form .warning input[type='checkbox']+label {
-	color: #fff !important;
+	color: var(--color-primary-text) !important;
 }
 
 .body-login-container.two-factor {
@@ -547,58 +470,6 @@ form .warning input[type='checkbox']+label {
 #remember_login {
 	margin: 18px 5px 0 16px !important;
 }
-.lost-password-container {
-	display: inline-block;
-	margin: 10px 0;
-	text-align: center;
-	width: 100%;
-}
-#lost-password,
-#lost-password-back,
-#reset-password-wrapper + a {
-	display: inline-block;
-	font-weight: normal !important;
-	padding: 12px;
-	color: #fff;
-	cursor: pointer;
-	text-shadow: 0 0 2px rgba(0, 0, 0, .4); /* better readability on bright background */
-}
-#lost-password {
-	margin-top: -6px;
-}
-#forgot-password {
-	padding: 11px;
-	float: right;
-	color: #fff;
-}
-
-/* Alternative Logins */
-.alternative-logins legend {
-	margin-bottom: 10px;
-}
-.alternative-logins li {
-	height: 40px;
-	white-space: nowrap;
-	padding: 05px;
-}
-.alternative-logins a.button,
-.alternative-logins li a {
-	width: 100%;
-	display: inline-block;
-	text-align: center;
-	box-sizing: border-box;
-	border: 2px solid #ffffff;
-	background-color: #0082c9;
-	color: #ffffff;
-	border-radius: 100px; /* --border-radius-pill */
-}
-
-.alternative-logins a.button:focus,
-.alternative-logins li a:focus {
-	border: 2px solid #000000;
-	background-image: linear-gradient(40deg, #0082c9 0%, #30b6ff 100%);
-	background-position: initial;
-}
 
 /* fixes for update page TODO should be fixed some time in a proper way */
 /* this is just for an error while updating the ownCloud instance */
@@ -621,20 +492,17 @@ form #selectDbType label {
 	flex-grow: 1;
 	margin: 0 -1px 5px;
 	font-size: 12px;
-	background:#f8f8f8;
-	color:#888;
+	background: var(--color-background-hover);
+	color: var(--color-main-text);
 	cursor:pointer;
-	border: 1px solid #ddd;
+	border: 1px solid var(--color-border);
 	padding: 10px 17px;
 }
 form #selectDbType label.ui-state-hover,
 form #selectDbType label.ui-state-active {
 	font-weight: normal;
-	color:#000;
-	background-color:#e8e8e8;
-}
-form #selectDbType .ui-visual-focus {
-	box-shadow: none;
+	background: var(--color-background-darker);
+	color: var(--color-main-text);
 }
 form #selectDbType label span {
 	display: none;
@@ -645,31 +513,13 @@ form #selectDbType label span {
 .groupmiddle,
 .groupbottom {
 	position: relative;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
 	user-select: none;
 }
-.grouptop input {
-	margin-bottom: 0 !important;
-	border-bottom: 0 !important;
-	border-bottom-left-radius: 0 !important;
-	border-bottom-right-radius: 0 !important;
+.grouptop, .groupmiddle {
+	margin-bottom: 8px !important;
 }
-.groupmiddle input {
-	margin-top: 0 !important;
-	margin-bottom: 0 !important;
-	border-top: 0 !important;
-	border-bottom: 0 !important;
-	border-radius: 0 !important;
-	box-shadow: 0 1px 0 rgba(0,0,0,.1) inset !important;
-}
-.groupbottom input {
-	margin-top: 0 !important;
-	border-top: 0 !important;
-	border-top-right-radius: 0 !important;
-	border-top-left-radius: 0 !important;
-	box-shadow: 0 1px 0 rgba(0,0,0,.1) inset !important;
+.groupbottom {
+	margin-bottom: 13px;
 }
 .groupbottom input[type=submit] {
 	box-shadow: none !important;
@@ -681,16 +531,9 @@ form #selectDbType label span {
 
 /* Errors */
 /* Warnings and errors are the same */
-.body-login-container,
-.warning,
-.update,
-.error {
+.body-login-container {
 	display: flex;
 	flex-direction: column;
-	margin-top: 15px;
-	padding: 15px;
-	background-color: rgba(0,0,0,.3);
-	color: #fff;
 	text-align: left;
 	word-wrap: break-word;
 	border-radius: 10px; /* --border-radius-large */
@@ -699,14 +542,6 @@ form #selectDbType label span {
 	-webkit-user-select: text;
 	-ms-user-select: text;
 	user-select: text;
-}
-
-.body-login-container h2,
-.warning h2,
-.update h2,
-.error h2 {
-	color: #fff;
-	text-align: center;
 }
 
 /* TODO: Change all .warning/.update/.error to .body-login-container */
@@ -723,48 +558,6 @@ form #selectDbType label span {
     margin-bottom: 12px;
 }
 
-.warning.updateAnyways {
-	text-align: center;
-}
-.warning legend,
-.warning a,
-.error a {
-	color: #fff !important;
-	font-weight: bold !important;
-	opacity: 1;
-}
-.error a.button {
-	color: #555 !important;
-	display: inline-block;
-	text-align: center;
-}
-.error pre {
-	white-space: pre-wrap;
-	text-align: left;
-}
-.error-wide {
-	width: 700px;
-	margin-top: 35px;
-}
-.error-wide .button {
-	color: black !important;
-}
-.warning-input {
-	border-color: #ce3702 !important;
-}
-a.warning {
-	cursor: pointer;
-}
-fieldset.warning legend,
-fieldset.update legend {
-	top: 18px;
-	position: relative;
-}
-fieldset.warning legend + p,
-fieldset.update legend + p {
-	margin-top: 12px;
-}
-
 /* Various paragraph styles */
 .infogroup {
 	margin: 8px 0;
@@ -774,7 +567,6 @@ fieldset.update legend + p {
 }
 p.info {
 	margin: 20px auto;
-	text-shadow: 0 0 2px rgba(0, 0, 0, .4); /* better readability on bright background */
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -783,7 +575,7 @@ p.info {
 
 /* Update */
 .update {
-	width: inherit;
+	width: calc(100% - 32px);
 	text-align: center;
 }
 .update .appList {
@@ -854,6 +646,7 @@ p.info {
 }
 .loading, .loading-small, .icon-loading, .icon-loading-dark, .icon-loading-small, .icon-loading-small-dark {
 	position: relative;
+	filter: var(--background-invert-if-dark)
 }
 .loading:after, .loading-small:after, .icon-loading:after, .icon-loading-dark:after, .icon-loading-small:after, .icon-loading-small-dark:after {
 	z-index: 2;
@@ -870,6 +663,9 @@ p.info {
 	-webkit-transform-origin: center;
 	-ms-transform-origin: center;
 	transform-origin: center;
+}
+.primary .loading,.primary+.loading,.primary .loading-small,.primary+.loading-small,.primary .icon-loading,.primary+.icon-loading,.primary .icon-loading-dark,.primary+.icon-loading-dark,.primary .icon-loading-small,.primary+.icon-loading-small,.primary .icon-loading-small-dark,.primary+.icon-loading-small-dark {
+    filter: var(--primary-invert-if-bright)
 }
 .loading:after, .loading-small:after, .icon-loading:after, .icon-loading-dark:after, .icon-loading-small:after, .icon-loading-small-dark:after {
 	border: 2px solid rgba(150, 150, 150, 0.5);
@@ -920,7 +716,7 @@ img.icon-loading-small-dark, object.icon-loading-small-dark, video.icon-loading-
 
 /* FOOTER */
 footer {
-	height: 70px;
+	min-height: 70px;
 	margin-top: auto;
 }
 
@@ -945,4 +741,77 @@ label.infield,
 
 a.legal {
 	font-size: smaller;
+}
+
+.notecard.success {
+	--note-background: rgba(var(--color-success-rgb), 0.1);
+	--note-theme: var(--color-success);
+}
+.notecard.error {
+	--note-background: rgba(var(--color-error-rgb), 0.1);
+	--note-theme: var(--color-error);
+}
+.notecard.warning {
+	--note-background: rgba(var(--color-warning-rgb), 0.1);
+	--note-theme: var(--color-warning);
+}
+.notecard {
+	color: var(--color-text-light);
+	background-color: var(--note-background);
+	border-left: 4px solid var(--note-theme);
+	border-radius: var(--border-radius);
+	margin: 1rem 0;
+	margin-top: 1rem;
+	padding: 1rem;
+	text-align: left;
+}
+
+.notecard:last-child {
+	margin-bottom: 0;
+}
+
+.notecard pre {
+	background-color: var(--color-background-dark);
+	margin-top: 1rem;
+	padding: 1em 1.3em;
+	border-radius: var(--border-radius);
+}
+
+.guest-box, .body-login-container {
+	color: var(--color-main-text);
+	background-color: var(--color-main-background);
+	padding: 16px;
+	border-radius: var(--border-radius-large);
+	box-shadow: 0 0 10px var(--color-box-shadow);
+	display: inline-block;
+}
+
+.guest-box.wide {
+	display: block;
+	text-align: left;
+}
+
+.guest-box fieldset {
+	margin-top: 0;
+}
+
+.guest-box pre {
+	overflow-x: scroll;
+}
+
+button.toggle-password {
+	background-color: transparent;
+	border-width: 0;
+	height: 44px;
+}
+
+/** Utilities */
+
+.margin-top {
+	margin-top: 1rem !important;
+}
+
+
+.text-left {
+	text-align: left !important;
 }

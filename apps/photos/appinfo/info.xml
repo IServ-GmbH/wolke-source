@@ -5,18 +5,22 @@
     <name>Photos</name>
     <summary>Your memories under your control</summary>
     <description>Your memories under your control</description>
-    <version>1.6.0</version>
+    <version>2.0.1</version>
     <licence>agpl</licence>
 	<author mail="skjnldsv@protonmail.com">John Molakvoæ</author>
     <namespace>Photos</namespace>
     <category>multimedia</category>
+    <types>
+        <dav />
+        <authentication />
+    </types>
 
 	<website>https://github.com/nextcloud/photos</website>
 	<bugs>https://github.com/nextcloud/photos/issues</bugs>
     <repository>https://github.com/nextcloud/photos.git</repository>
     <default_enable />
     <dependencies>
-        <nextcloud min-version="24" max-version="24" />
+        <nextcloud min-version="25" max-version="25" />
     </dependencies>
     <navigations>
         <navigation>
@@ -25,4 +29,14 @@
             <order>1</order>
         </navigation>
     </navigations>
+
+    <sabre>
+        <collections>
+            <collection>OCA\Photos\Sabre\RootCollection</collection>
+            <collection>OCA\Photos\Sabre\PublicRootCollection</collection>
+        </collections>
+        <plugins>
+            <plugin>OCA\Photos\Sabre\Album\PropFindPlugin</plugin>
+        </plugins>
+    </sabre>
 </info>

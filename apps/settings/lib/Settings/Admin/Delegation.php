@@ -31,30 +31,27 @@ use OCP\IGroupManager;
 use OCP\Settings\IDelegatedSettings;
 use OCP\Settings\IManager;
 use OCP\Settings\ISettings;
+use OCP\IURLGenerator;
 
 class Delegation implements ISettings {
-	/** @var IManager */
-	private $settingManager;
-
-	/** @var IInitialState $initialStateService */
-	private $initialStateService;
-
-	/** @var IGroupManager $groupManager */
-	private $groupManager;
-
-	/** @var AuthorizedGroupService $authorizedGroupService */
-	private $authorizedGroupService;
+	private IManager $settingManager;
+	private IInitialState $initialStateService;
+	private IGroupManager $groupManager;
+	private AuthorizedGroupService $authorizedGroupService;
+	private IURLGenerator $urlGenerator;
 
 	public function __construct(
 		IManager $settingManager,
 		IInitialState $initialStateService,
 		IGroupManager $groupManager,
-		AuthorizedGroupService $authorizedGroupService
+		AuthorizedGroupService $authorizedGroupService,
+		IURLGenerator $urlGenerator
 	) {
 		$this->settingManager = $settingManager;
 		$this->initialStateService = $initialStateService;
 		$this->groupManager = $groupManager;
 		$this->authorizedGroupService = $authorizedGroupService;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -85,9 +82,11 @@ class Delegation implements ISettings {
 				$settings = array_merge(
 					$settings,
 					array_map(function (IDelegatedSettings $setting) use ($section) {
+						$sectionName = $section->getName() . ($setting->getName() !== null ? ' - ' . $setting->getName() : '');
 						return [
 							'class' => get_class($setting),
-							'sectionName' => $section->getName() . ($setting->getName() !== null ? ' - ' . $setting->getName() : ''),
+							'sectionName' => $sectionName,
+							'id' => mb_strtolower(str_replace(' ', '-', $sectionName)),
 							'priority' => $section->getPriority(),
 						];
 					}, $sectionSettings)
@@ -128,6 +127,7 @@ class Delegation implements ISettings {
 		$this->initSettingState();
 		$this->initAvailableGroupState();
 		$this->initAuthorizedGroupState();
+		$this->initialStateService->provideInitialState('authorized-settings-doc-link', $this->urlGenerator->linkToDocs('admin-delegation'));
 
 		return new TemplateResponse(Application::APP_ID, 'settings/admin/delegation', [], '');
 	}

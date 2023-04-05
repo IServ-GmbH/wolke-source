@@ -219,6 +219,13 @@ class Application extends App {
 					}
 				}
 
+				if ($schema->hasTable('preferences')) {
+					$table = $schema->getTable('preferences');
+					if (!$table->hasIndex('preferences_app_key')) {
+						$subject->addHintForMissingSubject($table->getName(), 'preferences_app_key');
+					}
+				}
+
 				if ($schema->hasTable('mounts')) {
 					$table = $schema->getTable('mounts');
 					if (!$table->hasIndex('mounts_class_index')) {

@@ -126,7 +126,7 @@ class RemoveLinkShares implements IRepairStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select($query->func()->count('*', 'total'))
 			->from('share')
-			->where($query->expr()->in('id', $query->createFunction('(' . $subQuery->getSQL() . ')')));
+			->where($query->expr()->in('id', $query->createFunction($subQuery->getSQL())));
 
 		$result = $query->execute();
 		$data = $result->fetch();
@@ -217,7 +217,7 @@ class RemoveLinkShares implements IRepairStep {
 		$output->finishProgress();
 		$shareResult->closeCursor();
 
-		// Notifiy all admins
+		// Notify all admins
 		$adminGroup = $this->groupManager->get('admin');
 		$adminUsers = $adminGroup->getUsers();
 		foreach ($adminUsers as $user) {

@@ -49,6 +49,7 @@ use Sabre\DAV\IFile;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\PropPatch;
 use Sabre\DAV\ServerPlugin;
+use Sabre\DAV\Server;
 use Sabre\DAV\Tree;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
@@ -70,6 +71,7 @@ class FilesPlugin extends ServerPlugin {
 	public const GETETAG_PROPERTYNAME = '{DAV:}getetag';
 	public const LASTMODIFIED_PROPERTYNAME = '{DAV:}lastmodified';
 	public const CREATIONDATE_PROPERTYNAME = '{DAV:}creationdate';
+	public const DISPLAYNAME_PROPERTYNAME = '{DAV:}displayname';
 	public const OWNER_ID_PROPERTYNAME = '{http://owncloud.org/ns}owner-id';
 	public const OWNER_DISPLAY_NAME_PROPERTYNAME = '{http://owncloud.org/ns}owner-display-name';
 	public const CHECKSUMS_PROPERTYNAME = '{http://owncloud.org/ns}checksums';
@@ -85,66 +87,28 @@ class FilesPlugin extends ServerPlugin {
 	public const SUBFILE_COUNT_PROPERTYNAME = '{http://nextcloud.org/ns}contained-file-count';
 	public const FILE_METADATA_SIZE = '{http://nextcloud.org/ns}file-metadata-size';
 
-	/**
-	 * Reference to main server object
-	 *
-	 * @var \Sabre\DAV\Server
-	 */
-	private $server;
-
-	/**
-	 * @var Tree
-	 */
-	private $tree;
-
-	/**
-	 * @var IUserSession
-	 */
-	private $userSession;
+	/** Reference to main server object */
+	private ?Server $server = null;
+	private Tree $tree;
+	private IUserSession $userSession;
 
 	/**
 	 * Whether this is public webdav.
 	 * If true, some returned information will be stripped off.
-	 *
-	 * @var bool
 	 */
-	private $isPublic;
+	private bool $isPublic;
+	private bool $downloadAttachment;
+	private IConfig $config;
+	private IRequest $request;
+	private IPreview $previewManager;
 
-	/**
-	 * @var bool
-	 */
-	private $downloadAttachment;
-
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-
-	/**
-	 * @var IRequest
-	 */
-	private $request;
-
-	/**
-	 * @var IPreview
-	 */
-	private $previewManager;
-
-	/**
-	 * @param Tree $tree
-	 * @param IConfig $config
-	 * @param IRequest $request
-	 * @param IPreview $previewManager
-	 * @param bool $isPublic
-	 * @param bool $downloadAttachment
-	 */
 	public function __construct(Tree $tree,
 								IConfig $config,
 								IRequest $request,
 								IPreview $previewManager,
 								IUserSession $userSession,
-								$isPublic = false,
-								$downloadAttachment = true) {
+								bool $isPublic = false,
+								bool $downloadAttachment = true) {
 		$this->tree = $tree;
 		$this->config = $config;
 		$this->request = $request;
@@ -162,10 +126,9 @@ class FilesPlugin extends ServerPlugin {
 	 *
 	 * This method should set up the required event subscriptions.
 	 *
-	 * @param \Sabre\DAV\Server $server
 	 * @return void
 	 */
-	public function initialize(\Sabre\DAV\Server $server) {
+	public function initialize(Server $server) {
 		$server->xml->namespaceMap[self::NS_OWNCLOUD] = 'oc';
 		$server->xml->namespaceMap[self::NS_NEXTCLOUD] = 'nc';
 		$server->protectedProperties[] = self::FILEID_PROPERTYNAME;
@@ -349,7 +312,7 @@ class FilesPlugin extends ServerPlugin {
 				);
 			});
 
-			$propFind->handle(self::OCM_SHARE_PERMISSIONS_PROPERTYNAME, function () use ($node, $httpRequest) {
+			$propFind->handle(self::OCM_SHARE_PERMISSIONS_PROPERTYNAME, function () use ($node, $httpRequest): ?string {
 				$user = $this->userSession->getUser();
 				if ($user === null) {
 					return null;
@@ -361,15 +324,15 @@ class FilesPlugin extends ServerPlugin {
 				return json_encode($ocmPermissions);
 			});
 
-			$propFind->handle(self::SHARE_ATTRIBUTES_PROPERTYNAME, function () use ($node, $httpRequest): string {
+			$propFind->handle(self::SHARE_ATTRIBUTES_PROPERTYNAME, function () use ($node, $httpRequest) {
 				return json_encode($node->getShareAttributes());
 			});
 
-			$propFind->handle(self::GETETAG_PROPERTYNAME, function () use ($node) {
+			$propFind->handle(self::GETETAG_PROPERTYNAME, function () use ($node): string {
 				return $node->getETag();
 			});
 
-			$propFind->handle(self::OWNER_ID_PROPERTYNAME, function () use ($node) {
+			$propFind->handle(self::OWNER_ID_PROPERTYNAME, function () use ($node): ?string {
 				$owner = $node->getOwner();
 				if (!$owner) {
 					return null;
@@ -377,7 +340,7 @@ class FilesPlugin extends ServerPlugin {
 					return $owner->getUID();
 				}
 			});
-			$propFind->handle(self::OWNER_DISPLAY_NAME_PROPERTYNAME, function () use ($node) {
+			$propFind->handle(self::OWNER_DISPLAY_NAME_PROPERTYNAME, function () use ($node): ?string {
 				$owner = $node->getOwner();
 				if (!$owner) {
 					return null;
@@ -396,7 +359,7 @@ class FilesPlugin extends ServerPlugin {
 				return $node->getFileInfo()->getMountPoint()->getMountType();
 			});
 
-			$propFind->handle(self::SHARE_NOTE, function () use ($node, $httpRequest) {
+			$propFind->handle(self::SHARE_NOTE, function () use ($node, $httpRequest): ?string {
 				$user = $this->userSession->getUser();
 				if ($user === null) {
 					return null;
@@ -416,6 +379,15 @@ class FilesPlugin extends ServerPlugin {
 			});
 			$propFind->handle(self::CREATION_TIME_PROPERTYNAME, function () use ($node) {
 				return $node->getFileInfo()->getCreationTime();
+			});
+			/**
+			 * Return file/folder name as displayname. The primary reason to
+			 * implement it this way is to avoid costly fallback to 
+			 * CustomPropertiesBackend (esp. visible when querying all files
+			 * in a folder).
+			 */
+			$propFind->handle(self::DISPLAYNAME_PROPERTYNAME, function () use ($node) {
+				return $node->getName();
 			});
 		}
 
@@ -575,10 +547,7 @@ class FilesPlugin extends ServerPlugin {
 			if (empty($etag)) {
 				return false;
 			}
-			if ($node->setEtag($etag) !== -1) {
-				return true;
-			}
-			return false;
+			return $node->setEtag($etag) !== -1;
 		});
 		$propPatch->handle(self::CREATIONDATE_PROPERTYNAME, function ($time) use ($node) {
 			if (empty($time)) {
@@ -594,6 +563,13 @@ class FilesPlugin extends ServerPlugin {
 			}
 			$node->setCreationTime((int) $time);
 			return true;
+		});
+		/**
+		 * Disable modification of the displayname property for files and
+		 * folders via PROPPATCH. See PROPFIND for more information.
+		 */
+		$propPatch->handle(self::DISPLAYNAME_PROPERTYNAME, function ($displayName) {
+			return 403;
 		});
 	}
 

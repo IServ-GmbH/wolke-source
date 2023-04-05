@@ -141,7 +141,7 @@ class DefaultOs implements IOperatingSystem {
 	}
 
 	public function getNetworkInterfaces(): array {
-		$interfaces = glob('/sys/class/net/*');
+		$interfaces = glob('/sys/class/net/*') ?: [];
 		$result = [];
 
 		foreach ($interfaces as $interface) {
@@ -199,6 +199,8 @@ class DefaultOs implements IOperatingSystem {
 		foreach ($matches['Filesystem'] as $i => $filesystem) {
 			if (in_array($matches['Type'][$i], ['tmpfs', 'devtmpfs', 'squashfs', 'overlay'], false)) {
 				continue;
+			} elseif (in_array($matches['Mounted'][$i], ['/etc/hostname', '/etc/hosts'], false)) {
+				continue;
 			}
 
 			$disk = new Disk();
@@ -215,6 +217,25 @@ class DefaultOs implements IOperatingSystem {
 		return $data;
 	}
 
+	public function getThermalZones(): array {
+		$thermalZones = glob('/sys/class/thermal/thermal_zone*') ?: [];
+		$result = [];
+
+		foreach ($thermalZones as $thermalZone) {
+			$tzone = [];
+			try {
+				$tzone['hash'] = md5($thermalZone);
+				$tzone['type'] = $this->readContent($thermalZone . '/type');
+				$tzone['temp'] = (float)((int)($this->readContent($thermalZone . '/temp')) / 1000);
+			} catch (\RuntimeException $e) {
+				continue;
+			}
+			$result[] = $tzone;
+		}
+
+		return $result;
+	}
+
 	protected function readContent(string $filename): string {
 		$data = @file_get_contents($filename);
 		if ($data === false || $data === '') {
@@ -225,7 +246,7 @@ class DefaultOs implements IOperatingSystem {
 
 	protected function executeCommand(string $command): string {
 		$output = @shell_exec(escapeshellcmd($command));
-		if ($output === null || $output === '') {
+		if ($output === false || $output === null || $output === '') {
 			throw new \RuntimeException('No output for command: "' . $command . '"');
 		}
 		return $output;

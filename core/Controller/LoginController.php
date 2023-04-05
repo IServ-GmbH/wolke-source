@@ -47,7 +47,6 @@ use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -61,32 +60,19 @@ class LoginController extends Controller {
 	public const LOGIN_MSG_INVALIDPASSWORD = 'invalidpassword';
 	public const LOGIN_MSG_USERDISABLED = 'userdisabled';
 
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IConfig */
-	private $config;
-	/** @var ISession */
-	private $session;
+	private IUserManager $userManager;
+	private IConfig $config;
+	private ISession $session;
 	/** @var IUserSession|Session */
 	private $userSession;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var ILogger */
-	private $logger;
-	/** @var Defaults */
-	private $defaults;
-	/** @var Throttler */
-	private $throttler;
-	/** @var Chain */
-	private $loginChain;
-	/** @var IInitialStateService */
-	private $initialStateService;
-	/** @var WebAuthnManager */
-	private $webAuthnManager;
-	/** @var IManager */
-	private $manager;
-	/** @var IL10N */
-	private $l10n;
+	private IURLGenerator $urlGenerator;
+	private Defaults $defaults;
+	private Throttler $throttler;
+	private Chain $loginChain;
+	private IInitialStateService $initialStateService;
+	private WebAuthnManager $webAuthnManager;
+	private IManager $manager;
+	private IL10N $l10n;
 
 	public function __construct(?string $appName,
 								IRequest $request,
@@ -95,7 +81,6 @@ class LoginController extends Controller {
 								ISession $session,
 								IUserSession $userSession,
 								IURLGenerator $urlGenerator,
-								ILogger $logger,
 								Defaults $defaults,
 								Throttler $throttler,
 								Chain $loginChain,
@@ -109,7 +94,6 @@ class LoginController extends Controller {
 		$this->session = $session;
 		$this->userSession = $userSession;
 		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
 		$this->defaults = $defaults;
 		$this->throttler = $throttler;
 		$this->loginChain = $loginChain;
@@ -134,7 +118,7 @@ class LoginController extends Controller {
 
 		$response = new RedirectResponse($this->urlGenerator->linkToRouteAbsolute(
 			'core.login.showLoginForm',
-			['clear' => true] // this param the the code in login.js may be removed when the "Clear-Site-Data" is working in the browsers
+			['clear' => true] // this param the code in login.js may be removed when the "Clear-Site-Data" is working in the browsers
 		));
 
 		$this->session->set('clearingExecutionContexts', '1');
@@ -167,7 +151,7 @@ class LoginController extends Controller {
 			if (!is_array($loginMessages)) {
 				$loginMessages = [[], []];
 			}
-			$loginMessages[1][] = $this->l10n->t('This community release of Nextcloud is unsupported and instant notifications are unavailable.');
+			$loginMessages[1][] = $this->l10n->t('This community release of Nextcloud is unsupported and push notifications are limited.');
 		}
 		if (is_array($loginMessages)) {
 			[$errors, $messages] = $loginMessages;
@@ -217,12 +201,17 @@ class LoginController extends Controller {
 
 		$parameters = [
 			'alt_login' => OC_App::getAlternativeLogIns(),
+			'pageTitle' => $this->l10n->t('Login'),
 		];
 
 		$this->initialStateService->provideInitialState('core', 'countAlternativeLogins', count($parameters['alt_login']));
+		$this->initialStateService->provideInitialState('core', 'alternativeLogins', $parameters['alt_login']);
 
 		return new TemplateResponse(
-			$this->appName, 'login', $parameters, 'guest'
+			$this->appName,
+			'login',
+			$parameters,
+			TemplateResponse::RENDER_AS_GUEST,
 		);
 	}
 
@@ -306,16 +295,28 @@ class LoginController extends Controller {
 	 *
 	 * @return RedirectResponse
 	 */
-	public function tryLogin(string $user,
-							 string $password,
+	public function tryLogin(string $user = '',
+							 string $password = '',
 							 string $redirect_url = null,
 							 string $timezone = '',
 							 string $timezone_offset = ''): RedirectResponse {
-		// If the user is already logged in and the CSRF check does not pass then
-		// simply redirect the user to the correct page as required. This is the
-		// case when an user has already logged-in, in another tab.
 		if (!$this->request->passesCSRFCheck()) {
-			return $this->generateRedirect($redirect_url);
+			if ($this->userSession->isLoggedIn()) {
+				// If the user is already logged in and the CSRF check does not pass then
+				// simply redirect the user to the correct page as required. This is the
+				// case when a user has already logged-in, in another tab.
+				return $this->generateRedirect($redirect_url);
+			}
+
+			// Clear any auth remnants like cookies to ensure a clean login
+			// For the next attempt
+			$this->userSession->logout();
+			return $this->createLoginFailedResponse(
+				$user,
+				$user,
+				$redirect_url,
+				$this->l10n->t('Please try again')
+			);
 		}
 
 		$data = new LoginData(
@@ -375,13 +376,10 @@ class LoginController extends Controller {
 	 * @UseSession
 	 * @BruteForceProtection(action=sudo)
 	 *
-	 * @param string $password
-	 *
-	 * @return DataResponse
 	 * @license GNU AGPL version 3 or any later version
 	 *
 	 */
-	public function confirmPassword($password) {
+	public function confirmPassword(string $password): DataResponse {
 		$loginName = $this->userSession->getLoginName();
 		$loginResult = $this->userManager->checkPassword($loginName, $password);
 		if ($loginResult === false) {

@@ -24,8 +24,16 @@ GET /ocs/v2.php/apps/activity/api/v2/activity
 With type filter
 
 ```
-GET /ocs/v2.php/apps/activity/api/v2/activity/:filter
+GET /ocs/v2.php/apps/activity/api/v2/activity/{filter}
 ```
+
+Supported type filters can be obtained from:
+
+```
+GET /ocs/v2.php/apps/activity/api/v2/activity/filters
+```
+
+Additionally, filtering based on `object_type` and `object_id` (see below) is only valid when supplying `filter` as the type filter.  Filtering results based on `object_type` and `object_id` parameters is not supported when using any other type filter.
 
 ## Parameters
 
@@ -33,9 +41,10 @@ Name | Type | Description
 ---- | ---- | -----------
 `since` | int (Optional) | The integer ID of the last activity that you’ve seen.
 `limit` | int (Optional) | How many activities should be returned (Default: `50`)
-`object_type` | string (Optional) | Allows to filter the activities to a given object. May only appear together with `object_id`
-`object_id` | string (Optional) | Allows to filter the activities to a given object. May only appear together with `object_type`
+`object_type` | string (Optional) | Allows to filter the activities to a given object. May only appear together with `object_id` and the `filter` type filter
+`object_id` | string (Optional) | Allows to filter the activities to a given object. May only appear together with `object_type` and the `filter` type filter
 `sort` | string - `asc` or `desc` | Should activities be given ascending or descending (from the `since`) (Default: `desc`)
+
 
 ## HTTP Status
 
@@ -90,6 +99,7 @@ Field name | Type | Value description
 `object_type` | string (Optional) | Type of the object this activity is about (e.g. `'files'` is used for files and folders)
 `object_id` | int (Optional) | ID of the object this activity is about (e.g. ID in the file cache is used for files and folders)
 `object_name` | string (Optional) | Name of the object this activity is about (e.g. for files it's the relative path to the user's root: `'/folder/.travis.yml'`)
+`objects` | object (Optional) | In activities that reference multiple objects (e.g. an activity detailing several files edited in the same folder), this field holds the objects referenced in this activity. They are stored in `objects` as key-value pairs of the `object_id` and the `object_name`: `{ object_id: object_name}`
 `previews` | array (Optional) | A list of potential previews (currently only available for file activities). See `Preview element` for more information
 
 ### Preview element

@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Приватност",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Центарот за приватност ви покажува каде се складираат вашите податоци и кој има пристап до нив, или затоа што сте ги споделиле со некој или затоа што тие се администратори.",
-    "Remove external admin" : "Отстрани надворешен администратор",
+    "Remove external {propertyName} admin" : "Острани го надворешниот {propertyName} администратор",
     "Add external admin" : "Додади надворешен администратор",
     "Name of external admin" : "Име на надворешен администратор",
+    "Adapt encryption" : "Прилагоди енкрипција",
     "This server is using full-disk-encryption." : "Овој сервер користи целосно енкриптиран диск.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Вашите датотеки се енкриптирани со {linkopen}енкрипција од страна на серверот ↗{linkclose} со главен клуч.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Вашата домашна меморија е шифрирана со {linkopen}шифрирање од страна на серверот ↗{linkclose} со главен клуч. Тоа значи дека администраторите можат да пристапат до вашите датотеки, но не и да ја читаат нивната содржина.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Вашите датотеки надворешните складишта може да се криптираат со {linkopen}енкрипција од страна на серверот ↗{linkclose} со главен клуч базиран според конфигурацијата.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Вашите датотеки се енкриптирани со {linkopen}енкрипција од страна на серверот ↗{linkclose} со приватен клуч.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Вашата домашна меморија е шифрирана со {linkopen}шифрирање од страна на серверот ↗{linkclose} со индивидуален корснички клуч. Тоа значи дека администраторите можат да пристапат до вашите датотеки, но не и да ја читаат нивната содржина.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Вашите датотеки надворешните складишта може да се криптираат со {linkopen}енкрипција од страна на серверот ↗{linkclose} со индивидуален клуч базиран според конфигурацијата.",
     "Additionally, this server is protected with full-disk-encryption." : "Овој сервер е заштитен со целосно енкриптиран диск.",
     "This server is protected with full-disk-encryption." : "Овој сервер е заштитен со целосно енкриптиран диск.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Политика за приватност",
     "Read the privacy policy." : "Прочитај ја политиката за приватност",
     "Encryption" : "Енкрипција",
-    "The admin hasn't selected the location of the server yet." : "Администраторот сеуште нема избрано локација на серверот."
+    "Remove external admin" : "Отстрани надворешен администратор",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Вашите датотеки се енкриптирани со {linkopen}енкрипција од страна на серверот ↗{linkclose} со главен клуч.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Вашите датотеки се енкриптирани со {linkopen}енкрипција од страна на серверот ↗{linkclose} со приватен клуч."
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

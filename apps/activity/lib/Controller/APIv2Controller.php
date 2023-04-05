@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Activity\Controller;
 
-use OC\Files\View;
 use OCA\Activity\Data;
 use OCA\Activity\Exception\InvalidFilterException;
 use OCA\Activity\GroupHelper;
@@ -93,28 +92,9 @@ class APIv2Controller extends OCSController {
 	/** @var IMimeTypeDetector */
 	protected $mimeTypeDetector;
 
-	/** @var View */
-	protected $view;
-
 	/** @var ViewInfoCache */
 	protected $infoCache;
 
-	/**
-	 * OCSEndPoint constructor.
-	 *
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IManager $activityManager
-	 * @param Data $data
-	 * @param GroupHelper $helper
-	 * @param UserSettings $settings
-	 * @param IURLGenerator $urlGenerator
-	 * @param IUserSession $userSession
-	 * @param IPreview $preview
-	 * @param IMimeTypeDetector $mimeTypeDetector
-	 * @param View $view
-	 * @param ViewInfoCache $infoCache
-	 */
 	public function __construct($appName,
 								IRequest $request,
 								IManager $activityManager,
@@ -125,7 +105,6 @@ class APIv2Controller extends OCSController {
 								IUserSession $userSession,
 								IPreview $preview,
 								IMimeTypeDetector $mimeTypeDetector,
-								View $view,
 								ViewInfoCache $infoCache) {
 		parent::__construct($appName, $request);
 		$this->activityManager = $activityManager;
@@ -136,7 +115,6 @@ class APIv2Controller extends OCSController {
 		$this->userSession = $userSession;
 		$this->preview = $preview;
 		$this->mimeTypeDetector = $mimeTypeDetector;
-		$this->view = $view;
 		$this->infoCache = $infoCache;
 	}
 
@@ -357,7 +335,7 @@ class APIv2Controller extends OCSController {
 		}
 
 		$preview = [
-			'link' => $this->getPreviewLink($info['path'], $info['is_dir'], $info['view']),
+			'link' => $this->urlGenerator->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $fileId]),
 			'source' => '',
 			'mimeType' => 'application/octet-stream',
 			'isMimeTypeIcon' => true,
@@ -371,17 +349,20 @@ class APIv2Controller extends OCSController {
 			$preview['source'] = $this->getPreviewPathFromMimeType('dir');
 			$preview['mimeType'] = 'dir';
 		} else {
-			$this->view->chroot('/' . $owner . '/files');
-			$fileInfo = $this->view->getFileInfo($info['path']);
-			if (!$fileInfo instanceof FileInfo) {
+			$fileInfo = $info['node'] ?? null;
+			if (!($fileInfo instanceof FileInfo)) {
 				$preview = $this->getPreviewFromPath($fileId, $filePath, $info);
 			} elseif ($this->preview->isAvailable($fileInfo)) {
-				$preview['source'] = $this->urlGenerator->linkToRouteAbsolute('core.Preview.getPreview', [
-					'file' => $info['path'],
-					'c' => $this->view->getETag($info['path']),
-					'x' => 150,
-					'y' => 150,
-				]);
+				$params = [
+					'forceIcon' => 0,
+					'a' => 0,
+					'x' => 250,
+					'y' => 250,
+					'fileId' => $fileId,
+					'c' => $fileInfo->getEtag(),
+				];
+
+				$preview['source'] = $this->urlGenerator->linkToRouteAbsolute('core.Preview.getPreviewByFileId', $params);
 				$preview['mimeType'] = $fileInfo->getMimetype() ?: 'application/octet-stream';
 				$preview['isMimeTypeIcon'] = false;
 			} else {
@@ -396,7 +377,7 @@ class APIv2Controller extends OCSController {
 	protected function getPreviewFromPath(int $fileId, string $filePath, array $info): array {
 		$mimeType = $info['is_dir'] ? 'dir' : $this->mimeTypeDetector->detectPath($filePath);
 		return [
-			'link' => $this->getPreviewLink($info['path'], $info['is_dir'], $info['view']),
+			'link' => $this->urlGenerator->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $fileId]),
 			'source' => $this->getPreviewPathFromMimeType($mimeType),
 			'mimeType' => $mimeType,
 			'isMimeTypeIcon' => true,
@@ -413,19 +394,5 @@ class APIv2Controller extends OCSController {
 		}
 
 		return $this->urlGenerator->getAbsoluteURL($mimeTypeIcon);
-	}
-
-	protected function getPreviewLink(string $path, bool $isDir, string $view): string {
-		$params = [
-			'dir' => $path,
-		];
-		if (!$isDir) {
-			$params['dir'] = (substr_count($path, '/') === 1) ? '/' : \dirname($path);
-			$params['scrollto'] = basename($path);
-		}
-		if ($view !== '') {
-			$params['view'] = $view;
-		}
-		return $this->urlGenerator->linkToRouteAbsolute('files.view.index', $params);
 	}
 }

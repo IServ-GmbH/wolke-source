@@ -51,7 +51,6 @@ use OC_Helper;
 use OCP\HintException;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\ILogger;
 use OCP\ITempManager;
 use phpseclib\File\X509;
 use Psr\Log\LoggerInterface;
@@ -501,7 +500,7 @@ class Installer {
 			OC_Helper::rmdirr($appDir);
 			return true;
 		} else {
-			\OCP\Util::writeLog('core', 'can\'t remove app '.$appId.'. It is not installed.', ILogger::ERROR);
+			$this->logger->error('can\'t remove app '.$appId.'. It is not installed.');
 
 			return false;
 		}
@@ -546,8 +545,7 @@ class Installer {
 					if ($filename[0] !== '.' and is_dir($app_dir['path']."/$filename")) {
 						if (file_exists($app_dir['path']."/$filename/appinfo/info.xml")) {
 							if ($config->getAppValue($filename, "installed_version", null) === null) {
-								$info = OC_App::getAppInfo($filename);
-								$enabled = isset($info['default_enable']);
+								$enabled = $appManager->isDefaultEnabled($filename);
 								if (($enabled || in_array($filename, $appManager->getAlwaysEnabledApps()))
 									  && $config->getAppValue($filename, 'enabled') !== 'no') {
 									if ($softErrors) {

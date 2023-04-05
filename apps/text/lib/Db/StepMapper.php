@@ -46,35 +46,31 @@ class StepMapper extends QBMapper {
 		$qb
 			->setMaxResults(100)
 			->orderBy('version')
-			->orderBy('id')
-			->execute();
+			->orderBy('id');
 
 		return $this->findEntities($qb);
 	}
 
 	public function deleteAll($documentId): void {
-		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
-			->execute();
+			->executeStatement();
 	}
 
 	public function deleteBeforeVersion($documentId, $version): void {
-		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->andWhere($qb->expr()->lte('version', $qb->createNamedParameter($version)))
-			->execute();
+			->executeStatement();
 	}
 
 	public function deleteAfterVersion($documentId, $version): int {
-		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		return $qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->andWhere($qb->expr()->gt('version', $qb->createNamedParameter($version)))
-			->execute();
+			->executeStatement();
 	}
 }

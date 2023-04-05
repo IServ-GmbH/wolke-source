@@ -14,7 +14,6 @@ OC.L10N.register(
     "On this day" : "Αυτή τη μέρα",
     "Shared with you" : "Διαμοιρασμένα μαζί σας",
     "Tags" : "Ετικέτες",
-    "Locations" : "Τοποθεσίες",
     "Photos settings" : "Ρυθμίσεις φωτογραφιών",
     "Mark selection as favorite" : "Επισήμανση ως αγαπημένο",
     "Add selection to favorites" : "Προσθήκη στα αγαπημένα",
@@ -40,6 +39,7 @@ OC.L10N.register(
     "Share this folder" : "Διαμοιρασμός αυτού του φακέλου",
     "_{years} year ago_::_{years} years ago_" : ["{years} χρόνο πριν","{years} χρόνια πριν"],
     "Enable squared photos view" : "Ενεργοποίηση προβολής τετραγωνικών φωτογραφιών",
+    "Select the default location for your media" : "Επιλέξτε την προεπιλεγμένη τοποθεσία για τα πολυμέσα σας",
     "View" : "Προβολή",
     "Delete album" : "Διαγραφή άλμπουμ",
     "Download selected files" : "Λήψη επιλεγμένων αρχείων",
@@ -78,6 +78,7 @@ OC.L10N.register(
     "Your photos" : "Οι φωτογραφίες σας",
     "Your videos" : "Τα βίντεό σας",
     "Your folders" : "Οι φάκελοί σας",
+    "Locations" : "Τοποθεσίες",
     "Settings" : "Ρυθμίσεις"
 },
 "nplurals=2; plural=(n != 1);");

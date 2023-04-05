@@ -39,6 +39,7 @@ use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IEmojiHelper;
 use OCP\IUser;
 use OCP\IInitialStateService;
 use OCP\PreConditionNotMetException;
@@ -59,7 +60,7 @@ class Manager implements ICommentsManager {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	/** @var EmojiHelper */
+	/** @var IEmojiHelper */
 	protected $emojiHelper;
 
 	/** @var IInitialStateService */
@@ -81,7 +82,7 @@ class Manager implements ICommentsManager {
 								LoggerInterface $logger,
 								IConfig $config,
 								ITimeFactory $timeFactory,
-								EmojiHelper $emojiHelper,
+								IEmojiHelper $emojiHelper,
 								IInitialStateService $initialStateService) {
 		$this->dbConn = $dbConn;
 		$this->logger = $logger;
@@ -105,6 +106,9 @@ class Manager implements ICommentsManager {
 		$data['creation_timestamp'] = new \DateTime($data['creation_timestamp']);
 		if (!is_null($data['latest_child_timestamp'])) {
 			$data['latest_child_timestamp'] = new \DateTime($data['latest_child_timestamp']);
+		}
+		if (!is_null($data['expire_date'])) {
+			$data['expire_date'] = new \DateTime($data['expire_date']);
 		}
 		$data['children_count'] = (int)$data['children_count'];
 		$data['reference_id'] = $data['reference_id'] ?? null;
@@ -159,14 +163,13 @@ class Manager implements ICommentsManager {
 			throw new \UnexpectedValueException('Actor, Object and Verb information must be provided for saving');
 		}
 
-		if ($comment->getVerb() === 'reaction' && !$this->emojiHelper->isValidEmoji($comment->getMessage())) {
+		if ($comment->getVerb() === 'reaction' && !$this->emojiHelper->isValidSingleEmoji($comment->getMessage())) {
 			// 4 characters: laptop + person + gender + skin color => "🧑🏽‍💻" is a single emoji from the picker
 			throw new \UnexpectedValueException('Reactions can only be a single emoji');
 		}
 
 		if ($comment->getId() === '') {
 			$comment->setChildrenCount(0);
-			$comment->setLatestChildDateTime(new \DateTime('0000-00-00 00:00:00', new \DateTimeZone('UTC')));
 			$comment->setLatestChildDateTime(null);
 		}
 
@@ -1080,7 +1083,7 @@ class Manager implements ICommentsManager {
 	 * @since 24.0.0
 	 */
 	public function supportReactions(): bool {
-		return $this->dbConn->supports4ByteText();
+		return $this->emojiHelper->doesPlatformSupportEmoji();
 	}
 
 	/**
@@ -1202,6 +1205,7 @@ class Manager implements ICommentsManager {
 			'latest_child_timestamp' => $qb->createNamedParameter($comment->getLatestChildDateTime(), 'datetime'),
 			'object_type' => $qb->createNamedParameter($comment->getObjectType()),
 			'object_id' => $qb->createNamedParameter($comment->getObjectId()),
+			'expire_date' => $qb->createNamedParameter($comment->getExpireDate(), 'datetime'),
 		];
 
 		if ($tryWritingReferenceId) {
@@ -1257,8 +1261,6 @@ class Manager implements ICommentsManager {
 	}
 
 	private function sumReactions(string $parentId): void {
-		$qb = $this->dbConn->getQueryBuilder();
-
 		$totalQuery = $this->dbConn->getQueryBuilder();
 		$totalQuery
 			->selectAlias(
@@ -1272,7 +1274,7 @@ class Manager implements ICommentsManager {
 			)
 			->selectAlias($totalQuery->func()->count('id'), 'total')
 			->from('reactions', 'r')
-			->where($totalQuery->expr()->eq('r.parent_id', $qb->createNamedParameter($parentId)))
+			->where($totalQuery->expr()->eq('r.parent_id', $totalQuery->createNamedParameter($parentId)))
 			->groupBy('r.reaction')
 			->orderBy('total', 'DESC')
 			->addOrderBy('r.reaction', 'ASC')
@@ -1290,9 +1292,10 @@ class Manager implements ICommentsManager {
 			)
 			->from($jsonQuery->createFunction('(' . $totalQuery->getSQL() . ')'), 'json');
 
+		$qb = $this->dbConn->getQueryBuilder();
 		$qb
 			->update('comments')
-			->set('reactions', $jsonQuery->createFunction('(' . $jsonQuery->getSQL() . ')'))
+			->set('reactions', $qb->createFunction('(' . $jsonQuery->getSQL() . ')'))
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($parentId)))
 			->executeStatement();
 	}
@@ -1641,5 +1644,26 @@ class Manager implements ICommentsManager {
 	public function load(): void {
 		$this->initialStateService->provideInitialState('comments', 'max-message-length', IComment::MAX_MESSAGE_LENGTH);
 		Util::addScript('comments', 'comments-app');
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function deleteCommentsExpiredAtObject(string $objectType, string $objectId = ''): bool {
+		$qb = $this->dbConn->getQueryBuilder();
+		$qb->delete('comments')
+			->where($qb->expr()->lte('expire_date',
+				$qb->createNamedParameter($this->timeFactory->getDateTime(), IQueryBuilder::PARAM_DATE)))
+			->andWhere($qb->expr()->eq('object_type', $qb->createNamedParameter($objectType)));
+
+		if ($objectId !== '') {
+			$qb->andWhere($qb->expr()->eq('object_id', $qb->createNamedParameter($objectId)));
+		}
+
+		$affectedRows = $qb->executeStatement();
+
+		$this->commentsCache = [];
+
+		return $affectedRows > 0;
 	}
 }

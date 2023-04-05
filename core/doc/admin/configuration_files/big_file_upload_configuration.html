@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -101,7 +105,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
       <li class="breadcrumb-item active">Uploading big files &gt; 512MB</li>
       <li class="wy-breadcrumbs-aside">
@@ -158,7 +162,7 @@ relevant php.ini files)</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">upload_max_filesize</span></code> and <code class="docutils literal notranslate"><span class="pre">post_max_size</span></code> settings may not apply to file uploads
-through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 For those, PHP and webserver timeouts are the limiting factor on the upload size.</p>
 <p>Adjust these values for your needs. If you see PHP timeouts in your logfiles,
 increase the timeout values, which are in seconds:</p>
@@ -276,7 +280,7 @@ configuration to reset it to the default shown in the <code class="docutils lite
 </section>
 <section id="large-file-upload-on-object-storage">
 <h2>Large file upload on object storage<a class="headerlink" href="#large-file-upload-on-object-storage" title="Permalink to this headline"></a></h2>
-<p><a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+<p><a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 do have a larger space consumption on the temporary folder when processing those uploads
 on object storage as the individual chunks get downloaded from the storage and will be assembled
 to the actual file on the Nextcloud servers temporary directory. It is recommended to increase
@@ -296,7 +300,7 @@ enough for PHP, webservers or any load balancers involved.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -321,6 +325,8 @@ enough for PHP, webservers or any load balancers involved.</p>
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

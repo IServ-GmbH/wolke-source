@@ -89,7 +89,7 @@ class HEIC extends ProviderV2 {
 		$this->cleanTmpFiles();
 
 		//new bitmap image object
-		$image = new \OC_Image();
+		$image = new \OCP\Image();
 		$image->loadFromData((string) $bp);
 		//check if image object is valid
 		return $image->valid() ? $image : null;
@@ -114,6 +114,9 @@ class HEIC extends ProviderV2 {
 
 		// Layer 0 contains either the bitmap or a flat representation of all vector layers
 		$bp->readImage($tmpPath . '[0]');
+
+		// Fix orientation from EXIF
+		$bp->autoOrient();
 
 		$bp->setImageFormat('jpg');
 

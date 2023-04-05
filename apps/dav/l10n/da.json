@@ -53,15 +53,12 @@
     "Description: %s" : "Beskrivelse: %s",
     "Where: %s" : "Hvor: %s",
     "%1$s via %2$s" : "%1$s via %2$s",
-    "Invitation canceled" : "Invitation annulleret",
-    "Invitation updated" : "Invitation opdateret ",
-    "Invitation" : "Invitation",
+    "Organizer:" : "Arrangør:",
+    "Attendees:" : "Deltagere:",
     "Title:" : "Titel:",
     "Time:" : "Tid:",
     "Location:" : "Sted:",
     "Link:" : "Link:",
-    "Organizer:" : "Arrangør:",
-    "Attendees:" : "Deltagere:",
     "Accept" : "Accepter",
     "Decline" : "Afvis",
     "More options …" : "Flere indstillinger…",
@@ -91,7 +88,6 @@
     "Hence they will not be available immediately after enabling but will show up after some time." : "Derfor vil de ikke blive synlige med det samme efter aktivering, men vil vise sig efter noget tid.",
     "Are you accepting the invitation?" : "Accepter du invitationen?",
     "Tentative" : "Foreløbig",
-    "Comment" : "Kommentér",
     "Todos" : "Opgaver",
     "{actor} created todo {todo} in list {calendar}" : "{actor} oprettede en opgave {todo} i listen {calendar}",
     "You created todo {todo} in list {calendar}" : "Du oprettede opgaven {todo} i listen {calendar}",
@@ -103,6 +99,9 @@
     "You solved todo {todo} in list {calendar}" : "Du løste opgaven {todo} i listen {calendar}",
     "{actor} reopened todo {todo} in list {calendar}" : "{actor} genåbnede opgaven {todo} i listen {calendar}",
     "You reopened todo {todo} in list {calendar}" : "Du genåbnede opgaven {todo} i listen {calendar}",
-    "A calendar <strong>todo</strong> was modified" : "En kalender  <strong>opgave</strong> blev ændret"
+    "A calendar <strong>todo</strong> was modified" : "En kalender  <strong>opgave</strong> blev ændret",
+    "Invitation canceled" : "Invitation annulleret",
+    "Invitation updated" : "Invitation opdateret ",
+    "Invitation" : "Invitation"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

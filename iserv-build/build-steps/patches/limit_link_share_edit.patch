@@ -1,20 +1,21 @@
 diff --git a/apps/files_sharing/src/components/SharePermissionsEditor.vue b/apps/files_sharing/src/components/SharePermissionsEditor.vue
---- a/apps/files_sharing/src/components/SharePermissionsEditor.vue	(revision 888ffa498d3a08bb32591704806ee90075b4bc20)
-+++ b/apps/files_sharing/src/components/SharePermissionsEditor.vue	(date 1673625973188)
-@@ -23,7 +23,7 @@
- <template>
- 	<span>
- 		<!-- file -->
--		<ActionCheckbox v-if="!isFolder"
-+		<ActionCheckbox v-if="!isFolder && canEditFileType"
- 			:checked="shareHasPermissions(atomicPermissions.UPDATE)"
- 			:disabled="saving"
- 			@update:checked="toggleSharePermissions(atomicPermissions.UPDATE)">
-@@ -144,6 +144,35 @@
+index c5e652b2cda..90951eb6483 100644
+--- a/apps/files_sharing/src/components/SharePermissionsEditor.vue
++++ b/apps/files_sharing/src/components/SharePermissionsEditor.vue
+@@ -24,7 +24,7 @@
+ 	<li>
+ 		<ul>
+ 			<!-- file -->
+-			<NcActionCheckbox v-if="!isFolder"
++			<NcActionCheckbox v-if="!isFolder && canEditFileType"
+ 				:checked="shareHasPermissions(atomicPermissions.UPDATE)"
+ 				:disabled="saving"
+ 				@update:checked="toggleSharePermissions(atomicPermissions.UPDATE)">
+@@ -146,6 +146,35 @@ export default {
  	},
-
+ 
  	computed: {
-+		canEditFileType() {
++		canEditFileType () {
 +			// Taken from https://github.com/nextcloud/text/blob/0320046ffe8b853e8e329a9b865cdf3633228509/lib/DirectEditing/TextDirectEditor.php#L83
 +			const supportedMimeTypes = [
 +				'text/markdown',

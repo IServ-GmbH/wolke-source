@@ -45,7 +45,7 @@ namespace OCA\User_LDAP;
 use Closure;
 use Exception;
 use OC;
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OC\ServerNotAvailableException;
 use OCP\Group\Backend\IGetDisplayNameBackend;
 use OCP\Group\Backend\IDeleteGroupBackend;
@@ -55,12 +55,12 @@ use Psr\Log\LoggerInterface;
 class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend, IDeleteGroupBackend {
 	protected $enabled = false;
 
-	/** @var string[][] $cachedGroupMembers array of users with gid as key */
-	protected $cachedGroupMembers;
-	/** @var string[] $cachedGroupsByMember array of groups with uid as key */
-	protected $cachedGroupsByMember;
-	/** @var string[] $cachedNestedGroups array of groups with gid (DN) as key */
-	protected $cachedNestedGroups;
+	/** @var CappedMemoryCache<string[]> $cachedGroupMembers array of users with gid as key */
+	protected CappedMemoryCache $cachedGroupMembers;
+	/** @var CappedMemoryCache<string[]> $cachedGroupsByMember array of groups with uid as key */
+	protected CappedMemoryCache $cachedGroupsByMember;
+	/** @var CappedMemoryCache<string[]> $cachedNestedGroups array of groups with gid (DN) as key */
+	protected CappedMemoryCache $cachedNestedGroups;
 	/** @var GroupPluginManager */
 	protected $groupPluginManager;
 	/** @var LoggerInterface */
@@ -245,7 +245,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	private function _groupMembers(string $dnGroup, ?array &$seen = null): array {
 		if ($seen === null) {
 			$seen = [];
-			// the root entry has to be marked as processed to avoind infinit loops,
+			// the root entry has to be marked as processed to avoid infinite loops,
 			// but not included in the results laters on
 			$excludeFromResult = $dnGroup;
 		}

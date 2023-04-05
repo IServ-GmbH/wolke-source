@@ -53,8 +53,6 @@ return array(
     'OCA\\Circles\\Controller\\EventWrapperController' => $baseDir . '/lib/Controller/EventWrapperController.php',
     'OCA\\Circles\\Controller\\LocalController' => $baseDir . '/lib/Controller/LocalController.php',
     'OCA\\Circles\\Controller\\RemoteController' => $baseDir . '/lib/Controller/RemoteController.php',
-    'OCA\\Circles\\Cron\\ContactsExistingShares' => $baseDir . '/lib/Cron/ContactsExistingShares.php',
-    'OCA\\Circles\\Cron\\GlobalSync' => $baseDir . '/lib/Cron/GlobalSync.php',
     'OCA\\Circles\\Cron\\Maintenance' => $baseDir . '/lib/Cron/Maintenance.php',
     'OCA\\Circles\\Cron\\MaintenanceHeavy' => $baseDir . '/lib/Cron/MaintenanceHeavy.php',
     'OCA\\Circles\\Db\\AccountsRequest' => $baseDir . '/lib/Db/AccountsRequest.php',

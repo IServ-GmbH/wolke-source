@@ -29,7 +29,7 @@
 
 namespace OCA\Files_Sharing;
 
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OC\Files\Filesystem;
 use OC\Files\Mount\MountPoint;
 use OC\Files\Mount\MoveableMount;
@@ -96,6 +96,7 @@ class SharedMount extends MountPoint implements MoveableMount {
 	 *
 	 * @param \OCP\Share\IShare $share
 	 * @param SharedMount[] $mountpoints
+	 * @param CappedMemoryCache<bool> $folderExistCache
 	 * @return string
 	 */
 	private function verifyMountPoint(
@@ -103,7 +104,7 @@ class SharedMount extends MountPoint implements MoveableMount {
 		array $mountpoints,
 		CappedMemoryCache $folderExistCache
 	) {
-		$cacheKey = $this->user->getUID() . '/' . $share->getTarget();
+		$cacheKey = $this->user->getUID() . '/' . $share->getId() . '/' . $share->getTarget();
 		$cached = $this->cache->get($cacheKey);
 		if ($cached !== null) {
 			return $cached;

@@ -28,12 +28,16 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../contents.html">
-            <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../contents.html">
+            
+              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -88,7 +92,7 @@
         <div class="rst-content style-external-links">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../contents.html" class="icon icon-home"></a></li>
+      <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Office</a></li>
           <li class="breadcrumb-item"><a href="installation.html">Installation</a></li>
       <li class="breadcrumb-item active">Installation example with Docker</li>
@@ -115,12 +119,12 @@
 <section id="install-the-collabora-online-server">
 <h2>Install the Collabora Online server<a class="headerlink" href="#install-the-collabora-online-server" title="Permalink to this headline"></a></h2>
 <p>The following steps will download the Collabora Online docker. Make sure to replace “cloud.example.com” with the host that your own Nextcloud runs on. Also make sure to escape all dots with double backslashes (<cite>\</cite>), since this string will be evaluated as a regular expression (and your bash ‘eats’ the first backslash.) If you want to use the docker container with more than one Nextcloud, you’ll need to use <cite>domain=cloud\.nextcloud\.com|second\.nextcloud\.com</cite> instead. (All hosts are separated by <cite>|</cite>.)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull collabora/code
-docker run -t -d -p <span class="m">127</span>.0.0.1:9980:9980 <span class="se">\</span>
-    -e <span class="s1">&#39;domain=cloud\\.example\\.com&#39;</span> <span class="se">\</span>
-    --restart always <span class="se">\</span>
-    --cap-add MKNOD <span class="se">\</span>
-    collabora/code
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>collabora/code
+docker<span class="w"> </span>run<span class="w"> </span>-t<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:9980:9980<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s1">&#39;domain=cloud\\.example\\.com&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--restart<span class="w"> </span>always<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cap-add<span class="w"> </span>MKNOD<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>collabora/code
 </pre></div>
 </div>
 <p>That will be enough. Once you have done that the server will listen on “localhost:9980”. Now we just need to configure the locally installed Apache reverse proxy.</p>
@@ -128,8 +132,8 @@ docker run -t -d -p <span class="m">127</span>.0.0.1:9980:9980 <span class="se">
 <section id="install-the-apache-reverse-proxy">
 <h2>Install the Apache reverse proxy<a class="headerlink" href="#install-the-apache-reverse-proxy" title="Permalink to this headline"></a></h2>
 <p>On a recent Ubuntu or Debian this should be possible using:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt-get install apache2
-a2enmod proxy proxy_wstunnel proxy_http ssl
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apt-get<span class="w"> </span>install<span class="w"> </span>apache2
+a2enmod<span class="w"> </span>proxy<span class="w"> </span>proxy_wstunnel<span class="w"> </span>proxy_http<span class="w"> </span>ssl
 </pre></div>
 </div>
 <p>Afterward, configure one VirtualHost properly to proxy the traffic. For security reason we recommend to use a subdomain such as office.example.com instead of running on the same domain. An example config can be found below:</p>
@@ -191,21 +195,21 @@ Congratulations, your Nextcloud has Collabora Online Office integrated!</p>
 <h2>Updating<a class="headerlink" href="#updating" title="Permalink to this headline"></a></h2>
 <p>Occasionally, new versions of this docker image are released with security and feature updates. We will of course let you know when that happens! This is how you upgrade to a new version:</p>
 <dl>
-<dt>Update the docker image:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker pull collabora/code
+<dt>Update the docker image:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>collabora/code
 </pre></div>
 </div>
 </dd>
-<dt>List running docker containers:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker ps
+<dt>List running docker containers:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>ps
 </pre></div>
 </div>
 </dd>
-<dt>Stop and remove the Collabora Online container with the container id of the running one:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker stop CONTAINER_ID
-docker rm CONTAINER_ID
+<dt>Stop and remove the Collabora Online container with the container id of the running one:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>stop<span class="w"> </span>CONTAINER_ID
+docker<span class="w"> </span>rm<span class="w"> </span>CONTAINER_ID
 </pre></div>
 </div>
 </dd>
-<dt>Start the new container:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -t -d -p <span class="m">127</span>.0.0.1:9980:9980 -e <span class="s1">&#39;domain=cloud\\.example\\.com&#39;</span> <span class="se">\</span>
-    --restart always --cap-add MKNOD collabora/code
+<dt>Start the new container:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-t<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">127</span>.0.0.1:9980:9980<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;domain=cloud\\.example\\.com&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--restart<span class="w"> </span>always<span class="w"> </span>--cap-add<span class="w"> </span>MKNOD<span class="w"> </span>collabora/code
 </pre></div>
 </div>
 </dd>
@@ -224,7 +228,7 @@ docker rm CONTAINER_ID
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
   </div>
 
    
@@ -249,6 +253,8 @@ docker rm CONTAINER_ID
           <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -54,7 +54,7 @@ use Icewind\SMB\ServerFactory;
 use Icewind\SMB\System;
 use Icewind\Streams\CallbackWrapper;
 use Icewind\Streams\IteratorDirectory;
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OC\Files\Filesystem;
 use OC\Files\Storage\Common;
 use OCA\Files_External\Lib\Notify\SMBNotifyHandler;
@@ -84,10 +84,8 @@ class SMB extends Common implements INotifyStorage {
 	 */
 	protected $root;
 
-	/**
-	 * @var IFileInfo[]
-	 */
-	protected $statCache;
+	/** @var CappedMemoryCache<IFileInfo> */
+	protected CappedMemoryCache $statCache;
 
 	/** @var ILogger */
 	protected $logger;
@@ -527,7 +525,7 @@ class SMB extends Common implements INotifyStorage {
 		}
 
 		try {
-			$this->statCache = [];
+			$this->statCache = new CappedMemoryCache();
 			$content = $this->share->dir($this->buildPath($path));
 			foreach ($content as $file) {
 				if ($file->isDirectory()) {

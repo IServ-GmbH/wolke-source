@@ -1,5 +1,4 @@
 { "translations": {
-    "Copy to clipboard" : "Kopierat till urklipp",
     "Copied!" : "Kopierad!",
     "Not supported!" : "Stöds inte!",
     "Press ⌘-C to copy." : "Tryck ⌘-C för att kopiera.",
@@ -20,6 +19,10 @@
     "Sync tasks from various devices with your Nextcloud and edit them online." : "Synka uppgifter från olika enheter med ditt Nextcloud och redigera dem online.",
     "App recommendation: Deck" : "Rekommenderad app: Kortlek",
     "Kanban style organization for personal planning and team projects." : "Kanban-baserad planering för egna projekt eller i grupp.",
+    "App recommendation: Forms" : "Apprekommendation: Formulär",
+    "Simple surveys and questionnaires, self-hosted" : "Enkla undersökningar och enkäter, själv-hostad",
+    "App recommendation: Recognize" : "Apprekommendation: Känn igen",
+    "Smart media tagging for Nextcloud" : "Smart taggning för media i Nextcloud",
     "App recommendation: Group folders" : "Rekommenderad app: Gruppmappar (Group folders)",
     "Admin-configured folders shared by everyone in a group." : "Admin-konfigurerade mappar som delas av alla i en grupp.",
     "About" : "Om",
@@ -53,6 +56,8 @@
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Vill du få en viss förbättring i Nextcloud? Hittade du ett problem? Vill du hjälpa till att översätta, marknadsföra eller dokumentera Nextcloud?",
     "Become part of the Community" : "Bli en del av gemenskapen",
     "Enterprise support" : "Företagssupport",
+    "If you run Nextcloud in a mission critical environment where security and compliance are important, you need the certainty of Nextcloud Enterprise." : "Om du kör Nextcloud i en verksamhetskritisk miljö där säkerhet och efterlevnad är viktigt behöver du vissheten hos Nextcloud Enterprise.",
+    "Learn more about Nextcloud Enterprise" : "Läs mer om Nextcloud Enterprise",
     "Get more information" : "Skaffa mer information",
     "The Nextcloud documentation for home users:" : "Nextcloud-dokumentation för hemanvändare:",
     "User manual" : "Manual för användare",
@@ -63,6 +68,8 @@
     "A safe home for all your data" : "Ett säkert hem för all din data",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Nextcloud ger dig full kontroll över din data. Lagra dina dokument, kalender, kontakter och foton på en server i ditt företag, hemma, hos en av våra leverantörer eller i ett datacenter du känner.",
     "Host your data and files where you decide" : "Lagra din data och filer där du vill",
+    "Open standards and interoperability" : "Öppna standarder och interoperabilitet",
+    "100%% open source & community-focused" : "100%% öppen källkod och gemenskapsfokuserad",
     "Learn more about %s" : "Läs mer om %s",
     "This Nextcloud is on version %s" : "Denna Nextcloud är på version %s",
     "%s gives you access to your files wherever you are. Our easy to use desktop and mobile clients are available for all major platforms at zero cost." : "%s ger dig åtkomst till dina filer var du än befinner dig. Våra lättanvända skrivbords- och mobilklienter är tillgängliga för alla större plattformar utan kostnad.",
@@ -72,12 +79,11 @@
     "Server address" : "Serveradress",
     "Use this link to connect your apps and desktop client to this server:" : "Använd den här länken för att ansluta dina appar och desktopklient till den här servern:",
     "Copy link" : "Kopiera länk",
+    "Copy to clipboard" : "Kopierat till urklipp",
     "App recommendation: Notes" : "Rekommenderad app: Anteckningar (Notes)",
     "Distraction-free notes and writing." : "Störningsfria anteckningar helt enkelt.",
     "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Om du kör Nextcloud i produktionsmiljö med många användare, mycket data och behöver trygghet med support från experterna bakom Nextcloud-tekniken, finns ett företagsabonnemang från Nextcloud med e-post- och telefonsupport.",
     "Get enterprise support" : "Skaffa företagssupport",
-    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC-chattkanal på freenode.net",
-    "Open Standards and Interoperability" : "Öppna standarder och interoperabilitet",
-    "100%% Open Source & community-focused" : "100%% öppen källkod & gemenskapsfokuserad"
+    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC-chattkanal på freenode.net"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

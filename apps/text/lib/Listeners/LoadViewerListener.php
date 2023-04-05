@@ -25,17 +25,32 @@ declare(strict_types=1);
 
 namespace OCA\Text\Listeners;
 
+use OCA\Text\Service\InitialStateProvider;
 use OCA\Viewer\Event\LoadViewer;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Util;
 
 /** @implements IEventListener<Event> */
 class LoadViewerListener implements IEventListener {
+	private InitialStateProvider $initialStateProvider;
+	private IEventDispatcher $eventDispatcher;
+
+	public function __construct(InitialStateProvider $initialStateProvider,
+								IEventDispatcher $eventDispatcher) {
+		$this->initialStateProvider = $initialStateProvider;
+		$this->eventDispatcher = $eventDispatcher;
+	}
+
 	public function handle(Event $event): void {
 		if (!$event instanceof LoadViewer) {
 			return;
 		}
-		\OCP\Util::addScript('text', 'text-viewer', 'viewer');
-		\OCP\Util::addStyle('text', 'icons');
+		Util::addScript('text', 'text-viewer', 'viewer');
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
+
+		$this->initialStateProvider->provideState();
 	}
 }

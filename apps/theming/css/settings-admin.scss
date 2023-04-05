@@ -31,6 +31,8 @@
     }
     form.uploadButton {
         width: 411px;
+        display: flex;
+        align-items: center;
     }
     form .theme-undo,
     .theme-remove-bg {
@@ -46,7 +48,14 @@
         visibility: visible;
         height: 32px;
         width: 32px;
+        // right align
+        margin-left: auto;
     }
+    form .theme-undo:not([style*="display:"]) ~ .theme-remove-bg {
+        // Only align the undo button if both are shown
+        margin-left: 0;
+    }
+
     input[type='text']:hover + .theme-undo,
     input[type='text'] + .theme-undo:hover,
     input[type='text']:focus + .theme-undo,
@@ -61,6 +70,8 @@
     label span {
         display: inline-block;
         min-width: 175px;
+        max-width: 175px;
+        white-space: wrap;
         padding: 8px 0px;
         vertical-align: top;
     }
@@ -100,6 +111,8 @@
         margin-top: 10px;
         margin-bottom: 20px;
         cursor: pointer;
+        background-color: var(--color-primary-default);
+        background-image: var(--image-background-default, var(--image-background-plain, url('../../../core/img/app-background.jpg'), linear-gradient(40deg, #0082c9 0%, #30b6ff 100%)));
 
         #theming-preview-logo {
             cursor: pointer;
@@ -110,6 +123,7 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
+            background-image: var(--image-logo, url('../../../core/img/logo/logo.svg'));
         }
     }
 
@@ -124,6 +138,24 @@
         background-position: center;
         background-repeat: no-repeat;
         background-size: contain;
+    }
+
+	#theming-preview-logoheader {
+        // Only using --image-logoheader to show the custom value only
+        background-image: var(--image-logoheader);
+    }
+
+	#theming-preview-favicon {
+        background-image: var(--image-favicon);
+    }
+
+    #user-theming {
+        margin-top: 44px;
+        display: flex;
+       & > div {
+            max-width: 400px;
+            margin-bottom: 44px;
+        }
     }
 }
 

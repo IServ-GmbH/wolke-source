@@ -4,13 +4,14 @@ OC.L10N.register(
     "Privacy" : "Vie privée",
     "-" : "-",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "Le centre de confidentialité indique où sont stockées vos données et qui peut y accéder soit parce que vous partager ces données explicitement soit parce que des administrateurs ont accès à ces données.",
-    "Remove external admin" : "Supprimer l'administrateur externe",
+    "Remove external {propertyName} admin" : "Supprimer l'admin externe de {propertyName}",
     "Add external admin" : "Ajouter un administrateur externe",
     "Name of external admin" : "Nom de l'administrateur externe",
+    "Adapt encryption" : "Adapter le chiffrement",
     "This server is using full-disk-encryption." : "Les disques de ce serveur sont chiffrés.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Votre espace de stockage est chiffré avec {linkopen}server-side-encryption ↗{linkclose} avec une clé principale.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key. It means that administrators can access your files, but not read their content." : "Votre stockage personnel est chiffré en utilisant le {linkopen}server-side-encryption ↗{linkclose} avec une clé principale. Cela signifie que les administrateurs peuvent accéder à vos fichiers, mais pas en lire le contenu.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key based on their configuration." : "Vos fichiers sur les stockages externes peuvent être chiffrés avec {linkopen}server-side-encryption ↗{linkclose} avec une clé principale reposant sur leur configuration.",
-    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Votre espace de stockage est chiffré avec {linkopen}server-side-encryption ↗{linkclose} avec une clé d'utilisateur individuelle.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key. It means that administrators can access your files, but not read their content." : "Votre stockage personnel est chiffré en utilisant le {linkopen}server-side-encryption ↗{linkclose} avec une clé utilisateur individuelle. Cela signifie que les administrateurs peuvent accéder à vos fichiers, mais pas en lire le contenu.",
     "Your files on external storages may be encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual key based on their configuration." : "Vos fichiers sur les stockages externes peuvent être chiffrés avec {linkopen}server-side-encryption ↗{linkclose} avec une clé individuelle reposant sur leur configuration.",
     "Additionally, this server is protected with full-disk-encryption." : "De plus, ce serveur est protégé par un chiffrement complet du disque.",
     "This server is protected with full-disk-encryption." : "Les disques de ce serveur sont protégés par chiffrement.",
@@ -288,6 +289,8 @@ OC.L10N.register(
     "Privacy policy" : "Politique de confidentialité",
     "Read the privacy policy." : "Lisez la politique de confidentialité.",
     "Encryption" : "Chiffrement",
-    "The admin hasn't selected the location of the server yet." : "L'administrateur n'a pas encore indiqué l'emplacement du serveur."
+    "Remove external admin" : "Supprimer l'administrateur externe",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with a master key." : "Votre espace de stockage est chiffré avec {linkopen}server-side-encryption ↗{linkclose} avec une clé principale.",
+    "Your home storage is encrypted using {linkopen}server-side-encryption ↗{linkclose} with an individual user key." : "Votre espace de stockage est chiffré avec {linkopen}server-side-encryption ↗{linkclose} avec une clé d'utilisateur individuelle."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

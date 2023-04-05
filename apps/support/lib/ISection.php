@@ -29,25 +29,12 @@ namespace OCA\Support;
  * @package OCA\IssueTemplate
  */
 interface ISection {
-
-	/**
-	 * @return string
-	 */
-	public function getIdentifier();
-
-	/**
-	 * @return string
-	 */
-	public function getTitle();
-
-	/**
-	 * @param IDetail $details
-	 * @return void
-	 */
-	public function addDetail(IDetail $details);
+	public function getIdentifier(): string;
+	public function getTitle(): string;
+	public function addDetail(IDetail $details): void;
 
 	/**
 	 * @return IDetail[]
 	 */
-	public function getDetails();
+	public function getDetails(): array;
 }

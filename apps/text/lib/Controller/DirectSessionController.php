@@ -60,9 +60,6 @@ class DirectSessionController extends Controller {
 	private ApiService $apiService;
 	private IManager $directManager;
 	private IUserSession $userSession;
-	/**
-	 * @var \OCP\IUserManager
-	 */
 	private IUserManager $userManager;
 
 	public function __construct(string $appName, IRequest $request, ApiService $apiService, IManager $directManager, IUserSession $userSession, IUserManager $userManager) {
