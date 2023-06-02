@@ -117,12 +117,14 @@
 							iconClass: 'icon-delete',
 							order: 99,
 						},
-						{
-							name: 'tags',
-							displayName:  t('files', 'Tags'),
-							iconClass: 'icon-tag',
-							order: 100,
-						},
+						...(
+							OCA?.SystemTags === undefined ? [] : ([{
+								name: 'tags',
+								displayName:  t('files', 'Tags'),
+								iconClass: 'icon-tag',
+								order: 100,
+							}])
+						),
 					],
 					sorting: {
 						mode: $('#defaultFileSorting').val(),
@@ -369,9 +371,9 @@
 			this.navigation.setActiveItem(params.view, {silent: true});
 			if (lastId !== this.navigation.getActiveItem()) {
 				this.navigation.getActiveContainer().trigger(new $.Event('show'));
+				window._nc_event_bus.emit('files:navigation:changed')
 			}
 			this.navigation.getActiveContainer().trigger(new $.Event('urlChanged', params));
-			window._nc_event_bus.emit('files:navigation:changed')
 		},
 
 		/**

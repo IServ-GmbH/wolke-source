@@ -96,7 +96,6 @@
     "Current password" : "Pašreizējā parole",
     "New password" : "Jauna parole",
     "Change password" : "Mainīt paroli",
-    "png or jpg, max. 20 MB" : "png vai jpg, max. 20 MB",
     "Cancel" : "Atcelt",
     "Details" : "Detaļas",
     "Your email address" : "Jūsu e-pasta adrese",
@@ -108,6 +107,7 @@
     "Add" : "Pievienot",
     "Display name" : "Ekrāna vārds",
     "Email" : "E-pasts",
+    "Avatar" : "Profila attēls",
     "Group admin for" : "Admin grupa",
     "Quota" : "Apjoms",
     "Storage location" : "Krātuves atrašanās vieta",
@@ -167,7 +167,6 @@
     "Migration in progress. Please wait until the migration is finished" : "Notiek migrācija. Lūdzu, pagaidiet, līdz migrēšana ir pabeigta",
     "Migration started …" : "Uzsākta migrācija...",
     "Address" : "Adrese",
-    "Avatar" : "Profila attēls",
     "Plain" : "vienkāršs teksts",
     "NT LAN Manager" : "NT LAN Pārvaldnieks",
     "STARTTLS" : "STARTTLS",
@@ -178,6 +177,7 @@
     "Upload new" : "Ielādēt jaunu",
     "Select from Files" : "Izvēlēties no Datnes",
     "Remove image" : "Novākt attēlu",
+    "png or jpg, max. 20 MB" : "png vai jpg, max. 20 MB",
     "Choose as profile picture" : "Izvēlēties kā profila attēlu",
     "Your postal address" : "Jūsu pasta adrese"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"

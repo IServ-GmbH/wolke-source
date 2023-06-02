@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the occ command &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -64,7 +64,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#deleting-a-single-configuration-value">Deleting a single configuration value</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#dav-commands">Dav commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dav-commands">Dav commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sync-system-address-book">Sync system address book</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#database-conversion">Database conversion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-missing-indices">Add missing indices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#encryption">Encryption</a></li>
@@ -634,11 +637,14 @@ bernie:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">birthday</span><span class="o">-</span><span class="n">calendar</span> <span class="n">bernie</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">dav:sync-system-addressbook</span></code> synchronizes all users to the system
-addressbook:</p>
+<section id="sync-system-address-book">
+<span id="occ-dav-sync-system-address-book"></span><h3>Sync system address book<a class="headerlink" href="#sync-system-address-book" title="Permalink to this headline"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">dav:sync-system-addressbook</span></code> synchronizes all users to the <a class="reference internal" href="../groupware/contacts.html#system-address-book"><span class="std std-ref">system
+address book</span></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">addressbook</span>
 </pre></div>
 </div>
+</section>
 </section>
 <section id="database-conversion">
 <span id="database-conversion-label"></span><h2>Database conversion<a class="headerlink" href="#database-conversion" title="Permalink to this headline"></a></h2>
@@ -1625,11 +1631,6 @@ check for that user via the occ command:</p>
 </div>
 <p>Access level</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 34%" />
-<col style="width: 28%" />
-<col style="width: 38%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Level</p></th>
 <th class="head"><p>Visible¹</p></th>

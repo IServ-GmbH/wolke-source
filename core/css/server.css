@@ -132,7 +132,7 @@ body {
 
 .two-factor-provider {
   text-align: center;
-  width: 258px !important;
+  width: 100% !important;
   display: inline-block;
   margin-bottom: 0 !important;
   background-color: var(--color-background-darker) !important;
@@ -1995,8 +1995,16 @@ label.infield {
   overflow: hidden;
 }
 
-::placeholder,
-::-ms-input-placeholder,
+::placeholder {
+  color: var(--color-text-maxcontrast);
+  font-size: var(--default-font-size);
+}
+
+::-ms-input-placeholder {
+  color: var(--color-text-maxcontrast);
+  font-size: var(--default-font-size);
+}
+
 ::-webkit-input-placeholder {
   color: var(--color-text-maxcontrast);
   font-size: var(--default-font-size);
@@ -3150,7 +3158,7 @@ kbd {
   width: calc(100% - var(--body-container-margin) * 2);
   height: var(--body-height);
   border-radius: var(--body-container-radius);
-  overflow: hidden;
+  overflow: clip;
 }
 #content:not(.with-sidebar--full) {
   position: fixed;

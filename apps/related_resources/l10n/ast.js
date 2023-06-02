@@ -1,8 +1,6 @@
 OC.L10N.register(
     "related_resources",
     {
-    "Calendar" : "Calendariu",
-    "Deck" : "Deck",
-    "Files" : "Ficheros"
+    "Calendar" : "Calendariu"
 },
 "nplurals=2; plural=(n != 1);");

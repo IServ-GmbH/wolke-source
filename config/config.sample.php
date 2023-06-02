@@ -159,13 +159,14 @@ $CONFIG = [
 /**
  * This sets the default language on your Nextcloud server, using ISO_639-1
  * language codes such as ``en`` for English, ``de`` for German, and ``fr`` for
- * French. It overrides automatic language detection on public pages like login
- * or shared items. User's language preferences configured under "personal ->
- * language" override this setting after they have logged in. Nextcloud has two
- * distinguished language codes for German, 'de' and 'de_DE'. 'de' is used for
- * informal German and 'de_DE' for formal German. By setting this value to 'de_DE'
- * you can enforce the formal version of German unless the user has chosen
- * something different explicitly.
+ * French. The default_language parameter is only used, when the browser does
+ * not send any language, and the user hasn’t configured own language
+ * preferences.
+ *
+ * Nextcloud has two distinguished language codes for German, 'de' and 'de_DE'.
+ * 'de' is used for informal German and 'de_DE' for formal German. By setting
+ * this value to 'de_DE' you can enforce the formal version of German unless
+ * the user has chosen something different explicitly.
  *
  * Defaults to ``en``
  */
@@ -295,7 +296,7 @@ $CONFIG = [
 
 /**
  * The interval at which token activity should be updated.
- * Increasing this value means that the last activty on the security page gets
+ * Increasing this value means that the last activity on the security page gets
  * more outdated.
  *
  * Tokens are still checked every 5 minutes for validity
@@ -313,6 +314,15 @@ $CONFIG = [
  * Defaults to ``true``
  */
 'auth.bruteforce.protection.enabled' => true,
+
+/**
+ * Whether the rate limit protection shipped with Nextcloud should be enabled or not.
+ *
+ * Disabling this is discouraged for security reasons.
+ *
+ * Defaults to ``true``
+ */
+'ratelimit.protection.enabled' => true,
 
 /**
  * By default WebAuthn is available but it can be explicitly disabled by admins
@@ -789,9 +799,10 @@ $CONFIG = [
  * The channel that Nextcloud should use to look for updates
  *
  * Supported values:
- *   - ``daily``
- *   - ``beta``
- *   - ``stable``
+ *
+ * - ``daily``
+ * - ``beta``
+ * - ``stable``
  */
 'updater.release.channel' => 'stable',
 
@@ -1031,10 +1042,11 @@ $CONFIG = [
  * seen in the first-run wizard and on Personal pages.
  *
  * Defaults to:
- *  - Desktop client: ``https://nextcloud.com/install/#install-clients``
- *  - Android client: ``https://play.google.com/store/apps/details?id=com.nextcloud.client``
- *  - iOS client: ``https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8``
- *  - iOS client app id: ``1125420102``
+ *
+ * - Desktop client: ``https://nextcloud.com/install/#install-clients``
+ * - Android client: ``https://play.google.com/store/apps/details?id=com.nextcloud.client``
+ * - iOS client: ``https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8``
+ * - iOS client app id: ``1125420102``
  */
 'customclient_desktop' =>
 	'https://nextcloud.com/install/#install-clients',

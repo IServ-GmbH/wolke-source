@@ -2,6 +2,7 @@ OC.L10N.register(
     "text",
     {
     "New text file" : "Nový textový soubor",
+    "Create new text file" : "Vytvořit nový textový soubor",
     "The file was uploaded" : "Soubor byl nahrán",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "Velikost nahrávaného souboru překračuje limit nastavený direktivou upload_max_filesize v php.ini",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Velikost nahrávaného souboru překračuje limit nastavený direktivou MAX_FILE_SIZE, zadanou v HTML formuláři",
@@ -87,7 +88,7 @@ OC.L10N.register(
     "Link to file or folder" : "Odkaz na soubor nebo složku",
     "Link to website" : "Odkaz na webovou stránku",
     "Update link" : "Aktualizovat odkaz",
-    "Open link picker" : "Otevřít nabídku výběru odkazu",
+    "Open the Smart Picker" : "Otevřít Inteligentní výběr",
     "Select file or folder to link to" : "Vyberte soubor nebo složku na kterou odkazovat",
     "_%n word_::_%n words_" : ["%n slovo","%n slova","%n slov","%n slova"],
     "_%n char_::_%n chars_" : ["%n znak","%n znaky","%n znaků","%n znaky"],

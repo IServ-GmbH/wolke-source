@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Migrating from ownCloud &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -110,10 +110,6 @@ So it is quite easy, to migrate from one ownCloud version to at least one Nextcl
 However this does only work with versions that are close enough database and code-wise.
 See the table below for a version map, where migrating is easily possible:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 39%" />
-<col style="width: 61%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>ownCloud</p></th>
 <th class="head"><p>Nextcloud</p></th>
@@ -130,12 +126,11 @@ See the table below for a version map, where migrating is easily possible:</p>
 </table>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>While we understand, that you want to migrate as soon as possible,
-we also don’t want to put your data at risk. Since we never know
-what ownCloud changes in a future release, we only allow migrations
-from versions that were released before our last maintenance release,
-so we can at least perform some basic migration tests, before you
-migrate your production instance.</p>
+<p>Since ownCloud does not and will not support PHP 8.0 or higher, you
+need to migrate from ownCloud 10.11.x to Nextcloud 25 and then
+further upgrade from there. We urge you to migrate to Nextcloud
+since PHP versions prior PHP8 are end of life, see
+<a class="reference external" href="https://www.php.net/supported-versions.php">https://www.php.net/supported-versions.php</a>.</p>
 </div>
 <ol class="arabic simple">
 <li><p>First download the correct version of Nextcloud from our <a class="reference external" href="https://nextcloud.com/changelog/">older releases page</a>,</p></li>

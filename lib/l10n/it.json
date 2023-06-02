@@ -3,7 +3,6 @@
     "This can usually be fixed by giving the web server write access to the config directory." : "Ciò può essere corretto di solito fornendo al server web accesso in scrittura alla cartella config.",
     "But, if you prefer to keep config.php file read only, set the option \"config_is_read_only\" to true in it." : "Ma, se preferisci mantenere il file config.php in sola lettura, imposta l'opzione \"config_is_read_only\" a true.",
     "See %s" : "Vedi %s",
-    "The files of the app %1$s were not replaced correctly. Make sure it is a version compatible with the server." : "I file dell'applicazione %1$s non sono stati sostituiti correttamente. Assicurati che sia una versione compatibile con il server.",
     "Sample configuration detected" : "Configurazione di esempio rilevata",
     "It has been detected that the sample configuration has been copied. This can break your installation and is unsupported. Please read the documentation before performing changes on config.php" : "È stato rilevato che la configurazione di esempio è stata copiata. Ciò può compromettere la tua installazione e non è supportato. Leggi la documentazione prima di modificare il file config.php",
     "404" : "404",
@@ -111,7 +110,6 @@
     "Address" : "Indirizzo",
     "Profile picture" : "Immagine di profilo",
     "About" : "Informazioni",
-    "Full name" : "Nome completo",
     "Headline" : "Titolo",
     "Organisation" : "Organizzazione",
     "Role" : "Ruolo",
@@ -228,8 +226,6 @@
     "Adjusting this setting in php.ini will make Nextcloud run again" : "Per eseguire nuovamente Nextcloud, modificare questa impostazione nel file php.ini",
     "<code>mbstring.func_overload</code> is set to <code>%s</code> instead of the expected value <code>0</code>." : "<code>mbstring.func_overload</code> è impostato a <code>%s</code> invece del valore previsto <code>0</code>.",
     "To fix this issue set <code>mbstring.func_overload</code> to <code>0</code> in your php.ini." : "Per correggere questo problema, imposta <code>mbstring.func_overload</code> a <code>0</code> nel tuo php.ini.",
-    "libxml2 2.7.0 is at least required. Currently %s is installed." : "È richiesta almeno la versione 2.7.0 di libxml2. Quella attualmente installata è la %s.",
-    "To fix this issue update your libxml2 version and restart your web server." : "Per risolvere questo problema, aggiorna la tua versione di libxml2 e riavvia il server web.",
     "PHP is apparently set up to strip inline doc blocks. This will make several core apps inaccessible." : "Sembra che PHP sia configurato per rimuovere i blocchi di documentazione in linea. Ciò renderà inaccessibili diverse applicazioni principali.",
     "This is probably caused by a cache/accelerator such as Zend OPcache or eAccelerator." : "Ciò è causato probabilmente da una cache/acceleratore come Zend OPcache o eAccelerator.",
     "PHP modules have been installed, but they are still listed as missing?" : "Sono stati installati moduli PHP, ma sono elencati ancora come mancanti?",
@@ -253,10 +249,14 @@
     "Storage connection error. %s" : "Errore di connessione all'archiviazione. %s",
     "Storage is temporarily not available" : "L'archiviazione è temporaneamente non disponibile",
     "Storage connection timeout. %s" : "Timeout di connessione all'archiviazione. %s",
+    "The files of the app %1$s were not replaced correctly. Make sure it is a version compatible with the server." : "I file dell'applicazione %1$s non sono stati sostituiti correttamente. Assicurati che sia una versione compatibile con il server.",
+    "Full name" : "Nome completo",
     "%s enter the database username and name." : "%s digita il nome utente e il nome del database.",
     "%s enter the database username." : "%s digita il nome utente del database.",
     "%s enter the database name." : "%s digita il nome del database.",
     "%s you may not use dots in the database name" : "%s non dovresti utilizzare punti nel nome del database",
-    "Only the following characters are allowed in a username: \"a-z\", \"A-Z\", \"0-9\", and \"_.@-'\"" : "Solo i seguenti caratteri sono consentiti in un nome utente: \"a-z\", \"A-Z\", \"0-9\", e \"_.@-'\""
+    "Only the following characters are allowed in a username: \"a-z\", \"A-Z\", \"0-9\", and \"_.@-'\"" : "Solo i seguenti caratteri sono consentiti in un nome utente: \"a-z\", \"A-Z\", \"0-9\", e \"_.@-'\"",
+    "libxml2 2.7.0 is at least required. Currently %s is installed." : "È richiesta almeno la versione 2.7.0 di libxml2. Quella attualmente installata è la %s.",
+    "To fix this issue update your libxml2 version and restart your web server." : "Per risolvere questo problema, aggiorna la tua versione di libxml2 e riavvia il server web."
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installing from command line &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -120,15 +120,16 @@ this example for Debian/Ubuntu. You must run <code class="docutils literal notra
 <p>3. Use the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command to complete your installation. This takes the place
 of running the graphical Installation Wizard:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /var/www/nextcloud/
-$ sudo -u www-data php occ  maintenance:install --database \
-&quot;mysql&quot; --database-name &quot;nextcloud&quot;  --database-user &quot;root&quot; --database-pass \
-&quot;password&quot; --admin-user &quot;admin&quot; --admin-pass &quot;password&quot;
+$ sudo -u www-data php occ  maintenance:install \
+--database=&#39;mysql&#39; --database-name=&#39;nextcloud&#39; \
+--database-user=&#39;root&#39; --database-pass=&#39;password&#39; \
+--admin-user=&#39;admin&#39; --admin-pass=&#39;password&#39;
 Nextcloud is not installed - only a limited number of commands are available
 Nextcloud was successfully installed
 </pre></div>
 </div>
 <p>Note that you must change to the root Nextcloud directory, as in the example
-above, to run <code class="docutils literal notranslate"><span class="pre">occ</span>&#160; <span class="pre">maintenance:install</span></code>, or the installation will fail with
+above, to run <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">maintenance:install</span></code>, or the installation will fail with
 a PHP fatal error message.</p>
 <p>Supported databases are:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">sqlite</span> <span class="p">(</span><span class="n">SQLite3</span> <span class="o">-</span> <span class="n">Nextcloud</span> <span class="n">Community</span> <span class="n">edition</span> <span class="n">only</span><span class="p">)</span>

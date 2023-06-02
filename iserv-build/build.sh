@@ -2,7 +2,7 @@
 set -e
 
 # See Dockerfile
-nextcloud_version=23.0.7
+nextcloud_version=25.0.7
 
 file_sharing_tab_combined="./docker/cloudfiles/adds/patches/generated/file_sharing_tab_combined.patch"
 file_sharing_tab_part="./docker/cloudfiles/build-steps/patches/limit_link_share_edit.patch"

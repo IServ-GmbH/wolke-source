@@ -1,17 +1,13 @@
 OC.L10N.register(
     "photos",
     {
-    "Photos" : "Photos",
-    "Videos" : "Vídeos",
+    "Public link" : "Enllaz públicu",
+    "Photos" : "Semeyes",
+    "Albums" : "Álbumes",
     "Folders" : "Carpetes",
-    "Favorites" : "Favorites",
-    "Shared with you" : "Shared with you",
     "Tags" : "Etiquetes",
-    "Back" : "Atrás",
-    "Save" : "Guardar",
-    "Favorite" : "Marcar como favoritu",
-    "Remove from favorites" : "Remove from favorites",
-    "Add" : "Amestar",
-    "Settings" : "Settings"
+    "An error occurred" : "Prodúxose un error",
+    "This place does not have any photos or videos yet!" : "¡Esti llugar entá nun tien nenguna semeya nin nengún videu!",
+    "Settings" : "Configuración"
 },
 "nplurals=2; plural=(n != 1);");

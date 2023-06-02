@@ -87,7 +87,6 @@ OC.L10N.register(
     "Link to file or folder" : "Enllaç a fitxer o carpeta",
     "Link to website" : "Enllaç al lloc web",
     "Update link" : "Actualitza l'enllaç",
-    "Open link picker" : "Obre el selector d'enllaços",
     "Select file or folder to link to" : "Seleccioneu el fitxer o la carpeta per enllaçar",
     "_%n word_::_%n words_" : ["%n paraula","%n paraules"],
     "_%n char_::_%n chars_" : ["%n caràcter","%n caràcters"],

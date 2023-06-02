@@ -1,9 +1,6 @@
 OC.L10N.register(
     "recommendations",
     {
-    "Recently commented" : "Comentóse apocayá",
-    "Recently edited" : "Editóse apocayá",
-    "Recently shared" : "Compartióse apocayá",
-    "Recommendations" : "Recomendaciones"
+    "Show recommendations" : "Amosar recomendaciones"
 },
 "nplurals=2; plural=(n != 1);");

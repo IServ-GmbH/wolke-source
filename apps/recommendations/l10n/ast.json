@@ -1,7 +1,4 @@
 { "translations": {
-    "Recently commented" : "Comentóse apocayá",
-    "Recently edited" : "Editóse apocayá",
-    "Recently shared" : "Compartióse apocayá",
-    "Recommendations" : "Recomendaciones"
+    "Show recommendations" : "Amosar recomendaciones"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

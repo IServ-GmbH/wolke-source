@@ -1,5 +1,6 @@
 { "translations": {
     "New text file" : "新文字檔",
+    "Create new text file" : "建立新文字檔案",
     "The file was uploaded" : "檔案已上傳",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "上傳的檔案大小超過 php.ini 當中 upload_max_filesize 選項的限制",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "上傳的檔案大小超過 HTML 表單中 MAX_FILE_SIZE 的限制",
@@ -85,7 +86,7 @@
     "Link to file or folder" : "連結至檔案或資料夾",
     "Link to website" : "連結至網站",
     "Update link" : "更新連結",
-    "Open link picker" : "開啟連結挑選器",
+    "Open the Smart Picker" : "開啟智慧選挑選器",
     "Select file or folder to link to" : "選取要連結的檔案或資料夾",
     "_%n word_::_%n words_" : ["%n 個字"],
     "_%n char_::_%n chars_" : ["%n 個字元"],

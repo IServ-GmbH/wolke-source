@@ -2,6 +2,7 @@ OC.L10N.register(
     "text",
     {
     "New text file" : "Novo ficheiro de texto",
+    "Create new text file" : "Crea un novo ficheiro de texto",
     "The file was uploaded" : "O ficheiro foi enviado",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "O ficheiro enviado excede a directiva indicada por upload_max_filesize de php.ini",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "O ficheiro enviado excede da directiva MAX_FILE_SIZE especificada no formulario HTML",
@@ -87,7 +88,7 @@ OC.L10N.register(
     "Link to file or folder" : "Enlace a ficheiro ou cartafol",
     "Link to website" : "Enlace a sitio web",
     "Update link" : "Ligazón de actualización",
-    "Open link picker" : "Abre o selector de ligazóns",
+    "Open the Smart Picker" : "Abre o Selector Intelixente",
     "Select file or folder to link to" : "Seleccione o ficheiro ou cartafol ao que quere enlazar",
     "_%n word_::_%n words_" : ["%n palabra","%n palabras"],
     "_%n char_::_%n chars_" : ["%n caracter","%n caracteres"],

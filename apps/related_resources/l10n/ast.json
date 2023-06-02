@@ -1,6 +1,4 @@
 { "translations": {
-    "Calendar" : "Calendariu",
-    "Deck" : "Deck",
-    "Files" : "Ficheros"
+    "Calendar" : "Calendariu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Encryption configuration &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -356,9 +356,9 @@ disable it:</p>
 </pre></div>
 </div>
 <p>Fix Bad signature errors:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">--</span><span class="nb">all</span>
-<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span>
-<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">versions</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">p</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">version</span> <span class="o">--</span><span class="nb">all</span>
+<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">version</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span>
+<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">encrypted</span><span class="o">-</span><span class="n">version</span> <span class="o">&lt;</span><span class="n">userid</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">p</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>Fix key not found errors:</p>
@@ -369,17 +369,18 @@ disable it:</p>
 <section id="disabling-encryption">
 <span id="occ-disable-encryption-label"></span><h2>Disabling encryption<a class="headerlink" href="#disabling-encryption" title="Permalink to this headline"></a></h2>
 <p>You may disable encryption only with <code class="docutils literal notranslate"><span class="pre">occ</span></code>. Make sure you have backups of all
-encryption keys, including users’. Put your Nextcloud server into
-maintenance mode, and then disable your encryption module with these commands:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">mode</span> <span class="o">--</span><span class="n">on</span>
-<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">disable</span>
-<span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">decrypt</span><span class="o">-</span><span class="nb">all</span>
+encryption keys, including users’.
+Disable your encryption module with this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">decrypt</span><span class="o">-</span><span class="nb">all</span>
 </pre></div>
 </div>
-<p>Take it out of maintenance mode when you are finished:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">mode</span> <span class="o">--</span><span class="n">off</span>
-</pre></div>
-</div>
+<p>It will put your server into maintenance mode and back.
+It also takes care of disabling encryption when all files have been decrypted.
+If the command is aborted some files have been decrypted and others are still encrypted.
+In this case the command will keep the encryption turned on
+and Nextcloud can handle this situation fine.
+You can proceed decrypting the remaining files by calling the command again
+once the problems that caused the abortion have been resolved.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Disabling encryption without decrypting all the files will lead to decryption errors in the future as this state causes unpredictable behaviors.</p>
