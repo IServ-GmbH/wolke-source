@@ -27,7 +27,6 @@ OC.L10N.register(
     "Connect your calendar" : "Conecta tu calendario",
     "Connect your contacts" : "Conecta tus contactos",
     "Access files via WebDAV" : "Accede tus archivos vía WebDAV",
-    "Get help" : "Obten ayuda",
     "Start contributing" : "Empeiza a contribuir",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "¿Desas tener alguna mejora específica en Nextcloud? ¿Encontraste aglún problema? ¿Quieres ayudarnos a traducir, promover o documentar Nextcloud?",
     "Become part of the Community" : "Hazte parte de la Comunidad",
@@ -48,8 +47,6 @@ OC.L10N.register(
     "Server address" : "Dirección del servidor",
     "Copy link" : "Copiar liga",
     "Copy to clipboard" : "Copiar al portapapeles",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Si estas corriendo Nextcloud en un ambiente de misión crítica con un gran número de usuarios y altos volúmenes de datos y necesitas la certidumbre de soporte de los expertos detrás de la tecnología Nextcloud, la Suscripción Empresarial de Nextcloud está disponible con soporte vía correo electrónico y telefónico. ",
-    "Get enterprise support" : "Obten soporte empresarial",
-    "the Nextcloud IRC chat channel on freenode.net" : "el canal del chat de IRC para Nextcloud en freenode.net"
+    "Get help" : "Obten ayuda"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

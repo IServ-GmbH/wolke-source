@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "Kapcsolódás a címjegyzékekhez",
     "Access files via WebDAV" : "Fájlok elérése WebDAV protokoll segítségével",
     "Download macOS/iOS configuration profile" : "MacOS/iOS konfigurációs profil letöltése",
-    "Get help" : "Segítség kérése",
+    "Get support or participate" : "Támogatás kérése vagy részvétel",
     "Start contributing" : "Közreműködés kezdése",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Szüksége lenne egy bizonyos fejlesztésre a Nextcloudban? Hibát talált? Szeretne segíteni a Nextcloud fordításában, népszerűsítésében vagy dokumentálásában?",
     "Become part of the Community" : "Légy tagja a Közösségnek",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "Segítséget is kérhet a közösségi támogatási csatornáinkon:",
     "the Nextcloud forums" : "a Nextcloud fórumon",
     "A safe home for all your data" : "Egy biztonságos hely az adataidnak",
+    "Our values" : "Az értékeink",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "A Nextcloud segítségével kézben tarthatja és felügyelheti az adatait. Tárolja a dokumentumait, naptárait, névjegyeit és fényképeit egy vállalati kiszolgálón, otthon, valamelyik szolgáltatónknál vagy egy olyan adatközpontban, amelyet már ismer.",
     "Host your data and files where you decide" : "Ott tárolja az adatait és fájljait, ahol Ön szeretné",
     "Open standards and interoperability" : "Nyílt szabványok és együttműködés",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Használja ezt a hivatkozást az alkalmazások és az asztali kliens csatlakoztatásához a kiszolgálóhoz:",
     "Copy link" : "Hivatkozás másolása",
     "Copy to clipboard" : "Vágólapra másolás",
-    "App recommendation: Notes" : "Alkalmazásjavaslat: Jegyzetek",
-    "Distraction-free notes and writing." : "Figyelemelterelés nélküli jegyzetek és írás.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Ha a Nextcloudot létfontosságú rendszeren futtatja, nagy számú felhasználóval és nagy adatmennyiséggel, és szüksége van a Nextcloud szakértők támogatására, akkor igénybe veheti  a e-mail és telefonos támogatással rendelkező vállalati előfizetést a Nextcloudtól.",
-    "Get enterprise support" : "Vállalati támogatás beszerzése",
-    "the Nextcloud IRC chat channel on freenode.net" : "a Nextcloud IRC csevegőn a freenode.net oldalon"
+    "Get help" : "Segítség kérése"
 },
 "nplurals=2; plural=(n != 1);");

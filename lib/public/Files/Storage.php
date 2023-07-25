@@ -135,7 +135,7 @@ interface Storage extends IStorage {
 	 * The result for filesize when called on a folder is required to be 0
 	 *
 	 * @param string $path
-	 * @return int|float|bool
+	 * @return false|int|float
 	 * @since 6.0.0
 	 */
 	public function filesize($path);
@@ -244,22 +244,22 @@ interface Storage extends IStorage {
 	/**
 	 * see https://www.php.net/manual/en/function.rename.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 * @since 6.0.0
 	 */
-	public function rename($path1, $path2);
+	public function rename($source, $target);
 
 	/**
 	 * see https://www.php.net/manual/en/function.copy.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $soruce
+	 * @param string $target
 	 * @return bool
 	 * @since 6.0.0
 	 */
-	public function copy($path1, $path2);
+	public function copy($source, $target);
 
 	/**
 	 * see https://www.php.net/manual/en/function.fopen.php
@@ -293,7 +293,7 @@ interface Storage extends IStorage {
 	public function hash($type, $path, $raw = false);
 
 	/**
-	 * see https://www.php.net/manual/en/function.free_space.php
+	 * see https://www.php.net/manual/en/function.disk-free-space.php
 	 *
 	 * @param string $path
 	 * @return int|float|bool
@@ -462,5 +462,9 @@ interface Storage extends IStorage {
 	 */
 	public function setAvailability($isAvailable);
 
+	/**
+	 * @since 12.0.0
+	 * @return mixed
+	 */
 	public function needsPartFile();
 }

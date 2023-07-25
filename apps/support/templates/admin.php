@@ -347,13 +347,13 @@ if ($_['showCommunitySupportSection']) {
 		</p>
 		<?php
 	}
-	?>
+?>
 </div>
 
 
 <?php
 if (!$_['showSubscriptionDetails']) {
-		?>
+	?>
 	<div class="section system-information">
 		<div>
 			<img src="<?php p(\OCP\Template::image_path('support', 'system-info.svg')); ?>">
@@ -368,7 +368,7 @@ if (!$_['showSubscriptionDetails']) {
 		</div>
 	</div>
 	<?php
-	}
+}
 ?>
 
 <div class="section">

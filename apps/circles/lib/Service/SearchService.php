@@ -35,9 +35,10 @@ use OC;
 use OCA\Circles\AppInfo\Application;
 use OCA\Circles\Exceptions\InitiatorNotFoundException;
 use OCA\Circles\Exceptions\RequestBuilderException;
+use OCA\Circles\IFederatedUser;
 use OCA\Circles\ISearch;
 use OCA\Circles\Model\Circle;
-use OCA\Circles\Model\FederatedUser;
+use OCA\Circles\Model\SearchResult;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Model\Probes\CircleProbe;
 use OCA\Circles\Search\FederatedUsers;
@@ -77,7 +78,7 @@ class SearchService {
 	/**
 	 * @param string $needle
 	 *
-	 * @return FederatedUser[]
+	 * @return list<SearchResult|IFederatedUser>
 	 */
 	public function search(string $needle): array {
 		$result = [];
@@ -105,7 +106,7 @@ class SearchService {
 		$probe = $this->generateSearchProbe($term, $options);
 
 		try {
-			$circles = $this->circleService->getCircles($probe);
+			$circles = $this->circleService->probeCircles($probe);
 		} catch (InitiatorNotFoundException $e) {
 			return [];
 		}
@@ -153,8 +154,7 @@ class SearchService {
 			  ->filterBackendCircles();
 
 		$circle = new Circle();
-		$circle->setDisplayName($term)
-			   ->setDescription($term);
+		$circle->setDisplayName($term);
 
 		$probe->setFilterCircle($circle);
 

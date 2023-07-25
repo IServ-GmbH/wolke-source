@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Üyesi olduğunuz bir <strong>Çevredeki</strong> olaylarda",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Sorumlusu olduğunuz bir <strong>Çevredeki</strong> önemli olaylarda",
     "On global events happening in any <strong>Circle</strong>" : "Herhangi bir <strong>Çevredeki</strong> genel olaylarda",
+    "Shared to Circles" : "Çevrelerle paylaşıldı",
     "Single" : "Tek",
     "Personal" : "Kişisel",
     "System" : "Sistem",
@@ -180,15 +181,9 @@ OC.L10N.register(
     "Name" : "Ad",
     "Size" : "Boyut",
     "Modified" : "Değiştirilme",
-    "Nextcloud User" : "Nextcloud kullanıcısı",
     "Initialisation Nextcloud" : "Nextcloud hazırlanıyor",
     "Initialisation Circles App" : "Nextcloud çevreler uygulaması hazırlanıyor",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Yöneticiniz en az bir çevre türüne izin verene kadar Çevreler uygulamasını kullanamazsınız",
-    "This user is already a member of the circle" : "Bu kullanıcı zaten bu çevrenin üyesi",
-    "The user is already a member of this circle" : "Kullanıcı zaten bu çevrenin üyesi",
-    "The user has already been invited into this circle" : "Kullanıcı zaten bu çevreye girmesi için çağrılmış",
-    "This user does not exist" : "Bu kullanıcı bulunamadı",
-    "Could not find share" : "Paylaşım bulunamadı",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Çevreler, kullanıcılarınızın kendi kullanıcı/iş arkadaşı/arkadaş gruplarını oluşturmasına sağlar.\nBu kullanıcı grupları (ya da \"çevreler\") başka uygulamalar tarafından paylaşım amacıyla kullanılabilir."
+    "Could not find share" : "Paylaşım bulunamadı"
 },
 "nplurals=2; plural=(n > 1);");

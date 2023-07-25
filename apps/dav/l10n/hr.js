@@ -136,21 +136,6 @@ OC.L10N.register(
     "Please contact the organizer directly." : "Izravno se obratite organizatoru.",
     "Are you accepting the invitation?" : "Prihvaćate li poziv?",
     "Tentative" : "Uvjetno",
-    "Your attendance was updated successfully." : "Vaša je prisutnost uspješno ažurirana.",
-    "Todos" : "Zadaci",
-    "{actor} created todo {todo} in list {calendar}" : "{actor} je stvorio zadatak {todo} u popisu {calendar}",
-    "You created todo {todo} in list {calendar}" : "Stvorili ste zadatak {todo} u popisu {calendar}",
-    "{actor} deleted todo {todo} from list {calendar}" : "{actor} je izbrisao zadatak {todo} s popisa {calendar}",
-    "You deleted todo {todo} from list {calendar}" : "Izbrisali ste zadatak {todo} s popisa {calendar}",
-    "{actor} updated todo {todo} in list {calendar}" : "{actor} je ažurirao zadatak {todo} u popisu {calendar}",
-    "You updated todo {todo} in list {calendar}" : "Ažurirali ste zadatak {todo} u popisu {calendar}",
-    "{actor} solved todo {todo} in list {calendar}" : "{actor} je izvršio zadatak {todo} u popisu {calendar}",
-    "You solved todo {todo} in list {calendar}" : "Izvršili ste zadatak {todo} u popisu {calendar}",
-    "{actor} reopened todo {todo} in list {calendar}" : "{actor} je ponovno otvorio zadatak {todo} u popisu {calendar}",
-    "You reopened todo {todo} in list {calendar}" : "Ponovno ste otvorili zadatak {todo} u popisu {calendar}",
-    "A calendar <strong>todo</strong> was modified" : "Izmijenjen je <strong>zadatak</strong> u kalendaru",
-    "Invitation canceled" : "Poziv je otkazan",
-    "Invitation updated" : "Poziv je ažuriran",
-    "Invitation" : "Pozivnica"
+    "Your attendance was updated successfully." : "Vaša je prisutnost uspješno ažurirana."
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

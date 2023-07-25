@@ -3,11 +3,12 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2020 Daniel Kesselberg <mail@danielkesselberg.de>
+ * @copyright Copyright (c) 2020, Daniel Kesselberg <mail@danielkesselberg.de>
  *
+ * @author Joas Schilling <coding@schilljs.com>
  * @author Daniel Kesselberg <mail@danielkesselberg.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,17 +28,24 @@ declare(strict_types=1);
 namespace OCA\Notifications\Listener;
 
 use OCA\Notifications\Handler;
+use OCA\Notifications\Model\SettingsMapper;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
 
+/**
+ * @template-implements IEventListener<Event|UserDeletedEvent>
+ */
 class UserDeletedListener implements IEventListener {
+	private Handler $handler;
+	private SettingsMapper $settingsMapper;
 
-	/** @var Handler */
-	private $handler;
-
-	public function __construct(Handler $handler) {
+	public function __construct(
+		Handler $handler,
+		SettingsMapper $settingsMapper,
+	) {
 		$this->handler = $handler;
+		$this->settingsMapper = $settingsMapper;
 	}
 
 	public function handle(Event $event): void {
@@ -48,5 +56,6 @@ class UserDeletedListener implements IEventListener {
 
 		$user = $event->getUser();
 		$this->handler->deleteByUser($user->getUID());
+		$this->settingsMapper->deleteSettingsByUser($user->getUID());
 	}
 }

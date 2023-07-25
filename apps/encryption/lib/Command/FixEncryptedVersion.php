@@ -22,6 +22,7 @@
 
 namespace OCA\Encryption\Command;
 
+use OC\Files\Storage\Wrapper\Encryption;
 use OC\Files\View;
 use OC\ServerNotAvailableException;
 use OCA\Encryption\Util;
@@ -102,7 +103,7 @@ class FixEncryptedVersion extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$skipSignatureCheck = $this->config->getSystemValue('encryption_skip_signature_check', false);
+		$skipSignatureCheck = $this->config->getSystemValueBool('encryption_skip_signature_check', false);
 		$this->supportLegacy = $this->config->getSystemValueBool('encryption.legacy_format_support', false);
 
 		if ($skipSignatureCheck) {
@@ -190,6 +191,13 @@ class FixEncryptedVersion extends Command {
 	 */
 	private function verifyFileContent(string $path, OutputInterface $output, bool $ignoreCorrectEncVersionCall = true): bool {
 		try {
+			// since we're manually poking around the encrypted state we need to ensure that this isn't cached in the encryption wrapper
+			$mount = $this->view->getMount($path);
+			$storage = $mount->getStorage();
+			if ($storage && $storage->instanceOfStorage(Encryption::class)) {
+				$storage->clearIsEncryptedCache();
+			}
+
 			/**
 			 * In encryption, the files are read in a block size of 8192 bytes
 			 * Read block size of 8192 and a bit more (808 bytes)
@@ -198,6 +206,11 @@ class FixEncryptedVersion extends Command {
 			 * correct the encrypted version.
 			 */
 			$handle = $this->view->fopen($path, 'rb');
+
+			if ($handle === false) {
+				$output->writeln("<warning>Failed to open file: \"$path\" skipping</warning>");
+				return true;
+			}
 
 			if (\fread($handle, 9001) !== false) {
 				$fileInfo = $this->view->getFileInfo($path);

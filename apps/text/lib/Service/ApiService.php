@@ -27,18 +27,14 @@ declare(strict_types=1);
 namespace OCA\Text\Service;
 
 use Exception;
+use InvalidArgumentException;
 use OC\Files\Node\File;
 use OCA\Files_Sharing\SharedStorage;
 use OCA\Text\AppInfo\Application;
-use OCA\Text\Exception\DocumentHasUnsavedChangesException;
 use OCA\Text\Exception\DocumentSaveConflictException;
-use OCA\Text\TextFile;
-use OCA\Text\Exception\VersionMismatchException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Http\FileDisplayResponse;
-use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\Constants;
 use OCP\Files\Lock\ILock;
 use OCP\Files\NotFoundException;
@@ -75,7 +71,7 @@ class ApiService {
 		$this->l10n = $l10n;
 	}
 
-	public function create($fileId = null, $filePath = null, $token = null, $guestName = null, bool $forceRecreate = false): DataResponse {
+	public function create($fileId = null, $filePath = null, $token = null, $guestName = null): DataResponse {
 		try {
 			/** @var File $file */
 			if ($token) {
@@ -93,9 +89,13 @@ class ApiService {
 					return new DataResponse($this->l10n->t('This file cannot be displayed as download is disabled by the share'), 404);
 				}
 			} elseif ($fileId) {
-				$file = $this->documentService->getFileById($fileId);
+				try {
+					$file = $this->documentService->getFileById($fileId);
+				} catch (NotFoundException $e) {
+					return new DataResponse([], Http::STATUS_NOT_FOUND);
+				}
 			} else {
-				return new DataResponse('No valid file argument provided', 500);
+				return new DataResponse('No valid file argument provided', Http::STATUS_PRECONDITION_FAILED);
 			}
 
 			$storage = $file->getStorage();
@@ -111,33 +111,43 @@ class ApiService {
 
 			$readOnly = $this->documentService->isReadOnly($file, $token);
 
-			$this->sessionService->removeInactiveSessions($file->getId());
-			$activeSessions = $this->sessionService->getActiveSessions($file->getId());
-			if ($forceRecreate || count($activeSessions) === 0) {
-				try {
-					$this->documentService->resetDocument($file->getId(), $forceRecreate);
-				} catch (DocumentHasUnsavedChangesException $e) {
-				}
-			}
+			$this->sessionService->removeInactiveSessionsWithoutSteps($file->getId());
+			$document = $this->documentService->getDocument($file);
+			$freshSession = $document === null;
 
-			$document = $this->documentService->createDocument($file);
+			if ($freshSession) {
+				$this->logger->info('Create new document of ' . $file->getId());
+				$document = $this->documentService->createDocument($file);
+			} else {
+				$this->logger->info('Keep previous document of ' . $file->getId());
+			}
 		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return new DataResponse('Failed to create the document session', 500);
 		}
 
 		$session = $this->sessionService->initSession($document->getId(), $guestName);
-		try {
-			$baseFile = $this->documentService->getBaseFile($document->getId());
-			$content = $baseFile->getContent();
 
-			$content = $this->encodingService->encodeToUtf8($content);
-			if ($content === null) {
-				$this->logger->warning('Failed to encode file to UTF8. File ID: ' . $file->getId());
-			}
-		} catch (NotFoundException $e) {
-			$this->logger->info($e->getMessage(), ['exception' => $e]);
+		if ($freshSession) {
+			$this->logger->debug('Starting a fresh editing session for ' . $file->getId());
+			$documentState = null;
+			$content = $this->loadContent($file);
+		} else {
+			$this->logger->debug('Loading existing session for ' . $file->getId());
 			$content = null;
+			try {
+				$stateFile = $this->documentService->getStateFile($document->getId());
+				$documentState = $stateFile->getContent();
+			} catch (NotFoundException $e) {
+				$this->logger->debug('State file not found for ' . $file->getId());
+				$documentState = ''; // no state saved yet.
+				// If there are no steps yet we might still need the content.
+				$steps = $this->documentService->getSteps($document->getId(), 0);
+				if (empty($steps)) {
+					$this->logger->debug('Empty steps, loading content for ' . $file->getId());
+					$content = $this->loadContent($file);
+				}
+			}
 		}
 
 		$lockInfo = $this->documentService->getLockInfo($file);
@@ -152,36 +162,20 @@ class ApiService {
 
 		return new DataResponse([
 			'document' => $document,
-			'session' => $session,
+			'session' => array_merge($session->jsonSerialize(), ['displayName' => $this->sessionService->getNameForSession($session)]),
 			'readOnly' => $readOnly,
 			'content' => $content,
+			'documentState' => $documentState,
 			'lock' => $lockInfo,
 		]);
 	}
 
-	public function fetch($documentId, $sessionId, $sessionToken) {
-		if ($this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			$this->sessionService->removeInactiveSessions($documentId);
-			try {
-				$file = new TextFile($this->documentService->getBaseFile($documentId), $this->encodingService);
-			} catch (NotFoundException $e) {
-				return new NotFoundResponse();
-			}
-			return new FileDisplayResponse($file, 200, ['Content-Type' => 'text/plain']);
-		}
-		return new NotFoundResponse();
-	}
-
 	public function close($documentId, $sessionId, $sessionToken): DataResponse {
 		$this->sessionService->closeSession($documentId, $sessionId, $sessionToken);
-		$this->sessionService->removeInactiveSessions($documentId);
+		$this->sessionService->removeInactiveSessionsWithoutSteps($documentId);
 		$activeSessions = $this->sessionService->getActiveSessions($documentId);
 		if (count($activeSessions) === 0) {
-			try {
-				$this->documentService->resetDocument($documentId);
-				$this->attachmentService->cleanupAttachments($documentId);
-			} catch (DocumentHasUnsavedChangesException $e) {
-			}
+			$this->documentService->unlock($documentId);
 		}
 		return new DataResponse([]);
 	}
@@ -190,21 +184,39 @@ class ApiService {
 	 * @throws NotFoundException
 	 * @throws DoesNotExistException
 	 */
-	public function push($documentId, $sessionId, $sessionToken, $version, $steps, $token = null): DataResponse {
-		$session = $this->sessionService->getSession($documentId, $sessionId, $sessionToken);
-		$file = $this->documentService->getFileForSession($session, $token);
-		if ($this->sessionService->isValidSession($documentId, $sessionId, $sessionToken) && !$this->documentService->isReadOnly($file, $token)) {
-			try {
-				$steps = $this->documentService->addStep($documentId, $sessionId, $steps, $version);
-			} catch (VersionMismatchException $e) {
-				return new DataResponse($e->getMessage(), $e->getStatus());
-			}
-			return new DataResponse($steps);
+	public function push($documentId, $sessionId, $sessionToken, $version, $steps, $awareness, $token = null): DataResponse {
+		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
+			return new DataResponse([], 403);
 		}
-		return new DataResponse([], 403);
+		$session = $this->sessionService->getSession($documentId, $sessionId, $sessionToken);
+		if (!$session) {
+			return new DataResponse([], 403);
+		}
+		try {
+			$this->sessionService->updateSessionAwareness($documentId, $sessionId, $sessionToken, $awareness);
+		} catch (DoesNotExistException $e) {
+			// Session was removed in the meantime. #3875
+			return new DataResponse([], 403);
+		}
+		if (empty($steps)) {
+			return new DataResponse([]);
+		}
+		$file = $this->documentService->getFileForSession($session, $token);
+		if ($this->documentService->isReadOnly($file, $token)) {
+			return new DataResponse([], 403);
+		}
+		try {
+			$result = $this->documentService->addStep($documentId, $sessionId, $steps, $version);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse($e->getMessage(), 422);
+		} catch (DoesNotExistException $e) {
+			// Session was removed in the meantime. #3875
+			return new DataResponse([], 403);
+		}
+		return new DataResponse($result);
 	}
 
-	public function sync($documentId, $sessionId, $sessionToken, $version = 0, $autosaveContent = null, bool $force = false, bool $manualSave = false, $token = null): DataResponse {
+	public function sync($documentId, $sessionId, $sessionToken, $version = 0, $autosaveContent = null, $documentState = null, bool $force = false, bool $manualSave = false, $token = null): DataResponse {
 		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
 			return new DataResponse([], 403);
 		}
@@ -231,7 +243,7 @@ class ApiService {
 		}
 
 		try {
-			$result['document'] = $this->documentService->autosave($file, $documentId, $version, $autosaveContent, $force, $manualSave, $token, $this->request->getParam('filePath'));
+			$result['document'] = $this->documentService->autosave($file, $documentId, $version, $autosaveContent, $documentState, $force, $manualSave, $token, $this->request->getParam('filePath'));
 		} catch (DocumentSaveConflictException $e) {
 			try {
 				$result['outsideChange'] = $file->getContent();
@@ -259,5 +271,19 @@ class ApiService {
 		}
 
 		return new DataResponse($this->sessionService->updateSession($documentId, $sessionId, $sessionToken, $guestName));
+	}
+
+	private function loadContent(\OCP\Files\File $file): ?string {
+		try {
+			$content = $file->getContent();
+			$content = $this->encodingService->encodeToUtf8($content);
+			if ($content === null) {
+				$this->logger->warning('Failed to encode file to UTF8. File ID: ' . $file->getId());
+			}
+		} catch (NotFoundException $e) {
+			$this->logger->warning($e->getMessage(), ['exception' => $e]);
+			$content = null;
+		}
+		return $content;
 	}
 }

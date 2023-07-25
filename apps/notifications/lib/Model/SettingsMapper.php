@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2021 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2021, Joas Schilling <coding@schilljs.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @author Joas Schilling <coding@schilljs.com>
+ *
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -31,6 +33,8 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
+ * @template-extends QBMapper<Settings>
+ *
  * @method Settings mapRowToEntity(array $row)
  * @method Settings findEntity(IQueryBuilder $query)
  * @method Settings[] findEntities(IQueryBuilder $query)
@@ -55,6 +59,19 @@ class SettingsMapper extends QBMapper {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
 
 		return $this->findEntity($query);
+	}
+
+	/**
+	 * @param string $userId
+	 * @throws DBException
+	 */
+	public function deleteSettingsByUser(string $userId): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+
+		$query->executeStatement();
 	}
 
 	public function setBatchSettingForUser(string $userId, int $batchSetting): void {

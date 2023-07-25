@@ -30,12 +30,11 @@ namespace OC\Template;
 use Psr\Log\LoggerInterface;
 
 class JSResourceLocator extends ResourceLocator {
-
 	/** @var JSCombiner */
 	protected $jsCombiner;
 
-	public function __construct(LoggerInterface $logger, $theme, array $core_map, array $party_map, JSCombiner $JSCombiner) {
-		parent::__construct($logger, $theme, $core_map, $party_map);
+	public function __construct(LoggerInterface $logger, JSCombiner $JSCombiner) {
+		parent::__construct($logger);
 
 		$this->jsCombiner = $JSCombiner;
 	}
@@ -45,10 +44,6 @@ class JSResourceLocator extends ResourceLocator {
 	 */
 	public function doFind($script) {
 		$theme_dir = 'themes/'.$this->theme.'/';
-		if (strpos($script, '3rdparty') === 0
-			&& $this->appendIfExist($this->thirdpartyroot, $script.'.js')) {
-			return;
-		}
 
 		// Extracting the appId and the script file name
 		$app = substr($script, 0, strpos($script, '/'));

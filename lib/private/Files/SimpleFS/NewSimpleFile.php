@@ -56,7 +56,7 @@ class NewSimpleFile implements ISimpleFile {
 	/**
 	 * Get the size in bytes
 	 */
-	public function getSize(): int {
+	public function getSize(): int|float {
 		if ($this->file) {
 			return $this->file->getSize();
 		} else {
@@ -136,6 +136,10 @@ class NewSimpleFile implements ISimpleFile {
 	 * @throws NotFoundException
 	 */
 	private function checkFile(): void {
+		if (!$this->file) {
+			throw new NotFoundException('File not set');
+		}
+
 		$cur = $this->file;
 
 		while ($cur->stat() === false) {

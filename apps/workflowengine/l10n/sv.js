@@ -67,6 +67,7 @@ OC.L10N.register(
     "Desktop client" : "Skrivbordsklient",
     "Thunderbird & Outlook addons" : "Thunderbird & Outlook - tillägg",
     "Custom user agent" : "Anpassad användaragent",
+    "Select a trigger" : "Välj en utlösare",
     "At least one event must be selected" : "Minst en händelse måste väljas",
     "Add new flow" : "Lägg till nytt flöde",
     "When" : "När",
@@ -112,10 +113,6 @@ OC.L10N.register(
     "User group membership" : "Användargruppsmedlemskap",
     "is member of" : "är medlem i",
     "is not member of" : "är inte medlem i",
-    "Select a tag" : "Välj en tagg",
-    "No results" : "Inga resultat",
-    "%s (invisible)" : "%s (osynlig)",
-    "%s (restricted)" : "%s (begränsad)",
     "Predefined URLs" : "Förinställda webbadresser",
     "Others" : "Övriga"
 },

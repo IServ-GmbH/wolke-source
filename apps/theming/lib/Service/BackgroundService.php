@@ -30,7 +30,7 @@ namespace OCA\Theming\Service;
 use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\Theming\AppInfo\Application;
-use OCP\Files\AppData\IAppDataFactory;
+use OCA\Theming\ThemingDefaults;
 use OCP\Files\File;
 use OCP\Files\IAppData;
 use OCP\Files\IRootFolder;
@@ -48,7 +48,35 @@ class BackgroundService {
 	public const DEFAULT_COLOR = '#0082c9';
 	public const DEFAULT_ACCESSIBLE_COLOR = '#006aa3';
 
+	public const BACKGROUND_SHIPPED = 'shipped';
+	public const BACKGROUND_CUSTOM = 'custom';
+	public const BACKGROUND_DEFAULT = 'default';
+	public const BACKGROUND_DISABLED = 'disabled';
+
+	public const DEFAULT_BACKGROUND_IMAGE = 'kamil-porembinski-clouds.jpg';
 	public const SHIPPED_BACKGROUNDS = [
+		'hannah-maclean-soft-floral.jpg' => [
+			'attribution' => 'Soft floral (Hannah MacLean, CC0)',
+			'attribution_url' => 'https://stocksnap.io/photo/soft-floral-XOYWCCW5PA',
+			'theming' => self::THEMING_MODE_DARK,
+			'primary_color' => '#9f652f',
+		],
+		'ted-moravec-morning-fog.jpg' => [
+			'attribution' => 'Morning fog (Ted Moravec, Public Domain)',
+			'attribution_url' => 'https://flickr.com/photos/tmoravec/52392410261',
+			'theming' => self::THEMING_MODE_DARK,
+			'primary_color' => '#114c3b',
+		],
+		'stefanus-martanto-setyo-husodo-underwater-ocean.jpg' => [
+			'attribution' => 'Underwater ocean (Stefanus Martanto Setyo Husodo, CC0)',
+			'attribution_url' => 'https://stocksnap.io/photo/underwater-ocean-TJA9LBH4WS',
+			'primary_color' => '#04577e',
+		],
+		'zoltan-voros-rhythm-and-blues.jpg' => [
+			'attribution' => 'Rhythm and blues (Zoltán Vörös, CC BY)',
+			'attribution_url' => 'https://flickr.com/photos/v923z/51634409289/',
+			'primary_color' => '#1c243c',
+		],
 		'anatoly-mikhaltsov-butterfly-wing-scale.jpg' => [
 			'attribution' => 'Butterfly wing scale (Anatoly Mikhaltsov, CC BY-SA)',
 			'attribution_url' => 'https://commons.wikimedia.org/wiki/File:%D0%A7%D0%B5%D1%88%D1%83%D0%B9%D0%BA%D0%B8_%D0%BA%D1%80%D1%8B%D0%BB%D0%B0_%D0%B1%D0%B0%D0%B1%D0%BE%D1%87%D0%BA%D0%B8.jpg',
@@ -134,13 +162,13 @@ class BackgroundService {
 	private IAppData $appData;
 	private IConfig $config;
 	private string $userId;
-	private IAppDataFactory $appDataFactory;
+	private ThemingDefaults $themingDefaults;
 
 	public function __construct(IRootFolder $rootFolder,
 								IAppData $appData,
 								IConfig $config,
 								?string $userId,
-								IAppDataFactory $appDataFactory) {
+								ThemingDefaults $themingDefaults) {
 		if ($userId === null) {
 			return;
 		}
@@ -149,11 +177,12 @@ class BackgroundService {
 		$this->config = $config;
 		$this->userId = $userId;
 		$this->appData = $appData;
-		$this->appDataFactory = $appDataFactory;
+		$this->themingDefaults = $themingDefaults;
 	}
 
 	public function setDefaultBackground(): void {
-		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'background');
+		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'background_image');
+		$this->config->deleteUserValue($this->userId, Application::APP_ID, 'background_color');
 	}
 
 	/**
@@ -165,7 +194,7 @@ class BackgroundService {
 	 * @throws NoUserException
 	 */
 	public function setFileBackground($path): void {
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'background', 'custom');
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'background_image', self::BACKGROUND_CUSTOM);
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
 
 		/** @var File $file */
@@ -183,27 +212,28 @@ class BackgroundService {
 		if (!array_key_exists($fileName, self::SHIPPED_BACKGROUNDS)) {
 			throw new InvalidArgumentException('The given file name is invalid');
 		}
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'background', $fileName);
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'background_image', $fileName);
+		$this->setColorBackground(self::SHIPPED_BACKGROUNDS[$fileName]['primary_color']);
 	}
 
 	public function setColorBackground(string $color): void {
 		if (!preg_match('/^#([0-9a-f]{3}|[0-9a-f]{6})$/i', $color)) {
 			throw new InvalidArgumentException('The given color is invalid');
 		}
-		$this->config->setUserValue($this->userId, Application::APP_ID, 'background', $color);
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'background_color', $color);
+	}
+
+	public function deleteBackgroundImage(): void {
+		$this->config->setUserValue($this->userId, Application::APP_ID, 'background_image', self::BACKGROUND_DISABLED);
 	}
 
 	public function getBackground(): ?ISimpleFile {
-		$background = $this->config->getUserValue($this->userId, Application::APP_ID, 'background', 'default');
-		if ($background === 'custom') {
+		$background = $this->config->getUserValue($this->userId, Application::APP_ID, 'background_image', self::BACKGROUND_DEFAULT);
+		if ($background === self::BACKGROUND_CUSTOM) {
 			try {
 				return $this->getAppDataFolder()->getFile('background.jpg');
 			} catch (NotFoundException | NotPermittedException $e) {
-				try {
-					// Fallback can be removed in 26
-					$dashboardFolder = $this->appDataFactory->get('dashboard');
-					return $dashboardFolder->getFolder($this->userId)->getFile('background.jpg');
-				} catch (\Throwable $t) {}
+				return null;
 			}
 		}
 		return null;

@@ -73,6 +73,7 @@
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Sur les événements survenant dans un <strong>Cercle</strong> dont vous êtes membre",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Tous les événements importants dans un <strong>Cercle</strong> que vous modérez",
     "On global events happening in any <strong>Circle</strong>" : "Sur les événements globaux survenant dans n’importe quel <strong>Cercle</strong>",
+    "Shared to Circles" : "Partagé avec les cercles",
     "Single" : "Simple",
     "Personal" : "Personnel",
     "System" : "Système",
@@ -165,9 +166,9 @@
     "This contact is not available" : "Ce contact n'est pas disponible",
     "You have no permission to create a new circle" : "Vous n'avez pas l'autorisation de créer un nouveau cercle",
     "%s shared a file with \"%s\"." : "%s a partagé un fichier avec \"%s\".",
-    "%s shared a file with you." : "%sa partagé un fichier avec vous.",
+    "%s shared a file with you." : "%s a partagé un fichier avec vous.",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s a partagé quelque chose avec vous\nVous devriez avoir déjà reçu un e-mail séparé avec un lien pour y accéder\n",
-    "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$sa partagé quelque chose avec vous\nVous devriez avoir déjà reçu un e-mail séparé avec un lien pour y accéder",
+    "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s a partagé quelque chose avec vous\nVous devriez avoir déjà reçu un e-mail séparé avec un lien pour y accéder",
     "Password to access content shared with you by %1$s" : "Mot de passe pour accéder au contenu partagé avec vous par %1$s",
     "Password to access content" : "Mot de passe pour accéder au contenu",
     "This item is already shared with this circle" : "Cet item est déjà partagé avec ce cercle",
@@ -178,15 +179,9 @@
     "Name" : "Nom",
     "Size" : "Taille",
     "Modified" : "Modifié",
-    "Nextcloud User" : "Utilisateur Nextcloud",
     "Initialisation Nextcloud" : "Initialisation de Nextcloud",
     "Initialisation Circles App" : "Initialisation de l'application Cercles",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Vous ne pouvez pas utiliser l'application Cercles à moins que votre administrateur ait autorisé au moins un type de cercles",
-    "This user is already a member of the circle" : "Cet utilisateur est déjà membre du cercle",
-    "The user is already a member of this circle" : "L'utilisateur est déjà membre de ce cercle",
-    "The user has already been invited into this circle" : "L'utilisateur a déjà été invité dans ce cercle",
-    "This user does not exist" : "Cet utilisateur n'existe pas",
-    "Could not find share" : "Impossible de trouver le partage",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "L'applications Cercles permet aux utilisateurs de créer leurs propres groupes d'utilisateurs/collègues/amis.\nCes groupes d'utilisateurs (ou \"cercles\") peuvent alors être utilisés par toutes les autres applications pour partager des éléments."
+    "Could not find share" : "Impossible de trouver le partage"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

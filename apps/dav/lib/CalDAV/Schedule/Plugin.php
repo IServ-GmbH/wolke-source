@@ -34,6 +34,7 @@ use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\Calendar;
 use OCA\DAV\CalDAV\CalendarHome;
 use OCP\IConfig;
+use Psr\Log\LoggerInterface;
 use Sabre\CalDAV\ICalendar;
 use Sabre\DAV\INode;
 use Sabre\DAV\IProperties;
@@ -47,7 +48,6 @@ use Sabre\VObject\Component;
 use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Component\VEvent;
 use Sabre\VObject\DateTimeParser;
-use Sabre\VObject\Document;
 use Sabre\VObject\FreeBusyGenerator;
 use Sabre\VObject\ITip;
 use Sabre\VObject\Parameter;
@@ -70,12 +70,14 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 
 	public const CALENDAR_USER_TYPE = '{' . self::NS_CALDAV . '}calendar-user-type';
 	public const SCHEDULE_DEFAULT_CALENDAR_URL = '{' . Plugin::NS_CALDAV . '}schedule-default-calendar-URL';
+	private LoggerInterface $logger;
 
 	/**
 	 * @param IConfig $config
 	 */
-	public function __construct(IConfig $config) {
+	public function __construct(IConfig $config, LoggerInterface $logger) {
 		$this->config = $config;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -166,7 +168,7 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 	 * @inheritDoc
 	 */
 	public function scheduleLocalDelivery(ITip\Message $iTipMessage):void {
-		/** @var Component|null $vevent */
+		/** @var VEvent|null $vevent */
 		$vevent = $iTipMessage->message->VEVENT ?? null;
 
 		// Strip VALARMs from incoming VEVENT
@@ -175,12 +177,13 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 		}
 
 		parent::scheduleLocalDelivery($iTipMessage);
-
 		// We only care when the message was successfully delivered locally
+		// Log all possible codes returned from the parent method that mean something went wrong
+		// 3.7, 3.8, 5.0, 5.2
 		if ($iTipMessage->scheduleStatus !== '1.2;Message delivered locally') {
+			$this->logger->debug('Message not delivered locally with status: ' . $iTipMessage->scheduleStatus);
 			return;
 		}
-
 		// We only care about request. reply and cancel are properly handled
 		// by parent::scheduleLocalDelivery already
 		if (strcasecmp($iTipMessage->method, 'REQUEST') !== 0) {
@@ -196,26 +199,31 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 		$principalUri = $aclPlugin->getPrincipalByUri($iTipMessage->recipient);
 		$calendarUserType = $this->getCalendarUserTypeForPrincipal($principalUri);
 		if (strcasecmp($calendarUserType, 'ROOM') !== 0 && strcasecmp($calendarUserType, 'RESOURCE') !== 0) {
+			$this->logger->debug('Calendar user type is room or resource, not processing further');
 			return;
 		}
 
 		$attendee = $this->getCurrentAttendee($iTipMessage);
 		if (!$attendee) {
+			$this->logger->debug('No attendee set for scheduling message');
 			return;
 		}
 
 		// We only respond when a response was actually requested
 		$rsvp = $this->getAttendeeRSVP($attendee);
 		if (!$rsvp) {
+			$this->logger->debug('No RSVP requested for attendee ' . $attendee->getValue());
 			return;
 		}
 
 		if (!$vevent) {
+			$this->logger->debug('No VEVENT set to process on scheduling message');
 			return;
 		}
 
 		// We don't support autoresponses for recurrencing events for now
 		if (isset($vevent->RRULE) || isset($vevent->RDATE)) {
+			$this->logger->debug('VEVENT is a recurring event, autoresponding not supported');
 			return;
 		}
 
@@ -320,12 +328,12 @@ EOF;
 
 				/** @var CalendarHome $calendarHome */
 				$calendarHome = $this->server->tree->getNodeForPath($calendarHomePath);
-				if (!$calendarHome->childExists($uri)) {
+				$currentCalendarDeleted = false;
+				if (!$calendarHome->childExists($uri) || $currentCalendarDeleted = $this->isCalendarDeleted($calendarHome, $uri)) {
 					// If the default calendar doesn't exist
 					if ($isResourceOrRoom) {
-						$calendarHome->getCalDAVBackend()->createCalendar($principalUrl, $uri, [
-							'{DAV:}displayname' => $displayName,
-						]);
+						// Resources or rooms can't be in the trashbin, so we're fine
+						$this->createCalendar($calendarHome, $principalUrl, $uri, $displayName);
 					} else {
 						// And we're not handling scheduling on resource/room booking
 						$userCalendars = [];
@@ -350,9 +358,16 @@ EOF;
 							$uri = $userCalendars[0]->getName();
 						} else {
 							// Otherwise if we have really nothing, create a new calendar
-							$calendarHome->getCalDAVBackend()->createCalendar($principalUrl, $uri, [
-								'{DAV:}displayname' => $displayName,
-							]);
+							if ($currentCalendarDeleted) {
+								// If the calendar exists but is deleted, we need to purge it first
+								// This may cause some issues in a non synchronous database setup
+								$calendar = $this->getCalendar($calendarHome, $uri);
+								if ($calendar instanceof Calendar) {
+									$calendar->disableTrashbin();
+									$calendar->delete();
+								}
+							}
+							$this->createCalendar($calendarHome, $principalUrl, $uri, $displayName);
 						}
 					}
 				}
@@ -599,5 +614,20 @@ EOF;
 		}
 
 		return $email;
+	}
+
+	private function getCalendar(CalendarHome $calendarHome, string $uri): INode {
+		return $calendarHome->getChild($uri);
+	}
+
+	private function isCalendarDeleted(CalendarHome $calendarHome, string $uri): bool {
+		$calendar = $this->getCalendar($calendarHome, $uri);
+		return $calendar instanceof Calendar && $calendar->isDeleted();
+	}
+
+	private function createCalendar(CalendarHome $calendarHome, string $principalUri, string $uri, string $displayName): void {
+		$calendarHome->getCalDAVBackend()->createCalendar($principalUri, $uri, [
+			'{DAV:}displayname' => $displayName,
+		]);
 	}
 }

@@ -37,7 +37,6 @@ use OCP\Files\NotPermittedException;
  * @since 11.0.0
  */
 interface ISimpleFile {
-
 	/**
 	 * Get the name
 	 *
@@ -50,7 +49,7 @@ interface ISimpleFile {
 	 *
 	 * @since 11.0.0
 	 */
-	public function getSize(): int;
+	public function getSize(): int|float;
 
 	/**
 	 * Get the ETag

@@ -53,7 +53,6 @@ OC.L10N.register(
     "Connect your contacts" : "Verbinde deine Kontakte",
     "Access files via WebDAV" : "Greife auf Dateien über WebDAV zu",
     "Download macOS/iOS configuration profile" : "Konfigurationsprofil für macOS/iOS herunterladen",
-    "Get help" : "Bekomme Hilfe",
     "Start contributing" : "Mach mit",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Willst du eine bestimmte Verbesserung in Nextcloud? Hast du ein Problem gefunden? Willst du uns beim Übersetzen, Werben oder der Dokumentation helfen?",
     "Become part of the Community" : "Werde Teil der Community",
@@ -82,10 +81,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Verwende diesen Link, um deine Apps und deinen Desktop-Clienten mit diesem Server zu verbinden:",
     "Copy link" : "Link kopieren",
     "Copy to clipboard" : "In die Zwischenablage kopieren",
-    "App recommendation: Notes" : "App-Empfehlung: Notes",
-    "Distraction-free notes and writing." : "Ablenkungsfreie Notizen und Schreiben.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Wenn du Nextcloud in einer missionskritischen Umgebung mit einer hohen Anzahl Nutzern und großen Datenmengen betreibst und die Sicherheit und Unterstützung der Experten hinter der Nextcloud-Technologie benötigst, dann kannst du ein Enterprise-Abo von der Nextcloud GmbH kaufen. Dies beinhaltet Unterstützung via E-Mail und Telefon.",
-    "Get enterprise support" : "Enterprise Support erhalten",
-    "the Nextcloud IRC chat channel on freenode.net" : "Der Nextcloud IRC Chat Channel auf freenode.net"
+    "Get help" : "Bekomme Hilfe"
 },
 "nplurals=2; plural=(n != 1);");

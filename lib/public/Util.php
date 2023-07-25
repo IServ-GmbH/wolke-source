@@ -56,27 +56,6 @@ use bantu\IniGetWrapper\IniGetWrapper;
  * @since 4.0.0
  */
 class Util {
-	/**
-	 * @deprecated 14.0.0 use \OCP\ILogger::DEBUG
-	 */
-	public const DEBUG = 0;
-	/**
-	 * @deprecated 14.0.0 use \OCP\ILogger::INFO
-	 */
-	public const INFO = 1;
-	/**
-	 * @deprecated 14.0.0 use \OCP\ILogger::WARN
-	 */
-	public const WARN = 2;
-	/**
-	 * @deprecated 14.0.0 use \OCP\ILogger::ERROR
-	 */
-	public const ERROR = 3;
-	/**
-	 * @deprecated 14.0.0 use \OCP\ILogger::FATAL
-	 */
-	public const FATAL = 4;
-
 	/** @var \OCP\Share\IManager */
 	private static $shareManager;
 
@@ -344,11 +323,11 @@ class Util {
 	 * is passed to this function
 	 * @since 5.0.0
 	 */
-	public static function getDefaultEmailAddress($user_part) {
+	public static function getDefaultEmailAddress(string $user_part): string {
 		$config = \OC::$server->getConfig();
-		$user_part = $config->getSystemValue('mail_from_address', $user_part);
+		$user_part = $config->getSystemValueString('mail_from_address', $user_part);
 		$host_name = self::getServerHostName();
-		$host_name = $config->getSystemValue('mail_domain', $host_name);
+		$host_name = $config->getSystemValueString('mail_domain', $host_name);
 		$defaultEmailAddress = $user_part.'@'.$host_name;
 
 		$mailer = \OC::$server->getMailer();
@@ -361,24 +340,35 @@ class Util {
 	}
 
 	/**
+	 * Converts string to int of float depending if it fits an int
+	 * @param numeric-string|float|int $number numeric string
+	 * @return int|float int if it fits, float if it is too big
+	 * @since 26.0.0
+	 */
+	public static function numericToNumber(string|float|int $number): int|float {
+		/* This is a hack to cast to (int|float) */
+		return 0 + (string)$number;
+	}
+
+	/**
 	 * Make a human file size (2048 to 2 kB)
-	 * @param int $bytes file size in bytes
+	 * @param int|float $bytes file size in bytes
 	 * @return string a human readable file size
 	 * @since 4.0.0
 	 */
-	public static function humanFileSize($bytes) {
+	public static function humanFileSize(int|float $bytes): string {
 		return \OC_Helper::humanFileSize($bytes);
 	}
 
 	/**
 	 * Make a computer file size (2 kB to 2048)
 	 * @param string $str file size in a fancy format
-	 * @return float|false a file size in bytes
+	 * @return false|int|float a file size in bytes
 	 *
 	 * Inspired by: https://www.php.net/manual/en/function.filesize.php#92418
 	 * @since 4.0.0
 	 */
-	public static function computerFileSize($str) {
+	public static function computerFileSize(string $str): false|int|float {
 		return \OC_Helper::computerFileSize($str);
 	}
 
@@ -495,31 +485,31 @@ class Util {
 	 * calculates the maximum upload size respecting system settings, free space and user quota
 	 *
 	 * @param string $dir the current folder where the user currently operates
-	 * @param int $free the number of bytes free on the storage holding $dir, if not set this will be received from the storage directly
-	 * @return int number of bytes representing
+	 * @param int|float|null $free the number of bytes free on the storage holding $dir, if not set this will be received from the storage directly
+	 * @return int|float number of bytes representing
 	 * @since 5.0.0
 	 */
-	public static function maxUploadFilesize($dir, $free = null) {
+	public static function maxUploadFilesize(string $dir, int|float|null $free = null): int|float {
 		return \OC_Helper::maxUploadFilesize($dir, $free);
 	}
 
 	/**
 	 * Calculate free space left within user quota
 	 * @param string $dir the current folder where the user currently operates
-	 * @return int number of bytes representing
+	 * @return int|float number of bytes representing
 	 * @since 7.0.0
 	 */
-	public static function freeSpace($dir) {
+	public static function freeSpace(string $dir): int|float {
 		return \OC_Helper::freeSpace($dir);
 	}
 
 	/**
 	 * Calculate PHP upload limit
 	 *
-	 * @return int number of bytes representing
+	 * @return int|float number of bytes representing
 	 * @since 7.0.0
 	 */
-	public static function uploadLimit() {
+	public static function uploadLimit(): int|float {
 		return \OC_Helper::uploadLimit();
 	}
 

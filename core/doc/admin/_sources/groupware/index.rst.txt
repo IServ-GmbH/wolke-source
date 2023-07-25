@@ -8,3 +8,4 @@ Groupware
 
     calendar
     contacts
+    mail

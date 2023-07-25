@@ -53,7 +53,6 @@ OC.L10N.register(
     "Connect your contacts" : "Свържете вашите контакти",
     "Access files via WebDAV" : "Достъп до файловете чрез WebDAV",
     "Download macOS/iOS configuration profile" : "Изтегляне на конфигурационния профил на macOS / iOS",
-    "Get help" : "Помощ",
     "Start contributing" : "Започнете да допринасяте",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Желаете да направите подобрение по Nextcloud? Открили сте проблем? Желаете да преведете, промотирате или пишете документация за Nextcloud?",
     "Become part of the Community" : "Станете част от Общността",
@@ -82,10 +81,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Използвайте тази връзка, за да свържете вашите приложения и настолен клиент към този сървър:",
     "Copy link" : "Копирай връзката",
     "Copy to clipboard" : "Копирай",
-    "App recommendation: Notes" : "Препоръка за приложение: Бележки",
-    "Distraction-free notes and writing." : "Бележки и писане без разсейване .",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Ако използвате Nextcloud в критично важна среда с много потребители, голям обем от данни и имате нужда от допълнителна поддръжка и функционалност от експертите зад Nextcloud, трябва ви професионална поддръжка от Nextcloud достъпна чрез e-mail и телефон.",
-    "Get enterprise support" : "Получете професионална поддръжка",
-    "the Nextcloud IRC chat channel on freenode.net" : "IRC канала на Nextcloud във freenode.net"
+    "Get help" : "Помощ"
 },
 "nplurals=2; plural=(n != 1);");

@@ -42,6 +42,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
+use Psr\Log\LoggerInterface;
 
 class OauthApiController extends Controller {
 	/** @var AccessTokenMapper */
@@ -58,6 +59,8 @@ class OauthApiController extends Controller {
 	private $time;
 	/** @var Throttler */
 	private $throttler;
+	/** @var LoggerInterface */
+	private $logger;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -67,6 +70,7 @@ class OauthApiController extends Controller {
 								TokenProvider $tokenProvider,
 								ISecureRandom $secureRandom,
 								ITimeFactory $time,
+								LoggerInterface $logger,
 								Throttler $throttler) {
 		parent::__construct($appName, $request);
 		$this->crypto = $crypto;
@@ -76,11 +80,13 @@ class OauthApiController extends Controller {
 		$this->secureRandom = $secureRandom;
 		$this->time = $time;
 		$this->throttler = $throttler;
+		$this->logger = $logger;
 	}
 
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
+	 * @BruteForceProtection(action=oauth2GetToken)
 	 *
 	 * @param string $grant_type
 	 * @param string $code
@@ -93,9 +99,11 @@ class OauthApiController extends Controller {
 
 		// We only handle two types
 		if ($grant_type !== 'authorization_code' && $grant_type !== 'refresh_token') {
-			return new JSONResponse([
+			$response = new JSONResponse([
 				'error' => 'invalid_grant',
 			], Http::STATUS_BAD_REQUEST);
+			$response->throttle(['invalid_grant' => $grant_type]);
+			return $response;
 		}
 
 		// We handle the initial and refresh tokens the same way
@@ -106,17 +114,21 @@ class OauthApiController extends Controller {
 		try {
 			$accessToken = $this->accessTokenMapper->getByCode($code);
 		} catch (AccessTokenNotFoundException $e) {
-			return new JSONResponse([
+			$response = new JSONResponse([
 				'error' => 'invalid_request',
 			], Http::STATUS_BAD_REQUEST);
+			$response->throttle(['invalid_request' => 'token not found', 'code' => $code]);
+			return $response;
 		}
 
 		try {
 			$client = $this->clientMapper->getByUid($accessToken->getClientId());
 		} catch (ClientNotFoundException $e) {
-			return new JSONResponse([
+			$response = new JSONResponse([
 				'error' => 'invalid_request',
 			], Http::STATUS_BAD_REQUEST);
+			$response->throttle(['invalid_request' => 'client not found', 'client_id' => $accessToken->getClientId()]);
+			return $response;
 		}
 
 		if (isset($this->request->server['PHP_AUTH_USER'])) {
@@ -124,11 +136,22 @@ class OauthApiController extends Controller {
 			$client_secret = $this->request->server['PHP_AUTH_PW'];
 		}
 
-		// The client id and secret must match. Else we don't provide an access token!
-		if ($client->getClientIdentifier() !== $client_id || $client->getSecret() !== $client_secret) {
+		try {
+			$storedClientSecret = $this->crypto->decrypt($client->getSecret());
+		} catch (\Exception $e) {
+			$this->logger->error('OAuth client secret decryption error', ['exception' => $e]);
+			// we don't throttle here because it might not be a bruteforce attack
 			return new JSONResponse([
 				'error' => 'invalid_client',
 			], Http::STATUS_BAD_REQUEST);
+		}
+		// The client id and secret must match. Else we don't provide an access token!
+		if ($client->getClientIdentifier() !== $client_id || $storedClientSecret !== $client_secret) {
+			$response = new JSONResponse([
+				'error' => 'invalid_client',
+			], Http::STATUS_BAD_REQUEST);
+			$response->throttle(['invalid_client' => 'client ID or secret does not match']);
+			return $response;
 		}
 
 		$decryptedToken = $this->crypto->decrypt($accessToken->getEncryptedToken(), $code);
@@ -141,9 +164,11 @@ class OauthApiController extends Controller {
 		} catch (InvalidTokenException $e) {
 			//We can't do anything...
 			$this->accessTokenMapper->delete($accessToken);
-			return new JSONResponse([
+			$response = new JSONResponse([
 				'error' => 'invalid_request',
 			], Http::STATUS_BAD_REQUEST);
+			$response->throttle(['invalid_request' => 'token is invalid']);
+			return $response;
 		}
 
 		// Rotate the apptoken (so the old one becomes invalid basically)

@@ -21,7 +21,7 @@ class AlbumsManagementEventListener implements IEventListener {
 
 	public function __construct(
 		AlbumMapper $albumMapper,
-		LoggerInterface $logger
+		LoggerInterface $logger,
 	) {
 		$this->albumMapper = $albumMapper;
 		$this->logger = $logger;
@@ -49,11 +49,13 @@ class AlbumsManagementEventListener implements IEventListener {
 			}
 		} elseif ($event instanceof ShareDeletedEvent) {
 			$receiverId = $event->getShare()->getSharedWith();
-			$this->forEachSubNode(
-				$event->getShare()->getNode(),
-				// Remove node from any album when the owner is $receiverId.
-				fn ($node) => $this->albumMapper->removeFileWithOwner($node->getId(), $receiverId),
-			);
+			if ($receiverId !== null) { // null for public link shares
+				$this->forEachSubNode(
+					$event->getShare()->getNode(),
+					// Remove node from any album when the owner is $receiverId.
+					fn ($node) => $this->albumMapper->removeFileWithOwner($node->getId(), $receiverId),
+				);
+			}
 		} elseif ($event instanceof UserRemovedEvent) {
 			// Get all shared albums for this group:
 			$albums_group = $this->albumMapper->getSharedAlbumsForCollaborator($event->getGroup()->getGID(), AlbumMapper::TYPE_GROUP);

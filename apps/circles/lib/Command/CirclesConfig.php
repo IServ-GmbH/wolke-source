@@ -65,8 +65,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @package OCA\Circles\Command
  */
 class CirclesConfig extends Base {
-
-
 	/** @var FederatedUserService */
 	private $federatedUserService;
 
@@ -97,14 +95,14 @@ class CirclesConfig extends Base {
 			 ->setDescription('edit config/type of a Circle')
 			 ->addArgument('circle_id', InputArgument::REQUIRED, 'ID of the circle')
 			 ->addArgument(
-				 'config', InputArgument::IS_ARRAY,
-				 'list of value to change in the configuration of the Circle'
+			 	'config', InputArgument::IS_ARRAY,
+			 	'list of value to change in the configuration of the Circle'
 			 )
 			 ->addOption('initiator', '', InputOption::VALUE_REQUIRED, 'set an initiator to the request', '')
 			 ->addOption('initiator-type', '', InputOption::VALUE_REQUIRED, 'set initiator type', '0')
 			 ->addOption(
-				 'super-session', '',
-				 InputOption::VALUE_NONE, 'use super session to bypass some condition'
+			 	'super-session', '',
+			 	InputOption::VALUE_NONE, 'use super session to bypass some condition'
 			 )
 			 ->addOption('status-code', '', InputOption::VALUE_NONE, 'display status code on exception');
 	}
@@ -137,15 +135,15 @@ class CirclesConfig extends Base {
 		$circleId = (string)$input->getArgument('circle_id');
 
 		try {
+			$this->federatedUserService->commandLineInitiator(
+				$input->getOption('initiator'),
+				Member::parseTypeString($input->getOption('initiator-type')),
+				$circleId,
+				false
+			);
+
 			if ($input->getOption('super-session')) {
 				$this->federatedUserService->bypassCurrentUserCondition(true);
-			} else {
-				$this->federatedUserService->commandLineInitiator(
-					$input->getOption('initiator'),
-					Member::parseTypeString($input->getOption('initiator-type')),
-					$circleId,
-					false
-				);
 			}
 
 			$circle = $this->circleService->getCircle($circleId);

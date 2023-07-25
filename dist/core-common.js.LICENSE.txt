@@ -1,14 +1,29 @@
-/*!
-  * Bootstrap tooltip.js v4.6.1 (https://getbootstrap.com/)
-  * Copyright 2011-2021 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
-  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-  */
+/*
+ * @copyright Copyright (c) 2022 Richard Steinmetz <richard@steinmetz.cloud>
+ *
+ * @author Richard Steinmetz <richard@steinmetz.cloud>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/*!
-  * Bootstrap util.js v4.6.1 (https://getbootstrap.com/)
-  * Copyright 2011-2021 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
-  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-  */
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
 
 /*!
   * vue-router v3.5.3
@@ -73,7 +88,7 @@
  */
 
 /*!
- * clipboard.js v2.0.10
+ * clipboard.js v2.0.11
  * https://clipboardjs.com/
  *
  * Licensed MIT © Zeno Rocha
@@ -316,12 +331,12 @@
  */
 
 /*!
-* focus-trap 7.1.0
+* focus-trap 7.2.0
 * @license MIT, https://github.com/focus-trap/focus-trap/blob/master/LICENSE
 */
 
 /*!
-* focus-trap 7.2.0
+* focus-trap 7.4.0
 * @license MIT, https://github.com/focus-trap/focus-trap/blob/master/LICENSE
 */
 
@@ -330,9 +345,24 @@
 * @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
 */
 
-/*! @license DOMPurify 2.4.4 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.4/LICENSE */
+/*!
+* tabbable 6.1.1
+* @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
+*/
+
+/*! @license DOMPurify 2.4.3 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.3/LICENSE */
+
+/*! For license information please see NcActionButton.js.LICENSE.txt */
+
+/*! For license information please see NcActionInput.js.LICENSE.txt */
+
+/*! For license information please see NcActionLink.js.LICENSE.txt */
 
 /*! For license information please see NcActionSeparator.js.LICENSE.txt */
+
+/*! For license information please see NcActionText.js.LICENSE.txt */
+
+/*! For license information please see NcActionTextEditable.js.LICENSE.txt */
 
 /*! For license information please see NcActions.js.LICENSE.txt */
 
@@ -344,13 +374,19 @@
 
 /*! For license information please see NcAppNavigationItem.js.LICENSE.txt */
 
+/*! For license information please see NcAppNavigationNew.js.LICENSE.txt */
+
 /*! For license information please see NcAppNavigationSettings.js.LICENSE.txt */
 
 /*! For license information please see NcAppNavigationSpacer.js.LICENSE.txt */
 
+/*! For license information please see NcAppSettingsDialog.js.LICENSE.txt */
+
 /*! For license information please see NcAppSidebar.js.LICENSE.txt */
 
 /*! For license information please see NcAppSidebarTab.js.LICENSE.txt */
+
+/*! For license information please see NcAvatar.js.LICENSE.txt */
 
 /*! For license information please see NcButton.js.LICENSE.txt */
 
@@ -362,19 +398,39 @@
 
 /*! For license information please see NcCounterBubble.js.LICENSE.txt */
 
+/*! For license information please see NcDashboardWidget.js.LICENSE.txt */
+
+/*! For license information please see NcDashboardWidgetItem.js.LICENSE.txt */
+
+/*! For license information please see NcDatetimePicker.js.LICENSE.txt */
+
 /*! For license information please see NcEmojiPicker.js.LICENSE.txt */
+
+/*! For license information please see NcInputField.js.LICENSE.txt */
 
 /*! For license information please see NcLoadingIcon.js.LICENSE.txt */
 
 /*! For license information please see NcModal.js.LICENSE.txt */
 
+/*! For license information please see NcMultiselect.js.LICENSE.txt */
+
 /*! For license information please see NcNoteCard.js.LICENSE.txt */
 
 /*! For license information please see NcPasswordField.js.LICENSE.txt */
 
+/*! For license information please see NcRichContenteditable.js.LICENSE.txt */
+
+/*! For license information please see NcRichText.js.LICENSE.txt */
+
+/*! For license information please see NcSelect.js.LICENSE.txt */
+
+/*! For license information please see NcSelectTags.js.LICENSE.txt */
+
 /*! For license information please see NcSettingsSection.js.LICENSE.txt */
 
 /*! For license information please see NcTextField.js.LICENSE.txt */
+
+/*! For license information please see NcTimezonePicker.js.LICENSE.txt */
 
 /*! For license information please see index.module.js.LICENSE.txt */
 
@@ -387,6 +443,8 @@
 /*! https://mths.be/base64 v1.0.0 by @mathias | MIT license */
 
 /*! https://mths.be/he v1.2.0 by @mathias | MIT license */
+
+/*! https://mths.be/punycode v1.3.2 by @mathias */
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
@@ -402,6 +460,51 @@
  *
  * @author Jerry Bendy <jerry@icewingcc.com>
  * @licence MIT
+ *
+ */
+
+/**
+ * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
+ *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ *
+ * @license AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+ * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
+ *
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @license AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -739,6 +842,28 @@
  */
 
 /**
+ * @copyright Copyright (c) 2021 John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @license AGPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
  * @license
  * Lodash <https://lodash.com/>
  * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
@@ -803,6 +928,6 @@
 
 //! momentjs.com
 
-//! version : 0.5.37
+//! version : 0.5.38
 
 //! version : 2.29.4

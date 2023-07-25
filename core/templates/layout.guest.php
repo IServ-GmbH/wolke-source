@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="ng-csp" data-placeholder-focus="false" lang="<?php p($_['language']); ?>" data-locale="<?php p($_['locale']); ?>" >
+<html class="ng-csp" data-placeholder-focus="false" lang="<?php p($_['language']); ?>" data-locale="<?php p($_['locale']); ?>" translate="no" >
 	<head
 <?php if ($_['user_uid']) { ?>
 	data-user="<?php p($_['user_uid']); ?>" data-user-displayname="<?php p($_['user_displayname']); ?>"
@@ -9,8 +9,8 @@
 		<title>
 			<?php
 				p(!empty($_['pageTitle']) ? $_['pageTitle'] . ' – ' : '');
-				p($theme->getTitle());
-			?>
+p($theme->getTitle());
+?>
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 		<?php if ($theme->getiTunesAppId() !== '') { ?>

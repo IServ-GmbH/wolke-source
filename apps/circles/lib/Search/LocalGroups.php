@@ -31,15 +31,14 @@ use OCA\Circles\Model\DeprecatedMember;
 use OCA\Circles\Model\SearchResult;
 
 class LocalGroups implements ISearch {
-
 	/**
 	 * {@inheritdoc}
 	 */
-	public function search($search) {
+	public function search($needle): array {
 		$result = [];
 		$groupManager = \OC::$server->getGroupManager();
 
-		$groups = $groupManager->search($search);
+		$groups = $groupManager->search($needle);
 		foreach ($groups as $group) {
 			$result[] = new SearchResult($group->getGID(), DeprecatedMember::TYPE_GROUP);
 		}

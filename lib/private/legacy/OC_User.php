@@ -209,10 +209,10 @@ class OC_User {
 					]
 				);
 				$dispatcher->dispatchTyped(new UserLoggedInEvent(
-						\OC::$server->get(IUserManager::class)->get($uid),
-						$uid,
-						null,
-						false)
+					\OC::$server->get(IUserManager::class)->get($uid),
+					$uid,
+					null,
+					false)
 				);
 
 				//trigger creation of user home and /files folder

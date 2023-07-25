@@ -26,90 +26,36 @@ namespace OCA\Photos\Sabre\Album;
 use OCA\Photos\Album\AlbumFile;
 use OCA\Photos\Album\AlbumInfo;
 use OCA\Photos\Album\AlbumMapper;
+use OCA\Photos\Sabre\CollectionPhoto;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
-use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\IFile;
 
-class AlbumPhoto implements IFile {
-	private AlbumMapper $albumMapper;
-	private AlbumInfo $album;
-	private AlbumFile $albumFile;
-	private IRootFolder $rootFolder;
-
-	public const TAG_FAVORITE = '_$!<Favorite>!$_';
-
-	public function __construct(AlbumMapper $albumMapper, AlbumInfo $album, AlbumFile $albumFile, IRootFolder $rootFolder) {
-		$this->albumMapper = $albumMapper;
-		$this->album = $album;
-		$this->albumFile = $albumFile;
-		$this->rootFolder = $rootFolder;
+class AlbumPhoto extends CollectionPhoto implements IFile {
+	public function __construct(
+		private AlbumMapper $albumMapper,
+		private AlbumInfo $album,
+		private AlbumFile $albumFile,
+		private IRootFolder $rootFolder,
+		Folder $userFolder,
+	) {
+		parent::__construct($albumFile, $userFolder);
 	}
 
 	/**
 	 * @return void
 	 */
 	public function delete() {
-		$this->albumMapper->removeFile($this->album->getId(), $this->albumFile->getFileId());
+		$this->albumMapper->removeFile($this->album->getId(), $this->file->getFileId());
 	}
 
-	public function getName() {
-		return $this->albumFile->getFileId() . "-" . $this->albumFile->getName();
-	}
-
-	/**
-	 * @return never
-	 */
-	public function setName($name) {
-		throw new Forbidden('Can\'t rename photos trough the album api');
-	}
-
-	public function getLastModified() {
-		return $this->albumFile->getMTime();
-	}
-
-	public function put($data) {
-		$nodes = $this->userFolder->getById($this->file->getFileId());
-		$node = current($nodes);
-		if ($node) {
-			/** @var Node $node */
-			if ($node instanceof File) {
-				return $node->putContent($data);
-			} else {
-				throw new NotFoundException("Photo is a folder");
-			}
-		} else {
-			throw new NotFoundException("Photo not found for user");
-		}
-	}
-
-	public function get() {
+	private function getNode(): Node {
 		$nodes = $this->rootFolder
 			->getUserFolder($this->albumFile->getOwner() ?: $this->album->getUserId())
-			->getById($this->albumFile->getFileId());
-		$node = current($nodes);
-		if ($node) {
-			/** @var Node $node */
-			if ($node instanceof File) {
-				return $node->fopen('r');
-			} else {
-				throw new NotFoundException("Photo is a folder");
-			}
-		} else {
-			throw new NotFoundException("Photo not found for user");
-		}
-	}
-
-	public function getFileId(): int {
-		return $this->albumFile->getFileId();
-	}
-
-	public function getFileInfo(): Node {
-		$nodes = $this->rootFolder
-			->getUserFolder($this->albumFile->getOwner() ?: $this->album->getUserId())
-			->getById($this->albumFile->getFileId());
+			->getById($this->file->getFileId());
 		$node = current($nodes);
 		if ($node) {
 			return $node;
@@ -118,48 +64,16 @@ class AlbumPhoto implements IFile {
 		}
 	}
 
-	public function getContentType() {
-		return $this->albumFile->getMimeType();
-	}
-
-	public function getETag() {
-		return $this->albumFile->getEtag();
-	}
-
-	public function getSize() {
-		return $this->albumFile->getSize();
-	}
-
-	public function getFile(): AlbumFile {
-		return $this->albumFile;
-	}
-
-	public function isFavorite(): bool {
-		$tagManager = \OCP\Server::get(\OCP\ITagManager::class);
-		$tagger = $tagManager->load('files');
-		if ($tagger === null) {
-			return false;
+	public function get() {
+		$node = $this->getNode();
+		if ($node instanceof File) {
+			return $node->fopen('r');
+		} else {
+			throw new NotFoundException("Photo is a folder");
 		}
-		$tags = $tagger->getTagsForObjects([$this->getFileId()]);
-
-		if ($tags === false || empty($tags)) {
-			return false;
-		}
-
-		return array_search(self::TAG_FAVORITE, current($tags)) !== false;
 	}
 
-	public function setFavoriteState($favoriteState): bool {
-		$tagManager = \OCP\Server::get(\OCP\ITagManager::class);
-		$tagger = $tagManager->load('files');
-
-		switch ($favoriteState) {
-			case "0":
-				return $tagger->removeFromFavorites($this->albumFile->getFileId());
-			case "1":
-				return $tagger->addToFavorites($this->albumFile->getFileId());
-			default:
-				new \Exception('Favorite state is invalide, should be 0 or 1.');
-		}
+	public function getFileInfo(): Node {
+		return $this->getNode();
 	}
 }

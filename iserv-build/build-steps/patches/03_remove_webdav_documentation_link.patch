@@ -1,0 +1,15 @@
+diff --git a/apps/files/src/views/Settings.vue b/apps/files/src/views/Settings.vue
+index 1319b1f1808..fd8a88933d5 100644
+--- a/apps/files/src/views/Settings.vue
++++ b/apps/files/src/views/Settings.vue
+@@ -61,9 +61,7 @@
+ 				</template>
+ 			</NcInputField>
+ 			<em>
+-				<a :href="webdavDocs" target="_blank" rel="noreferrer noopener">
+-					{{ t('files', 'Use this address to access your Files via WebDAV') }} ↗
+-				</a>
++				{{ t('files', 'Use this address to access your Files via WebDAV') }}
+ 			</em>
+ 		</NcAppSettingsSection>
+ 	</NcAppSettingsDialog>

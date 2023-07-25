@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Calendar app &mdash; Nextcloud latest User Manual latest documentation</title>
@@ -78,6 +78,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#creating-an-appointment-configuration">Creating an appointment configuration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#booking-an-appointment">Booking an appointment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#working-with-the-booked-appointment">Working with the booked appointment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-talk-room-for-booked-appointments">Create Talk room for booked appointments</a></li>
 </ul>
 </li>
 </ul>
@@ -126,7 +127,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-calendar-app">
-<h1>Using the Calendar app<a class="headerlink" href="#using-the-calendar-app" title="Permalink to this headline"></a></h1>
+<span id="calendar-app"></span><h1>Using the Calendar app<a class="headerlink" href="#using-the-calendar-app" title="Permalink to this headline"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The Calendar app comes installed with Nextcloud Hub by default, but can be disabled.
@@ -310,6 +311,9 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <figure class="align-default">
 <a class="reference internal image-reference" href="../_images/calendar_event_invitation_level.png"><img alt="../_images/calendar_event_invitation_level.png" src="../_images/calendar_event_invitation_level.png" style="width: 406.40000000000003px; height: 437.6px;" /></a>
 </figure>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 25: </span>Attendee email response links no longer offer inputs to add a comment or invite additional guests to the event.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>When adding other Nextcloud users as attendees to an event, you may access their free-busy information if available, helping you determine when the best time slot for your event is. Set your <a class="reference internal" href="#calendar-working-hours"><span class="std std-ref">working hours</span></a> to let others know when you are available. Free-busy information is only available for other users on the same Nextcloud instance.</p>
@@ -340,7 +344,7 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 </ul>
 <p>You may set reminders at a time relative to the event or at a specific date.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_event_reminders.png"><img alt="../_images/calendar_event_reminders.png" src="../_images/calendar_event_reminders.png" style="width: 406.40000000000003px; height: 569.6px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_event_reminders.png"><img alt="../_images/calendar_event_reminders.png" src="../_images/calendar_event_reminders.png" style="width: 386.40000000000003px; height: 498.40000000000003px;" /></a>
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -493,6 +497,10 @@ The system will detect the conflict and offer to pick a new time slot.</p>
 <p>As with any other event that has attendees, changes and cancellations will trigger a notification to the attendee’s email.</p>
 <p>If attendees wish to cancel the appointment they have to get in contact with the organizer, so that the organizer can cancel or even delete the event.</p>
 </section>
+<section id="create-talk-room-for-booked-appointments">
+<h3>Create Talk room for booked appointments<a class="headerlink" href="#create-talk-room-for-booked-appointments" title="Permalink to this headline"></a></h3>
+<p>You can create a Talk room directly from the calendar app for a booked appointment. The option can be found on the ‘Create appointment’ modal. A unique link will be generated for every booked appointment and sent via the confirmation email when you check this option.</p>
+</section>
 </section>
 </section>
 
@@ -535,11 +543,9 @@ The system will detect the conflict and offer to pick a new time slot.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

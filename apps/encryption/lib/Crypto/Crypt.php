@@ -6,7 +6,9 @@
  * @author Björn Schießle <bjoern@schiessle.org>
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Clark Tomlinson <fallen013@gmail.com>
+ * @author Côme Chilliet <come.chilliet@nextcloud.com>
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Kevin Niehage <kevin@niehage.name>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -40,6 +42,7 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IUserSession;
+use phpseclib\Crypt\RC4;
 
 /**
  * Class Crypt provides the encryption implementation of the default Nextcloud
@@ -67,9 +70,9 @@ class Crypt {
 	// default cipher from old Nextcloud versions
 	public const LEGACY_CIPHER = 'AES-128-CFB';
 
-	public const SUPPORTED_KEY_FORMATS = ['hash', 'password'];
+	public const SUPPORTED_KEY_FORMATS = ['hash2', 'hash', 'password'];
 	// one out of SUPPORTED_KEY_FORMATS
-	public const DEFAULT_KEY_FORMAT = 'hash';
+	public const DEFAULT_KEY_FORMAT = 'hash2';
 	// default key format, old Nextcloud version encrypted the private key directly
 	// with the user password
 	public const LEGACY_KEY_FORMAT = 'password';
@@ -160,7 +163,7 @@ class Crypt {
 	/**
 	 * Generates a new private key
 	 *
-	 * @return resource
+	 * @return \OpenSSLAsymmetricKey|false
 	 */
 	public function getOpenSSLPKey() {
 		$config = $this->getOpenSSLConfig();
@@ -275,7 +278,7 @@ class Crypt {
 		}
 
 		// Get cipher either from config.php or the default cipher defined in this class
-		$cipher = $this->config->getSystemValue('cipher', self::DEFAULT_CIPHER);
+		$cipher = $this->config->getSystemValueString('cipher', self::DEFAULT_CIPHER);
 		if (!isset(self::SUPPORTED_CIPHERS_AND_KEY_SIZE[$cipher])) {
 			$this->logger->warning(
 				sprintf(
@@ -316,8 +319,8 @@ class Crypt {
 
 		throw new \InvalidArgumentException(
 			sprintf(
-					'Unsupported cipher (%s) defined.',
-					$cipher
+				'Unsupported cipher (%s) defined.',
+				$cipher
 			)
 		);
 	}
@@ -373,22 +376,20 @@ class Crypt {
 	 * @param string $uid only used for user keys
 	 * @return string
 	 */
-	protected function generatePasswordHash($password, $cipher, $uid = '') {
+	protected function generatePasswordHash(string $password, string $cipher, string $uid = '', int $iterations = 600000): string {
 		$instanceId = $this->config->getSystemValue('instanceid');
 		$instanceSecret = $this->config->getSystemValue('secret');
 		$salt = hash('sha256', $uid . $instanceId . $instanceSecret, true);
 		$keySize = $this->getKeySize($cipher);
 
-		$hash = hash_pbkdf2(
+		return hash_pbkdf2(
 			'sha256',
 			$password,
 			$salt,
-			100000,
+			$iterations,
 			$keySize,
 			true
 		);
-
-		return $hash;
 	}
 
 	/**
@@ -433,8 +434,10 @@ class Crypt {
 			$keyFormat = self::LEGACY_KEY_FORMAT;
 		}
 
-		if ($keyFormat === self::DEFAULT_KEY_FORMAT) {
-			$password = $this->generatePasswordHash($password, $cipher, $uid);
+		if ($keyFormat === 'hash') {
+			$password = $this->generatePasswordHash($password, $cipher, $uid, 100000);
+		} elseif ($keyFormat === 'hash2') {
+			$password = $this->generatePasswordHash($password, $cipher, $uid, 600000);
 		}
 
 		$binaryEncoding = isset($header['encoding']) && $header['encoding'] === self::BINARY_ENCODING_FORMAT;
@@ -470,8 +473,7 @@ class Crypt {
 	 */
 	protected function isValidPrivateKey($plainKey) {
 		$res = openssl_get_privatekey($plainKey);
-		// TODO: remove resource check one php7.4 is not longer supported
-		if (is_resource($res) || (is_object($res) && get_class($res) === 'OpenSSLAsymmetricKey')) {
+		if (is_object($res) && get_class($res) === 'OpenSSLAsymmetricKey') {
 			$sslInfo = openssl_pkey_get_details($res);
 			if (isset($sslInfo['key'])) {
 				return true;
@@ -518,13 +520,10 @@ class Crypt {
 	/**
 	 * check for valid signature
 	 *
-	 * @param string $data
-	 * @param string $passPhrase
-	 * @param string $expectedSignature
 	 * @throws GenericEncryptionException
 	 */
-	private function checkSignature($data, $passPhrase, $expectedSignature) {
-		$enforceSignature = !$this->config->getSystemValue('encryption_skip_signature_check', false);
+	private function checkSignature(string $data, string $passPhrase, string $expectedSignature): void {
+		$enforceSignature = !$this->config->getSystemValueBool('encryption_skip_signature_check', false);
 
 		$signature = $this->createSignature($data, $passPhrase);
 		$isCorrectHash = hash_equals($expectedSignature, $signature);
@@ -605,7 +604,7 @@ class Crypt {
 	 * @throws GenericEncryptionException
 	 */
 	private function hasSignature($catFile, $cipher) {
-		$skipSignatureCheck = $this->config->getSystemValue('encryption_skip_signature_check', false);
+		$skipSignatureCheck = $this->config->getSystemValueBool('encryption_skip_signature_check', false);
 
 		$meta = substr($catFile, -93);
 		$signaturePosition = strpos($meta, '00sig00');
@@ -696,9 +695,9 @@ class Crypt {
 	}
 
 	/**
-	 * @param $encKeyFile
-	 * @param $shareKey
-	 * @param $privateKey
+	 * @param string $encKeyFile
+	 * @param string $shareKey
+	 * @param \OpenSSLAsymmetricKey|\OpenSSLCertificate|array|string $privateKey
 	 * @return string
 	 * @throws MultiKeyDecryptException
 	 */
@@ -707,7 +706,8 @@ class Crypt {
 			throw new MultiKeyDecryptException('Cannot multikey decrypt empty plain content');
 		}
 
-		if (openssl_open($encKeyFile, $plainContent, $shareKey, $privateKey, 'RC4')) {
+		$plainContent = '';
+		if ($this->opensslOpen($encKeyFile, $plainContent, $shareKey, $privateKey, 'RC4')) {
 			return $plainContent;
 		} else {
 			throw new MultiKeyDecryptException('multikeydecrypt with share key failed:' . openssl_error_string());
@@ -732,7 +732,7 @@ class Crypt {
 		$shareKeys = [];
 		$mappedShareKeys = [];
 
-		if (openssl_seal($plainContent, $sealed, $shareKeys, $keyFiles, 'RC4')) {
+		if ($this->opensslSeal($plainContent, $sealed, $shareKeys, $keyFiles, 'RC4')) {
 			$i = 0;
 
 			// Ensure each shareKey is labelled with its corresponding key id
@@ -750,7 +750,105 @@ class Crypt {
 		}
 	}
 
+	/**
+	 * returns the value of $useLegacyBase64Encoding
+	 *
+	 * @return bool
+	 */
 	public function useLegacyBase64Encoding(): bool {
 		return $this->useLegacyBase64Encoding;
+	}
+
+	/**
+	 * Uses phpseclib RC4 implementation
+	 */
+	private function rc4Decrypt(string $data, string $secret): string {
+		$rc4 = new RC4();
+		/** @psalm-suppress InternalMethod */
+		$rc4->setKey($secret);
+
+		return $rc4->decrypt($data);
+	}
+
+	/**
+	 * Uses phpseclib RC4 implementation
+	 */
+	private function rc4Encrypt(string $data, string $secret): string {
+		$rc4 = new RC4();
+		/** @psalm-suppress InternalMethod */
+		$rc4->setKey($secret);
+
+		return $rc4->encrypt($data);
+	}
+
+	/**
+	 * Custom implementation of openssl_open()
+	 *
+	 * @param \OpenSSLAsymmetricKey|\OpenSSLCertificate|array|string $private_key
+	 * @throws DecryptionFailedException
+	 */
+	private function opensslOpen(string $data, string &$output, string $encrypted_key, $private_key, string $cipher_algo): bool {
+		$result = false;
+
+		// check if RC4 is used
+		if (strcasecmp($cipher_algo, "rc4") === 0) {
+			// decrypt the intermediate key with RSA
+			if (openssl_private_decrypt($encrypted_key, $intermediate, $private_key, OPENSSL_PKCS1_PADDING)) {
+				// decrypt the file key with the intermediate key
+				// using our own RC4 implementation
+				$output = $this->rc4Decrypt($data, $intermediate);
+				$result = (strlen($output) === strlen($data));
+			}
+		} else {
+			throw new DecryptionFailedException('Unsupported cipher '.$cipher_algo);
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Custom implementation of openssl_seal()
+	 *
+	 * @throws EncryptionFailedException
+	 */
+	private function opensslSeal(string $data, string &$sealed_data, array &$encrypted_keys, array $public_key, string $cipher_algo): int|false {
+		$result = false;
+
+		// check if RC4 is used
+		if (strcasecmp($cipher_algo, "rc4") === 0) {
+			// make sure that there is at least one public key to use
+			if (count($public_key) >= 1) {
+				// generate the intermediate key
+				$intermediate = openssl_random_pseudo_bytes(16, $strong_result);
+
+				// check if we got strong random data
+				if ($strong_result) {
+					// encrypt the file key with the intermediate key
+					// using our own RC4 implementation
+					$sealed_data = $this->rc4Encrypt($data, $intermediate);
+					if (strlen($sealed_data) === strlen($data)) {
+						// prepare the encrypted keys
+						$encrypted_keys = [];
+
+						// iterate over the public keys and encrypt the intermediate
+						// for each of them with RSA
+						foreach ($public_key as $tmp_key) {
+							if (openssl_public_encrypt($intermediate, $tmp_output, $tmp_key, OPENSSL_PKCS1_PADDING)) {
+								$encrypted_keys[] = $tmp_output;
+							}
+						}
+
+						// set the result if everything worked fine
+						if (count($public_key) === count($encrypted_keys)) {
+							$result = strlen($sealed_data);
+						}
+					}
+				}
+			}
+		} else {
+			throw new EncryptionFailedException('Unsupported cipher '.$cipher_algo);
+		}
+
+		return $result;
 	}
 }

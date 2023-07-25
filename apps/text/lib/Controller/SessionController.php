@@ -30,7 +30,6 @@ use OCA\Text\Service\NotificationService;
 use OCA\Text\Service\SessionService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Http\Response;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -58,16 +57,8 @@ class SessionController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function create(int $fileId = null, string $file = null, bool $forceRecreate = false): DataResponse {
-		return $this->apiService->create($fileId, $file, null, null, $forceRecreate);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @PublicPage
-	 */
-	public function fetch(int $documentId, int $sessionId, string $sessionToken): Response {
-		return $this->apiService->fetch($documentId, $sessionId, $sessionToken);
+	public function create(int $fileId = null, string $file = null): DataResponse {
+		return $this->apiService->create($fileId, $file, null, null);
 	}
 
 	/**
@@ -82,10 +73,10 @@ class SessionController extends Controller {
 	 * @NoAdminRequired
 	 * @PublicPage
 	 */
-	public function push(int $documentId, int $sessionId, string $sessionToken, int $version, array $steps): DataResponse {
+	public function push(int $documentId, int $sessionId, string $sessionToken, int $version, array $steps, string $awareness): DataResponse {
 		try {
 			$this->loginSessionUser($documentId, $sessionId, $sessionToken);
-			return $this->apiService->push($documentId, $sessionId, $sessionToken, $version, $steps);
+			return $this->apiService->push($documentId, $sessionId, $sessionToken, $version, $steps, $awareness);
 		} finally {
 			$this->restoreSessionUser();
 		}
@@ -95,10 +86,10 @@ class SessionController extends Controller {
 	 * @NoAdminRequired
 	 * @PublicPage
 	 */
-	public function sync(int $documentId, int $sessionId, string $sessionToken, int $version = 0, string $autosaveContent = null, bool $force = false, bool $manualSave = false): DataResponse {
+	public function sync(int $documentId, int $sessionId, string $sessionToken, int $version = 0, string $autosaveContent = null, string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
 		try {
 			$this->loginSessionUser($documentId, $sessionId, $sessionToken);
-			return $this->apiService->sync($documentId, $sessionId, $sessionToken, $version, $autosaveContent, $force, $manualSave);
+			return $this->apiService->sync($documentId, $sessionId, $sessionToken, $version, $autosaveContent, $documentState, $force, $manualSave);
 		} finally {
 			$this->restoreSessionUser();
 		}

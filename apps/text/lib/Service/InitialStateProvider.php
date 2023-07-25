@@ -3,16 +3,15 @@
 namespace OCA\Text\Service;
 
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Translation\ITranslationManager;
 
 class InitialStateProvider {
-	private IInitialState $initialState;
-	private ConfigService $configService;
-	private ?string $userId;
-
-	public function __construct(IInitialState $initialState, ConfigService $configService, ?string $userId) {
-		$this->initialState = $initialState;
-		$this->configService = $configService;
-		$this->userId = $userId;
+	public function __construct(
+		private IInitialState $initialState,
+		private ConfigService $configService,
+		private ITranslationManager $translationManager,
+		private ?string $userId
+	) {
 	}
 
 	public function provideState(): void {
@@ -35,5 +34,19 @@ class InitialStateProvider {
 			'rich_editing_enabled',
 			$this->configService->isRichEditingEnabled()
 		);
+
+		$this->initialState->provideInitialState(
+			'translation_can_detect',
+			$this->translationManager->canDetectLanguage()
+		);
+
+		$this->initialState->provideInitialState(
+			'translation_languages',
+			$this->translationManager->getLanguages()
+		);
+	}
+
+	public function provideFileId(int $fileId): void {
+		$this->initialState->provideInitialState('file_id', $fileId);
 	}
 }

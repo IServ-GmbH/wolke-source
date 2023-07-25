@@ -140,7 +140,7 @@ class FTP extends Common {
 		}
 	}
 
-	public function filesize($path) {
+	public function filesize($path): false|int|float {
 		$result = $this->getConnection()->size($this->buildPath($path));
 		if ($result === -1) {
 			return false;
@@ -333,9 +333,9 @@ class FTP extends Common {
 		}
 	}
 
-	public function rename($path1, $path2) {
-		$this->unlink($path2);
-		return $this->getConnection()->rename($this->buildPath($path1), $this->buildPath($path2));
+	public function rename($source, $target) {
+		$this->unlink($target);
+		return $this->getConnection()->rename($this->buildPath($source), $this->buildPath($target));
 	}
 
 	public function getDirectoryContent($directory): \Traversable {

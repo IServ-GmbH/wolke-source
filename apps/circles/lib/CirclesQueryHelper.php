@@ -48,8 +48,6 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
  * @package OCA\Circles
  */
 class CirclesQueryHelper {
-
-
 	/** @var CoreRequestBuilder */
 	private $coreRequestBuilder;
 
@@ -142,6 +140,8 @@ class CirclesQueryHelper {
 			[CoreQueryBuilder::HELPER],
 			[
 				'getData' => $fullDetails,
+				'filterPersonalCircles' => true,
+				'includePersonalCircles' => true,
 				'minimumLevel' => Member::LEVEL_MEMBER
 			]
 		);

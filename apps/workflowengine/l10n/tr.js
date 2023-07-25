@@ -67,6 +67,7 @@ OC.L10N.register(
     "Desktop client" : "Masaüstü istemcisi",
     "Thunderbird & Outlook addons" : "Thunderbird ve Outlook eklentileri",
     "Custom user agent" : "Özel kullanıcı uygulaması",
+    "Select a trigger" : "Bir tetikleyici seçin",
     "At least one event must be selected" : "En az bir etkinlik seçilmelidir",
     "Add new flow" : "Akış ekle",
     "When" : "Şu zamanda",
@@ -112,10 +113,6 @@ OC.L10N.register(
     "User group membership" : "Kullanıcı grubu üyeliği",
     "is member of" : "şunun üyesi olan",
     "is not member of" : "şunun üyesi olmayan",
-    "Select a tag" : "Etiket seçin",
-    "No results" : "Herhangi bir sonuç bulunamadı",
-    "%s (invisible)" : "%s (görünmez)",
-    "%s (restricted)" : "%s (kısıtlanmış)",
     "Predefined URLs" : "Hazır adresler",
     "Others" : "Diğerleri"
 },

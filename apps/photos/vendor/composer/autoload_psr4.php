@@ -6,4 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'OCA\\Photos\\' => array($baseDir . '/lib'),
+    'Hexogen\\KDTree\\' => array($vendorDir . '/hexogen/kdtree/src'),
 );

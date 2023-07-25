@@ -3,7 +3,7 @@
 # IMPORTANT: Update version in build.sh as well!
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-FROM nextcloud:25.0.7-apache
+FROM nextcloud:26.0.4-apache
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
@@ -27,7 +27,9 @@ COPY ./theme /usr/src/nextcloud/themes/iserv
 # Contains patches and config scripts
 COPY ./adds /
 
-# Apply backend patches
+# Apply patches - Refer to README.md for description of individual patches.
+
+# Backend patches
 # This is not the most efficient way in term of image layers but it's easier to find faulty patches during updates
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/remove_contactsmenu.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/cleanup_settings.patch
@@ -36,8 +38,8 @@ RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_send_mails.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_activity_jobs.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/show_share_owner.patch
 
-# Apply frontend patches
-RUN cd /usr/src/nextcloud && git apply /patches/generated/file_sharing_tab_combined.patch
+# Frontend patches
+RUN cd /usr/src/nextcloud && git apply /patches/generated/generated_combined.patch
 
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart
 # This makes config updates easier

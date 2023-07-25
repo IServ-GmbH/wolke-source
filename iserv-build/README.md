@@ -4,8 +4,9 @@ This folder contains everything needed to build the docker image. Run `./build.s
 
 ## How it works
 
-The Image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).\
-The source code in the image is then modified by a number of patches disabling or altering the functionality. These patches are located in `./adds/patches/`.\
+The Image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).
+The source code in the image is then modified by [a number of patches disabling or altering the functionality](README.md#Documentation of patches).
+These patches are located in `./adds/patches/`.\
 Patches that affect the generated JS are generated automatically by the scripts in `./build-steps` and are located in `./adds/patches/generated/`. The patches to the JS source-code pre-compilation are located in `./build-steps/patches`.
 
 The patches were created based on [nextcloud/server](https://github.com/nextcloud/server) and [nextcloud/activity](https://github.com/nextcloud/activity).
@@ -43,3 +44,39 @@ The following files/volumes are required by this image:
 - `/ldap_pass.txt`
 
 If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXTCLOUD_DATA_DIR` environment variable also has to be set to a volume-mounted persisted path.
+
+## Documentation of patches / customizations
+
+### Backend
+
+- `remove_contactsmenu.patch`
+   Hides contacts menu and disables related routes. #52541
+
+- `cleanup_settings.patch`
+   Removes unneeded options and information from settings page. Re-routes default-endpoint to security endpoint. Clicking profile image -> settings should not lead to an empty page. #52547
+
+- `cleanup_activity.patch`
+   Removes several unneeded stuff from the sidebar of the activity tab. #52547
+
+- `deactivate_send_mails.patch`
+   Disables sending mails when you share a file with a note to a specific user. #54341
+
+- `deactivate_activity_jobs.patch`
+   Deactivates unneeded background cron jobs. #54341
+
+- `show_share_owner.patch`
+   Always display name of user that shared a file, even if it's shared publicly. #52635
+
+### Frontend
+
+- `01_limit_link_share_edit.patch`
+  Hides "Allow edit" menu entry when publicly sharing files that cannot be edited in the browser. #54278
+- `02_hide_accessibility_description.patch`
+  Hides the description text with links to Nextcloud's documentation on top of the theme/accessibility settings page. #52676
+- `03_remove_webdav_documentation_link.patch`
+  Removes link to Nextcloud's WebDAV documentation when opening Files - File settings. #52676
+
+### Theme
+
+- `theme/core/css/server.css` contains some further customizations
+

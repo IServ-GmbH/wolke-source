@@ -24,8 +24,11 @@ declare(strict_types=1);
 namespace OCA\Photos\Sabre;
 
 use OCA\Photos\Album\AlbumMapper;
+use OCA\Photos\DB\Place\PlaceMapper;
 use OCA\Photos\Sabre\Album\AlbumsHome;
 use OCA\Photos\Sabre\Album\SharedAlbumsHome;
+use OCA\Photos\Sabre\Place\PlacesHome;
+use OCA\Photos\Service\ReverseGeoCoderService;
 use OCA\Photos\Service\UserConfigService;
 use OCP\Files\IRootFolder;
 use OCP\IUserManager;
@@ -35,30 +38,17 @@ use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\ICollection;
 
 class PhotosHome implements ICollection {
-	private AlbumMapper $albumMapper;
-	private array $principalInfo;
-	private string $userId;
-	private IRootFolder $rootFolder;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private UserConfigService $userConfigService;
-
 	public function __construct(
-		array $principalInfo,
-		AlbumMapper $albumMapper,
-		string $userId,
-		IRootFolder $rootFolder,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		UserConfigService $userConfigService
+		private array $principalInfo,
+		private AlbumMapper $albumMapper,
+		private PlaceMapper $placeMapper,
+		private ReverseGeoCoderService $reverseGeoCoderService,
+		private string $userId,
+		private IRootFolder $rootFolder,
+		private IUserManager $userManager,
+		private IGroupManager $groupManager,
+		private UserConfigService $userConfigService,
 	) {
-		$this->principalInfo = $principalInfo;
-		$this->albumMapper = $albumMapper;
-		$this->userId = $userId;
-		$this->rootFolder = $rootFolder;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->userConfigService = $userConfigService;
 	}
 
 	/**
@@ -97,6 +87,8 @@ class PhotosHome implements ICollection {
 				return new AlbumsHome($this->principalInfo, $this->albumMapper, $this->userId, $this->rootFolder, $this->userConfigService);
 			case SharedAlbumsHome::NAME:
 				return new SharedAlbumsHome($this->principalInfo, $this->albumMapper, $this->userId, $this->rootFolder, $this->userManager, $this->groupManager, $this->userConfigService);
+			case PlacesHome::NAME:
+				return new PlacesHome($this->userId, $this->rootFolder, $this->reverseGeoCoderService, $this->placeMapper);
 		}
 
 		throw new NotFound();
@@ -109,11 +101,12 @@ class PhotosHome implements ICollection {
 		return [
 			new AlbumsHome($this->principalInfo, $this->albumMapper, $this->userId, $this->rootFolder, $this->userConfigService),
 			new SharedAlbumsHome($this->principalInfo, $this->albumMapper, $this->userId, $this->rootFolder, $this->userManager, $this->groupManager, $this->userConfigService),
+			new PlacesHome($this->userId, $this->rootFolder, $this->reverseGeoCoderService, $this->placeMapper),
 		];
 	}
 
 	public function childExists($name): bool {
-		return $name === AlbumsHome::NAME || $name === SharedAlbumsHome::NAME;
+		return $name === AlbumsHome::NAME || $name === SharedAlbumsHome::NAME || $name === PlacesHome::NAME;
 	}
 
 	public function getLastModified(): int {

@@ -78,7 +78,6 @@ use OC\Command\CronBus;
 use OC\Comments\ManagerFactory as CommentsManagerFactory;
 use OC\Contacts\ContactsMenu\ActionFactory;
 use OC\Contacts\ContactsMenu\ContactsStore;
-use OC\Dashboard\DashboardManager;
 use OC\DB\Connection;
 use OC\DB\ConnectionAdapter;
 use OC\Diagnostics\EventLogger;
@@ -87,6 +86,7 @@ use OC\EventDispatcher\SymfonyAdapter;
 use OC\Federation\CloudFederationFactory;
 use OC\Federation\CloudFederationProviderManager;
 use OC\Federation\CloudIdManager;
+use OC\Files\Config\MountProviderCollection;
 use OC\Files\Config\UserMountCache;
 use OC\Files\Config\UserMountCacheListener;
 use OC\Files\Lock\LockManager;
@@ -105,8 +105,6 @@ use OC\Files\Type\Loader;
 use OC\Files\View;
 use OC\FullTextSearch\FullTextSearchManager;
 use OC\Http\Client\ClientService;
-use OC\Http\Client\DnsPinMiddleware;
-use OC\Http\Client\LocalAddressChecker;
 use OC\Http\Client\NegativeDnsCache;
 use OC\IntegrityCheck\Checker;
 use OC\IntegrityCheck\Helpers\AppLocator;
@@ -129,9 +127,11 @@ use OC\Metadata\MetadataManager;
 use OC\Notification\Manager;
 use OC\OCS\DiscoveryService;
 use OC\Preview\GeneratorHelper;
+use OC\Preview\IMagickSupport;
 use OC\Remote\Api\ApiFactory;
 use OC\Remote\InstanceFactory;
 use OC\RichObjectStrings\Validator;
+use OC\Route\CachingRouter;
 use OC\Route\Router;
 use OC\Security\Bruteforce\Throttler;
 use OC\Security\CertificateManager;
@@ -152,15 +152,18 @@ use OC\SystemTag\ManagerFactory as SystemTagManagerFactory;
 use OC\Tagging\TagMapper;
 use OC\Talk\Broker;
 use OC\Template\JSCombiner;
+use OC\Translation\TranslationManager;
 use OC\User\DisplayNameCache;
 use OC\User\Listeners\BeforeUserDeletedListener;
 use OC\User\Listeners\UserChangedListener;
+use OC\User\Session;
 use OCA\Theming\ImageManager;
 use OCA\Theming\ThemingDefaults;
 use OCA\Theming\Util;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
 use OCP\Authentication\LoginCredentials\IStore;
+use OCP\Authentication\Token\IProvider as OCPIProvider;
 use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Reference\IReferenceManager;
@@ -168,7 +171,6 @@ use OCP\Command\IBus;
 use OCP\Comments\ICommentsManager;
 use OCP\Contacts\ContactsMenu\IActionFactory;
 use OCP\Contacts\ContactsMenu\IContactsStore;
-use OCP\Dashboard\IDashboardManager;
 use OCP\Defaults;
 use OCP\Diagnostics\IEventLogger;
 use OCP\Diagnostics\IQueryLogger;
@@ -247,6 +249,7 @@ use OCP\Share\IShareHelper;
 use OCP\SystemTag\ISystemTagManager;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\Talk\IBroker;
+use OCP\Translation\ITranslationManager;
 use OCP\User\Events\BeforePasswordUpdatedEvent;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\BeforeUserLoggedInEvent;
@@ -278,7 +281,6 @@ use OC\Profiler\Profiler;
  * TODO: hookup all manager classes
  */
 class Server extends ServerContainer implements IServerContainer {
-
 	/** @var string */
 	private $webRoot;
 
@@ -340,7 +342,8 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->get(ISession::class)->get('user_id'),
 				$c->get(Coordinator::class),
 				$c->get(IServerContainer::class),
-				$c->get(IBinaryFinder::class)
+				$c->get(IBinaryFinder::class),
+				$c->get(IMagickSupport::class)
 			);
 		});
 		/** @deprecated 19.0.0 */
@@ -488,7 +491,8 @@ class Server extends ServerContainer implements IServerContainer {
 			$groupManager = new \OC\Group\Manager(
 				$this->get(IUserManager::class),
 				$c->get(SymfonyAdapter::class),
-				$this->get(LoggerInterface::class)
+				$this->get(LoggerInterface::class),
+				$this->get(ICacheFactory::class)
 			);
 			$groupManager->listen('\OC\Group', 'preCreate', function ($gid) {
 				/** @var IEventDispatcher $dispatcher */
@@ -547,6 +551,7 @@ class Server extends ServerContainer implements IServerContainer {
 		});
 		$this->registerAlias(IStore::class, Store::class);
 		$this->registerAlias(IProvider::class, Authentication\Token\Manager::class);
+		$this->registerAlias(OCPIProvider::class, Authentication\Token\Manager::class);
 
 		$this->registerService(\OC\User\Session::class, function (Server $c) {
 			$manager = $c->get(IUserManager::class);
@@ -688,6 +693,7 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->get(\OCP\IConfig::class),
 				$c->getRequest(),
 				$c->get(IUserSession::class),
+				$c->get(ICacheFactory::class),
 				\OC::$SERVERROOT
 			);
 		});
@@ -821,11 +827,10 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerService(Router::class, function (Server $c) {
 			$cacheFactory = $c->get(ICacheFactory::class);
-			$logger = $c->get(LoggerInterface::class);
 			if ($cacheFactory->isLocalCacheAvailable()) {
-				$router = new \OC\Route\CachingRouter($cacheFactory->createLocal('route'), $logger);
+				$router = $c->resolve(CachingRouter::class);
 			} else {
-				$router = new \OC\Route\Router($logger);
+				$router = $c->resolve(Router::class);
 			}
 			return $router;
 		});
@@ -859,7 +864,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(\OCP\Security\ISecureRandom::class, SecureRandom::class);
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('SecureRandom', \OCP\Security\ISecureRandom::class);
-
+		$this->registerAlias(\OCP\Security\IRemoteHostValidator::class, \OC\Security\RemoteHostValidator::class);
 		$this->registerAlias(IVerificationToken::class, VerificationToken::class);
 
 		$this->registerAlias(ICrypto::class, Crypto::class);
@@ -891,20 +896,9 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(ICertificateManager::class, CertificateManager::class);
 		$this->registerAlias(IClientService::class, ClientService::class);
-		$this->registerService(LocalAddressChecker::class, function (ContainerInterface $c) {
-			return new LocalAddressChecker(
-				$c->get(LoggerInterface::class),
-			);
-		});
 		$this->registerService(NegativeDnsCache::class, function (ContainerInterface $c) {
 			return new NegativeDnsCache(
 				$c->get(ICacheFactory::class),
-			);
-		});
-		$this->registerService(DnsPinMiddleware::class, function (ContainerInterface $c) {
-			return new DnsPinMiddleware(
-				$c->get(NegativeDnsCache::class),
-				$c->get(LocalAddressChecker::class)
 			);
 		});
 		$this->registerDeprecatedAlias('HttpClientService', IClientService::class);
@@ -961,11 +955,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerDeprecatedAlias('DateTimeFormatter', IDateTimeFormatter::class);
 
 		$this->registerService(IUserMountCache::class, function (ContainerInterface $c) {
-			$mountCache = new UserMountCache(
-				$c->get(IDBConnection::class),
-				$c->get(IUserManager::class),
-				$c->get(LoggerInterface::class)
-			);
+			$mountCache = $c->get(UserMountCache::class);
 			$listener = new UserMountCacheListener($mountCache);
 			$listener->listen($c->get(IUserManager::class));
 			return $mountCache;
@@ -974,9 +964,10 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerDeprecatedAlias('UserMountCache', IUserMountCache::class);
 
 		$this->registerService(IMountProviderCollection::class, function (ContainerInterface $c) {
-			$loader = \OC\Files\Filesystem::getLoader();
+			$loader = $c->get(IStorageFactory::class);
 			$mountCache = $c->get(IUserMountCache::class);
-			$manager = new \OC\Files\Config\MountProviderCollection($loader, $mountCache);
+			$eventLogger = $c->get(IEventLogger::class);
+			$manager = new MountProviderCollection($loader, $mountCache, $eventLogger);
 
 			// builtin providers
 
@@ -1446,8 +1437,8 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(IStorageFactory::class, StorageFactory::class);
 
-		$this->registerAlias(IDashboardManager::class, DashboardManager::class);
 		$this->registerAlias(\OCP\Dashboard\IManager::class, \OC\Dashboard\Manager::class);
+
 		$this->registerAlias(IFullTextSearchManager::class, FullTextSearchManager::class);
 
 		$this->registerAlias(ISubAdmin::class, SubAdmin::class);
@@ -1465,6 +1456,10 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(\OCP\Files\AppData\IAppDataFactory::class, \OC\Files\AppData\Factory::class);
 
 		$this->registerAlias(IBinaryFinder::class, BinaryFinder::class);
+
+		$this->registerAlias(\OCP\Share\IPublicShareTemplateFactory::class, \OC\Share20\PublicShareTemplateFactory::class);
+
+		$this->registerAlias(ITranslationManager::class, TranslationManager::class);
 
 		$this->connectDispatcher();
 	}
@@ -1677,7 +1672,7 @@ class Server extends ServerContainer implements IServerContainer {
 	 * @deprecated 20.0.0
 	 */
 	public function getSession() {
-		return $this->get(IUserSession::class)->getSession();
+		return $this->get(Session::class)->getSession();
 	}
 
 	/**
@@ -1685,7 +1680,7 @@ class Server extends ServerContainer implements IServerContainer {
 	 */
 	public function setSession(\OCP\ISession $session) {
 		$this->get(SessionStorage::class)->setSession($session);
-		$this->get(IUserSession::class)->setSession($session);
+		$this->get(Session::class)->setSession($session);
 		$this->get(Store::class)->setSession($session);
 	}
 

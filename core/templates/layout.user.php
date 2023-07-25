@@ -13,15 +13,15 @@ $getUserAvatar = static function (int $size) use ($_): string {
 }
 
 ?><!DOCTYPE html>
-<html class="ng-csp" data-placeholder-focus="false" lang="<?php p($_['language']); ?>" data-locale="<?php p($_['locale']); ?>" >
+<html class="ng-csp" data-placeholder-focus="false" lang="<?php p($_['language']); ?>" data-locale="<?php p($_['locale']); ?>" translate="no" >
 	<head data-user="<?php p($_['user_uid']); ?>" data-user-displayname="<?php p($_['user_displayname']); ?>" data-requesttoken="<?php p($_['requesttoken']); ?>">
 		<meta charset="utf-8">
 		<title>
 			<?php
 				p(!empty($_['pageTitle'])?$_['pageTitle'].' - ':'');
-				p(!empty($_['application'])?$_['application'].' - ':'');
-				p($theme->getTitle());
-			?>
+p(!empty($_['application'])?$_['application'].' - ':'');
+p($theme->getTitle());
+?>
 		</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -43,8 +43,8 @@ $getUserAvatar = static function (int $size) use ($_): string {
 		<?php print_unescaped($_['headers']); ?>
 	</head>
 	<body id="<?php p($_['bodyid']);?>" <?php foreach ($_['enabledThemes'] as $themeId) {
-				p("data-theme-$themeId ");
-			}?> data-themes=<?php p(join(',', $_['enabledThemes'])) ?>>
+		p("data-theme-$themeId ");
+	}?> data-themes=<?php p(join(',', $_['enabledThemes'])) ?>>
 	<?php include 'layout.noscript.warning.php'; ?>
 
 		<?php foreach ($_['initialStates'] as $app => $initialState) { ?>

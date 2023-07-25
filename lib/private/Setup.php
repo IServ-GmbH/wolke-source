@@ -420,6 +420,9 @@ class Setup {
 
 			//and we are done
 			$config->setSystemValue('installed', true);
+			if (self::shouldRemoveCanInstallFile()) {
+				unlink(\OC::$configDir.'/CAN_INSTALL');
+			}
 
 			$bootstrapCoordinator = \OC::$server->query(\OC\AppFramework\Bootstrap\Coordinator::class);
 			$bootstrapCoordinator->runInitialRegistration();
@@ -514,10 +517,10 @@ class Setup {
 		$htaccessContent = explode($content, $htaccessContent, 2)[0];
 
 		//custom 403 error page
-		$content .= "\nErrorDocument 403 " . $webRoot . '/';
+		$content .= "\nErrorDocument 403 " . $webRoot . '/index.php/error/403';
 
 		//custom 404 error page
-		$content .= "\nErrorDocument 404 " . $webRoot . '/';
+		$content .= "\nErrorDocument 404 " . $webRoot . '/index.php/error/404';
 
 		// Add rewrite rules if the RewriteBase is configured
 		$rewriteBase = $config->getValue('htaccess.RewriteBase', '');
@@ -596,5 +599,19 @@ class Setup {
 			'vendor' => (string)$vendor,
 			'channel' => (string)$OC_Channel,
 		];
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function shouldRemoveCanInstallFile() {
+		return \OC_Util::getChannel() !== 'git' && is_file(\OC::$configDir.'/CAN_INSTALL');
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function canInstallFileExists() {
+		return is_file(\OC::$configDir.'/CAN_INSTALL');
 	}
 }

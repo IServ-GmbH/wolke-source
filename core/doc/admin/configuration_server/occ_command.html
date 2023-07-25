@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the occ command &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -52,8 +52,12 @@
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Using the occ command</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#occ-command-directory">occ command Directory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#run-occ-as-your-http-user">Run occ as your HTTP user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-occ-as-your-http-user">Run occ as your HTTP user</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-autocompletion">Enabling autocompletion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-commands-in-maintenance-mode">Run commands in maintenance mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#apps-commands">Apps commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#background-jobs-selector">Background jobs selector</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#config-commands">Config commands</a><ul>
@@ -122,9 +126,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -171,6 +176,7 @@ on your Nextcloud files and directories.</p>
 <h2>occ command Directory<a class="headerlink" href="#occ-command-directory" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#http-user-label"><span class="std std-ref">Run occ as your HTTP user</span></a></p></li>
+<li><p><a class="reference internal" href="#run-commands-in-maintenance-mode"><span class="std std-ref">Run commands in maintenance mode</span></a></p></li>
 <li><p><a class="reference internal" href="#apps-commands-label"><span class="std std-ref">Apps commands</span></a></p></li>
 <li><p><a class="reference internal" href="#background-jobs-selector-label"><span class="std std-ref">Background jobs selector</span></a></p></li>
 <li><p><a class="reference internal" href="#config-commands-label"><span class="std std-ref">Config commands</span></a></p></li>
@@ -314,6 +320,17 @@ The default is plain text, but it can also be <code class="docutils literal notr
 <p>This output option is available on all list and list-like commands:
 <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">app:list</span></code>, <code class="docutils literal notranslate"><span class="pre">config:list</span></code>, <code class="docutils literal notranslate"><span class="pre">encryption:status</span></code>
 and <code class="docutils literal notranslate"><span class="pre">encryption:list-modules</span></code></p>
+<section id="environment-variables">
+<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">sudo</span></code> does not forward environment variables by default. Put the variables before the <code class="docutils literal notranslate"><span class="pre">php</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">NC_debug</span><span class="o">=</span><span class="n">true</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">status</span>
+</pre></div>
+</div>
+<p>Alternatively, you can <code class="docutils literal notranslate"><span class="pre">export</span></code> the variable or use the <code class="docutils literal notranslate"><span class="pre">-E</span></code> switch for <code class="docutils literal notranslate"><span class="pre">sudo</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NC_debug</span><span class="o">=</span><span class="n">true</span> <span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">status</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="enabling-autocompletion">
 <h2>Enabling autocompletion<a class="headerlink" href="#enabling-autocompletion" title="Permalink to this headline"></a></h2>
@@ -339,6 +356,20 @@ eval $(/var/www/html/nextcloud/occ _completion --generate-hook)
 you need to specify <code class="docutils literal notranslate"><span class="pre">--program</span> <span class="pre">occ</span></code> after the <code class="docutils literal notranslate"><span class="pre">--generate-hook</span></code>.</p>
 <p>If you want the completion to apply automatically for all new shell sessions, add the command to your
 shell’s profile (eg. <code class="docutils literal notranslate"><span class="pre">~/.bash_profile</span></code> or <code class="docutils literal notranslate"><span class="pre">~/.zshrc</span></code>).</p>
+</section>
+<section id="run-commands-in-maintenance-mode">
+<span id="id1"></span><h2>Run commands in maintenance mode<a class="headerlink" href="#run-commands-in-maintenance-mode" title="Permalink to this headline"></a></h2>
+<p>In maintenance mode, apps are not loaded <a class="footnote-reference brackets" href="#id4" id="id2">1</a>, so commands from apps are unavailable. Commands integrated into Nextcloud server are available in maintenance mode.</p>
+<p>We discourage the use of maintenance mode unless the command explicitly prompts you to do so or unless the commands’ documentation explicitly states that maintenance mode should be used.</p>
+<p>A command may use events to communicate with other apps. An app can only react to an event when loaded. Example: The command user:delete deletes a user account. UserDeletedEvent is emitted. Calendar app implements an event listener to delete user data <a class="footnote-reference brackets" href="#id5" id="id3">2</a>. In maintenance mode, the Calendar app is not loaded, and hence the user data not deleted.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>Exception: <a class="reference external" href="https://github.com/nextcloud/server/blob/75f17b60945e15effc3eea41393eef2b13937226/lib/base.php#L780">The settings app is loaded</a></p>
+</dd>
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dd><p><a class="reference external" href="https://github.com/nextcloud/calendar/blob/87e8586971a8676dc15a90f0cd969274678b7009/lib/Listener/UserDeletedListener.php">Calendar app event listener for UserDeletedEvent</a></p>
+</dd>
+</dl>
 </section>
 <section id="apps-commands">
 <span id="apps-commands-label"></span><h2>Apps commands<a class="headerlink" href="#apps-commands" title="Permalink to this headline"></a></h2>
@@ -735,10 +766,7 @@ user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">encryption</span><span class="p">:</span><span class="n">decrypt</span> <span class="n">freda</span>
 </pre></div>
 </div>
-<p>Users must have enabled recovery keys on their Personal pages. You must first
-put your Nextcloud server into <a class="reference internal" href="#maintenance-commands-label"><span class="std std-ref">maintenance
-mode</span></a> to prevent any user activity until
-decryption is completed.</p>
+<p>Users must have enabled recovery keys on their Personal pages.</p>
 <p>Note that if you do not have master key/recovery key enabled, you can ONLY
 decrypt files per user, one user at a time and NOT when in maintenance mode.
 You will need the users’ password to decrypt the files.</p>
@@ -787,7 +815,7 @@ to synchronize federated servers:</p>
 </pre></div>
 </div>
 <section id="scan">
-<h3>Scan<a class="headerlink" href="#scan" title="Permalink to this headline"></a></h3>
+<span id="occ-files-scan-label"></span><h3>Scan<a class="headerlink" href="#scan" title="Permalink to this headline"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">files:scan</span></code> command scans for new files and updates the file cache. You
 may rescan all files, per-user, a space-delimited list of users, and limit the
 search path. If not using <code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, statistics will be shown at the end of
@@ -898,6 +926,10 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>The transferred files will appear inside a new sub-directory in the destination user’s home.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless server side encryption is enabled, <strong>the command will init the &lt;destination-user&gt; file system</strong> in Nextcloud versions <strong>22.2.6, 23.0.3 and since 24</strong>. When it is unable to create the user’s folder in the data directory it will show the following error: <code class="docutils literal notranslate"><span class="pre">unable</span> <span class="pre">to</span> <span class="pre">rename,</span> <span class="pre">destination</span> <span class="pre">directory</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">writable</span></code>. Before 22.2.6 the command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">files:transfer-ownership</span></code> would only work after the user has logged in for the first time.</p>
+</div>
 <p>If the destination user has no files at all (empty home), it is possible to also transfer all the source user’s files by passing <code class="docutils literal notranslate"><span class="pre">--move</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">--</span><span class="n">move</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
 </pre></div>
@@ -917,7 +949,7 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>Users may also transfer files or folders selectively by themselves.
-See <a class="reference external" href="https://docs.nextcloud.com/server/25/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 </section>
 <section id="files-sharing">
@@ -977,7 +1009,7 @@ and to copy external mount configurations to another Nextcloud server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">pathto</span><span class="o">/</span><span class="n">app</span> <span class="n">appname</span>
 </pre></div>
 </div>
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
+<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">integrity:sign-core</span></code> is for Nextcloud core developers only.</p>
 <p>See <a class="reference internal" href="../issues/code_signing.html"><span class="doc">Code signing</span></a> to learn more.</p>
 </section>
@@ -1631,6 +1663,11 @@ check for that user via the occ command:</p>
 </div>
 <p>Access level</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 28%" />
+<col style="width: 38%" />
+</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Level</p></th>
 <th class="head"><p>Visible¹</p></th>
@@ -1699,11 +1736,9 @@ check for that user via the occ command:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

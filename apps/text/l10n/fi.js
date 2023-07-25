@@ -2,6 +2,7 @@ OC.L10N.register(
     "text",
     {
     "New text file" : "Uusi tekstitiedosto",
+    "Create new text file" : "Luo uusi tekstitiedosto",
     "The file was uploaded" : "Tiedosto lähetettiin",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "Ladattu tiedosto on suurempi kuin php.ini-tiedostossa määritelty upload_max_filesize",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Ladattu tiedosto on suurempi kuin HTML-lomakkeessa määritelty MAX_FILE_SIZE",
@@ -123,18 +124,11 @@ OC.L10N.register(
     "Add notes, lists or links …" : "Lisää muistiinpanoja, listoja tai linkkejä...",
     "Edit" : "Muokkaa",
     "Add description" : "Lisää kuvaus",
-    "Last saved {lastSaved}" : "Viimeksi tallennettu {lastSaved}",
-    "Image file format not supported" : "Kuvan tiedostomuoto ei ole tuettu",
-    "Enter your name so other users can see who is editing" : "Kirjoita nimesi, jotta muut näkevät kuka muokkaa asiakirjaa",
-    "Insert an image" : "Lisää kuva",
+    "Document save status" : "Asiakirjan tallennuksen tila",
     "Update Link" : "Päivitä linkki",
     "Add Link" : "Lisää linkki",
     "Link file" : "Linkitä tiedosto",
     "Remove Link" : "Poista linkki",
-    "Select file to link to" : "Valitse tiedosto johon linkitetään",
-    "ToDo list" : "Tehtävälista",
-    "Emoji picker" : "Emoji-valitsin",
-    "Insert image" : "Lisää kuva",
-    "Document save status" : "Asiakirjan tallennuksen tila"
+    "Select file to link to" : "Valitse tiedosto johon linkitetään"
 },
 "nplurals=2; plural=(n != 1);");

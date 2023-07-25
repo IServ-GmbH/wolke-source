@@ -421,7 +421,7 @@
 						messages.push({
 							msg: t(
 								'core',
-								'It seems like you are running a 32-bit PHP version. Nextcloud needs 64-bit to run well. Please upgrade your OS and PHP to 64-bit! For further details read {linkstart}the documentation page about this ↗{linkend}.'
+								'It seems like you are running a 32-bit PHP version. Nextcloud needs 64-bit to run well. Please upgrade your OS and PHP to 64-bit! For further details read {linkstart}the documentation page ↗{linkend} about this.'
 								.replace('{linkstart}', '<a target="_blank" rel="noreferrer noopener" class="external" href="' + OC.theme.docPlaceholderUrl.replace('PLACEHOLDER', 'admin-system-requirements') + '">')
 								.replace('{linkend}', '</a>'),
 							),
@@ -719,10 +719,10 @@
 					}
 				} else {
 					messages.push({
-						msg: t('core', 'Accessing site insecurely via HTTP. You are strongly advised to set up your server to require HTTPS instead, as described in the {linkstart}security tips ↗{linkend}.')
+						msg: t('core', 'Accessing site insecurely via HTTP. You are strongly advised to set up your server to require HTTPS instead, as described in the {linkstart}security tips ↗{linkend}. Without it some important web functionality like "copy to clipboard" or "service workers" will not work!')
 							.replace('{linkstart}', '<a target="_blank" rel="noreferrer noopener" class="external" href="' + tipsUrl + '">')
 							.replace('{linkend}', '</a>'),
-						type: OC.SetupChecks.MESSAGE_TYPE_WARNING
+						type: OC.SetupChecks.MESSAGE_TYPE_ERROR
 					});
 				}
 			} else {

@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Σε γεγονότα που συμβαίνουν σε <strong>Κύκλο</strong> που συμμετέχετε",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Οποιοδήποτε σημαντικό γεγονός σε έναν <strong>Κύκλο</strong> που συντονίζετε",
     "On global events happening in any <strong>Circle</strong>" : "Σε δημόσια γεγονότα που συμβαίνουν σε διάφορους  <strong>Κύκλο</strong>",
+    "Shared to Circles" : "Κοινόχρηστο στους Κύκλους",
     "Single" : "Μονός",
     "Personal" : "Προσωπικός",
     "System" : "Συστήματος",
@@ -178,15 +179,9 @@ OC.L10N.register(
     "Name" : "Όνομα",
     "Size" : "Μέγεθος",
     "Modified" : "Τροποποιήθηκε",
-    "Nextcloud User" : "Χρήστης Nextcloud",
     "Initialisation Nextcloud" : "Αρχικοποίηση Nextcloud",
     "Initialisation Circles App" : "Αρχικοποίηση Circles App",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Δεν μπορείτε να χρησιμοποιήσετε την εφαρμογή Κύκλοι, μέχρι ο διαχειριστής να επιτρέψει τουλάχιστον έναν τύπο κύκλων",
-    "This user is already a member of the circle" : "Αυτός ο χρήστης είναι ήδη μέλος του κύκλου",
-    "The user is already a member of this circle" : "Ο χρήστης είναι ήδη μέλος του κύκλου",
-    "The user has already been invited into this circle" : "Ο χρήστης έχει ήδη προσκληθεί για συμμετοχή στον κύκλο",
-    "This user does not exist" : "Δεν υπάρχει ο χρήστης",
-    "Could not find share" : "Αδυναμία εύρεσης κοινόχρηστου",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Οι Κύκλοι επιτρέπουν στους χρήστες σας να δημιουργούν τις δικές τους ομάδες χρηστών/συναδέλφων/φίλων.\nΑυτές οι ομάδες χρηστών (ή οι \"κύκλοι\") μπορούν στη συνέχεια να χρησιμοποιηθούν από οποιαδήποτε άλλη εφαρμογή για σκοπούς κοινής χρήσης."
+    "Could not find share" : "Αδυναμία εύρεσης κοινόχρηστου"
 },
 "nplurals=2; plural=(n != 1);");

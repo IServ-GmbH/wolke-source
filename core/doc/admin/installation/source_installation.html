@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation on Linux &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -86,9 +86,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -123,22 +124,33 @@
              
   <section id="installation-on-linux">
 <h1>Installation on Linux<a class="headerlink" href="#installation-on-linux" title="Permalink to this headline"></a></h1>
+<p>There are multiple ways of installing Nextcloud depending on your preferences, requirements and goals.</p>
+<p>If you prefer an automated installation, you have the option to:</p>
+<ul class="simple">
+<li><p>use the <a class="reference external" href="https://github.com/nextcloud/all-in-one#nextcloud-all-in-one">official Nextcloud AIO Docker-based image</a>. Nextcloud AIO stands for Nextcloud All-in-One and provides easy deployment and maintenance with most features included in this one Nextcloud instance. It includes Office, a turnkey Backup solution, Imaginary (for previews of heic, heif, illustrator, pdf, svg, tiff and webp) and more.</p></li>
+<li><p>use the <a class="reference external" href="https://snapcraft.io/nextcloud">community Snap Package</a>. This includes a full production-ready stack, will maintain your HTTPS certificates for you, and will automatically update as needed to stay secure.</p></li>
+<li><p>use the <a class="reference external" href="https://github.com/nextcloud/vm/">community Nextcloud VM Appliance</a> (aka Nextcloud Virtual Machine or NcVM). This helps you create a personal or corporate Nextcloud Server faster and easier. It can be used install directly on a clean Ubuntu Server or downloaded as a fully functioning VM.</p></li>
+<li><p>use the <a class="reference external" href="https://nextcloudpi.com/">community NextcloudPi scripts</a> (based on Debian). It will setup everything for you and include scripts for automated installation of apps like: Collabora, OnlyOffice, Talk and so on.</p></li>
+<li><p>use the <a class="reference external" href="https://hub.docker.com/_/nextcloud/">community Nextcloud Docker image</a>. This image is designed to be used in a micro-service environment. There are two versions of the image you can choose from: the Apache one contains a full Nextcloud installation including an Apache web server. The second option is an FPM installation and runs a FastCGI process that serves your Nextcloud installation (you will need to supply your preferred web, database and other desired supplementary services).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the community options are not officially supported by Nextcloud GmbH.</p>
+</div>
 <p>In case you prefer installing from the source tarball, you can setup Nextcloud
 from scratch using a classic LAMP stack (Linux, Apache, MySQL/MariaDB, PHP).
 This document provides a complete walk-through for installing Nextcloud on
 Ubuntu 18.04 LTS Server with Apache and MariaDB, using <a class="reference external" href="https://nextcloud.com/install/">the Nextcloud .tar
 archive</a>. This method is recommended to install Nextcloud.</p>
-<div class="admonition note">
+<p>This installation guide is giving a general overview of required dependencies and their configuration. For a distribution specific setup guide have a look at the <a class="reference internal" href="example_ubuntu.html"><span class="doc">Example installation on Ubuntu 22.04 LTS</span></a> and <a class="reference internal" href="example_centos.html"><span class="doc">Example installation on CentOS 8</span></a>.</p>
+<div class="admonition note" id="prerequisites-label">
 <p class="admonition-title">Note</p>
 <p>Admins of SELinux-enabled distributions such as CentOS, Fedora, and
 Red Hat Enterprise Linux may need to set new rules to enable installing
 Nextcloud. See <a class="reference internal" href="#selinux-tips-label"><span class="std std-ref">SELinux configuration tips</span></a> for a suggested configuration.</p>
 </div>
-<p>If you prefer a more automated installation of Nextcloud and there are no packages for your Linux distribution, you have the option to
-install the community <a class="reference external" href="https://snapcraft.io/nextcloud">Snap Package</a>. This includes a full production-ready stack, will maintain your HTTPS certificates for you, and will automatically update as needed to stay secure. You can also use the <a class="reference external" href="https://github.com/nextcloud/vm/">Nextcloud VM scripts</a> to install directly on a clean Ubuntu Server or <a class="reference external" href="https://nextcloudpi.com/">NextcloudPi scripts</a> (similar project based on Debian). It will setup everything for you and include scripts for automated installation of apps like; Collabora, OnlyOffice, Talk and so on. Please note that those three options are not officially supported by Nextcloud GmbH.</p>
-<p>This installation guide is giving a general overview of required dependencies and their configuration. For a distribution specific setup guide have a look at the <a class="reference internal" href="example_ubuntu.html"><span class="doc">Example installation on Ubuntu 22.04 LTS</span></a> and <a class="reference internal" href="example_centos.html"><span class="doc">Example installation on CentOS 8</span></a>.</p>
 <section id="prerequisites-for-manual-installation">
-<span id="prerequisites-label"></span><h2>Prerequisites for manual installation<a class="headerlink" href="#prerequisites-for-manual-installation" title="Permalink to this headline"></a></h2>
+<h2>Prerequisites for manual installation<a class="headerlink" href="#prerequisites-for-manual-installation" title="Permalink to this headline"></a></h2>
 <p>The Nextcloud .tar archive contains all of the required PHP modules. This
 section lists all required and optional PHP modules.  Consult the <a class="reference external" href="https://php.net/manual/en/extensions.php">PHP manual</a> for more information on modules.
 Your Linux distribution should have packages for all required modules. You can
@@ -405,20 +417,20 @@ SELinux-enabled distributions such as Fedora and CentOS.</p>
 <p>Keep in mind that changes to <code class="docutils literal notranslate"><span class="pre">php.ini</span></code> may have to be configured on more than one
 ini file. This can be the case, for example, for the <code class="docutils literal notranslate"><span class="pre">date.timezone</span></code> setting.</p>
 <p><strong>php.ini - used by the Web server:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">7.4</span><span class="o">/</span><span class="n">apache2</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">apache2</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
 <span class="ow">or</span>
-  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">7.4</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
+  <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
 <span class="ow">or</span> <span class="o">...</span>
 </pre></div>
 </div>
 <p><strong>php.ini - used by the php-cli and so by Nextcloud CRON jobs:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">7.4</span><span class="o">/</span><span class="n">cli</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">cli</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Path names have to be set in respect of the installed PHP
-(&gt;= 7.3 or 7.4) as applicable.</p>
+(8.0, 8.1 or 8.2) as applicable.</p>
 </div>
 </section>
 <section id="php-fpm-configuration-notes">
@@ -431,11 +443,15 @@ return an empty result. So you may need to manually configure environment
 variables in the appropropriate <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code> ini/config file.</p>
 <p>Here are some example root paths for these ini/config files:</p>
 <table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>Debian/Ubuntu/Mint</p></td>
 <td><p>CentOS/Red Hat/Fedora</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/php/7.4/fpm/</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/php/8.0/fpm/</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">/etc/php-fpm.d/</span></code></p></td>
 </tr>
 </tbody>
@@ -461,7 +477,7 @@ confirm your paths, for example:</p>
 <p>If any of your system environment variables are not present in the file then
 you must add them.</p>
 <p>Alternatively it is possible to use the environment variables of your system by modifying:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">7.4</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">pool</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">www</span><span class="o">.</span><span class="n">conf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">pool</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">www</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 <p>and uncommenting the line:</p>
@@ -631,11 +647,9 @@ spread the deployment of new major releases out over time.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

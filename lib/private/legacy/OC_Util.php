@@ -65,10 +65,10 @@
  */
 
 use bantu\IniGetWrapper\IniGetWrapper;
-use OC\AppFramework\Http\Request;
 use OC\Files\SetupManager;
 use OCP\Files\Template\ITemplateManager;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -145,7 +145,7 @@ class OC_Util {
 	/**
 	 * check if share API enforces a default expire date
 	 *
-	 * @return boolean
+	 * @return bool
 	 * @suppress PhanDeprecatedFunction
 	 */
 	public static function isDefaultExpireDateEnforced() {
@@ -158,7 +158,7 @@ class OC_Util {
 	 * Get the quota of a user
 	 *
 	 * @param IUser|null $user
-	 * @return float|\OCP\Files\FileInfo::SPACE_UNLIMITED|false Quota bytes
+	 * @return int|\OCP\Files\FileInfo::SPACE_UNLIMITED|false|float Quota bytes
 	 */
 	public static function getUserQuota(?IUser $user) {
 		if (is_null($user)) {
@@ -326,10 +326,9 @@ class OC_Util {
 			return;
 		}
 
-		$timestamp = filemtime(OC::$SERVERROOT . '/version.php');
 		require OC::$SERVERROOT . '/version.php';
 		/** @var int $timestamp */
-		self::$versionCache['OC_Version_Timestamp'] = $timestamp;
+		self::$versionCache['OC_Version_Timestamp'] = \OC::$VERSION_MTIME;
 		/** @var string $OC_Version */
 		self::$versionCache['OC_Version'] = $OC_Version;
 		/** @var string $OC_VersionString */
@@ -543,7 +542,7 @@ class OC_Util {
 					'hint' => $l->t('This can usually be fixed by giving the web server write access to the config directory. See %s',
 						[ $urlGenerator->linkToDocs('admin-dir_permissions') ]) . '. '
 						. $l->t('Or, if you prefer to keep config.php file read only, set the option "config_is_read_only" to true in it. See %s',
-						[ $urlGenerator->linkToDocs('admin-config') ])
+							[ $urlGenerator->linkToDocs('admin-config') ])
 				];
 			}
 		}
@@ -749,9 +748,13 @@ class OC_Util {
 		$dbType = \OC::$server->getSystemConfig()->getValue('dbtype', 'sqlite');
 		if ($dbType === 'pgsql') {
 			// check PostgreSQL version
+			// TODO latest postgresql 8 released was 8 years ago, maybe remove the
+			// check completely?
 			try {
-				$result = \OC_DB::executeAudited('SHOW SERVER_VERSION');
-				$data = $result->fetchRow();
+				/** @var IDBConnection $connection */
+				$connection = \OC::$server->get(IDBConnection::class);
+				$result = $connection->executeQuery('SHOW SERVER_VERSION');
+				$data = $result->fetch();
 				$result->closeCursor();
 				if (isset($data['server_version'])) {
 					$version = $data['server_version'];
@@ -834,11 +837,11 @@ class OC_Util {
 		// Check if we are a user
 		if (!\OC::$server->getUserSession()->isLoggedIn()) {
 			header('Location: ' . \OC::$server->getURLGenerator()->linkToRoute(
-						'core.login.showLoginForm',
-						[
-							'redirect_url' => \OC::$server->getRequest()->getRequestUri(),
-						]
-					)
+				'core.login.showLoginForm',
+				[
+					'redirect_url' => \OC::$server->getRequest()->getRequestUri(),
+				]
+			)
 			);
 			exit();
 		}

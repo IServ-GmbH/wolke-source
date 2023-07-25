@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Logging &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -72,7 +72,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#log-field-breakdown">Log field breakdown</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#admin-audit-log">Admin audit log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#admin-audit-log-optional">Admin audit log (Optional)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#log-level-interaction">Log level interaction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#integrating-into-the-web-interface">Integrating into the Web Interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-through-admin-audit-app-settings">Configuring through admin_audit app settings</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#workflow-log">Workflow log</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#temporary-overrides">Temporary overrides</a></li>
 </ul>
@@ -91,9 +96,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -128,7 +134,9 @@
              
   <section id="logging">
 <h1>Logging<a class="headerlink" href="#logging" title="Permalink to this headline"></a></h1>
-<p>Use your Nextcloud log to review system status, or to help debug problems. You may adjust logging levels, and choose between using the Nextcloud log or your syslog. If additional audit information is required, you can optionally activate the <strong>admin_audit</strong> app, which by default generates a separate audit.log file in the data directory.</p>
+<p>Use your Nextcloud log to review system status, or to help debug problems. You may adjust logging levels, and choose how and where log data is stored. If additional event logging is required, you can optionally activate the <strong>admin_audit</strong> app.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">file</span></code> based logging is utilized, both the Nextcloud log and, optionally, the <strong>admit_audit</strong> app log can be viewed within the Nextcloud interface under <em>Administration settings -&gt; Logging</em> (this functionality is provided by the <strong>logreader</strong> app).</p>
+<p>Further configuration and usage details for both the standard Nextcloud log and the optional <strong>admin_audit</strong> app log can be found below.</p>
 <section id="log-level">
 <h2>Log level<a class="headerlink" href="#log-level" title="Permalink to this headline"></a></h2>
 <p>Logging levels range from <strong>DEBUG</strong>, which logs all activity, to <strong>FATAL</strong>, which logs only fatal errors.</p>
@@ -149,6 +157,10 @@
 <p>All log information will be sent to PHP <code class="docutils literal notranslate"><span class="pre">error_log()</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;log_type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;errorlog&quot;</span><span class="p">,</span>
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Until version Nextcloud 25 log entries were prefixed with <code class="docutils literal notranslate"><span class="pre">[owncloud]</span></code>. From 26 onwards messages start with <code class="docutils literal notranslate"><span class="pre">[nextcloud]</span></code>.</p>
 </div>
 </section>
 <section id="file">
@@ -239,28 +251,46 @@ date format in the example below, the date/time format will be written in the fo
 <li><p><strong>data</strong> additional structured data (if applicable)</p></li>
 <li><p><strong>version</strong>: Nextcloud version at the time of request</p></li>
 </ul>
-<p>Empty value are written as two dashes: “–“.</p>
+<p>Empty value are written as two dashes: <code class="docutils literal notranslate"><span class="pre">--</span></code>.</p>
 </section>
 </section>
-<section id="admin-audit-log">
-<h2>Admin audit log<a class="headerlink" href="#admin-audit-log" title="Permalink to this headline"></a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> is set to <code class="docutils literal notranslate"><span class="pre">2</span></code> or higher, audit logging needs to be triggered explicitly by adding the following setting to to <code class="docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;log.condition&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;apps&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;admin_audit&#39;</span><span class="p">],</span>
-<span class="p">],</span>
-</pre></div>
-</div>
-<p>Similar to the normal logging, the audit log can be written to any of the existing logging mechanism in <code class="file docutils literal notranslate"><span class="pre">config/config.php</span></code>:</p>
+<section id="admin-audit-log-optional">
+<h2>Admin audit log (Optional)<a class="headerlink" href="#admin-audit-log-optional" title="Permalink to this headline"></a></h2>
+<p>By enabling the <strong>admin_audit</strong> app, additional information about various events can be logged. Similar to the normal logging, the audit log can be provided to any of the existing logging mechanisms in <code class="file docutils literal notranslate"><span class="pre">config/config.php</span></code>. The default behavior, if no parameters are specified after the app is enabled, is <code class="docutils literal notranslate"><span class="pre">file</span></code> based logging to a file called <code class="docutils literal notranslate"><span class="pre">audit.log</span></code> stored in the <code class="docutils literal notranslate"><span class="pre">datadirectory</span></code>.</p>
+<p>If you wish to override this and log to syslog instead the following would be one approach:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;log_type_audit&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;syslog&quot;</span><span class="p">,</span>
 <span class="s2">&quot;syslog_tag_audit&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;Nextcloud&quot;</span><span class="p">,</span>
 <span class="s2">&quot;logfile_audit&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Previously the logfile could be defined in the app config. This config is still used when the system config is not provided:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">admin_audit</span> <span class="n">logfile</span> <span class="o">--</span><span class="n">value</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">audit</span><span class="o">.</span><span class="n">log</span>
+<section id="log-level-interaction">
+<h3>Log level interaction<a class="headerlink" href="#log-level-interaction" title="Permalink to this headline"></a></h3>
+<p>If system <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> is set to <code class="docutils literal notranslate"><span class="pre">2</span></code> or higher, audit logging needs to be triggered explicitly by adding the following setting to to <code class="docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;log.condition&quot;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s2">&quot;apps&quot;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">&quot;admin_audit&quot;</span><span class="p">],</span>
+<span class="p">],</span>
 </pre></div>
 </div>
 <p>Find detailed documentation on auditable events for enterprises in our <a class="reference external" href="https://portal.nextcloud.com/article/using-the-audit-log-44.html">customer portal</a>.</p>
+</section>
+<section id="integrating-into-the-web-interface">
+<h3>Integrating into the Web Interface<a class="headerlink" href="#integrating-into-the-web-interface" title="Permalink to this headline"></a></h3>
+<p>The built-in NC <code class="docutils literal notranslate"><span class="pre">logreader</span></code> app (which is what provides the <em>Administration settings-&gt;Logging</em> interface) only accesses the file-based <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code>. The <strong>admin_audit</strong> app log output, however, can be integrated into the web interface by configuring it to <em>also</em> log to the <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code>.</p>
+<p>Add the following to your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> (adjusting the path to your own <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code> path):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;log.condition&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;apps&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span> <span class="s1">&#39;admin_audit&#39;</span><span class="p">],</span>
+<span class="p">],</span>
+<span class="s1">&#39;logfile_audit&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/var/www/html/data/nextcloud.log&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+</section>
+<section id="configuring-through-admin-audit-app-settings">
+<h3>Configuring through admin_audit app settings<a class="headerlink" href="#configuring-through-admin-audit-app-settings" title="Permalink to this headline"></a></h3>
+<p>Previously the audit logfile was defined in the app config. This config is still used when the system config is not provided, but is considered a legacy parameter.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">admin_audit</span> <span class="n">logfile</span> <span class="o">--</span><span class="n">value</span><span class="o">=/</span><span class="n">var</span><span class="o">/</span><span class="n">log</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">audit</span><span class="o">.</span><span class="n">log</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="workflow-log">
 <h2>Workflow log<a class="headerlink" href="#workflow-log" title="Permalink to this headline"></a></h2>
@@ -310,11 +340,9 @@ date format in the example below, the date/time format will be written in the fo
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

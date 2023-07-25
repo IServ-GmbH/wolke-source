@@ -234,10 +234,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	/** @var ConfigService */
 	private $configService;
 
-
-	/** @var array */
-	private $options = [];
-
+	private array $options = [];
+	private array $sqlPath = [];
 
 	/**
 	 * CoreQueryBuilder constructor.
@@ -315,8 +313,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	/**
 	 * @param string $singleId
 	 */
-	public function limitToSingleId(string $singleId): void {
-		$this->limit('single_id', $singleId, '', true);
+	public function limitToSingleId(string $singleId, string $alias = ''): void {
+		$this->limit('single_id', $singleId, $alias, true);
 	}
 
 
@@ -384,9 +382,11 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 
 
 	/**
+	 * filter result on details (ie. displayName, Description, ...)
+	 *
 	 * @param Circle $circle
 	 */
-	public function filterCircle(Circle $circle): void {
+	public function filterCircleDetails(Circle $circle): void {
 		if ($this->getType() !== QueryBuilder::SELECT) {
 			return;
 		}
@@ -405,18 +405,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			}
 			$orX->add($andX);
 		}
-		if ($circle->getDescription() !== '') {
-			$orDescription = $expr->orX();
-			foreach (explode(' ', $circle->getDescription()) as $word) {
-				$orDescription->add(
-					$expr->iLike(
-						$this->getDefaultSelectAlias() . '.' . 'description',
-						$this->createNamedParameter('%' . $word . '%')
-					)
-				);
-			}
-			$orX->add($orDescription);
-		}
+
 		if ($orX->count() > 0) {
 			$this->andWhere($orX);
 		}
@@ -440,8 +429,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			$aliasRemoteInstance = $this->generateAlias($alias, self::REMOTE);
 			$this->generateRemoteInstanceSelectAlias($aliasRemoteInstance)
 				 ->leftJoin(
-					 $alias, CoreRequestBuilder::TABLE_REMOTE, $aliasRemoteInstance,
-					 $expr->eq($alias . '.instance', $aliasRemoteInstance . '.instance')
+				 	$alias, CoreRequestBuilder::TABLE_REMOTE, $aliasRemoteInstance,
+				 	$expr->eq($alias . '.instance', $aliasRemoteInstance . '.instance')
 				 );
 		} catch (RequestBuilderException $e) {
 		}
@@ -809,8 +798,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$expr = $this->expr();
 		$this->generateCircleSelectAlias($aliasInvitedBy)
 			 ->leftJoin(
-				 $aliasMember, CoreRequestBuilder::TABLE_CIRCLE, $aliasInvitedBy,
-				 $expr->eq($aliasMember . '.invited_by', $aliasInvitedBy . '.unique_id')
+			 	$aliasMember, CoreRequestBuilder::TABLE_CIRCLE, $aliasInvitedBy,
+			 	$expr->eq($aliasMember . '.invited_by', $aliasInvitedBy . '.unique_id')
 			 );
 
 		$this->leftJoinOwner($aliasInvitedBy);
@@ -840,8 +829,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$expr = $this->expr();
 		$this->generateCircleSelectAlias($aliasBasedOn)
 			 ->leftJoin(
-				 $aliasMember, CoreRequestBuilder::TABLE_CIRCLE, $aliasBasedOn,
-				 $expr->eq($aliasBasedOn . '.unique_id', $aliasMember . '.single_id')
+			 	$aliasMember, CoreRequestBuilder::TABLE_CIRCLE, $aliasBasedOn,
+			 	$expr->eq($aliasBasedOn . '.unique_id', $aliasMember . '.single_id')
 			 );
 
 		if (!is_null($initiator)) {
@@ -872,17 +861,52 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$expr = $this->expr();
 		$this->generateMemberSelectAlias($aliasMember)
 			 ->leftJoin(
-				 $alias, CoreRequestBuilder::TABLE_MEMBER, $aliasMember,
-				 $expr->andX(
-					 $expr->eq($aliasMember . '.circle_id', $alias . '.' . $field),
-					 $expr->eq(
-						 $aliasMember . '.level',
-						 $this->createNamedParameter(Member::LEVEL_OWNER, self::PARAM_INT)
-					 )
-				 )
+			 	$alias, CoreRequestBuilder::TABLE_MEMBER, $aliasMember,
+			 	$expr->andX(
+			 		$expr->eq($aliasMember . '.circle_id', $alias . '.' . $field),
+			 		$expr->eq(
+			 			$aliasMember . '.level',
+			 			$this->createNamedParameter(Member::LEVEL_OWNER, self::PARAM_INT)
+			 		)
+			 	)
 			 );
 
 		$this->leftJoinBasedOn($aliasMember);
+	}
+
+
+	/**
+	 * @param CircleProbe $probe
+	 * @param string $alias
+	 * @param string $field
+	 */
+	public function innerJoinMembership(
+		CircleProbe $probe,
+		string $alias,
+		string $field = 'unique_id'
+	): void {
+		if ($this->getType() !== QueryBuilder::SELECT) {
+			return;
+		}
+
+		try {
+			$aliasMembership = $this->generateAlias($alias, self::MEMBERSHIPS);
+		} catch (RequestBuilderException $e) {
+			return;
+		}
+
+		$expr = $this->expr();
+
+		$on = $expr->andX($expr->eq($aliasMembership . '.circle_id', $alias . '.' . $field));
+
+		// limit on membership level if requested
+		$minLevel = $probe->getMinimumLevel();
+		if ($minLevel > Member::LEVEL_MEMBER) {
+			$on->add($this->exprGt('level', $minLevel, true, $aliasMembership));
+		}
+
+		$this->generateMembershipSelectAlias($aliasMembership)
+			 ->innerJoin($alias, CoreRequestBuilder::TABLE_MEMBERSHIP, $aliasMembership, $on);
 	}
 
 
@@ -912,15 +936,12 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$expr = $this->expr();
 		$this->generateMemberSelectAlias($aliasMember)
 			 ->leftJoin(
-				 $alias, CoreRequestBuilder::TABLE_MEMBER, $aliasMember,
-				 $expr->andX(
-					 $expr->eq($aliasMember . '.circle_id', $alias . '.' . $fieldCircleId),
-					 $expr->eq($aliasMember . '.single_id', $alias . '.' . $fieldSingleId),
-					 $expr->gte(
-						 $aliasMember . '.level',
-						 $this->createNamedParameter(Member::LEVEL_MEMBER, self::PARAM_INT)
-					 )
-				 )
+			 	$alias, CoreRequestBuilder::TABLE_MEMBER, $aliasMember,
+			 	$expr->andX(
+			 		$expr->eq($aliasMember . '.circle_id', $alias . '.' . $fieldCircleId),
+			 		$expr->eq($aliasMember . '.single_id', $alias . '.' . $fieldSingleId),
+			 		$this->exprGt('level', Member::LEVEL_MEMBER, true, $aliasMember)
+			 	)
 			 );
 
 		$this->leftJoinRemoteInstance($aliasMember);
@@ -962,11 +983,11 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		}
 		$this->generateMemberSelectAlias($aliasInheritedBy)
 			 ->leftJoin(
-				 $alias, CoreRequestBuilder::TABLE_MEMBER, $aliasInheritedBy,
-				 $expr->andX(
-					 $expr->eq($aliasMembership . '.inheritance_last', $aliasInheritedBy . '.circle_id'),
-					 $expr->eq($aliasMembership . '.single_id', $aliasInheritedBy . '.single_id')
-				 )
+			 	$alias, CoreRequestBuilder::TABLE_MEMBER, $aliasInheritedBy,
+			 	$expr->andX(
+			 		$expr->eq($aliasMembership . '.inheritance_last', $aliasInheritedBy . '.circle_id'),
+			 		$expr->eq($aliasMembership . '.single_id', $aliasInheritedBy . '.single_id')
+			 	)
 			 );
 
 		$this->leftJoinBasedOn($aliasInheritedBy);
@@ -1052,11 +1073,11 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$aliasInheritanceFrom = $this->generateAlias($alias, self::INHERITANCE_FROM);
 		$this->generateMemberSelectAlias($aliasInheritanceFrom)
 			 ->leftJoin(
-				 $aliasMembership, CoreRequestBuilder::TABLE_MEMBER, $aliasInheritanceFrom,
-				 $expr->andX(
-					 $expr->eq($aliasMembership . '.circle_id', $aliasInheritanceFrom . '.circle_id'),
-					 $expr->eq($aliasMembership . '.inheritance_first', $aliasInheritanceFrom . '.single_id')
-				 )
+			 	$aliasMembership, CoreRequestBuilder::TABLE_MEMBER, $aliasInheritanceFrom,
+			 	$expr->andX(
+			 		$expr->eq($aliasMembership . '.circle_id', $aliasInheritanceFrom . '.circle_id'),
+			 		$expr->eq($aliasMembership . '.inheritance_first', $aliasInheritanceFrom . '.single_id')
+			 	)
 			 );
 	}
 
@@ -1232,13 +1253,13 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 				$aliasDirectInitiator = $this->generateAlias($alias, self::DIRECT_INITIATOR, $options);
 				$this->generateMemberSelectAlias($aliasDirectInitiator)
 					 ->leftJoin(
-						 $helperAlias,
-						 CoreRequestBuilder::TABLE_MEMBER,
-						 $aliasDirectInitiator,
-						 $expr->andX(
-							 $this->exprLimit('single_id', $initiator->getSingleId(), $aliasDirectInitiator),
-							 $expr->eq($aliasDirectInitiator . '.circle_id', $helperAlias . '.' . $field)
-						 )
+					 	$helperAlias,
+					 	CoreRequestBuilder::TABLE_MEMBER,
+					 	$aliasDirectInitiator,
+					 	$expr->andX(
+					 		$this->exprLimit('single_id', $initiator->getSingleId(), $aliasDirectInitiator),
+					 		$expr->eq($aliasDirectInitiator . '.circle_id', $helperAlias . '.' . $field)
+					 	)
 					 );
 			} catch (RequestBuilderException $e) {
 				// meaning that this path does not require DIRECT_INITIATOR; can be safely ignored
@@ -1284,6 +1305,36 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	}
 
 
+	public function completeProbeWithInitiator(
+		string $alias,
+		string $field = 'single_id',
+		string $helperAlias = ''
+	): void {
+		if ($this->getType() !== QueryBuilder::SELECT) {
+			return;
+		}
+
+		try {
+			$aliasInitiator = $this->generateAlias($alias, self::INITIATOR);
+		} catch (RequestBuilderException $e) {
+			return;
+		}
+
+		$helperAlias = ($helperAlias === '') ? $alias : $helperAlias;
+
+		$expr = $this->expr();
+		$this->generateMemberSelectAlias($aliasInitiator)
+			 ->leftJoin(
+			 	$alias, CoreRequestBuilder::TABLE_MEMBER, $aliasInitiator,
+			 	$expr->andX(
+			 		$expr->eq($aliasInitiator . '.circle_id', $helperAlias . '.' . $field),
+			 		$this->exprLimitInt('level', Member::LEVEL_OWNER, $aliasInitiator)
+			 	)
+			 );
+//
+//		$this->leftJoinBasedOn($aliasInitiator);
+	}
+
 	/**
 	 * @param string $alias
 	 *
@@ -1326,7 +1377,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 				$orXLevelCheck->add(
 					$this->expr()->gte(
 						$alias . '.level',
-						$this->createNamedParameter($minimumLevel)
+						$this->createNamedParameter($minimumLevel, self::PARAM_INT)
 					)
 				);
 			},
@@ -1459,18 +1510,18 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			[]
 		)
 			 ->generateSelectAlias(
-				 CoreRequestBuilder::$outsideTables[CoreRequestBuilder::TABLE_STORAGES],
-				 $aliasStorages,
-				 $aliasStorages,
-				 []
+			 	CoreRequestBuilder::$outsideTables[CoreRequestBuilder::TABLE_STORAGES],
+			 	$aliasStorages,
+			 	$aliasStorages,
+			 	[]
 			 )
 			 ->leftJoin(
-				 $aliasShare, CoreRequestBuilder::TABLE_FILE_CACHE, $aliasFileCache,
-				 $expr->eq($aliasShare . '.file_source', $aliasFileCache . '.fileid')
+			 	$aliasShare, CoreRequestBuilder::TABLE_FILE_CACHE, $aliasFileCache,
+			 	$expr->eq($aliasShare . '.file_source', $aliasFileCache . '.fileid')
 			 )
 			 ->leftJoin(
-				 $aliasFileCache, CoreRequestBuilder::TABLE_STORAGES, $aliasStorages,
-				 $expr->eq($aliasFileCache . '.storage', $aliasStorages . '.numeric_id')
+			 	$aliasFileCache, CoreRequestBuilder::TABLE_STORAGES, $aliasStorages,
+			 	$expr->eq($aliasFileCache . '.storage', $aliasStorages . '.numeric_id')
 			 );
 	}
 
@@ -1658,8 +1709,8 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	public function generateAlias(string $base, string $extension, ?array &$options = []): string {
 		$search = str_replace('_', '.', $base);
 		$path = $search . '.' . $extension;
-		if (!$this->validKey($path, self::$SQL_PATH)
-			&& !in_array($extension, $this->getArray($search, self::$SQL_PATH))) {
+		if (!$this->validKey($path, $this->getSqlPath())
+			&& !in_array($extension, $this->getArray($search, $this->getSqlPath()))) {
 			throw new RequestBuilderException($extension . ' not found in ' . $search);
 		}
 
@@ -1672,7 +1723,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			$optionPath = trim($optionPath . '.' . $p, '.');
 			$options = array_merge(
 				$options,
-				$this->getArray($optionPath . '.' . self::OPTIONS, self::$SQL_PATH),
+				$this->getArray($optionPath . '.' . self::OPTIONS, $this->getSqlPath()),
 				$this->getArray($optionPath . '.' . self::OPTIONS, $this->options)
 			);
 		}
@@ -1691,7 +1742,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$search = str_replace('_', '.', $prefix);
 
 		$path = [];
-		foreach ($this->getArray($search, self::$SQL_PATH) as $arr => $item) {
+		foreach ($this->getArray($search, $this->getSqlPath()) as $arr => $item) {
 			if (is_numeric($arr)) {
 				$k = $item;
 			} else {
@@ -1701,5 +1752,42 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		}
 
 		return $path;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getSqlPath(): array {
+		if (empty($this->sqlPath)) {
+			return self::$SQL_PATH;
+		}
+
+		return $this->sqlPath;
+	}
+
+
+	/**
+	 * DataProbe uses this to set which data need to be extracted, based on self::$SQL_PATH.
+	 *
+	 * @param string $key
+	 * @param array $path
+	 *
+	 * @return $this
+	 */
+	public function setSqlPath(string $key, array $path = []): self {
+		if (empty($this->sqlPath)) {
+			$this->sqlPath = self::$SQL_PATH;
+		}
+
+		$this->sqlPath[$key] = $path;
+
+		return $this;
+	}
+
+	public function resetSqlPath(): self {
+		$this->sqlPath = [];
+
+		return $this;
 	}
 }

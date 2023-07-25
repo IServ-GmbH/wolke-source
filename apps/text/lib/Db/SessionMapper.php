@@ -36,6 +36,17 @@ class SessionMapper extends QBMapper {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function findAllDocuments(): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName());
+
+		return $this->findEntities($qb);
+	}
+
+	/**
 	 * @param $documentId
 	 * @param $sessionId
 	 * @param $token
@@ -62,7 +73,7 @@ class SessionMapper extends QBMapper {
 
 	public function findAll($documentId) {
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
+		$qb->select('id', 'color', 'document_id', 'last_awareness_message', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)));
 
@@ -71,7 +82,7 @@ class SessionMapper extends QBMapper {
 
 	public function findAllActive($documentId) {
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
+		$qb->select('id', 'color', 'document_id', 'last_awareness_message', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->andWhere($qb->expr()->gt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)));
@@ -81,34 +92,44 @@ class SessionMapper extends QBMapper {
 
 	public function findAllInactive() {
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('id', 'color', 'document_id', 'last_contact', 'user_id', 'guest_name')
+		$qb->select('id', 'color', 'document_id', 'last_awareness_message', 'last_contact', 'user_id', 'guest_name')
 			->from($this->getTableName())
 			->where($qb->expr()->lt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)));
 
 		return $this->findEntities($qb);
 	}
 
-	public function deleteInactive($documentId = -1) {
-		$qb = $this->db->getQueryBuilder();
-		$qb->select('session_id')
-			->from('text_steps');
+	public function deleteInactiveWithoutSteps(?int $documentId = null): int {
+		$lastContact = time() - SessionService::SESSION_VALID_TIME;
+
+		$inactiveSessionBuilder = $this->db->getQueryBuilder();
+		$inactiveSessionBuilder->select('s.id')
+			->from('text_sessions', 's')
+			->leftJoin('s', 'text_steps', 'st', $inactiveSessionBuilder->expr()->eq('st.session_id', 's.id'))
+			->where($inactiveSessionBuilder->expr()->lt('last_contact', $inactiveSessionBuilder->createNamedParameter($lastContact)))
+			->andWhere($inactiveSessionBuilder->expr()->isNull('st.id'));
 		if ($documentId !== null) {
-			$qb->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)));
+			$inactiveSessionBuilder->andWhere($inactiveSessionBuilder->expr()->eq('s.document_id', $inactiveSessionBuilder->createNamedParameter($documentId)));
 		}
-		$result = $qb
-			->groupBy('session_id')
-			->execute();
-		$activeSessions = $result->fetchAll(\PDO::FETCH_COLUMN);
+		$result = $inactiveSessionBuilder->executeQuery();
+		$documentIds = array_map(function ($row) {
+			return (int)$row['id'];
+		}, $result->fetchAll());
 		$result->closeCursor();
 
-		$qb = $this->db->getQueryBuilder();
-		$qb->delete($this->getTableName());
-		$qb->where($qb->expr()->lt('last_contact', $qb->createNamedParameter(time() - SessionService::SESSION_VALID_TIME)));
-		if ($documentId !== null) {
-			$qb->andWhere($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)));
+		$chunks = array_chunk($documentIds, 500);
+
+		$deleteBuilder = $this->db->getQueryBuilder();
+		$deleteBuilder->delete($this->getTableName())
+			->where($deleteBuilder->expr()->in('id', $deleteBuilder->createParameter('ids'), IQueryBuilder::PARAM_INT_ARRAY));
+
+		$deletedCount = 0;
+		foreach ($chunks as $ids) {
+			$deleteBuilder->setParameter('ids', $ids, IQueryBuilder::PARAM_INT_ARRAY);
+
+			$deletedCount += $deleteBuilder->executeStatement();
 		}
-		$qb->andWhere($qb->expr()->notIn('id', $qb->createNamedParameter($activeSessions, IQueryBuilder::PARAM_INT_ARRAY)));
-		return $qb->execute();
+		return $deletedCount;
 	}
 
 	public function deleteByDocumentId($documentId) {

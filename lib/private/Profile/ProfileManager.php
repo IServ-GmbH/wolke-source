@@ -35,6 +35,7 @@ use OC\KnownUser\KnownUserService;
 use OC\Profile\Actions\EmailAction;
 use OC\Profile\Actions\PhoneAction;
 use OC\Profile\Actions\TwitterAction;
+use OC\Profile\Actions\FediverseAction;
 use OC\Profile\Actions\WebsiteAction;
 use OCP\Accounts\IAccountManager;
 use OCP\Accounts\PropertyDoesNotExistException;
@@ -49,7 +50,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class ProfileManager {
-
 	/** @var IAccountManager */
 	private $accountManager;
 
@@ -95,6 +95,7 @@ class ProfileManager {
 		PhoneAction::class,
 		WebsiteAction::class,
 		TwitterAction::class,
+		FediverseAction::class,
 	];
 
 	/**

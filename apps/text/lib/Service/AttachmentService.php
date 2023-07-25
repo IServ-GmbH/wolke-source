@@ -26,11 +26,15 @@ declare(strict_types=1);
 
 namespace OCA\Text\Service;
 
+use OC\User\NoUserException;
+use OCA\Files_Sharing\SharedStorage;
 use OCA\Text\Controller\AttachmentController;
 use OCP\Constants;
 use OCP\Files\Folder;
 use OCP\Files\File;
 use OCP\Files\IMimeTypeDetector;
+use OCP\Files\InvalidPathException;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -75,14 +79,16 @@ class AttachmentService {
 	 * @param int $documentId
 	 * @param string $imageFileName
 	 * @param string $userId
-	 * @return File|\OCP\Files\Node|ISimpleFile|null
+	 * @param bool $preferRawImage
+	 * @return File|Node|ISimpleFile|null
+	 * @throws InvalidPathException
+	 * @throws NoUserException
 	 * @throws NotFoundException
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws \OCP\Files\NotPermittedException
+	 * @throws NotPermittedException
 	 */
-	public function getImageFile(int $documentId, string $imageFileName, string $userId) {
+	public function getImageFile(int $documentId, string $imageFileName, string $userId, bool $preferRawImage) {
 		$textFile = $this->getTextFile($documentId, $userId);
-		return $this->getImageFilePreview($imageFileName, $textFile);
+		return $this->getImageFileContent($imageFileName, $textFile, $preferRawImage);
 	}
 
 	/**
@@ -90,33 +96,44 @@ class AttachmentService {
 	 * @param int $documentId
 	 * @param string $imageFileName
 	 * @param string $shareToken
-	 * @return File|\OCP\Files\Node|ISimpleFile|null
+	 * @param bool $preferRawImage
+	 * @return File|Node|ISimpleFile|null
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws \OC\User\NoUserException
+	 * @throws InvalidPathException
+	 * @throws NoUserException
 	 */
-	public function getImageFilePublic(int $documentId, string $imageFileName, string $shareToken) {
+	public function getImageFilePublic(int $documentId, string $imageFileName, string $shareToken, bool $preferRawImage) {
 		$textFile = $this->getTextFilePublic($documentId, $shareToken);
-		return $this->getImageFilePreview($imageFileName, $textFile);
+		return $this->getImageFileContent($imageFileName, $textFile, $preferRawImage);
 	}
 
 	/**
 	 * @param string $imageFileName
 	 * @param File $textFile
-	 * @return File|\OCP\Files\Node|ISimpleFile|null
+	 * @param bool $preferRawImage
+	 * @return File|Node|ISimpleFile|null
+	 * @throws InvalidPathException
+	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
-	 * @throws \OCP\Files\InvalidPathException
-	 * @throws \OC\User\NoUserException
 	 */
-	private function getImageFilePreview(string $imageFileName, File $textFile) {
+	private function getImageFileContent(string $imageFileName, File $textFile, bool $preferRawImage) {
 		$attachmentFolder = $this->getAttachmentDirectoryForFile($textFile, true);
 		$imageFile = $attachmentFolder->get($imageFileName);
 		if ($imageFile instanceof File && in_array($imageFile->getMimetype(), AttachmentController::IMAGE_MIME_TYPES)) {
+			// previews of gifs are static images, always provide the real gif
+			if ($imageFile->getMimetype() === 'image/gif') {
+				return $imageFile;
+			}
+			// we might prefer the raw image
+			if ($preferRawImage && in_array($imageFile->getMimetype(), AttachmentController::BROWSER_SUPPORTED_IMAGE_MIME_TYPES)) {
+				return $imageFile;
+			}
 			if ($this->previewManager->isMimeSupported($imageFile->getMimeType())) {
 				return $this->previewManager->getPreview($imageFile, 1024, 1024);
 			}
+			// fallback: raw image
 			return $imageFile;
 		}
 		return null;
@@ -165,7 +182,7 @@ class AttachmentService {
 	private function getMediaFullFile(string $mediaFileName, File $textFile): ?File {
 		$attachmentFolder = $this->getAttachmentDirectoryForFile($textFile, true);
 		$mediaFile = $attachmentFolder->get($mediaFileName);
-		if ($mediaFile instanceof File) {
+		if ($mediaFile instanceof File && !$this->isDownloadDisabled($mediaFile)) {
 			return $mediaFile;
 		}
 		return null;
@@ -213,7 +230,7 @@ class AttachmentService {
 	private function getMediaFilePreviewFile(string $mediaFileName, File $textFile): ?array {
 		$attachmentFolder = $this->getAttachmentDirectoryForFile($textFile, true);
 		$mediaFile = $attachmentFolder->get($mediaFileName);
-		if ($mediaFile instanceof File) {
+		if ($mediaFile instanceof File && !$this->isDownloadDisabled($mediaFile)) {
 			if ($this->previewManager->isMimeSupported($mediaFile->getMimeType())) {
 				try {
 					return [
@@ -474,11 +491,25 @@ class AttachmentService {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 		if ($userFolder->nodeExists($filePath)) {
 			$file = $userFolder->get($filePath);
-			if ($file instanceof File) {
+			if ($file instanceof File && !$this->isDownloadDisabled($file)) {
 				return $file;
 			}
 		}
 		return null;
+	}
+
+	private function isDownloadDisabled(File $file): bool {
+		$storage = $file->getStorage();
+		if ($storage->instanceOfStorage(SharedStorage::class)) {
+			/** @var SharedStorage $storage */
+			$share = $storage->getShare();
+			$attributes = $share->getAttributes();
+			if ($attributes !== null && $attributes->getAttribute('permissions', 'download') === false) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -493,9 +524,10 @@ class AttachmentService {
 	 */
 	private function getTextFile(int $documentId, string $userId): File {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$textFile = $userFolder->getById($documentId);
-		if (count($textFile) > 0 && $textFile[0] instanceof File) {
-			return $textFile[0];
+		$files = $userFolder->getById($documentId);
+		$file = array_shift($files);
+		if ($file instanceof File && !$this->isDownloadDisabled($file)) {
+			return $file;
 		}
 		throw new NotFoundException('Text file with id=' . $documentId . ' was not found in storage of ' . $userId);
 	}
@@ -516,15 +548,16 @@ class AttachmentService {
 				// shared file or folder?
 				if ($share->getNodeType() === 'file') {
 					$textFile = $share->getNode();
-					if ($textFile instanceof File) {
+					if ($textFile instanceof File && !$this->isDownloadDisabled($textFile)) {
 						return $textFile;
 					}
 				} elseif ($documentId !== null && $share->getNodeType() === 'folder') {
 					$folder = $share->getNode();
 					if ($folder instanceof Folder) {
 						$textFile = $folder->getById($documentId);
-						if (count($textFile) > 0 && $textFile[0] instanceof File) {
-							return $textFile[0];
+						$textFile = array_shift($textFile);
+						if ($textFile instanceof File && !$this->isDownloadDisabled($textFile)) {
+							return $textFile;
 						}
 					}
 				}

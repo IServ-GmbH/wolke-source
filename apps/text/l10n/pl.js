@@ -2,6 +2,7 @@ OC.L10N.register(
     "text",
     {
     "New text file" : "Nowy plik tekstowy",
+    "Create new text file" : "Utwórz nowy plik tekstowy",
     "The file was uploaded" : "Plik został wysłany",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "Wysłany plik przekracza wartość upload_max_filesize zdefiniowaną w php.ini",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Wysłany plik przekracza wartość MAX_FILE_SIZE określoną w formularzu HTML",
@@ -87,6 +88,7 @@ OC.L10N.register(
     "Link to file or folder" : "Link do pliku lub katalogu",
     "Link to website" : "Link do strony internetowej",
     "Update link" : "Aktualizuj link",
+    "Open the Smart Picker" : "Otwórz inteligentny selektor",
     "Select file or folder to link to" : "Wybierz plik lub katalog do linku",
     "_%n word_::_%n words_" : ["%n słowo","%n słowa","%n słów","%n słów"],
     "_%n char_::_%n chars_" : ["%n znak","%n znaki","%n znaków","%n znaków"],
@@ -146,20 +148,11 @@ OC.L10N.register(
     "Edit" : "Edytuj",
     "Add description" : "Dodaj opis",
     "Front matter" : "Wstęp",
-    "Last saved {lastSaved}" : "Ostatnio zapisane {lastSaved}",
-    "Image file format not supported" : "Format pliku obrazu nie jest obsługiwany",
-    "Enter your name so other users can see who is editing" : "Wprowadź swoje imię, aby inni użytkownicy mogli zobaczyć, kto edytuje",
-    "Todo item" : "Do zrobienia",
-    "Insert an image" : "Wstaw obraz",
-    "Alt" : "Alt",
+    "Document save status" : "Status zapisywania dokumentu",
     "Update Link" : "Aktualizuj link",
     "Add Link" : "Dodaj link",
     "Link file" : "Link pliku",
     "Remove Link" : "Usuń link",
-    "Select file to link to" : "Wybierz plik dla linku",
-    "ToDo list" : "Lista zadań do zrobienia",
-    "Emoji picker" : "Selektor emoji",
-    "Insert image" : "Wstaw obraz",
-    "Document save status" : "Status zapisywania dokumentu"
+    "Select file to link to" : "Wybierz plik dla linku"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

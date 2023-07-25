@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Maintenance and release schedule &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -57,9 +57,10 @@
 <li class="toctree-l1"><a class="reference internal" href="apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
@@ -105,7 +106,25 @@
 </section>
 <section id="critical-changes">
 <h2>Critical changes<a class="headerlink" href="#critical-changes" title="Permalink to this headline"></a></h2>
-<p>You can find important documentation for app developers here: <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/app_publishing_maintenance/app_upgrade_guide/index.html">https://docs.nextcloud.com/server/25/developer_manual/app_publishing_maintenance/app_upgrade_guide/index.html</a>
+<ul class="simple">
+<li><p>PHP 7.4 is not supported anymore. Please upgrade to PHP 8.0 or higher.</p></li>
+<li><p>PHP 8.2 is now supported.</p></li>
+<li><dl class="simple">
+<dt>The recommended webserver configuration has changed to no longer include a default redirect to the login page</dt><dd><ul>
+<li><p>For Apache this change will automatically come with the <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> file provided by the release</p></li>
+<li><dl class="simple">
+<dt>for nginx administrators should ensure that their config is up to date with the <a class="reference external" href="https://docs.nextcloud.com/server/latest/admin_manual/installation/nginx.html">documentation</a></dt><dd><ul>
+<li><p>The relevant lines to remove are <code class="docutils literal notranslate"><span class="pre">error_page</span> <span class="pre">403</span> <span class="pre">/core/templates/403.php;</span></code> and <code class="docutils literal notranslate"><span class="pre">error_page</span> <span class="pre">404</span> <span class="pre">/core/templates/404.php;</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>You can find important documentation for app developers here: <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/app_upgrade_guide/index.html">https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/app_upgrade_guide/index.html</a>
 Each document lists a link to the breaking changes of the corresponding release.</p>
 </section>
 </section>
@@ -143,11 +162,9 @@ Each document lists a link to the breaking changes of the corresponding release.
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

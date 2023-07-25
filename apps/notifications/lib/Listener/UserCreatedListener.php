@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2022 Nikita Toponen <natoponen@gmail.com>
+ * @copyright Copyright (c) 2022, Nikita Toponen <natoponen@gmail.com>
  *
  * @author Nikita Toponen <natoponen@gmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,20 +28,20 @@ namespace OCA\Notifications\Listener;
 use OCA\Notifications\AppInfo\Application;
 use OCA\Notifications\Model\Settings;
 use OCA\Notifications\Model\SettingsMapper;
-use OCP\IUserManager;
 use OCP\User\Events\UserCreatedEvent;
 use OCP\EventDispatcher\IEventListener;
 use OCP\EventDispatcher\Event;
 use OCP\IConfig;
 
+/**
+ * @template-implements IEventListener<Event|UserCreatedEvent>
+ */
 class UserCreatedListener implements IEventListener {
-	private IUserManager $userManager;
 	private SettingsMapper $settingsMapper;
 	private IConfig $config;
 
 
-	public function __construct(IUserManager $userManager, SettingsMapper $settingsMapper, IConfig $config) {
-		$this->userManager = $userManager;
+	public function __construct(SettingsMapper $settingsMapper, IConfig $config) {
 		$this->settingsMapper = $settingsMapper;
 		$this->config = $config;
 	}

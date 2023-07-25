@@ -63,7 +63,6 @@ use function str_starts_with;
  * @package OC\Share20
  */
 class DefaultShareProvider implements IShareProvider {
-
 	// Special share type for user modified group shares
 	public const SHARE_TYPE_USERGROUP = 2;
 
@@ -609,7 +608,6 @@ class DefaultShareProvider implements IShareProvider {
 				->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
 				->execute();
 		} elseif ($share->getShareType() === IShare::TYPE_GROUP) {
-
 			// Check if there is a usergroup share
 			$qb = $this->dbConn->getQueryBuilder();
 			$stmt = $qb->select('id')
@@ -665,9 +663,9 @@ class DefaultShareProvider implements IShareProvider {
 	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true) {
 		$qb = $this->dbConn->getQueryBuilder();
 		$qb->select('s.*',
-				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
-				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
-				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum')
+			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum')
 			->from('share', 's')
 			->andWhere($qb->expr()->orX(
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),

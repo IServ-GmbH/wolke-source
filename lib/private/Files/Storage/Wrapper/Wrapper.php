@@ -148,11 +148,8 @@ class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStrea
 	/**
 	 * see https://www.php.net/manual/en/function.filesize.php
 	 * The result for filesize when called on a folder is required to be 0
-	 *
-	 * @param string $path
-	 * @return int|float|bool
 	 */
-	public function filesize($path) {
+	public function filesize($path): false|int|float {
 		return $this->getWrapperStorage()->filesize($path);
 	}
 
@@ -271,23 +268,23 @@ class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStrea
 	/**
 	 * see https://www.php.net/manual/en/function.rename.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 */
-	public function rename($path1, $path2) {
-		return $this->getWrapperStorage()->rename($path1, $path2);
+	public function rename($source, $target) {
+		return $this->getWrapperStorage()->rename($source, $target);
 	}
 
 	/**
 	 * see https://www.php.net/manual/en/function.copy.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 */
-	public function copy($path1, $path2) {
-		return $this->getWrapperStorage()->copy($path1, $path2);
+	public function copy($source, $target) {
+		return $this->getWrapperStorage()->copy($source, $target);
 	}
 
 	/**

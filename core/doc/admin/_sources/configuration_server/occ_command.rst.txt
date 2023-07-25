@@ -16,6 +16,7 @@ occ command Directory
 ---------------------
 
 * :ref:`http_user_label`
+* :ref:`run_commands_in_maintenance_mode`
 * :ref:`apps_commands_label`
 * :ref:`background_jobs_selector_label`
 * :ref:`config_commands_label`
@@ -160,6 +161,17 @@ This output option is available on all list and list-like commands:
 ``status``, ``check``, ``app:list``, ``config:list``, ``encryption:status``
 and ``encryption:list-modules``
 
+Environment variables
+^^^^^^^^^^^^^^^^^^^^^
+
+``sudo`` does not forward environment variables by default. Put the variables before the ``php`` command::
+
+  sudo -u www-data NC_debug=true php occ status
+
+Alternatively, you can ``export`` the variable or use the ``-E`` switch for ``sudo``::
+
+  NC_debug=true sudo -E -u www-data php occ status
+
 Enabling autocompletion
 -----------------------
 
@@ -185,6 +197,20 @@ you need to specify ``--program occ`` after the ``--generate-hook``.
 
 If you want the completion to apply automatically for all new shell sessions, add the command to your
 shell's profile (eg. ``~/.bash_profile`` or ``~/.zshrc``).
+
+.. _run_commands_in_maintenance_mode:
+
+Run commands in maintenance mode
+--------------------------------
+
+In maintenance mode, apps are not loaded [1]_, so commands from apps are unavailable. Commands integrated into Nextcloud server are available in maintenance mode.
+
+We discourage the use of maintenance mode unless the command explicitly prompts you to do so or unless the commands' documentation explicitly states that maintenance mode should be used.
+
+A command may use events to communicate with other apps. An app can only react to an event when loaded. Example: The command user:delete deletes a user account. UserDeletedEvent is emitted. Calendar app implements an event listener to delete user data [2]_. In maintenance mode, the Calendar app is not loaded, and hence the user data not deleted.
+
+.. [1] Exception: `The settings app is loaded <https://github.com/nextcloud/server/blob/75f17b60945e15effc3eea41393eef2b13937226/lib/base.php#L780>`_
+.. [2] `Calendar app event listener for UserDeletedEvent <https://github.com/nextcloud/calendar/blob/87e8586971a8676dc15a90f0cd969274678b7009/lib/Listener/UserDeletedListener.php>`_
 
 .. _apps_commands_label:
 
@@ -612,10 +638,7 @@ user::
 
  sudo -u www-data php occ encryption:decrypt freda
 
-Users must have enabled recovery keys on their Personal pages. You must first
-put your Nextcloud server into :ref:`maintenance
-mode <maintenance_commands_label>` to prevent any user activity until
-decryption is completed.
+Users must have enabled recovery keys on their Personal pages.
 
 Note that if you do not have master key/recovery key enabled, you can ONLY
 decrypt files per user, one user at a time and NOT when in maintenance mode.
@@ -670,6 +693,8 @@ File operations
                              Incoming shares are not moved by default because the
                              sharing user holds the ownership of the respective files.
                              There is however an option to enable moving incoming shares.
+
+.. _occ_files_scan_label:
 
 Scan
 ^^^^
@@ -796,6 +821,9 @@ before removing a user::
 
 The transferred files will appear inside a new sub-directory in the destination user's home.
 
+.. note::
+  Unless server side encryption is enabled, **the command will init the <destination-user> file system** in Nextcloud versions **22.2.6, 23.0.3 and since 24**. When it is unable to create the user's folder in the data directory it will show the following error: ``unable to rename, destination directory is not writable``. Before 22.2.6 the command ``occ files:transfer-ownership`` would only work after the user has logged in for the first time. 
+
 If the destination user has no files at all (empty home), it is possible to also transfer all the source user's files by passing ``--move``::
 
  sudo -u www-data php occ files:transfer-ownership --move <source-user> <destination-user>
@@ -817,7 +845,9 @@ The command line option ``--transfer-incoming-shares`` overwrites the config.php
  sudo -u www-data php occ files:transfer-ownership --transfer-incoming-shares=0 <source-user> <destination-user>
 
 Users may also transfer files or folders selectively by themselves.
-See `user documentation <https://docs.nextcloud.com/server/25/user_manual/en/files/transfer_ownership.html>`_ for details.
+See `user documentation <https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html>`_ for details.
+
+.. TODO ON RELEASE: Update version number above on release
 
 .. _occ_sharing_label:
 
@@ -886,7 +916,7 @@ Verify your app::
   sudo -u www-data php occ integrity:check-app --path=/pathto/app appname
 
 When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See `Code Signing
-<https://docs.nextcloud.com/server/25/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
+<https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
 
 .. TODO ON RELEASE: Update version number above on release
 

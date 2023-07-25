@@ -54,9 +54,8 @@ OC.L10N.register(
     "Subscription benefits" : "Beneficios de suscripción",
     "Pricing" : "Precios",
     "Forum" : "Foro",
-    "GitHub" : "GitHub",
-    "Chat" : "Chat",
     "Nextcloud forum" : "Foro de Nextcloud",
+    "GitHub" : "GitHub",
     "Subscription key" : "Clave de suscripción",
     "If you have an active Nextcloud Subscription please enter your subscription key here." : "Si tiene una suscripción activa a Nextcloud, ingrese su clave de suscripción aquí.",
     "Learn more about an enterprise subscription." : "Obtenga más información sobre una suscripción empresarial.",
@@ -73,4 +72,4 @@ OC.L10N.register(
     "Check out our blog" : "Echa un vistazo a nuestro blog.",
     "Subscribe to our newsletter" : "Suscríbete a nuestro boletín"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

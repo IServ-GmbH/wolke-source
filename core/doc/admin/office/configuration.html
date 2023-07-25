@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -52,13 +52,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Office</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#nextcloud-office-app-settings">Nextcloud Office App Settings</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#collabora-online-server">Collabora Online Server</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restrict-usage-to-specific-groups">Restrict usage to specific groups</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#restrict-edit-to-specific-groups">Restrict edit to specific groups</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#use-ooxml-by-default-for-new-files">Use OOXML by default for new files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enable-access-for-external-apps">Enable access for external apps</a></li>
@@ -68,6 +69,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#additional-configuration-options">Additional configuration options</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#previews">Previews</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#custom-fonts">Custom fonts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#secure-view-settings">Secure view settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wopi-settings">Wopi settings</a></li>
 </ul>
 </li>
 </ul>
@@ -76,6 +79,7 @@
 <li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -115,8 +119,10 @@
 <section id="collabora-online-server">
 <h3>Collabora Online Server<a class="headerlink" href="#collabora-online-server" title="Permalink to this headline"></a></h3>
 <p>URL (and port) of the Collabora Online server that provides the editing functionality as a WOPI client. Collabora Online should use the same protocol (<a class="reference external" href="http://">http://</a> or <a class="reference external" href="https://">https://</a>) as the server installation. Naturally, <a class="reference external" href="https://">https://</a> is recommended.</p>
-<p>Restrict usage to specific groups
-By default the app is enabled for all. When this setting is active, only members of specified groups can use Nextcloud Office.</p>
+</section>
+<section id="restrict-usage-to-specific-groups">
+<h3>Restrict usage to specific groups<a class="headerlink" href="#restrict-usage-to-specific-groups" title="Permalink to this headline"></a></h3>
+<p>By default the app is enabled for all. When this setting is active, only members of specified groups can use Nextcloud Office.</p>
 </section>
 <section id="restrict-edit-to-specific-groups">
 <h3>Restrict edit to specific groups<a class="headerlink" href="#restrict-edit-to-specific-groups" title="Permalink to this headline"></a></h3>
@@ -158,6 +164,26 @@ token. These credentials then can be used by the 3rd party application to make c
 <p><a class="reference external" href="https://sdk.collaboraonline.com/docs/installation/Fonts.html">https://sdk.collaboraonline.com/docs/installation/Fonts.html</a></p>
 </div>
 </section>
+<section id="secure-view-settings">
+<h3>Secure view settings<a class="headerlink" href="#secure-view-settings" title="Permalink to this headline"></a></h3>
+<p>The secure view settings enables Nextcloud to embed watermarks on your office files. The watermark may be set according to different rules:</p>
+<ul class="simple">
+<li><p><strong>Tags:</strong> will watermark files for files containing the defined tags</p></li>
+<li><p><strong>Groups:</strong> will watermark files when opened by users belonging to the defined groups.</p></li>
+<li><p><strong>All shares:</strong> will watermark files accessed via a share.</p></li>
+<li><p><strong>Read-only shares:</strong> will watermark files if they are accessed via a read-only share.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>To enforce the confidentiality of your files it is crucial to restrict the ability to download the documents.</p>
+<p>This includes ensuring that your <a class="reference external" href="#wopi-settings">WOPI configuration</a> is configured to only serve documents between Nextcloud and Collabora.</p>
+</div>
+</section>
+<section id="wopi-settings">
+<h3>Wopi settings<a class="headerlink" href="#wopi-settings" title="Permalink to this headline"></a></h3>
+<p>It is highly recommended to restrict WOPI requests to the IP addresses of the Collabora servers that are expected to request files from the Nextcloud installation. This can be done by setting the <code class="docutils literal notranslate"><span class="pre">Allow</span> <span class="pre">list</span> <span class="pre">for</span> <span class="pre">WOPI</span> <span class="pre">requests</span></code> option from the Office admin settings.</p>
+<p>Similarly, it is advised to configure <a class="reference external" href="https://sdk.collaboraonline.com/docs/installation/Configuration.html#multihost-configuration">Collabora’s WOPI host configuration</a> to only serve IPs from expected hosts.</p>
+</section>
 </section>
 </section>
 
@@ -194,11 +220,9 @@ token. These credentials then can be used by the 3rd party application to make c
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

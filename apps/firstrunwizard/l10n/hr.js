@@ -47,7 +47,6 @@ OC.L10N.register(
     "Connect your contacts" : "Povežite svoje kontakte",
     "Access files via WebDAV" : "Pristupite datotekama putem WebDAVa",
     "Download macOS/iOS configuration profile" : "Preuzmite konfiguracijski profil za macOS/iOS",
-    "Get help" : "Iskoristite opsežnu pomoć",
     "Start contributing" : "Počnite doprinositi",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Želite li poboljšati Nextcloud? Jeste li otkrili u čemu je problem? Želite li pomoći prevesti, promovirati ili dokumentirati Nextcloud?",
     "Become part of the Community" : "Postanite dio Zajednice",
@@ -72,10 +71,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Iskoristite ovu poveznicu za povezivanje aplikacija i klijenata za osobna računala s ovim poslužiteljem:",
     "Copy link" : "Kopiraj poveznicu",
     "Copy to clipboard" : "Kopiraj u međuspremnik",
-    "App recommendation: Notes" : "Preporučena aplikacija: Notes",
-    "Distraction-free notes and writing." : "Bilješke i pisanje bez ometanja.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Ako Nextcloud pokrećete u kritičnom okruženju s velikim brojem korisnika i velikim količinama podataka te trebate sigurnost podrške stručnjaka koji odlično poznaju Nextcloudove tehnologije, Enterprise pretplata na Nextcloud obuhvaća podršku putem e-pošte i telefona.",
-    "Get enterprise support" : "Zatražite poslovnu podršku",
-    "the Nextcloud IRC chat channel on freenode.net" : "IRC kanal za razmjenu poruka Nextcloud na freenode.net"
+    "Get help" : "Iskoristite opsežnu pomoć"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

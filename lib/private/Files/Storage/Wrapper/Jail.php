@@ -158,11 +158,8 @@ class Jail extends Wrapper {
 	/**
 	 * see https://www.php.net/manual/en/function.filesize.php
 	 * The result for filesize when called on a folder is required to be 0
-	 *
-	 * @param string $path
-	 * @return int|float|bool
 	 */
-	public function filesize($path) {
+	public function filesize($path): false|int|float {
 		return $this->getWrapperStorage()->filesize($this->getUnjailedPath($path));
 	}
 
@@ -281,23 +278,23 @@ class Jail extends Wrapper {
 	/**
 	 * see https://www.php.net/manual/en/function.rename.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 */
-	public function rename($path1, $path2) {
-		return $this->getWrapperStorage()->rename($this->getUnjailedPath($path1), $this->getUnjailedPath($path2));
+	public function rename($source, $target) {
+		return $this->getWrapperStorage()->rename($this->getUnjailedPath($source), $this->getUnjailedPath($target));
 	}
 
 	/**
 	 * see https://www.php.net/manual/en/function.copy.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 */
-	public function copy($path1, $path2) {
-		return $this->getWrapperStorage()->copy($this->getUnjailedPath($path1), $this->getUnjailedPath($path2));
+	public function copy($source, $target) {
+		return $this->getWrapperStorage()->copy($this->getUnjailedPath($source), $this->getUnjailedPath($target));
 	}
 
 	/**

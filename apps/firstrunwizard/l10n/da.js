@@ -49,7 +49,6 @@ OC.L10N.register(
     "Connect your contacts" : "Tilslut dine kontaktpersoner",
     "Access files via WebDAV" : "Adgang til filer via WebDAV",
     "Download macOS/iOS configuration profile" : "Download macOS/iOS-konfigurationsprofil",
-    "Get help" : "Få hjælp",
     "Start contributing" : "Begynd at bidrage",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Ønsker du at få en vis forbedring i Nextcloud? Fandt du et problem? Vil du hjælpe med at oversætte, promovere eller dokumentere Nextcloud?",
     "Become part of the Community" : "Bliv en del af Fællesskabet",
@@ -76,10 +75,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Brug dette link til at forbinde dine apps og desktop-klient til denne server:",
     "Copy link" : "Kopier link",
     "Copy to clipboard" : "Kopier til udklipsholder",
-    "App recommendation: Notes" : "Appanbefaling: Notes",
-    "Distraction-free notes and writing." : "Distraktionsfrie noter og skrivning.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Hvis du kører Nextcloud i et missionskritisk miljø med et stort antal brugere og store mængder data og har brug for sikkerheden for support fra eksperterne bag Nextcloud-teknologien, er et Enterprise-abonnement fra Nextcloud tilgængeligt med e-mail og telefonsupport.",
-    "Get enterprise support" : "Få enterprise support",
-    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC kanalen på freenode.net"
+    "Get help" : "Få hjælp"
 },
 "nplurals=2; plural=(n != 1);");

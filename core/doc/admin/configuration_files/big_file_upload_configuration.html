@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Uploading big files &gt; 512MB &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -82,9 +82,10 @@
 <li class="toctree-l2"><a class="reference internal" href="trashbin_configuration.html">Deleted Items (trash bin)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -162,7 +163,7 @@ relevant php.ini files)</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">upload_max_filesize</span></code> and <code class="docutils literal notranslate"><span class="pre">post_max_size</span></code> settings may not apply to file uploads
-through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 For those, PHP and webserver timeouts are the limiting factor on the upload size.</p>
 <p>Adjust these values for your needs. If you see PHP timeouts in your logfiles,
 increase the timeout values, which are in seconds:</p>
@@ -280,7 +281,7 @@ configuration to reset it to the default shown in the <code class="docutils lite
 </section>
 <section id="large-file-upload-on-object-storage">
 <h2>Large file upload on object storage<a class="headerlink" href="#large-file-upload-on-object-storage" title="Permalink to this headline"></a></h2>
-<p><a class="reference external" href="https://docs.nextcloud.com/server/25/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+<p><a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 do have a larger space consumption on the temporary folder when processing those uploads
 on object storage as the individual chunks get downloaded from the storage and will be assembled
 to the actual file on the Nextcloud servers temporary directory. It is recommended to increase
@@ -322,11 +323,9 @@ enough for PHP, webservers or any load balancers involved.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

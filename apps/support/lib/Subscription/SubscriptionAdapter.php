@@ -45,7 +45,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			] = $this->subscriptionService->getSubscriptionInfo();
+		] = $this->subscriptionService->getSubscriptionInfo();
 
 		return !$isInvalidSubscription;
 	}
@@ -71,7 +71,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			] = $this->subscriptionService->getSubscriptionInfo();
+		] = $this->subscriptionService->getSubscriptionInfo();
 		$hasValidGroupwareSubscription = $this->subscriptionNotExpired($subscriptionInfo['groupware']['endDate'] ?? 'now');
 		$hasValidTalkSubscription = $this->subscriptionNotExpired($subscriptionInfo['talk']['endDate'] ?? 'now');
 		$hasValidCollaboraSubscription = $this->subscriptionNotExpired($subscriptionInfo['collabora']['endDate'] ?? 'now');
@@ -226,7 +226,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
-			] = $this->subscriptionService->getSubscriptionInfo();
+		] = $this->subscriptionService->getSubscriptionInfo();
 		return $isOverLimit;
 	}
 }

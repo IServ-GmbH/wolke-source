@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Trên những sự kiên đang diễn ra trong một <strong> Vòng kết nối </strong> mà bạn là thành viên của nhóm",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Một sự kiện quan trọng trong một <strong> Vòng kết nối </strong> mà bạn đang điều hành",
     "On global events happening in any <strong>Circle</strong>" : "Trên những sự kiện chung đang diễn ra của tổ chức trong bất cứ <strong> Vòng kết nối </strong>",
+    "Shared to Circles" : "Đã được chia sẻ đến những Vòng kết nối",
     "Personal" : "Cá nhân",
     "System" : "Hệ thống",
     "Open" : "Mở",
@@ -136,10 +137,6 @@ OC.L10N.register(
     "Size" : "Kích cỡ",
     "Modified" : "Thay đổi",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Bạn không thể sử dụng Ứng dụng Vòng kết nối cho đến khi quản trị viên của bạn cho phép ít nhất một loại của vòng kết nối",
-    "This user is already a member of the circle" : "Người dùng này đã là thành viên của vòng kết nối",
-    "The user is already a member of this circle" : "Người dùng này đã là thành viên của vòng kết nối này",
-    "The user has already been invited into this circle" : "Người dùng này đã được mời vào vòng kết nối này",
-    "This user does not exist" : "Người dùng này không tòn tại",
     "Could not find share" : "Không thể tìm thấy chia sẻ"
 },
 "nplurals=1; plural=0;");

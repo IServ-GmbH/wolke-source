@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced Talk features &mdash; Nextcloud latest User Manual latest documentation</title>
@@ -57,6 +57,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#commands">Commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#talk-from-files">Talk from Files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#create-tasks-from-chat-or-share-tasks-in-chat">Create tasks from chat or share tasks in chat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#breakout-rooms">Breakout rooms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configure-breakout-rooms">Configure breakout rooms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manage-breakout-rooms">Manage breakout rooms</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="join_a_call_or_chat_as_guest.html">Join a call or chat as guest</a></li>
@@ -142,6 +147,40 @@
 <img alt="../_images/deck-talk-share-card-to-chat-menu.png" src="../_images/deck-talk-share-card-to-chat-menu.png" />
 <img alt="../_images/deck-talk-share-card-to-chat-in-talk.png" src="../_images/deck-talk-share-card-to-chat-in-talk.png" />
 </section>
+<section id="breakout-rooms">
+<h2>Breakout rooms<a class="headerlink" href="#breakout-rooms" title="Permalink to this headline"></a></h2>
+<p>Breakout rooms allow you to divide a Nextcloud Talk call into smaller groups for more focused discussions. The moderator
+of the call can create multiple breakout rooms and assign participants to each room.</p>
+<section id="configure-breakout-rooms">
+<h3>Configure breakout rooms<a class="headerlink" href="#configure-breakout-rooms" title="Permalink to this headline"></a></h3>
+<p>To create breakout rooms, you need to be a moderator in a group conversation. Click on the top-bar menu and click on
+“Setup breakout rooms”.</p>
+<img alt="../_images/talk-breakout-rooms-setup.png" src="../_images/talk-breakout-rooms-setup.png" />
+<p>A dialog will open where you can specify the number of rooms you want to create and the participants assignment method.
+Here you’ll be presented with 3 options:</p>
+<ul class="simple">
+<li><p><strong>Automatically assign participants</strong>: Talk will automatically assign participants to the rooms.</p></li>
+<li><p><strong>Manually assign participants</strong>: You’ll go through a participants editor where you can assign participants to rooms.</p></li>
+<li><p><strong>Allow participants choose</strong>: Participants will be able to join breakout rooms themselves.</p></li>
+</ul>
+<img alt="../_images/talk-breakout-rooms-setup-dialog.png" src="../_images/talk-breakout-rooms-setup-dialog.png" />
+</section>
+<section id="manage-breakout-rooms">
+<h3>Manage breakout rooms<a class="headerlink" href="#manage-breakout-rooms" title="Permalink to this headline"></a></h3>
+<p>Once the breakout rooms are created, you will be able to see them in the sidebar.</p>
+<img alt="../_images/talk-breakout-rooms-sidebar.png" src="../_images/talk-breakout-rooms-sidebar.png" />
+<p>From the sidebar header</p>
+<ul class="simple">
+<li><p><strong>Start and stop the breakout rooms</strong>: this will move all the users in the parent conversation to their respective breakout rooms.</p></li>
+<li><p><strong>Broadcast a message to all the rooms</strong>: this will send a message to all the rooms at the same time.</p></li>
+<li><p><strong>Make changes to the assigned participants</strong>: this will open the participants editor where you can change which participans are assigned to which breakout room. From this dialog it’s also possible to delete the breakout rooms.</p></li>
+</ul>
+<img alt="../_images/talk-breakout-rooms-sidebar-header.png" src="../_images/talk-breakout-rooms-sidebar-header.png" />
+<p>From the breakout room element in the sidebar, you can also join a particular breakout room or send a message to a
+specific room.</p>
+<img alt="../_images/talk-breakout-rooms-sidebar-item.png" src="../_images/talk-breakout-rooms-sidebar-item.png" />
+</section>
+</section>
 </section>
 
 
@@ -183,11 +222,9 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

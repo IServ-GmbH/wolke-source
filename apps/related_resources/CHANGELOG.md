@@ -1,13 +1,8 @@
 # Changelog
 
-### 1.0.4
+### 1.1.0
 
-- new API/route for complex itemId
-- improve result post-cache
-
-### 1.0.3
-
-- identify calendar by uri
+- nc26
 
 ### 1.0.2
 

@@ -40,8 +40,6 @@ use OCA\Circles\Model\ShareToken;
  * @package OCA\Circles\Db
  */
 class ShareTokenRequest extends ShareTokenRequestBuilder {
-
-
 	/**
 	 * @param ShareToken $token
 	 *
@@ -90,6 +88,20 @@ class ShareTokenRequest extends ShareTokenRequestBuilder {
 		$qb->limitToToken($token);
 
 		return $this->getItemFromRequest($qb);
+	}
+
+
+	/**
+	 * @param string $circleId
+	 * @param string $hashedPassword
+	 */
+	public function updateSharePassword(string $circleId, string $hashedPassword) {
+		$qb = $this->getTokenUpdateSql();
+		$qb->limitToCircleId($circleId);
+
+		$qb->set('password', $qb->createNamedParameter($hashedPassword));
+
+		$qb->executeStatement();
 	}
 
 

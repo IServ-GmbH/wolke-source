@@ -58,8 +58,8 @@ use OCA\Circles\Exceptions\UnknownRemoteException;
 use OCA\Circles\FederatedItems\Files\FileShare;
 use OCA\Circles\FederatedItems\Files\FileUnshare;
 use OCA\Circles\Model\Federated\FederatedEvent;
-use OCA\Circles\Model\Helpers\MemberHelper;
 use OCA\Circles\Model\Probes\CircleProbe;
+use OCA\Circles\Model\Probes\DataProbe;
 use OCA\Circles\Model\ShareWrapper;
 use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\EventService;
@@ -85,6 +85,7 @@ use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ShareByCircleProvider
@@ -100,49 +101,17 @@ class ShareByCircleProvider implements IShareProvider {
 	public const IDENTIFIER = 'ocCircleShare';
 
 
-	/** @var IUserManager */
-	private $userManager;
+	private IUserManager $userManager;
+	private IRootFolder $rootFolder;
+	private IL10N $l10n;
+	private LoggerInterface $logger;
+	private IURLGenerator $urlGenerator;
+	private ShareWrapperService $shareWrapperService;
+	private FederatedUserService $federatedUserService;
+	private FederatedEventService $federatedEventService;
+	private CircleService $circleService;
+	private EventService $eventService;
 
-	/** @var IRootFolder */
-	private $rootFolder;
-
-	/** @var IL10N */
-	private $l10n;
-
-	/** @var ILogger */
-	private $logger;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-
-	/** @var ShareWrapperService */
-	private $shareWrapperService;
-
-	/** @var FederatedUserService */
-	private $federatedUserService;
-
-	/** @var FederatedEventService */
-	private $federatedEventService;
-
-	/** @var CircleService */
-	private $circleService;
-
-	/** @var EventService */
-	private $eventService;
-
-
-	/**
-	 * ShareByCircleProvider constructor.
-	 *
-	 * @param IDBConnection $connection
-	 * @param ISecureRandom $secureRandom
-	 * @param IUserManager $userManager
-	 * @param IRootFolder $rootFolder
-	 * @param IL10N $l10n
-	 * @param ILogger $logger
-	 * @param IURLGenerator $urlGenerator
-	 */
 	public function __construct(
 		IDBConnection $connection,
 		ISecureRandom $secureRandom,
@@ -155,7 +124,7 @@ class ShareByCircleProvider implements IShareProvider {
 		$this->userManager = $userManager;
 		$this->rootFolder = $rootFolder;
 		$this->l10n = $l10n;
-		$this->logger = $logger;
+		$this->logger = OC::$server->get(LoggerInterface::class);
 		$this->urlGenerator = $urlGenerator;
 
 		$this->federatedUserService = OC::$server->get(FederatedUserService::class);
@@ -217,21 +186,18 @@ class ShareByCircleProvider implements IShareProvider {
 		}
 
 		$this->federatedUserService->initCurrentUser();
-		$circle = $this->circleService->getCircle($share->getSharedWith());
-		$owner = $circle->getInitiator();
+		$circleProbe = new CircleProbe();
+		$dataProbe = new DataProbe();
+		$dataProbe->add(DataProbe::OWNER)
+				  ->add(DataProbe::INITIATOR, [DataProbe::BASED_ON]);
 
-		$initiatorHelper = new MemberHelper($owner);
-		$initiatorHelper->mustBeMember();
-
+		$circle = $this->circleService->probeCircle($share->getSharedWith(), $circleProbe, $dataProbe);
 		$share->setToken($this->token(15));
+		$owner = $circle->getInitiator();
 		$this->shareWrapperService->save($share);
 
 		try {
-			$wrappedShare = $this->shareWrapperService->getShareById(
-				(int)$share->getId(),
-				$this->federatedUserService->getCurrentUser()
-			);
-
+			$wrappedShare = $this->shareWrapperService->getShareById((int)$share->getId());
 			$wrappedShare->setOwner($owner);
 		} catch (ShareWrapperNotFoundException $e) {
 			throw new ShareNotFound();
@@ -291,10 +257,7 @@ class ShareByCircleProvider implements IShareProvider {
 
 		$this->federatedUserService->initCurrentUser();
 		try {
-			$wrappedShare = $this->shareWrapperService->getShareById(
-				(int)$share->getId(),
-				$this->federatedUserService->getCurrentUser()
-			);
+			$wrappedShare = $this->shareWrapperService->getShareById((int)$share->getId());
 		} catch (ShareWrapperNotFoundException $e) {
 			return;
 		}
@@ -344,15 +307,6 @@ class ShareByCircleProvider implements IShareProvider {
 		}
 	}
 
-	/**
-	 * @param IShare $share
-	 * @param string $recipient
-	 *
-	 * @return IShare
-	 */
-	public function restore(IShare $share, string $recipient): IShare {
-		return $share;
-	}
 
 	/**
 	 * @param IShare $share
@@ -378,6 +332,30 @@ class ShareByCircleProvider implements IShareProvider {
 
 		if ($child->getFileTarget() !== $share->getTarget()) {
 			$child->setFileTarget($share->getTarget());
+			$this->shareWrapperService->update($child);
+		}
+
+		$wrappedShare = $this->shareWrapperService->getShareById((int)$share->getId(), $federatedUser);
+
+		return $wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
+	}
+
+
+	/**
+	 * @param IShare $share
+	 * @param string $recipient
+	 *
+	 * @return IShare
+	 */
+	public function restore(IShare $share, string $recipient): IShare {
+		$orig = $this->shareWrapperService->getShareById((int)$share->getId());
+
+		$federatedUser = $this->federatedUserService->getLocalFederatedUser($recipient);
+		$child = $this->shareWrapperService->getChild($share, $federatedUser);
+		$this->debug('Shares::restore()', ['federatedUser' => $federatedUser, 'child' => $child]);
+
+		if ($child->getPermissions() !== $orig->getPermissions()) {
+			$child->setPermissions($orig->getPermissions());
 			$this->shareWrapperService->update($child);
 		}
 
@@ -607,7 +585,35 @@ class ShareByCircleProvider implements IShareProvider {
 			throw new ShareNotFound();
 		}
 
-		return $wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
+		$share = $wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
+		if ($share->getPassword() !== '') {
+			$this->logger->notice('share is protected by a password, hash: ' . $share->getPassword());
+		}
+
+		return $share;
+	}
+
+
+	public function formatShare(IShare $share): array {
+		$this->federatedUserService->initCurrentUser();
+		$circleProbe = new CircleProbe();
+		$dataProbe = new DataProbe();
+
+		$result = ['share_with' => $share->getSharedWith()];
+		try {
+			$circle = $this->circleService->probeCircle($share->getSharedWith(), $circleProbe, $dataProbe);
+			$result['share_with_displayname'] = $circle->getDisplayName();
+		} catch (Exception $e) {
+			$this->logger->warning(
+				'Circle not found while probeCircle',
+				[
+					'sharedWith' => $share->getSharedWith(),
+					'exception' => $e
+				]
+			);
+		}
+
+		return $result;
 	}
 
 

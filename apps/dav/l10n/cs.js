@@ -189,20 +189,6 @@ OC.L10N.register(
     "Are you accepting the invitation?" : "Přijímáte pozvání?",
     "Tentative" : "Nezávazně",
     "Your attendance was updated successfully." : "Vaše účast byla úspěšně aktualizována.",
-    "Todos" : "Úkoly",
-    "{actor} created todo {todo} in list {calendar}" : "{actor} vytvořil(a) v seznamu {calendar} vytvořila úkol {todo}",
-    "You created todo {todo} in list {calendar}" : "V seznamu {calendar} jste vytvořili úkol {todo}",
-    "{actor} deleted todo {todo} from list {calendar}" : "{actor} smazal(a) úkol {todo} ze seznamu {calendar}",
-    "You deleted todo {todo} from list {calendar}" : "Ze seznamu {calendar} jste smazali úkol {todo}",
-    "{actor} updated todo {todo} in list {calendar}" : "{actor} aktualizoval(a) úkol {todo} v seznamu {calendar}",
-    "You updated todo {todo} in list {calendar}" : "Aktualizovali jste úkol {todo} v seznamu {calendar}",
-    "{actor} solved todo {todo} in list {calendar}" : "{actor} vyřešil(a) úkol {todo} v seznamu {calendar}",
-    "You solved todo {todo} in list {calendar}" : "Vyřešili jste úkol {todo} v seznamu {calendar}",
-    "{actor} reopened todo {todo} in list {calendar}" : "{actor} znovu otevřel(a) úkol {todo} v seznamu {calendar}",
-    "You reopened todo {todo} in list {calendar}" : "Znovu jste otevřeli úkol {todo} v seznamu {calendar}",
-    "A calendar <strong>todo</strong> was modified" : "<strong>Úkol</strong> v kalendáři byl změněn",
-    "Invitation canceled" : "Pozvánka zrušena",
-    "Invitation updated" : "Pozvánka aktualizována",
-    "Invitation" : "Pozvání"
+    "%1$s has responded your invitation" : "%1$s odpověděl(a) na vaši pozvánku"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

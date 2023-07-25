@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "Connect your contacts",
     "Access files via WebDAV" : "Access files via WebDAV",
     "Download macOS/iOS configuration profile" : "Download macOS/iOS configuration profile",
-    "Get help" : "Get help",
+    "Get support or participate" : "Get support or participate",
     "Start contributing" : "Start contributing",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?",
     "Become part of the Community" : "Become part of the Community",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "You can also ask for help in our community support channels:",
     "the Nextcloud forums" : "the Nextcloud forums",
     "A safe home for all your data" : "A safe home for all your data",
+    "Our values" : "Our values",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know.",
     "Host your data and files where you decide" : "Host your data and files where you decide",
     "Open standards and interoperability" : "Open standards and interoperability",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Use this link to connect your apps and desktop client to this server:",
     "Copy link" : "Copy link",
     "Copy to clipboard" : "Copy to clipboard",
-    "App recommendation: Notes" : "App recommendation: Notes",
-    "Distraction-free notes and writing." : "Distraction-free notes and writing.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support.",
-    "Get enterprise support" : "Get enterprise support",
-    "the Nextcloud IRC chat channel on freenode.net" : "the Nextcloud IRC chat channel on freenode.net"
+    "Get help" : "Get help"
 },
 "nplurals=2; plural=(n != 1);");

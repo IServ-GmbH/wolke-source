@@ -44,7 +44,6 @@ use Psr\Container\NotFoundExceptionInterface;
  * @deprecated 20.0.0 use \Psr\Container\ContainerInterface
  */
 interface IContainer extends ContainerInterface {
-
 	/**
 	 * @template T
 	 *

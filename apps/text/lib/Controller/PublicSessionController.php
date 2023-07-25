@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Text\Controller;
 
 use OCA\Text\Service\ApiService;
-use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\PublicShareController;
 use OCP\ISession;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -67,16 +66,8 @@ class PublicSessionController extends PublicShareController {
 	 * @NoAdminRequired
 	 * @PublicPage
 	 */
-	public function create(string $token, string $file = null, $guestName = null, bool $forceRecreate = false): DataResponse {
-		return $this->apiService->create(null, $file, $token, $guestName, $forceRecreate);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @PublicPage
-	 */
-	public function fetch(int $documentId, int $sessionId, string $sessionToken): Response {
-		return $this->apiService->fetch($documentId, $sessionId, $sessionToken);
+	public function create(string $token, string $file = null, $guestName = null): DataResponse {
+		return $this->apiService->create(null, $file, $token, $guestName);
 	}
 
 	/**
@@ -91,16 +82,16 @@ class PublicSessionController extends PublicShareController {
 	 * @NoAdminRequired
 	 * @PublicPage
 	 */
-	public function push(int $documentId, int $sessionId, string $sessionToken, int $version, array $steps, string $token): DataResponse {
-		return $this->apiService->push($documentId, $sessionId, $sessionToken, $version, $steps, $token);
+	public function push(int $documentId, int $sessionId, string $sessionToken, int $version, array $steps, string $awareness, string $token): DataResponse {
+		return $this->apiService->push($documentId, $sessionId, $sessionToken, $version, $steps, $awareness, $token);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @PublicPage
 	 */
-	public function sync(string $token, int $documentId, int $sessionId, string $sessionToken, int $version = 0, string $autosaveContent = null, bool $force = false, bool $manualSave = false): DataResponse {
-		return $this->apiService->sync($documentId, $sessionId, $sessionToken, $version, $autosaveContent, $force, $manualSave, $token);
+	public function sync(string $token, int $documentId, int $sessionId, string $sessionToken, int $version = 0, string $autosaveContent = null, string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
+		return $this->apiService->sync($documentId, $sessionId, $sessionToken, $version, $autosaveContent, $documentState, $force, $manualSave, $token);
 	}
 
 	/**

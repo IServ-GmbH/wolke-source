@@ -70,8 +70,12 @@
     "_%n char_::_%n chars_" : ["%n 字符"],
     "Translate" : "翻译",
     "Replace" : "替换",
+    "Detect language" : "检测语言",
+    "Translation failed" : "翻译失败",
     "Unsupported image type" : "不支持图片格式",
     "Show rich workspaces" : "显示富文本编辑区",
+    "Hide outline" : "隐藏大纲",
+    "Show outline" : "显示大纲",
     "Undo" : "撤销",
     "Redo" : "重做",
     "Headings" : "标题",
@@ -89,18 +93,11 @@
     "Control" : "控制",
     "Add notes, lists or links …" : "添加笔记、列表或链接...",
     "Edit" : "编辑",
-    "Last saved {lastSaved}" : "最近保存 {lastSave}",
-    "Enter your name so other users can see who is editing" : "输入您的姓名以便他人看到谁在编辑",
-    "Todo item" : "待办事项",
-    "Insert an image" : "插入一张图片",
-    "Alt" : "Alt",
+    "Add description" : "添加描述",
     "Update Link" : "更新链接",
     "Add Link" : "添加链接",
     "Link file" : "链接文件",
     "Remove Link" : "移除链接",
-    "Select file to link to" : "选择文件链接至",
-    "ToDo list" : "待办事项清单",
-    "Emoji picker" : "Emoji 选择器",
-    "Insert image" : "插入图片"
+    "Select file to link to" : "选择文件链接至"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

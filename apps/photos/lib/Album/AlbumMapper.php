@@ -298,7 +298,7 @@ class AlbumMapper {
 		$query = $this->connection->getQueryBuilder();
 		$albumsRows = $query->select('album_id')
 			->from("photos_albums_files")
-			->where($query->expr()->eq("owner_id", $query->createNamedParameter($ownerId)))
+			->where($query->expr()->eq("owner", $query->createNamedParameter($ownerId)))
 			->andWhere($query->expr()->eq("file_id", $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)))
 			->executeQuery()
 			->fetchAll();
@@ -306,7 +306,7 @@ class AlbumMapper {
 		// Remove any occurrence of fileId when owner is ownerId.
 		$query = $this->connection->getQueryBuilder();
 		$query->delete("photos_albums_files")
-			->where($query->expr()->eq("owner_id", $query->createNamedParameter($ownerId)))
+			->where($query->expr()->eq("owner", $query->createNamedParameter($ownerId)))
 			->andWhere($query->expr()->eq("file_id", $query->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)))
 			->executeStatement();
 
@@ -458,12 +458,18 @@ class AlbumMapper {
 		}
 
 		foreach ($collaboratorsToRemove as $collaborator) {
-			$query = $this->connection->getQueryBuilder();
-			$query->delete('photos_albums_collabs')
-				->where($query->expr()->eq('album_id', $query->createNamedParameter($albumId, IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->eq('collaborator_id', $query->createNamedParameter($collaborator['id'])))
-				->andWhere($query->expr()->eq('collaborator_type', $query->createNamedParameter($collaborator['type'], IQueryBuilder::PARAM_INT)))
-				->executeStatement();
+			switch ($collaborator['type']) {
+				case self::TYPE_USER:
+					$this->deleteUserFromAlbumCollaboratorsList($collaborator['id'], $albumId);
+					break;
+				default:
+					$query = $this->connection->getQueryBuilder();
+					$query->delete('photos_albums_collabs')
+						->where($query->expr()->eq('album_id', $query->createNamedParameter($albumId, IQueryBuilder::PARAM_INT)))
+						->andWhere($query->expr()->eq('collaborator_id', $query->createNamedParameter($collaborator['id'])))
+						->andWhere($query->expr()->eq('collaborator_type', $query->createNamedParameter($collaborator['type'], IQueryBuilder::PARAM_INT)))
+						->executeStatement();
+			}
 		}
 
 		$this->connection->commit();
@@ -558,7 +564,7 @@ class AlbumMapper {
 			->andWhere($query->expr()->eq('collaborator_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('collaborator_type', $query->createNamedParameter(self::TYPE_USER, IQueryBuilder::PARAM_INT)))
 			->executeStatement();
-			
+
 		// Remove all photos by this user from the album:
 		$this->removeFilesForUser($albumId, $userId);
 	}

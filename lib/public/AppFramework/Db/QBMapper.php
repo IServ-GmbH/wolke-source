@@ -43,7 +43,6 @@ use OCP\IDBConnection;
  * @template T of Entity
  */
 abstract class QBMapper {
-
 	/** @var string */
 	protected $tableName;
 
@@ -319,6 +318,7 @@ abstract class QBMapper {
 	 * @since 14.0.0
 	 */
 	protected function mapRowToEntity(array $row): Entity {
+		unset($row['DOCTRINE_ROWNUM']); // remove doctrine/dbal helper column
 		return \call_user_func($this->entityClass .'::fromRow', $row);
 	}
 

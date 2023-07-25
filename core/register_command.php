@@ -55,19 +55,19 @@ $application->add(new OC\Core\Command\Status(\OC::$server->get(\OCP\IConfig::cla
 $application->add(new OC\Core\Command\Check(\OC::$server->getSystemConfig()));
 $application->add(new OC\Core\Command\L10n\CreateJs());
 $application->add(new \OC\Core\Command\Integrity\SignApp(
-		\OC::$server->getIntegrityCodeChecker(),
-		new \OC\IntegrityCheck\Helpers\FileAccessHelper(),
-		\OC::$server->getURLGenerator()
+	\OC::$server->getIntegrityCodeChecker(),
+	new \OC\IntegrityCheck\Helpers\FileAccessHelper(),
+	\OC::$server->getURLGenerator()
 ));
 $application->add(new \OC\Core\Command\Integrity\SignCore(
-		\OC::$server->getIntegrityCodeChecker(),
-		new \OC\IntegrityCheck\Helpers\FileAccessHelper()
+	\OC::$server->getIntegrityCodeChecker(),
+	new \OC\IntegrityCheck\Helpers\FileAccessHelper()
 ));
 $application->add(new \OC\Core\Command\Integrity\CheckApp(
-		\OC::$server->getIntegrityCodeChecker()
+	\OC::$server->getIntegrityCodeChecker()
 ));
 $application->add(new \OC\Core\Command\Integrity\CheckCore(
-		\OC::$server->getIntegrityCodeChecker()
+	\OC::$server->getIntegrityCodeChecker()
 ));
 
 
@@ -104,11 +104,12 @@ if (\OC::$server->getConfig()->getSystemValue('installed', false)) {
 	$application->add(new OC\Core\Command\Config\System\SetConfig(\OC::$server->getSystemConfig()));
 
 	$application->add(\OC::$server->get(OC\Core\Command\Info\File::class));
+	$application->add(\OC::$server->get(OC\Core\Command\Info\Space::class));
 
 	$application->add(new OC\Core\Command\Db\ConvertType(\OC::$server->getConfig(), new \OC\DB\ConnectionFactory(\OC::$server->getSystemConfig())));
 	$application->add(new OC\Core\Command\Db\ConvertMysqlToMB4(\OC::$server->getConfig(), \OC::$server->getDatabaseConnection(), \OC::$server->getURLGenerator(), \OC::$server->get(LoggerInterface::class)));
 	$application->add(new OC\Core\Command\Db\ConvertFilecacheBigInt(\OC::$server->get(\OC\DB\Connection::class)));
-	$application->add(new OC\Core\Command\Db\AddMissingIndices(\OC::$server->get(\OC\DB\Connection::class), \OC::$server->getEventDispatcher()));
+	$application->add(\OCP\Server::get(\OC\Core\Command\Db\AddMissingIndices::class));
 	$application->add(new OC\Core\Command\Db\AddMissingColumns(\OC::$server->get(\OC\DB\Connection::class), \OC::$server->getEventDispatcher()));
 	$application->add(new OC\Core\Command\Db\AddMissingPrimaryKeys(\OC::$server->get(\OC\DB\Connection::class), \OC::$server->getEventDispatcher()));
 
@@ -144,21 +145,21 @@ if (\OC::$server->getConfig()->getSystemValue('installed', false)) {
 		\OC::$server->getConfig()
 	);
 	$application->add(new OC\Core\Command\Encryption\ChangeKeyStorageRoot(
-			$view,
-			\OC::$server->getUserManager(),
-			\OC::$server->getConfig(),
-			$util,
-			new \Symfony\Component\Console\Helper\QuestionHelper()
-		)
+		$view,
+		\OC::$server->getUserManager(),
+		\OC::$server->getConfig(),
+		$util,
+		new \Symfony\Component\Console\Helper\QuestionHelper()
+	)
 	);
 	$application->add(new OC\Core\Command\Encryption\ShowKeyStorageRoot($util));
 	$application->add(new OC\Core\Command\Encryption\MigrateKeyStorage(
-			$view,
-			\OC::$server->getUserManager(),
-			\OC::$server->getConfig(),
-			$util,
-			\OC::$server->getCrypto()
-		)
+		$view,
+		\OC::$server->getUserManager(),
+		\OC::$server->getConfig(),
+		$util,
+		\OC::$server->getCrypto()
+	)
 	);
 
 	$application->add(new OC\Core\Command\Maintenance\DataFingerprint(\OC::$server->getConfig(), new \OC\AppFramework\Utility\TimeFactory()));

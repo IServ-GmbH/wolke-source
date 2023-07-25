@@ -51,7 +51,6 @@
     "Connect your contacts" : "Verbind je contactpersonen",
     "Access files via WebDAV" : "Benader bestanden via WebDAV",
     "Download macOS/iOS configuration profile" : "Download het macOS/iOS configuratieprofiel",
-    "Get help" : "Hulp krijgen",
     "Start contributing" : "Begin met bijdragen",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Heb je verbeteringen in Nextcloud nodig ? Vond je een probleem? Wil je helpen met vertalen, promotie of documentatie van Nextcloud?",
     "Become part of the Community" : "Word onderdeel van onze Community",
@@ -80,10 +79,6 @@
     "Use this link to connect your apps and desktop client to this server:" : "Gebruik deze link om je apps en desktop client met deze server te verbinden:",
     "Copy link" : "Link kopiëren",
     "Copy to clipboard" : "Kopiëren naar het klembord",
-    "App recommendation: Notes" : "App aanbeveling: Contactpersonen",
-    "Distraction-free notes and writing." : "Afleidingsvrije notities en schrijven.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Als je Nextcloud in een missie-kritische omgeving met veel gebruikers en veel gegevens draait en de zekerheid van ondersteuning van experts achter de Nextcloud technologie nodig hebt, dan is een Enterprise Abonnement van Nextcloud beschikbaar met e-mail en telefonische ondersteuning.",
-    "Get enterprise support" : "Verkrijg zakelijke ondersteuning",
-    "the Nextcloud IRC chat channel on freenode.net" : "het Nextcloud IRC chat kanaal op freenode.net"
+    "Get help" : "Hulp krijgen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

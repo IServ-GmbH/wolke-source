@@ -73,6 +73,7 @@ OC.L10N.register(
     "You are the new owner of {circle}" : "თქვენ ხართ {circle} წრის ახალი მფლობელი",
     "{member} is the new owner of {circle}" : "{member} ახლა {circle} წრის ახალი მფლობელია",
     "Any important event in a <strong>Circle</strong> you are moderating" : "მნიშვნელოვანი მოვლენა <strong>წრეში</strong> რომლის მოდერატორიც ხართ",
+    "Shared to Circles" : "წრეებთან გაზიარებული",
     "Personal" : "პირადი",
     "System" : "სისტემა",
     "Visible" : "ჩანს",
@@ -122,10 +123,6 @@ OC.L10N.register(
     "Size" : "ზომა",
     "Modified" : "შეიცვალა",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "წრეების აპლიკაციას ვერ გამოიყენებთ, სანამ ადმინისტრატორი ერთი ტიპის წრის უფლებას მაინც არ დართავს",
-    "This user is already a member of the circle" : "მომხმარებელი უკვე არის წრის წევრი",
-    "The user is already a member of this circle" : "მომხმარებელი უკვე არის წრის წევრი",
-    "The user has already been invited into this circle" : "მოხმარებელი უკვე დაპატიჟებულია წრეში",
-    "This user does not exist" : "მოხმარებელი არ არსებობს",
     "Could not find share" : "გაზიარება ვერ იქნა ნაპოვნი"
 },
 "nplurals=2; plural=(n!=1);");

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Version control &mdash; Nextcloud latest User Manual latest documentation</title>
@@ -58,7 +58,11 @@
 <li class="toctree-l2"><a class="reference internal" href="file_drop.html">Making anonymous uploads</a></li>
 <li class="toctree-l2"><a class="reference internal" href="large_file_upload.html">Large file uploads</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quota.html">Storage quota</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Version control</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Version control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#naming-a-version">Naming a version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deleting-a-version">Deleting a version</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="projects.html">Projects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transfer_ownership.html">Transfer Ownership</a></li>
 <li class="toctree-l2"><a class="reference internal" href="federated_cloud_sharing.html">Using Federation Shares</a></li>
@@ -127,6 +131,29 @@ created.</p>
 <p>The version app never uses more than 50% of the user’s currently available free
 space. If the stored versions exceed this limit, Nextcloud deletes the oldest
 versions until it meets the disk space limit again.</p>
+<section id="naming-a-version">
+<h2>Naming a version<a class="headerlink" href="#naming-a-version" title="Permalink to this headline"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Naming a version is currently not available when the group folders or S3 versioning apps are enabled.</p>
+</div>
+<p>You can give a name to a version.</p>
+<figure class="align-default">
+<img alt="../_images/files_versions_actions.png" src="../_images/files_versions_actions.png" />
+</figure>
+<figure class="align-default">
+<img alt="../_images/files_versions_naming.png" src="../_images/files_versions_naming.png" />
+</figure>
+<p>When a version has a name, it will be excluded from the automatic expiration process.</p>
+</section>
+<section id="deleting-a-version">
+<h2>Deleting a version<a class="headerlink" href="#deleting-a-version" title="Permalink to this headline"></a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deleting a version is currently not available when the group folders or S3 versioning apps are enabled.</p>
+</div>
+<p>You can also manually delete a version without waiting for the automatic expiration process.</p>
+</section>
 </section>
 
 
@@ -168,11 +195,9 @@ versions until it meets the disk space limit again.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

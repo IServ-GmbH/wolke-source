@@ -77,7 +77,6 @@ use OCP\User\Backend\ISetDisplayNameBackend;
 use Psr\Log\LoggerInterface;
 
 class UsersController extends AUserData {
-
 	/** @var IURLGenerator */
 	protected $urlGenerator;
 	/** @var LoggerInterface */
@@ -374,7 +373,7 @@ class UsersController extends AUserData {
 				$group = $this->groupManager->get($groupid);
 				// Check if group exists
 				if ($group === null) {
-					throw new OCSException('Subadmin group does not exist',  102);
+					throw new OCSException('Subadmin group does not exist', 102);
 				}
 				// Check if trying to make subadmin of admin group
 				if ($group->getGID() === 'admin') {
@@ -389,7 +388,7 @@ class UsersController extends AUserData {
 		}
 
 		$generatePasswordResetToken = false;
-		if (strlen($password) > 469) {
+		if (strlen($password) > IUserManager::MAX_PASSWORD_LENGTH) {
 			throw new OCSException('Invalid password value', 101);
 		}
 		if ($password === '') {
@@ -621,6 +620,7 @@ class UsersController extends AUserData {
 		$permittedFields[] = IAccountManager::PROPERTY_ADDRESS;
 		$permittedFields[] = IAccountManager::PROPERTY_WEBSITE;
 		$permittedFields[] = IAccountManager::PROPERTY_TWITTER;
+		$permittedFields[] = IAccountManager::PROPERTY_FEDIVERSE;
 		$permittedFields[] = IAccountManager::PROPERTY_ORGANISATION;
 		$permittedFields[] = IAccountManager::PROPERTY_ROLE;
 		$permittedFields[] = IAccountManager::PROPERTY_HEADLINE;
@@ -784,6 +784,7 @@ class UsersController extends AUserData {
 			$permittedFields[] = IAccountManager::PROPERTY_ADDRESS;
 			$permittedFields[] = IAccountManager::PROPERTY_WEBSITE;
 			$permittedFields[] = IAccountManager::PROPERTY_TWITTER;
+			$permittedFields[] = IAccountManager::PROPERTY_FEDIVERSE;
 			$permittedFields[] = IAccountManager::PROPERTY_ORGANISATION;
 			$permittedFields[] = IAccountManager::PROPERTY_ROLE;
 			$permittedFields[] = IAccountManager::PROPERTY_HEADLINE;
@@ -793,6 +794,7 @@ class UsersController extends AUserData {
 			$permittedFields[] = IAccountManager::PROPERTY_ADDRESS . self::SCOPE_SUFFIX;
 			$permittedFields[] = IAccountManager::PROPERTY_WEBSITE . self::SCOPE_SUFFIX;
 			$permittedFields[] = IAccountManager::PROPERTY_TWITTER . self::SCOPE_SUFFIX;
+			$permittedFields[] = IAccountManager::PROPERTY_FEDIVERSE . self::SCOPE_SUFFIX;
 			$permittedFields[] = IAccountManager::PROPERTY_ORGANISATION . self::SCOPE_SUFFIX;
 			$permittedFields[] = IAccountManager::PROPERTY_ROLE . self::SCOPE_SUFFIX;
 			$permittedFields[] = IAccountManager::PROPERTY_HEADLINE . self::SCOPE_SUFFIX;
@@ -829,6 +831,7 @@ class UsersController extends AUserData {
 				$permittedFields[] = IAccountManager::PROPERTY_ADDRESS;
 				$permittedFields[] = IAccountManager::PROPERTY_WEBSITE;
 				$permittedFields[] = IAccountManager::PROPERTY_TWITTER;
+				$permittedFields[] = IAccountManager::PROPERTY_FEDIVERSE;
 				$permittedFields[] = IAccountManager::PROPERTY_ORGANISATION;
 				$permittedFields[] = IAccountManager::PROPERTY_ROLE;
 				$permittedFields[] = IAccountManager::PROPERTY_HEADLINE;
@@ -887,7 +890,7 @@ class UsersController extends AUserData {
 				break;
 			case self::USER_FIELD_PASSWORD:
 				try {
-					if (strlen($value) > 469) {
+					if (strlen($value) > IUserManager::MAX_PASSWORD_LENGTH) {
 						throw new OCSException('Invalid password value', 102);
 					}
 					if (!$targetUser->canChangePassword()) {
@@ -957,6 +960,7 @@ class UsersController extends AUserData {
 			case IAccountManager::PROPERTY_ADDRESS:
 			case IAccountManager::PROPERTY_WEBSITE:
 			case IAccountManager::PROPERTY_TWITTER:
+			case IAccountManager::PROPERTY_FEDIVERSE:
 			case IAccountManager::PROPERTY_ORGANISATION:
 			case IAccountManager::PROPERTY_ROLE:
 			case IAccountManager::PROPERTY_HEADLINE:
@@ -1001,6 +1005,7 @@ class UsersController extends AUserData {
 			case IAccountManager::PROPERTY_ADDRESS . self::SCOPE_SUFFIX:
 			case IAccountManager::PROPERTY_WEBSITE . self::SCOPE_SUFFIX:
 			case IAccountManager::PROPERTY_TWITTER . self::SCOPE_SUFFIX:
+			case IAccountManager::PROPERTY_FEDIVERSE . self::SCOPE_SUFFIX:
 			case IAccountManager::PROPERTY_ORGANISATION . self::SCOPE_SUFFIX:
 			case IAccountManager::PROPERTY_ROLE . self::SCOPE_SUFFIX:
 			case IAccountManager::PROPERTY_HEADLINE . self::SCOPE_SUFFIX:
@@ -1307,7 +1312,7 @@ class UsersController extends AUserData {
 		}
 		// Check if group exists
 		if ($group === null) {
-			throw new OCSException('Group does not exist',  102);
+			throw new OCSException('Group does not exist', 102);
 		}
 		// Check if trying to make subadmin of admin group
 		if ($group->getGID() === 'admin') {

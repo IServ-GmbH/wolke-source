@@ -2,15 +2,3 @@
     right: 78px !important;
 }
 
-/* Remove link to nextcloud in accessibility settings */
-#accessibility > p:nth-child(2),
-#accessibility > p:nth-child(3) {
-    display: none;
-}
-
-/* "Remove" link to nextcloud doc in file app settings */
-#app-settings-content > em:nth-child(6) > a:nth-child(1) {
-    pointer-events: none;
-    cursor: default;
-    text-decoration: none;
-}

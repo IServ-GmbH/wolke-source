@@ -2,15 +2,9 @@
 set -e
 
 # See Dockerfile
-nextcloud_version=25.0.7
+nextcloud_version=26.0.4
 
-file_sharing_tab_combined="./docker/cloudfiles/adds/patches/generated/file_sharing_tab_combined.patch"
-file_sharing_tab_part="./docker/cloudfiles/build-steps/patches/limit_link_share_edit.patch"
-if [ ! -f "$file_sharing_tab_combined" ] || [ "$file_sharing_tab_combined" -ot "$file_sharing_tab_part" ]
-then
-  echo "Missing or outdated file_sharing_tab patch. Rebuilding..."
-  ./docker/cloudfiles/build-steps/create-file_sharing_tab-patch $nextcloud_version
-fi
+./docker/cloudfiles/build-steps/create-combined-patch $nextcloud_version
 
 DOCKER_DIR="$(dirname "$0")"
 
@@ -21,3 +15,4 @@ if [ -d "$PWD/data" ]; then
   docker save 'iserv/cloudfiles:latest' | xz -T0 > data/image.tar.xz
   docker image inspect iserv/cloudfiles --format '{{ .Id }}' > data/image.id
 fi
+

@@ -49,7 +49,6 @@ OC.L10N.register(
     "Connect your contacts" : "Σύνδεσε τις επαφές σου",
     "Access files via WebDAV" : "Πρόσβαση στα αρχεία μέσω WebDAV",
     "Download macOS/iOS configuration profile" : "Κατεβάστε το προφίλ ρυθμίσεων για macOS / iOS",
-    "Get help" : "Λήψη βοήθειας",
     "Start contributing" : "Ξεκινήστε να συνεισφέρετε",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Θέλετε να έχετε κάποια βελτίωση στο Nextcloud; Βρήκατε κάποιο πρόβλημα; Θέλετε να βοηθήσετε να μεταφράσετε, να προωθήσετε ή να τεκμηριώσετε το Nextcloud;",
     "Become part of the Community" : "Γίνετε μέρος της Κοινότητας",
@@ -76,10 +75,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Χρησιμοποιήστε τον σύνδεσμο για να συνδέσετε την εφαρμογή υπολογιστή και κινητού σε αυτόν τον διακομιστή:",
     "Copy link" : "Αντιγραφή συνδέσμου",
     "Copy to clipboard" : "Αντιγραφή στο πρόχειρο",
-    "App recommendation: Notes" : "Προτεινόμενη εφαρμογή: Σημειώσεις",
-    "Distraction-free notes and writing." : "Χωρίς περιορισμούς σημειώσεις και γραφή.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Εάν εκτελείτε το Nextcloud σε ένα κρίσιμο περιβάλλον με μεγάλο αριθμό χρηστών, αρκετά δεδομένα και χρειάζεστε τη σιγουριά υποστήριξης από τους έμπειρους τεχνολογίας του Nextcloud, υπάρχει μια συνδρομή Enterprise από το Nextcloud με υποστήριξη email και τηλεφώνου.",
-    "Get enterprise support" : "Αποκτήστε υποστήριξη επιχειρήσεων",
-    "the Nextcloud IRC chat channel on freenode.net" : "το Nextcloud IRC chat στο freenode.net"
+    "Get help" : "Λήψη βοήθειας"
 },
 "nplurals=2; plural=(n != 1);");

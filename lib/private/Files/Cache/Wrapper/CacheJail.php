@@ -46,7 +46,7 @@ class CacheJail extends CacheWrapper {
 	protected $unjailedRoot;
 
 	/**
-	 * @param \OCP\Files\Cache\ICache $cache
+	 * @param ?\OCP\Files\Cache\ICache $cache
 	 * @param string $root
 	 */
 	public function __construct($cache, $root) {
@@ -240,7 +240,7 @@ class CacheJail extends CacheWrapper {
 	 *
 	 * @param string $path
 	 * @param array $entry (optional) meta data of the folder
-	 * @return int
+	 * @return int|float
 	 */
 	public function calculateFolderSize($path, $entry = null) {
 		if ($this->getCache() instanceof Cache) {

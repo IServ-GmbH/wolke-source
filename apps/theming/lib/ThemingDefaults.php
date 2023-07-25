@@ -224,25 +224,19 @@ class ThemingDefaults extends \OC_Defaults {
 		if ($this->isUserThemingDisabled()) {
 			return $defaultColor;
 		}
-		
+
 		// user-defined primary color
-		$themingBackground = '';
 		if (!empty($user)) {
-			$themingBackground = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'background', '');
-			// If the user selected the default background
-			if ($themingBackground === '') {
-				return $defaultColor;
+			$themingBackgroundColor = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'background_color', '');
+			// If the user selected a specific colour
+			if (preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $themingBackgroundColor)) {
+				return $themingBackgroundColor;
 			}
+		}
 
-			// If the user selected a valid custom colour
-			if (preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $themingBackground)) {
-				return $themingBackground;
-			}
-
-			// if the user-selected background is a background reference
-			if (isset(BackgroundService::SHIPPED_BACKGROUNDS[$themingBackground]['primary_color'])) {
-				return BackgroundService::SHIPPED_BACKGROUNDS[$themingBackground]['primary_color'];
-			}
+		// If the default color is not valid, return the default background one
+		if (!preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $defaultColor)) {
+			return BackgroundService::DEFAULT_COLOR;
 		}
 
 		// Finally, return the system global primary color
@@ -253,13 +247,10 @@ class ThemingDefaults extends \OC_Defaults {
 	 * Return the default color primary
 	 */
 	public function getDefaultColorPrimary(): string {
-		$color = $this->config->getAppValue(Application::APP_ID, 'color');
-
-		// If the color is invalid, fallback to default
+		$color = $this->config->getAppValue(Application::APP_ID, 'color', '');
 		if (!preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $color)) {
-			$color = BackgroundService::DEFAULT_COLOR;
+			$color = '#0082c9';
 		}
-
 		return $color;
 	}
 
@@ -448,8 +439,16 @@ class ThemingDefaults extends \OC_Defaults {
 	 * @param string $setting
 	 * @param string $value
 	 */
-	public function set($setting, $value) {
+	public function set($setting, $value): void {
 		$this->config->setAppValue('theming', $setting, $value);
+		$this->increaseCacheBuster();
+	}
+
+	/**
+	 * Revert all settings to the default value
+	 */
+	public function undoAll(): void {
+		$this->config->deleteAppValues('theming');
 		$this->increaseCacheBuster();
 	}
 
@@ -459,7 +458,7 @@ class ThemingDefaults extends \OC_Defaults {
 	 * @param string $setting setting which should be reverted
 	 * @return string default value
 	 */
-	public function undo($setting) {
+	public function undo($setting): string {
 		$this->config->deleteAppValue('theming', $setting);
 		$this->increaseCacheBuster();
 
@@ -495,6 +494,15 @@ class ThemingDefaults extends \OC_Defaults {
 	 */
 	public function getTextColorPrimary() {
 		return $this->util->invertTextColor($this->getColorPrimary()) ? '#000000' : '#ffffff';
+	}
+
+	/**
+	 * Color of text in the header and primary buttons
+	 *
+	 * @return string
+	 */
+	public function getDefaultTextColorPrimary() {
+		return $this->util->invertTextColor($this->getDefaultColorPrimary()) ? '#000000' : '#ffffff';
 	}
 
 	/**

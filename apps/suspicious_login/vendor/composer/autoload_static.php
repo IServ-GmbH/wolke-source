@@ -140,7 +140,7 @@ class ComposerStaticInitSuspiciousLogin
         ),
         'Amp\\Parser\\' => 
         array (
-            0 => __DIR__ . '/..' . '/amphp/parser/lib',
+            0 => __DIR__ . '/..' . '/amphp/parser/src',
         ),
         'Amp\\Parallel\\' => 
         array (
@@ -264,8 +264,8 @@ class ComposerStaticInitSuspiciousLogin
         'Amp\\Parallel\\Worker\\WorkerParallel' => __DIR__ . '/..' . '/amphp/parallel/lib/Worker/WorkerParallel.php',
         'Amp\\Parallel\\Worker\\WorkerProcess' => __DIR__ . '/..' . '/amphp/parallel/lib/Worker/WorkerProcess.php',
         'Amp\\Parallel\\Worker\\WorkerThread' => __DIR__ . '/..' . '/amphp/parallel/lib/Worker/WorkerThread.php',
-        'Amp\\Parser\\InvalidDelimiterError' => __DIR__ . '/..' . '/amphp/parser/lib/InvalidDelimiterError.php',
-        'Amp\\Parser\\Parser' => __DIR__ . '/..' . '/amphp/parser/lib/Parser.php',
+        'Amp\\Parser\\InvalidDelimiterError' => __DIR__ . '/..' . '/amphp/parser/src/InvalidDelimiterError.php',
+        'Amp\\Parser\\Parser' => __DIR__ . '/..' . '/amphp/parser/src/Parser.php',
         'Amp\\Process\\Internal\\Posix\\Handle' => __DIR__ . '/..' . '/amphp/process/lib/Internal/Posix/Handle.php',
         'Amp\\Process\\Internal\\Posix\\Runner' => __DIR__ . '/..' . '/amphp/process/lib/Internal/Posix/Runner.php',
         'Amp\\Process\\Internal\\ProcessHandle' => __DIR__ . '/..' . '/amphp/process/lib/Internal/ProcessHandle.php',

@@ -67,6 +67,7 @@ OC.L10N.register(
     "Desktop client" : "Десктоп клијент",
     "Thunderbird & Outlook addons" : "Додаци за Thunderbird & Outlook",
     "Custom user agent" : "Произвољни агент захтева",
+    "Select a trigger" : "Изаберите окидач",
     "At least one event must be selected" : "Мора бити одабран бар један догађај",
     "Add new flow" : "Додај нови ток",
     "When" : "Када",
@@ -112,10 +113,6 @@ OC.L10N.register(
     "User group membership" : "Припадност групи",
     "is member of" : "је члан групе",
     "is not member of" : "није члан групе",
-    "Select a tag" : "Одаберите ознаку",
-    "No results" : "Нема резултата",
-    "%s (invisible)" : "%s (невидљив)",
-    "%s (restricted)" : "%s (ограничен)",
     "Predefined URLs" : "Предефинисане адресе",
     "Others" : "Остали"
 },

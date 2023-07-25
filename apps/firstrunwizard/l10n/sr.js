@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "Повежите контакте",
     "Access files via WebDAV" : "Приступите фајловима преко ВебДАВ-а",
     "Download macOS/iOS configuration profile" : "Преузмите macOS/iOS конфигурациони профил",
-    "Get help" : "Затражи помоћ",
+    "Get support or participate" : "Добијте подршку или учествујте",
     "Start contributing" : "Дајте допринос",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Да ли желите одређена побољшања у Некстклауду? Да ли сте наишли на проблем? Да ли желите да помогнете са преводом, да промовишете или документујете Некстклауд?",
     "Become part of the Community" : "Постаните члан Заједнице",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "Такође можете да затражите помоћ у каналима које одржава заједница:",
     "the Nextcloud forums" : "Некстклауд форуми",
     "A safe home for all your data" : "Сигурно место за све Ваше податке",
+    "Our values" : "Наше вредности",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Некстклауд Вам ставља податке на дланове, под Вашом контролом. Складиштите документе, календар, контакте и слике на серверу у Вашој фирми, кући или на неком од наших провајдера или и дата центру за који знате.",
     "Host your data and files where you decide" : "Хостујте податке и фајлове где Ви одлучите",
     "Open standards and interoperability" : "Отворени стандарди и интероперабилност",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Користите ову везу да повежете Ваше апликације на овај сервер:",
     "Copy link" : "Копирај везу",
     "Copy to clipboard" : "Копирај у оставу",
-    "App recommendation: Notes" : "Препоруке апликација: Белешке",
-    "Distraction-free notes and writing." : "Белешке и писање без ометања",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Ако имате Некстклауд у јако битном окружењу са великим бројем корисника и са великом количином података и потребу за подршком од стране експерата који стоје иза Некстклауд технологије, комерцијална претплата за Некстклауд је доступна са подршком е-поштом или телефоном.",
-    "Get enterprise support" : "Затражите комерцијалну подршку",
-    "the Nextcloud IRC chat channel on freenode.net" : "Некстклауд IRC чет канал на freenode.net серверу"
+    "Get help" : "Затражи помоћ"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

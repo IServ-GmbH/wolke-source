@@ -73,6 +73,7 @@
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Obvestila za dogodke v <strong>krogih</strong>, v katere ste vključeni",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Obvestila za pomembne dogodke v <strong>krogih</strong>, ki jih moderirate",
     "On global events happening in any <strong>Circle</strong>" : "Za splošne dogodke v kateremkoli <strong>krogu</strong>",
+    "Shared to Circles" : "Souporaba v krogu",
     "Single" : "Enojni",
     "Personal" : "Osebni",
     "System" : "Sistem",
@@ -119,6 +120,7 @@
     "%s shared multiple files with you." : "%s vam omogoči souporabo več datotek.",
     "Boot up" : "Zaganjanje",
     "Nextcloud Initialization" : "Zaganjanje oblaka Nextcloud",
+    "Circles App Initialization" : "Zaganjanje programa Krogi",
     "Fresh installation status" : "Stanje sveže namestitve",
     "Building Local Database" : "Poteka izgradnja krajevne podatkovne zbirke",
     "Testing Basic Circle Creation" : "Preizkušanje ustvarjanja osnovnega kroga",
@@ -177,15 +179,9 @@
     "Name" : "Ime",
     "Size" : "Velikost",
     "Modified" : "Spremenjeno",
-    "Nextcloud User" : "Uporabnik Nextcloud",
     "Initialisation Nextcloud" : "Začenjanje okolja Nextcloud",
     "Initialisation Circles App" : "Začenjanje programa Krogi",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Programa Krogi ni mogoče uporabljati, dokler skrbnik ne omogoči vsaj ene vrste kroga.",
-    "This user is already a member of the circle" : "Uporabnik je že član kroga.",
-    "The user is already a member of this circle" : "Uporabnik je že član kroga.",
-    "The user has already been invited into this circle" : "Uporabnik je že bil povabljen v krog.",
-    "This user does not exist" : "Uporabnik s tem imenom ne obstaja",
-    "Could not find share" : "Mesta souporabe ni mogoče najti",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Program Krogi omogoča uporabnikom ustvariti lastne skupine uporabnikov, sodelavcev, prijateljev ...\nTe skupine uporabnikov (oziroma »krogov«) je nato mogoče uporabiti kot skupine za souporabo in izmenjavo datotek in podatkov v različnih programih."
+    "Could not find share" : "Mesta souporabe ni mogoče najti"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }

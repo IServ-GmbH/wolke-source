@@ -78,6 +78,11 @@ interface IRequest {
 	public const USER_AGENT_CLIENT_DESKTOP = '/^Mozilla\/5\.0 \([A-Za-z ]+\) (mirall|csyncoC)\/.*$/';
 
 	/**
+	 * @since 26.0.0
+	 */
+	public const USER_AGENT_TALK_DESKTOP = '/^Mozilla\/5\.0 \((?!Android|iOS)[A-Za-z ]+\) Nextcloud\-Talk v.*$/';
+
+	/**
 	 * @since 9.1.0
 	 */
 	public const USER_AGENT_CLIENT_IOS = '/^Mozilla\/5\.0 \(iOS\) (ownCloud|Nextcloud)\-iOS.*$/';
@@ -96,6 +101,11 @@ interface IRequest {
 	 * @since 13.0.1
 	 */
 	public const USER_AGENT_THUNDERBIRD_ADDON = '/^Mozilla\/5\.0 \([A-Za-z ]+\) Nextcloud\-Thunderbird v.*$/';
+
+	/**
+	 * @since 26.0.0
+	 */
+	public const JSON_CONTENT_TYPE_REGEX = '/^application\/(?:[a-z0-9.-]+\+)?json\b/';
 
 	/**
 	 * @param string $name

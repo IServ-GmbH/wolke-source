@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "Anslut dina kontakter",
     "Access files via WebDAV" : "Åtkomst till filer via WebDAV",
     "Download macOS/iOS configuration profile" : "Hämta macOS/iOS-konfigurationsprofil",
-    "Get help" : "Få hjälp",
+    "Get support or participate" : "Få support eller delta",
     "Start contributing" : "Börja bidra",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Vill du få en viss förbättring i Nextcloud? Hittade du ett problem? Vill du hjälpa till att översätta, marknadsföra eller dokumentera Nextcloud?",
     "Become part of the Community" : "Bli en del av gemenskapen",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "Du kan också begära hjälp i våra gemenskapssupportskanaler:",
     "the Nextcloud forums" : "Nextcloud-forum",
     "A safe home for all your data" : "Ett säkert hem för all din data",
+    "Our values" : "Våra värderingar",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Nextcloud ger dig full kontroll över din data. Lagra dina dokument, kalender, kontakter och foton på en server i ditt företag, hemma, hos en av våra leverantörer eller i ett datacenter du känner.",
     "Host your data and files where you decide" : "Lagra din data och filer där du vill",
     "Open standards and interoperability" : "Öppna standarder och interoperabilitet",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Använd den här länken för att ansluta dina appar och desktopklient till den här servern:",
     "Copy link" : "Kopiera länk",
     "Copy to clipboard" : "Kopierat till urklipp",
-    "App recommendation: Notes" : "Rekommenderad app: Anteckningar (Notes)",
-    "Distraction-free notes and writing." : "Störningsfria anteckningar helt enkelt.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Om du kör Nextcloud i produktionsmiljö med många användare, mycket data och behöver trygghet med support från experterna bakom Nextcloud-tekniken, finns ett företagsabonnemang från Nextcloud med e-post- och telefonsupport.",
-    "Get enterprise support" : "Skaffa företagssupport",
-    "the Nextcloud IRC chat channel on freenode.net" : "Nextcloud IRC-chattkanal på freenode.net"
+    "Get help" : "Få hjälp"
 },
 "nplurals=2; plural=(n != 1);");

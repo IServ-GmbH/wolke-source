@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reverse proxy &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -90,9 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -171,6 +172,7 @@ or webroot you can use the <strong>overwrite</strong> parameters inside the <cod
 <li><p><code class="file docutils literal notranslate"><span class="pre">overwriteprotocol</span></code> set the protocol of the proxy. You can choose between the two options <strong>http</strong> and <strong>https</strong>.</p></li>
 <li><p><code class="file docutils literal notranslate"><span class="pre">overwritewebroot</span></code> set the absolute web path of the proxy to the Nextcloud folder.</p></li>
 <li><p><code class="file docutils literal notranslate"><span class="pre">overwritecondaddr</span></code> overwrite the values dependent on the remote address. The value must be a <strong>regular expression</strong> of the IP addresses of the proxy. This is useful when you use a reverse SSL proxy only for https access and you want to use the automatic detection for http access.</p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">overwrite.cli.url</span></code> the base URL for any URLs which are generated within Nextcloud using any kind of command line tools. For example, the value set here will be used by the notifications area.</p></li>
 </ul>
 <p>Leave the value empty or omit the parameter to keep the automatic detection.</p>
 </section>
@@ -273,6 +275,7 @@ $CONFIG = array (
   &#39;overwriteprotocol&#39; =&gt; &#39;https&#39;,
   &#39;overwritewebroot&#39;  =&gt; &#39;/domain.tld/nextcloud&#39;,
   &#39;overwritecondaddr&#39; =&gt; &#39;^10\.0\.0\.1$&#39;,
+  &#39;overwrite.cli.url&#39; =&gt; &#39;https://domain.tld/,
 );
 </pre></div>
 </div>
@@ -319,11 +322,9 @@ create the <code class="file docutils literal notranslate"><span class="pre">con
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

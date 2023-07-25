@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Email &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -64,8 +64,6 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#setting-mail-server-parameters-in-config-php">Setting mail server parameters in config.php</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#smtp">SMTP</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#ssl">SSL</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tls">TLS</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sendmail">Sendmail</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#qmail">qmail</a></li>
 </ul>
@@ -92,9 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -158,11 +157,28 @@ these include a <code class="docutils literal notranslate"><span class="pre">sen
 <h2>Configuring an SMTP server<a class="headerlink" href="#configuring-an-smtp-server" title="Permalink to this headline"></a></h2>
 <p>You need the following information from your mail server administrator to
 connect Nextcloud to a remote SMTP server:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There were changes to the 3rd party mailer library in Nextcloud 26:</p>
 <ul class="simple">
-<li><p>Encryption type: None, SSL/TLS, or STARTTLS</p></li>
+<li><p>STARTTLS cannot be enforced. It will be used automatically if the mail server supports it. The encryption type should be set to ‘None/STARTTLS’ in this case. See <a class="reference internal" href="#tlspeerverification"><span class="std std-ref">here</span></a> for an example on how to configure self signed certificates.</p></li>
+<li><p>NTLM authentication for Microsoft Exchange is not supported by the new mailer library</p></li>
+</ul>
+</div>
+<ul>
+<li><p>Encryption type: None/STARTTLS or SSL</p></li>
 <li><p>The From address you want your outgoing Nextcloud mails to use</p></li>
 <li><p>Whether authentication is required</p></li>
-<li><p>Authentication method: None, Login, Plain, or NT LAN Manager</p></li>
+<li><p>Authentication: when authentication is required, the underlying mailer will try the following authentication methods in the order they’re listed:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>CramMd5</p></li>
+<li><p>Login</p></li>
+<li><p>Plain</p></li>
+<li><p>XOAuth2</p></li>
+</ul>
+</div></blockquote>
+</li>
 <li><p>The server’s IP address or fully-qualified domain name and the SMTP port</p></li>
 <li><p>Login credentials (if required)</p></li>
 </ul>
@@ -170,9 +186,6 @@ connect Nextcloud to a remote SMTP server:</p>
 <p class="admonition-title">Note</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">overwrite.cli.url</span></code> parameter from <code class="docutils literal notranslate"><span class="pre">config.php</span></code> will be used for the SMTP EHLO.</p>
 </div>
-<figure class="align-default">
-<img alt="../_images/smtp-config-smtp.png" src="../_images/smtp-config-smtp.png" />
-</figure>
 <p>Your changes are saved immediately, and you can click the Send Email button to
 test your configuration. This sends a test message to the email address you
 configured on your Personal page. The test message says:</p>
@@ -274,24 +287,12 @@ used:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpsecure&quot;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If the SMTP server only accepts secure connections you can choose between
-the following two variants:</p>
-</section>
-<section id="ssl">
-<h3>SSL<a class="headerlink" href="#ssl" title="Permalink to this headline"></a></h3>
-<p>A secure connection will be initiated using the SMTPS protocol
-which uses the port 465/tcp:</p>
+<p>The connection will be upgraded automatically via STARTTLS if the SMTP server
+supports it.</p>
+<p>If required by the SMTP server, a secure SSL/TLS connection can be enforced
+via the SMTPS protocol which uses the port 465/tcp:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtphost&quot;</span>     <span class="o">=&gt;</span> <span class="s2">&quot;smtp.server.dom:465&quot;</span><span class="p">,</span>
 <span class="s2">&quot;mail_smtpsecure&quot;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;ssl&#39;</span><span class="p">,</span>
-</pre></div>
-</div>
-</section>
-<section id="tls">
-<h3>TLS<a class="headerlink" href="#tls" title="Permalink to this headline"></a></h3>
-<p>A secure connection will be initiated using the STARTTLS protocol which
-uses the default port 25/tcp:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtphost&quot;</span>     <span class="o">=&gt;</span> <span class="s2">&quot;smtp.server.dom&quot;</span><span class="p">,</span>
-<span class="s2">&quot;mail_smtpsecure&quot;</span>   <span class="o">=&gt;</span> <span class="s1">&#39;tls&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
 <p>And finally it is necessary to configure if the SMTP server requires
@@ -302,18 +303,10 @@ authentication, if not, the default values can be taken as is.</p>
 </pre></div>
 </div>
 <p>If SMTP authentication is required you have to set the required username
-and password and can optionally choose between the authentication types
-<strong>LOGIN</strong> (default) or <strong>PLAIN</strong>.</p>
+and password.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpauth&quot;</span>     <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
-<span class="s2">&quot;mail_smtpauthtype&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;LOGIN&quot;</span><span class="p">,</span>
 <span class="s2">&quot;mail_smtpname&quot;</span>     <span class="o">=&gt;</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span>
 <span class="s2">&quot;mail_smtppassword&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
-</pre></div>
-</div>
-<p>Advanced users can add additional stream options in <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code>,
-which maps directly to <a class="reference external" href="https://swiftmailer.symfony.com/">Swift Mailer’s</a>
-<code class="docutils literal notranslate"><span class="pre">streamOptions</span></code> configuration parameter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpstreamoptions&quot;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(),</span>
 </pre></div>
 </div>
 </section>
@@ -455,9 +448,8 @@ using the <code class="docutils literal notranslate"><span class="pre">telnet</s
 <span class="n">Connection</span> <span class="n">closed</span> <span class="n">by</span> <span class="n">foreign</span> <span class="n">host</span><span class="o">.</span>
 </pre></div>
 </div>
-<p><strong>Question</strong>: How can I send mail when using self-signed certificates if
-remote SMTP server do not have options to allow this on their side?</p>
-<p><strong>Answer</strong>: If you are having remote SMTP setup, you can try adding this
+<p id="tlspeerverification"><strong>Question</strong>: How can I send mail using self-signed certificates or use STARTTLS with self signed certificates?</p>
+<p><strong>Answer</strong>: To disable peer verification or to use self signed certificates, add the following
 to your <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpstreamoptions&quot;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(</span>
     <span class="s1">&#39;ssl&#39;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(</span>
@@ -468,6 +460,8 @@ to your <code class="docutils literal notranslate"><span class="pre">config/conf
 <span class="p">),</span>
 </pre></div>
 </div>
+<p><strong>Question</strong>: All emails keep getting rejected even though only one email address is invalid.</p>
+<p><strong>Answer</strong>: Partial sending, i. e. sending to all but the faulty email address is not possible.</p>
 </section>
 <section id="enabling-debug-mode">
 <h2>Enabling debug mode<a class="headerlink" href="#enabling-debug-mode" title="Permalink to this headline"></a></h2>
@@ -518,11 +512,9 @@ This is expected behavior and can be ignored.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

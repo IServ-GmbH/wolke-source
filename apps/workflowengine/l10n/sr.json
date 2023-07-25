@@ -65,6 +65,7 @@
     "Desktop client" : "Десктоп клијент",
     "Thunderbird & Outlook addons" : "Додаци за Thunderbird & Outlook",
     "Custom user agent" : "Произвољни агент захтева",
+    "Select a trigger" : "Изаберите окидач",
     "At least one event must be selected" : "Мора бити одабран бар један догађај",
     "Add new flow" : "Додај нови ток",
     "When" : "Када",
@@ -110,10 +111,6 @@
     "User group membership" : "Припадност групи",
     "is member of" : "је члан групе",
     "is not member of" : "није члан групе",
-    "Select a tag" : "Одаберите ознаку",
-    "No results" : "Нема резултата",
-    "%s (invisible)" : "%s (невидљив)",
-    "%s (restricted)" : "%s (ограничен)",
     "Predefined URLs" : "Предефинисане адресе",
     "Others" : "Остали"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"

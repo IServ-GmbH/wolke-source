@@ -134,13 +134,21 @@ class SessionService {
 		}, $sessions);
 	}
 
+	public function getNameForSession(Session $session): ?string {
+		if ($session->getUserId() !== null) {
+			return $this->userManager->getDisplayName($session->getUserId());
+		}
+
+		return $session->getGuestName();
+	}
+
 	public function findAllInactive() {
 		return $this->sessionMapper->findAllInactive();
 	}
 
-	public function removeInactiveSessions($documentId = -1) {
+	public function removeInactiveSessionsWithoutSteps($documentId = -1) {
 		// No need to clear the cache here as we already set a TTL
-		return $this->sessionMapper->deleteInactive($documentId);
+		return $this->sessionMapper->deleteInactiveWithoutSteps($documentId);
 	}
 
 	/**
@@ -165,12 +173,17 @@ class SessionService {
 
 		try {
 			$data = $this->sessionMapper->find($documentId, $sessionId, $token);
-			$this->cache->set($token, json_encode($data), self::SESSION_VALID_TIME - 30);
-			return $data;
+			$jsonData = json_encode($data);
+
+			if ($jsonData) {
+				$this->cache->set($token, json_encode($data), self::SESSION_VALID_TIME - 30);
+				return $data;
+			}
 		} catch (DoesNotExistException $e) {
-			$this->session = false;
-			return false;
 		}
+
+		$this->session = false;
+		return false;
 	}
 
 	public function isValidSession($documentId, $sessionId, $token): bool {
@@ -214,6 +227,23 @@ class SessionService {
 		$session = $this->sessionMapper->find($documentId, $sessionId, $sessionToken);
 		$session->setGuestName($guestName);
 		$session->setColor($this->getColorForGuestName($guestName));
+		return $this->sessionMapper->update($session);
+	}
+
+	/**
+	 * @param $documentId
+	 * @param $sessionId
+	 * @param $sessionToken
+	 * @param $message
+	 * @return Session
+	 * @throws DoesNotExistException
+	 */
+	public function updateSessionAwareness(int $documentId, int $sessionId, string $sessionToken, string $message): Session {
+		$session = $this->sessionMapper->find($documentId, $sessionId, $sessionToken);
+		if (empty($message)) {
+			return $session;
+		}
+		$session->setLastAwarenessMessage($message);
 		return $this->sessionMapper->update($session);
 	}
 

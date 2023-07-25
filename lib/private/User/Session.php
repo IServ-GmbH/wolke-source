@@ -90,7 +90,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @package OC\User
  */
 class Session implements IUserSession, Emitter {
-
 	/** @var Manager $manager */
 	private $manager;
 
@@ -373,6 +372,7 @@ class Session implements IUserSession, Emitter {
 
 		if ($regenerateSessionId) {
 			$this->session->regenerateId();
+			$this->session->remove(Auth::DAV_AUTHENTICATED);
 		}
 
 		$this->setUser($user);
@@ -428,7 +428,7 @@ class Session implements IUserSession, Emitter {
 								IRequest $request,
 								OC\Security\Bruteforce\Throttler $throttler) {
 		$remoteAddress = $request->getRemoteAddress();
-		$currentDelay = $throttler->sleepDelay($remoteAddress, 'login');
+		$currentDelay = $throttler->sleepDelayOrThrowOnMax($remoteAddress, 'login');
 
 		if ($this->manager instanceof PublicEmitter) {
 			$this->manager->emit('\OC\User', 'preLogin', [$user, $password]);
@@ -450,7 +450,6 @@ class Session implements IUserSession, Emitter {
 
 		// Try to login with this username and password
 		if (!$this->login($user, $password)) {
-
 			// Failed, maybe the user used their email address
 			if (!filter_var($user, FILTER_VALIDATE_EMAIL)) {
 				$this->handleLoginFailed($throttler, $currentDelay, $remoteAddress, $user, $password);
@@ -458,15 +457,7 @@ class Session implements IUserSession, Emitter {
 			}
 			$users = $this->manager->getByEmail($user);
 			if (!(\count($users) === 1 && $this->login($users[0]->getUID(), $password))) {
-				$this->logger->warning('Login failed: \'' . $user . '\' (Remote IP: \'' . \OC::$server->getRequest()->getRemoteAddress() . '\')', ['app' => 'core']);
-
-				$throttler->registerAttempt('login', $request->getRemoteAddress(), ['user' => $user]);
-
-				$this->dispatcher->dispatchTyped(new OC\Authentication\Events\LoginFailed($user));
-
-				if ($currentDelay === 0) {
-					$throttler->sleepDelay($request->getRemoteAddress(), 'login');
-				}
+				$this->handleLoginFailed($throttler, $currentDelay, $remoteAddress, $user, $password);
 				return false;
 			}
 		}
@@ -485,10 +476,10 @@ class Session implements IUserSession, Emitter {
 		$this->logger->warning("Login failed: '" . $user . "' (Remote IP: '" . $remoteAddress . "')", ['app' => 'core']);
 
 		$throttler->registerAttempt('login', $remoteAddress, ['user' => $user]);
-		$this->dispatcher->dispatchTyped(new OC\Authentication\Events\LoginFailed($user));
+		$this->dispatcher->dispatchTyped(new OC\Authentication\Events\LoginFailed($user, $password));
 
 		if ($currentDelay === 0) {
-			$throttler->sleepDelay($remoteAddress, 'login');
+			$throttler->sleepDelayOrThrowOnMax($remoteAddress, 'login');
 		}
 	}
 
@@ -686,7 +677,7 @@ class Session implements IUserSession, Emitter {
 			// User does not exist
 			return false;
 		}
-		$name = isset($request->server['HTTP_USER_AGENT']) ? utf8_encode($request->server['HTTP_USER_AGENT']) : 'unknown browser';
+		$name = isset($request->server['HTTP_USER_AGENT']) ? mb_convert_encoding($request->server['HTTP_USER_AGENT'], 'UTF-8', 'ISO-8859-1') : 'unknown browser';
 		try {
 			$sessionId = $this->session->getId();
 			$pwd = $this->getPassword($password);

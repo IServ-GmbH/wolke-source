@@ -51,7 +51,6 @@
     "Connect your contacts" : "連絡先に接続",
     "Access files via WebDAV" : "WebDAV 経由でファイルにアクセス",
     "Download macOS/iOS configuration profile" : "macOS/iOS 設定プロファイルをダウンロード",
-    "Get help" : "ヘルプの入手",
     "Start contributing" : "貢献を開始",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "あなたは Nextcloud で一定の改善をしたいですか？ 問題が見つかりましたか？ Nextcloud の翻訳、宣伝、または文書化を手伝いたいですか？",
     "Become part of the Community" : "コミュニティの一員になる",
@@ -80,10 +79,6 @@
     "Use this link to connect your apps and desktop client to this server:" : "アプリやデスクトップクライアントをこのサーバーに接続するには、このリンクを使用してください:",
     "Copy link" : "リンクをコピー",
     "Copy to clipboard" : "クリップボードにコピー",
-    "App recommendation: Notes" : "アプリのおすすめ：ノート",
-    "Distraction-free notes and writing." : "集中モードのノートと執筆",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Nextcloud を大勢のユーザーと大量のデータを扱うミッションクリティカルな環境で運用し、Nextcloud 技術の裏側にいる専門家による確実なサポートが必要であれば、Nextcloud からの法人向けサブスクリプションがメールと電話サポートで利用できます。",
-    "Get enterprise support" : "法人向けサポートを取得",
-    "the Nextcloud IRC chat channel on freenode.net" : "freenode.net の Nextcloud IRC チャットチャンネル"
+    "Get help" : "ヘルプの入手"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

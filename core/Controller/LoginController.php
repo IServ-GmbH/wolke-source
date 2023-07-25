@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2017, Sandro Lutz <sandro.lutz@temparus.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -40,6 +43,7 @@ use OC\User\Session;
 use OC_App;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -68,7 +72,6 @@ class LoginController extends Controller {
 	private IURLGenerator $urlGenerator;
 	private Defaults $defaults;
 	private Throttler $throttler;
-	private Chain $loginChain;
 	private IInitialStateService $initialStateService;
 	private WebAuthnManager $webAuthnManager;
 	private IManager $manager;
@@ -83,7 +86,6 @@ class LoginController extends Controller {
 								IURLGenerator $urlGenerator,
 								Defaults $defaults,
 								Throttler $throttler,
-								Chain $loginChain,
 								IInitialStateService $initialStateService,
 								WebAuthnManager $webAuthnManager,
 								IManager $manager,
@@ -96,7 +98,6 @@ class LoginController extends Controller {
 		$this->urlGenerator = $urlGenerator;
 		$this->defaults = $defaults;
 		$this->throttler = $throttler;
-		$this->loginChain = $loginChain;
 		$this->initialStateService = $initialStateService;
 		$this->webAuthnManager = $webAuthnManager;
 		$this->manager = $manager;
@@ -105,10 +106,10 @@ class LoginController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @UseSession
 	 *
 	 * @return RedirectResponse
 	 */
+	#[UseSession]
 	public function logout() {
 		$loginToken = $this->request->getCookie('nc_token');
 		if (!is_null($loginToken)) {
@@ -134,13 +135,13 @@ class LoginController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
 	 *
 	 * @param string $user
 	 * @param string $redirect_url
 	 *
 	 * @return TemplateResponse|RedirectResponse
 	 */
+	#[UseSession]
 	public function showLoginForm(string $user = null, string $redirect_url = null): Http\Response {
 		if ($this->userSession->isLoggedIn()) {
 			return new RedirectResponse($this->urlGenerator->linkToDefaultPageUrl());
@@ -227,7 +228,7 @@ class LoginController extends Controller {
 			$user = null;
 		}
 
-		$passwordLink = $this->config->getSystemValue('lost_password_link', '');
+		$passwordLink = $this->config->getSystemValueString('lost_password_link', '');
 
 		$this->initialStateService->provideInitialState(
 			'core',
@@ -283,19 +284,14 @@ class LoginController extends Controller {
 
 	/**
 	 * @PublicPage
-	 * @UseSession
 	 * @NoCSRFRequired
 	 * @BruteForceProtection(action=login)
 	 *
-	 * @param string $user
-	 * @param string $password
-	 * @param string $redirect_url
-	 * @param string $timezone
-	 * @param string $timezone_offset
-	 *
 	 * @return RedirectResponse
 	 */
-	public function tryLogin(string $user = '',
+	#[UseSession]
+	public function tryLogin(Chain $loginChain,
+							 string $user = '',
 							 string $password = '',
 							 string $redirect_url = null,
 							 string $timezone = '',
@@ -327,7 +323,7 @@ class LoginController extends Controller {
 			$timezone,
 			$timezone_offset
 		);
-		$result = $this->loginChain->process($data);
+		$result = $loginChain->process($data);
 		if (!$result->isSuccess()) {
 			return $this->createLoginFailedResponse(
 				$data->getUsername(),
@@ -373,12 +369,12 @@ class LoginController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @UseSession
 	 * @BruteForceProtection(action=sudo)
 	 *
 	 * @license GNU AGPL version 3 or any later version
 	 *
 	 */
+	#[UseSession]
 	public function confirmPassword(string $password): DataResponse {
 		$loginName = $this->userSession->getLoginName();
 		$loginResult = $this->userManager->checkPassword($loginName, $password);

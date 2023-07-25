@@ -67,6 +67,7 @@ OC.L10N.register(
     "Desktop client" : "Desktop client",
     "Thunderbird & Outlook addons" : "Thunderbird & Outlook addons",
     "Custom user agent" : "Custom user agent",
+    "Select a trigger" : "Select a trigger",
     "At least one event must be selected" : "At least one event must be selected",
     "Add new flow" : "Add new flow",
     "When" : "When",
@@ -112,10 +113,6 @@ OC.L10N.register(
     "User group membership" : "User group membership",
     "is member of" : "is member of",
     "is not member of" : "is not member of",
-    "Select a tag" : "Select a tag",
-    "No results" : "No results",
-    "%s (invisible)" : "%s (invisible)",
-    "%s (restricted)" : "%s (restricted)",
     "Predefined URLs" : "Predefined URLs",
     "Others" : "Others"
 },

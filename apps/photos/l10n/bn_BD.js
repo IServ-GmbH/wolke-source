@@ -7,9 +7,10 @@ OC.L10N.register(
     "Tags" : "ট্যাগ",
     "Back" : "পেছনে যাও",
     "Save" : "সংরক্ষণ",
+    "Shared by" : "যাদের মাঝে ভাগাভাগি করা হয়েছে",
+    "Group" : "গোষ্ঠীসমূহ",
     "Favorite" : "প্রিয়জন",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "যোগ করুন",
-    "Settings" : "সেটিংস"
+    "Add" : "যোগ করুন"
 },
 "nplurals=2; plural=(n != 1);");

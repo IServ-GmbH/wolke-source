@@ -22,7 +22,7 @@ For best performance, stability and functionality we have documented some recomm
 |                  | - openSUSE Leap 15.4                                                  |
 |                  | - CentOS Stream                                                       |
 +------------------+-----------------------------------------------------------------------+
-| Database         | - **MySQL 8.0+ or MariaDB 10.2/10.3/10.4/10.5/10.6** (recommended)    |
+| Database         | - **MySQL 8.0+ or MariaDB 10.3/10.4/10.5/10.6** (recommended)         |
 |                  | - Oracle Database 11g (*only as part of an enterprise subscription*)  |
 |                  | - PostgreSQL 10/11/12/13/14/15                                        |
 |                  | - SQLite (*only recommended for testing and minimal-instances*)       |
@@ -30,9 +30,9 @@ For best performance, stability and functionality we have documented some recomm
 | Webserver        | - **Apache 2.4 with** ``mod_php`` **or** ``php-fpm`` (recommended)    |
 |                  | - nginx with ``php-fpm``                                              |
 +------------------+-----------------------------------------------------------------------+
-| PHP Runtime      | - 7.4  (*deprecated*)                                                 |
-|                  | - 8.0                                                                 |
+| PHP Runtime      | - 8.0                                                                 |
 |                  | - **8.1** (*recommended*)                                             |
+|                  | - 8.2                                                                 |
 +------------------+-----------------------------------------------------------------------+
 
 See :doc:`source_installation` for minimum PHP-modules and additional software for installing Nextcloud.
@@ -40,6 +40,11 @@ See :doc:`source_installation` for minimum PHP-modules and additional software f
 CPU Architecture and OS
 ^^^^^^^^^^^^^^^^^^^^^^^
 A 64-bit CPU, OS and PHP is required for Nextcloud to run well.
+
+32-bit systems are supported, with the following known limitations:
+
+- Dates before Unix Epoch (1970-01-01) are not supported
+- Dates after 2038 are not supported
 
 Memory
 ^^^^^^
@@ -90,10 +95,9 @@ Desktop client
 We strongly recommend using the latest version of your operating system to get the full and most stable experience out
 of our clients.
 
-* **Windows** 8.1+
-* **macOS** Lion (10.7)+ (64-bit only)
-* **Linux** (CentOS 6.5+, Ubuntu 14.04+, Fedora 21+, openSUSE 13, SUSE Linux Enterprise 11 SP3+, Debian 8 (Jessie)+, Red Hat
-  Enterprise Linux 7)
+* **Windows** 10+
+* **macOS** Lion (10.14)+ (64-bits only)
+* **Linux** (64-bits only) Should run on any distribution newer than Ubuntu 18.04 with our official AppImage package
 
 Mobile apps
 -----------
@@ -111,7 +115,7 @@ Talk App
 ^^^^^^^^
 
 - **iOS** 14.0+
-- **Android** 5.0+
+- **Android** 6.0+
 - **Nextcloud Server** 14.0+
 - **Nextcloud Talk** 4.0+
 

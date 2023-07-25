@@ -241,20 +241,14 @@ OC.L10N.register(
     "Detailed logs" : "Detalizēti žurnāli",
     "Update needed" : "Nepieciešama atjaunināšana",
     "Please use the command line updater because you have a big instance with more than 50 users." : "Lūdzu, izmantojiet komandrindas atjauninātāju, jo jums ir vairāk nekā 50 lietotāji.",
-    "Please use the command line updater because automatic updating is disabled in the config.php." : "Lūdzu izmanto komandrindas atjaunināšanu, jo automātiskā atjaunināšana ir atspējota konfigurācijas datnē config.php.",
     "I know that if I continue doing the update via web UI has the risk, that the request runs into a timeout and could cause data loss, but I have a backup and know how to restore my instance in case of a failure." : "Es zinu ka ja es turpināšu atjauninājumu caur tīmekļa atjauninātāju ir risks ka pieprasījumam būs noliedze , kas var radīt  datu zudumu, bet man ir dublējumkopija un es zinu kā atjaunot instanci neveiksmes gadijumā.",
     "Upgrade via web on my own risk" : "Atjaunināt caur tīmekļa atjauninātāju uz mana paša risku.",
     "Maintenance mode" : "Uzturēšanas režīms",
     "This %s instance is currently in maintenance mode, which may take a while." : "Šis %s serveris pašlaik darbojas uzturēšanas režīmā, tas var ilgt kādu laiku.",
     "Contact your system administrator if this message persists or appeared unexpectedly." : "Sazinieties ar sistēmas administratoru, ja šis ziņojums tiek rādīts.. vai parādījās negaidīti",
-    "[%d / %d]: Checking table %s" : "[%d / %d]: Pārbauda tabulu %s",
     "If it is not there ask your local administrator." : "Ja tas tur nav tad jautājiet savam vietējam administratoram.",
-    "Collaboratively edit office documents." : "Kopīgi rediģējiet ofisa dokumentus.",
     "Settings" : "Iestatījumi",
-    "restricted" : "ierobežots",
-    "invisible" : "Neredzams",
     "File not found" : "Datne nav atrasta",
-    "More" : "Vairāk",
-    "Contacts" : "Kontakti"
+    "Please use the command line updater because automatic updating is disabled in the config.php." : "Lūdzu izmanto komandrindas atjaunināšanu, jo automātiskā atjaunināšana ir atspējota konfigurācijas datnē config.php."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

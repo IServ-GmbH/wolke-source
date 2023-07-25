@@ -21,7 +21,7 @@ return array(
     'Amp\\Sync\\' => array($vendorDir . '/amphp/sync/src'),
     'Amp\\Serialization\\' => array($vendorDir . '/amphp/serialization/src'),
     'Amp\\Process\\' => array($vendorDir . '/amphp/process/lib'),
-    'Amp\\Parser\\' => array($vendorDir . '/amphp/parser/lib'),
+    'Amp\\Parser\\' => array($vendorDir . '/amphp/parser/src'),
     'Amp\\Parallel\\' => array($vendorDir . '/amphp/parallel/lib'),
     'Amp\\ByteStream\\' => array($vendorDir . '/amphp/byte-stream/lib'),
     'Amp\\' => array($vendorDir . '/amphp/amp/lib'),

@@ -77,6 +77,7 @@ The user needs to be identified/logged in by the server. Then you can just run a
         "messageRichParameters": [],
         "link": "http://localhost/index.php/apps/files_sharing/pending",
         "icon": "http://localhost/img/icon.svg",
+        "shouldNotify": true,
         "actions": [
           {
             "label": "Accept",
@@ -167,3 +168,12 @@ In order to delete a notification, you can send a DELETE request against `/ocs/v
 In order to delete all notifications, you can send a DELETE request against `/ocs/v2.php/apps/notifications/api/v2/notifications`
 
 **Note:** This endpoint was added for Nextcloud 14, so check for the `delete-all` capability first.
+
+
+## Check existance of notifications for a user
+
+In order to check whether a set of notification ids (max. 200 items per request) still exist for a user,
+a client can send a POST request against `/ocs/v2.php/apps/notifications/api/v2/notifications/exists` with
+the integer list provided as `ids` field on the POST body.
+
+**Note:** This endpoint was added for Nextcloud 27, so check for the `exists` capability first.

@@ -62,6 +62,7 @@ use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\ManagedModel;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Model\Probes\CircleProbe;
+use OCA\Circles\Model\Probes\DataProbe;
 use OCA\Circles\Model\Probes\MemberProbe;
 use OCA\Circles\StatusCode;
 use OCA\Circles\Tools\Exceptions\InvalidItemException;
@@ -734,13 +735,17 @@ class CircleService {
 			return $this->l10n->t('Personal Circle');
 		}
 
-		return $this->l10n->t(
-			'%s owned by %s',
-			[
-				$source,
-				$this->configService->displayFederatedUser($circle->getOwner(), true)
-			]
-		);
+		if ($circle->hasOwner()) {
+			return $this->l10n->t(
+				'%s owned by %s',
+				[
+					$source,
+					$this->configService->displayFederatedUser($circle->getOwner(), true)
+				]
+			);
+		}
+
+		return $source;
 	}
 
 	/**
@@ -755,5 +760,62 @@ class CircleService {
 
 	private function generateGetCirclesCacheKey(FederatedUser $federatedUser, string $probeSum): string {
 		return $federatedUser->getSingleId() . '#' . $probeSum;
+	}
+
+
+	/**
+	 * @param string $circleId
+	 * @param CircleProbe $circleProbe
+	 * @param DataProbe|null $dataProbe
+	 *
+	 * @return Circle
+	 * @throws InitiatorNotFoundException
+	 * @throws RequestBuilderException
+	 * @throws CircleNotFoundException
+	 */
+	public function probeCircle(
+		string $circleId,
+		?CircleProbe $circleProbe = null,
+		?DataProbe $dataProbe = null
+	): Circle {
+		$this->federatedUserService->mustHaveCurrentUser();
+
+		if (is_null($circleProbe)) {
+			$circleProbe = new CircleProbe();
+			$circleProbe->includeSystemCircles();
+		}
+
+		if (is_null($dataProbe)) {
+			$dataProbe = new DataProbe();
+		}
+
+		return $this->circleRequest->probeCircle(
+			$circleId,
+			$this->federatedUserService->getCurrentUser(),
+			$circleProbe,
+			$dataProbe
+		);
+	}
+
+	/**
+	 * @param CircleProbe $circleProbe
+	 * @param DataProbe|null $dataProbe
+	 *
+	 * @return array
+	 * @throws InitiatorNotFoundException
+	 * @throws RequestBuilderException
+	 */
+	public function probeCircles(CircleProbe $circleProbe, ?DataProbe $dataProbe = null): array {
+		$this->federatedUserService->mustHaveCurrentUser();
+
+		if (is_null($dataProbe)) {
+			$dataProbe = new DataProbe();
+		}
+
+		return $this->circleRequest->probeCircles(
+			$this->federatedUserService->getCurrentUser(),
+			$circleProbe,
+			$dataProbe
+		);
 	}
 }

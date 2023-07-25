@@ -32,7 +32,6 @@ use OCP\Contacts\IManager;
 use OCP\IAddressBook;
 
 class ContactsManager implements IManager {
-
 	/**
 	 * This function is used to search and find contacts within the users address books.
 	 * In case $pattern is empty all contacts will be returned.
@@ -147,24 +146,6 @@ class ContactsManager implements IManager {
 	 */
 	public function unregisterAddressBook(IAddressBook $addressBook) {
 		unset($this->addressBooks[$addressBook->getKey()]);
-	}
-
-	/**
-	 * Return a list of the user's addressbooks display names
-	 * ! The addressBook displayName are not unique, please use getUserAddressBooks
-	 *
-	 * @return IAddressBook[]
-	 * @since 6.0.0
-	 * @deprecated 16.0.0 - Use `$this->getUserAddressBooks()` instead
-	 */
-	public function getAddressBooks() {
-		$this->loadAddressBooks();
-		$result = [];
-		foreach ($this->addressBooks as $addressBook) {
-			$result[$addressBook->getKey()] = $addressBook->getDisplayName();
-		}
-
-		return $result;
 	}
 
 	/**

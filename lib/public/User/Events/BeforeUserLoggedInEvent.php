@@ -34,15 +34,9 @@ use OCP\EventDispatcher\Event;
  * @since 18.0.0
  */
 class BeforeUserLoggedInEvent extends Event {
-
-	/** @var string */
-	private $username;
-
-	/** @var string */
-	private $password;
-
-	/** @var IApacheBackend|null */
-	private $backend;
+	private string $username;
+	private ?string $password;
+	private ?IApacheBackend $backend;
 
 	/**
 	 * @since 18.0.0

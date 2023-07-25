@@ -64,8 +64,6 @@ use OCP\Util;
  * @package OCA\Circles\Circles
  */
 class FileSharingBroadcaster implements IBroadcaster {
-
-
 	/** @var bool */
 	private $initiated = false;
 
@@ -375,7 +373,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 				$ownerCloudId->getId(),
 				$share->getSharedBy(),
 				$sharedByFederatedId,
-				Share::TYPE_USER
+				IShare::TYPE_USER
 			);
 		} catch (\Exception $e) {
 			$this->logger->logException(

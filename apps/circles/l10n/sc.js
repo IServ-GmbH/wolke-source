@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Pro is eventos de unu <strong>Giru</strong> de su chi ses cumponente",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Cale si siat eventu importante in un <strong>Giru</strong> chi ses moderende",
     "On global events happening in any <strong>Circle</strong>" : "Pro is eventos globales de cale si siat <strong>Giru</strong>",
+    "Shared to Circles" : "Cumpartzidu cun is giros\\",
     "Single" : "Ùnicu",
     "Personal" : "Personale",
     "System" : "Sistema",
@@ -166,15 +167,9 @@ OC.L10N.register(
     "Name" : "Nùmene",
     "Size" : "Mannària",
     "Modified" : "Modificadu",
-    "Nextcloud User" : "Utente de Nextcloud",
     "Initialisation Nextcloud" : "Apariciamentu de Nextcloud",
     "Initialisation Circles App" : "Apariciamentu de s'aplicatzione Giros",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Non podes impreare s'aplicatzione de is giros finas a cando s'amministratzione at a permìtere a su mancu una genia de giru",
-    "This user is already a member of the circle" : "Custa utèntzia faghet giai parte de su giru",
-    "The user is already a member of this circle" : "S'utente est giai cumponente de custu giru",
-    "The user has already been invited into this circle" : "Ant giai invitadu a s'utente a custu giru",
-    "This user does not exist" : "S'utente no esistit",
-    "Could not find share" : "No at fatu a agatare sa cumpartzidura",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Giros permitit a is utentes tuos de creare is grupos issoro de utentes/collegas/amistades.\nCustos grupos de utentes (o \"giros\") podent duncas èssere impreados dae calesisiat àtera aplicatzione pro is cumpartziduras."
+    "Could not find share" : "No at fatu a agatare sa cumpartzidura"
 },
 "nplurals=2; plural=(n != 1);");

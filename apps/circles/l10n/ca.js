@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Quan es produeixin esdeveniments en un <strong>cercle</strong> del qual sigueu membre",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Quan es produeixi qualsevol esdeveniment important en un <strong>cercle</strong> que modereu",
     "On global events happening in any <strong>Circle</strong>" : "Quan es produeixin esdeveniments globals en qualsevol <strong>cercle</strong>",
+    "Shared to Circles" : "S'ha compartit en cercles",
     "Single" : "Individual",
     "Personal" : "Personal",
     "System" : "Sistema",
@@ -180,15 +181,9 @@ OC.L10N.register(
     "Name" : "Nom",
     "Size" : "Mida",
     "Modified" : "Data de modificació",
-    "Nextcloud User" : "Usuari del Nextcloud",
     "Initialisation Nextcloud" : "Inicialització del Nextcloud",
     "Initialisation Circles App" : "Inicialització de l’aplicació Cercles",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "No podeu utilitzar l'aplicació Cercles fins que l'administrador hagi permès com a mínim un tipus de cercle",
-    "This user is already a member of the circle" : "Aquest usuari ja és membre del cercle",
-    "The user is already a member of this circle" : "L'usuari ja és membre d'aquest cercle",
-    "The user has already been invited into this circle" : "L'usuari ja ha rebut una invitació per a aquest cercle",
-    "This user does not exist" : "Aquest usuari no existeix",
-    "Could not find share" : "No s'ha pogut trobar l'element compartit",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Els cercles permeten que els vostres usuaris creïn els seus propis grups d'usuaris/, companys i amics.\nQualsevol altra aplicació pot utilitzar aquests grups d'usuaris (o «cercles») per a compartir contingut."
+    "Could not find share" : "No s'ha pogut trobar l'element compartit"
 },
 "nplurals=2; plural=(n != 1);");

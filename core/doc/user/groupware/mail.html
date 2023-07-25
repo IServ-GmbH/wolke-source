@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Mail app &mdash; Nextcloud latest User Manual latest documentation</title>
@@ -54,11 +54,15 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Using the Mail app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#managing-your-mail-account">Managing your mail account</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-new-mail-account">Add a new mail account</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#create-write-a-new-message">Create/Write a new message</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scheduled-messages">Scheduled messages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#priority-inbox">Priority inbox</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#all-inboxes">All inboxes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-settings">Account settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#account-delegation">Account delegation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#compose-messages">Compose messages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#minimize-the-composer-modal">Minimize the composer modal</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#mailbox-actions">Mailbox actions</a><ul>
@@ -69,7 +73,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#envelope-actions">Envelope actions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#create-an-event">Create an event</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-task">Create a task</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#edit-tags">Edit tags</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#message-actions">Message actions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#unsubscribe-from-a-mailing-list">Unsubscribe from a mailing list</a></li>
 </ul>
 </li>
 </ul>
@@ -139,13 +148,6 @@ Please ask your Administrator for it.</p>
 <img alt="../_images/new-mail-account.png" src="../_images/new-mail-account.png" />
 </figure>
 </section>
-<section id="create-write-a-new-message">
-<h3>Create/Write a new message<a class="headerlink" href="#create-write-a-new-message" title="Permalink to this headline"></a></h3>
-<ol class="arabic simple">
-<li><p>Click new message on the top left of your screen</p></li>
-<li><p>Start writing your message</p></li>
-</ol>
-</section>
 <section id="scheduled-messages">
 <h3>Scheduled messages<a class="headerlink" href="#scheduled-messages" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
@@ -181,6 +183,47 @@ Messages will automatically be marked as important based on which messages you i
 </ol>
 <p>Can be found in the action menu of a mail account. There you can edit, add or remove settings depending on your need.</p>
 </section>
+<section id="account-delegation">
+<h3>Account delegation<a class="headerlink" href="#account-delegation" title="Permalink to this headline"></a></h3>
+<p>The app allows account delegation so that one user can send emails from the address of another.</p>
+<ol class="arabic simple">
+<li><p>The delegation has to be configured on the mail server by an admin</p></li>
+<li><p>Add the other email address as an alias for your own email account</p></li>
+<li><p>When sending an email, select the alias as sender</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The sent email might not be visible to the original account if it’s stored in your personal <em>Sent</em> mailbox.</p>
+</div>
+</section>
+</section>
+<section id="compose-messages">
+<h2>Compose messages<a class="headerlink" href="#compose-messages" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>Click new message on the top left of your screen</p></li>
+<li><p>Start writing your message</p></li>
+</ol>
+<section id="minimize-the-composer-modal">
+<h3>Minimize the composer modal<a class="headerlink" href="#minimize-the-composer-modal" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version 3.2.</span></p>
+</div>
+</div></blockquote>
+<p>The composer modal can be minimized while writing a new message, editing an existing draft or editing a message from the outbox. Simply click the minimize button on the top right of the modal or click anywhere outside the modal.</p>
+<blockquote>
+<div><figure class="align-default">
+<img alt="../_images/mail-minimize-composer.png" src="../_images/mail-minimize-composer.png" />
+</figure>
+</div></blockquote>
+<p>You can resume your minimized message by clicking anywhere on the indicator on the bottom right of your screen.</p>
+<blockquote>
+<div><figure class="align-default">
+<img alt="../_images/mail-composer-indicator.png" src="../_images/mail-composer-indicator.png" />
+</figure>
+</div></blockquote>
+<p>Press the close button on the modal or the indicator in the bottom right corner to stop editing a message. A draft will be saved automatically into your draft mailbox.</p>
+</section>
 </section>
 <section id="mailbox-actions">
 <h2>Mailbox actions<a class="headerlink" href="#mailbox-actions" title="Permalink to this headline"></a></h2>
@@ -215,6 +258,20 @@ Messages will automatically be marked as important based on which messages you i
 2. Click <em>more actions</em>
 3. Click <em>create event</em></p>
 </section>
+<section id="create-a-task">
+<h3>Create a task<a class="headerlink" href="#create-a-task" title="Permalink to this headline"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.2.</span></p>
+</div>
+<p>Create an task for a certain message/thread directly via mail app
+1. Open action menu of an envelope
+2. Click <em>more actions</em>
+3. Click <em>create task</em></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Tasks are stored in supported calendars. If there is no compatible calendar you can create a new one with the <a class="reference internal" href="calendar.html#calendar-app"><span class="std std-ref">calendar app</span></a>.</p>
+</div>
+</section>
 <section id="edit-tags">
 <h3>Edit tags<a class="headerlink" href="#edit-tags" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
@@ -222,6 +279,16 @@ Messages will automatically be marked as important based on which messages you i
 <li><p>Click <em>Edit tags</em></p></li>
 <li><p>On the tags modal, set/unset tags</p></li>
 </ol>
+</section>
+</section>
+<section id="message-actions">
+<h2>Message actions<a class="headerlink" href="#message-actions" title="Permalink to this headline"></a></h2>
+<section id="unsubscribe-from-a-mailing-list">
+<h3>Unsubscribe from a mailing list<a class="headerlink" href="#unsubscribe-from-a-mailing-list" title="Permalink to this headline"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.1.</span></p>
+</div>
+<p>Some mailing lists and newsletters allow to be unsubscribed easily. If the Mail app detects messages from such a sender, it will show an <em>Unsubscribe</em> button next to the sender information. Click and confirm to unsubscribe from the list.</p>
 </section>
 </section>
 </section>
@@ -265,11 +332,9 @@ Messages will automatically be marked as important based on which messages you i
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

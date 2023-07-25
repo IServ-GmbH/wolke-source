@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Server tuning &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -60,7 +60,10 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Server tuning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#using-cron-to-perform-background-jobs">Using cron to perform background jobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#reducing-system-load">Reducing system load</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#caching">Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#log-levels">Log Levels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#debug-mode">Debug Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compression">Compression</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-mariadb-mysql-instead-of-sqlite">Using MariaDB/MySQL instead of SQLite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-redis-based-transactional-file-locking">Using Redis-based transactional file locking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#tls-encryption-app">TLS / encryption app</a></li>
@@ -79,9 +82,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -133,11 +137,34 @@ prevented by all means. If you run your database inside a VM, you should not
 store it inside a VM image file. Better put it on a dedicated block device to
 reduce latency due to multiple abstraction layers.</p>
 </section>
-<section id="caching">
-<span id="id1"></span><h2>Caching<a class="headerlink" href="#caching" title="Permalink to this headline"></a></h2>
+<section id="log-levels">
+<span id="caching"></span><h2>Log Levels<a class="headerlink" href="#log-levels" title="Permalink to this headline"></a></h2>
+<p>Verify the <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default the log level is
+set to <code class="docutils literal notranslate"><span class="pre">2</span></code> (WARN) in new installations. Sometimes this parameter is inadvertently
+left at the DEBUG level (<code class="docutils literal notranslate"><span class="pre">0</span></code>) after a troubleshooting event. In some older installations this
+parameter may also be something other than the default. Use <code class="docutils literal notranslate"><span class="pre">0</span></code> (DEBUG)
+when you have a problem to diagnose, and then reset your log level to a
+less-verbose level. DEBUG outputs a lot of information, and can affect your
+server performance.</p>
+</section>
+<section id="debug-mode">
+<h2>Debug Mode<a class="headerlink" href="#debug-mode" title="Permalink to this headline"></a></h2>
+<p>Verify that <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">false</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">false</span></code> in new
+installations (or when not specified). While similar to the DEBUG logging level, this option
+also disables various optimizations (to faciliate easier debugging) and generates additional
+debug output both at the browser level and server-side. It should not be enabled in production
+environments outside of isolated troubleshooting situations.</p>
+</section>
+<section id="id1">
+<h2>Caching<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
 <p>Caching improves performance by storing data, code, and other objects in memory.
 Memory cache configuration for the Nextcloud server must be installed and configured.
 See <a class="reference internal" href="../configuration_server/caching_configuration.html"><span class="doc">Memory caching</span></a>.</p>
+</section>
+<section id="compression">
+<h2>Compression<a class="headerlink" href="#compression" title="Permalink to this headline"></a></h2>
+<p>Enabling compression in your web server for JavaScript, CSS, and SVG files improves the
+performance because fewer bytes need to be transferred to the clients.</p>
 </section>
 <section id="using-mariadb-mysql-instead-of-sqlite">
 <h2>Using MariaDB/MySQL instead of SQLite<a class="headerlink" href="#using-mariadb-mysql-instead-of-sqlite" title="Permalink to this headline"></a></h2>
@@ -209,11 +236,21 @@ more processes to run in parallel to handle the requests.</p>
 </div>
 <p>Any change to <code class="docutils literal notranslate"><span class="pre">config.php</span></code> will then require either restarting PHP, manually clearing the cache, or invalidating this particular script.</p>
 <p>For more details check out the <a class="reference external" href="https://php.net/manual/en/opcache.configuration.php">official documentation</a>. To monitor OPcache usage, clear individual or all cache entries, <a class="reference external" href="https://github.com/amnuts/opcache-gui">opcache-gui</a> can be used.</p>
+<p>PHP 8.0 and above ship with a JIT compiler that can be enabled to benefit any CPU intensive apps you might be running. To enable a tracing JIT with all optimizations:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">opcache.jit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1255</span>
+<span class="na">opcache.jit_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+</pre></div>
+</div>
 </section>
 <section id="previews">
 <h2>Previews<a class="headerlink" href="#previews" title="Permalink to this headline"></a></h2>
 <p>It is possible to speed up preview generation using an
 external microservice: <a class="reference external" href="https://github.com/h2non/imaginary">Imaginary</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Imaginary is currently incompatible with server-side-encryption.
+See <a class="reference external" href="https://github.com/nextcloud/server/issues/34262">https://github.com/nextcloud/server/issues/34262</a></p>
+</div>
 <p>We strongly recommend running our custom docker image that is more up to date than the official image.
 You can find the image at <cite>docker.io/nextcloud/aio-imaginary:latest</cite>.</p>
 <p>To do so, you will need to deploy the service and make sure that it is
@@ -276,11 +313,9 @@ Also make sure to add the capability <cite>SYS_NICE</cite> via <cite>–cap-add=
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

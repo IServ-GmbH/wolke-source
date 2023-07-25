@@ -52,6 +52,7 @@ use OCP\Files\GenericFileException;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
 use OCP\IConfig;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -242,7 +243,7 @@ class Local extends \OC\Files\Storage\Common {
 		return $filetype;
 	}
 
-	public function filesize($path) {
+	public function filesize($path): false|int|float {
 		if (!$this->is_file($path)) {
 			return 0;
 		}
@@ -334,9 +335,9 @@ class Local extends \OC\Files\Storage\Common {
 		}
 	}
 
-	public function rename($path1, $path2) {
-		$srcParent = dirname($path1);
-		$dstParent = dirname($path2);
+	public function rename($source, $target) {
+		$srcParent = dirname($source);
+		$dstParent = dirname($target);
 
 		if (!$this->isUpdatable($srcParent)) {
 			\OC::$server->get(LoggerInterface::class)->error('unable to rename, source directory is not writable : ' . $srcParent, ['app' => 'core']);
@@ -348,44 +349,44 @@ class Local extends \OC\Files\Storage\Common {
 			return false;
 		}
 
-		if (!$this->file_exists($path1)) {
-			\OC::$server->get(LoggerInterface::class)->error('unable to rename, file does not exists : ' . $path1, ['app' => 'core']);
+		if (!$this->file_exists($source)) {
+			\OC::$server->get(LoggerInterface::class)->error('unable to rename, file does not exists : ' . $source, ['app' => 'core']);
 			return false;
 		}
 
-		if ($this->is_dir($path2)) {
-			$this->rmdir($path2);
-		} elseif ($this->is_file($path2)) {
-			$this->unlink($path2);
+		if ($this->is_dir($target)) {
+			$this->rmdir($target);
+		} elseif ($this->is_file($target)) {
+			$this->unlink($target);
 		}
 
-		if ($this->is_dir($path1)) {
+		if ($this->is_dir($source)) {
 			// we can't move folders across devices, use copy instead
-			$stat1 = stat(dirname($this->getSourcePath($path1)));
-			$stat2 = stat(dirname($this->getSourcePath($path2)));
+			$stat1 = stat(dirname($this->getSourcePath($source)));
+			$stat2 = stat(dirname($this->getSourcePath($target)));
 			if ($stat1['dev'] !== $stat2['dev']) {
-				$result = $this->copy($path1, $path2);
+				$result = $this->copy($source, $target);
 				if ($result) {
-					$result &= $this->rmdir($path1);
+					$result &= $this->rmdir($source);
 				}
 				return $result;
 			}
 
-			$this->checkTreeForForbiddenItems($this->getSourcePath($path1));
+			$this->checkTreeForForbiddenItems($this->getSourcePath($source));
 		}
 
-		return rename($this->getSourcePath($path1), $this->getSourcePath($path2));
+		return rename($this->getSourcePath($source), $this->getSourcePath($target));
 	}
 
-	public function copy($path1, $path2) {
-		if ($this->is_dir($path1)) {
-			return parent::copy($path1, $path2);
+	public function copy($source, $target) {
+		if ($this->is_dir($source)) {
+			return parent::copy($source, $target);
 		} else {
 			$oldMask = umask($this->defUMask);
 			if ($this->unlinkOnTruncate) {
-				$this->unlink($path2);
+				$this->unlink($target);
 			}
-			$result = copy($this->getSourcePath($path1), $this->getSourcePath($path2));
+			$result = copy($this->getSourcePath($source), $this->getSourcePath($target));
 			umask($oldMask);
 			return $result;
 		}
@@ -422,7 +423,7 @@ class Local extends \OC\Files\Storage\Common {
 		if ($space === false || is_null($space)) {
 			return \OCP\Files\FileInfo::SPACE_UNKNOWN;
 		}
-		return $space;
+		return Util::numericToNumber($space);
 	}
 
 	public function search($query) {

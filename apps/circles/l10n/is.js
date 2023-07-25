@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Við atburði sem gerast í <strong>hring</strong> sem þú tilheyrir",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Hvaða mikilvægi atburður sem er í <strong>hring</strong> sem þú hefur umsjón með",
     "On global events happening in any <strong>Circle</strong>" : "Við almenna atburði sem gerast í hvaða <strong>hring</strong> sem er",
+    "Shared to Circles" : "Deilt til hringja",
     "Personal" : "Persónulegur",
     "System" : "Kerfið",
     "Visible" : "Sýnilegt",
@@ -140,10 +141,6 @@ OC.L10N.register(
     "Size" : "Stærð",
     "Modified" : "Breytt",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Þú getur ekki notað Hringir-forritið fyrr en kerfisstjóri er búinn að leyfa a.m.k. eina gerð hringja",
-    "This user is already a member of the circle" : "Þessi notandi er nú þegar meðlimur í þessum hring",
-    "The user is already a member of this circle" : "Notandi er nú þegar meðlimur í þessum hring",
-    "The user has already been invited into this circle" : "Notandanum er þegar boðið að taka þátt í þessum hring",
-    "This user does not exist" : "Þessi notandi er ekki til",
     "Could not find share" : "Gat ekki fundið sameign"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

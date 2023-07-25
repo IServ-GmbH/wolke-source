@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "På hendelser som skjer i en <strong>sirkel</strong> hvor du er medlem",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Ønsker du å bli varslet om hendelser i <strong>sirkler</strong> du modererer?",
     "On global events happening in any <strong>Circle</strong>" : "På global hendelse som skjer i en <strong>sirkel</strong>",
+    "Shared to Circles" : "Delt til Sirkler",
     "Single" : "Enkel",
     "Personal" : "Personlig",
     "System" : "System",
@@ -176,10 +177,6 @@ OC.L10N.register(
     "Initialisation Nextcloud" : "Forbereder Nextcloud",
     "Initialisation Circles App" : "Forbereder Sirkel-app",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Du kan ikke bruke sirkel-appen før administratoren din har tillat minst én type sirkler",
-    "This user is already a member of the circle" : "Denne brukeren er allerede medlem av sirkelen",
-    "The user is already a member of this circle" : "Brukeren er allerede medlem av denne sirkelen",
-    "The user has already been invited into this circle" : "Brukeren er allerede invitert inn i denne sirkelen",
-    "This user does not exist" : "Denne brukeren finnes ikke",
     "Could not find share" : "Kunne ikke finne ressurs"
 },
 "nplurals=2; plural=(n != 1);");

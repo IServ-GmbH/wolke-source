@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How to upgrade &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -52,9 +52,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
@@ -135,6 +136,13 @@ Major releases are 18, 19 or 20. Point releases are intermediate releases for ea
 </ul>
 </dd>
 </dl>
+<p><strong>Wait for background migrations to finish after major upgrades</strong>. After upgrading to a new major version, some migrations are scheduled to run
+as a background job. If you plan to upgrade directly to another major version (e.g. 24 -&gt; 25 -&gt; 26) you need to make sure these
+migrations were executed before starting the next upgrade. To do so you should run the <code class="docutils literal notranslate"><span class="pre">cron.php</span></code> file 2-3 times, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -u www-data php -f /var/www/nextcloud/cron.php
+</pre></div>
+</div>
+<p>For more information about background jobs see <a class="reference internal" href="../configuration_server/background_jobs_configuration.html"><span class="doc">Background jobs</span></a>.</p>
 <p><strong>Upgrading is disruptive</strong>. Your Nextcloud server will be put into maintenance
 mode, so your users will be locked out until the upgrade is completed. Large
 installations may take several hours to complete the upgrade. Nevertheless usual
@@ -253,11 +261,9 @@ $ sudo -u www-data php occ db:add-missing-primary-keys
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

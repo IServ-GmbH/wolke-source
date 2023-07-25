@@ -42,7 +42,7 @@ OC.L10N.register(
     "Browse the App Store" : "Parcourir le magasin d'applications",
     "Stay in sync" : "Restez synchronisé",
     "Nextcloud gives you access to your files wherever you are." : "Nextcloud vous donne accès à vos fichiers où que vous soyez.",
-    "Our easy to use desktop and mobile clients are available for all major platforms at zero cost!" : "Nos applications de bureau et mobiles faciles à utiliser sont disponibles pour toutes les plateformes majeures gratuitement!",
+    "Our easy to use desktop and mobile clients are available for all major platforms at zero cost!" : "Nos applications de bureau et mobiles faciles à utiliser sont disponibles pour toutes les plateformes majeures gratuitement !",
     "Get the apps to sync your files" : "Obtenez les applications vous permettant de synchroniser vos fichiers",
     "Desktop client" : "Client de bureau",
     "Android app on Google Play Store" : "Application Android sur le Google Play Store",
@@ -53,7 +53,6 @@ OC.L10N.register(
     "Connect your contacts" : "Connectez vos contacts",
     "Access files via WebDAV" : "Accédez à vos fichiers via WebDAV",
     "Download macOS/iOS configuration profile" : "Télécharger le profil de configuration macOS / iOS",
-    "Get help" : "Obtenir de l'aide",
     "Start contributing" : "Commencer à contribuer",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Voulez-vous obtenir une certaine amélioration dans Nextcloud? Avez-vous trouvé un problème? Voulez-vous aider à traduire, promouvoir ou documenter Nextcloud?",
     "Become part of the Community" : "Devenir membre de la communauté",
@@ -82,10 +81,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Utilisez ce lien pour connecter vos applications et votre client de bureau à ce serveur :",
     "Copy link" : "Copier le lien",
     "Copy to clipboard" : "Copier dans le presse-papier",
-    "App recommendation: Notes" : "Application recommandée : Notes",
-    "Distraction-free notes and writing." : "Notes et écriture sans distraction.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Si vous exécutez Nextcloud dans un environnement de production avec un grand nombre d'utilisateurs et de grandes quantités de données et que vous avez besoin de la confiance des experts de la technologie Nextcloud, un abonnement Entreprise de Nextcloud est disponible avec support téléphonique et mail.",
-    "Get enterprise support" : "Obtenir le support Entreprise",
-    "the Nextcloud IRC chat channel on freenode.net" : "le canal de discussion Nextcloud IRC sur freenode.net"
+    "Get help" : "Obtenir de l'aide"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

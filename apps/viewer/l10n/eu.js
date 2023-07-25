@@ -10,8 +10,11 @@ OC.L10N.register(
     "Error saving image" : "Errorea irudia gordetzean",
     "Unsaved changes" : "Gorde gabeko aldaketak",
     "Drop changes" : "Jaregin aldaketak",
+    "\"{fileName}\"" : "\"{fileName}\"",
     "Your browser does not support videos." : "Zure nabigatzaileak ez ditu bideoak onartzen.",
     "Edit" : "Aldatu",
+    "Exit full screen" : "Irten pantaila osotik",
+    "Full screen" : "Pantaila osoa",
     "Open sidebar" : "Ireki albo-barra",
     "Download" : "Deskargatu",
     "Delete" : "Ezabatu",
@@ -106,7 +109,6 @@ OC.L10N.register(
     "Saved image size (width x height)" : "Gordetako irudiaren tamaina (zabalera x altuera)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Kontuan izan hautatutako mozte-eremua aplikatutako tamaina baino txikiagoa dela eta horrek kalitatea gutxitzea eragin dezakeela",
     "Actual size (100%)" : "Benetako tamaina (% 100)",
-    "Fit size" : "Egokitu tamaina",
-    "Show your latest holiday photos and videos like in the movies, show a glimpse of your latest novel directly from your nextcloud, choose the best GIF of your collection thanks to the direct preview of your favorites files and many more!" : "Erakutsi zure azken oporretako argazki eta bideoak pelikuletan bezala, erakutsi zure azken nobelaren lagin bat zuzenean zure nextclouden, aukeratu zure bildumako GIFik onena gogoko fitxategien zuzeneko aurrebistari esker, eta gehiago!"
+    "Fit size" : "Egokitu tamaina"
 },
 "nplurals=2; plural=(n != 1);");

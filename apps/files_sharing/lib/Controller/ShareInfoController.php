@@ -59,6 +59,11 @@ class ShareInfoController extends ApiController {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 * @BruteForceProtection(action=shareinfo)
+	 *
+	 * @param string $t
+	 * @param ?string $password
+	 * @param ?string $dir
+	 * @return JSONResponse
 	 */
 	public function info(string $t, ?string $password = null, ?string $dir = null, int $depth = -1): JSONResponse {
 		try {

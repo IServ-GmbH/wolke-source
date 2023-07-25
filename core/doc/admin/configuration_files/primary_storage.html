@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuring Object Storage as Primary Storage &mdash; Nextcloud latest Administration Manual latest documentation</title>
@@ -65,6 +65,7 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#multibucket-object-store">Multibucket Object Store</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sse-c-encryption-support">SSE-C encryption support</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="external_storage_configuration_gui.html">Configuring External Storage (GUI)</a></li>
@@ -78,9 +79,10 @@
 <li class="toctree-l2"><a class="reference internal" href="trashbin_configuration.html">Deleted Items (trash bin)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">File workflows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -293,6 +295,35 @@ users will be mapped to the updated range of buckets.</p>
 <p>You can find out more information about upscaling with object storage and Nextcloud in the
 <a class="reference external" href="https://portal.nextcloud.com/article/object-store-as-primary-storage-16.html">Nextcloud customer portal</a>.</p>
 </section>
+<section id="sse-c-encryption-support">
+<h2>SSE-C encryption support<a class="headerlink" href="#sse-c-encryption-support" title="Permalink to this headline"></a></h2>
+<p>Nextcloud supports server side encryption, also known as <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html">SSE-C</a>, with compatible S3 bucket provider. The encryption and decryption happens on the S3 bucket side with a key provided by the Nextcloud server.</p>
+<p>The key can be specified with the <code class="code docutils literal notranslate"><span class="pre">sse_c_key</span></code> parameter which needs to be provided as a base64 encoded string with a maximum length of 32 bytes. A random key could be generated using the the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">rand</span> <span class="mi">32</span> <span class="o">|</span> <span class="n">base64</span>
+</pre></div>
+</div>
+<p>The following example shows how to configure the S3 object store with SSE-C encryption support in the objectstore section of the Nextcloud config.php file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="n">array</span> <span class="p">(</span>
+                <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">S3&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span>
+                <span class="n">array</span> <span class="p">(</span>
+                        <span class="s1">&#39;bucket&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;hostname&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;s3&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;443&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;use_ssl&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+                        <span class="s1">&#39;use_path_style&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+                        <span class="s1">&#39;autocreate&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+                        <span class="s1">&#39;verify_bucket_exists&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+                        <span class="s1">&#39;sse_c_key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;o9d3Q9tHcPMv6TIpH53MSXaUmY91YheZRwuIhwCFRSs=&#39;</span><span class="p">,</span>
+                <span class="p">),</span>
+        <span class="p">);</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -328,11 +359,9 @@ users will be mapped to the updated range of buckets.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/admin_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/admin_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

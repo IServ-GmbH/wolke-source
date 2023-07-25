@@ -40,8 +40,6 @@ use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Exception;
-use Doctrine\DBAL\Exception\ConstraintViolationException;
-use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
 use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
@@ -50,12 +48,13 @@ use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Statement;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Diagnostics\IEventLogger;
 use OCP\IRequestId;
 use OCP\PreConditionNotMetException;
+use OCP\Profiler\IProfiler;
 use OC\DB\QueryBuilder\QueryBuilder;
 use OC\SystemConfig;
 use Psr\Log\LoggerInterface;
-use OCP\Profiler\IProfiler;
 
 class Connection extends \Doctrine\DBAL\Connection {
 	/** @var string */
@@ -124,12 +123,14 @@ class Connection extends \Doctrine\DBAL\Connection {
 	public function connect() {
 		try {
 			if ($this->_conn) {
+				/** @psalm-suppress InternalMethod */
 				return parent::connect();
 			}
 
 			// Only trigger the event logger for the initial connect call
-			$eventLogger = \OC::$server->getEventLogger();
+			$eventLogger = \OC::$server->get(IEventLogger::class);
 			$eventLogger->start('connect:db', 'db connection opened');
+			/** @psalm-suppress InternalMethod */
 			$status = parent::connect();
 			$eventLogger->end('connect:db');
 
@@ -291,7 +292,7 @@ class Connection extends \Doctrine\DBAL\Connection {
 		$sql = $this->adapter->fixupStatement($sql);
 		$this->queriesExecuted++;
 		$this->logQueryToFile($sql);
-		return parent::executeStatement($sql, $params, $types);
+		return (int)parent::executeStatement($sql, $params, $types);
 	}
 
 	protected function logQueryToFile(string $sql): void {
@@ -378,10 +379,10 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 * @param array $values (column name => value)
 	 * @param array $updatePreconditionValues ensure values match preconditions (column name => value)
 	 * @return int number of new rows
-	 * @throws \Doctrine\DBAL\Exception
+	 * @throws \OCP\DB\Exception
 	 * @throws PreConditionNotMetException
 	 */
-	public function setValues($table, array $keys, array $values, array $updatePreconditionValues = []) {
+	public function setValues(string $table, array $keys, array $values, array $updatePreconditionValues = []): int {
 		try {
 			$insertQb = $this->getQueryBuilder();
 			$insertQb->insert($table)
@@ -390,10 +391,16 @@ class Connection extends \Doctrine\DBAL\Connection {
 						return $insertQb->createNamedParameter($value, $this->getType($value));
 					}, array_merge($keys, $values))
 				);
-			return $insertQb->execute();
-		} catch (NotNullConstraintViolationException $e) {
-			throw $e;
-		} catch (ConstraintViolationException $e) {
+			return $insertQb->executeStatement();
+		} catch (\OCP\DB\Exception $e) {
+			if (!in_array($e->getReason(), [
+				\OCP\DB\Exception::REASON_CONSTRAINT_VIOLATION,
+				\OCP\DB\Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION,
+			])
+			) {
+				throw $e;
+			}
+
 			// value already exists, try update
 			$updateQb = $this->getQueryBuilder();
 			$updateQb->update($table);
@@ -416,7 +423,7 @@ class Connection extends \Doctrine\DBAL\Connection {
 				}
 			}
 			$updateQb->where($where);
-			$affected = $updateQb->execute();
+			$affected = $updateQb->executeStatement();
 
 			if ($affected === 0 && !empty($updatePreconditionValues)) {
 				throw new PreConditionNotMetException();

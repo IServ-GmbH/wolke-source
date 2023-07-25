@@ -36,10 +36,7 @@ use OCP\Files\Search\ISearchBinaryOperator;
 use OCP\Files\Search\ISearchComparison;
 
 class SystemTagsInFilesDetector {
-	protected QuerySearchHelper $searchHelper;
-
-	public function __construct(QuerySearchHelper $searchHelper) {
-		$this->searchHelper = $searchHelper;
+	public function __construct(protected QuerySearchHelper $searchHelper) {
 	}
 
 	public function detectAssignedSystemTagsIn(
@@ -57,6 +54,7 @@ class SystemTagsInFilesDetector {
 		}
 
 		$query = new SearchQuery($operator, $limit, $offset, []);
+		/** @var \OCP\Files\Cache\ICache[] $caches */
 		[$caches, ] = $this->searchHelper->getCachesAndMountPointsForSearch(
 			$this->getRootFolder($folder),
 			$folder->getPath(),

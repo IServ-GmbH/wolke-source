@@ -50,6 +50,7 @@ OC.L10N.register(
     "{member} sent a request to join {circle}" : "נשלחה בקשה על ידי {member} להצטרף אל {circle}",
     "You are the new owner of {circle}" : "קיבלת בעלות על {circle}",
     "{member} is the new owner of {circle}" : "הבעלות על {circle} הועברה לידי {member}",
+    "Shared to Circles" : "שותף למעגלים",
     "Single" : "בודד",
     "Personal" : "אישי",
     "System" : "מערכת",
@@ -119,12 +120,7 @@ OC.L10N.register(
     "Name" : "שם",
     "Size" : "גודל",
     "Modified" : "מועד שינוי",
-    "Nextcloud User" : "משתמש Nextcloud",
     "Initialisation Circles App" : "יישומון המעגלים נטען",
-    "This user is already a member of the circle" : "משתמש זה כבר חבר במעגל",
-    "The user is already a member of this circle" : "המשתמש הוא כבר חבר במעגל הזה",
-    "The user has already been invited into this circle" : "המשתמש הזה כבר הוזמן למעגל הזה",
-    "This user does not exist" : "המשתמש הזה לא קיים",
     "Could not find share" : "לא ניתן למצוא את השיתוף"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

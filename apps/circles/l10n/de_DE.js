@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Bei Ereignissen in einem <strong>Kreis</strong> , in dem Du Mitglied bist",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Irgend ein wichtiger Termin in einem <strong>Kreis</strong> den Sie moderieren",
     "On global events happening in any <strong>Circle</strong>" : "Bei globalen Ereignissen in irgendeinem <strong>Kreis</strong> ",
+    "Shared to Circles" : "Geteilt mit Kreisen",
     "Single" : "Einzeln",
     "Personal" : "Persönlich",
     "System" : "System",
@@ -180,15 +181,9 @@ OC.L10N.register(
     "Name" : "Name",
     "Size" : "Größe",
     "Modified" : "Geändert",
-    "Nextcloud User" : "Nextcloud-Benutzer",
     "Initialisation Nextcloud" : "Initialisierung von Nextcloud",
     "Initialisation Circles App" : "Initialisierung der Circles-App",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Sie können die Kreise-App nicht verwenden, solange Ihr Administrator nicht wenigstens einen Kreis-Typ zulässt",
-    "This user is already a member of the circle" : "Dieser Benutzer ist bereits Mitglied dieses Kreises",
-    "The user is already a member of this circle" : "Dieser Benutzer ist bereits Mitglied dieses Kreises ",
-    "The user has already been invited into this circle" : "Dieser Benutzer wurde bereits zu diesem Kreis eingeladen",
-    "This user does not exist" : "Dieser Benutzer existiert nicht",
-    "Could not find share" : "Freigabe konnte nicht gefunden werden",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Mit Kreisen können Ihre Benutzer ihre eigenen Gruppen von Benutzern/Kollegen/Freunden erstellen.\nDiese Benutzergruppen (oder \"Kreise\") können dann von jeder anderen App zum Zweck der gemeinsamen Nutzung verwendet werden."
+    "Could not find share" : "Freigabe konnte nicht gefunden werden"
 },
 "nplurals=2; plural=(n != 1);");

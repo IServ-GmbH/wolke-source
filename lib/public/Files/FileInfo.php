@@ -84,7 +84,7 @@ interface FileInfo {
 	 * Get the size in bytes for the file or folder
 	 *
 	 * @param bool $includeMounts whether or not to include the size of any sub mounts, since 16.0.0
-	 * @return int
+	 * @return int|float
 	 * @since 7.0.0
 	 */
 	public function getSize($includeMounts = true);
@@ -256,7 +256,10 @@ interface FileInfo {
 	public function getOwner();
 
 	/**
-	 * Get the stored checksum for this file
+	 * Get the stored checksum(s) for this file
+	 *
+	 * Checksums are stored in the format TYPE:CHECKSUM, here may be multiple checksums separated by a single space
+	 * e.g. MD5:d3b07384d113edec49eaa6238ad5ff00 SHA1:f1d2d2f924e986ac86fdf7b36c94bcdf32beec15
 	 *
 	 * @return string
 	 * @since 9.0.0

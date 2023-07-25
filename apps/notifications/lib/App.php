@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 /**
+ * @copyright Copyright (c) 2016, ownCloud, Inc.
+ *
  * @author Joas Schilling <coding@schilljs.com>
  *
- * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @license AGPL-3.0
  *
  * This code is free software: you can redistribute it and/or modify
@@ -82,7 +83,7 @@ class App implements IDeferrableApp {
 		}
 		foreach ($deleted as $user => $notifications) {
 			foreach ($notifications as $data) {
-				$this->push->pushDeleteToDevice((string) $user, $data['id'], $data['app']);
+				$this->push->pushDeleteToDevice((string) $user, [$data['id']], $data['app']);
 			}
 		}
 		if (!$isAlreadyDeferring) {

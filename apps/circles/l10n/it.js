@@ -75,6 +75,7 @@ OC.L10N.register(
     "On events happening in a <strong>Circle</strong> of which you are a member" : "Per gli eventi che si verificano in una <strong>cerchia</strong> di cui sei membro",
     "Any important event in a <strong>Circle</strong> you are moderating" : "Qualsiasi evento importante in una <strong>cerchia</strong> di cui sei moderatore",
     "On global events happening in any <strong>Circle</strong>" : "Per eventi globali che si verificano in qualsiasi <strong>cerchia</strong>",
+    "Shared to Circles" : "Condivisi con cerchie",
     "Single" : "Singola",
     "Personal" : "Personale",
     "System" : "Sistema",
@@ -120,6 +121,8 @@ OC.L10N.register(
     "%s shared multiple files with \"%s\"." : "%s ha condiviso più file con \"%s\".",
     "%s shared multiple files with you." : "%s ha condiviso più file con te.",
     "Boot up" : "Avvia",
+    "Nextcloud Initialization" : "Inizializzazione Nextcloud",
+    "Circles App Initialization" : "Inizializzazione app Cerchie",
     "Fresh installation status" : "Stato nuova installazione",
     "Building Local Database" : "Costruzione database locale",
     "Testing Basic Circle Creation" : "Test creazione cerchia di base",
@@ -178,15 +181,9 @@ OC.L10N.register(
     "Name" : "Nome",
     "Size" : "Dimensione",
     "Modified" : "Modificato",
-    "Nextcloud User" : "Utente Nextcloud",
     "Initialisation Nextcloud" : "Inizializzazione di Nextcloud",
     "Initialisation Circles App" : "Inizializzazione applicazione Cerchie",
     "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Non puoi utilizzare l'applicazione Cerchie fino a quando il tuo amministratore avrà consentito almeno un tipo di cerchia",
-    "This user is already a member of the circle" : "L'utente è già membro di una cerchia",
-    "The user is already a member of this circle" : "L'utente è già membro di questa cerchia",
-    "The user has already been invited into this circle" : "L'utente è stato già invitato in questa cerchia",
-    "This user does not exist" : "Questo utente non esiste",
-    "Could not find share" : "Impossibile trovare la condivisione",
-    "Circles allows your users to create their own groups of users/colleagues/friends.\nThose groups of users (or \"circles\") can then be used by any other app for sharing purpose." : "Le cerchie permettono ai tuoi utenti di creare i propri gruppi di utenti/colleghi/amici.\nQuei gruppi di utenti (o \"cerchie\") possono poi essere usati da qualsiasi altra applicazione per condividere."
+    "Could not find share" : "Impossibile trovare la condivisione"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

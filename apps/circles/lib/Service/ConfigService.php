@@ -356,6 +356,26 @@ class ConfigService {
 
 	/**
 	 * true if:
+	 * - password enforced for Circle
+	 * - single password enabled for Circle
+	 * - single password defined within Circle's settings
+	 *
+	 * @param Circle $circle
+	 *
+	 * @return bool
+	 */
+	public function isSinglePasswordAvailable(Circle $circle): bool {
+		if (!$this->enforcePasswordOnSharedFile($circle)) {
+			return false;
+		}
+
+		return ($this->getBool('password_single_enabled', $circle->getSettings(), false)
+				&& $this->get('password_single', $circle->getSettings()) !== '');
+	}
+
+
+	/**
+	 * true if:
 	 *   - global setting of Nextcloud enforce password on shares.
 	 *   - setting of Circles' app enforce password on shares.
 	 *   - setting for specific Circle enforce password on shares.
@@ -366,10 +386,10 @@ class ConfigService {
 	 */
 	public function enforcePasswordOnSharedFile(Circle $circle): bool {
 		if ($this->config->getAppValue(
-				'core',
-				'shareapi_enforce_links_password',
-				'no'
-			) === 'yes') {
+			'core',
+			'shareapi_enforce_links_password',
+			'no'
+		) === 'yes') {
 			return true;
 		}
 
@@ -665,9 +685,9 @@ class ConfigService {
 		$name = ($displayName) ? $federatedUser->getDisplayName() : $federatedUser->getUserId();
 		if ($federatedUser->getUserType() === Member::TYPE_MAIL) {
 			return $name . ' ' . $this->displayInstance(
-					$federatedUser->getInstance(),
-					self::DISPLAY_PARENTHESIS
-				);
+				$federatedUser->getInstance(),
+				self::DISPLAY_PARENTHESIS
+			);
 		}
 
 		if (!$displayInstance) {

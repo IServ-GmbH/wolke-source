@@ -127,11 +127,11 @@ class CirclesRemote extends Base {
 			 ->setDescription('remote features')
 			 ->addArgument('host', InputArgument::OPTIONAL, 'host of the remote instance of Nextcloud')
 			 ->addOption(
-				 'type', '', InputOption::VALUE_REQUIRED, 'set type of remote', RemoteInstance::TYPE_UNKNOWN
+			 	'type', '', InputOption::VALUE_REQUIRED, 'set type of remote', RemoteInstance::TYPE_UNKNOWN
 			 )
 			 ->addOption(
-				 'iface', '', InputOption::VALUE_REQUIRED, 'set interface to use to contact remote',
-				 InterfaceService::$LIST_IFACE[InterfaceService::IFACE_FRONTAL]
+			 	'iface', '', InputOption::VALUE_REQUIRED, 'set interface to use to contact remote',
+			 	InterfaceService::$LIST_IFACE[InterfaceService::IFACE_FRONTAL]
 			 )
 			 ->addOption('yes', '', InputOption::VALUE_NONE, 'silently add the remote instance')
 			 ->addOption('all', '', InputOption::VALUE_NONE, 'display all information');
@@ -409,7 +409,11 @@ class CirclesRemote extends Base {
 
 		$app = $this->remoteStreamService->getAppSignatory();
 		$signedRequest = $this->remoteStreamService->signOutgoingRequest($request, $app);
-		$this->doRequest($signedRequest->getOutgoingRequest());
+		$outgoingRequest = $signedRequest->getOutgoingRequest();
+		$outgoingRequest->setLocalAddressAllowed(true);
+		$outgoingRequest->setFollowLocation(true);
+
+		$this->doRequest($outgoingRequest);
 
 		return $signedRequest;
 	}
@@ -446,11 +450,12 @@ class CirclesRemote extends Base {
 	 * @param string $instance
 	 */
 	private function syncGSInstance(string $instance): void {
+		$this->output->write('Adding <comment>' . $instance . '</comment>: ');
 		if ($this->configService->isLocalInstance($instance)) {
+			$this->output->writeln('<comment>instance is local</comment>');
 			return;
 		}
 
-		$this->output->write('Adding <comment>' . $instance . '</comment>: ');
 		try {
 			$this->remoteStreamService->addRemoteInstance(
 				$instance,

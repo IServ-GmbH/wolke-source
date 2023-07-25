@@ -295,7 +295,7 @@ class ServerSection extends Section {
 			$mountOptions = $config->getMountOptions();
 			// hide defaults
 			foreach ($mountOptions as $key => $value) {
-				if ($value === $defaultMountOptions[$key]) {
+				if (isset($defaultMountOptions[$key]) && ($value === $defaultMountOptions[$key])) {
 					unset($mountOptions[$key]);
 				}
 			}

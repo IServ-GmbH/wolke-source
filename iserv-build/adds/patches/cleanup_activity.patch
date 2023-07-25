@@ -1,11 +1,11 @@
 diff --git a/apps/dav/appinfo/info.xml b/apps/dav/appinfo/info.xml
-index fede63276b..dffdbfd0e2 100644
+index 4e4387071a2..1618fc406e0 100644
 --- a/apps/dav/appinfo/info.xml
 +++ b/apps/dav/appinfo/info.xml
-@@ -62,29 +62,6 @@
- 		<personal>OCA\DAV\Settings\AvailabilitySettings</personal>
+@@ -63,29 +63,6 @@
+ 		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
  	</settings>
-
+ 
 -	<activity>
 -		<settings>
 -			<setting>OCA\DAV\CalDAV\Activity\Setting\Calendar</setting>

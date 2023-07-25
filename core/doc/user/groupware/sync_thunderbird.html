@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Synchronizing with Thunderbird &mdash; Nextcloud latest User Manual latest documentation</title>
@@ -57,6 +57,7 @@
 <li class="toctree-l2"><a class="reference internal" href="sync_osx.html">Synchronizing with macOS</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Synchronizing with Thunderbird</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#recommended-method">Recommended method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#alternative-using-the-tbsync-addon">Alternative: using the TbSync addon</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#alternative-using-the-cardbook-add-on-contacts-only">Alternative: Using the CardBook add-on (Contacts only)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-old-method-manually-subscribing-to-calendars">The old method: Manually subscribing to calendars</a></li>
 </ul>
@@ -101,9 +102,31 @@
              
   <section id="synchronizing-with-thunderbird">
 <h1>Synchronizing with Thunderbird<a class="headerlink" href="#synchronizing-with-thunderbird" title="Permalink to this headline"></a></h1>
-<p><a class="reference external" href="https://www.thunderbird.net">Thunderbird</a> is a feature-rich and mature mail client that can be turned into a full-fledged PIM. However, it lacks support  for address book synchronisation via CardDAV and it also lacks the ability to automatically discover calendars and address books available on the server. Therefore, to synchronise with Nextcloud, add-ons are required, which can be easily installed through Thunderbird’s add-on manager.</p>
+<p><a class="reference external" href="https://www.thunderbird.net">Thunderbird</a> is a feature-rich and mature mail client that can be turned into a full-fledged PIM. Since version 102, it supports address book synchronisation via CardDAV and automatic discovering calendars and address books available on the server.</p>
 <section id="recommended-method">
 <h2>Recommended method<a class="headerlink" href="#recommended-method" title="Permalink to this headline"></a></h2>
+<p>Since Thunderbird 102, there is a native support for CardDAV protocol.</p>
+<p>To enable it:</p>
+<ul class="simple">
+<li><p>On the address book view, click the down arrow near “<strong>New Address Book</strong>” and choose “<strong>Add CardDAV Address Book</strong>”.</p></li>
+<li><p>In the next window, type your <strong>user name</strong> and <strong>URL of your server</strong>.</p></li>
+<li><p>The next window will ask your username and password for this account.</p></li>
+<li><p>The previous window will be refreshed and ask you which address books you wish to sync.</p></li>
+<li><p>Choose and then click <strong>Continue</strong>.</p></li>
+</ul>
+<p>If you later add a new Address Book you can redo all of those steps and only the books not already synchronized will be suggested.</p>
+<p>For calendars there is too a native support of CalDAV.</p>
+<p>To enable it:</p>
+<ul class="simple">
+<li><p>Click on “<strong>+</strong>” near Agendas on the agendas page.</p></li>
+<li><p>Choose “<strong>On the network</strong>” on the next window.</p></li>
+<li><p>Type you “<strong>user name</strong>” and “<strong>Url of the server</strong>” and click on “Find Calendars”.</p></li>
+<li><p>Choose which agendas you want to add and click “<strong>Subscribe</strong>”</p></li>
+</ul>
+<p>Same thing here, if you lately want to add more calendar just redo the procedure.</p>
+</section>
+<section id="alternative-using-the-tbsync-addon">
+<h2>Alternative: using the TbSync addon<a class="headerlink" href="#alternative-using-the-tbsync-addon" title="Permalink to this headline"></a></h2>
 <p>For this method, you need to have two add-ons installed:</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://addons.thunderbird.net/en/thunderbird/addon/tbsync/">TbSync</a>.</p></li>
@@ -202,11 +225,9 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/22/user_manual">22</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/23/user_manual">23</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

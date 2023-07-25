@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  *  The MIT License (MIT)
  *
@@ -29,11 +32,10 @@ use OC\SystemConfig;
 use OCP\Log\IWriter;
 
 class Errorlog extends LogDetails implements IWriter {
-
 	/** @var string */
 	protected $tag;
 
-	public function __construct(SystemConfig $config, string $tag = 'owncloud') {
+	public function __construct(SystemConfig $config, string $tag = 'nextcloud') {
 		parent::__construct($config);
 		$this->tag = $tag;
 	}

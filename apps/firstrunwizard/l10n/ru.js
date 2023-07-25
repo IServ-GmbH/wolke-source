@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "Подключение к спискам контактов",
     "Access files via WebDAV" : "Доступ к файлам по протоколу WebDAV",
     "Download macOS/iOS configuration profile" : "Скачать профиль конфигурации macOS/iOS",
-    "Get help" : "Помощь",
+    "Get support or participate" : "Получить поддержку или принять участие",
     "Start contributing" : "Участие",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "Хотите внести улучшение в Nextcloud? Столкнулись с проблемой? Или хотите помочь с переводом, продвижением или созданием документации?",
     "Become part of the Community" : "Становитесь частью сообщества.",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "За помощью можно обратиться с сообществу:",
     "the Nextcloud forums" : "на форумах Nextcloud",
     "A safe home for all your data" : "Надёжный дом для всех ваших данных",
+    "Our values" : "Наши ценности",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Nextcloud возвращает вам контроль над своими данными. Храните свои документы, календари, контакты и фотографии на сервере своей компании, дома, у одного из наших провайдеров или в известном вам дата-центре.",
     "Host your data and files where you decide" : "Самостоятельно выбирайте место для размещения своих файлов и данных",
     "Open standards and interoperability" : "Открытые стандарты и функциональная совместимость",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Используйте эту ссылку для соединения ваших приложений и десктоп-клиентов с этим сервером:",
     "Copy link" : "Скопировать ссылку",
     "Copy to clipboard" : "Копировать в буфер обмена",
-    "App recommendation: Notes" : "Рекомендованное приложение: Заметки",
-    "Distraction-free notes and writing." : "Простые заметки и записки.",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "Используете Nextcloud в критически важной среде с большим количеством пользователей и значительным объёмом данных, и вам требуется поддержка от экспертов технологий Nextcloud? Для вас доступна корпоративная поддержка, оказываемая по телефону и электронной почте.",
-    "Get enterprise support" : "Получить корпоративную поддержку",
-    "the Nextcloud IRC chat channel on freenode.net" : "на канале IRC, расположенном на серверах freenode.net"
+    "Get help" : "Помощь"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

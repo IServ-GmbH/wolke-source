@@ -53,7 +53,7 @@ OC.L10N.register(
     "Connect your contacts" : "連結您的聯絡人",
     "Access files via WebDAV" : "透過 WebDAV 存取檔案",
     "Download macOS/iOS configuration profile" : "下載 macOS/iOS 描述檔",
-    "Get help" : "取得協助",
+    "Get support or participate" : "獲得支援或參與",
     "Start contributing" : "開始貢獻",
     "Do you want to get a certain improvement in Nextcloud? Did you find a problem? Do you want to help translate, promote or document Nextcloud?" : "您想要取得 Nextcloud 特定的改進嗎？您有找到問題嗎？你想要幫忙翻譯，推動或是寫 Nextcloud 文件嗎？",
     "Become part of the Community" : "成為社群的一分子",
@@ -68,6 +68,7 @@ OC.L10N.register(
     "You can also ask for help in our community support channels:" : "您也可以在我們的社群支援頻道尋求協助:",
     "the Nextcloud forums" : "Nextcloud 論壇",
     "A safe home for all your data" : "您資料的安全屋",
+    "Our values" : "我們的價值",
     "Nextcloud puts your data at your fingertips, under your control. Store your documents, calendar, contacts and photos on a server in your company, at home, at one of our providers or in a data center you know." : "Nextcloud 將您的資料置於您觸手可及之處且在您掌控之下。將您的文件、日曆、聯絡人與照片儲存在您的公司、家中、我們的其中一個提供商或是您所知的資料中心的伺服器上。",
     "Host your data and files where you decide" : "在您決定的位置存放您的資料與檔案",
     "Open standards and interoperability" : "開放標準與互操作性",
@@ -82,10 +83,6 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "使用此連結將您的應用程式與桌面用戶端連結到此伺服器:",
     "Copy link" : "複製連結",
     "Copy to clipboard" : "複製到剪貼簿",
-    "App recommendation: Notes" : "推薦功能: Notes",
-    "Distraction-free notes and writing." : "無干擾的筆記與寫作。",
-    "If you run Nextcloud in a mission critical environment with large numbers of users and big amounts of data and need the certainty of support from the experts behind the Nextcloud technology, an Enterprise Subscription from Nextcloud is available with email and phone support." : "如果您在有大量使用者與大量資料的關鍵任務環境中執行 Nextcloud，且需要 Nextcloud 技術背後的專家支援的話，則可以透過電子郵件與電話支援取得 Nextcloud 的企業訂閱。",
-    "Get enterprise support" : "獲得企業級支援",
-    "the Nextcloud IRC chat channel on freenode.net" : "在 freenode.net 上的 Nextcloud IRC 聊天頻道"
+    "Get help" : "取得協助"
 },
 "nplurals=1; plural=0;");

@@ -86,7 +86,7 @@ class SystemTagsInUseCollection extends SimpleCollection {
 			if ($user) {
 				$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 			}
-		} catch (NoUserException $e) {
+		} catch (NoUserException) {
 			// will throw a Sabre exception in the next step.
 		}
 		if ($user === null || $userFolder === null) {

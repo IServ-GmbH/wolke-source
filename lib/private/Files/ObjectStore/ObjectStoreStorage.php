@@ -29,19 +29,25 @@
  */
 namespace OC\Files\ObjectStore;
 
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\Exception\S3MultipartUploadException;
 use Icewind\Streams\CallbackWrapper;
 use Icewind\Streams\CountWrapper;
 use Icewind\Streams\IteratorDirectory;
 use OC\Files\Cache\Cache;
 use OC\Files\Cache\CacheEntry;
 use OC\Files\Storage\PolyFill\CopyDirectory;
+use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\FileInfo;
+use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\ObjectStore\IObjectStore;
+use OCP\Files\ObjectStore\IObjectStoreMultiPartUpload;
+use OCP\Files\Storage\IChunkedFileWrite;
 use OCP\Files\Storage\IStorage;
 
-class ObjectStoreStorage extends \OC\Files\Storage\Common {
+class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFileWrite {
 	use CopyDirectory;
 
 	/**
@@ -61,6 +67,9 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 
 	private $logger;
 
+	/** @var bool */
+	protected $validateWrites = true;
+
 	public function __construct($params) {
 		if (isset($params['objectstore']) && $params['objectstore'] instanceof IObjectStore) {
 			$this->objectStore = $params['objectstore'];
@@ -75,6 +84,9 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 		if (isset($params['objectPrefix'])) {
 			$this->objectPrefix = $params['objectPrefix'];
 		}
+		if (isset($params['validateWrites'])) {
+			$this->validateWrites = (bool)$params['validateWrites'];
+		}
 		//initialize cache with root directory in cache
 		if (!$this->is_dir('/')) {
 			$this->mkdir('/');
@@ -85,7 +97,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 
 	public function mkdir($path) {
 		$path = $this->normalizePath($path);
-
 		if ($this->file_exists($path)) {
 			return false;
 		}
@@ -303,13 +314,23 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 			case 'rb':
 				$stat = $this->stat($path);
 				if (is_array($stat)) {
+					$filesize = $stat['size'] ?? 0;
 					// Reading 0 sized files is a waste of time
-					if (isset($stat['size']) && $stat['size'] === 0) {
+					if ($filesize === 0) {
 						return fopen('php://memory', $mode);
 					}
 
 					try {
-						return $this->objectStore->readObject($this->getURN($stat['fileid']));
+						$handle = $this->objectStore->readObject($this->getURN($stat['fileid']));
+						if ($handle === false) {
+							return false; // keep backward compatibility
+						}
+						$streamStat = fstat($handle);
+						$actualSize = $streamStat['size'] ?? -1;
+						if ($actualSize > -1 && $actualSize !== $filesize) {
+							$this->getCache()->update((int)$stat['fileid'], ['size' => $actualSize]);
+						}
+						return $handle;
 					} catch (NotFoundException $e) {
 						$this->logger->logException($e, [
 							'app' => 'objectstore',
@@ -326,7 +347,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 				} else {
 					return false;
 				}
-			// no break
+				// no break
 			case 'w':
 			case 'wb':
 			case 'w+':
@@ -522,7 +543,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 		if ($exists) {
 			$this->getCache()->update($fileId, $stat);
 		} else {
-			if ($this->objectStore->objectExists($urn)) {
+			if (!$this->validateWrites || $this->objectStore->objectExists($urn)) {
 				$this->getCache()->move($uploadPath, $path);
 			} else {
 				$this->getCache()->remove($uploadPath);
@@ -550,7 +571,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 				if (is_array($sourceEntryData) && array_key_exists('scan_permissions', $sourceEntryData)) {
 					$sourceEntry['permissions'] = $sourceEntryData['scan_permissions'];
 				}
-				$this->copyInner($sourceEntry, $targetInternalPath);
+				$this->copyInner($sourceStorage->getCache(), $sourceEntry, $targetInternalPath);
 				return true;
 			}
 		}
@@ -558,22 +579,22 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 		return parent::copyFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
-	public function copy($path1, $path2) {
-		$path1 = $this->normalizePath($path1);
-		$path2 = $this->normalizePath($path2);
+	public function copy($source, $target) {
+		$source = $this->normalizePath($source);
+		$target = $this->normalizePath($target);
 
 		$cache = $this->getCache();
-		$sourceEntry = $cache->get($path1);
+		$sourceEntry = $cache->get($source);
 		if (!$sourceEntry) {
 			throw new NotFoundException('Source object not found');
 		}
 
-		$this->copyInner($sourceEntry, $path2);
+		$this->copyInner($cache, $sourceEntry, $target);
 
 		return true;
 	}
 
-	private function copyInner(ICacheEntry $sourceEntry, string $to) {
+	private function copyInner(ICache $sourceCache, ICacheEntry $sourceEntry, string $to) {
 		$cache = $this->getCache();
 
 		if ($sourceEntry->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
@@ -582,8 +603,8 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 			}
 			$this->mkdir($to);
 
-			foreach ($cache->getFolderContentsById($sourceEntry->getId()) as $child) {
-				$this->copyInner($child, $to . '/' . $child->getName());
+			foreach ($sourceCache->getFolderContentsById($sourceEntry->getId()) as $child) {
+				$this->copyInner($sourceCache, $child, $to . '/' . $child->getName());
 			}
 		} else {
 			$this->copyFile($sourceEntry, $to);
@@ -610,5 +631,73 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common {
 
 			throw $e;
 		}
+	}
+
+	public function startChunkedWrite(string $targetPath): string {
+		if (!$this->objectStore instanceof IObjectStoreMultiPartUpload) {
+			throw new GenericFileException('Object store does not support multipart upload');
+		}
+		$cacheEntry = $this->getCache()->get($targetPath);
+		$urn = $this->getURN($cacheEntry->getId());
+		return $this->objectStore->initiateMultipartUpload($urn);
+	}
+
+	/**
+	 *
+	 * @throws GenericFileException
+	 */
+	public function putChunkedWritePart(string $targetPath, string $writeToken, string $chunkId, $data, $size = null): ?array {
+		if (!$this->objectStore instanceof IObjectStoreMultiPartUpload) {
+			throw new GenericFileException('Object store does not support multipart upload');
+		}
+		$cacheEntry = $this->getCache()->get($targetPath);
+		$urn = $this->getURN($cacheEntry->getId());
+
+		$result = $this->objectStore->uploadMultipartPart($urn, $writeToken, (int)$chunkId, $data, $size);
+
+		$parts[$chunkId] = [
+			'PartNumber' => $chunkId,
+			'ETag' => trim($result->get('ETag'), '"')
+		];
+		return $parts[$chunkId];
+	}
+
+	public function completeChunkedWrite(string $targetPath, string $writeToken): int {
+		if (!$this->objectStore instanceof IObjectStoreMultiPartUpload) {
+			throw new GenericFileException('Object store does not support multipart upload');
+		}
+		$cacheEntry = $this->getCache()->get($targetPath);
+		$urn = $this->getURN($cacheEntry->getId());
+		$parts = $this->objectStore->getMultipartUploads($urn, $writeToken);
+		$sortedParts = array_values($parts);
+		sort($sortedParts);
+		try {
+			$size = $this->objectStore->completeMultipartUpload($urn, $writeToken, $sortedParts);
+			$stat = $this->stat($targetPath);
+			$mtime = time();
+			if (is_array($stat)) {
+				$stat['size'] = $size;
+				$stat['mtime'] = $mtime;
+				$stat['mimetype'] = $this->getMimeType($targetPath);
+				$this->getCache()->update($stat['fileid'], $stat);
+			}
+		} catch (S3MultipartUploadException | S3Exception $e) {
+			$this->objectStore->abortMultipartUpload($urn, $writeToken);
+			$this->logger->logException($e, [
+				'app' => 'objectstore',
+				'message' => 'Could not compete multipart upload ' . $urn. ' with uploadId ' . $writeToken
+			]);
+			throw new GenericFileException('Could not write chunked file');
+		}
+		return $size;
+	}
+
+	public function cancelChunkedWrite(string $targetPath, string $writeToken): void {
+		if (!$this->objectStore instanceof IObjectStoreMultiPartUpload) {
+			throw new GenericFileException('Object store does not support multipart upload');
+		}
+		$cacheEntry = $this->getCache()->get($targetPath);
+		$urn = $this->getURN($cacheEntry->getId());
+		$this->objectStore->abortMultipartUpload($urn, $writeToken);
 	}
 }

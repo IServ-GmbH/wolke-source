@@ -12,6 +12,7 @@ OC.L10N.register(
     "Tags" : "Etiquetas",
     "Back" : "Retorn",
     "Save" : "Enregistrar",
+    "Group" : "Grop",
     "Copy public link" : "Copiar lo ligam public",
     "An error occurred" : "Una error s’es producha",
     "Open the full size \"{name}\" image" : "Dobrir l’imatge {name} en talha originala",
@@ -24,15 +25,11 @@ OC.L10N.register(
     "Remove from favorites" : "Remove from favorites",
     "This folder does not exist" : "Aqueste dossièr existís pas",
     "No photos in here" : "Cap de fòto aquí",
-    "Shared albums" : "Albums partejats",
     "No tags yet" : "Cap d’etiqueta pel moment",
     "Photos with tags will show up here" : "Las fòtos amb etiquetas apreissaràn aquí",
     "Add" : "Apondre",
     "Tagged photos" : "Fòtos etiquetadas",
-    "Your photos" : "Vòstras fòtos",
-    "Your videos" : "Vòstras vidèos",
-    "Your folders" : "Vòstres dossièrs",
     "Locations" : "Emplaçaments",
-    "Settings" : "Paramètres"
+    "Shared albums" : "Albums partejats"
 },
 "nplurals=2; plural=(n > 1);");

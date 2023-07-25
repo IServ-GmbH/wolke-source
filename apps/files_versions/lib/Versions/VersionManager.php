@@ -35,7 +35,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\IUser;
 use OCP\Lock\ManuallyLockedException;
 
-class VersionManager implements IVersionManager {
+class VersionManager implements IVersionManager, INameableVersionBackend, IDeletableVersionBackend {
 	/** @var (IVersionBackend[])[] */
 	private $backends = [];
 
@@ -99,7 +99,16 @@ class VersionManager implements IVersionManager {
 
 	public function rollback(IVersion $version) {
 		$backend = $version->getBackend();
-		return self::handleAppLocks(fn(): ?bool => $backend->rollback($version));
+		$result = self::handleAppLocks(fn(): ?bool => $backend->rollback($version));
+		// rollback doesn't have a return type yet and some implementations don't return anything
+		if ($result === null || $result === true) {
+			\OC_Hook::emit('\OCP\Versions', 'rollback', [
+				'path' => $version->getVersionPath(),
+				'revision' => $version->getRevisionId(),
+				'node' => $version->getSourceFile(),
+			]);
+		}
+		return $result;
 	}
 
 	public function read(IVersion $version) {
@@ -114,6 +123,20 @@ class VersionManager implements IVersionManager {
 
 	public function useBackendForStorage(IStorage $storage): bool {
 		return false;
+	}
+
+	public function setVersionLabel(IVersion $version, string $label): void {
+		$backend = $this->getBackendForStorage($version->getSourceFile()->getStorage());
+		if ($backend instanceof INameableVersionBackend) {
+			$backend->setVersionLabel($version, $label);
+		}
+	}
+
+	public function deleteVersion(IVersion $version): void {
+		$backend = $this->getBackendForStorage($version->getSourceFile()->getStorage());
+		if ($backend instanceof IDeletableVersionBackend) {
+			$backend->deleteVersion($version);
+		}
 	}
 
 	/**
@@ -136,27 +159,27 @@ class VersionManager implements IVersionManager {
 	 *
 	 */
 	private static function handleAppLocks(callable $callback): ?bool {
-			try {
-					return $callback();
-			} catch (ManuallyLockedException $e) {
-					$owner = (string) $e->getOwner();
-					$appsThatHandleUpdates = array("text", "richdocuments");
-					if (!in_array($owner, $appsThatHandleUpdates)) {
-							throw $e;
-					}
-					// The LockWrapper in the files_lock app only compares the lock type and owner
-					// when checking the lock against the current scope.
-					// So we do not need to get the actual node here
-					// and use the root node instead.
-					$root = \OC::$server->get(IRootFolder::class);
-					$lockContext = new LockContext($root, ILock::TYPE_APP, $owner);
-					$lockManager = \OC::$server->get(ILockManager::class);
-					$result = null;
-					$lockManager->runInScope($lockContext, function() use ($callback, &$result) {
-							$result = $callback();
-					});
-					return $result;
+		try {
+			return $callback();
+		} catch (ManuallyLockedException $e) {
+			$owner = (string) $e->getOwner();
+			$appsThatHandleUpdates = array("text", "richdocuments");
+			if (!in_array($owner, $appsThatHandleUpdates)) {
+				throw $e;
 			}
+			// The LockWrapper in the files_lock app only compares the lock type and owner
+			// when checking the lock against the current scope.
+			// So we do not need to get the actual node here
+			// and use the root node instead.
+			$root = \OC::$server->get(IRootFolder::class);
+			$lockContext = new LockContext($root, ILock::TYPE_APP, $owner);
+			$lockManager = \OC::$server->get(ILockManager::class);
+			$result = null;
+			$lockManager->runInScope($lockContext, function() use ($callback, &$result) {
+				$result = $callback();
+			});
+			return $result;
+		}
 	}
 
 }

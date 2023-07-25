@@ -48,8 +48,6 @@ use Symfony\Component\Console\Question\Question;
  * @package OCA\Circles\Command
  */
 class CirclesMaintenance extends Base {
-
-
 	/** @var CoreRequestBuilder */
 	private $coreRequestBuilder;
 
@@ -85,15 +83,16 @@ class CirclesMaintenance extends Base {
 			 ->setDescription('Clean stuff, keeps the app running')
 			 ->addOption('level', '', InputOption::VALUE_REQUIRED, 'level of maintenance', '3')
 			 ->addOption(
-				 'reset', '', InputOption::VALUE_NONE, 'reset Circles; remove all data related to the App'
+			 	'reset', '', InputOption::VALUE_NONE, 'reset Circles; remove all data related to the App'
 			 )
 			 ->addOption(
-				 'clean-shares', '', InputOption::VALUE_NONE, 'remove Circles\' shares'
+			 	'clean-shares', '', InputOption::VALUE_NONE, 'remove Circles\' shares'
 			 )
 			 ->addOption(
-				 'uninstall', '', InputOption::VALUE_NONE,
-				 'Uninstall the apps and everything related to the app from the database'
-			 );
+			 	'uninstall', '', InputOption::VALUE_NONE,
+			 	'Uninstall the apps and everything related to the app from the database'
+			 )
+			->addOption('force-refresh', '', InputOption::VALUE_NONE, 'enforce some refresh');
 	}
 
 
@@ -156,9 +155,10 @@ class CirclesMaintenance extends Base {
 
 		$this->outputService->setOccOutput($output);
 		$this->maintenanceService->setOccOutput($output);
+
 		for ($i = 1; $i <= $level; $i++) {
 			try {
-				$this->maintenanceService->runMaintenance($i);
+				$this->maintenanceService->runMaintenance($i, $input->getOption('force-refresh'));
 			} catch (MaintenanceException $e) {
 			}
 		}
