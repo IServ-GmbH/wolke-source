@@ -7,6 +7,9 @@ FROM nextcloud:26.0.4-apache
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
+# Limit Apache MaxRequestWorkers to 25 to prevent out of memory
+COPY ./apache/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
+
 # Install git for binary patches
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
