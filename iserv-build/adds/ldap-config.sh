@@ -24,4 +24,7 @@ php /var/www/html/occ ldap:set-config s01 ldapEmailAttribute "mail"
 php /var/www/html/occ ldap:set-config s01 ldapUserDisplayName "gecos"
 php /var/www/html/occ ldap:set-config s01 ldapGroupDisplayName "cn" # Nextcloud doesn't allow spaces in group display names
 php /var/www/html/occ ldap:set-config s01 ldapExpertUsernameAttr "uuid"
+# See explanation in /doc/account_rename_postmortem.md
+php /var/www/html/occ ldap:set-config s01 ldapExpertUUIDGroupAttr "uuid"
+php /var/www/html/occ ldap:set-config s01 ldapExpertUUIDUserAttr "uuid"
 
