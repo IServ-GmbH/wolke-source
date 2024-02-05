@@ -3,6 +3,11 @@ OC.L10N.register(
     {
     "Privacy" : "Privaatheid",
     "-" : "-",
+    "Add" : "Voeg toe",
+    "Encryption" : "Enkripsie",
+    "Privacy policy" : "Privaatheidsbeleid",
+    "Who has access to your data?" : "Wie het toegang tot u data?",
+    "Where is your data?" : "Waar is u data?",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Verenigde Arabiese Emirate",
     "Afghanistan" : "Afghanistan",
@@ -93,9 +98,9 @@ OC.L10N.register(
     "Guam" : "Guam",
     "Guinea-Bissau" : "Guinee-Bissau",
     "Guyana" : "Guiana",
-    "Honduras" : "Honduras",
     "Hong Kong" : "Hongkong",
     "Heard Island and McDonald Islands" : "Heardeiland en McDonaldeilande",
+    "Honduras" : "Honduras",
     "Croatia" : "Kroasië",
     "Haiti" : "Haïti",
     "Hungary" : "Hongarye",
@@ -239,10 +244,6 @@ OC.L10N.register(
     "South Africa" : "Suid-Afrika",
     "Zambia" : "Zambië",
     "Zimbabwe" : "Zimbabwe",
-    "Where is your data?" : "Waar is u data?",
-    "Who has access to your data?" : "Wie het toegang tot u data?",
-    "Privacy policy" : "Privaatheidsbeleid",
-    "Read the privacy policy." : "Lees die privaatheidsbeleid.",
-    "Encryption" : "Enkripsie"
+    "Read the privacy policy." : "Lees die privaatheidsbeleid."
 },
 "nplurals=2; plural=(n != 1);");

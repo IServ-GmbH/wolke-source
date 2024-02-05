@@ -20,9 +20,12 @@ OC.L10N.register(
     "Delete the public link" : "Dzēst publisko saiti",
     "Share via public link" : "Kopīgojiet, izmantojot publisko saiti",
     "An error occurred" : "Gadījās kļūda",
-    "View" : "Skats",
     "Favorite" : "Favorīts",
+    "Go back" : "Atpakaļ",
+    "Invalid location selected" : "Ir izvēlēta nederīga atrašanās vieta ",
+    "View" : "Skats",
     "Remove from favorites" : "Noņemt no izlases",
-    "Add" : "Pievienot"
+    "Add" : "Pievienot",
+    "Details" : "Detaļas"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

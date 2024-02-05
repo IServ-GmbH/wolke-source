@@ -225,8 +225,10 @@ class ShareByCircleProvider implements IShareProvider {
 	public function update(IShare $share): IShare {
 		$wrappedShare = $this->shareWrapperService->getShareById((int)$share->getId());
 		$wrappedShare->setPermissions($share->getPermissions())
-					 ->setShareOwner($share->getShareOwner())
-					 ->setSharedBy($share->getSharedBy());
+			->setShareOwner($share->getShareOwner())
+			->setAttributes($share->getAttributes())
+			->setSharedBy($share->getSharedBy())
+			->setExpirationDate($share->getExpirationDate());
 
 		$this->shareWrapperService->update($wrappedShare);
 
@@ -401,6 +403,11 @@ class ShareByCircleProvider implements IShareProvider {
 			if ($wrappedShare->getFileCache()->isAccessible()) {
 				$result[$wrappedShare->getFileSource()][] =
 					$wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
+			} else {
+				$this->logger->debug('shared document is not available anymore', ['wrappedShare' => $wrappedShare]);
+				if ($wrappedShare->getFileCache()->getPath() === '') {
+					$this->logger->notice('share is not available while path is empty. might comes from an unsupported storage.', ['wrappedShare' => $wrappedShare]);
+				}
 			}
 		}
 
@@ -437,7 +444,7 @@ class ShareByCircleProvider implements IShareProvider {
 		$nodeId = (!is_null($node)) ? $node->getId() : 0;
 
 		try {
-			$federatedUser = $this->federatedUserService->getLocalFederatedUser($userId, false);
+			$federatedUser = $this->federatedUserService->getLocalFederatedUser($userId);
 		} catch (Exception $e) {
 			$this->e($e, ['userId' => $userId, 'shareType' => $shareType, 'nodeId' => $nodeId]);
 

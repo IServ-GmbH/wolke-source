@@ -4,7 +4,7 @@ OC.L10N.register(
     "Password is expired, please use forgot password method to reset" : "Adgangskoden er udløbet, vælg venligst \"Glemt kodeord\" for at vælge et nyt",
     "Password must not have been used recently before." : "Adgangskoden må ikke være benyttet for nyligt.",
     "Password is among the 1,000,000 most common ones. Please make it unique." : "Kodeordet er i blandt de 1.000.000 mest almindelige kodeord. Vælg venligst et andet.",
-    "Password is present in compromised password list. Please choose a different password." : "Adgangskoden findes i liste over kompromitterede adgangskoder. Vælg en anden adgangsode.",
+    "Password is present in compromised password list. Please choose a different password." : "Adgangskoden findes i liste over kompromitterede adgangskoder. Vælg en anden adgangskode.",
     "Password needs to be at least %s characters long." : "Adgangskoden skal være mindst %s karakterer lang.",
     "Password needs to contain at least one numeric character." : "Kodeord skal mindst indeholde et tal.",
     "Password needs to contain at least one special character." : "Kodeord skal indeholde mindst et special tegn.",
@@ -28,6 +28,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Udløbstiden må ikke være negativ",
     "Maximum login attempts have to be a non negative number" : "Antal tilladte loginforsøg må ikke være negativ",
     "Settings saved" : "Indstillinger gemt",
+    "Error while saving settings" : "Der opstod en fejl under lagring af indstillinger",
     "Saved" : "Gemt",
     "Error while saving" : "Kunne ikke gemme de nye værdier"
 },

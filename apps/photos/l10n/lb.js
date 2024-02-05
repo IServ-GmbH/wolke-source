@@ -10,7 +10,9 @@ OC.L10N.register(
     "Shared by" : "Gedeelt vun",
     "Group" : "Grupp",
     "Favorite" : "Favorit",
+    "Go back" : "Zeréckgoen",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "Derbäimaachen"
+    "Add" : "Derbäimaachen",
+    "Details" : "Detailer"
 },
 "nplurals=2; plural=(n != 1);");

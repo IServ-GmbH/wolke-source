@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
@@ -70,6 +70,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#place-data-directory-outside-of-the-web-root">Place data directory outside of the web root</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#disable-preview-image-generation">Disable preview image generation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#disable-debug-mode">Disable Debug Mode</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#use-https">Use HTTPS</a><ul>
@@ -102,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -203,13 +205,21 @@ installation.</p>
 <h3>Disable preview image generation<a class="headerlink" href="#disable-preview-image-generation" title="Permalink to this headline"></a></h3>
 <p>Nextcloud is able to generate preview images of common filetypes such as images
 or text files. By default the preview generation for some file types that we
-consider secure enough for deployment is enabled by default. However,
+consider secure enough for deployment is enabled. However,
 administrators should be aware that these previews are generated using PHP
 libraries written in C which might be vulnerable to attack vectors.</p>
 <p>For high security deployments we recommend disabling the preview generation by
 setting the <code class="docutils literal notranslate"><span class="pre">enable_previews</span></code> switch to <code class="docutils literal notranslate"><span class="pre">false</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. As an
 administrator you are also able to manage which preview providers are enabled by
 modifying the <code class="docutils literal notranslate"><span class="pre">enabledPreviewProviders</span></code> option switch.</p>
+</section>
+<section id="disable-debug-mode">
+<h3>Disable Debug Mode<a class="headerlink" href="#disable-debug-mode" title="Permalink to this headline"></a></h3>
+<p>Verify that <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">false</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">false</span></code>
+in new installations (or when not specified). It should not be enabled in production
+environments or outside of targeted troubleshooting situations. When enabled, things
+like server-wide WebDAV collection listings are permitted. It is intended for local
+development and usage in controlled environments only.</p>
 </section>
 </section>
 <section id="use-https">
@@ -431,7 +441,7 @@ running:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -453,9 +463,11 @@ running:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -32,7 +32,7 @@ OC.L10N.register(
     "Unordered list" : "Ongesorteerde lys",
     "Ordered list" : "Gesorteerde lys",
     "Blockquote" : "Blokaanhaling",
-    "Unsupported image type" : "Onondersteunde beeldtipe",
+    "to" : "aan",
     "Headings" : "Koppe",
     "Heading 2" : "Kop 2",
     "Heading 3" : "Kop 3",
@@ -42,7 +42,6 @@ OC.L10N.register(
     "Success" : "Sukses",
     "Warning" : "Waarskuwing",
     "Edit" : "Wysig",
-    "Link file" : "Koppel lêer",
-    "Select file to link to" : "Kies lêer om na te koppel"
+    "Unsupported image type" : "Onondersteunde beeldtipe"
 },
 "nplurals=2; plural=(n != 1);");

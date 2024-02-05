@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -65,6 +65,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -134,7 +135,7 @@
 </ul>
 <section id="frequently-asked-questions">
 <h2>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline"></a></h2>
-<dl class="simple">
+<dl>
 <dt>Issue: I get connection errors when trying to open documents</dt><dd><p>Be sure to check the error log from docker through <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">logs</span> <span class="pre">container-id</span></code>. If the logs note something like:
 <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">acceptable</span> <span class="pre">WOPI</span> <span class="pre">hosts</span> <span class="pre">found</span> <span class="pre">matching</span> <span class="pre">the</span> <span class="pre">target</span> <span class="pre">host</span> <span class="pre">[YOUR</span> <span class="pre">NEXTCLOUD</span> <span class="pre">DOMAIN]</span> <span class="pre">in</span> <span class="pre">config.</span></code>
 Unauthorized WOPI host. Please try again later and report to your administrator if the issue persists. You might have started the docker container with the wrong URL. Be sure to triplecheck that you start it with the URL of your Nextcloud server, not the server where Collabora Online runs on.</p>
@@ -146,6 +147,13 @@ Unauthorized WOPI host. Please try again later and report to your administrator 
 <dt>Issue: Collabora Online doesn’t handle my 100 users.</dt><dd><p>This docker image is designed for home usage. If you need a more scalable solution, consider a support subscription for a reliable, business-ready online office experience.</p>
 </dd>
 <dt>Issue: Collabora Online doesn’t work with Encryption.</dt><dd><p>Yes, this is currently unsupported.</p>
+</dd>
+<dt>Issue: Nextcloud Office could not connect to the built-in Collabora Online - Built-in CODE server.</dt><dd><p>Make sure that the Nextcloud instance is able to reach itself using the same hostname that is used to access through the browser.</p>
+<p>You might want to add your Nextcloud domain to /etc/hosts to ensure the connectivity if DNS resolution doesn’t work for this:
+<code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">127.0.0.1</span> <span class="pre">cloud.yourdomain.com</span>
+<span class="pre">`</span></code></p>
+<p>If you continue to see a warning about the WOPI allow list, make sure to also add the IP to the allow list under Settings/Administration/Office.</p>
 </dd>
 </dl>
 </section>
@@ -162,7 +170,7 @@ Unauthorized WOPI host. Please try again later and report to your administrator 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -184,9 +192,11 @@ Unauthorized WOPI host. Please try again later and report to your administrator 
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

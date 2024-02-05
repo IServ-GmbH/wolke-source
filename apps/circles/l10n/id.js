@@ -10,6 +10,7 @@ OC.L10N.register(
     "Local" : "Lokal",
     "Root" : "Root",
     "Federated" : "Federated",
+    "Contact" : "Kontak",
     "Admin" : "Admin",
     "Owner" : "Owner",
     "Open »%s«" : "Buka »%s«",
@@ -20,7 +21,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Tidak ada entri yang ditemukan dalam folder ini",
     "Name" : "Nama",
     "Size" : "Ukuran",
-    "Modified" : "Dimodifikasi",
-    "Could not find share" : "Tidak menemukan berbagi"
+    "Modified" : "Dimodifikasi"
 },
 "nplurals=1; plural=0;");

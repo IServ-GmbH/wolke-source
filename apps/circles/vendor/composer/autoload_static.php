@@ -21,6 +21,7 @@ class ComposerStaticInitCircles
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'OCA\\Circles\\Activity\\Filter' => __DIR__ . '/../..' . '/lib/Activity/Filter.php',
         'OCA\\Circles\\Activity\\Provider' => __DIR__ . '/../..' . '/lib/Activity/Provider.php',
         'OCA\\Circles\\Activity\\ProviderParser' => __DIR__ . '/../..' . '/lib/Activity/ProviderParser.php',

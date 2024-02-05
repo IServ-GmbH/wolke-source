@@ -30,24 +30,34 @@ namespace OCA\User_LDAP;
 
 use OCP\Group\Backend\IDeleteGroupBackend;
 use OCP\Group\Backend\IGetDisplayNameBackend;
+use OCP\Group\Backend\IIsAdminBackend;
 use OCP\Group\Backend\INamedBackend;
+use OCP\GroupInterface;
+use OCP\IConfig;
+use OCP\IUserManager;
 
-class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend {
+class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend, IIsAdminBackend {
 	private $backends = [];
 	private ?Group_LDAP $refBackend = null;
 	private Helper $helper;
 	private GroupPluginManager $groupPluginManager;
 	private bool $isSetUp = false;
+	private IConfig $config;
+	private IUserManager $ncUserManager;
 
 	public function __construct(
 		Helper $helper,
 		ILDAPWrapper $ldap,
 		AccessFactory $accessFactory,
-		GroupPluginManager $groupPluginManager
+		GroupPluginManager $groupPluginManager,
+		IConfig $config,
+		IUserManager $ncUserManager,
 	) {
 		parent::__construct($ldap, $accessFactory);
 		$this->helper = $helper;
 		$this->groupPluginManager = $groupPluginManager;
+		$this->config = $config;
+		$this->ncUserManager = $ncUserManager;
 	}
 
 	protected function setup(): void {
@@ -58,7 +68,7 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 		$serverConfigPrefixes = $this->helper->getServerConfigurationPrefixes(true);
 		foreach ($serverConfigPrefixes as $configPrefix) {
 			$this->backends[$configPrefix] =
-				new Group_LDAP($this->getAccess($configPrefix), $this->groupPluginManager);
+				new Group_LDAP($this->getAccess($configPrefix), $this->groupPluginManager, $this->config, $this->ncUserManager);
 			if (is_null($this->refBackend)) {
 				$this->refBackend = &$this->backends[$configPrefix];
 			}
@@ -171,7 +181,7 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 	/**
 	 * get a list of all users in a group
 	 *
-	 * @return string[] with user ids
+	 * @return array<int,string> user ids
 	 */
 	public function usersInGroup($gid, $search = '', $limit = -1, $offset = 0) {
 		$this->setup();
@@ -333,5 +343,13 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 	 */
 	public function getBackendName(): string {
 		return 'LDAP';
+	}
+
+	public function searchInGroup(string $gid, string $search = '', int $limit = -1, int $offset = 0): array {
+		return $this->handleRequest($gid, 'searchInGroup', [$gid, $search, $limit, $offset]);
+	}
+
+	public function isAdmin(string $uid): bool {
+		return $this->handleRequest($uid, 'isAdmin', [$uid]);
 	}
 }

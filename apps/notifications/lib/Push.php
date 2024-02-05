@@ -119,15 +119,15 @@ class Push {
 	];
 
 	public function __construct(IDBConnection $connection,
-								INotificationManager $notificationManager,
-								IConfig $config,
-								IProvider $tokenProvider,
-								Manager $keyManager,
-								IClientService $clientService,
-								ICacheFactory $cacheFactory,
-								IUserStatusManager $userStatusManager,
-								IFactory $l10nFactory,
-								LoggerInterface $log) {
+		INotificationManager $notificationManager,
+		IConfig $config,
+		IProvider $tokenProvider,
+		Manager $keyManager,
+		IClientService $clientService,
+		ICacheFactory $cacheFactory,
+		IUserStatusManager $userStatusManager,
+		IFactory $l10nFactory,
+		LoggerInterface $log) {
 		$this->db = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->config = $config;
@@ -299,13 +299,15 @@ class Push {
 		$language = $this->l10nFactory->getUserLanguage($user);
 		$this->printInfo('Language is set to ' . $language);
 
-		try {
-			$this->notificationManager->setPreparingPushNotification(true);
-			$notification = $this->notificationManager->prepare($notification, $language);
-		} catch (\InvalidArgumentException $e) {
-			return;
-		} finally {
-			$this->notificationManager->setPreparingPushNotification(false);
+		if (!$notification->isValidParsed()) {
+			try {
+				$this->notificationManager->setPreparingPushNotification(true);
+				$notification = $this->notificationManager->prepare($notification, $language);
+			} catch (\InvalidArgumentException $e) {
+				return;
+			} finally {
+				$this->notificationManager->setPreparingPushNotification(false);
+			}
 		}
 
 		$userKey = $this->keyManager->getKey($user);
@@ -333,13 +335,15 @@ class Push {
 			}
 
 			try {
-				$payload = json_encode($this->encryptAndSign($userKey, $device, $id, $notification, $isTalkNotification));
+				$payload = json_encode($this->encryptAndSign($userKey, $device, $id, $notification, $isTalkNotification), JSON_THROW_ON_ERROR);
 
 				$proxyServer = rtrim($device['proxyserver'], '/');
 				if (!isset($this->payloadsToSend[$proxyServer])) {
 					$this->payloadsToSend[$proxyServer] = [];
 				}
 				$this->payloadsToSend[$proxyServer][] = $payload;
+			} catch (\JsonException $e) {
+				$this->log->error('JSON error while encoding push notification: ' . $e->getMessage(), ['exception' => $e]);
 			} catch (\InvalidArgumentException $e) {
 				// Failed to encrypt message for device: public key is invalid
 				$this->deletePushToken($device['token']);
@@ -428,14 +432,22 @@ class Push {
 
 				if ($deleteAll) {
 					$data = $this->encryptAndSignDelete($userKey, $device, null);
-					$this->payloadsToSend[$proxyServer][] = json_encode($data['payload']);
+					try {
+						$this->payloadsToSend[$proxyServer][] = json_encode($data['payload'], JSON_THROW_ON_ERROR);
+					} catch (\JsonException $e) {
+						$this->log->error('JSON error while encoding push notification: ' . $e->getMessage(), ['exception' => $e]);
+					}
 				} else {
 					$temp = $notificationIds;
 
 					while (!empty($temp)) {
 						$data = $this->encryptAndSignDelete($userKey, $device, $temp);
 						$temp = $data['remaining'];
-						$this->payloadsToSend[$proxyServer][] = json_encode($data['payload']);
+						try {
+							$this->payloadsToSend[$proxyServer][] = json_encode($data['payload'], JSON_THROW_ON_ERROR);
+						} catch (\JsonException $e) {
+							$this->log->error('JSON error while encoding push notification: ' . $e->getMessage(), ['exception' => $e]);
+						}
 					}
 				}
 			} catch (\InvalidArgumentException $e) {

@@ -1,9 +1,11 @@
 OC.L10N.register(
     "text",
     {
+    "The file was uploaded" : "ຟາຍຖຶກອັບໂຫລດສຳເລັດ",
+    "No file was uploaded" : "ບໍ່ມີການອັບໂຫລດຟາຍ",
+    "Translate" : "ແປ",
     "Offline" : "ອັອບລາຍ",
     "Saving …" : "ກຳລັງບັນທຶກ",
-    "Translate" : "ແປ",
     "Replace" : "ປ່ຽນແທນ",
     "Info" : "ຂໍ້ມຸນ",
     "Success" : "ຄວາມສໍາເລັດ",

@@ -24,6 +24,7 @@ declare(strict_types=1);
  * @author Thomas Müller <thomas.mueller@tmit.eu>
  * @author Tom Needham <tom@owncloud.com>
  * @author Vincent Petry <vincent@nextcloud.com>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license AGPL-3.0
  *
@@ -337,7 +338,8 @@ class UsersController extends AUserData {
 		array $groups = [],
 		array $subadmin = [],
 		string $quota = '',
-		string $language = ''
+		string $language = '',
+		?string $manager = null,
 	): DataResponse {
 		$user = $this->userSession->getUser();
 		$isAdmin = $this->groupManager->isAdmin($user->getUID());
@@ -446,6 +448,15 @@ class UsersController extends AUserData {
 				$this->editUser($userid, self::USER_FIELD_LANGUAGE, $language);
 			}
 
+			/**
+			 * null -> nothing sent
+			 * '' -> unset manager
+			 * else -> set manager
+			 */
+			if ($manager !== null) {
+				$this->editUser($userid, self::USER_FIELD_MANAGER, $manager);
+			}
+
 			// Send new user mail only if a mail is set
 			if ($email !== '') {
 				$newUser->setEMailAddress($email);
@@ -545,10 +556,6 @@ class UsersController extends AUserData {
 		$user = $this->userSession->getUser();
 		if ($user) {
 			$data = $this->getUserData($user->getUID(), true);
-			// rename "displayname" to "display-name" only for this call to keep
-			// the API stable.
-			$data['display-name'] = $data['displayname'];
-			unset($data['displayname']);
 			return new DataResponse($data);
 		}
 
@@ -803,9 +810,11 @@ class UsersController extends AUserData {
 
 			$permittedFields[] = IAccountManager::PROPERTY_AVATAR . self::SCOPE_SUFFIX;
 
-			// If admin they can edit their own quota
+			// If admin they can edit their own quota and manager
 			if ($this->groupManager->isAdmin($currentLoggedInUser->getUID())) {
 				$permittedFields[] = self::USER_FIELD_QUOTA;
+				$permittedFields[] = self::USER_FIELD_MANAGER;
+
 			}
 		} else {
 			// Check if admin / subadmin
@@ -839,6 +848,7 @@ class UsersController extends AUserData {
 				$permittedFields[] = IAccountManager::PROPERTY_PROFILE_ENABLED;
 				$permittedFields[] = self::USER_FIELD_QUOTA;
 				$permittedFields[] = self::USER_FIELD_NOTIFICATION_EMAIL;
+				$permittedFields[] = self::USER_FIELD_MANAGER;
 			} else {
 				// No rights
 				throw new OCSException('', OCSController::RESPOND_NOT_FOUND);
@@ -887,6 +897,9 @@ class UsersController extends AUserData {
 					}
 				}
 				$targetUser->setQuota($quota);
+				break;
+			case self::USER_FIELD_MANAGER:
+				$targetUser->setManagerUids([$value]);
 				break;
 			case self::USER_FIELD_PASSWORD:
 				try {
@@ -945,11 +958,11 @@ class UsersController extends AUserData {
 				if (filter_var($value, FILTER_VALIDATE_EMAIL) && $value !== $targetUser->getSystemEMailAddress()) {
 					$userAccount = $this->accountManager->getAccount($targetUser);
 					$mailCollection = $userAccount->getPropertyCollection(IAccountManager::COLLECTION_EMAIL);
-					foreach ($mailCollection->getProperties() as $property) {
-						if ($property->getValue() === $value) {
-							break;
-						}
+
+					if ($mailCollection->getPropertyByValue($value)) {
+						throw new OCSException('', 102);
 					}
+
 					$mailCollection->addPropertyWithDefaults($value);
 					$this->accountManager->updateAccount($userAccount);
 				} else {

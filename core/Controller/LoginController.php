@@ -34,7 +34,6 @@ declare(strict_types=1);
  */
 namespace OC\Core\Controller;
 
-use OC\AppFramework\Http\Request;
 use OC\Authentication\Login\Chain;
 use OC\Authentication\Login\LoginData;
 use OC\Authentication\WebAuthn\Manager as WebAuthnManager;
@@ -63,11 +62,12 @@ use OCP\Util;
 class LoginController extends Controller {
 	public const LOGIN_MSG_INVALIDPASSWORD = 'invalidpassword';
 	public const LOGIN_MSG_USERDISABLED = 'userdisabled';
+	public const LOGIN_MSG_CSRFCHECKFAILED = 'csrfCheckFailed';
 
 	private IUserManager $userManager;
 	private IConfig $config;
 	private ISession $session;
-	/** @var IUserSession|Session */
+	/** @var Session */
 	private $userSession;
 	private IURLGenerator $urlGenerator;
 	private Defaults $defaults;
@@ -125,7 +125,8 @@ class LoginController extends Controller {
 		$this->session->set('clearingExecutionContexts', '1');
 		$this->session->close();
 
-		if (!$this->request->isUserAgent([Request::USER_AGENT_CHROME, Request::USER_AGENT_ANDROID_MOBILE_CHROME])) {
+		if ($this->request->getServerProtocol() === 'https') {
+			// This feature is available only in secure contexts
 			$response->addHeader('Clear-Site-Data', '"cache", "storage"');
 		}
 
@@ -311,7 +312,7 @@ class LoginController extends Controller {
 				$user,
 				$user,
 				$redirect_url,
-				$this->l10n->t('Please try again')
+				self::LOGIN_MSG_CSRFCHECKFAILED
 			);
 		}
 

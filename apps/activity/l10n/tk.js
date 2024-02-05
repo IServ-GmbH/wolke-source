@@ -1,12 +1,12 @@
 OC.L10N.register(
     "activity",
     {
-    "Home" : "Baş sahypa",
+    "Hello %s" : "Salam%s",
+    "Activity" : "işjeňlik we hereket",
+    "Notifications" : "Duýduryşlar",
     "Today" : "Şu gün",
     "Yesterday" : "Düýn",
-    "Activity" : "işjeňlik we hereket",
-    "Hello %s" : "Salam%s",
-    "Notifications" : "Duýduryşlar",
+    "Home" : "Baş sahypa",
     "No activity yet" : "Entek işjeňlik ýok",
     "Activities" : "Çäreler"
 },

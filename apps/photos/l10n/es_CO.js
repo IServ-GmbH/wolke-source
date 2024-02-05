@@ -12,7 +12,9 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Shared by" : "Compartido por",
     "Favorite" : "Hacer favorito",
+    "Go back" : "Regresar",
     "Remove from favorites" : "Eliminar de favoritos",
-    "Add" : "Agregar"
+    "Add" : "Agregar",
+    "Details" : "Detalles"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

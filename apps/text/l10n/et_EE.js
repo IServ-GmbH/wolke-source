@@ -11,6 +11,7 @@ OC.L10N.register(
     "Could not write file to disk" : "Faili kirjutamine kettale ebaõnnestus",
     "A PHP extension stopped the file upload" : "PHP laiendus peatas faili üleslaadimise",
     "No file uploaded or file size exceeds maximum of %s" : "Faili ei laaditud üles või selle suurus ületab maksimaalse %s",
+    "Translate" : "Tõlgi",
     "Use current version" : "Kasuta praegust versiooni",
     "Use the saved version" : "Kasuta salvestatud versiooni",
     "Guest" : "Külaline",
@@ -20,15 +21,15 @@ OC.L10N.register(
     "Saved" : "Salvestatud",
     "Unsaved changes" : "Salvestamata muutused",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
-    "Translate" : "Tõlgi",
+    "to" : "saaja",
     "Replace" : "Asenda",
     "Detect language" : "Tuvasta keel",
     "Translation failed" : "Tõlkimine ebaõnnestus",
-    "Unsupported image type" : "Pildi tüüp pole toetatud",
     "Undo" : "Tühista",
     "Headings" : "Pealkirjad",
     "Info" : "Info",
     "Warning" : "Hoiatus",
-    "Edit" : "Redigeeri"
+    "Edit" : "Redigeeri",
+    "Unsupported image type" : "Pildi tüüp pole toetatud"
 },
 "nplurals=2; plural=(n != 1);");

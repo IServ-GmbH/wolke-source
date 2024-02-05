@@ -26,12 +26,16 @@ declare(strict_types=1);
 namespace OCA\Support\AppInfo;
 
 use OCA\Support\Notification\Notifier;
+use OCA\Support\Settings\Admin;
+use OCA\Support\Settings\Section;
 use OCA\Support\Subscription\SubscriptionAdapter;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\IConfig;
 use OCP\Notification\IManager;
+use OCP\Settings\IManager as ISettingsManager;
 use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
 use OCP\Support\Subscription\IRegistry;
 use Psr\Log\LoggerInterface;
@@ -53,6 +57,11 @@ class Application extends App implements IBootstrap {
 		$registry = $container->get(IRegistry::class);
 		try {
 			$registry->registerService(SubscriptionAdapter::class);
+			if ($container->get(IConfig::class)->getAppValue('support', 'hide-app', 'no') !== 'yes') {
+				$settingsManager = $container->get(ISettingsManager::class);
+				$settingsManager->registerSetting('admin', Admin::class);
+				$settingsManager->registerSection('admin', Section::class);
+			}
 		} catch (AlreadyRegisteredException $e) {
 			$logger = $container->get(LoggerInterface::class);
 			$logger->critical('Multiple subscription adapters are registered.', [

@@ -27,7 +27,7 @@
 
 ?>
 
-<div class="section" id="shareAPI">
+<div class="section loading" id="shareAPI">
 	<h2><?php p($l->t('Sharing'));?></h2>
 	<?php if ($_['sharingAppEnabled'] === false) { ?>
 		<p class="warning"><?php p($l->t('You need to enable the File sharing App.')); ?></p>
@@ -209,7 +209,7 @@
 				<?php if ($_['allowShareDialogUserEnumeration'] === 'yes') {
 	print_unescaped('checked="checked"');
 } ?> />
-			<label for="shareapi_allow_share_dialog_user_enumeration"><?php p($l->t('Allow username autocompletion in share dialog'));?></label><br />
+			<label for="shareapi_allow_share_dialog_user_enumeration"><?php p($l->t('Allow username autocompletion in share dialog and allow access to the system address book'));?></label><br />
 		</p>
 
 		<p id="shareapi_restrict_user_enumeration_to_group_setting" class="indent <?php if ($_['shareAPIEnabled'] === 'no' || $_['allowShareDialogUserEnumeration'] === 'no') {
@@ -219,7 +219,7 @@
 				<?php if ($_['restrictUserEnumerationToGroup'] === 'yes') {
 	print_unescaped('checked="checked"');
 } ?> />
-			<label for="shareapi_restrict_user_enumeration_to_group"><?php p($l->t('Allow username autocompletion to users within the same groups'));?></label><br />
+			<label for="shareapi_restrict_user_enumeration_to_group"><?php p($l->t('Allow username autocompletion to users within the same groups and limit system address books to users in the same groups'));?></label><br />
 		</p>
 
 		<p id="shareapi_restrict_user_enumeration_to_phone_setting" class="indent <?php if ($_['shareAPIEnabled'] === 'no' || $_['allowShareDialogUserEnumeration'] === 'no') {

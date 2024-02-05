@@ -25,20 +25,19 @@ declare(strict_types=1);
 
 namespace OCA\Notifications\BackgroundJob;
 
-use OCP\BackgroundJob\TimedJob;
 use OCA\Notifications\MailNotifications;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\TimedJob;
 
 class SendNotificationMails extends TimedJob {
-
 	/** @var MailNotifications */
 	protected $mailNotifications;
 	/** @var bool */
 	protected $isCLI;
 
 	public function __construct(ITimeFactory $timeFactory,
-								MailNotifications $mailNotifications,
-								bool $isCLI) {
+		MailNotifications $mailNotifications,
+		bool $isCLI) {
 		parent::__construct($timeFactory);
 
 		$this->mailNotifications = $mailNotifications;

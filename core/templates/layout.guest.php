@@ -20,7 +20,7 @@ p($theme->getTitle());
 		<link rel="icon" href="<?php print_unescaped(image_path('core', 'favicon.ico')); /* IE11+ supports png */ ?>">
 		<link rel="apple-touch-icon" href="<?php print_unescaped(image_path('core', 'favicon-touch.png')); ?>">
 		<link rel="mask-icon" sizes="any" href="<?php print_unescaped(image_path('core', 'favicon-mask.svg')); ?>" color="<?php p($theme->getColorPrimary()); ?>">
-		<link rel="manifest" href="<?php print_unescaped(image_path('core', 'manifest.json')); ?>">
+		<link rel="manifest" href="<?php print_unescaped(image_path('core', 'manifest.json')); ?>" crossorigin="use-credentials">
 		<?php emit_css_loading_tags($_); ?>
 		<?php emit_script_loading_tags($_); ?>
 		<?php print_unescaped($_['headers']); ?>
@@ -47,7 +47,7 @@ p($theme->getTitle());
 				</main>
 			</div>
 		</div>
-		<footer role="contentinfo">
+		<footer role="contentinfo" class="guest-box">
 			<p class="info">
 				<?php print_unescaped($theme->getLongFooter()); ?>
 			</p>

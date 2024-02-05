@@ -228,6 +228,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -289,6 +290,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -351,6 +353,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -410,6 +413,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: false,
@@ -468,6 +472,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -526,6 +531,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: false,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -570,6 +576,124 @@ describe('OC.SetupChecks tests', function() {
 			});
 		});
 
+		it('should return an info if transactional file locking is not set up', function(done) {
+			var async = OC.SetupChecks.checkSetup();
+
+			suite.server.requests[0].respond(
+				200,
+				{
+					'Content-Type': 'application/json'
+				},
+				JSON.stringify({
+					hasFileinfoInstalled: true,
+					isGetenvServerWorking: true,
+					isReadOnlyConfig: false,
+					wasEmailTestSuccessful: true,
+					hasWorkingFileLocking: false,
+					hasDBFileLocking: false,
+					hasValidTransactionIsolationLevel: true,
+					suggestedOverwriteCliURL: '',
+					isRandomnessSecure: true,
+					securityDocs: 'https://docs.nextcloud.com/myDocs.html',
+					isFairUseOfFreePushService: true,
+					serverHasInternetConnectionProblems: false,
+					isMemcacheConfigured: true,
+					forwardedForHeadersWorking: true,
+					isCorrectMemcachedPHPModuleInstalled: true,
+					hasPassedCodeIntegrityCheck: true,
+					OpcacheSetupRecommendations: [],
+					isSettimelimitAvailable: true,
+					hasFreeTypeSupport: true,
+					missingIndexes: [],
+					missingPrimaryKeys: [],
+					missingColumns: [],
+					cronErrors: [],
+					cronInfo: {
+						diffInSeconds: 0
+					},
+					isMemoryLimitSufficient: true,
+					appDirsWithDifferentOwner: [],
+					isImagickEnabled: true,
+					areWebauthnExtensionsEnabled: true,
+					is64bit: true,
+					recommendedPHPModules: [],
+					pendingBigIntConversionColumns: [],
+					isMysqlUsedWithoutUTF8MB4: false,
+					isDefaultPhoneRegionSet: true,
+					isEnoughTempSpaceAvailableIfS3PrimaryStorageIsUsed: true,
+					reverseProxyGeneratedURL: 'https://server',
+					temporaryDirectoryWritable: true,
+				})
+			);
+
+			async.done(function( data, s, x ){
+				expect(data).toEqual([{
+					msg: 'Transactional file locking is disabled, this might lead to issues with race conditions. Enable "filelocking.enabled" in config.php to avoid these problems. See the <a target="_blank" rel="noreferrer noopener" class="external" href="https://docs.example.org/admin-transactional-locking">documentation ↗</a> for more information.',
+					type: OC.SetupChecks.MESSAGE_TYPE_WARNING
+				}]);
+				done();
+			});
+		});
+
+		it('should return an info if database file locking is used', function(done) {
+			var async = OC.SetupChecks.checkSetup();
+
+			suite.server.requests[0].respond(
+				200,
+				{
+					'Content-Type': 'application/json'
+				},
+				JSON.stringify({
+					hasFileinfoInstalled: true,
+					isGetenvServerWorking: true,
+					isReadOnlyConfig: false,
+					wasEmailTestSuccessful: true,
+					hasWorkingFileLocking: true,
+					hasDBFileLocking: true,
+					hasValidTransactionIsolationLevel: true,
+					suggestedOverwriteCliURL: '',
+					isRandomnessSecure: true,
+					securityDocs: 'https://docs.nextcloud.com/myDocs.html',
+					isFairUseOfFreePushService: true,
+					serverHasInternetConnectionProblems: false,
+					isMemcacheConfigured: true,
+					forwardedForHeadersWorking: true,
+					isCorrectMemcachedPHPModuleInstalled: true,
+					hasPassedCodeIntegrityCheck: true,
+					OpcacheSetupRecommendations: [],
+					isSettimelimitAvailable: true,
+					hasFreeTypeSupport: true,
+					missingIndexes: [],
+					missingPrimaryKeys: [],
+					missingColumns: [],
+					cronErrors: [],
+					cronInfo: {
+						diffInSeconds: 0
+					},
+					isMemoryLimitSufficient: true,
+					appDirsWithDifferentOwner: [],
+					isImagickEnabled: true,
+					areWebauthnExtensionsEnabled: true,
+					is64bit: true,
+					recommendedPHPModules: [],
+					pendingBigIntConversionColumns: [],
+					isMysqlUsedWithoutUTF8MB4: false,
+					isDefaultPhoneRegionSet: true,
+					isEnoughTempSpaceAvailableIfS3PrimaryStorageIsUsed: true,
+					reverseProxyGeneratedURL: 'https://server',
+					temporaryDirectoryWritable: true,
+				})
+			);
+
+			async.done(function( data, s, x ){
+				expect(data).toEqual([{
+					msg: 'The database is used for transactional file locking. To enhance performance, please configure memcache, if available. See the <a target="_blank" rel="noreferrer noopener" class="external" href="https://docs.example.org/admin-transactional-locking">documentation ↗</a> for more information.',
+					type: OC.SetupChecks.MESSAGE_TYPE_INFO
+				}]);
+				done();
+			});
+		});
+
 		it('should return a warning if there are app directories with wrong permissions', function(done) {
 			var async = OC.SetupChecks.checkSetup();
 
@@ -584,6 +708,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -644,6 +769,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -688,6 +814,67 @@ describe('OC.SetupChecks tests', function() {
 			});
 		});
 
+		it('should return an error if the admin IP is bruteforce throttled', function(done) {
+			var async = OC.SetupChecks.checkSetup();
+
+			suite.server.requests[0].respond(
+				200,
+				{
+					'Content-Type': 'application/json',
+				},
+				JSON.stringify({
+					hasFileinfoInstalled: true,
+					isGetenvServerWorking: true,
+					isReadOnlyConfig: false,
+					wasEmailTestSuccessful: true,
+					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
+					hasValidTransactionIsolationLevel: true,
+					suggestedOverwriteCliURL: '',
+					isRandomnessSecure: true,
+					isFairUseOfFreePushService: true,
+					isBruteforceThrottled: true,
+					bruteforceRemoteAddress: '::1',
+					serverHasInternetConnectionProblems: false,
+					isMemcacheConfigured: true,
+					forwardedForHeadersWorking: true,
+					reverseProxyDocs: 'https://docs.nextcloud.com/foo/bar.html',
+					isCorrectMemcachedPHPModuleInstalled: true,
+					hasPassedCodeIntegrityCheck: true,
+					OpcacheSetupRecommendations: [],
+					isSettimelimitAvailable: true,
+					hasFreeTypeSupport: true,
+					missingIndexes: [],
+					missingPrimaryKeys: [],
+					missingColumns: [],
+					cronErrors: [],
+					cronInfo: {
+						diffInSeconds: 0
+					},
+					isMemoryLimitSufficient: true,
+					appDirsWithDifferentOwner: [],
+					isImagickEnabled: true,
+					areWebauthnExtensionsEnabled: true,
+					is64bit: true,
+					recommendedPHPModules: [],
+					pendingBigIntConversionColumns: [],
+					isMysqlUsedWithoutUTF8MB4: false,
+					isDefaultPhoneRegionSet: true,
+					isEnoughTempSpaceAvailableIfS3PrimaryStorageIsUsed: true,
+					reverseProxyGeneratedURL: 'https://server',
+					temporaryDirectoryWritable: true,
+				})
+			);
+
+			async.done(function( data, s, x ){
+				expect(data).toEqual([{
+					msg: 'Your remote address was identified as "::1" and is brute-force throttled at the moment slowing down the performance of various requests. If the remote address is not your address this can be an indication that a proxy is not configured correctly. Further information can be found in the <a target="_blank" rel="noreferrer noopener" class="external" href="https://docs.nextcloud.com/foo/bar.html">documentation ↗</a>.',
+					type: OC.SetupChecks.MESSAGE_TYPE_ERROR
+				}]);
+				done();
+			});
+		});
+
 		it('should return an error if set_time_limit is unavailable', function(done) {
 			var async = OC.SetupChecks.checkSetup();
 
@@ -702,6 +889,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -760,6 +948,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -838,6 +1027,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -877,7 +1067,7 @@ describe('OC.SetupChecks tests', function() {
 			async.done(function( data, s, x ){
 				expect(data).toEqual([{
 					msg: 'You are currently running PHP 5.4.0. Upgrade your PHP version to take advantage of <a target="_blank" rel="noreferrer noopener" class="external" href="https://secure.php.net/supported-versions.php">performance and security updates provided by the PHP Group ↗</a> as soon as your distribution supports it.',
-					type: OC.SetupChecks.MESSAGE_TYPE_INFO
+					type: OC.SetupChecks.MESSAGE_TYPE_WARNING
 				}]);
 				done();
 			});
@@ -897,6 +1087,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -955,6 +1146,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1013,6 +1205,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1075,6 +1268,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1134,6 +1328,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1190,6 +1385,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1249,6 +1445,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1308,6 +1505,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1366,6 +1564,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1424,6 +1623,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1482,6 +1682,7 @@ describe('OC.SetupChecks tests', function() {
 					isReadOnlyConfig: false,
 					wasEmailTestSuccessful: true,
 					hasWorkingFileLocking: true,
+					hasDBFileLocking: false,
 					hasValidTransactionIsolationLevel: true,
 					suggestedOverwriteCliURL: '',
 					isRandomnessSecure: true,
@@ -1951,30 +2152,6 @@ describe('OC.SetupChecks tests', function() {
 					done();
 				});
 			});
-		});
-	});
-
-	it('should return a SSL warning if HTTPS is not used', function(done) {
-		protocolStub.returns('http');
-		var async = OC.SetupChecks.checkGeneric();
-
-		suite.server.requests[0].respond(200,
-			{
-				'X-XSS-Protection': '1; mode=block',
-				'X-Content-Type-Options': 'nosniff',
-				'X-Robots-Tag': 'noindex, nofollow',
-				'X-Frame-Options': 'SAMEORIGIN',
-				'X-Permitted-Cross-Domain-Policies': 'none',
-				'Referrer-Policy': 'no-referrer',
-			}
-		);
-
-		async.done(function( data, s, x ){
-			expect(data).toEqual([{
-				msg: 'Accessing site insecurely via HTTP. You are strongly advised to set up your server to require HTTPS instead, as described in the <a target="_blank" rel="noreferrer noopener" class="external" href="https://docs.example.org/admin-security">security tips ↗</a>. Without it some important web functionality like "copy to clipboard" or "service workers" will not work!',
-				type: OC.SetupChecks.MESSAGE_TYPE_ERROR
-			}]);
-			done();
 		});
 	});
 

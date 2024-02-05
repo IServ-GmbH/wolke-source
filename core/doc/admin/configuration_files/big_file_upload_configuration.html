@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -67,6 +67,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#configuring-nextcloud">Configuring Nextcloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adjust-chunk-size-on-nextcloud-side">Adjust chunk size on Nextcloud side</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#large-file-upload-on-object-storage">Large file upload on object storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#federated-cloud-sharing">Federated Cloud Sharing</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="default_files_configuration.html">Providing default files</a></li>
@@ -86,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -163,7 +165,7 @@ relevant php.ini files)</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">upload_max_filesize</span></code> and <code class="docutils literal notranslate"><span class="pre">post_max_size</span></code> settings may not apply to file uploads
-through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+through WebDAV single file PUT requests or <a class="reference external" href="https://docs.nextcloud.com/server/27/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 For those, PHP and webserver timeouts are the limiting factor on the upload size.</p>
 <p>Adjust these values for your needs. If you see PHP timeouts in your logfiles,
 increase the timeout values, which are in seconds:</p>
@@ -181,7 +183,7 @@ for how to configure those values correctly:</p>
 <section id="apache">
 <h3>Apache<a class="headerlink" href="#apache" title="Permalink to this headline"></a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody">LimitRequestBody</a></p></li>
+<li><p><a class="reference external" href="https://httpd.apache.org/docs/current/en/mod/core.html#limitrequestbody">LimitRequestBody</a> (In Apache HTTP Server &lt;=2.4.53 this defaulted to unlimited, but now defaults to 1 GiB. The new default limits uploads from non-chunking clients to 1 GiB. If this is a concern in your environment, override the new default by either manually setting it to <code class="docutils literal notranslate"><span class="pre">0</span></code> or to a value similar to that used for your local environment’s PHP <code class="docutils literal notranslate"><span class="pre">upload_max_filesize</span> <span class="pre">/</span> <span class="pre">post_max_size</span> <span class="pre">/</span> <span class="pre">memory_limit</span></code> parameters.)</p></li>
 <li><p><a class="reference external" href="https://httpd.apache.org/docs/current/mod/mod_ssl.html#sslrenegbuffersize">SSLRenegBufferSize</a></p></li>
 <li><p><a class="reference external" href="https://httpd.apache.org/docs/current/mod/core.html#timeout">Timeout</a></p></li>
 </ul>
@@ -281,12 +283,17 @@ configuration to reset it to the default shown in the <code class="docutils lite
 </section>
 <section id="large-file-upload-on-object-storage">
 <h2>Large file upload on object storage<a class="headerlink" href="#large-file-upload-on-object-storage" title="Permalink to this headline"></a></h2>
-<p><a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
+<p><a class="reference external" href="https://docs.nextcloud.com/server/27/developer_manual/client_apis/WebDAV/chunking.html">Chunked file uploads</a>
 do have a larger space consumption on the temporary folder when processing those uploads
 on object storage as the individual chunks get downloaded from the storage and will be assembled
 to the actual file on the Nextcloud servers temporary directory. It is recommended to increase
 the size of your temp directory accordingly and also ensure that request timeouts are high
 enough for PHP, webservers or any load balancers involved.</p>
+</section>
+<section id="federated-cloud-sharing">
+<h2>Federated Cloud Sharing<a class="headerlink" href="#federated-cloud-sharing" title="Permalink to this headline"></a></h2>
+<p>If you are using <a class="reference external" href="https://docs.nextcloud.com/server/latest/admin_manual/configuration_files/federated_cloud_sharing_configuration.html">Federated Cloud Sharing</a> and want to share large files, you can increase the timeout values for requests to the federated servers.
+Therefore, you can set <code class="docutils literal notranslate"><span class="pre">davstorage.request_timeout</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default value is 30 seconds.</p>
 </section>
 </section>
 
@@ -301,7 +308,7 @@ enough for PHP, webservers or any load balancers involved.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -323,9 +330,11 @@ enough for PHP, webservers or any load balancers involved.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

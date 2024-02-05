@@ -169,8 +169,8 @@ class UserStatusController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function clearStatus(): DataResponse {
-		$this->service->clearStatus($this->userId);
+	public function clearMessage(): DataResponse {
+		$this->service->clearMessage($this->userId);
 		return new DataResponse([]);
 	}
 
@@ -179,8 +179,11 @@ class UserStatusController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function clearMessage(): DataResponse {
-		$this->service->clearMessage($this->userId);
+	public function revertStatus(string $messageId): DataResponse {
+		$backupStatus = $this->service->revertUserStatus($this->userId, $messageId, true);
+		if ($backupStatus) {
+			return new DataResponse($this->formatStatus($backupStatus));
+		}
 		return new DataResponse([]);
 	}
 

@@ -1,0 +1,47 @@
+{
+  "name": "suspicious_login",
+  "version": "5.0.0",
+  "description": "Detect and warn about suspicious IPs logging into Nextcloud",
+  "private": true,
+  "dependencies": {
+    "@nextcloud/initial-state": "^2.0.0",
+    "chart.js": "^2.9.4",
+    "vue": "^2.7.14",
+    "vue-chartjs": "^3.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.5",
+    "@babel/preset-env": "^7.21.5",
+    "@nextcloud/browserslist-config": "^2.3.0",
+    "@vue/babel-preset-app": "^5.0.8",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.7.3",
+    "file-loader": "^6.2.0",
+    "url-loader": "^4.1.1",
+    "vue-loader": "^15.10.1",
+    "vue-template-compiler": "^2.7.14",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.2",
+    "webpack-merge": "^5.8.0"
+  },
+  "engines": {
+    "node": "^16.0.0",
+    "npm": "^7.0.0 || ^8.0.0"
+  },
+  "scripts": {
+    "build": "webpack --progress --config src/webpack.prod.js",
+    "dev": "webpack --progress --watch --config src/webpack.dev.js"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextcloud/suspicious_login.git"
+  },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
+  "author": "Christoph Wurst",
+  "license": "AGPL-3.0"
+}

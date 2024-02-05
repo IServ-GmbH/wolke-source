@@ -106,6 +106,8 @@ class SystemTagNode implements \Sabre\DAV\INode {
 	 * @param string $name The new name
 	 *
 	 * @throws MethodNotAllowed not allowed to rename node
+	 *
+	 * @return never
 	 */
 	public function setName($name) {
 		throw new MethodNotAllowed();
@@ -117,11 +119,12 @@ class SystemTagNode implements \Sabre\DAV\INode {
 	 * @param string $name new tag name
 	 * @param bool $userVisible user visible
 	 * @param bool $userAssignable user assignable
+	 *
 	 * @throws NotFound whenever the given tag id does not exist
 	 * @throws Forbidden whenever there is no permission to update said tag
 	 * @throws Conflict whenever a tag already exists with the given attributes
 	 */
-	public function update($name, $userVisible, $userAssignable) {
+	public function update($name, $userVisible, $userAssignable): void {
 		try {
 			if (!$this->tagManager->canUserSeeTag($this->tag, $this->user)) {
 				throw new NotFound('Tag with id ' . $this->tag->getId() . ' does not exist');
@@ -154,11 +157,15 @@ class SystemTagNode implements \Sabre\DAV\INode {
 	/**
 	 * Returns null, not supported
 	 *
+	 * @return null
 	 */
 	public function getLastModified() {
 		return null;
 	}
 
+	/**
+	 * @return void
+	 */
 	public function delete() {
 		try {
 			if (!$this->isAdmin) {

@@ -589,6 +589,15 @@ class Access extends LDAPUtility {
 		$altName = $this->createAltInternalOwnCloudName($intName, $isUser);
 		if (is_string($altName)) {
 			if ($this->mapAndAnnounceIfApplicable($mapper, $fdn, $altName, $uuid, $isUser)) {
+				$this->logger->warning(
+					'Mapped {fdn} as {altName} because of a name collision on {intName}.',
+					[
+						'fdn' => $fdn,
+						'altName' => $altName,
+						'intName' => $intName,
+						'app' => 'user_ldap',
+					]
+				);
 				$newlyMapped = true;
 				return $altName;
 			}
@@ -622,7 +631,7 @@ class Access extends LDAPUtility {
 	 * gives back the user names as they are used ownClod internally
 	 *
 	 * @param array $ldapUsers as returned by fetchList()
-	 * @return array an array with the user names to use in Nextcloud
+	 * @return array<int,string> an array with the user names to use in Nextcloud
 	 *
 	 * gives back the user names as they are used ownClod internally
 	 * @throws \Exception
@@ -635,7 +644,7 @@ class Access extends LDAPUtility {
 	 * gives back the group names as they are used ownClod internally
 	 *
 	 * @param array $ldapGroups as returned by fetchList()
-	 * @return array an array with the group names to use in Nextcloud
+	 * @return array<int,string> an array with the group names to use in Nextcloud
 	 *
 	 * gives back the group names as they are used ownClod internally
 	 * @throws \Exception
@@ -646,6 +655,7 @@ class Access extends LDAPUtility {
 
 	/**
 	 * @param array[] $ldapObjects as returned by fetchList()
+	 * @return array<int,string>
 	 * @throws \Exception
 	 */
 	private function ldap2NextcloudNames(array $ldapObjects, bool $isUsers): array {
@@ -1411,9 +1421,7 @@ class Access extends LDAPUtility {
 			$asterisk = '*';
 			$input = mb_substr($input, 1, null, 'UTF-8');
 		}
-		$search = ['*', '\\', '(', ')'];
-		$replace = ['\\*', '\\\\', '\\(', '\\)'];
-		return $asterisk . str_replace($search, $replace, $input);
+		return $asterisk . ldap_escape($input, '', LDAP_ESCAPE_FILTER);
 	}
 
 	/**
@@ -1528,14 +1536,23 @@ class Access extends LDAPUtility {
 			}
 		}
 
+		$originalSearch = $search;
 		$search = $this->prepareSearchTerm($search);
 		if (!is_array($searchAttributes) || count($searchAttributes) === 0) {
 			if ($fallbackAttribute === '') {
 				return '';
 			}
+			// wildcards don't work with some attributes
+			if ($originalSearch !== '') {
+				$filter[] = $fallbackAttribute . '=' . $originalSearch;
+			}
 			$filter[] = $fallbackAttribute . '=' . $search;
 		} else {
 			foreach ($searchAttributes as $attribute) {
+				// wildcards don't work with some attributes
+				if ($originalSearch !== '') {
+					$filter[] = $attribute . '=' . $originalSearch;
+				}
 				$filter[] = $attribute . '=' . $search;
 			}
 		}

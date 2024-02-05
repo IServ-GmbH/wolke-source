@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1
+class ComposerStaticInitde8e822aa0676a447950aff4b41a4d43
 {
     public static $prefixLengthsPsr4 = array (
         'E' => 
@@ -31,6 +31,7 @@ class ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1
     public static $classMap = array (
         'Base32\\Base32' => __DIR__ . '/..' . '/christian-riesen/base32/src/Base32.php',
         'Base32\\Base32Hex' => __DIR__ . '/..' . '/christian-riesen/base32/src/Base32Hex.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'EasyTOTP\\Factory' => __DIR__ . '/..' . '/rullzer/easytotp/src/Factory.php',
         'EasyTOTP\\TOTP' => __DIR__ . '/..' . '/rullzer/easytotp/src/TOTP.php',
         'EasyTOTP\\TOTPInterface' => __DIR__ . '/..' . '/rullzer/easytotp/src/TOTPInterface.php',
@@ -45,9 +46,9 @@ class ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit3adf9f0d97b51ae8d6de3a257b66bdf1::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitde8e822aa0676a447950aff4b41a4d43::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitde8e822aa0676a447950aff4b41a4d43::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitde8e822aa0676a447950aff4b41a4d43::$classMap;
 
         }, null, ClassLoader::class);
     }

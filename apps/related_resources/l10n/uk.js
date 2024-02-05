@@ -7,10 +7,12 @@ OC.L10N.register(
     "Deck board \"%s\"" : "Палубна дошка \"%s\"",
     "Files" : "Файли",
     "File \"%s\"" : "Файл \"%s\"",
+    "Group Folder" : "Груповий каталог",
+    "Group Folder \"%s\"" : "Груповий каталог \"%s\"",
     "Talk conversation" : "Розмова Talk",
     "Conversation with %s" : "Розмова з %s",
     "Talk" : "Розмови",
-    "Talk conversation \"%s\"" : "Talk conversation \"%s\"",
+    "Talk conversation \"%s\"" : "Розмова Talk \"%s\"",
     "Related Resources" : "Пов'язані ресурси",
     "Displays resources related to current item in right panel" : "Відображає ресурси, пов’язані з поточним елементом, на правій панелі",
     "Displays resources related to current item in right panel." : "Відображає ресурси, пов’язані з поточним елементом, на правій панелі."

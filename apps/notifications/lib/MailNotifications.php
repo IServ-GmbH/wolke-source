@@ -38,14 +38,13 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Mail\IMessage;
+use OCP\Notification\IAction;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
-use OCP\Notification\IAction;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class MailNotifications {
-
 	/** @var IConfig */
 	private $config;
 
@@ -136,11 +135,13 @@ class MailNotifications {
 		$userEnabled = $this->config->getUserValueForUsers('core', 'enabled', $userIds);
 
 		$fallbackLang = $this->config->getSystemValue('force_language', null);
-		if ($fallbackLang === null) {
-			$fallbackLang = $this->config->getSystemValue('default_language', 'en');
-			$userLanguages = $this->config->getUserValueForUsers('core', 'lang', $userIds);
-		} else {
+		if (is_string($fallbackLang)) {
+			/** @psalm-var array<string, string> $userLanguages */
 			$userLanguages = [];
+		} else {
+			$fallbackLang = $this->config->getSystemValueString('default_language', 'en');
+			/** @psalm-var array<string, string> $userLanguages */
+			$userLanguages = $this->config->getUserValueForUsers('core', 'lang', $userIds);
 		}
 
 		foreach ($userSettings as $settings) {

@@ -6,6 +6,7 @@ OC.L10N.register(
     "No file was uploaded" : "No se subió ningún archivo ",
     "Missing a temporary folder" : "Falta un directorio temporal",
     "Text" : "Texto",
+    "Translate" : "Traducir",
     "Guest" : "Invitado",
     "Offline" : "Sin conexión",
     "Saved" : "Guardado",
@@ -13,12 +14,15 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Atajos de teclado",
     "Bold" : "Negrita",
     "Italic" : "Itálico",
-    "Translate" : "Traducir",
+    "Select language" : "Seleccionar idioma",
+    "to" : "para",
     "Replace" : "Reemplazar",
-    "Unsupported image type" : "Tipo de imagen no soportado",
+    "Source code" : "Código fuente",
     "Undo" : "Deshacer",
     "Info" : "Info",
     "Warning" : "Advertencia",
-    "Edit" : "Editar"
+    "Table" : "Tabla",
+    "Edit" : "Editar",
+    "Unsupported image type" : "Tipo de imagen no soportado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

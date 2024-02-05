@@ -33,6 +33,8 @@ use Closure;
 use OCP\Calendar\Resource\IBackend as IResourceBackend;
 use OCP\Calendar\Room\IBackend as IRoomBackend;
 use OCP\Collaboration\Reference\IReferenceProvider;
+use OCP\TextProcessing\IProvider as ITextProcessingProvider;
+use OCP\SpeechToText\ISpeechToTextProvider;
 use OCP\Talk\ITalkBackend;
 use OCP\Translation\ITranslationProvider;
 use RuntimeException;
@@ -110,6 +112,12 @@ class RegistrationContext {
 
 	/** @var ServiceRegistration<IHandler>[] */
 	private $wellKnownHandlers = [];
+
+	/** @var ServiceRegistration<ISpeechToTextProvider>[] */
+	private $speechToTextProviders = [];
+
+	/** @var ServiceRegistration<ITextProcessingProvider>[] */
+	private $textProcessingProviders = [];
 
 	/** @var ServiceRegistration<ICustomTemplateProvider>[] */
 	private $templateProviders = [];
@@ -249,6 +257,19 @@ class RegistrationContext {
 				$this->context->registerWellKnown(
 					$this->appId,
 					$class
+				);
+			}
+
+			public function registerSpeechToTextProvider(string $providerClass): void {
+				$this->context->registerSpeechToTextProvider(
+					$this->appId,
+					$providerClass
+				);
+			}
+			public function registerTextProcessingProvider(string $providerClass): void {
+				$this->context->registerTextProcessingProvider(
+					$this->appId,
+					$providerClass
 				);
 			}
 
@@ -412,6 +433,14 @@ class RegistrationContext {
 
 	public function registerWellKnown(string $appId, string $class): void {
 		$this->wellKnownHandlers[] = new ServiceRegistration($appId, $class);
+	}
+
+	public function registerSpeechToTextProvider(string $appId, string $class): void {
+		$this->speechToTextProviders[] = new ServiceRegistration($appId, $class);
+	}
+
+	public function registerTextProcessingProvider(string $appId, string $class): void {
+		$this->textProcessingProviders[] = new ServiceRegistration($appId, $class);
 	}
 
 	public function registerTemplateProvider(string $appId, string $class): void {
@@ -683,6 +712,20 @@ class RegistrationContext {
 	 */
 	public function getWellKnownHandlers(): array {
 		return $this->wellKnownHandlers;
+	}
+
+	/**
+	 * @return ServiceRegistration<ISpeechToTextProvider>[]
+	 */
+	public function getSpeechToTextProviders(): array {
+		return $this->speechToTextProviders;
+	}
+
+	/**
+	 * @return ServiceRegistration<ITextProcessingProvider>[]
+	 */
+	public function getTextProcessingProviders(): array {
+		return $this->textProcessingProviders;
 	}
 
 	/**

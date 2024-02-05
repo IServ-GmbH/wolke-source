@@ -1,49 +1,117 @@
-diff --git a/apps/files_sharing/src/components/SharePermissionsEditor.vue b/apps/files_sharing/src/components/SharePermissionsEditor.vue
-index c5e652b2cda..90951eb6483 100644
---- a/apps/files_sharing/src/components/SharePermissionsEditor.vue
-+++ b/apps/files_sharing/src/components/SharePermissionsEditor.vue
-@@ -24,7 +24,7 @@
- 	<li>
- 		<ul>
- 			<!-- file -->
--			<NcActionCheckbox v-if="!isFolder"
-+			<NcActionCheckbox v-if="!isFolder && canEditFileType"
- 				:checked="shareHasPermissions(atomicPermissions.UPDATE)"
- 				:disabled="saving"
- 				@update:checked="toggleSharePermissions(atomicPermissions.UPDATE)">
-@@ -146,6 +146,35 @@ export default {
+diff --git a/apps/files_sharing/src/views/SharingDetailsTab.vue b/apps/files_sharing/src/views/SharingDetailsTab.vue
+index 67bfac3..5cb49a3 100644
+--- a/apps/files_sharing/src/views/SharingDetailsTab.vue
++++ b/apps/files_sharing/src/views/SharingDetailsTab.vue
+@@ -16,7 +16,7 @@
+ 			</span>
+ 		</div>
+ 		<div class="sharingTabDetailsView__wrapper">
+-			<div ref="quickPermissions"
++			<div v-if="canEditFileType || isFolder" ref="quickPermissions"
+ 				class="sharingTabDetailsView__quick-permissions">
+ 				<div>
+ 					<NcCheckboxRadioSwitch :button-variant="true"
+@@ -37,36 +37,10 @@
+ 						button-variant-grouped="vertical"
+ 						@update:checked="toggleCustomPermissions">
+ 						<EditIcon :size="20" />
+-						<template v-if="allowsFileDrop">
+-							<span>{{ t('files_sharing', 'Allow upload and editing') }}</span>
+-						</template>
+-						<template v-else>
++						<template>
+ 							<span>{{ t('files_sharing', 'Allow editing') }}</span>
+ 						</template>
+ 					</NcCheckboxRadioSwitch>
+-					<NcCheckboxRadioSwitch v-if="allowsFileDrop"
+-						:button-variant="true"
+-						:checked.sync="sharingPermission"
+-						:value="bundledPermissions.FILE_DROP.toString()"
+-						name="sharing_permission_radio"
+-						type="radio"
+-						button-variant-grouped="vertical"
+-						@update:checked="toggleCustomPermissions">
+-						<UploadIcon :size="20" />
+-						<span>{{ t('files_sharing', 'File drop') }}</span>
+-						<small>{{ t('files_sharing', 'Upload only') }}</small>
+-					</NcCheckboxRadioSwitch>
+-					<NcCheckboxRadioSwitch :button-variant="true"
+-						:checked.sync="sharingPermission"
+-						:value="'custom'"
+-						name="sharing_permission_radio"
+-						type="radio"
+-						button-variant-grouped="vertical"
+-						@update:checked="expandCustomPermissions">
+-						<DotsHorizontalIcon :size="20" />
+-						<span>{{ t('files_sharing', 'Custom permissions') }}</span>
+-						<small>{{ customPermissionsList }}</small>
+-					</NcCheckboxRadioSwitch>
+ 				</div>
+ 			</div>
+ 			<div class="sharingTabDetailsView__advanced-control">
+@@ -147,29 +121,6 @@
+ 						</label>
+ 						<textarea id="share-note-textarea" :value="share.note" @input="share.note = $event.target.value" />
+ 					</template>
+-					<NcCheckboxRadioSwitch :checked.sync="setCustomPermissions">
+-						{{ t('files_sharing', 'Custom permissions') }}
+-					</NcCheckboxRadioSwitch>
+-					<section v-if="setCustomPermissions" class="custom-permissions-group">
+-						<NcCheckboxRadioSwitch :disabled="!allowsFileDrop && share.type === SHARE_TYPES.SHARE_TYPE_LINK"
+-							:checked.sync="hasRead">
+-							{{ t('files_sharing', 'Read') }}
+-						</NcCheckboxRadioSwitch>
+-						<NcCheckboxRadioSwitch v-if="isFolder" :disabled="!canSetCreate" :checked.sync="canCreate">
+-							{{ t('files_sharing', 'Create') }}
+-						</NcCheckboxRadioSwitch>
+-						<NcCheckboxRadioSwitch :disabled="!canSetEdit" :checked.sync="canEdit">
+-							{{ t('files_sharing', 'Update') }}
+-						</NcCheckboxRadioSwitch>
+-						<NcCheckboxRadioSwitch v-if="config.isResharingAllowed && share.type !== SHARE_TYPES.SHARE_TYPE_LINK"
+-							:disabled="!canSetReshare"
+-							:checked.sync="canReshare">
+-							{{ t('files_sharing', 'Share') }}
+-						</NcCheckboxRadioSwitch>
+-						<NcCheckboxRadioSwitch :disabled="!canSetDelete" :checked.sync="canDelete">
+-							{{ t('files_sharing', 'Delete') }}
+-						</NcCheckboxRadioSwitch>
+-					</section>
+ 				</section>
+ 			</div>
+ 		</div>
+@@ -285,6 +236,35 @@ export default {
  	},
- 
+
  	computed: {
-+		canEditFileType () {
-+			// Taken from https://github.com/nextcloud/text/blob/0320046ffe8b853e8e329a9b865cdf3633228509/lib/DirectEditing/TextDirectEditor.php#L83
-+			const supportedMimeTypes = [
-+				'text/markdown',
-+				'text/plain',
-+				'application/cmd',
-+				'application/x-empty',
-+				'application/x-msdos-program',
-+				'application/javascript',
-+				'application/json',
-+				'application/x-perl',
-+				'application/x-php',
-+				'application/x-tex',
-+				'application/xml',
-+				'application/yaml',
-+				'text/css',
-+				'text/csv',
-+				'text/html',
-+				'text/org',
-+				'text/x-c',
-+				'text/x-c++src',
-+				'text/x-h',
-+				'text/x-java-source',
-+				'text/x-ldif',
-+				'text/x-python',
-+				'text/x-shellscript'
-+			];
-+			return supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
-+		},
- 		/**
- 		 * Return the summary of custom checked permissions.
- 		 *
++        canEditFileType () {
++            // Taken from https://github.com/nextcloud/text/blob/0320046ffe8b853e8e329a9b865cdf3633228509/lib/DirectEditing/TextDirectEditor.php#L83
++            const supportedMimeTypes = [
++                'text/markdown',
++                'text/plain',
++                'application/cmd',
++                'application/x-empty',
++                'application/x-msdos-program',
++                'application/javascript',
++                'application/json',
++                'application/x-perl',
++                'application/x-php',
++                'application/x-tex',
++                'application/xml',
++                'application/yaml',
++                'text/css',
++                'text/csv',
++                'text/html',
++                'text/org',
++                'text/x-c',
++                'text/x-c++src',
++                'text/x-h',
++                'text/x-java-source',
++                'text/x-ldif',
++                'text/x-python',
++                'text/x-shellscript'
++            ];
++            return supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
++        },
+ 		title() {
+ 			let title = t('files_sharing', 'Share with ')
+ 			if (this.share.type === this.SHARE_TYPES.SHARE_TYPE_USER) {

@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
@@ -92,6 +92,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#logging-commands">Logging commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#maintenance-commands">Maintenance commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#security">Security</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#status">Status</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#status-return-code">Status return code</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#trashbin">Trashbin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#user-commands">User commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#group-commands">Group commands</a></li>
@@ -130,6 +134,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -949,7 +954,7 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>Users may also transfer files or folders selectively by themselves.
-See <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/27/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 </section>
 <section id="files-sharing">
@@ -1009,7 +1014,7 @@ and to copy external mount configurations to another Nextcloud server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">pathto</span><span class="o">/</span><span class="n">app</span> <span class="n">appname</span>
 </pre></div>
 </div>
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
+<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/27/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">integrity:sign-core</span></code> is for Nextcloud core developers only.</p>
 <p>See <a class="reference internal" href="../issues/code_signing.html"><span class="doc">Code signing</span></a> to learn more.</p>
 </section>
@@ -1204,11 +1209,86 @@ change to existing files.</p>
 </pre></div>
 </div>
 </section>
+<section id="status">
+<h2>Status<a class="headerlink" href="#status" title="Permalink to this headline"></a></h2>
+<p>Use the status command to retrieve information about the current installation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -u www-data php occ status
+  - installed: true
+  - version: 25.0.2.3
+  - versionstring: 25.0.2
+  - edition:
+  - maintenance: false
+  - needsDbUpgrade: false
+  - productname: Nextcloud
+  - extendedSupport: false
+</pre></div>
+</div>
+<p>This information can also be formatted via JSON instead of plain text:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ php occ status --output=json_pretty
+{
+    &quot;installed&quot;: true,
+    &quot;version&quot;: &quot;25.0.2.3&quot;,
+    &quot;versionstring&quot;: &quot;25.0.2&quot;,
+    &quot;edition&quot;: &quot;&quot;,
+    &quot;maintenance&quot;: false,
+    &quot;needsDbUpgrade&quot;: false,
+    &quot;productname&quot;: &quot;Nextcloud&quot;,
+    &quot;extendedSupport&quot;: false
+}
+</pre></div>
+</div>
+<section id="status-return-code">
+<h3>Status return code<a class="headerlink" href="#status-return-code" title="Permalink to this headline"></a></h3>
+<p>And finally, the <code class="docutils literal notranslate"><span class="pre">-e</span></code> (for exit code) parameter can be used to check
+the state of the nextcloud installation via return code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ php occ status -e
+$ echo $?
+0
+$ php occ maintenance:mode --on
+Maintenance mode enabled
+$ php occ status -e
+$ echo $?
+1
+$ php occ maintenance:mode --off
+Maintenance mode disabled
+$ php occ status -e
+$ echo $?
+0
+</pre></div>
+</div>
+<p>Note that by default there is no output when run with <code class="docutils literal notranslate"><span class="pre">-e</span></code>. This is
+intentional, so it can be used in scripts, monitoring checks, and systemd
+units.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Return code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>normal operation</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>maintenance mode is enabled; the instance is currently
+unavailable to users.</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">upgrade</span></code> is required</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="trashbin">
 <span id="trashbin-label"></span><h2>Trashbin<a class="headerlink" href="#trashbin" title="Permalink to this headline"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trashbin</span>
- <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span>
- <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Restore</span> <span class="n">deleted</span> <span class="n">files</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Permanently</span> <span class="n">remove</span> <span class="n">deleted</span> <span class="n">files</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">scope</span><span class="p">[</span><span class="o">=</span><span class="n">SCOPE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">since</span><span class="p">[</span><span class="o">=</span><span class="n">SINCE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">until</span><span class="p">[</span><span class="o">=</span><span class="n">UNTIL</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Restore</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">according</span> <span class="n">to</span> <span class="n">the</span> <span class="n">given</span> <span class="n">filters</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -1235,15 +1315,33 @@ users in a space-delimited list, or all users if –all-users is specified.</p>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">of</span>   <span class="n">freda</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">trashbin:restore</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command restores the deleted files of the specified
+<p>The <code class="docutils literal notranslate"><span class="pre">trashbin:restore</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--scope[=SCOPE]]</span> <span class="pre">[--since[=SINCE]]</span> <span class="pre">[--until[=UNTIL]]</span> <span class="pre">[--dry-run]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command restores the deleted files of the specified
 users in a space-delimited list, or all users if –all-users is specified.</p>
-<p>This example restores the deleted files of all users:</p>
+<p>This example restores the deleted user-files of all users:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span>
 </pre></div>
 </div>
-<p>This example restores the deleted files of users molly and freda:</p>
+<p>This example restores the deleted user-files of users molly and freda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="n">molly</span> <span class="n">freda</span>
 </pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--scope</span></code> option can be used to limit the restore to a specific scope.
+Possible values are “user”, “groupfolders” or “all” [default: “user”].</p>
+<p>This example restores the deleted files of all groupfolders which are visible to the user freda:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="o">--</span><span class="n">scope</span> <span class="n">groupfolders</span> <span class="n">freda</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--since</span></code> and <code class="docutils literal notranslate"><span class="pre">--until</span></code> options can be used to limit the restore to files deleted inside of the given time period.</p>
+<p>This example restores the locally deleted files and files of any groupfolders which are visible to the user
+freda. Additionally the files have to be deleted between <code class="docutils literal notranslate"><span class="pre">01.08.2023</span> <span class="pre">11:55:22</span></code> and <code class="docutils literal notranslate"><span class="pre">02.08.2023</span> <span class="pre">01:33</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span> <span class="o">--</span><span class="n">scope</span> <span class="nb">all</span> <span class="o">--</span><span class="n">since</span> <span class="s2">&quot;01.08.2023 11:55:22&quot;</span> <span class="o">--</span><span class="n">until</span> <span class="s2">&quot;02.08.2023 01:33&quot;</span> <span class="n">freda</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> option can be used to simulate the restore without actually restoring the files.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use the verbose options (<code class="docutils literal notranslate"><span class="pre">-v</span></code> or <code class="docutils literal notranslate"><span class="pre">-vv</span></code>) to get more information about
+the restore process and why some files might be skipped.</p>
 </div>
 </section>
 <section id="user-commands">
@@ -1714,7 +1812,7 @@ check for that user via the occ command:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -1736,9 +1834,11 @@ check for that user via the occ command:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

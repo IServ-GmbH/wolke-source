@@ -224,17 +224,17 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	/**
 	 * Get the permissions granted for a shared file
 	 *
-	 * @param string $target Shared target file path
+	 * @param string $path Shared target file path
 	 * @return int CRUDS permissions granted
 	 */
-	public function getPermissions($target = ''): int {
+	public function getPermissions($path = ''): int {
 		if (!$this->isValid()) {
 			return 0;
 		}
-		$permissions = parent::getPermissions($target) & $this->superShare->getPermissions();
+		$permissions = parent::getPermissions($path) & $this->superShare->getPermissions();
 
 		// part files and the mount point always have delete permissions
-		if ($target === '' || pathinfo($target, PATHINFO_EXTENSION) === 'part') {
+		if ($path === '' || pathinfo($path, PATHINFO_EXTENSION) === 'part') {
 			$permissions |= \OCP\Constants::PERMISSION_DELETE;
 		}
 
@@ -415,7 +415,8 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 		$this->cache = new \OCA\Files_Sharing\Cache(
 			$storage,
 			$sourceRoot,
-			\OC::$server->get(DisplayNameCache::class)
+			\OC::$server->get(DisplayNameCache::class),
+			$this->getShare()
 		);
 		return $this->cache;
 	}
@@ -517,9 +518,9 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	}
 
 	/**
-	 * @param bool $available
+	 * @param bool $isAvailable
 	 */
-	public function setAvailability($available) {
+	public function setAvailability($isAvailable) {
 		// shares do not participate in availability logic
 	}
 

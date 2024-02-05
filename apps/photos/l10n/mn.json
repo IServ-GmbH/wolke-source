@@ -9,7 +9,9 @@
     "Save" : "Хадгалах",
     "Shared by" : "Хуваалцсан",
     "Favorite" : "Дуртай",
+    "Go back" : "Буцах",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "нэмэх"
+    "Add" : "нэмэх",
+    "Details" : "Дэлгэрэнгүй"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -2,10 +2,15 @@ OC.L10N.register(
     "circles",
     {
     "Circles" : "Кругови",
+    "Select circles to filter by" : "Изберете кругови за да филтрирате",
+    "Please select circles to filter by" : "Изберете кругови за да филтрирате",
+    "No files found for the selected circles" : "Нема пронајдено датотеки за селектиранате кругови",
+    "Shared to Circles" : "Споделено со кругови",
     "Personal" : "Сопствен",
     "System" : "Систем",
     "Visible" : "Видлив",
     "Open" : "Отвори",
+    "Invite" : "Покани",
     "Hidden" : "Сокриен",
     "Local" : "Локално",
     "Root" : "Корен",
@@ -31,7 +36,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Нема ништо во оваа папка",
     "Name" : "Име",
     "Size" : "Големина",
-    "Modified" : "Изменето",
-    "Could not find share" : "Неможе да се пронајде споделувањето"
+    "Modified" : "Изменето"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

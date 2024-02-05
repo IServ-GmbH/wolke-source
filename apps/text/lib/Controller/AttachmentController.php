@@ -26,11 +26,16 @@ declare(strict_types=1);
 namespace OCA\Text\Controller;
 
 use Exception;
-use OCA\Text\Service\SessionService;
+use OCA\Text\Exception\InvalidSessionException;
 use OCA\Text\Exception\UploadException;
-use OCP\AppFramework\Http;
+use OCA\Text\Middleware\Attribute\RequireDocumentSession;
+use OCA\Text\Middleware\Attribute\RequireDocumentSessionOrUserOrShareToken;
 use OCA\Text\Service\AttachmentService;
-use OCP\AppFramework\Controller;
+use OCP\AppFramework\ApiController;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -40,7 +45,8 @@ use OCP\IRequest;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
-class AttachmentController extends Controller {
+class AttachmentController extends ApiController implements ISessionAwareController {
+	use TSessionAwareController;
 	public const IMAGE_MIME_TYPES = [
 		'image/png',
 		'image/jpeg',
@@ -66,46 +72,46 @@ class AttachmentController extends Controller {
 		'image/webp',
 	];
 
-	private AttachmentService $attachmentService;
-	private LoggerInterface $logger;
-	private SessionService $sessionService;
-	private IL10N $l10n;
-	private IMimeTypeDetector $mimeTypeDetector;
-
-	public function __construct(string $appName,
-								IRequest $request,
-								IL10N $l10n,
-								LoggerInterface $logger,
-								IMimeTypeDetector $mimeTypeDetector,
-								AttachmentService $attachmentService,
-								SessionService $sessionService) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		private IL10N $l10n,
+		private LoggerInterface $logger,
+		private IMimeTypeDetector $mimeTypeDetector,
+		private AttachmentService $attachmentService
+	) {
 		parent::__construct($appName, $request);
-		$this->attachmentService = $attachmentService;
-		$this->request = $request;
-		$this->logger = $logger;
-		$this->sessionService = $sessionService;
-		$this->l10n = $l10n;
-		$this->mimeTypeDetector = $mimeTypeDetector;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @PublicPage
-	 *
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string $filePath
-	 * @return DataResponse
-	 */
-	public function insertAttachmentFile(int $documentId, int $sessionId, string $sessionToken, string $filePath): DataResponse {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[RequireDocumentSessionOrUserOrShareToken]
+	public function getAttachmentList(?string $shareToken = null): DataResponse {
+		$documentId = $this->getDocument()->getId();
+		try {
+			$session = $this->getSession();
+		} catch (InvalidSessionException) {
+			$session = null;
 		}
-		$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
+
+		if ($shareToken) {
+			$attachments = $this->attachmentService->getAttachmentList($documentId, null, $session, $shareToken);
+		} else {
+			$userId = $this->getUserId();
+			$attachments = $this->attachmentService->getAttachmentList($documentId, $userId, $session, null);
+		}
+
+		return new DataResponse($attachments);
+	}
+
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[RequireDocumentSession]
+	public function insertAttachmentFile(string $filePath): DataResponse {
+		$userId = $this->getSession()->getUserId();
 
 		try {
-			$insertResult = $this->attachmentService->insertAttachmentFile($documentId, $filePath, $userId);
+			$insertResult = $this->attachmentService->insertAttachmentFile($this->getSession()->getDocumentId(), $filePath, $userId);
 			if (isset($insertResult['error'])) {
 				return new DataResponse($insertResult, Http::STATUS_BAD_REQUEST);
 			} else {
@@ -117,25 +123,11 @@ class AttachmentController extends Controller {
 		}
 	}
 
-	/**
-	 * @NoAdminRequired
-	 * @PublicPage
-	 *
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string|null $shareToken
-	 * @return DataResponse
-	 */
-	public function uploadAttachment(int $documentId, int $sessionId, string $sessionToken, ?string $shareToken = null): DataResponse {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			$this->logger->debug('Invalid session found when uploading', [
-				'documentId' => $documentId,
-				'sessionId' => $sessionId,
-				'sessionToken' => $sessionToken
-			]);
-			return new DataResponse(['error' => 'Upload error, unauthorized action'], Http::STATUS_FORBIDDEN);
-		}
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[RequireDocumentSession]
+	public function uploadAttachment(?string $shareToken = null): DataResponse {
+		$documentId = $this->getSession()->getDocumentId();
 
 		try {
 			$file = $this->getUploadedFile('file');
@@ -148,7 +140,7 @@ class AttachmentController extends Controller {
 				if ($shareToken) {
 					$uploadResult = $this->attachmentService->uploadAttachmentPublic($documentId, $newFileName, $newFileResource, $shareToken);
 				} else {
-					$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
+					$userId = $this->getSession()->getUserId();
 					$uploadResult = $this->attachmentService->uploadAttachment($documentId, $newFileName, $newFileResource, $userId);
 				}
 				if (isset($uploadResult['error'])) {
@@ -191,36 +183,27 @@ class AttachmentController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 *
 	 * Serve the image files in the editor
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string $imageFileName
-	 * @param string|null $shareToken
-	 * @param int $preferRawImage
-	 * @return DataDownloadResponse|DataResponse
 	 */
-	public function getImageFile(int $documentId, int $sessionId, string $sessionToken, string $imageFileName, ?string $shareToken = null,
-								int $preferRawImage = 0) {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			return new DataResponse('', Http::STATUS_FORBIDDEN);
-		}
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireDocumentSessionOrUserOrShareToken]
+	public function getImageFile(string $imageFileName, ?string $shareToken = null,
+		int $preferRawImage = 0): DataResponse|DataDownloadResponse {
+		$documentId = $this->getDocument()->getId();
 
 		try {
 			if ($shareToken) {
 				$imageFile = $this->attachmentService->getImageFilePublic($documentId, $imageFileName, $shareToken, $preferRawImage === 1);
 			} else {
-				$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
+				$userId = $this->getUserId();
 				$imageFile = $this->attachmentService->getImageFile($documentId, $imageFileName, $userId, $preferRawImage === 1);
 			}
 			return $imageFile !== null
 				? new DataDownloadResponse(
 					$imageFile->getContent(),
-					(string) Http::STATUS_OK,
+					$imageFile->getName(),
 					$this->getSecureMimeType($imageFile->getMimeType())
 				)
 				: new DataResponse('', Http::STATUS_NOT_FOUND);
@@ -231,34 +214,26 @@ class AttachmentController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 *
 	 * Serve the media files in the editor
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string $mediaFileName
-	 * @param string|null $shareToken
-	 * @return DataDownloadResponse|DataResponse
 	 */
-	public function getMediaFile(int $documentId, int $sessionId, string $sessionToken, string $mediaFileName, ?string $shareToken = null) {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			return new DataResponse('', Http::STATUS_FORBIDDEN);
-		}
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireDocumentSessionOrUserOrShareToken]
+	public function getMediaFile(string $mediaFileName, ?string $shareToken = null): DataResponse|DataDownloadResponse {
+		$documentId = $this->getDocument()->getId();
 
 		try {
 			if ($shareToken) {
 				$mediaFile = $this->attachmentService->getMediaFilePublic($documentId, $mediaFileName, $shareToken);
 			} else {
-				$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
+				$userId = $this->getUserId();
 				$mediaFile = $this->attachmentService->getMediaFile($documentId, $mediaFileName, $userId);
 			}
 			return $mediaFile !== null
 				? new DataDownloadResponse(
 					$mediaFile->getContent(),
-					(string) Http::STATUS_OK,
+					$mediaFile->getName(),
 					$this->getSecureMimeType($mediaFile->getMimeType())
 				)
 				: new DataResponse('', Http::STATUS_NOT_FOUND);
@@ -269,28 +244,21 @@ class AttachmentController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 *
 	 * Serve the media files preview in the editor
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string $mediaFileName
-	 * @param string|null $shareToken
 	 * @return DataDownloadResponse|DataResponse|RedirectResponse
 	 */
-	public function getMediaFilePreview(int $documentId, int $sessionId, string $sessionToken, string $mediaFileName, ?string $shareToken = null) {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			return new DataResponse('', Http::STATUS_FORBIDDEN);
-		}
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[RequireDocumentSessionOrUserOrShareToken]
+	public function getMediaFilePreview(string $mediaFileName, ?string $shareToken = null) {
+		$documentId = $this->getDocument()->getId();
 
 		try {
 			if ($shareToken) {
 				$preview = $this->attachmentService->getMediaFilePreviewPublic($documentId, $mediaFileName, $shareToken);
 			} else {
-				$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
+				$userId = $this->getUserId();
 				$preview = $this->attachmentService->getMediaFilePreview($documentId, $mediaFileName, $userId);
 			}
 			if ($preview === null) {
@@ -299,7 +267,7 @@ class AttachmentController extends Controller {
 			if ($preview['type'] === 'file') {
 				return new DataDownloadResponse(
 					$preview['file']->getContent(),
-					(string) Http::STATUS_OK,
+					$mediaFileName,
 					$this->getSecureMimeType($preview['file']->getMimeType())
 				);
 			} elseif ($preview['type'] === 'icon') {
@@ -309,55 +277,6 @@ class AttachmentController extends Controller {
 			$this->logger->error('getMediaFilePreview error', ['exception' => $e]);
 		}
 		return new DataResponse('', Http::STATUS_NOT_FOUND);
-	}
-
-	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 *
-	 * Serve the media files metadata in the editor
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @param string $mediaFileName
-	 * @param string|null $shareToken
-	 * @return DataResponse
-	 */
-	public function getMediaFileMetadata(int $documentId, int $sessionId, string $sessionToken,
-										 string $mediaFileName, ?string $shareToken = null): DataResponse {
-		if (!$this->sessionService->isValidSession($documentId, $sessionId, $sessionToken)) {
-			return new DataResponse('', Http::STATUS_FORBIDDEN);
-		}
-
-		try {
-			if ($shareToken) {
-				$metadata = $this->attachmentService->getMediaFileMetadataPublic($documentId, $mediaFileName, $shareToken);
-			} else {
-				$userId = $this->getUserIdFromSession($documentId, $sessionId, $sessionToken);
-				$metadata = $this->attachmentService->getMediaFileMetadataPrivate($documentId, $mediaFileName, $userId);
-			}
-			if ($metadata === null) {
-				return new DataResponse('', Http::STATUS_NOT_FOUND);
-			}
-			return new DataResponse($metadata);
-		} catch (Exception $e) {
-			$this->logger->error('getMediaFileMetadata error', ['exception' => $e]);
-			return new DataResponse('', Http::STATUS_NOT_FOUND);
-		}
-	}
-
-	/**
-	 * Extract the user ID from the edition session
-	 *
-	 * @param int $documentId
-	 * @param int $sessionId
-	 * @param string $sessionToken
-	 * @return ?string
-	 */
-	private function getUserIdFromSession(int $documentId, int $sessionId, string $sessionToken): ?string {
-		$session = $this->sessionService->getSession($documentId, $sessionId, $sessionToken);
-		return $session->getUserId();
 	}
 
 	/**

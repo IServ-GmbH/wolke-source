@@ -100,7 +100,7 @@ class CustomPropertiesBackend implements BackendInterface {
 	/**
 	 * Properties set by one user, readable by all others
 	 *
-	 * @var array[]
+	 * @var string[]
 	 */
 	private const PUBLISHED_READ_ONLY_PROPERTIES = [
 		'{urn:ietf:params:xml:ns:caldav}calendar-availability',
@@ -174,6 +174,21 @@ class CustomPropertiesBackend implements BackendInterface {
 
 			foreach ($customPropertiesForShares as $customPropertyForShares) {
 				if (in_array($customPropertyForShares, $allRequestedProps)) {
+					$requestedProps[] = $customPropertyForShares;
+				}
+			}
+		}
+
+		// substr of addressbooks/ => path is inside the CardDAV component
+		// three '/' => this a addressbook (no addressbook-home nor contact object)
+		if (str_starts_with($path, 'addressbooks/') && substr_count($path, '/') === 3) {
+			$allRequestedProps = $propFind->getRequestedProperties();
+			$customPropertiesForShares = [
+				'{DAV:}displayname',
+			];
+
+			foreach ($customPropertiesForShares as $customPropertyForShares) {
+				if (in_array($customPropertyForShares, $allRequestedProps, true)) {
 					$requestedProps[] = $customPropertyForShares;
 				}
 			}

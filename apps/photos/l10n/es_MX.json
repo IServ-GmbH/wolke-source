@@ -15,18 +15,19 @@
     "Group" : "Grupo",
     "Copy public link" : "Copiar enlace público",
     "An error occurred" : "Ha ocurrido un error",
+    "Favorite" : "Marcar como favorito",
     "Open the full size \"{name}\" image" : "Abrir Imagen \"{name}\" en tamaño completo",
-    "Open the \"{name}\" sub-directory" : "Abrir el sub-directorio de \"{name}\"",
+    "Go back" : "Regresar",
     "Back to {folder}" : "Regresar a {folder}",
     "View" : "Ver",
-    "Favorite" : "Marcar como favorito",
     "Remove from favorites" : "Eliminar de favoritos",
     "No photos in here" : "No hay fotos aquí",
     "No tags yet" : "Aún no hay etiquetas",
     "Photos with tags will show up here" : "Las fotos con etiquetas se mostrarán aquí",
     "Add" : "Agregar",
     "Tagged photos" : "Fotos con etiquetas",
-    "Locations" : "Ubicaciones",
+    "Details" : "Detalles",
+    "Open the \"{name}\" sub-directory" : "Abrir el sub-directorio de \"{name}\"",
     "Shared albums" : "Álbums compartidos"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

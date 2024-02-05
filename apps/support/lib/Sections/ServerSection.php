@@ -410,11 +410,42 @@ class ServerSection extends Section {
 		$output .= PHP_EOL;
 		$output .= 'Signaling servers (mode: ' . $config . '):' . PHP_EOL;
 
+		if ($this->config->getAppValue('spreed', 'sip_bridge_shared_secret') !== '') {
+			$output .= ' * SIP dialin is enabled' . PHP_EOL;
+		} else {
+			$output .= ' * SIP dialin is disabled' . PHP_EOL;
+		}
+		if ($this->config->getAppValue('spreed', 'sip_dialout', 'no') !== 'no') {
+			$output .= ' * SIP dialout is enabled' . PHP_EOL;
+		} else {
+			$output .= ' * SIP dialout is disabled' . PHP_EOL;
+		}
+
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$servers = json_decode($config, true);
 
 		if (empty($servers['servers'])) {
 			$output .= ' * no custom server configured' . PHP_EOL;
+		} else {
+			foreach ($servers['servers'] as $server) {
+				$output .= ' * ' . $server['server'] . ' - ' . $this->getHPBVersion($server['server']) . PHP_EOL;
+			}
+		}
+
+		$output .= PHP_EOL;
+		$output .= 'Recording servers:' . PHP_EOL;
+		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
+			$output .= ' * Recording is disabled' . PHP_EOL;
+		} else {
+			$output .= ' * Recording is enabled' . PHP_EOL;
+		}
+		$output .= ' * Recording consent is set to "' . $this->config->getAppValue('spreed', 'recording_consent', 'default') . '"' . PHP_EOL;
+
+		$config = $this->config->getAppValue('spreed', 'recording_servers');
+		$servers = json_decode($config, true);
+
+		if (empty($servers['servers'])) {
+			$output .= ' * no recording server configured' . PHP_EOL;
 		} else {
 			foreach ($servers['servers'] as $server) {
 				$output .= ' * ' . $server['server'] . ' - ' . $this->getHPBVersion($server['server']) . PHP_EOL;

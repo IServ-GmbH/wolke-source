@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -245,11 +246,13 @@ path to your current Nextcloud installation.</p>
 
 <span class="p">[</span><span class="n">Service</span><span class="p">]</span>
 <span class="n">User</span><span class="o">=</span><span class="n">www</span><span class="o">-</span><span class="n">data</span>
+<span class="n">ExecCondition</span><span class="o">=</span><span class="n">php</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">occ</span> <span class="n">status</span> <span class="o">-</span><span class="n">e</span>
 <span class="n">ExecStart</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">php</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">php</span>
 <span class="n">KillMode</span><span class="o">=</span><span class="n">process</span>
 </pre></div>
 </div>
 <p>Replace the user <code class="docutils literal notranslate"><span class="pre">www-data</span></code> with the user of your http server and <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud/cron.php</span></code> with the location of <strong>cron.php</strong> in your nextcloud directory.</p>
+<p>The <cite>ExecCondition</cite> checks that the nextcloud instance is operating normally before running the background job, and skips it if otherwise.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">KillMode=process</span></code> setting is necessary for external programs that are started by the cron job to keep running after the cron job has finished.</p>
 <p>Note that the <strong>.service</strong> unit file does not need an <code class="docutils literal notranslate"><span class="pre">[Install]</span></code> section. Please check your setup because we recommended it in earlier versions of this admin manual.</p>
 <p><strong>nextcloudcron.timer</strong> should look like this:</p>
@@ -290,7 +293,7 @@ path to your current Nextcloud installation.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -312,9 +315,11 @@ path to your current Nextcloud installation.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
@@ -82,6 +82,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -115,7 +116,7 @@
            <div itemprop="articleBody">
              
   <section id="nginx-configuration">
-<h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline"></a></h1>
+<span id="nginx-config"></span><h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Please note that webservers other than Apache 2.x are not officially supported.</p>
@@ -201,7 +202,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="kn">gzip_comp_level</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">gzip_min_length</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">gzip_proxied</span><span class="w"> </span><span class="s">expired</span><span class="w"> </span><span class="s">no-cache</span><span class="w"> </span><span class="s">no-store</span><span class="w"> </span><span class="s">private</span><span class="w"> </span><span class="s">no_last_modified</span><span class="w"> </span><span class="s">no_etag</span><span class="w"> </span><span class="s">auth</span><span class="p">;</span>
-<span class="w">    </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">application/atom+xml</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/json</span><span class="w"> </span><span class="s">application/ld+json</span><span class="w"> </span><span class="s">application/manifest+json</span><span class="w"> </span><span class="s">application/rss+xml</span><span class="w"> </span><span class="s">application/vnd.geo+json</span><span class="w"> </span><span class="s">application/vnd.ms-fontobject</span><span class="w"> </span><span class="s">application/wasm</span><span class="w"> </span><span class="s">application/x-font-ttf</span><span class="w"> </span><span class="s">application/x-web-app-manifest+json</span><span class="w"> </span><span class="s">application/xhtml+xml</span><span class="w"> </span><span class="s">application/xml</span><span class="w"> </span><span class="s">font/opentype</span><span class="w"> </span><span class="s">image/bmp</span><span class="w"> </span><span class="s">image/svg+xml</span><span class="w"> </span><span class="s">image/x-icon</span><span class="w"> </span><span class="s">text/cache-manifest</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/vcard</span><span class="w"> </span><span class="s">text/vnd.rim.location.xloc</span><span class="w"> </span><span class="s">text/vtt</span><span class="w"> </span><span class="s">text/x-component</span><span class="w"> </span><span class="s">text/x-cross-domain-policy</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">application/atom+xml</span><span class="w"> </span><span class="s">text/javascript</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/json</span><span class="w"> </span><span class="s">application/ld+json</span><span class="w"> </span><span class="s">application/manifest+json</span><span class="w"> </span><span class="s">application/rss+xml</span><span class="w"> </span><span class="s">application/vnd.geo+json</span><span class="w"> </span><span class="s">application/vnd.ms-fontobject</span><span class="w"> </span><span class="s">application/wasm</span><span class="w"> </span><span class="s">application/x-font-ttf</span><span class="w"> </span><span class="s">application/x-web-app-manifest+json</span><span class="w"> </span><span class="s">application/xhtml+xml</span><span class="w"> </span><span class="s">application/xml</span><span class="w"> </span><span class="s">font/opentype</span><span class="w"> </span><span class="s">image/bmp</span><span class="w"> </span><span class="s">image/svg+xml</span><span class="w"> </span><span class="s">image/x-icon</span><span class="w"> </span><span class="s">text/cache-manifest</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/vcard</span><span class="w"> </span><span class="s">text/vnd.rim.location.xloc</span><span class="w"> </span><span class="s">text/vtt</span><span class="w"> </span><span class="s">text/x-component</span><span class="w"> </span><span class="s">text/x-cross-domain-policy</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1"># Pagespeed is not supported by Nextcloud, so if your server is built</span>
 <span class="w">    </span><span class="c1"># with the `ngx_pagespeed` module, uncomment this line to disable it.</span>
@@ -224,6 +225,15 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># Remove X-Powered-By, which is an information leak</span>
 <span class="w">    </span><span class="kn">fastcgi_hide_header</span><span class="w"> </span><span class="s">X-Powered-By</span><span class="p">;</span>
 
+<span class="w">    </span><span class="c1"># Add .mjs as a file extension for javascript</span>
+<span class="w">    </span><span class="c1"># Either include it in the default mime.types list</span>
+<span class="w">    </span><span class="c1"># or include you can include that list explicitly and add the file extension</span>
+<span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
+<span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
 <span class="w">    </span><span class="c1"># Specify how to handle directories -- specifying `/index.php$request_uri`</span>
 <span class="w">    </span><span class="c1"># here as the fallback means that Nginx always exhibits the desired behaviour</span>
 <span class="w">    </span><span class="c1"># when a client requests a path that corresponds to a directory that exists</span>
@@ -231,7 +241,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># that file is correctly served; if it doesn&#39;t, then the request is passed to</span>
 <span class="w">    </span><span class="c1"># the front-end controller. This consistent behaviour means that we don&#39;t need</span>
 <span class="w">    </span><span class="c1"># to specify custom rules for certain paths (e.g. images and other assets,</span>
-<span class="w">    </span><span class="c1"># `/updater`, `/ocm-provider`, `/ocs-provider`), and thus</span>
+<span class="w">    </span><span class="c1"># `/updater`, `/ocs-provider`), and thus</span>
 <span class="w">    </span><span class="c1"># `try_files $uri $uri/ /index.php$request_uri`</span>
 <span class="w">    </span><span class="c1"># always provides the desired behaviour.</span>
 <span class="w">    </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="w"> </span><span class="s">index.html</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
@@ -278,7 +288,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># to the URI, resulting in a HTTP 500 error response.</span>
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php(?:$|/)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1"># Required for legacy support</span>
-<span class="w">        </span><span class="kn">rewrite</span><span class="w"> </span><span class="s">^/(?!index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">rewrite</span><span class="w"> </span><span class="s">^/(?!index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|ocs-provider\/.+|.+\/richdocumentscode\/proxy)</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 
 <span class="w">        </span><span class="kn">fastcgi_split_path_info</span><span class="w"> </span><span class="s">^(.+?\.php)(/.*)</span>$<span class="p">;</span>
 <span class="w">        </span><span class="kn">set</span><span class="w"> </span><span class="nv">$path_info</span><span class="w"> </span><span class="nv">$fastcgi_path_info</span><span class="p">;</span>
@@ -300,7 +310,8 @@ webroot of your nginx installation. In this example it is
 <span class="w">        </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1"># Serve static files</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
@@ -391,6 +402,15 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="c1"># could take several months.</span>
 <span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload&quot; always;</span>
 
+<span class="w">    </span><span class="c1"># Add .mjs as a file extension for javascript</span>
+<span class="w">    </span><span class="c1"># Either include it in the default mime.types list</span>
+<span class="w">    </span><span class="c1"># or include you can include that list explicitly and add the file extension</span>
+<span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
+<span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/robots.txt</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">allow</span><span class="w"> </span><span class="s">all</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">log_not_found</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
@@ -424,7 +444,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="kn">gzip_comp_level</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">gzip_min_length</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">gzip_proxied</span><span class="w"> </span><span class="s">expired</span><span class="w"> </span><span class="s">no-cache</span><span class="w"> </span><span class="s">no-store</span><span class="w"> </span><span class="s">private</span><span class="w"> </span><span class="s">no_last_modified</span><span class="w"> </span><span class="s">no_etag</span><span class="w"> </span><span class="s">auth</span><span class="p">;</span>
-<span class="w">        </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">application/atom+xml</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/json</span><span class="w"> </span><span class="s">application/ld+json</span><span class="w"> </span><span class="s">application/manifest+json</span><span class="w"> </span><span class="s">application/rss+xml</span><span class="w"> </span><span class="s">application/vnd.geo+json</span><span class="w"> </span><span class="s">application/vnd.ms-fontobject</span><span class="w"> </span><span class="s">application/wasm</span><span class="w"> </span><span class="s">application/x-font-ttf</span><span class="w"> </span><span class="s">application/x-web-app-manifest+json</span><span class="w"> </span><span class="s">application/xhtml+xml</span><span class="w"> </span><span class="s">application/xml</span><span class="w"> </span><span class="s">font/opentype</span><span class="w"> </span><span class="s">image/bmp</span><span class="w"> </span><span class="s">image/svg+xml</span><span class="w"> </span><span class="s">image/x-icon</span><span class="w"> </span><span class="s">text/cache-manifest</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/vcard</span><span class="w"> </span><span class="s">text/vnd.rim.location.xloc</span><span class="w"> </span><span class="s">text/vtt</span><span class="w"> </span><span class="s">text/x-component</span><span class="w"> </span><span class="s">text/x-cross-domain-policy</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">gzip_types</span><span class="w"> </span><span class="s">application/atom+xml</span><span class="w"> </span><span class="s">text/javascript</span><span class="w"> </span><span class="s">application/javascript</span><span class="w"> </span><span class="s">application/json</span><span class="w"> </span><span class="s">application/ld+json</span><span class="w"> </span><span class="s">application/manifest+json</span><span class="w"> </span><span class="s">application/rss+xml</span><span class="w"> </span><span class="s">application/vnd.geo+json</span><span class="w"> </span><span class="s">application/vnd.ms-fontobject</span><span class="w"> </span><span class="s">application/wasm</span><span class="w"> </span><span class="s">application/x-font-ttf</span><span class="w"> </span><span class="s">application/x-web-app-manifest+json</span><span class="w"> </span><span class="s">application/xhtml+xml</span><span class="w"> </span><span class="s">application/xml</span><span class="w"> </span><span class="s">font/opentype</span><span class="w"> </span><span class="s">image/bmp</span><span class="w"> </span><span class="s">image/svg+xml</span><span class="w"> </span><span class="s">image/x-icon</span><span class="w"> </span><span class="s">text/cache-manifest</span><span class="w"> </span><span class="s">text/css</span><span class="w"> </span><span class="s">text/plain</span><span class="w"> </span><span class="s">text/vcard</span><span class="w"> </span><span class="s">text/vnd.rim.location.xloc</span><span class="w"> </span><span class="s">text/vtt</span><span class="w"> </span><span class="s">text/x-component</span><span class="w"> </span><span class="s">text/x-cross-domain-policy</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1"># Pagespeed is not supported by Nextcloud, so if your server is built</span>
 <span class="w">        </span><span class="c1"># with the `ngx_pagespeed` module, uncomment this line to disable it.</span>
@@ -454,7 +474,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="c1"># that file is correctly served; if it doesn&#39;t, then the request is passed to</span>
 <span class="w">        </span><span class="c1"># the front-end controller. This consistent behaviour means that we don&#39;t need</span>
 <span class="w">        </span><span class="c1"># to specify custom rules for certain paths (e.g. images and other assets,</span>
-<span class="w">        </span><span class="c1"># `/updater`, `/ocm-provider`, `/ocs-provider`), and thus</span>
+<span class="w">        </span><span class="c1"># `/updater`, `/ocs-provider`), and thus</span>
 <span class="w">        </span><span class="c1"># `try_files $uri $uri/ /nextcloud/index.php$request_uri`</span>
 <span class="w">        </span><span class="c1"># always provides the desired behaviour.</span>
 <span class="w">        </span><span class="kn">index</span><span class="w"> </span><span class="s">index.php</span><span class="w"> </span><span class="s">index.html</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
@@ -476,7 +496,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="c1"># `/nextcloud/index.php` to the URI, resulting in a HTTP 500 error response.</span>
 <span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.php(?:$|/)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="c1"># Required for legacy support</span>
-<span class="w">            </span><span class="kn">rewrite</span><span class="w"> </span><span class="s">^/nextcloud/(?!index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">rewrite</span><span class="w"> </span><span class="s">^/nextcloud/(?!index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|ocs-provider\/.+|.+\/richdocumentscode\/proxy)</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 
 <span class="w">            </span><span class="kn">fastcgi_split_path_info</span><span class="w"> </span><span class="s">^(.+?\.php)(/.*)</span>$<span class="p">;</span>
 <span class="w">            </span><span class="kn">set</span><span class="w"> </span><span class="nv">$path_info</span><span class="w"> </span><span class="nv">$fastcgi_path_info</span><span class="p">;</span>
@@ -498,7 +518,8 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">            </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1"># Serve static files</span>
+<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
@@ -604,7 +625,7 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -626,9 +647,11 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

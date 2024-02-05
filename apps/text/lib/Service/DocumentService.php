@@ -28,44 +28,43 @@ namespace OCA\Text\Service;
 
 use \InvalidArgumentException;
 use OCA\Text\AppInfo\Application;
-use OCA\Text\Db\Session;
-use OCA\Text\Db\SessionMapper;
-use OCP\DB\Exception;
-use OCP\DirectEditing\IManager;
-use OCP\Files\Config\IUserMountCache;
-use OCP\Files\Lock\ILock;
-use OCP\Files\Lock\ILockManager;
-use OCP\Files\Lock\LockContext;
-use OCP\Files\Lock\NoLockProviderException;
-use OCP\Files\Lock\OwnerLockedException;
-use OCP\IRequest;
-use OCP\Lock\ILockingProvider;
-use OCP\PreConditionNotMetException;
-use Psr\Log\LoggerInterface;
-use function json_encode;
 use OCA\Text\Db\Document;
 use OCA\Text\Db\DocumentMapper;
+use OCA\Text\Db\Session;
+use OCA\Text\Db\SessionMapper;
 use OCA\Text\Db\Step;
 use OCA\Text\Db\StepMapper;
 use OCA\Text\Exception\DocumentHasUnsavedChangesException;
 use OCA\Text\Exception\DocumentSaveConflictException;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\Entity;
 use OCP\Constants;
+use OCP\DB\Exception;
+use OCP\DirectEditing\IManager;
+use OCP\Files\Config\IUserMountCache;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IAppData;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\Lock\ILock;
+use OCP\Files\Lock\ILockManager;
+use OCP\Files\Lock\LockContext;
+use OCP\Files\Lock\NoLockProviderException;
+use OCP\Files\Lock\OwnerLockedException;
 use OCP\Files\Node;
-use OCP\Files\File;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCP\IRequest;
+use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
+use OCP\PreConditionNotMetException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
+use Psr\Log\LoggerInterface;
+use function json_encode;
 
 class DocumentService {
 
@@ -112,24 +111,23 @@ class DocumentService {
 		}
 	}
 
-	public function getDocument(File $file): ?Document {
+	public function getDocument(int $id): ?Document {
 		try {
-			return $this->documentMapper->find($file->getId());
+			return $this->documentMapper->find($id);
 		} catch (DoesNotExistException|NotFoundException $e) {
 			return null;
 		}
 	}
 
 	/**
-	 * @param File $file
-	 * @return Entity
 	 * @throws NotFoundException
 	 * @throws InvalidPathException
 	 * @throws NotPermittedException
+	 * @throws Exception
 	 */
 	public function createDocument(File $file): Document {
 		try {
-			$document = $this->documentMapper->find($file->getFileInfo()->getId());
+			$document = $this->documentMapper->find($file->getId());
 
 			// Do not hard reset if changed from outside since this will throw away possible steps
 			// This way the user can still resolve conflicts in the editor view
@@ -149,9 +147,9 @@ class DocumentService {
 		}
 
 		$document = new Document();
-		$document->setId($file->getFileInfo()->getId());
+		$document->setId($file->getId());
 		$document->setLastSavedVersion(0);
-		$document->setLastSavedVersionTime($file->getFileInfo()->getMtime());
+		$document->setLastSavedVersionTime($file->getMTime());
 		$document->setLastSavedVersionEtag($file->getEtag());
 		$document->setBaseVersionEtag($file->getEtag());
 		try {
@@ -160,7 +158,7 @@ class DocumentService {
 		} catch (Exception $e) {
 			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				// Document might have been created in the meantime
-				return $this->documentMapper->find($file->getFileInfo()->getId());
+				return $this->documentMapper->find($file->getId());
 			}
 
 			throw $e;
@@ -207,11 +205,6 @@ class DocumentService {
 		$documentStateFile->putContent($content);
 	}
 
-
-	public function get($documentId) {
-		return $this->documentMapper->find($documentId);
-	}
-
 	/**
 	 * @param $documentId
 	 * @param $sessionId
@@ -221,7 +214,9 @@ class DocumentService {
 	 * @throws DoesNotExistException
 	 * @throws InvalidArgumentException
 	 */
-	public function addStep($documentId, $sessionId, $steps, $version): array {
+	public function addStep(Document $document, Session $session, $steps, $version): array {
+		$sessionId = $session->getId();
+		$documentId = $session->getDocumentId();
 		$stepsToInsert = [];
 		$querySteps = [];
 		$getStepsSinceVersion = null;
@@ -238,7 +233,7 @@ class DocumentService {
 			}
 		}
 		if (sizeof($stepsToInsert) > 0) {
-			$newVersion = $this->insertSteps($documentId, $sessionId, $stepsToInsert, $version);
+			$newVersion = $this->insertSteps($document, $session, $stepsToInsert, $version);
 		}
 		// If there were any queries in the steps send the entire history
 		$getStepsSinceVersion = count($querySteps) > 0 ? 0 : $version;
@@ -264,34 +259,30 @@ class DocumentService {
 	 * @throws DoesNotExistException
 	 * @throws InvalidArgumentException
 	 */
-	private function insertSteps($documentId, $sessionId, $steps, $version): int {
-		$document = null;
+	private function insertSteps(Document $document, Session $session, $steps, $version): int {
 		$stepsVersion = null;
 		try {
-			$document = $this->documentMapper->find($documentId);
 			$stepsJson = json_encode($steps);
 			if (!is_array($steps) || $stepsJson === null) {
 				throw new InvalidArgumentException('Failed to encode steps');
 			}
 			$stepsVersion = $this->stepMapper->getLatestVersion($document->getId());
-			$newVersion = $stepsVersion + count($steps);
-			$this->logger->debug("Adding steps to $documentId: bumping version from $stepsVersion to $newVersion");
-			$this->cache->set('document-version-' . $document->getId(), $newVersion);
 			$step = new Step();
 			$step->setData($stepsJson);
-			$step->setSessionId($sessionId);
-			$step->setDocumentId($documentId);
-			$step->setVersion($newVersion);
-			$this->stepMapper->insert($step);
+			$step->setSessionId($session->getId());
+			$step->setDocumentId($document->getId());
+			$step->setVersion(Step::VERSION_STORED_IN_ID);
+			$step = $this->stepMapper->insert($step);
+			$newVersion = $step->getId();
+			$this->logger->debug("Adding steps to " . $document->getId() . ": bumping version from $stepsVersion to $newVersion");
+			$this->cache->set('document-version-' . $document->getId(), $newVersion);
 			// TODO write steps to cache for quicker reading
 			return $newVersion;
-		} catch (DoesNotExistException $e) {
-			throw $e;
 		} catch (\Throwable $e) {
 			if ($document !== null && $stepsVersion !== null) {
 				$this->logger->error('This should never happen. An error occurred when storing the version, trying to recover the last stable one', ['exception' => $e]);
 				$this->cache->set('document-version-' . $document->getId(), $stepsVersion);
-				$this->stepMapper->deleteAfterVersion($documentId, $stepsVersion);
+				$this->stepMapper->deleteAfterVersion($document->getId(), $stepsVersion);
 			}
 			throw $e;
 		}
@@ -312,10 +303,8 @@ class DocumentService {
 	 * @throws NotPermittedException
 	 * @throws Exception
 	 */
-	public function autosave(?File $file, int $documentId, int $version, ?string $autoSaveDocument, ?string $documentState, bool $force = false, bool $manualSave = false, ?string $shareToken = null, ?string $filePath = null): Document {
-		/** @var Document $document */
-		$document = $this->documentMapper->find($documentId);
-
+	public function autosave(Document $document, ?File $file, int $version, ?string $autoSaveDocument, ?string $documentState, bool $force = false, bool $manualSave = false, ?string $shareToken = null, ?string $filePath = null): Document {
+		$documentId = $document->getId();
 		if ($file === null) {
 			throw new NotFoundException();
 		}
@@ -340,7 +329,7 @@ class DocumentService {
 			return $document;
 		}
 		// Do not save if version already saved
-		$stepsVersion = $this->stepMapper->getLatestVersion($documentId);
+		$stepsVersion = $this->stepMapper->getLatestVersion($documentId)?: 0;
 		if (!$force && ($version <= (string)$document->getLastSavedVersion() || $version > (string)$stepsVersion)) {
 			return $document;
 		}
@@ -434,15 +423,17 @@ class DocumentService {
 	}
 
 	/**
-	 * @param Session $session
-	 * @param $shareToken
-	 * @return File
 	 * @throws NotFoundException
 	 */
 	public function getFileForSession(Session $session, ?string $shareToken = null): File {
-		if ($session->getUserId() !== null && $shareToken === null) {
+		if ($session->getUserId() !== null) {
 			return $this->getFileById($session->getDocumentId(), $session->getUserId());
 		}
+
+		if ($shareToken === null) {
+			throw new \InvalidArgumentException('No proper share data');
+		}
+
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 		} catch (ShareNotFound $e) {
@@ -461,6 +452,7 @@ class DocumentService {
 
 	/**
 	 * @throws NotFoundException
+	 * @throws NotPermittedException
 	 */
 	public function getFileById($fileId, $userId = null): File {
 		$userId = $userId ?? $this->userId;
@@ -494,13 +486,23 @@ class DocumentService {
 			return ($b->getPermissions() & Constants::PERMISSION_UPDATE) <=> ($a->getPermissions() & Constants::PERMISSION_UPDATE);
 		});
 
-		return array_shift($files);
+		$file = array_shift($files);
+
+		if (!$file instanceof File) {
+			throw new NotFoundException();
+		}
+
+		if (($file->getPermissions() & Constants::PERMISSION_READ) !== Constants::PERMISSION_READ) {
+			throw new NotPermittedException();
+		}
+
+		return $file;
 	}
 
 	/**
 	 * @throws NotFoundException
 	 */
-	public function getFileByShareToken($shareToken, ?string $path = null): File {
+	public function getFileByShareToken(string $shareToken, ?string $path = null): File {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 		} catch (ShareNotFound $e) {
@@ -508,7 +510,7 @@ class DocumentService {
 		}
 
 		$node = $share->getNode();
-		if ($node instanceof Folder) {
+		if ($path !== null && $node instanceof Folder) {
 			$node = $node->get($path);
 		}
 		if ($node instanceof File) {
@@ -556,7 +558,7 @@ class DocumentService {
 	 * @return void
 	 * @throws NotFoundException|NotPermittedException
 	 */
-	public function checkSharePermissions($shareToken, $permission = Constants::PERMISSION_READ): void {
+	public function checkSharePermissions(string $shareToken, $permission = Constants::PERMISSION_READ): void {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 		} catch (ShareNotFound $e) {

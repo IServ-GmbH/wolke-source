@@ -12,6 +12,7 @@
     "Readme" : "Readme",
     "Text" : "Tèxt",
     "📝 Collaborative document editing" : "📝 Edicion collaborativa de document",
+    "Translate" : "Translate",
     "Use current version" : "Utilizar la version actuala",
     "Use the saved version" : "Utilizar la version salvada",
     "Reconnect" : "Se reconnectar",
@@ -22,9 +23,11 @@
     "Insert an attachment" : "Inserir una pèça junta",
     "guest" : "convidat",
     "Show author colors" : "Afichar las colors dels utilizaires",
+    "Last saved" : "Darrièra salvagarda",
     "Offline" : "Fòra linha",
     "Saving …" : "Enregistrament...",
     "Saved" : "Enregistrat",
+    "Last saved {lastSave}" : "Darrièra salvagarda {lastSave}",
     "Unsaved changes" : "Modificacions pas enregistradas",
     "Keyboard shortcuts" : "Acorchis de clavièr",
     "Bold" : "Gras",
@@ -35,8 +38,10 @@
     "Ordered list" : "Lista ordenada",
     "Blockquote" : "Citacion",
     "Code block" : "Còdi",
-    "Translate" : "Translate",
     "Remaining actions" : "Mai d’accions",
+    "Select language" : "Causir lenga",
+    "to" : "a",
+    "Source code" : "Còdi font",
     "Delete this table" : "Suprimir aqueste tablèu",
     "Undo" : "Anullar",
     "Redo" : "Refar",
@@ -54,8 +59,6 @@
     "Insert attachment" : "Inserir una pèça junta",
     "Command" : "Comanda",
     "Add notes, lists or links …" : "Apondre nòtas, listas o ligams…",
-    "Edit" : "Modificar",
-    "Link file" : "Ligam fichièr",
-    "Remove Link" : "Suprimir ligam"
+    "Edit" : "Modificar"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

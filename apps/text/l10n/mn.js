@@ -1,14 +1,16 @@
 OC.L10N.register(
     "text",
     {
+    "Translate" : "Орчуулга",
     "Guest" : "Зочин",
     "Saved" : "Хадгалах",
-    "Translate" : "Орчуулга",
+    "to" : "Дуусах нь",
     "Replace" : "Солих",
-    "Unsupported image type" : "Дэмжигдэхгүй зургийн төрөл байна",
+    "Source code" : "эх үүсвэр талын код",
     "Undo" : "буцах",
     "Info" : "Info",
     "Warning" : "Warning",
-    "Edit" : "засварлах"
+    "Edit" : "засварлах",
+    "Unsupported image type" : "Дэмжигдэхгүй зургийн төрөл байна"
 },
 "nplurals=2; plural=(n != 1);");

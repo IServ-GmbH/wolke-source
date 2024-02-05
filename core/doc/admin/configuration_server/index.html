@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Nextcloud configuration</a><ul>
@@ -77,6 +77,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -148,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#logging-commands">Logging commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#maintenance-commands">Maintenance commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#security">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#status">Status</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#trashbin">Trashbin</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#user-commands">User commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#group-commands">Group commands</a></li>
@@ -168,12 +170,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="caching_configuration.html">Memory caching</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#recommendations-based-on-type-of-deployment">Recommendations based on type of deployment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#id1">APCu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#id2">Redis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#id3">Memcached</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#cache-directory-location">Cache Directory location</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#recommendations-based-on-type-of-deployment">Recommendations based on type of deployment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#additional-redis-installation-help">Additional Redis installation help</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a><ul>
@@ -186,6 +187,7 @@
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#default-parameters">Default Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#default-config-php-examples">Default config.php Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#user-experience">User Experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#user-session">User session</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#mail-parameters">Mail Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#proxy-configurations">Proxy Configurations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#deleted-items-trash-bin">Deleted Items (trash bin)</a></li>
@@ -300,7 +302,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -322,9 +324,11 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -37,9 +37,9 @@ class Admin implements IDelegatedSettings {
 	private SubscriptionService $subscriptionService;
 
 	public function __construct(IConfig $config,
-								IUserManager $userManager,
-								IURLGenerator $urlGenerator,
-								SubscriptionService $subscriptionService) {
+		IUserManager $userManager,
+		IURLGenerator $urlGenerator,
+		SubscriptionService $subscriptionService) {
 		$this->userManager = $userManager;
 		$this->config = $config;
 		$this->urlGenerator = $urlGenerator;

@@ -268,11 +268,16 @@ class TemplateManager implements ITemplateManager {
 
 		$defaultSkeletonDirectory = \OC::$SERVERROOT . '/core/skeleton';
 		$defaultTemplateDirectory = \OC::$SERVERROOT . '/core/skeleton/Templates';
-		$skeletonPath = $this->config->getSystemValue('skeletondirectory', $defaultSkeletonDirectory);
-		$skeletonTemplatePath = $this->config->getSystemValue('templatedirectory', $defaultTemplateDirectory);
+		$skeletonPath = $this->config->getSystemValueString('skeletondirectory', $defaultSkeletonDirectory);
+		$skeletonTemplatePath = $this->config->getSystemValueString('templatedirectory', $defaultTemplateDirectory);
 		$isDefaultSkeleton = $skeletonPath === $defaultSkeletonDirectory;
 		$isDefaultTemplates = $skeletonTemplatePath === $defaultTemplateDirectory;
 		$userLang = $this->l10nFactory->getUserLanguage($this->userManager->get($this->userId));
+
+		if ($skeletonTemplatePath === '') {
+			$this->setTemplatePath('');
+			return '';
+		}
 
 		try {
 			$l10n = $this->l10nFactory->get('lib', $userLang);

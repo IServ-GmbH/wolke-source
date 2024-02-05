@@ -26,12 +26,13 @@ diff --git a/apps/settings/appinfo/info.xml b/apps/settings/appinfo/info.xml
 index 310d2902510..095698fe316 100644
 --- a/apps/settings/appinfo/info.xml
 +++ b/apps/settings/appinfo/info.xml
-@@ -25,21 +25,14 @@
+@@ -26,22 +26,15 @@
  		<admin>OCA\Settings\Settings\Admin\Delegation</admin>
  		<admin-section>OCA\Settings\Sections\Admin\Additional</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Delegation</admin-section>
 -		<admin-section>OCA\Settings\Sections\Admin\Groupware</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Overview</admin-section>
+ 		<admin-section>OCA\Settings\Sections\Admin\ArtificialIntelligence</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Security</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Server</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Sharing</admin-section>

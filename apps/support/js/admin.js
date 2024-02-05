@@ -1,7 +1,7 @@
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,15 +18,15 @@
  *
  */
 
-(function ($, OC) {
+(function($, OC) {
 
-	$(document).ready(function () {
+	$(document).ready(function() {
 
 		$('.subscription-toggle-subscription-key').on('click', function(e) {
 			$('#subscription-key-section').removeClass('hidden');
 		});
 
-		$('#generate-report-button').on('click', function(e){
+		$('#generate-report-button').on('click', function(e) {
 			e.target.disabled = true;
 			var $reportStatus = $('#report-status');
 
@@ -49,7 +49,7 @@
 					$reportStatus.append($link);
 					$reportStatus.append('<br />' + t('support', 'Password:') + ' ' + '<code>' + password + '</code>');
 				})
-				.fail(function(xhr){
+				.fail(function(xhr) {
 					var message = xhr.responseJSON.message;
 					$reportStatus.html(t('support', 'Generating system report failed.') + ' ' + message);
 				})

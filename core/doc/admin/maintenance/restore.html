@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
@@ -73,6 +74,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#id2">PostgreSQL</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#synchronising-with-clients-after-data-recovery">Synchronising with clients after data recovery</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="upgrade.html">How to upgrade</a></li>
@@ -127,9 +129,6 @@ restore:</p>
 <p>You must have both the database and data directory. You cannot
 complete restoration unless you have both of these.</p>
 </div>
-<p>When you have completed your restoration, also make sure to run the
-<a class="reference internal" href="../configuration_server/occ_command.html#maintenance-commands-label"><span class="std std-ref">maintenance:data-fingerprint</span></a> command
-afterwards, to ensure your sync clients can recover from the restored backup.</p>
 <section id="restore-folders">
 <h2>Restore folders<a class="headerlink" href="#restore-folders" title="Permalink to this headline"></a></h2>
 <div class="admonition note">
@@ -200,6 +199,30 @@ SQLite does this automatically.</p>
 </div>
 </section>
 </section>
+<section id="synchronising-with-clients-after-data-recovery">
+<h2>Synchronising with clients after data recovery<a class="headerlink" href="#synchronising-with-clients-after-data-recovery" title="Permalink to this headline"></a></h2>
+<p>By default the Nextcloud server is considered the authorative source for the data.
+If the data on the server and the client differs
+clients will default to fetching the data from the server.</p>
+<p>If the recovered backup is outdated
+the state of the clients may be more up to date than the state of the server.
+In this case also make sure to run the
+<a class="reference internal" href="../configuration_server/occ_command.html#maintenance-commands-label"><span class="std std-ref">maintenance:data-fingerprint</span></a> command
+afterwards.
+It changes the logic of the synchronisation algorithm
+to try an recover as much data as possible.
+Files missing on the server are therefore recovered from the clients
+and in case of different content the users will be asked.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The usage of <cite>maintenance:data-fingerprint</cite> can cause conflict dialogues
+and difficulties deleting files on the client.
+Therefore it’s only recommended to prevent dataloss if the backup was outdated.</p>
+</div>
+<p>If you are running multiple application servers you will need to make sure
+the config files are synced between them so that the updated <cite>data-fingerprint</cite>
+is applied on all instances.</p>
+</section>
 </section>
 
 
@@ -213,7 +236,7 @@ SQLite does this automatically.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -235,9 +258,11 @@ SQLite does this automatically.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

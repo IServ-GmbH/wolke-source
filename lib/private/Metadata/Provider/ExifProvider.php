@@ -44,10 +44,14 @@ class ExifProvider implements IMetadataProvider {
 		return extension_loaded('exif');
 	}
 
-	/** @return array{'gps': FileMetadata, 'size': FileMetadata} */
+	/** @return array{'gps'?: FileMetadata, 'size'?: FileMetadata} */
 	public function execute(File $file): array {
 		$exifData = [];
 		$fileDescriptor = $file->fopen('rb');
+
+		if ($fileDescriptor === false) {
+			return [];
+		}
 
 		$data = null;
 		try {
@@ -67,8 +71,9 @@ class ExifProvider implements IMetadataProvider {
 		$size->setId($file->getId());
 		$size->setArrayAsValue([]);
 
-		if (!$data) {
-			$sizeResult = getimagesizefromstring($file->getContent());
+		$content = $file->getContent();
+		if (!$data && $content) {
+			$sizeResult = getimagesizefromstring($content);
 			if ($sizeResult !== false) {
 				$size->setArrayAsValue([
 					'width' => $sizeResult[0],
@@ -77,7 +82,7 @@ class ExifProvider implements IMetadataProvider {
 
 				$exifData['size'] = $size;
 			}
-		} elseif (array_key_exists('COMPUTED', $data)) {
+		} elseif ($data && array_key_exists('COMPUTED', $data)) {
 			if (array_key_exists('Width', $data['COMPUTED']) && array_key_exists('Height', $data['COMPUTED'])) {
 				$size->setArrayAsValue([
 					'width' => $data['COMPUTED']['Width'],
@@ -107,7 +112,7 @@ class ExifProvider implements IMetadataProvider {
 	}
 
 	public static function getMimetypesSupported(): string {
-		return '/image\/.*/';
+		return '/image\/(png|jpeg|heif|webp|tiff)/';
 	}
 
 	/**

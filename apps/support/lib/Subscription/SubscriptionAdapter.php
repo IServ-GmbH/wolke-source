@@ -25,14 +25,15 @@ declare(strict_types=1);
 namespace OCA\Support\Subscription;
 
 use OCA\Support\Service\SubscriptionService;
+use OCP\IConfig;
 use OCP\Support\Subscription\ISubscription;
 use OCP\Support\Subscription\ISupportedApps;
 
 class SubscriptionAdapter implements ISubscription, ISupportedApps {
-	private SubscriptionService $subscriptionService;
-
-	public function __construct(SubscriptionService $subscriptionService) {
-		$this->subscriptionService = $subscriptionService;
+	public function __construct(
+		private SubscriptionService $subscriptionService,
+		private IConfig $config,
+	) {
 	}
 
 	/**
@@ -215,18 +216,26 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 * @since 21.0.0
 	 */
 	public function isHardUserLimitReached(): bool {
-		$subscriptionInfo = $this->subscriptionService->getMinimalSubscriptionInfo();
-		if (!isset($subscriptionInfo['hasHardUserLimit']) || $subscriptionInfo['hasHardUserLimit'] === false) {
-			return false;
-		}
-
 		[
-			$instanceSize,
-			$hasSubscription,
+			,,
 			$isInvalidSubscription,
 			$isOverLimit,
 			$subscriptionInfo
 		] = $this->subscriptionService->getSubscriptionInfo();
+
+		$configUserLimit = (int) $this->config->getAppValue('support', 'user-limit', '0');
+		if (
+			!$isInvalidSubscription
+			&& $configUserLimit > 0
+			&& $configUserLimit <= $this->subscriptionService->getUserCount()
+		) {
+			return true;
+		}
+
+		if (!isset($subscriptionInfo['hasHardUserLimit']) || $subscriptionInfo['hasHardUserLimit'] === false) {
+			return false;
+		}
+
 		return $isOverLimit;
 	}
 }

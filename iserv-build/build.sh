@@ -2,7 +2,7 @@
 set -e
 
 # See Dockerfile
-nextcloud_version=26.0.4
+nextcloud_version=27.1.6
 
 ./docker/cloudfiles/build-steps/create-combined-patch $nextcloud_version
 

@@ -54,11 +54,15 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Using the Mail app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#managing-your-mail-account">Managing your mail account</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-new-mail-account">Add a new mail account</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#change-sort-order">Change sort order</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scheduled-messages">Scheduled messages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#priority-inbox">Priority inbox</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#all-inboxes">All inboxes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-settings">Account settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move-messages-to-junk-folder">Move messages to Junk folder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-mail-body-search">Enable mail body search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-delegation">Account delegation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#automatic-trash-deletion">Automatic trash deletion</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#compose-messages">Compose messages</a><ul>
@@ -148,6 +152,23 @@ Please ask your Administrator for it.</p>
 <img alt="../_images/new-mail-account.png" src="../_images/new-mail-account.png" />
 </figure>
 </section>
+<section id="change-sort-order">
+<h3>Change sort order<a class="headerlink" href="#change-sort-order" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version 3.5.</span></p>
+</div>
+</div></blockquote>
+<ol class="arabic simple">
+<li><p>Visit mail settings</p></li>
+<li><p>Go to <em>Sorting</em></p></li>
+<li><p>You can choose <em>Oldest</em> or <em>Newest</em> mail first</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This change will apply across all your accounts and mailboxes</p>
+</div>
+</section>
 <section id="scheduled-messages">
 <h3>Scheduled messages<a class="headerlink" href="#scheduled-messages" title="Permalink to this headline"></a></h3>
 <ol class="arabic simple">
@@ -183,6 +204,47 @@ Messages will automatically be marked as important based on which messages you i
 </ol>
 <p>Can be found in the action menu of a mail account. There you can edit, add or remove settings depending on your need.</p>
 </section>
+<section id="move-messages-to-junk-folder">
+<h3>Move messages to Junk folder<a class="headerlink" href="#move-messages-to-junk-folder" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.</span></p>
+</div>
+</div></blockquote>
+<p>Mail can move a message to a different folder when it is marked as junk.</p>
+<ol class="arabic">
+<li><p>Visit Account settings</p></li>
+<li><p>Go to Default folders</p></li>
+<li><p>Check that a folder is selected for the junk messages</p></li>
+<li><p>Go to Junk settings</p></li>
+<li><p>Click Move messages to Junk folder</p>
+<figure class="align-default">
+<img alt="../_images/mail_move-message-to-junk-folder.png" src="../_images/mail_move-message-to-junk-folder.png" />
+</figure>
+</li>
+</ol>
+</section>
+<section id="enable-mail-body-search">
+<h3>Enable mail body search<a class="headerlink" href="#enable-mail-body-search" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version 3.5.</span></p>
+</div>
+</div></blockquote>
+<p>Mail bodies can now be searched, this feature is opt-in because of potential performance issues.</p>
+<p>To enable it:</p>
+<ol class="arabic simple">
+<li><p>Visit Account settings</p></li>
+<li><p>Go to Mailbox search</p></li>
+<li><p>Enable mail body search</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you want to also enable it for unified mailboxes you have to do so in Mail settings</p>
+</div>
+<p>By enabling it the main search box will now search in both subjects and mail bodies, and a sperate <em>Body</em> option
+will appear in advanced search.</p>
+</section>
 <section id="account-delegation">
 <h3>Account delegation<a class="headerlink" href="#account-delegation" title="Permalink to this headline"></a></h3>
 <p>The app allows account delegation so that one user can send emails from the address of another.</p>
@@ -195,6 +257,26 @@ Messages will automatically be marked as important based on which messages you i
 <p class="admonition-title">Warning</p>
 <p>The sent email might not be visible to the original account if it’s stored in your personal <em>Sent</em> mailbox.</p>
 </div>
+</section>
+<section id="automatic-trash-deletion">
+<h3>Automatic trash deletion<a class="headerlink" href="#automatic-trash-deletion" title="Permalink to this headline"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.</span></p>
+</div>
+<p>The Mail app can automatically delete messages in the trash folder after a certain number of days.</p>
+<ol class="arabic simple">
+<li><p>Visit Account settings</p></li>
+<li><p>Go to Automatic trash deletion</p></li>
+<li><p>Enter the number of days after which messages should be deleted</p></li>
+</ol>
+<p>Disable trash retention by leaving the field empty or setting it to 0.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only mails deleted after enabling trash retention will be processed.</p>
+</div>
+<figure class="align-default">
+<img alt="../_images/mail_trash_retention_settings.png" src="../_images/mail_trash_retention_settings.png" />
+</figure>
 </section>
 </section>
 <section id="compose-messages">
@@ -253,20 +335,24 @@ Messages will automatically be marked as important based on which messages you i
 <h2>Envelope actions<a class="headerlink" href="#envelope-actions" title="Permalink to this headline"></a></h2>
 <section id="create-an-event">
 <h3>Create an event<a class="headerlink" href="#create-an-event" title="Permalink to this headline"></a></h3>
-<p>Create an event for a certain message/thread directly via mail app
-1. Open action menu of an envelope
-2. Click <em>more actions</em>
-3. Click <em>create event</em></p>
+<p>Create an event for a certain message/thread directly via mail app</p>
+<ol class="arabic simple">
+<li><p>Open action menu of an envelope</p></li>
+<li><p>Click <em>more actions</em></p></li>
+<li><p>Click <em>create event</em></p></li>
+</ol>
 </section>
 <section id="create-a-task">
 <h3>Create a task<a class="headerlink" href="#create-a-task" title="Permalink to this headline"></a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.2.</span></p>
 </div>
-<p>Create an task for a certain message/thread directly via mail app
-1. Open action menu of an envelope
-2. Click <em>more actions</em>
-3. Click <em>create task</em></p>
+<p>Create an task for a certain message/thread directly via mail app</p>
+<ol class="arabic simple">
+<li><p>Open action menu of an envelope</p></li>
+<li><p>Click <em>more actions</em></p></li>
+<li><p>Click <em>create task</em></p></li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Tasks are stored in supported calendars. If there is no compatible calendar you can create a new one with the <a class="reference internal" href="calendar.html#calendar-app"><span class="std std-ref">calendar app</span></a>.</p>
@@ -304,7 +390,7 @@ Messages will automatically be marked as important based on which messages you i
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -332,9 +418,11 @@ Messages will automatically be marked as important based on which messages you i
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

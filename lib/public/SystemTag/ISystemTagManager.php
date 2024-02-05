@@ -46,7 +46,7 @@ interface ISystemTagManager {
 	 * @throws TagNotFoundException if at least one given tag ids did no exist
 	 * 			The message contains a json_encoded array of the ids that could not be found
 	 *
-	 * @since 9.0.0, optional parameter $user added in 26.0.4
+	 * @since 9.0.0, optional parameter $user added in 27.0.1
 	 */
 	public function getTagsByIds($tagIds, ?IUser $user = null): array;
 
@@ -126,7 +126,7 @@ interface ISystemTagManager {
 	 * @param ISystemTag $tag tag to check permission for
 	 * @param IUser $user user to check permission for
 	 *
-	 * @return true if the user is allowed to assign/unassign the tag, false otherwise
+	 * @return bool true if the user is allowed to assign/unassign the tag, false otherwise
 	 *
 	 * @since 9.1.0
 	 */
@@ -138,7 +138,7 @@ interface ISystemTagManager {
 	 * @param ISystemTag $tag tag to check permission for
 	 * @param IUser $user user to check permission for
 	 *
-	 * @return true if the user can see the tag, false otherwise
+	 * @return bool true if the user can see the tag, false otherwise
 	 *
 	 * @since 9.1.0
 	 */

@@ -1,8 +1,8 @@
 { "translations": {
-    "Home" : "﻿ಮುಖಪುಟ",
-    "Today" : "Today",
     "Mail" : "ಅಂಚೆ",
     "Notifications" : "ಸೂಚನೆಗಳು",
-    "Send email" : "ಇ-ಅಂಚೆಯನ್ನು  ಕಳುಹಿಸಿ"
+    "Send email" : "ಇ-ಅಂಚೆಯನ್ನು  ಕಳುಹಿಸಿ",
+    "Today" : "Today",
+    "Home" : "﻿ಮುಖಪುಟ"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

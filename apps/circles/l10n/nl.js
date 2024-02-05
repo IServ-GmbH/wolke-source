@@ -93,6 +93,7 @@ OC.L10N.register(
     "Circle Invite" : "Kringuitnodiging",
     "Federated" : "Gefedereerd",
     "Mount point" : "Aankoppelpunt",
+    "Nextcloud Account" : "Nextcloud Account",
     "Nextcloud Group" : "Nextcloud Groep",
     "Email Address" : "E-mailadres",
     "Contact" : "Contact",
@@ -120,6 +121,8 @@ OC.L10N.register(
     "%s shared multiple files with \"%s\"." : "%s deelde meerdere bestanden met \"%s\".",
     "%s shared multiple files with you." : "%s deelde meerdere bestanden met jou.",
     "Boot up" : "Opstarten",
+    "Nextcloud Initialization" : "Nextcloud Initialisatie",
+    "Circles App Initialization" : "Circles App Initialisatie",
     "Fresh installation status" : "Nieuwe installatiestatus",
     "Building Local Database" : "Aanmaken lokale database",
     "Testing Basic Circle Creation" : "Testen basis kringcreatie",
@@ -179,8 +182,6 @@ OC.L10N.register(
     "Size" : "Omvang",
     "Modified" : "Gewijzigd",
     "Initialisation Nextcloud" : "Initialisatie Nextcloud",
-    "Initialisation Circles App" : "Initialisatie Circles App",
-    "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "De beheerder dient minimaal een kring te maken voordat je de kring-app kan gebruiken.",
-    "Could not find share" : "De gedeelde folder kan niet worden gevonden"
+    "Initialisation Circles App" : "Initialisatie Circles App"
 },
 "nplurals=2; plural=(n != 1);");

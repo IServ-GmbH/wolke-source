@@ -216,7 +216,7 @@ class QuerySearchHelper {
 	}
 
 	/**
-	 * @return array{0?: array<array-key, ICache>, 1?: array<array-key, IMountPoint>}
+	 * @return list{0?: array<array-key, ICache>, 1?: array<array-key, IMountPoint>}
 	 */
 	public function getCachesAndMountPointsForSearch(IRootFolder $root, string $path, bool $limitToHome = false): array {
 		$rootLength = strlen($path);

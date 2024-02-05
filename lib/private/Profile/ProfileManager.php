@@ -169,7 +169,7 @@ class ProfileManager {
 				return;
 			}
 			if (!$this->appManager->isEnabledForUser($action->getAppId(), $visitingUser)) {
-				$this->logger->notice('App: ' . $action->getAppId() . ' cannot register actions as it is not enabled for the visiting user: ' . $visitingUser->getUID());
+				$this->logger->notice('App: ' . $action->getAppId() . ' cannot register actions as it is not enabled for the visiting user: ' . ($visitingUser ? $visitingUser->getUID() : '(user not connected)'));
 				return;
 			}
 		}
@@ -440,7 +440,7 @@ class ProfileManager {
 			],
 			IAccountManager::PROPERTY_DISPLAYNAME => [
 				'appId' => self::CORE_APP_ID,
-				'displayId' => $this->l10nFactory->get('lib')->t('Full name'),
+				'displayId' => $this->l10nFactory->get('lib')->t('Display name'),
 			],
 			IAccountManager::PROPERTY_HEADLINE => [
 				'appId' => self::CORE_APP_ID,

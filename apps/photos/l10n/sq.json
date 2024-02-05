@@ -9,9 +9,11 @@
     "Save" : "Ruaj",
     "Shared by" : "Shpërndarë nga",
     "Group" : "Grup",
-    "View" : "Shiko",
     "Favorite" : "I/E Preferuar",
+    "Go back" : "Shko prapa",
+    "View" : "Shiko",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "Shto"
+    "Add" : "Shto",
+    "Details" : "Detajet"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

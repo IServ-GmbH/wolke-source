@@ -32,6 +32,7 @@ namespace OCA\RelatedResources\Service;
 
 use Exception;
 use OCA\Circles\CirclesManager;
+use OCA\Circles\Exceptions\FederatedUserNotFoundException;
 use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
 use OCA\RelatedResources\Exceptions\CacheNotFoundException;
@@ -47,6 +48,7 @@ use OCA\RelatedResources\Model\RelatedResource;
 use OCA\RelatedResources\RelatedResourceProviders\CalendarRelatedResourceProvider;
 use OCA\RelatedResources\RelatedResourceProviders\DeckRelatedResourceProvider;
 use OCA\RelatedResources\RelatedResourceProviders\FilesRelatedResourceProvider;
+use OCA\RelatedResources\RelatedResourceProviders\GroupFoldersRelatedResourceProvider;
 use OCA\RelatedResources\RelatedResourceProviders\TalkRelatedResourceProvider;
 use OCA\RelatedResources\Tools\Exceptions\InvalidItemException;
 use OCA\RelatedResources\Tools\Traits\TDeserialize;
@@ -224,7 +226,7 @@ class RelatedService {
 		}
 
 		$result = $this->getRelatedResourceProvider($providerId)
-					   ->getRelatedFromItem($itemId);
+					   ->getRelatedFromItem($this->circlesManager, $itemId);
 
 		$this->logger->debug('get related to ' . $providerId . '.' . $itemId . ' - ' . json_encode($result));
 
@@ -428,7 +430,12 @@ class RelatedService {
 	 * @return IRelatedResource[]
 	 */
 	private function filterUnavailableResults(array $result): array {
-		$current = $this->circlesManager->getCurrentFederatedUser();
+		try {
+			$current = $this->circlesManager->getCurrentFederatedUser();
+		} catch (FederatedUserNotFoundException $e) {
+			$this->circlesManager->startSession(); // in case session is lost, restart fresh one
+			$current = $this->circlesManager->getCurrentFederatedUser();
+		}
 
 		return array_filter($result, function (IRelatedResource $res) use ($current): bool {
 			$all = array_values(array_unique(array_merge($res->getVirtualGroup(), $res->getRecipients())));
@@ -462,7 +469,7 @@ class RelatedService {
 	private function improveResult(array $result): array {
 		foreach ($result as $entry) {
 			$this->getRelatedResourceProvider($entry->getProviderId())
-				 ->improveRelatedResource($entry);
+				 ->improveRelatedResource($this->circlesManager, $entry);
 		}
 
 		return $result;
@@ -544,6 +551,14 @@ class RelatedService {
 		if ($this->appManager->isInstalled('spreed')) {
 			try {
 				$providers[] = Server::get(TalkRelatedResourceProvider::class);
+			} catch (NotFoundExceptionInterface | ContainerExceptionInterface $e) {
+				$this->logger->notice($e->getMessage());
+			}
+		}
+
+		if ($this->appManager->isInstalled('groupfolders')) {
+			try {
+				$providers[] = Server::get(GroupFoldersRelatedResourceProvider::class);
 			} catch (NotFoundExceptionInterface | ContainerExceptionInterface $e) {
 				$this->logger->notice($e->getMessage());
 			}

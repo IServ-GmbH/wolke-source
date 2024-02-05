@@ -61,7 +61,7 @@ class Imaginary extends ProviderV2 {
 	}
 
 	public function getCroppedThumbnail(File $file, int $maxX, int $maxY, bool $crop): ?IImage {
-		$maxSizeForImages = $this->config->getSystemValue('preview_max_filesize_image', 50);
+		$maxSizeForImages = $this->config->getSystemValueInt('preview_max_filesize_image', 50);
 
 		$size = $file->getSize();
 
@@ -78,6 +78,9 @@ class Imaginary extends ProviderV2 {
 
 		// Object store
 		$stream = $file->fopen('r');
+		if (!$stream || !is_resource($stream) || feof($stream)) {
+			return null;
+		}
 
 		$httpClient = $this->service->newClient();
 
@@ -105,7 +108,7 @@ class Imaginary extends ProviderV2 {
 			default:
 				$mimeType = 'jpeg';
 		}
-		
+
 		$operations = [];
 
 		if ($convert) {
@@ -146,15 +149,15 @@ class Imaginary extends ProviderV2 {
 					'timeout' => 120,
 					'connect_timeout' => 3,
 				]);
-		} catch (\Exception $e) {
-			$this->logger->error('Imaginary preview generation failed: ' . $e->getMessage(), [
+		} catch (\Throwable $e) {
+			$this->logger->info('Imaginary preview generation failed: ' . $e->getMessage(), [
 				'exception' => $e,
 			]);
 			return null;
 		}
 
 		if ($response->getStatusCode() !== 200) {
-			$this->logger->error('Imaginary preview generation failed: ' . json_decode($response->getBody())['message']);
+			$this->logger->info('Imaginary preview generation failed: ' . json_decode($response->getBody())['message']);
 			return null;
 		}
 

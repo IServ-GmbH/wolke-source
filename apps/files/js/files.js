@@ -25,7 +25,7 @@
 				state.call.abort();
 			}
 			state.dir = currentDir;
-			state.call = $.getJSON(OC.generateUrl('apps/files/ajax/getstoragestats?dir={dir}', {
+			state.call = $.getJSON(OC.generateUrl('apps/files/api/v1/stats?dir={dir}', {
 				dir: currentDir,
 			}), function(response) {
 				state.dir = null;
@@ -39,7 +39,7 @@
 		},
 		_updateStorageQuotas: function() {
 			var state = Files.updateStorageQuotas;
-			state.call = $.getJSON(OC.generateUrl('apps/files/ajax/getstoragestats'), function(response) {
+			state.call = $.getJSON(OC.generateUrl('apps/files/api/v1/stats'), function(response) {
 				Files.updateQuota(response);
 			});
 		},
@@ -281,7 +281,7 @@
 		 * @deprecated used OCA.Files.FileList.generatePreviewUrl instead
 		 */
 		generatePreviewUrl: function(urlSpec) {
-			console.warn('DEPRECATED: please use generatePreviewUrl() from an OCA.Files.FileList instance');
+			OC.debug && console.warn('DEPRECATED: please use generatePreviewUrl() from an OCA.Files.FileList instance');
 			return OCA.Files.App.fileList.generatePreviewUrl(urlSpec);
 		},
 
@@ -290,7 +290,7 @@
 		 * @deprecated used OCA.Files.FileList.lazyLoadPreview instead
 		 */
 		lazyLoadPreview : function(path, mime, ready, width, height, etag) {
-			console.warn('DEPRECATED: please use lazyLoadPreview() from an OCA.Files.FileList instance');
+			OC.debug && console.warn('DEPRECATED: please use lazyLoadPreview() from an OCA.Files.FileList instance');
 			return FileList.lazyLoadPreview({
 				path: path,
 				mime: mime,

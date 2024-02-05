@@ -104,7 +104,7 @@ OC.L10N.register(
     "Admin" : "Správce",
     "Owner" : "Vlastník",
     "%s shared »%s« with you." : "%s vám nasdílel(a) „%s“.",
-    "%s shared »%s« with \"%s\"." : "%s nasdílel(a) „%s“ uživateli „%s\".",
+    "%s shared »%s« with \"%s\"." : "%s nasdílel(a) „%s“ uživateli „%s“.",
     "%s on %s" : "%s na %s",
     "%1$s shared »%2$s« with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s s vámi sdílel(a) „%2$s“. Už jste měli dostat e-mail s přístupovými údaji.\n",
     "%1$s shared »%2$s« with you. You should have already received a separate email with a link to access it." : "%1$s s vámi sdílel(a) „%2$s“. Už jste měli dostat e-mail s přístupovými údaji.",
@@ -182,8 +182,6 @@ OC.L10N.register(
     "Size" : "Velikost",
     "Modified" : "Změněno",
     "Initialisation Nextcloud" : "Inicializace Nextcloud",
-    "Initialisation Circles App" : "Inicializace aplikace Okruhy",
-    "You cannot use the Circles Application until your administrator has allowed at least one type of circles" : "Aplikaci Okruhy nelze použít dokud správce nepovolí vytváření alespoň jednoho typu okruhů",
-    "Could not find share" : "Sdílení se nedaří nalézt"
+    "Initialisation Circles App" : "Inicializace aplikace Okruhy"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

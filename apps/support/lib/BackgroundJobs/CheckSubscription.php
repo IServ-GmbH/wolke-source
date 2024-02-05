@@ -21,9 +21,9 @@
 
 namespace OCA\Support\BackgroundJobs;
 
+use OCA\Support\Service\SubscriptionService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
-use OCA\Support\Service\SubscriptionService;
 use OCP\IConfig;
 
 class CheckSubscription extends TimedJob {

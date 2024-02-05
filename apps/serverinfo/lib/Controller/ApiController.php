@@ -55,17 +55,17 @@ class ApiController extends OCSController {
 	 * ApiController constructor.
 	 */
 	public function __construct(string $appName,
-								IRequest $request,
-								IConfig $config,
-								IGroupManager $groupManager,
-								?IUserSession $userSession,
-								Os $os,
-								SystemStatistics $systemStatistics,
-								StorageStatistics $storageStatistics,
-								PhpStatistics $phpStatistics,
-								DatabaseStatistics $databaseStatistics,
-								ShareStatistics $shareStatistics,
-								SessionStatistics $sessionStatistics) {
+		IRequest $request,
+		IConfig $config,
+		IGroupManager $groupManager,
+		?IUserSession $userSession,
+		Os $os,
+		SystemStatistics $systemStatistics,
+		StorageStatistics $storageStatistics,
+		PhpStatistics $phpStatistics,
+		DatabaseStatistics $databaseStatistics,
+		ShareStatistics $shareStatistics,
+		SessionStatistics $sessionStatistics) {
 		parent::__construct($appName, $request);
 
 		$this->config = $config;
@@ -113,7 +113,7 @@ class ApiController extends OCSController {
 	 * @PublicPage
 	 * @BruteForceProtection(action=serverinfo)
 	 */
-	public function info(): DataResponse {
+	public function info(bool $skipApps = false): DataResponse {
 		if (!$this->checkAuthorized()) {
 			$response = new DataResponse(['message' => 'Unauthorized']);
 			$response->throttle();
@@ -122,7 +122,7 @@ class ApiController extends OCSController {
 		}
 		return new DataResponse([
 			'nextcloud' => [
-				'system' => $this->systemStatistics->getSystemStatistics(),
+				'system' => $this->systemStatistics->getSystemStatistics($skipApps),
 				'storage' => $this->storageStatistics->getStorageStatistics(),
 				'shares' => $this->shareStatistics->getShareStatistics()
 			],

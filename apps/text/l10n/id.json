@@ -9,6 +9,8 @@
     "Could not write file to disk" : "Tidak dapat menulis berkas ke diska",
     "A PHP extension stopped the file upload" : "Ekstensi PHP menghentikan proses unggah berkas",
     "No file uploaded or file size exceeds maximum of %s" : "Gagal unggah berkas atau ukuran melampaui batas maksimum %s",
+    "Text" : "Teks",
+    "Translate" : "Terjemahkan",
     "File could not be loaded. Please check your internet connection." : "Berkas tidak dapat dimuat. Periksa koneksi internet Anda.",
     "Edit guest name" : "Edit nama tamu",
     "Guest" : "Tamu",
@@ -19,14 +21,17 @@
     "Formatting help" : "Bantuan pemformatan",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Select file or folder to link to" : "Pilih berkas atau folder untuk ditautkan",
-    "Translate" : "Terjemahkan",
+    "to" : "untuk",
     "Replace" : "Timpa",
-    "Unsupported image type" : "Tipe gambar tidak bisa diterima",
+    "Source code" : "Kode sumber",
+    "Both" : "Keduanya",
     "Undo" : "Undo",
     "Info" : "Info",
     "Warning" : "Peringatan",
     "Control" : "Kendali",
+    "Formatting" : "Pemformatan",
     "Add notes, lists or links …" : "Tambahkan catatan, daftar, atau tautan...",
-    "Edit" : "Sunting"
+    "Edit" : "Sunting",
+    "Unsupported image type" : "Tipe gambar tidak bisa diterima"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

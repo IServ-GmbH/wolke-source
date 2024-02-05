@@ -21,6 +21,7 @@ class ComposerStaticInitRelatedResources
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'OCA\\RelatedResources\\AppInfo\\Application' => __DIR__ . '/../..' . '/lib/AppInfo/Application.php',
         'OCA\\RelatedResources\\Command\\Test' => __DIR__ . '/../..' . '/lib/Command/Test.php',
         'OCA\\RelatedResources\\Controller\\ApiController' => __DIR__ . '/../..' . '/lib/Controller/ApiController.php',
@@ -38,6 +39,7 @@ class ComposerStaticInitRelatedResources
         'OCA\\RelatedResources\\Exceptions\\CalendarDataNotFoundException' => __DIR__ . '/../..' . '/lib/Exceptions/CalendarDataNotFoundException.php',
         'OCA\\RelatedResources\\Exceptions\\DeckDataNotFoundException' => __DIR__ . '/../..' . '/lib/Exceptions/DeckDataNotFoundException.php',
         'OCA\\RelatedResources\\Exceptions\\FilesShareNotFoundException' => __DIR__ . '/../..' . '/lib/Exceptions/FilesShareNotFoundException.php',
+        'OCA\\RelatedResources\\Exceptions\\GroupFolderNotFoundException' => __DIR__ . '/../..' . '/lib/Exceptions/GroupFolderNotFoundException.php',
         'OCA\\RelatedResources\\Exceptions\\RelatedResourceNotFound' => __DIR__ . '/../..' . '/lib/Exceptions/RelatedResourceNotFound.php',
         'OCA\\RelatedResources\\Exceptions\\RelatedResourceProviderNotFound' => __DIR__ . '/../..' . '/lib/Exceptions/RelatedResourceProviderNotFound.php',
         'OCA\\RelatedResources\\Exceptions\\TalkDataNotFoundException' => __DIR__ . '/../..' . '/lib/Exceptions/TalkDataNotFoundException.php',
@@ -60,6 +62,7 @@ class ComposerStaticInitRelatedResources
         'OCA\\RelatedResources\\RelatedResourceProviders\\CalendarRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/CalendarRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\DeckRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/DeckRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\FilesRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/FilesRelatedResourceProvider.php',
+        'OCA\\RelatedResources\\RelatedResourceProviders\\GroupFoldersRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/GroupFoldersRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\TalkRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/TalkRelatedResourceProvider.php',
         'OCA\\RelatedResources\\Service\\ConfigService' => __DIR__ . '/../..' . '/lib/Service/ConfigService.php',
         'OCA\\RelatedResources\\Service\\RelatedService' => __DIR__ . '/../..' . '/lib/Service/RelatedService.php',

@@ -58,6 +58,13 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#adding-and-managing-address-books">Adding and Managing Address Books</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#circles">Circles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-circle">Create a circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#circle-roles">Circle roles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-members-to-a-circle">Add members to a circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#circle-options">Circle options</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="calendar.html">Using the Calendar app</a></li>
@@ -116,7 +123,8 @@ in the application.</p>
 contact picture and manage your address books.</p>
 <section id="adding-contacts">
 <h2>Adding Contacts<a class="headerlink" href="#adding-contacts" title="Permalink to this headline"></a></h2>
-<p>When you first access the Contacts app, an empty default address book becomes available:</p>
+<p>When you first access the Contacts app, the system address book containing all
+users on the instance you are allowed to see, plus an empty default address book becomes available:</p>
 <figure class="align-default" id="id1">
 <img alt="../_images/contacts_empty.png" src="../_images/contacts_empty.png" />
 <figcaption>
@@ -134,6 +142,7 @@ contact picture and manage your address books.</p>
 <h3>Importing Virtual Contacts<a class="headerlink" href="#importing-virtual-contacts" title="Permalink to this headline"></a></h3>
 <p>To Import Contacts Using a VCF/vCard File:</p>
 <ol class="arabic">
+<li><p>On top left of the screen you have “Import contacts” button that is shown only when you don’t have any contacts yet.</p></li>
 <li><p>Find “Settings” at the bottom of the left sidebar, next to the gear button:</p>
 <blockquote>
 <div><figure class="align-default">
@@ -153,7 +162,7 @@ contact picture and manage your address books.</p>
 <p class="admonition-title">Note</p>
 <p>The Contacts app only supports import of vCards version 3.0 and 4.0.</p>
 </div>
-<ol class="arabic simple" start="3">
+<ol class="arabic simple" start="4">
 <li><p>Click the “Import” button and upload your VCF/vCard file.</p></li>
 </ol>
 <p>After the import is complete, you will see your new contact in your address book.</p>
@@ -164,7 +173,7 @@ contact picture and manage your address books.</p>
 <p>To Create a New Contact:</p>
 <ol class="arabic">
 <li><p>Click the <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">New</span> <span class="pre">contact</span></code> button.</p>
-<p>An empty new contact configuration opens in the Application View field:</p>
+<p>The Edit View configuration opens in the Application View field:</p>
 </li>
 </ol>
 <blockquote>
@@ -173,8 +182,12 @@ contact picture and manage your address books.</p>
 </figure>
 </div></blockquote>
 <ol class="arabic simple" start="2">
-<li><p>Specify the new contact information. Changes that you made are implemented immediately.</p></li>
+<li><p>Specify the new contact information then click Save.</p></li>
+<li><p>The View mode will be shown with the data you added</p></li>
 </ol>
+<figure class="align-default">
+<img alt="../_images/contact_view_mode.png" src="../_images/contact_view_mode.png" />
+</figure>
 </section>
 <section id="edit-or-remove-contact-information">
 <h3>Edit or Remove Contact Information<a class="headerlink" href="#edit-or-remove-contact-information" title="Permalink to this headline"></a></h3>
@@ -186,6 +199,8 @@ contact picture and manage your address books.</p>
 <li><p>Make your modifications or click on the trash bin.</p></li>
 </ol>
 <p>Changes or removals that you made to any contact information are implemented immediately.</p>
+<p>Not all contacts will be editable for you. The system address book does not allow you to modify
+someone elses data, only your own. Your own data can also be modified in the <a class="reference internal" href="../userpreferences.html"><span class="doc">user settings</span></a>.</p>
 </section>
 <section id="contact-picture">
 <h3>Contact Picture<a class="headerlink" href="#contact-picture" title="Permalink to this headline"></a></h3>
@@ -213,10 +228,50 @@ to create new address books, simply by specifying an address books name:</p>
 <figure class="align-default">
 <img alt="Add address book in the contacts settings" src="../_images/contact_manageaddressbook.png" />
 </figure>
-<p>The Contacts settings is also where you can share, export and delete address
-books. You will find the CardDAV URLs there.</p>
+<p>The Contacts settings is also where you can share, export and delete addressbooks. You will find the CardDAV URLs there.</p>
 <p>See <a class="reference internal" href="index.html"><span class="doc">Groupware</span></a> for more details about syncing your address books
 with iOS, macOS, Thunderbird and other CardDAV clients.</p>
+</section>
+<section id="circles">
+<h2>Circles<a class="headerlink" href="#circles" title="Permalink to this headline"></a></h2>
+<p>Informal collaboration takes place within organizations: an event to organize for a few weeks, a short ideation session between members from differents entities, workshops, a place to joke around and support team building, or simply in very organic organizations where formal structure is kept to a minimum.</p>
+<p>For all these reasons, Nextcloud supports Circles, a feature embedded in the Contacts app, where every user is able to create its own circle, a user-defined aggregate of accounts. Circles can be used later on to share files and folders, added to Talk conversations, like a regular group.</p>
+<figure class="align-default">
+<img alt="Circle in the Contacts app left menu" src="../_images/circle.png" />
+</figure>
+<section id="create-a-circle">
+<h3>Create a circle<a class="headerlink" href="#create-a-circle" title="Permalink to this headline"></a></h3>
+<p>In the left menu, click on the + next to Circles.
+Set a circle name
+Landing on the circle configuration screen, you can:
+- add members to your circle
+- clicking on the three dot menu next to a user allow you to modify its role within the circle.</p>
+</section>
+<section id="circle-roles">
+<h3>Circle roles<a class="headerlink" href="#circle-roles" title="Permalink to this headline"></a></h3>
+<p>Circles support 4 types of roles:
+- Member
+- Moderator
+- Admin can configure circle options (+moderator permissions)
+- Owner</p>
+<p><strong>Member</strong></p>
+<p>Member is the role with the lowest permissions. A member can only access the resources shared with the circle, and view the members of the circle.</p>
+<p><strong>Moderator</strong></p>
+<p>In addition to member permissions, a moderator can invite, confirm invitations and manage members of the circle.</p>
+<p><strong>Admin</strong></p>
+<p>In addition to moderator permissions, an admin can configure circle options.</p>
+<p><strong>Owner</strong></p>
+<p>In addition to admin permissions, an owner can transfer the circle ownership to another member of the circle. There can be only one single owner per circle.</p>
+</section>
+<section id="add-members-to-a-circle">
+<h3>Add members to a circle<a class="headerlink" href="#add-members-to-a-circle" title="Permalink to this headline"></a></h3>
+<p>Local accounts, groups, email addresses or other circles can be added as members to a circle.
+For a group or a circle, the role applies to all members of the group or circle.</p>
+</section>
+<section id="circle-options">
+<h3>Circle options<a class="headerlink" href="#circle-options" title="Permalink to this headline"></a></h3>
+<p>Various self-explanatory options are available to configure a circle, to manage invites and membership, visibility of the circle, allowance of other circle membership and password protection.</p>
+</section>
 </section>
 </section>
 
@@ -231,7 +286,7 @@ with iOS, macOS, Thunderbird and other CardDAV clients.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -259,9 +314,11 @@ with iOS, macOS, Thunderbird and other CardDAV clients.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

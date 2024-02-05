@@ -75,6 +75,8 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   Hides the description text with links to Nextcloud's documentation on top of the theme/accessibility settings page. #52676
 - `03_remove_webdav_documentation_link.patch`
   Removes link to Nextcloud's WebDAV documentation when opening Files - File settings. #52676
+- `04_remove_quick_share_select.patch`
+  Removes Pop-Up for quick select of editing rights because we could not only patch a certain entry (custom permissions) of the Pop-Up.
 
 ### Theme
 

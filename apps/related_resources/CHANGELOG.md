@@ -1,9 +1,5 @@
 # Changelog
 
-### 1.1.0
-
-- nc26
-
 ### 1.0.2
 
 - polishing code and tests

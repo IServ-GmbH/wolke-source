@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -79,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -162,6 +163,11 @@ can add and remove users from their groups.</p>
 <dt><em>Quota</em></dt><dd><p>The maximum disk space assigned to each user. Any user that exceeds the quota
 cannot upload or sync data. You have the the option to include external
 storage in user quotas.</p>
+</dd>
+<dt><em>Manager</em></dt><dd><p>Every user can have one organizational manager. The manager property goes into
+the system address book card of the user and is used for the Contacts app’s
+organization chart, for example. Setting a manager does <strong>not</strong> change any
+authorization level of the user or their manager.</p>
 </dd>
 </dl>
 <section id="creating-a-new-user">
@@ -285,6 +291,11 @@ appears at the far right. After clicking on it, you will see the <strong>Disable
 <p>The user will not longer be able to access their Nextcloud until you enable them again.
 Also all external shares, via public link or email, will not be accessible.
 Internal shares will still be working, so that other users on Nextcloud can continue working.</p>
+<p>If you wish for internal shares to be disabled as well when a user is disabled,
+activate the configuration option files_sharing:hide_disabled_user_shares:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">files_sharing</span> <span class="n">hide_disabled_user_shares</span> <span class="o">--</span><span class="n">value</span> <span class="n">yes</span>
+</pre></div>
+</div>
 <p>You will find all disabled users in the <strong>disabled</strong>-section on the left pane.
 Enabling users is as easy as disabling them. Just click on the “…”-menu, and
 select <strong>Enable</strong>.</p>
@@ -319,7 +330,7 @@ persistent file shares that survive user deletions.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -341,9 +352,11 @@ persistent file shares that survive user deletions.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

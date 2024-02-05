@@ -37,7 +37,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Generate extends Command {
-
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
@@ -48,8 +47,8 @@ class Generate extends Command {
 	protected $notificationManager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								IUserManager $userManager,
-								IManager $notificationManager) {
+		IUserManager $userManager,
+		IManager $notificationManager) {
 		parent::__construct();
 
 		$this->timeFactory = $timeFactory;

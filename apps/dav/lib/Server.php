@@ -112,6 +112,8 @@ class Server {
 		// Add maintenance plugin
 		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin(\OC::$server->getConfig(), \OC::$server->getL10N('dav')));
 
+		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\AppleQuirksPlugin());
+
 		// Backends
 		$authBackend = new Auth(
 			\OC::$server->getSession(),
@@ -206,11 +208,7 @@ class Server {
 		}
 
 		// system tags plugins
-		$this->server->addPlugin(new SystemTagPlugin(
-			\OC::$server->getSystemTagManager(),
-			\OC::$server->getGroupManager(),
-			\OC::$server->getUserSession()
-		));
+		$this->server->addPlugin(\OC::$server->get(SystemTagPlugin::class));
 
 		// comments plugin
 		$this->server->addPlugin(new CommentsPlugin(
@@ -327,7 +325,8 @@ class Server {
 				}
 				$this->server->addPlugin(new \OCA\DAV\CalDAV\BirthdayCalendar\EnablePlugin(
 					\OC::$server->getConfig(),
-					\OC::$server->query(BirthdayService::class)
+					\OC::$server->query(BirthdayService::class),
+					$user
 				));
 				$this->server->addPlugin(new AppleProvisioningPlugin(
 					\OC::$server->getUserSession(),

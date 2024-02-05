@@ -10,7 +10,7 @@ div.ProseMirror {
 	font-variant-ligatures: none;
 	padding: 4px 8px 200px 14px;
 	line-height: 150%;
-	font-size: 14px;
+	font-size: var(--default-font-size);
 	outline: none;
 
 	:target {
@@ -28,7 +28,7 @@ div.ProseMirror {
 		opacity: 1;
 		-webkit-user-select: text;
 		user-select: text;
-		font-size: 14px;
+		font-size: var(--default-font-size);
 
 		&:not(.collaboration-cursor__caret) {
 			border: none !important;
@@ -46,8 +46,6 @@ div.ProseMirror {
 	.checkbox-item {
 		display: flex;
 		align-items: start;
-		// Left-align with list item text
-		margin-left: -23px;
 
 		input[type=checkbox] {
 			display: none;
@@ -57,7 +55,6 @@ div.ProseMirror {
 			vertical-align: middle;
 			margin: 3px 6px 3px 2px;
 			border: 1px solid var(--color-text-maxcontrast);
-			position: relative;
 			display: block;
 			border-radius: var(--border-radius);
 			height: 14px;
@@ -73,7 +70,7 @@ div.ProseMirror {
 				background-color: var(--color-primary-element);
 				border-color: var(--color-primary-element);
 			}
-			label {
+			> label > p {
 				color: var(--color-text-maxcontrast);
 				text-decoration: line-through;
 			}
@@ -82,7 +79,6 @@ div.ProseMirror {
 			display: block;
 			flex-grow: 1;
 			max-width: calc(100% - 28px);
-			margin-left: 9px;
 		}
 	}
 
@@ -145,7 +141,7 @@ div.ProseMirror {
 	}
 
 	h6 {
-		font-size: 14px;
+		font-size: var(--default-font-size);
 	}
 
 	img {
@@ -174,6 +170,60 @@ div.ProseMirror {
 		border-radius: var(--border-radius);
 		padding: 1em 1.3em;
 		margin-bottom: 1em;
+
+		&::before {
+			content: attr(data-language);
+			text-transform: uppercase;
+			display: block;
+			text-align: right;
+			font-weight: bold;
+			font-size: 0.6rem;
+		}
+		code {
+			.hljs-comment,
+			.hljs-quote {
+				color: #999999;
+			}
+			.hljs-variable,
+			.hljs-template-variable,
+			.hljs-attribute,
+			.hljs-tag,
+			.hljs-name,
+			.hljs-regexp,
+			.hljs-link,
+			.hljs-selector-id,
+			.hljs-selector-class {
+				color: #f2777a;
+			}
+			.hljs-number,
+			.hljs-meta,
+			.hljs-built_in,
+			.hljs-builtin-name,
+			.hljs-literal,
+			.hljs-type,
+			.hljs-params {
+				color: #f99157;
+			}
+			.hljs-string,
+			.hljs-symbol,
+			.hljs-bullet {
+				color: #99cc99;
+			}
+			.hljs-title,
+			.hljs-section {
+				color: #ffcc66;
+			}
+			.hljs-keyword,
+			.hljs-selector-tag {
+				color: #6699cc;
+			}
+			.hljs-emphasis {
+				font-style: italic;
+			}
+			.hljs-strong {
+				font-weight: 700;
+			}
+		}
 	}
 
 	pre.frontmatter {
@@ -198,7 +248,7 @@ div.ProseMirror {
 		position: relative;
 		padding-left: 3px;
 
-		p {
+		p .paragraph-content {
 			margin-bottom: 0.5em;
 		}
 	}
@@ -236,7 +286,7 @@ div.ProseMirror {
 	--table-color-heading: var(--color-text-maxcontrast);
 	--table-color-heading-border: var(--color-border-dark);
 	--table-color-background: var(--color-main-background);
-	--table-color-background-hover: var(--color-primary-light);
+	--table-color-background-hover: var(--color-primary-element-light);
 	--table-border-radius: var(--border-radius);
 
 	table {

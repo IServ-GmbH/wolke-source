@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb50b30681d6fc212cf2611f3ddbdd2b",
+    "content-hash": "980c4008778aa089c4aa2ccc37e46a77",
     "packages": [],
     "packages-dev": [
         {
@@ -1062,16 +1062,16 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable26",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "e83c3af4c37a8be5d7c6a6339f4aa2c99cc74f97"
+                "reference": "35711a5c821cc9589d58efa0ded87ae948ab71ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/e83c3af4c37a8be5d7c6a6339f4aa2c99cc74f97",
-                "reference": "e83c3af4c37a8be5d7c6a6339f4aa2c99cc74f97",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/35711a5c821cc9589d58efa0ded87ae948ab71ed",
+                "reference": "35711a5c821cc9589d58efa0ded87ae948ab71ed",
                 "shasum": ""
             },
             "require": {
@@ -1080,6 +1080,7 @@
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1098,10 +1099,9 @@
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
-                "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable26"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2023-07-06T00:47:48+00:00"
+            "time": "2022-09-22T12:49:25+00:00"
         },
         {
             "name": "nikic/php-parser",

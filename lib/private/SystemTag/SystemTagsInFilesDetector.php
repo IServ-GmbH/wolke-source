@@ -54,7 +54,6 @@ class SystemTagsInFilesDetector {
 		}
 
 		$query = new SearchQuery($operator, $limit, $offset, []);
-		/** @var \OCP\Files\Cache\ICache[] $caches */
 		[$caches, ] = $this->searchHelper->getCachesAndMountPointsForSearch(
 			$this->getRootFolder($folder),
 			$folder->getPath(),

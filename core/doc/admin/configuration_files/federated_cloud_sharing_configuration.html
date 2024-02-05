@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -78,6 +78,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -159,10 +160,14 @@ and that is <strong>can edit</strong>.</p></li>
 <p>You may create a list of trusted Nextcloud servers for Federation sharing. This
 allows your linked Nextcloud servers to share user directories, and to auto-fill
 user names in share dialogs.</p>
-<p>You may also enter Nextcloud server URLs in the <strong>Add Nextcloud Server</strong> field.
-The yellow light indicates a successful connection, with no user names
-exchanged. The green light indicates a successful connection with user names
-exchanged. A red light means the connection failed.</p>
+<p>You may also enter Nextcloud server URLs in the <strong>Add Nextcloud Server</strong> field.</p>
+<p>A red light means the connection failed. The yellow light indicates a successful
+connection, with no user names exchanged. The green light indicates a successful
+connection with user names exchanged.</p>
+<p>The prerequisiste for a green status is that the trusted servers were maintained
+in both interacting Nextcloud servers.
+Additionally <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">federation:sync-addressbooks</span></code> must have been executed (part of
+cron job list).</p>
 <figure class="align-default">
 <img alt="../_images/federation-1.png" src="../_images/federation-1.png" />
 </figure>
@@ -206,6 +211,7 @@ manage federated cloud shares:</p>
 <li><p>Check <code class="docutils literal notranslate"><span class="pre">Set</span> <span class="pre">default</span> <span class="pre">expiration</span> <span class="pre">date</span></code> to require an expiration date on link
 shares.</p></li>
 <li><p>Check <code class="docutils literal notranslate"><span class="pre">Allow</span> <span class="pre">public</span> <span class="pre">uploads</span></code> to allow two-way file sharing.</p></li>
+<li><p>If you encounter timeouts for downloading or uploading large files, you can use the option <code class="docutils literal notranslate"><span class="pre">davstorage.request_timeout</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> to increase the timeout. The default value is 30 seconds.</p></li>
 </ul>
 <p>Your Apache Web server must have <code class="docutils literal notranslate"><span class="pre">mod_rewrite</span></code> enabled, and you must have
 <code class="docutils literal notranslate"><span class="pre">trusted_domains</span></code> correctly configured in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> to allow external
@@ -233,7 +239,7 @@ access outside of your LAN you need to use a fully-qualified domain name such as
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -255,9 +261,11 @@ access outside of your LAN you need to use a fully-qualified domain name such as
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

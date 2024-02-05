@@ -29,6 +29,7 @@ class ComposerStaticInitPhotos
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Hexogen\\KDTree\\Exception\\ValidationException' => __DIR__ . '/..' . '/hexogen/kdtree/src/Exception/ValidationException.php',
         'Hexogen\\KDTree\\FSKDTree' => __DIR__ . '/..' . '/hexogen/kdtree/src/FSKDTree.php',
         'Hexogen\\KDTree\\FSNode' => __DIR__ . '/..' . '/hexogen/kdtree/src/FSNode.php',

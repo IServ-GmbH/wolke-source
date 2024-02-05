@@ -30,6 +30,9 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
+/**
+ * @template-extends QBMapper<FileMetadata>
+ */
 class FileMetadataMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'file_metadata', FileMetadata::class);
@@ -57,7 +60,7 @@ class FileMetadataMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT_ARRAY)))
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($fileId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('group_name', $qb->createNamedParameter($groupName, IQueryBuilder::PARAM_STR)));
 
 		return $this->findEntity($qb);
@@ -108,12 +111,12 @@ class FileMetadataMapper extends QBMapper {
 	/**
 	 * Updates an entry in the db from an entity
 	 *
-	 * @param Entity $entity the entity that should be created
-	 * @return Entity the saved entity with the set id
+	 * @param FileMetadata $entity the entity that should be created
+	 * @return FileMetadata the saved entity with the set id
 	 * @throws Exception
 	 * @throws \InvalidArgumentException if entity has no id
 	 */
-	public function update(Entity $entity): Entity {
+	public function update(Entity $entity): FileMetadata {
 		if (!($entity instanceof FileMetadata)) {
 			throw new \Exception("Entity should be a FileMetadata entity");
 		}
@@ -144,5 +147,31 @@ class FileMetadataMapper extends QBMapper {
 			->executeStatement();
 
 		return $entity;
+	}
+
+	/**
+	 * Override the insertOrUpdate as we could be in a transaction in which case we can not afford on error.
+	 *
+	 * @param FileMetadata $entity the entity that should be created/updated
+	 * @return FileMetadata the saved entity with the (new) id
+	 * @throws Exception
+	 * @throws \InvalidArgumentException if entity has no id
+	 */
+	public function insertOrUpdate(Entity $entity): FileMetadata {
+		try {
+			$existingEntity = $this->findForGroupForFile($entity->getId(), $entity->getGroupName());
+		} catch (\Throwable) {
+			$existingEntity = null;
+		}
+
+		if ($existingEntity !== null) {
+			if ($entity->getValue() !== $existingEntity->getValue()) {
+				return $this->update($entity);
+			} else {
+				return $existingEntity;
+			}
+		} else {
+			return parent::insertOrUpdate($entity);
+		}
 	}
 }

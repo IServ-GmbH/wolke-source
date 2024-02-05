@@ -845,7 +845,7 @@ The command line option ``--transfer-incoming-shares`` overwrites the config.php
  sudo -u www-data php occ files:transfer-ownership --transfer-incoming-shares=0 <source-user> <destination-user>
 
 Users may also transfer files or folders selectively by themselves.
-See `user documentation <https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html>`_ for details.
+See `user documentation <https://docs.nextcloud.com/server/27/user_manual/en/files/transfer_ownership.html>`_ for details.
 
 .. TODO ON RELEASE: Update version number above on release
 
@@ -916,7 +916,7 @@ Verify your app::
   sudo -u www-data php occ integrity:check-app --path=/pathto/app appname
 
 When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See `Code Signing
-<https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
+<https://docs.nextcloud.com/server/27/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
 
 .. TODO ON RELEASE: Update version number above on release
 
@@ -1130,6 +1130,70 @@ Remove a certificate::
 
  sudo -u www-data php occ security:certificates:remove [certificate name]
 
+Status
+------
+
+Use the status command to retrieve information about the current installation::
+
+ $ sudo -u www-data php occ status
+   - installed: true
+   - version: 25.0.2.3
+   - versionstring: 25.0.2
+   - edition:
+   - maintenance: false
+   - needsDbUpgrade: false
+   - productname: Nextcloud
+   - extendedSupport: false
+
+This information can also be formatted via JSON instead of plain text::
+
+ $ php occ status --output=json_pretty
+ {
+     "installed": true,
+     "version": "25.0.2.3",
+     "versionstring": "25.0.2",
+     "edition": "",
+     "maintenance": false,
+     "needsDbUpgrade": false,
+     "productname": "Nextcloud",
+     "extendedSupport": false
+ }
+
+Status return code
+^^^^^^^^^^^^^^^^^^
+
+And finally, the ``-e`` (for exit code) parameter can be used to check
+the state of the nextcloud installation via return code::
+
+ $ php occ status -e
+ $ echo $?
+ 0
+ $ php occ maintenance:mode --on
+ Maintenance mode enabled
+ $ php occ status -e
+ $ echo $?
+ 1
+ $ php occ maintenance:mode --off
+ Maintenance mode disabled
+ $ php occ status -e
+ $ echo $?
+ 0
+
+Note that by default there is no output when run with ``-e``. This is
+intentional, so it can be used in scripts, monitoring checks, and systemd
+units.
+
++-------------+--------------------------------------------------------+
+| Return code | Description                                            |
++=============+========================================================+
+| 0           | normal operation                                       |
++-------------+--------------------------------------------------------+
+| 1           | maintenance mode is enabled; the instance is currently |
+|             | unavailable to users.                                  |
++-------------+--------------------------------------------------------+
+| 2           | ``php occ upgrade`` is required                        |
++-------------+--------------------------------------------------------+
+
 .. _trashbin_label:
 
 Trashbin
@@ -1138,8 +1202,8 @@ Trashbin
 ::
 
  trashbin
-  trashbin:cleanup  [--all-users] [--] [<user_id>...]  Remove deleted files
-  trashbin:restore  [--all-users] [--] [<user_id>...]  Restore deleted files
+  trashbin:cleanup  [--all-users] [--] [<user_id>...]  Permanently remove deleted files
+  trashbin:restore  [--all-users] [--scope[=SCOPE]] [--since[=SINCE]] [--until[=UNTIL]] [--dry-run] [--] [<user_id>...]  Restore deleted files according to the given filters
 
 .. note::
   This command is only available when the "Deleted files" app
@@ -1165,16 +1229,36 @@ This example removes the deleted files of users molly and freda::
  Remove deleted files of   molly
  Remove deleted files of   freda
 
-The ``trashbin:restore  [--all-users] [--] [<user_id>...]`` command restores the deleted files of the specified
+The ``trashbin:restore  [--all-users] [--scope[=SCOPE]] [--since[=SINCE]] [--until[=UNTIL]] [--dry-run] [--] [<user_id>...]`` command restores the deleted files of the specified
 users in a space-delimited list, or all users if --all-users is specified.
 
-This example restores the deleted files of all users::
+This example restores the deleted user-files of all users::
 
  sudo -u www-data php occ trashbin:restore --all-users
 
-This example restores the deleted files of users molly and freda::
+This example restores the deleted user-files of users molly and freda::
 
  sudo -u www-data php occ trashbin:restore molly freda
+
+The ``--scope`` option can be used to limit the restore to a specific scope.
+Possible values are "user", "groupfolders" or "all" [default: "user"].
+
+This example restores the deleted files of all groupfolders which are visible to the user freda::
+
+  sudo -u www-data php occ trashbin:restore --scope groupfolders freda
+
+The ``--since`` and ``--until`` options can be used to limit the restore to files deleted inside of the given time period.
+
+This example restores the locally deleted files and files of any groupfolders which are visible to the user
+freda. Additionally the files have to be deleted between ``01.08.2023 11:55:22`` and ``02.08.2023 01:33``::
+
+  sudo -u www-data php occ trashbin:restore --scope all --since "01.08.2023 11:55:22" --until "02.08.2023 01:33" freda
+
+The ``--dry-run`` option can be used to simulate the restore without actually restoring the files.
+ 
+.. note::
+  You can use the verbose options (``-v`` or ``-vv``) to get more information about 
+  the restore process and why some files might be skipped.
 
 .. _user_commands_label:
 

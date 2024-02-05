@@ -28,8 +28,10 @@ namespace OC\Translation;
 
 use InvalidArgumentException;
 use OC\AppFramework\Bootstrap\Coordinator;
+use OCP\IConfig;
 use OCP\IServerContainer;
 use OCP\PreConditionNotMetException;
+use OCP\Translation\CouldNotTranslateException;
 use OCP\Translation\IDetectLanguageProvider;
 use OCP\Translation\ITranslationManager;
 use OCP\Translation\ITranslationProvider;
@@ -47,6 +49,7 @@ class TranslationManager implements ITranslationManager {
 		private IServerContainer $serverContainer,
 		private Coordinator $coordinator,
 		private LoggerInterface $logger,
+		private IConfig $config,
 	) {
 	}
 
@@ -58,28 +61,57 @@ class TranslationManager implements ITranslationManager {
 		return $languages;
 	}
 
-	public function translate(string $text, ?string $fromLanguage, string $toLanguage): string {
+	public function translate(string $text, ?string &$fromLanguage, string $toLanguage): string {
 		if (!$this->hasProviders()) {
 			throw new PreConditionNotMetException('No translation providers available');
 		}
 
-		foreach ($this->getProviders() as $provider) {
-			if ($fromLanguage === null && $provider instanceof IDetectLanguageProvider) {
-				$fromLanguage = $provider->detectLanguage($text);
+		$providers = $this->getProviders();
+		$json = $this->config->getAppValue('core', 'ai.translation_provider_preferences', '');
+
+		if ($json !== '') {
+			$precedence = json_decode($json, true);
+			$newProviders = [];
+			foreach ($precedence as $className) {
+				$provider = current(array_filter($providers, fn ($provider) => $provider::class === $className));
+				if ($provider !== false) {
+					$newProviders[] = $provider;
+				}
+			}
+			// Add all providers that haven't been added so far
+			$newProviders += array_udiff($providers, $newProviders, fn ($a, $b) => $a::class > $b::class ? 1 : ($a::class < $b::class ? -1 : 0));
+			$providers = $newProviders;
+		}
+
+		if ($fromLanguage === null) {
+			foreach ($providers as $provider) {
+				if ($provider instanceof IDetectLanguageProvider) {
+					$fromLanguage = $provider->detectLanguage($text);
+				}
+
+				if ($fromLanguage !== null) {
+					break;
+				}
 			}
 
 			if ($fromLanguage === null) {
 				throw new InvalidArgumentException('Could not detect language');
 			}
+		}
 
+		if ($fromLanguage === $toLanguage) {
+			return $text;
+		}
+
+		foreach ($providers as $provider) {
 			try {
 				return $provider->translate($fromLanguage, $toLanguage, $text);
 			} catch (RuntimeException $e) {
-				$this->logger->warning("Failed to translate from {$fromLanguage} to {$toLanguage}", ['exception' => $e]);
+				$this->logger->warning("Failed to translate from {$fromLanguage} to {$toLanguage} using provider {$provider->getName()}", ['exception' => $e]);
 			}
 		}
 
-		throw new RuntimeException('Could not translate text');
+		throw new CouldNotTranslateException($fromLanguage);
 	}
 
 	public function getProviders(): array {

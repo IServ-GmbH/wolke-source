@@ -1,12 +1,15 @@
 OC.L10N.register(
     "serverinfo",
     {
+    "Copied!" : "S-a copiat!",
     "Not supported!" : "Nu este suportat!",
     "Press ⌘-C to copy." : "Apasă ⌘-C pentru copiere.",
     "Press Ctrl-C to copy." : "Apasă Ctrl-C pentru copiere.",
     "System" : "Sistem",
+    "Monitoring" : "Monitorizare",
     "Size:" : "Mărime:",
     "Shares" : "Partajări",
+    "Database" : "Baza de date",
     "Type:" : "Tip:",
     "Copy" : "Copiază"
 },

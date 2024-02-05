@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -56,6 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -155,7 +156,7 @@ note that Nextcloud GmbH offers commercial support options.</p>
 <li><p>Search for a solution (see the options above)</p></li>
 <li><p>Double-check your configuration</p></li>
 </ul>
-<p>If you can’t find a solution, please use our <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
+<p>If you can’t find a solution, please use our <a class="reference external" href="https://docs.nextcloud.com/server/27/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
 configuration report with the <a class="reference internal" href="../configuration_server/occ_command.html#config-commands-label"><span class="std std-ref">occ config command</span></a>, with passwords automatically obscured.</p>
 </section>
 <section id="id1">
@@ -482,7 +483,7 @@ does not match the actual data stored in the user’s <code class="docutils lite
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Metadata, versions, trashbin and encryption keys are not counted in the used space above.
-Please refer to the <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/quota.html">quota documentation</a> for details.</p>
+Please refer to the <a class="reference external" href="https://docs.nextcloud.com/server/27/user_manual/en/files/quota.html">quota documentation</a> for details.</p>
 </div>
 <p>Running the following command can help fix the sizes and quota for a given user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">-</span><span class="n">vvv</span> <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span>
@@ -572,7 +573,7 @@ first.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -594,9 +595,11 @@ first.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

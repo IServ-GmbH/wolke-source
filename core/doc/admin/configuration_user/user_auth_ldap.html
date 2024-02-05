@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -69,12 +69,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#connection-settings">Connection settings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#directory-settings">Directory settings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#special-attributes">Special attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user-profile-attributes">User Profile attributes</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#expert-settings">Expert settings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#testing-the-configuration">Testing the configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#additional-configuration-options-via-occ">Additional configuration options via occ</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#attribute-update-interval">Attribute update interval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#administrative-group-mapping">Administrative Group mapping</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#nextcloud-avatar-integration">Nextcloud avatar integration</a><ul>
@@ -109,6 +111,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -361,11 +364,12 @@ The number updates automatically after any change.</p>
 working connection. This provides controls to disable the current
 configuration,
 configure replica hosts, and various performance-enhancing options.</p>
-<p>The Advanced Settings are structured into three parts:</p>
+<p>The Advanced Settings are structured into four parts:</p>
 <ul class="simple">
 <li><p>Connection Settings</p></li>
 <li><p>Directory Settings</p></li>
 <li><p>Special Attributes</p></li>
+<li><p>User Profile Attributes</p></li>
 </ul>
 <section id="connection-settings">
 <h3>Connection settings<a class="headerlink" href="#connection-settings" title="Permalink to this headline"></a></h3>
@@ -592,6 +596,83 @@ attribute value. The attribute can also return an absolute path, e.g.
 </pre></div>
 </div>
 </section>
+<section id="user-profile-attributes">
+<span id="ldap-user-profile-attributes"></span><h3>User Profile attributes<a class="headerlink" href="#user-profile-attributes" title="Permalink to this headline"></a></h3>
+<figure class="align-default">
+<img alt="User Profile Attributes." src="../_images/ldap-advanced-4-attributes.png" />
+</figure>
+<p>After configuring those attributes, the User Profile data will be overwritten with the according data from LDAP.  The checksum of data from LDAP will be stored in user settings <code class="docutils literal notranslate"><span class="pre">user_ldap</span></code>, <code class="docutils literal notranslate"><span class="pre">lastProfileChecksum</span></code> and profile update is skipped as long as data from LDAP doesn’t change.  If <code class="docutils literal notranslate"><span class="pre">memcache.distributed</span></code> is enabled in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> the checksum will be cached and the checking will be skipped, as long as the cached value exists (expires after <code class="docutils literal notranslate"><span class="pre">ldapCacheTTL</span></code> seconds).</p>
+<dl class="simple">
+<dt>Please be aware:</dt><dd><ul class="simple">
+<li><p>The user can change the data in profile, but it will get overwritten if changed in LDAP</p></li>
+<li><p>The user can change the visibility scope in profile</p></li>
+<li><p>The default visibility can be adjusted with setting the <code class="docutils literal notranslate"><span class="pre">account_manager.default_property_scope</span></code> array in <code class="docutils literal notranslate"><span class="pre">config.php</span></code></p></li>
+<li><p>If multiple attribute values are present, only the first distributed value is used</p></li>
+<li><p>All user profile properties are limited to 2048 character</p></li>
+<li><p>Having misformatted data in LDAP will most probably leave you with empty user profile fields</p></li>
+<li><p>Setting the global <code class="docutils literal notranslate"><span class="pre">profile.enabled</span> <span class="pre">=&gt;</span> <span class="pre">false</span></code> on <code class="docutils literal notranslate"><span class="pre">config.php</span></code> skips the code</p></li>
+</ul>
+</dd>
+</dl>
+<p>By calling <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">ldap:check-user</span> <span class="pre">--update</span> <span class="pre">&lt;uid&gt;</span></code> the users data from LDAP will be displayed and the profile gets updated. To get the correct <code class="docutils literal notranslate"><span class="pre">&lt;uid&gt;</span></code> value for any user you can use <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">user:list</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>After unsetting an attribute name here, the data won’t be deleted from user profile. Setting an nonexisting attribute will empty the corresponding profile field.</p>
+</div>
+<dl class="simple">
+<dt>Phone Field:</dt><dd><p>The LDAP Attribute holding the phone number, to copy to the Profile Phone field.
+The phone number has to be formatted in international syntax without delimiters (E.164).
+Be sure to format phone numbers like <code class="docutils literal notranslate"><span class="pre">+4966612345678</span></code>.</p>
+<ul class="simple">
+<li><p>Example: <em>telephoneNumber</em></p></li>
+<li><p>Example: <em>mobile</em></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should set your <code class="docutils literal notranslate"><span class="pre">default_phone_region</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
+</div>
+<dl class="simple">
+<dt>Website Field:</dt><dd><p>The LDAP attribute holding the website URI.
+The URI must start with <code class="docutils literal notranslate"><span class="pre">https://</span></code> or <code class="docutils literal notranslate"><span class="pre">http://</span></code> others are currently not allowed in Nextcloud user profile.
+If using <code class="docutils literal notranslate"><span class="pre">labeledURI</span></code> attributes the label (everything after first SPACE) gets removed.</p>
+<ul class="simple">
+<li><p>Example: <em>wWWHomePage</em></p></li>
+<li><p>Example: <em>labeledURI</em></p></li>
+</ul>
+</dd>
+<dt>Address Field:</dt><dd><p>The LDAP attribute holding the users address. Named Location on user profile page.
+Nextcloud wants a single line value like <code class="docutils literal notranslate"><span class="pre">city,</span> <span class="pre">country</span></code> or <code class="docutils literal notranslate"><span class="pre">somewhere</span> <span class="pre">under</span> <span class="pre">the</span> <span class="pre">loving</span> <span class="pre">sun</span></code>.
+Multi line postalAddress format will get reformatted, DOLLAR sign delimiter gets replaced with COMMA+SPACE.</p>
+<ul class="simple">
+<li><p>Example: <em>postalAddress</em></p></li>
+<li><p>Example: <em>localityName</em></p></li>
+</ul>
+</dd>
+<dt>Twitter Field:</dt><dd><p>The LDAP attribute holding the Twitter account name.</p>
+</dd>
+<dt>Fediverse Field:</dt><dd><p>The LDAP attribute holding the users Fediverse address.</p>
+</dd>
+<dt>Organisation Field:</dt><dd><p>The LDAP attribute holding the Organisation name.</p>
+<ul class="simple">
+<li><p>Example: <em>company</em></p></li>
+<li><p>Example: <em>o</em> or <em>organizationName</em></p></li>
+</ul>
+</dd>
+<dt>Role Field:</dt><dd><p>The LDAP attribute holding the organizational role, within the organisation or job title.</p>
+<ul class="simple">
+<li><p>Example: <em>title</em></p></li>
+</ul>
+</dd>
+<dt>Headline Field:</dt><dd><p>The LDAP attribute holding the users headline.</p>
+</dd>
+<dt>Biography Field:</dt><dd><p>The LDAP attribute holding the users about i.e. short biography.
+Multi line value with unix LF line ending.
+Windows CRLF and Macintosh CR line endings will be replaced with unix LF line ending.</p>
+</dd>
+</dl>
+</section>
 </section>
 <section id="expert-settings">
 <h2>Expert settings<a class="headerlink" href="#expert-settings" title="Permalink to this headline"></a></h2>
@@ -688,6 +769,66 @@ It is not a per-configuration option.</p>
 </pre></div>
 </div>
 <p>A value of 0 will update it on every of the named occasions.</p>
+</section>
+<section id="administrative-group-mapping">
+<h3>Administrative Group mapping<a class="headerlink" href="#administrative-group-mapping" title="Permalink to this headline"></a></h3>
+<p>It is possible to promote <strong>one</strong> LDAP per connection as an admin group, so
+that all its members also have administrative privileges in Nextcloud.</p>
+<p>A group can either be promoted via a dedicated <code class="docutils literal notranslate"><span class="pre">occ</span></code> call providing a group
+parameter that can be either a nextcloud group ID or a group name that will be
+search against. When a search is executed an exact match is required.</p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ php occ ldap:promote-group --help
+Description:
+  declares the specified group as admin group (only one is possible per LDAP configuration)
+
+Usage:
+  ldap:promote-group [options] [--] &lt;group&gt;
+
+Arguments:
+  group                 the group ID in Nextcloud or a group name
+
+Options:
+  -y, --yes             do not ask for confirmation
+…
+
+# Example
+$ php occ ldap:promote-group  &quot;Nextcloud Admins&quot;
+Promote Nextcloud Admins to the admin group (y|N)? y
+Group Nextcloud Admins was promoted
+
+$ php occ ldap:promote-group  &quot;Paramount Court&quot;
+Promote Nextcloud Admins to the admin group and demote Nextcloud Admins (Group ID: nextcloud_admins) (y|N)? y
+Group Paramount Court was promoted
+
+$ php occ ldap:promote-group  &quot;Paramount Court&quot;
+The specified group is already promoted
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note the group ID will only be displayed when it differs from the
+group’s display name.</p>
+</div>
+<p>It is also possible to set the admin group mapping using
+<code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">ldap:set-config</span> <span class="pre">$configId</span> <span class="pre">ldapAdminGroup</span> <span class="pre">$groupId</span></code>, but as the Nextcloud
+group ID might not be known (yet) it is recommended (especially for automatized
+setups) to use the <cite>promote-group</cite> command, that would also pull in the group
+and determine the group ID.</p>
+<p>In order to demote or reset a promotion, an empty string should be set against
+to the targeted config’s ldapAdminGroup:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Reset an admin group mapping via set-config
+occ ldap:set-config $configId ldapAdminGroup &quot;&quot;
+# Example
+occ ldap:set-config s01 ldapAdminGroup &quot;&quot;
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To have more than one administrative groups in a connection, create a
+holding group in your LDAP directory that contains the single groups as
+nested members, and promote this one.</p>
+</div>
 </section>
 </section>
 <section id="nextcloud-avatar-integration">
@@ -875,7 +1016,7 @@ technical accounts.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -897,9 +1038,11 @@ technical accounts.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

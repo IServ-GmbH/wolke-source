@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -72,6 +72,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -128,6 +129,7 @@
 <li class="toctree-l2"><a class="reference internal" href="big_file_upload_configuration.html#configuring-nextcloud">Configuring Nextcloud</a></li>
 <li class="toctree-l2"><a class="reference internal" href="big_file_upload_configuration.html#adjust-chunk-size-on-nextcloud-side">Adjust chunk size on Nextcloud side</a></li>
 <li class="toctree-l2"><a class="reference internal" href="big_file_upload_configuration.html#large-file-upload-on-object-storage">Large file upload on object storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="big_file_upload_configuration.html#federated-cloud-sharing">Federated Cloud Sharing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="default_files_configuration.html">Providing default files</a><ul>
@@ -138,7 +140,7 @@
 <li class="toctree-l2"><a class="reference internal" href="primary_storage.html#implications">Implications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="primary_storage.html#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="primary_storage.html#multibucket-object-store">Multibucket Object Store</a></li>
-<li class="toctree-l2"><a class="reference internal" href="primary_storage.html#sse-c-encryption-support">SSE-C encryption support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="primary_storage.html#s3-sse-c-encryption-support">S3 SSE-C encryption support</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="external_storage_configuration_gui.html">Configuring External Storage (GUI)</a><ul>
@@ -157,6 +159,7 @@
 <li class="toctree-l2"><a class="reference internal" href="external_storage/auth_mechanisms.html#special-mechanisms">Special mechanisms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="external_storage/auth_mechanisms.html#password-based-mechanisms">Password-based mechanisms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="external_storage/auth_mechanisms.html#public-key-mechanisms">Public-key mechanisms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_storage/auth_mechanisms.html#considerations-for-shared-storage">Considerations for shared storage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="encryption_configuration.html">Encryption configuration</a><ul>
@@ -225,7 +228,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -247,9 +250,11 @@
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/admin_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

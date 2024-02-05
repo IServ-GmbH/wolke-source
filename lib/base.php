@@ -114,8 +114,6 @@ class OC {
 
 	public static string $configDir;
 
-	public static int $VERSION_MTIME = 0;
-
 	/**
 	 * requested app
 	 */
@@ -161,6 +159,9 @@ class OC {
 				'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'] ?? null,
 			],
 		];
+		if (isset($_SERVER['REMOTE_ADDR'])) {
+			$params['server']['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'];
+		}
 		$fakeRequest = new \OC\AppFramework\Http\Request(
 			$params,
 			new \OC\AppFramework\Http\RequestId($_SERVER['UNIQUE_ID'] ?? '', new \OC\Security\SecureRandom()),
@@ -396,8 +397,8 @@ class OC {
 
 		if (!empty($incompatibleShippedApps)) {
 			$l = Server::get(\OCP\L10N\IFactory::class)->get('core');
-			$hint = $l->t('The files of the app %1$s were not replaced correctly. Make sure it is a version compatible with the server.', [implode(', ', $incompatibleShippedApps)]);
-			throw new \OCP\HintException('The files of the app ' . implode(', ', $incompatibleShippedApps) . ' were not replaced correctly. Make sure it is a version compatible with the server.', $hint);
+			$hint = $l->t('Application %1$s is not present or has a non-compatible version with this server. Please check the apps directory.', [implode(', ', $incompatibleShippedApps)]);
+			throw new \OCP\HintException('Application ' . implode(', ', $incompatibleShippedApps) . ' is not present or has a non-compatible version with this server. Please check the apps directory.', $hint);
 		}
 
 		$tmpl->assign('appsToUpgrade', $appManager->getAppsNeedingUpgrade($ocVersion));
@@ -568,11 +569,14 @@ class OC {
 
 			// All other endpoints require the lax and the strict cookie
 			if (!$request->passesStrictCookieCheck()) {
+				logger('core')->warning('Request does not pass strict cookie check');
 				self::sendSameSiteCookies();
 				// Debug mode gets access to the resources without strict cookie
 				// due to the fact that the SabreDAV browser also lives there.
-				if (!$config->getSystemValue('debug', false)) {
-					http_response_code(\OCP\AppFramework\Http::STATUS_SERVICE_UNAVAILABLE);
+				if (!$config->getSystemValueBool('debug', false)) {
+					http_response_code(\OCP\AppFramework\Http::STATUS_PRECONDITION_FAILED);
+					header('Content-Type: application/json');
+					echo json_encode(['error' => 'Strict Cookie has not been found in request']);
 					exit();
 				}
 			}
@@ -604,10 +608,9 @@ class OC {
 
 		self::$CLI = (php_sapi_name() == 'cli');
 
-		// Add default composer PSR-4 autoloader
+		// Add default composer PSR-4 autoloader, ensure apcu to be disabled
 		self::$composerAutoloader = require_once OC::$SERVERROOT . '/lib/composer/autoload.php';
-		OC::$VERSION_MTIME = filemtime(OC::$SERVERROOT . '/version.php');
-		self::$composerAutoloader->setApcuPrefix('composer_autoload_' . md5(OC::$SERVERROOT . '_' . OC::$VERSION_MTIME));
+		self::$composerAutoloader->setApcuPrefix(null);
 
 		try {
 			self::initPaths();
@@ -680,7 +683,7 @@ class OC {
 				\OCP\Server::get(\Psr\Log\LoggerInterface::class),
 			);
 			$exceptionHandler = [$errorHandler, 'onException'];
-			if ($config->getSystemValue('debug', false)) {
+			if ($config->getSystemValueBool('debug', false)) {
 				set_error_handler([$errorHandler, 'onAll'], E_ALL);
 				if (\OC::$CLI) {
 					$exceptionHandler = ['OC_Template', 'printExceptionErrorPage'];
@@ -741,7 +744,7 @@ class OC {
 					echo('Writing to database failed');
 				}
 				exit(1);
-			} elseif (self::$CLI && $config->getSystemValue('installed', false)) {
+			} elseif (self::$CLI && $config->getSystemValueBool('installed', false)) {
 				$config->deleteAppValue('core', 'cronErrors');
 			}
 		}
@@ -811,7 +814,7 @@ class OC {
 		 */
 		if (!OC::$CLI
 			&& !Server::get(\OC\Security\TrustedDomainHelper::class)->isTrustedDomain($host)
-			&& $config->getSystemValue('installed', false)
+			&& $config->getSystemValueBool('installed', false)
 		) {
 			// Allow access to CSS resources
 			$isScssRequest = false;
@@ -1132,6 +1135,9 @@ class OC {
 		if (OC_User::handleApacheAuth()) {
 			return true;
 		}
+		if (self::tryAppAPILogin($request)) {
+			return true;
+		}
 		if ($userSession->tryTokenLogin($request)) {
 			return true;
 		}
@@ -1167,6 +1173,22 @@ class OC {
 					break;
 				}
 			}
+		}
+	}
+
+	protected static function tryAppAPILogin(OCP\IRequest $request): bool {
+		$appManager = Server::get(OCP\App\IAppManager::class);
+		if (!$request->getHeader('AUTHORIZATION-APP-API')) {
+			return false;
+		}
+		if (!$appManager->isInstalled('app_api')) {
+			return false;
+		}
+		try {
+			$appAPIService = Server::get(OCA\AppAPI\Service\AppAPIService::class);
+			return $appAPIService->validateExAppRequestToNC($request);
+		} catch (\Psr\Container\NotFoundExceptionInterface|\Psr\Container\ContainerExceptionInterface $e) {
+			return false;
 		}
 	}
 }

@@ -548,6 +548,22 @@ class Manager implements ICommentsManager {
 					)
 				);
 			}
+		} elseif ($lastKnownCommentId > 0) {
+			// We didn't find the "$lastKnownComment" but we still use the ID as an offset.
+			// This is required as a fall-back for expired messages in talk and deleted comments in other apps.
+			if ($sortDirection === 'desc') {
+				if ($includeLastKnown) {
+					$query->andWhere($query->expr()->lte('id', $query->createNamedParameter($lastKnownCommentId)));
+				} else {
+					$query->andWhere($query->expr()->lt('id', $query->createNamedParameter($lastKnownCommentId)));
+				}
+			} else {
+				if ($includeLastKnown) {
+					$query->andWhere($query->expr()->gte('id', $query->createNamedParameter($lastKnownCommentId)));
+				} else {
+					$query->andWhere($query->expr()->gt('id', $query->createNamedParameter($lastKnownCommentId)));
+				}
+			}
 		}
 
 		$resultStatement = $query->execute();
@@ -1031,6 +1047,7 @@ class Manager implements ICommentsManager {
 			->select('message_id')
 			->from('reactions')
 			->where($qb->expr()->eq('parent_id', $qb->createNamedParameter($parentId)))
+			->orderBy('message_id', 'DESC')
 			->executeQuery();
 
 		$commentIds = [];
@@ -1106,22 +1123,29 @@ class Manager implements ICommentsManager {
 		if (!$commentIds) {
 			return [];
 		}
-		$query = $this->dbConn->getQueryBuilder();
 
+		$chunks = array_chunk($commentIds, 500);
+
+		$query = $this->dbConn->getQueryBuilder();
 		$query->select('*')
 			->from('comments')
-			->where($query->expr()->in('id', $query->createNamedParameter($commentIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->where($query->expr()->in('id', $query->createParameter('ids')))
 			->orderBy('creation_timestamp', 'DESC')
 			->addOrderBy('id', 'DESC');
 
 		$comments = [];
-		$result = $query->executeQuery();
-		while ($data = $result->fetch()) {
-			$comment = $this->getCommentFromData($data);
-			$this->cache($comment);
-			$comments[] = $comment;
+		foreach ($chunks as $ids) {
+			$query->setParameter('ids', $ids, IQueryBuilder::PARAM_STR_ARRAY);
+
+			$result = $query->executeQuery();
+			while ($data = $result->fetch()) {
+				$comment = $this->getCommentFromData($data);
+				$this->cache($comment);
+				$comments[] = $comment;
+			}
+			$result->closeCursor();
 		}
-		$result->closeCursor();
+
 		return $comments;
 	}
 

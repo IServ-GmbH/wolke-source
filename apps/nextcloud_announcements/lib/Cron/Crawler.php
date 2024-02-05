@@ -52,11 +52,11 @@ class Crawler extends TimedJob {
 	protected $notifyUsers = [];
 
 	public function __construct(string $appName,
-								ITimeFactory $time,
-								IConfig $config,
-								IGroupManager $groupManager,
-								INotificationManager $notificationManager,
-								IClientService $clientService) {
+		ITimeFactory $time,
+		IConfig $config,
+		IGroupManager $groupManager,
+		INotificationManager $notificationManager,
+		IClientService $clientService) {
 		parent::__construct($time);
 		$this->appName = $appName;
 		$this->config = $config;
@@ -90,7 +90,7 @@ class Crawler extends TimedJob {
 		$lastPubDate = $this->config->getAppValue($this->appName, 'pub_date', 'now');
 		if ($lastPubDate === 'now') {
 			// First call, don't spam the user with old stuff...
-			$this->config->setAppValue($this->appName, 'pub_date', $rss->channel->pubDate);
+			$this->config->setAppValue($this->appName, 'pub_date', (string) $rss->channel->pubDate);
 			return;
 		}
 
@@ -127,7 +127,7 @@ class Crawler extends TimedJob {
 			$this->config->getAppValue($this->appName, $id, 'published');
 		}
 
-		$this->config->setAppValue($this->appName, 'pub_date', $rss->channel->pubDate);
+		$this->config->setAppValue($this->appName, 'pub_date', (string) $rss->channel->pubDate);
 	}
 
 	/**
@@ -214,7 +214,11 @@ class Crawler extends TimedJob {
 			return array_keys($this->notifyUsers);
 		}
 
-		$groups = $this->config->getAppValue($this->appName, 'notification_groups', '["admin"]');
+		$groups = $this->config->getAppValue($this->appName, 'notification_groups', '');
+		if ($groups === '') {
+			// Fallback to the update notifications when not explicitly configured back in the days when this app had a UI
+			$groups = $this->config->getAppValue('updatenotification', 'notify_groups', '["admin"]');
+		}
 		$groups = json_decode($groups, true);
 
 		if ($groups === null) {

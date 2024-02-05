@@ -5,6 +5,7 @@ OC.L10N.register(
     "No file was uploaded" : "Neviena datne netika augšupielādēta",
     "Missing a temporary folder" : "Trūkst pagaidu mapes",
     "Text" : "Teksts",
+    "Translate" : "Tulkot",
     "Guest" : "Viesis",
     "guest" : "viesis",
     "Offline" : "Bezsaistē",
@@ -16,15 +17,17 @@ OC.L10N.register(
     "Strikethrough" : "Pārsvītrojums",
     "Remove link" : "Noņemt saiti",
     "Update link" : "Atjaunināt saiti",
-    "Translate" : "Tulkot",
+    "Select language" : "Izvēlies valodu",
+    "to" : "kam",
     "Replace" : "Aizvietot",
-    "Unsupported image type" : "Neatbalstīts attēla tips",
+    "Source code" : "Izejas kods",
     "Undo" : "Atsaukt",
     "Redo" : "Atcelt atsaukšanu",
     "Insert link" : "Ievietojiet saiti",
     "Info" : "Info",
     "Warning" : "Brīdinājums",
     "Command" : "Komanda",
-    "Edit" : "Rediģēt"
+    "Edit" : "Rediģēt",
+    "Unsupported image type" : "Neatbalstīts attēla tips"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

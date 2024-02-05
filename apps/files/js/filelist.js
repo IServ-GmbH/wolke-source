@@ -410,7 +410,7 @@
 
 			if (options.scrollTo) {
 				this.$fileList.one('updated', function() {
-					self.scrollTo(options.scrollTo);
+					self.scrollTo(options.scrollTo, !options.openFile);
 				});
 			}
 
@@ -666,7 +666,7 @@
 		 * @param {string} [tabId] optional tab id to select
 		 */
 		showDetailsView: function(fileName, tabId) {
-			console.warn('showDetailsView is deprecated! Use OCA.Files.Sidebar.activeTab. It will be removed in nextcloud 20.');
+			OC.debug && console.warn('showDetailsView is deprecated! Use OCA.Files.Sidebar.activeTab. It will be removed in nextcloud 20.');
 			this._updateDetailsView(fileName);
 			if (tabId) {
 				OCA.Files.Sidebar.setActiveTab(tabId);
@@ -707,8 +707,10 @@
 			tr.addClass('highlighted');
 			this._currentFileModel = model;
 
+			const secondaryActionsOpen = Boolean(tr.find('.actions-secondary-vue').length)
+
 			// open sidebar and set file
-			if (typeof show === 'undefined' || !!show || (OCA.Files.Sidebar.file !== '')) {
+			if (!secondaryActionsOpen && (typeof show === 'undefined' || !!show || (OCA.Files.Sidebar.file !== ''))) {
 				OCA.Files.Sidebar.open(path.replace('//', '/'))
 			}
 		},
@@ -762,13 +764,6 @@
 		 */
 		_onShow: function(e) {
 			OCA.Files.App && OCA.Files.App.updateCurrentFileList(this);
-			if (e.itemId === this.id) {
-				this._setCurrentDir('/', false);
-			}
-			// Only reload if we don't navigate to a different directory
-			if (typeof e.dir === 'undefined' || e.dir === this.getCurrentDirectory()) {
-				this.reload();
-			}
 		},
 
 		/**
@@ -1233,6 +1228,10 @@
 			if (this.$table.hasClass('multiselect')) {
 				return;
 			}
+
+			// Ensure the url does not change
+			e.preventDefault();
+	
 			var $target = $(e.target);
 			var sort;
 			if (!$target.is('a')) {
@@ -2183,9 +2182,22 @@
 			}
 
 			if (persist && OC.getCurrentUser().uid) {
-				$.post(OC.generateUrl('/apps/files/api/v1/sorting'), {
-					mode: sort,
-					direction: direction
+				$.ajax({
+					type: 'PUT',
+					url: OC.generateUrl('apps/files/api/v1/views/files/sorting_mode'),
+					contentType: 'application/json',
+					data: JSON.stringify({
+						// Compatibility with new files-to-vue API
+						value: sort === 'name' ? 'basename' : sort,
+					})
+				});
+				$.ajax({
+					type: 'PUT',
+					url: OC.generateUrl('apps/files/api/v1/views/files/sorting_direction'),
+					contentType: 'application/json',
+					data: JSON.stringify({
+						value: direction,
+					})
 				});
 			}
 		},
@@ -3339,11 +3351,14 @@
 			this.$el.find('.mask').remove();
 			this.$table.removeClass('hidden');
 		},
-		scrollTo:function(file) {
+		scrollTo:function(file, showDetails) {
+			if (showDetails === undefined) {
+				showDetails = true
+			}
 			if (!_.isArray(file)) {
 				file = [file];
 			}
-			if (file.length === 1) {
+			if (file.length === 1 && showDetails) {
 				_.defer(function() {
 					if (document.documentElement.clientWidth > 1024) {
 						this.showDetailsView(file[0]);
@@ -3842,7 +3857,8 @@
 				return;
 			}
 			var $newButton = $(OCA.Files.Templates['template_addbutton']({
-				addText: t('files', 'New file/folder menu'),
+				addText: t('files', 'New'),
+				addLongText: t('files', 'New file/folder menu'),
 				iconClass: 'icon-add',
 			}));
 
@@ -3877,7 +3893,7 @@
 		 * Register a tab view to be added to all views
 		 */
 		registerTabView: function(tabView) {
-			console.warn('registerTabView is deprecated! It will be removed in nextcloud 20.');
+			OC.debug && console.warn('registerTabView is deprecated! It will be removed in nextcloud 20.');
 			const enabled = tabView.canDisplay || undefined
 			if (tabView.id) {
 				OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
@@ -3903,7 +3919,7 @@
 		 * Register a detail view to be added to all views
 		 */
 		registerDetailView: function(detailView) {
-			console.warn('registerDetailView is deprecated! It will be removed in nextcloud 20.');
+			OC.debug && console.warn('registerDetailView is deprecated! It will be removed in nextcloud 20.');
 			if (detailView.el) {
 				OCA.Files.Sidebar.registerSecondaryView(detailView)
 			}

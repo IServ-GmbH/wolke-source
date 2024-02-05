@@ -25,11 +25,11 @@ declare(strict_types=1);
 
 namespace OCA\ServerInfo;
 
+use OC\Files\View;
+use OC\Installer;
 use OCP\App\IAppManager;
 use OCP\Files\FileInfo;
 use OCP\IConfig;
-use OC\Files\View;
-use OC\Installer;
 
 class SystemStatistics {
 	private IConfig $config;
@@ -40,7 +40,7 @@ class SystemStatistics {
 
 	public function __construct(IConfig $config, IAppManager $appManager, Installer $installer, Os $os) {
 		$this->config = $config;
-		$this->view = new View();
+		$this->view = new View('');
 		$this->appManager = $appManager;
 		$this->installer = $installer;
 		$this->os = $os;
@@ -51,10 +51,11 @@ class SystemStatistics {
 	 *
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-	public function getSystemStatistics(): array {
+	public function getSystemStatistics(bool $skipApps = false): array {
 		$processorUsage = $this->getProcessorUsage();
 		$memoryUsage = $this->os->getMemory();
-		return [
+
+		$data = [
 			'version' => $this->config->getSystemValue('version'),
 			'theme' => $this->config->getSystemValue('theme', 'none'),
 			'enable_avatars' => $this->config->getSystemValue('enable_avatars', true) ? 'yes' : 'no',
@@ -70,8 +71,13 @@ class SystemStatistics {
 			'mem_free' => $memoryUsage->getMemAvailable() * 1024,
 			'swap_total' => $memoryUsage->getSwapTotal() * 1024,
 			'swap_free' => $memoryUsage->getSwapFree() * 1024,
-			'apps' => $this->getAppsInfo()
 		];
+
+		if (!$skipApps) {
+			$data['apps'] = $this->getAppsInfo();
+		}
+
+		return $data;
 	}
 
 	/**

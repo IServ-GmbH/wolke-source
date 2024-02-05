@@ -33,7 +33,6 @@ use OCP\Capabilities\ICapability;
  * @package OCA\Notifications
  */
 class Capabilities implements ICapability {
-
 	/**
 	 * Return this classes capabilities
 	 *

@@ -66,6 +66,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#edit-duplicate-or-delete-an-event">Edit, duplicate or delete an event</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#invite-attendees-to-an-event">Invite attendees to an event</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#assign-rooms-and-resources-to-an-event">Assign rooms and resources to an event</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-attachments-to-events">Add attachments to events</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#set-up-reminders">Set up reminders</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#add-recurring-options">Add recurring options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#trash-bin">Trash bin</a></li>
@@ -335,6 +336,22 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <p>Rooms and resources are not managed by Nextcloud itself and the Calendar app will not allow you to add or change a resource. Your Administrator has to install and possibly configure resource back ends before you can use them as a user.</p>
 </div>
 </section>
+<section id="add-attachments-to-events">
+<h3>Add attachments to events<a class="headerlink" href="#add-attachments-to-events" title="Permalink to this headline"></a></h3>
+<p>You can import attachments to your events either by uploading them or adding them from files</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/calendar_adding_attachments.png"><img alt="../_images/calendar_adding_attachments.png" src="../_images/calendar_adding_attachments.png" style="width: 316.8px; height: 589.6px;" /></a>
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Attachments can be added while creating new events or editing existent ones.
+Newly uploaded files will be saved in files by default in the calendar folder in the root directory.</p>
+</div>
+<p>You can change the attachment folder by going to <code class="docutils literal notranslate"><span class="pre">Calendar</span> <span class="pre">settings</span></code> in the bottom left corner and changing <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">attachments</span> <span class="pre">location</span></code>.</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/calendar_attachments_location.png"><img alt="../_images/calendar_attachments_location.png" src="../_images/calendar_attachments_location.png" style="width: 348.0px; height: 426.0px;" /></a>
+</figure>
+</section>
 <section id="set-up-reminders">
 <h3>Set up reminders<a class="headerlink" href="#set-up-reminders" title="Permalink to this headline"></a></h3>
 <p>You can set up reminders to be notified before an event occurs. Currently supported notification methods are:</p>
@@ -431,7 +448,7 @@ Public appointments can be discovered through the profile page of a Nextcloud us
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only slots that do not conflict with existing events in your conflict calendars will be shown to attendees.</p>
+<p>Only slots that do not conflict with existing events in your calendars will be shown to attendees.</p>
 </div>
 <p>The organizer of an appointment can specify at which times of the week it’s generally possible to book a slot. This could be the working hours but also any other customized schedule.</p>
 <figure class="align-default">
@@ -515,7 +532,7 @@ The system will detect the conflict and offer to pick a new time slot.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
   </div>
 
    
@@ -543,9 +560,11 @@ The system will detect the conflict and offer to pick a new time slot.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/24/user_manual">24</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

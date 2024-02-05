@@ -11,7 +11,9 @@ OC.L10N.register(
     "Save" : "Хадгалах",
     "Shared by" : "Хуваалцсан",
     "Favorite" : "Дуртай",
+    "Go back" : "Буцах",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "нэмэх"
+    "Add" : "нэмэх",
+    "Details" : "Дэлгэрэнгүй"
 },
 "nplurals=2; plural=(n != 1);");

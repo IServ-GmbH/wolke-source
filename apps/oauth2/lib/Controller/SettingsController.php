@@ -41,47 +41,25 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
 use OCP\Security\ICrypto;
+use OCP\Security\ISecureRandom;
 
 class SettingsController extends Controller {
-	/** @var ClientMapper */
-	private $clientMapper;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var AccessTokenMapper  */
-	private $accessTokenMapper;
-	/** @var IL10N */
-	private $l;
-	/** @var IAuthTokenProvider */
-	private $tokenProvider;
-	/**
-	 * @var IUserManager
-	 */
-	private $userManager;
-	/** @var ICrypto */
-	private $crypto;
 
 	public const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	public function __construct(string $appName,
-								IRequest $request,
-								ClientMapper $clientMapper,
-								ISecureRandom $secureRandom,
-								AccessTokenMapper $accessTokenMapper,
-								IL10N $l,
-								IAuthTokenProvider $tokenProvider,
-								IUserManager $userManager,
-								ICrypto $crypto
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		private ClientMapper $clientMapper,
+		private ISecureRandom $secureRandom,
+		private AccessTokenMapper $accessTokenMapper,
+		private IL10N $l,
+		private IAuthTokenProvider $tokenProvider,
+		private IUserManager $userManager,
+		private ICrypto $crypto
 	) {
 		parent::__construct($appName, $request);
-		$this->secureRandom = $secureRandom;
-		$this->clientMapper = $clientMapper;
-		$this->accessTokenMapper = $accessTokenMapper;
-		$this->l = $l;
-		$this->tokenProvider = $tokenProvider;
-		$this->userManager = $userManager;
-		$this->crypto = $crypto;
 	}
 
 	public function addClient(string $name,
@@ -113,7 +91,7 @@ class SettingsController extends Controller {
 	public function deleteClient(int $id): JSONResponse {
 		$client = $this->clientMapper->getByUid($id);
 
-		$this->userManager->callForSeenUsers(function (IUser $user) use ($client) {
+		$this->userManager->callForAllUsers(function (IUser $user) use ($client) {
 			$this->tokenProvider->invalidateTokensOfUser($user->getUID(), $client->getName());
 		});
 

@@ -73,6 +73,16 @@ use Psr\Log\LoggerInterface;
  * @property int hasMemberOfFilterSupport
  * @property int useMemberOfToDetectMembership
  * @property string ldapMatchingRuleInChainState
+ * @property string ldapAttributePhone
+ * @property string ldapAttributeWebsite
+ * @property string ldapAttributeAddress
+ * @property string ldapAttributeTwitter
+ * @property string ldapAttributeFediverse
+ * @property string ldapAttributeOrganisation
+ * @property string ldapAttributeRole
+ * @property string ldapAttributeHeadline
+ * @property string ldapAttributeBiography
+ * @property string ldapAdminGroup
  */
 class Connection extends LDAPUtility {
 	/**
@@ -286,6 +296,10 @@ class Connection extends LDAPUtility {
 		$key = $this->getCacheKey($key);
 
 		return json_decode(base64_decode($this->cache->get($key) ?? ''), true);
+	}
+
+	public function getConfigPrefix(): string {
+		return $this->configPrefix;
 	}
 
 	/**

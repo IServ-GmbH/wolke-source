@@ -15,6 +15,8 @@
     "Text" : "טקסט",
     "📝 Collaborative document editing" : "📝 עריכת מסמכים שיתופית",
     "** 📝 Collaborative document editing!**\n\n- **📝 Focused writing:** No distractions, only the formatting you need.\n- **🙋 Work together:** Share and collaborate with friends and colleagues, no matter if they use Nextcloud or not!\n- **💾 Open format:** Files are saved as [Markdown](https://en.wikipedia.org/wiki/Markdown), so you can edit them from any other text app too.\n- **✊ Strong foundation:** We use [🐈 tiptap](https://tiptap.scrumpy.io) which is based on [🦉 ProseMirror](https://prosemirror.net) – huge thanks to them!" : "** 📝 עריכת מסמכים שיתופית!**\n\n- **📝 כתיבה ממוקדת:** בלי הפרעות, רק כלי העיצוב הנחוצים.\n- **🙋 לעבוד ביחד:** שיתוף פעולה עם חברים ועמיתים לעבודה, בין אם הם משתמשים ב־Nextcloud או לא!\n- **💾 תקן פתוח:** הקבצים נשמרים בתור [Markdown](https://en.wikipedia.org/wiki/Markdown), כך שניתן לערוך אותם בכל יישומון טקסט אחר בנוסף.\n- **✊ יסודות יציבים:** אנו משתמשים ב־[🐈 tiptap](https://tiptap.scrumpy.io) שמבוסס על [🦉 ProseMirror](https://prosemirror.net) – תודה ענקית להם!",
+    "Translate" : "תרגום",
+    "Delete task" : "מחיקת משימה",
     "Use current version" : "להשתמש בגרסה הנוכחית",
     "Use the saved version" : "להשתמש בגרסה השמורה",
     "Document idle for {timeout} minutes, click to continue editing" : "מסמך אינו פעיל למשך {timeout} דקות, לחץ כדי להמשיך בעריכה",
@@ -43,10 +45,10 @@
     "Blockquote" : "מקטע ציטוט",
     "Code block" : "מקטע קוד",
     "Update link" : "עדכן את הקישור",
-    "Translate" : "תרגום",
+    "Select language" : "בחירת שפה",
+    "to" : "סיום",
     "Replace" : "החלפה",
-    "Unsupported image type" : "סוג התמונה לא נתמך",
-    "Show rich workspaces" : "הצגת סביבות עבודה עשירות",
+    "Source code" : "קוד מקור",
     "Undo" : "ביטול",
     "Redo" : "שחזור",
     "Headings" : "כותרות",
@@ -60,9 +62,10 @@
     "Insert attachment" : "הוספת קובץ מצורף",
     "Command" : "פקודה",
     "Control" : "שליטה",
+    "Formatting" : "עיצוב",
     "Add notes, lists or links …" : "ניתן להוסיף הערות, רשימות או קישורים…",
     "Edit" : "עריכה",
-    "Link file" : "קישור לקובץ",
-    "Select file to link to" : "לבחור קובץ לקשר אליו"
+    "Unsupported image type" : "סוג התמונה לא נתמך",
+    "Show rich workspaces" : "הצגת סביבות עבודה עשירות"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"
 }

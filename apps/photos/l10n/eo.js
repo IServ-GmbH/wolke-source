@@ -14,10 +14,12 @@ OC.L10N.register(
     "No recommendations. Start typing." : "Neniu propono. Ektajpu.",
     "Group" : "Grupo",
     "An error occurred" : "Eraro okazis",
-    "View" : "Vidi",
     "Favorite" : "Pliŝatati",
+    "Go back" : "Reveni",
+    "View" : "Vidi",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add" : "Aldoni",
-    "Delete selection" : "Forigi elekton"
+    "Delete selection" : "Forigi elekton",
+    "Details" : "Detaloj"
 },
 "nplurals=2; plural=(n != 1);");

@@ -32,18 +32,16 @@
  */
 namespace OC\Files;
 
+use OC\Files\Mount\HomeMountPoint;
+use OCA\Files_Sharing\ISharedMountPoint;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Mount\IMountPoint;
 use OCP\IUser;
 
 class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
+	private array|ICacheEntry $data;
 	/**
-	 * @var array $data
-	 */
-	private $data;
-
-	/**
-	 * @var string $path
+	 * @var string
 	 */
 	private $path;
 
@@ -53,7 +51,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	private $storage;
 
 	/**
-	 * @var string $internalPath
+	 * @var string
 	 */
 	private $internalPath;
 
@@ -62,22 +60,19 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 */
 	private $mount;
 
-	/**
-	 * @var IUser
-	 */
-	private $owner;
+	private ?IUser $owner;
 
 	/**
 	 * @var string[]
 	 */
-	private $childEtags = [];
+	private array $childEtags = [];
 
 	/**
 	 * @var IMountPoint[]
 	 */
-	private $subMounts = [];
+	private array $subMounts = [];
 
-	private $subMountsUsed = false;
+	private bool $subMountsUsed = false;
 
 	/**
 	 * The size of the file/folder without any sub mount
@@ -89,8 +84,8 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @param Storage\Storage $storage
 	 * @param string $internalPath
 	 * @param array|ICacheEntry $data
-	 * @param \OCP\Files\Mount\IMountPoint $mount
-	 * @param \OCP\IUser|null $owner
+	 * @param IMountPoint $mount
+	 * @param ?IUser $owner
 	 */
 	public function __construct($path, $storage, $internalPath, $data, $mount, $owner = null) {
 		$this->path = $path;
@@ -107,6 +102,9 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	}
 
 	public function offsetSet($offset, $value): void {
+		if (is_null($offset)) {
+			throw new \TypeError('Null offset not supported');
+		}
 		$this->data[$offset] = $value;
 	}
 
@@ -209,7 +207,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		if ($includeMounts) {
 			$this->updateEntryfromSubMounts();
 
-			if (isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] > 0) {
+			if ($this->isEncrypted() && isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] > 0) {
 				return $this->data['unencrypted_size'];
 			} else {
 				return isset($this->data['size']) ? 0 + $this->data['size'] : 0;
@@ -231,15 +229,13 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @return bool
 	 */
 	public function isEncrypted() {
-		return $this->data['encrypted'];
+		return $this->data['encrypted'] ?? false;
 	}
 
 	/**
-	 * Return the currently version used for the HMAC in the encryption app
-	 *
-	 * @return int
+	 * Return the current version used for the HMAC in the encryption app
 	 */
-	public function getEncryptedVersion() {
+	public function getEncryptedVersion(): int {
 		return isset($this->data['encryptedVersion']) ? (int) $this->data['encryptedVersion'] : 1;
 	}
 
@@ -247,11 +243,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @return int
 	 */
 	public function getPermissions() {
-		$perms = (int) $this->data['permissions'];
-		if (\OCP\Util::isSharingDisabledForUser() || ($this->isShared() && !\OC\Share\Share::isResharingAllowed())) {
-			$perms = $perms & ~\OCP\Constants::PERMISSION_SHARE;
-		}
-		return $perms;
+		return (int) $this->data['permissions'];
 	}
 
 	/**
@@ -319,27 +311,12 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @return bool
 	 */
 	public function isShared() {
-		$sid = $this->getStorage()->getId();
-		if (!is_null($sid)) {
-			$sid = explode(':', $sid);
-			return ($sid[0] === 'shared');
-		}
-
-		return false;
+		return $this->mount instanceof ISharedMountPoint;
 	}
 
 	public function isMounted() {
-		$storage = $this->getStorage();
-		if ($storage->instanceOfStorage('\OCP\Files\IHomeStorage')) {
-			return false;
-		}
-		$sid = $storage->getId();
-		if (!is_null($sid)) {
-			$sid = explode(':', $sid);
-			return ($sid[0] !== 'home' and $sid[0] !== 'shared');
-		}
-
-		return false;
+		$isHome = $this->mount instanceof HomeMountPoint;
+		return !$isHome && !$this->isShared();
 	}
 
 	/**
@@ -354,7 +331,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	/**
 	 * Get the owner of the file
 	 *
-	 * @return \OCP\IUser
+	 * @return ?IUser
 	 */
 	public function getOwner() {
 		return $this->owner;
@@ -367,7 +344,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		$this->subMounts = $mounts;
 	}
 
-	private function updateEntryfromSubMounts() {
+	private function updateEntryfromSubMounts(): void {
 		if ($this->subMountsUsed) {
 			return;
 		}

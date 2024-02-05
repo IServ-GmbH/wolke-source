@@ -9,9 +9,11 @@ OC.L10N.register(
     "Save" : "Salveguardar",
     "Shared by" : "Compartite per",
     "Group" : "Gruppo",
-    "View" : "Vider",
     "Favorite" : "Favorite",
+    "Go back" : "Retornar",
+    "View" : "Vider",
     "Remove from favorites" : "Remove from favorites",
-    "Add" : "Adder"
+    "Add" : "Adder",
+    "Details" : "Detalios"
 },
 "nplurals=2; plural=(n != 1);");
