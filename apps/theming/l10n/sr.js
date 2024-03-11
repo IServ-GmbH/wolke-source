@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Не могу да упишем фајл на диск",
     "A PHP extension stopped the file upload" : "ПХП екстензија је зауставила отпремање фајла",
     "No file uploaded" : "Није отпремљен фајл",
-    "Failed to clean up the old administration theming images folder" : "Није успело чишћење фолдера са старим сликама административне теме",
-    "Failed to clean up the old administration image folder" : "Није успело чишћење фолдера са старим сликама администрације ",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "Већ користите прилагођену тему. Поставке ове апликације ће прегажене са њом.",
     "Theming" : "Изглед",
     "Appearance and accessibility" : "Изглед и приступачност",
@@ -109,9 +107,11 @@ OC.L10N.register(
     "Default app priority" : "Подразумевани приоритет апликације",
     "If an app is not enabled for a user, the next app with lower priority is used." : "Ако апликација није укључена за корисника, користиће се наредна апликација са нижим приоритетом.",
     "Could not set global default apps" : "Нису могле да се поставе глобалне подразумеване апликације",
-    "Select a custom color" : "Изаберите прилагођену боју",
     "Reset to default" : "Врати на подразумевано",
     "Upload" : "Отпреми",
-    "Remove background image" : "Уклони позадинску слику"
+    "Remove background image" : "Уклони позадинску слику",
+    "Failed to clean up the old administration theming images folder" : "Није успело чишћење фолдера са старим сликама административне теме",
+    "Failed to clean up the old administration image folder" : "Није успело чишћење фолдера са старим сликама администрације ",
+    "Select a custom color" : "Изаберите прилагођену боју"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

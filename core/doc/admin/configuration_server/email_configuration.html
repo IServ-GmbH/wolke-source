@@ -356,9 +356,16 @@ of the Admin settings page.</p>
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
-<p>If you are unable to send email, try turning on debugging. Do this by enabling
-the <code class="docutils literal notranslate"><span class="pre">mail_smtpdebug</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpdebug&quot;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">;</span>
+<p>If you are unable to send email, it might be useful to activate further debug
+messages by enabling the <code class="docutils literal notranslate"><span class="pre">mail_smtpdebug</span></code> parameter and temporarily setting your NC loglevel to DEBUG:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpdebug&quot;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+<span class="s2">&quot;loglevel&quot;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Be cautious setting your <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> to DEBUG (<code class="docutils literal notranslate"><span class="pre">0</span></code>) since it’ll apply to everything occurring on your NC instance, not just email.
+And don’t forget to set it back to a more reasonable level when you’re done troubleshooting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpdebug&quot;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
+<span class="s2">&quot;loglevel&quot;</span> <span class="o">=&gt;</span> <span class="mi">2</span><span class="p">,</span>
 </pre></div>
 </div>
 <div class="admonition note">

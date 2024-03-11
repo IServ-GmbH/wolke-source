@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "寫入硬碟失敗",
     "A PHP extension stopped the file upload" : "一個 PHP 擴充功能終止檔案的上傳",
     "No file uploaded" : "未上傳檔案",
-    "Failed to clean up the old administration theming images folder" : "無法清除舊的管理佈景主題圖像資料夾",
-    "Failed to clean up the old administration image folder" : "無法清除舊的管理圖像資料夾",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "您已經在使用自訂佈景主題。佈景主題應用程式設定可能會被覆寫。",
     "Theming" : "佈景主題",
     "Appearance and accessibility" : "外觀和可及性",
@@ -109,9 +107,11 @@ OC.L10N.register(
     "Default app priority" : "默認應用程式優先程度",
     "If an app is not enabled for a user, the next app with lower priority is used." : "若未對某個用戶啟用某個應用程式，則使用下一個優先程度較低的應用程式。",
     "Could not set global default apps" : "無法設定全域默認應用程式",
-    "Select a custom color" : "選擇自訂色彩",
     "Reset to default" : "恢復預設值",
     "Upload" : "上傳",
-    "Remove background image" : "移除背景圖片"
+    "Remove background image" : "移除背景圖片",
+    "Failed to clean up the old administration theming images folder" : "無法清除舊的管理佈景主題圖像資料夾",
+    "Failed to clean up the old administration image folder" : "無法清除舊的管理圖像資料夾",
+    "Select a custom color" : "選擇自訂色彩"
 },
 "nplurals=1; plural=0;");

@@ -24,6 +24,8 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Bold" : "I theksuar",
     "Italic" : "I pjerrët",
+    "Cancel" : "Anuloje",
+    "URL" : "URL",
     "Select language" : "Zgjidh gjuhën",
     "to" : "te",
     "Replace" : "Mbishkruaj",

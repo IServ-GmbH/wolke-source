@@ -12,6 +12,8 @@ OC.L10N.register(
     "Translate" : "Translate",
     "guest" : "Qonaq",
     "Saved" : "Saxlanıldı",
+    "Save changes" : "Dəyişiklikləri yaddaşa ver",
+    "URL" : "URL",
     "to" : "doğru",
     "Replace" : "Əvəz edin",
     "Info" : "Info",

@@ -14,6 +14,8 @@ OC.L10N.register(
     "Saving …" : "Orc'h enrolliñ",
     "Saved" : "Enrollet",
     "Unsaved changes" : "Kemmoù n'int ket bet enrollet",
+    "Save changes" : "Enrollañ ar cheñchamantoù",
+    "URL" : "URL",
     "Replace" : "Erlec'hiañ",
     "Info" : "Titouroù",
     "Success" : "Graet",

@@ -16,6 +16,7 @@ OC.L10N.register(
     "Italic" : "Slīpraksts",
     "Strikethrough" : "Pārsvītrojums",
     "Remove link" : "Noņemt saiti",
+    "URL" : "URL",
     "Update link" : "Atjaunināt saiti",
     "Select language" : "Izvēlies valodu",
     "to" : "kam",

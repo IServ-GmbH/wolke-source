@@ -2,7 +2,7 @@ OC.L10N.register(
     "dav",
     {
     "Calendar" : "日历",
-    "To-dos" : "待办事项",
+    "Tasks" : "任务",
     "Personal" : "个人",
     "{actor} created calendar {calendar}" : "{actor} 创建了日历 {calendar}",
     "You created calendar {calendar}" : "您创建的日历 {calendar}",
@@ -143,7 +143,6 @@ OC.L10N.register(
     "Configures a CalDAV account" : "配置一个 CalDAV 账号",
     "Configures a CardDAV account" : "配置一个 CardDAV 账号",
     "Events" : "事件",
-    "Tasks" : "任务",
     "Untitled task" : "无标题任务",
     "Completed on %s" : "已完成 %s",
     "Due on %s by %s" : "到期于 %s，在 %s 之前",
@@ -162,7 +161,9 @@ OC.L10N.register(
     "Long absence Message" : "长期离开信息",
     "Save" : "保存",
     "Disable absence" : "禁用离开状态",
+    "Absence saved" : "缺席已保存",
     "Failed to save your absence settings" : "未能保存您的离开状态设置",
+    "Absence cleared" : "缺席已清除",
     "Failed to clear your absence settings" : "未能清除您的离开状态设置",
     "Time zone:" : "时区：",
     "to" : "到",
@@ -183,7 +184,6 @@ OC.L10N.register(
     "Saved availability" : "可用时间已保存",
     "Failed to save availability" : "可用时间保存失败",
     "Availability" : "可用性",
-    "If you configure your working hours, other users will see when you are out of office when they book a meeting." : "如果您配置了工作时间，其他用户在预订会议时就会了解您何时不在办公室。",
     "Absence" : "离开",
     "Configure your next absence period." : "配置您的下一次离开时段",
     "Calendar server" : "日历服务器",
@@ -202,6 +202,8 @@ OC.L10N.register(
     "Please contact the organizer directly." : "请直接联系组织者。",
     "Are you accepting the invitation?" : "您是否接受邀请？",
     "Tentative" : "暂定",
-    "Your attendance was updated successfully." : "您的出席状态更新成功。"
+    "Your attendance was updated successfully." : "您的出席状态更新成功。",
+    "To-dos" : "待办事项",
+    "If you configure your working hours, other users will see when you are out of office when they book a meeting." : "如果您配置了工作时间，其他用户在预订会议时就会了解您何时不在办公室。"
 },
 "nplurals=1; plural=0;");

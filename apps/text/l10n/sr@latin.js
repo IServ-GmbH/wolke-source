@@ -6,6 +6,7 @@ OC.L10N.register(
     "guest" : "gost",
     "Bold" : "Podebljano",
     "Italic" : "Kurziv",
+    "Cancel" : "Poništi",
     "Replace" : "Zameni postojeću",
     "Source code" : "Izvorni kôd",
     "Undo" : "Opozovi",

@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Soubor se nedaří zapsat na datové úložiště",
     "A PHP extension stopped the file upload" : "PHP rozšíření zastavilo nahrávání souboru",
     "No file uploaded" : "Nenahrán žádný soubor",
-    "Failed to clean up the old administration theming images folder" : "Nepodařilo se uklidit v původní složce s obrázky motivu vzhledu, určovaným správcem",
-    "Failed to clean up the old administration image folder" : "Nepodařilo se uklidit v původní složce s obrázky určovanými správcem",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "Už používáte svůj vlastní motiv vzhledu. Nastavení aplikace pro změnu motivu vzhledu tím mohou být přepsána.",
     "Theming" : "Motiv vzhledu",
     "Appearance and accessibility" : "Vzhled a zpřístupnění",
@@ -108,9 +106,11 @@ OC.L10N.register(
     "Default app priority" : "Priorita výchozí aplikace",
     "If an app is not enabled for a user, the next app with lower priority is used." : "Pokud aplikace není pro daného uživatele zapnutá, bude použita hned další aplikace v pořadí priority.",
     "Could not set global default apps" : "Nepodařilo se nastavit globálně výchozí aplikace",
-    "Select a custom color" : "Vybrat uživatelsky určenou barvu",
     "Reset to default" : "Vrátit zpět na výchozí hodnoty",
     "Upload" : "Nahrát",
-    "Remove background image" : "Odebrat obrázek z pozadí"
+    "Remove background image" : "Odebrat obrázek z pozadí",
+    "Failed to clean up the old administration theming images folder" : "Nepodařilo se uklidit v původní složce s obrázky motivu vzhledu, určovaným správcem",
+    "Failed to clean up the old administration image folder" : "Nepodařilo se uklidit v původní složce s obrázky určovanými správcem",
+    "Select a custom color" : "Vybrat uživatelsky určenou barvu"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

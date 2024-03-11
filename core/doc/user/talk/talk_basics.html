@@ -52,10 +52,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Talk</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Basics of Nextcloud Talk</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-chat">Creating a chat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#view-all-open-conversations">View all open conversations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filter-your-conversations">Filter your conversations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sharing-files-in-a-chat">Sharing files in a chat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#inserting-emoji">Inserting emoji</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#replying-to-messages-and-more">Replying to messages and more</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#managing-a-conversation">Managing a conversation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#messages-expiration">Messages expiration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#starting-a-call">Starting a call</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#starting-a-screen-share">Starting a screen share</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changing-view-in-a-call">Changing view in a call</a></li>
@@ -109,12 +112,28 @@
 <h2>Creating a chat<a class="headerlink" href="#creating-a-chat" title="Permalink to this headline"></a></h2>
 <p>You can create a direct, one-on-one chat by searching for the name of a user, a group or a circle and clicking it. For a single user, a conversation is immediately created and you can start your chat. For a group or circle you get to pick a name and settings before you create the conversation and add the participants.</p>
 <img alt="../_images/chat-with-one-user.png" src="../_images/chat-with-one-user.png" />
-<p>If you want to create a custom group conversation, click the <code class="docutils literal notranslate"><span class="pre">plus</span></code> button next to the search field. You can then pick a name for the conversation and select if the conversation should be open to external users and if other users on the server can see and join the conversation.</p>
-<img alt="../_images/creating-group-room.png" src="../_images/creating-group-room.png" />
+<p>If you want to create a custom group conversation, click the <code class="docutils literal notranslate"><span class="pre">⋮</span></code> button next to the filters button and then on <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">conversation</span></code>.</p>
+<a class="reference internal image-reference" href="../_images/create-new-conversation.png"><img alt="../_images/create-new-conversation.png" src="../_images/create-new-conversation.png" style="width: 300px;" /></a>
+<p>You can then pick a name for the conversation, put a description, and set up an avatar for it (with uploaded photo or emoji), and select if the conversation should be open to external users and if other users on the server can see and join the conversation.</p>
+<a class="reference internal image-reference" href="../_images/creating-open-conversation.png"><img alt="../_images/creating-open-conversation.png" src="../_images/creating-open-conversation.png" style="width: 500px;" /></a>
 <p>In the second step, you get to add participants and finalize the creation of the conversation.</p>
-<img alt="../_images/add-participants.png" src="../_images/add-participants.png" />
+<a class="reference internal image-reference" href="../_images/add-participants.png"><img alt="../_images/add-participants.png" src="../_images/add-participants.png" style="width: 500px;" /></a>
 <p>You can cancel the creation of a conversation by clicking outside the white menu area at any time.</p>
 <img alt="../_images/new-room.png" src="../_images/new-room.png" />
+</section>
+<section id="view-all-open-conversations">
+<h2>View all open conversations<a class="headerlink" href="#view-all-open-conversations" title="Permalink to this headline"></a></h2>
+<p>You can view all the conversations that you can join by accessing the conversations list through the <code class="docutils literal notranslate"><span class="pre">⋮</span></code>  menu next to the filters button and clicking on <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">open</span> <span class="pre">conversations.</span></code></p>
+<a class="reference internal image-reference" href="../_images/join-open-conversations.png"><img alt="../_images/join-open-conversations.png" src="../_images/join-open-conversations.png" style="width: 500px;" /></a>
+</section>
+<section id="filter-your-conversations">
+<h2>Filter your conversations<a class="headerlink" href="#filter-your-conversations" title="Permalink to this headline"></a></h2>
+<p>You can filter your conversations using the filter button located next to the search field. There are two options for filtering:
+1. Filter unread mentions: This option allows you to view group conversations with unread mentions or unread one-on-one conversations.
+2. Filter unread messages: This option allows you to view all unread messages in all joined conversations.</p>
+<a class="reference internal image-reference" href="../_images/filters-menu.png"><img alt="../_images/filters-menu.png" src="../_images/filters-menu.png" style="width: 250px;" /></a>
+<p>You can then clear the filter from the filters menu.</p>
+<a class="reference internal image-reference" href="../_images/clear-filter.png"><img alt="../_images/clear-filter.png" src="../_images/clear-filter.png" style="width: 250px;" /></a>
 </section>
 <section id="sharing-files-in-a-chat">
 <h2>Sharing files in a chat<a class="headerlink" href="#sharing-files-in-a-chat" title="Permalink to this headline"></a></h2>
@@ -122,24 +141,24 @@
 <p>First, you can simply drag’n’drop them on the chat.</p>
 <img alt="../_images/drag-and-drop.png" src="../_images/drag-and-drop.png" />
 <p>Second, you can select a file from your Nextcloud Files or a file manager by choosing the little paperclip and selecting where you’d like to pick the file from.</p>
-<img alt="../_images/share-files-in-chat.png" src="../_images/share-files-in-chat.png" />
-<img alt="../_images/share-files-in-chat-selection.png" src="../_images/share-files-in-chat-selection.png" />
+<a class="reference internal image-reference" href="../_images/share-files-in-chat.png"><img alt="../_images/share-files-in-chat.png" src="../_images/share-files-in-chat.png" style="width: 500px;" /></a>
+<a class="reference internal image-reference" href="../_images/share-files-in-chat-selection.png"><img alt="../_images/share-files-in-chat-selection.png" src="../_images/share-files-in-chat-selection.png" style="width: 450px;" /></a>
 <p>You can add more files until you are done and decide to share the files.</p>
-<img alt="../_images/talk-upload-files.png" src="../_images/talk-upload-files.png" />
+<a class="reference internal image-reference" href="../_images/talk-upload-files.png"><img alt="../_images/talk-upload-files.png" src="../_images/talk-upload-files.png" style="width: 500px;" /></a>
 <p>All users will be able to click the files to view, edit or download them, irrespective of them having a user account. Users with an account will have the file automatically shared with them while external guest users will get them shared as a public link.</p>
 <img alt="../_images/editing-document-in-chat-room.png" src="../_images/editing-document-in-chat-room.png" />
 </section>
 <section id="inserting-emoji">
 <h2>Inserting emoji<a class="headerlink" href="#inserting-emoji" title="Permalink to this headline"></a></h2>
 <p>You can add emoji using the picker on the left of the text input field.</p>
-<img alt="../_images/emoji-picker.png" src="../_images/emoji-picker.png" />
+<a class="reference internal image-reference" href="../_images/emoji-picker.png"><img alt="../_images/emoji-picker.png" src="../_images/emoji-picker.png" style="width: 450px;" /></a>
 </section>
 <section id="replying-to-messages-and-more">
 <h2>Replying to messages and more<a class="headerlink" href="#replying-to-messages-and-more" title="Permalink to this headline"></a></h2>
 <p>You can reply to a message using the arrow that appears when you hover a message.</p>
-<img alt="../_images/reply.png" src="../_images/reply.png" />
+<a class="reference internal image-reference" href="../_images/reply.png"><img alt="../_images/reply.png" src="../_images/reply.png" style="width: 450px;" /></a>
 <p>In the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu you can also choose to reply privately. This will open a one-on-one chat.</p>
-<img alt="../_images/chat-message-menu.png" src="../_images/chat-message-menu.png" />
+<a class="reference internal image-reference" href="../_images/chat-message-menu.png"><img alt="../_images/chat-message-menu.png" src="../_images/chat-message-menu.png" style="width: 450px;" /></a>
 <p>Here you can also create a direct link to the message or mark it unread so you will scroll back there next time you enter the chat. When it is a file, you can view the file in Files.</p>
 </section>
 <section id="managing-a-conversation">
@@ -147,19 +166,30 @@
 <p>You are always moderator in your new conversation. In the participant list you can promote other participants to moderators using the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu to the right of their user name, assign them custom permissions or remove them from the conversation.</p>
 <p>Changing permissions of a user that joined a public conversation will also permanently add them to the conversation.</p>
 <img alt="../_images/participant-menu.png" src="../_images/participant-menu.png" />
-<p>Moderators can configure the conversation. Select <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> from the gear menu of the conversation on the top to access the settings.</p>
-<img alt="../_images/open-settings.png" src="../_images/open-settings.png" />
+<p>Moderators can configure the conversation. Select <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> from the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu of the conversation on the top to access the settings.</p>
+<a class="reference internal image-reference" href="../_images/open-settings.png"><img alt="../_images/open-settings.png" src="../_images/open-settings.png" style="width: 300px;" /></a>
 <p>Here you can configure the description, guest access, if the conversation is visible to others on the server and more.</p>
-<img alt="../_images/chat-room-settings.png" src="../_images/chat-room-settings.png" />
+<a class="reference internal image-reference" href="../_images/conversation-settings-dialog.png"><img alt="../_images/conversation-settings-dialog.png" src="../_images/conversation-settings-dialog.png" style="width: 450px;" /></a>
+</section>
+<section id="messages-expiration">
+<h2>Messages expiration<a class="headerlink" href="#messages-expiration" title="Permalink to this headline"></a></h2>
+<p>A moderator can configure message expiration under the <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> within the <code class="docutils literal notranslate"><span class="pre">Moderation</span></code> section. Once a message reaches its expiration time, it is automatically removed from the conversation.
+The available expiration durations are 1 hour, 8 hours, 1 day, 1 week, 4 weeks, or never (which is the default setting).</p>
+<img alt="../_images/messages-expiration.png" src="../_images/messages-expiration.png" />
 </section>
 <section id="starting-a-call">
 <h2>Starting a call<a class="headerlink" href="#starting-a-call" title="Permalink to this headline"></a></h2>
-<p>When you’re in a conversation, you can start a call any time with the <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">call</span></code> button. Other participants will get notified and can join the call. If somebody else has started a call already, the button will change in a green <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">call</span></code> button.</p>
+<p>When you’re in a conversation, you can start a call any time with the <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">call</span></code> button. Other participants will get notified and can join the call.</p>
+<a class="reference internal image-reference" href="../_images/device-settings-before-call.png"><img alt="../_images/device-settings-before-call.png" src="../_images/device-settings-before-call.png" style="width: 300px;" /></a>
+<p>If somebody else has started a call already, the button will change in a green <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">call</span></code> button.</p>
 <img alt="../_images/join-call.png" src="../_images/join-call.png" />
 <p>During a call, you can mute your microphone and disable your video with the buttons on the right side of the top bar, or using the shortcuts <code class="docutils literal notranslate"><span class="pre">M</span></code> to mute audio and <code class="docutils literal notranslate"><span class="pre">V</span></code> to disable video. You can also use the space bar to toggle mute. When you are muted, pressing space will unmute you so you can speak until you let go of the space bar. If you are unmuted, pressing space will mute you until you let go.</p>
 <p>You can hide your video (useful during a screen share) with the little arrow just above the video stream. Bring it back with the little arrow again.</p>
 <p>You can access your settings and choose a different webcam, microphone and other settings in the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu in the top bar.</p>
-<img alt="../_images/call-menu.png" src="../_images/call-menu.png" />
+<a class="reference internal image-reference" href="../_images/media-settings.png"><img alt="../_images/media-settings.png" src="../_images/media-settings.png" style="width: 300px;" /></a>
+<p>or change the background</p>
+<a class="reference internal image-reference" href="../_images/background-settings-in-call.png"><img alt="../_images/background-settings-in-call.png" src="../_images/background-settings-in-call.png" style="width: 300px;" /></a>
+<p>You can change other settings in the <code class="docutils literal notranslate"><span class="pre">Talk</span> <span class="pre">settings</span></code> dialog.</p>
 <img alt="../_images/talk-settings.png" src="../_images/talk-settings.png" />
 </section>
 <section id="starting-a-screen-share">

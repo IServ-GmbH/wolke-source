@@ -6,12 +6,12 @@ index 67bfac3..5cb49a3 100644
  			</span>
  		</div>
  		<div class="sharingTabDetailsView__wrapper">
--			<div ref="quickPermissions"
-+			<div v-if="canEditFileType || isFolder" ref="quickPermissions"
- 				class="sharingTabDetailsView__quick-permissions">
+-			<div ref="quickPermissions" class="sharingTabDetailsView__quick-permissions">
++			<div v-if="canEditFileType || isFolder" ref="quickPermissions" class="sharingTabDetailsView__quick-permissions">
  				<div>
  					<NcCheckboxRadioSwitch :button-variant="true"
-@@ -37,36 +37,10 @@
+ 						:checked.sync="sharingPermission"
+@@ -36,36 +36,10 @@
  						button-variant-grouped="vertical"
  						@update:checked="toggleCustomPermissions">
  						<EditIcon :size="20" />
@@ -49,7 +49,7 @@ index 67bfac3..5cb49a3 100644
  				</div>
  			</div>
  			<div class="sharingTabDetailsView__advanced-control">
-@@ -147,29 +121,6 @@
+@@ -146,29 +120,6 @@
  						</label>
  						<textarea id="share-note-textarea" :value="share.note" @input="share.note = $event.target.value" />
  					</template>
@@ -79,7 +79,7 @@ index 67bfac3..5cb49a3 100644
  				</section>
  			</div>
  		</div>
-@@ -285,6 +236,35 @@ export default {
+@@ -284,6 +235,35 @@ export default {
  	},
 
  	computed: {

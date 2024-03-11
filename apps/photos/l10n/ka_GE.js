@@ -12,6 +12,8 @@ OC.L10N.register(
     "Shared by" : "გამზიარებელი",
     "Favorite" : "რჩეული",
     "Go back" : "უკან დაბრუნება",
+    "Dates" : "თარიღები",
+    "Home" : "სახლი",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add" : "დამატება",
     "Details" : "დეტალები"

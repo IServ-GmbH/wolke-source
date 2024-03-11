@@ -113,7 +113,14 @@
 </section>
 <section id="system-email">
 <h2>System email<a class="headerlink" href="#system-email" title="Permalink to this headline"></a></h2>
-<p>The software component to send system emails (notifications, invites, password reset, etc) had to be replaced. The new library should work without any changes out of the box for most setups. Only NTLM/Exchange is kown to be no longer supported. See <a class="reference internal" href="../configuration_server/email_configuration.html#email-smtp-config"><span class="std std-ref">Configuring an SMTP server</span></a>.</p>
+<p>The software component to send system emails (notifications, invites, password reset, etc) had to be replaced. The new library should work without any changes out of the box for most setups.</p>
+<p>A brief overview of changes:</p>
+<ul class="simple">
+<li><p>STARTTLS cannot be enforced. It will be used automatically if the mail server supports it. The encryption type should be set to ‘None/STARTTLS’ in this case.</p></li>
+<li><p>Self signed certificates now need to be explicitly enabled, see <a class="reference internal" href="../configuration_server/email_configuration.html#tlspeerverification"><span class="std std-ref">this guide</span></a> for an example on how to configure this.</p></li>
+<li><p>NTLM authentication for Microsoft Exchange is not supported by the new mailer library. Try using <a class="reference external" href="https://learn.microsoft.com/en-us/exchange/client-developer/exchange-web-services/authentication-and-ews-in-exchange#basic-authentication">basic authentication</a> instead.</p></li>
+</ul>
+<p>See for more information: <a class="reference internal" href="../configuration_server/email_configuration.html#email-smtp-config"><span class="std std-ref">Configuring an SMTP server</span></a>.</p>
 </section>
 <section id="web-server-configuration">
 <h2>Web server configuration<a class="headerlink" href="#web-server-configuration" title="Permalink to this headline"></a></h2>

@@ -6,6 +6,7 @@ OC.L10N.register(
     "Translate" : "ແປ",
     "Offline" : "ອັອບລາຍ",
     "Saving …" : "ກຳລັງບັນທຶກ",
+    "Cancel" : "ຍົກເລີກ",
     "Replace" : "ປ່ຽນແທນ",
     "Info" : "ຂໍ້ມຸນ",
     "Success" : "ຄວາມສໍາເລັດ",

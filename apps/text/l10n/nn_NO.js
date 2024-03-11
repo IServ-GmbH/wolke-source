@@ -8,6 +8,7 @@ OC.L10N.register(
     "Guest" : "Gjest",
     "Saved" : "Lagra",
     "Keyboard shortcuts" : "Tastatursnarvegar",
+    "URL" : "URL",
     "Select language" : "Vel språk",
     "to" : "til",
     "Replace" : "Erstatt",

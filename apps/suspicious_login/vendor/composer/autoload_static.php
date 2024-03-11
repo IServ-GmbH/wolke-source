@@ -61,10 +61,6 @@ class ComposerStaticInitSuspiciousLogin
         array (
             'JAMA\\' => 5,
         ),
-        'D' => 
-        array (
-            'Darsyn\\IP\\' => 10,
-        ),
         'A' => 
         array (
             'Amp\\Sync\\' => 9,
@@ -121,10 +117,6 @@ class ComposerStaticInitSuspiciousLogin
         'JAMA\\' => 
         array (
             0 => __DIR__ . '/..' . '/rubix/tensor/lib/JAMA',
-        ),
-        'Darsyn\\IP\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/darsyn/ip/src',
         ),
         'Amp\\Sync\\' => 
         array (
@@ -317,34 +309,6 @@ class ComposerStaticInitSuspiciousLogin
         'Amp\\TimeoutException' => __DIR__ . '/..' . '/amphp/amp/lib/TimeoutException.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Darsyn\\IP\\AbstractIP' => __DIR__ . '/..' . '/darsyn/ip/src/AbstractIP.php',
-        'Darsyn\\IP\\Doctrine\\AbstractType' => __DIR__ . '/..' . '/darsyn/ip/src/Doctrine/AbstractType.php',
-        'Darsyn\\IP\\Doctrine\\IPv4Type' => __DIR__ . '/..' . '/darsyn/ip/src/Doctrine/IPv4Type.php',
-        'Darsyn\\IP\\Doctrine\\IPv6Type' => __DIR__ . '/..' . '/darsyn/ip/src/Doctrine/IPv6Type.php',
-        'Darsyn\\IP\\Doctrine\\MultiType' => __DIR__ . '/..' . '/darsyn/ip/src/Doctrine/MultiType.php',
-        'Darsyn\\IP\\Exception\\Formatter\\FormatException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/Formatter/FormatException.php',
-        'Darsyn\\IP\\Exception\\InvalidCidrException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/InvalidCidrException.php',
-        'Darsyn\\IP\\Exception\\InvalidIpAddressException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/InvalidIpAddressException.php',
-        'Darsyn\\IP\\Exception\\IpException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/IpException.php',
-        'Darsyn\\IP\\Exception\\Strategy\\ExtractionException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/Strategy/ExtractionException.php',
-        'Darsyn\\IP\\Exception\\Strategy\\PackingException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/Strategy/PackingException.php',
-        'Darsyn\\IP\\Exception\\WrongVersionException' => __DIR__ . '/..' . '/darsyn/ip/src/Exception/WrongVersionException.php',
-        'Darsyn\\IP\\Formatter\\ConsistentFormatter' => __DIR__ . '/..' . '/darsyn/ip/src/Formatter/ConsistentFormatter.php',
-        'Darsyn\\IP\\Formatter\\NativeFormatter' => __DIR__ . '/..' . '/darsyn/ip/src/Formatter/NativeFormatter.php',
-        'Darsyn\\IP\\Formatter\\ProtocolFormatterInterface' => __DIR__ . '/..' . '/darsyn/ip/src/Formatter/ProtocolFormatterInterface.php',
-        'Darsyn\\IP\\IpInterface' => __DIR__ . '/..' . '/darsyn/ip/src/IpInterface.php',
-        'Darsyn\\IP\\Strategy\\Compatible' => __DIR__ . '/..' . '/darsyn/ip/src/Strategy/Compatible.php',
-        'Darsyn\\IP\\Strategy\\Derived' => __DIR__ . '/..' . '/darsyn/ip/src/Strategy/Derived.php',
-        'Darsyn\\IP\\Strategy\\EmbeddingStrategyInterface' => __DIR__ . '/..' . '/darsyn/ip/src/Strategy/EmbeddingStrategyInterface.php',
-        'Darsyn\\IP\\Strategy\\Mapped' => __DIR__ . '/..' . '/darsyn/ip/src/Strategy/Mapped.php',
-        'Darsyn\\IP\\Util\\Binary' => __DIR__ . '/..' . '/darsyn/ip/src/Util/Binary.php',
-        'Darsyn\\IP\\Util\\MbString' => __DIR__ . '/..' . '/darsyn/ip/src/Util/MbString.php',
-        'Darsyn\\IP\\Version\\IPv4' => __DIR__ . '/..' . '/darsyn/ip/src/Version/IPv4.php',
-        'Darsyn\\IP\\Version\\IPv6' => __DIR__ . '/..' . '/darsyn/ip/src/Version/IPv6.php',
-        'Darsyn\\IP\\Version\\Multi' => __DIR__ . '/..' . '/darsyn/ip/src/Version/Multi.php',
-        'Darsyn\\IP\\Version\\MultiVersionInterface' => __DIR__ . '/..' . '/darsyn/ip/src/Version/MultiVersionInterface.php',
-        'Darsyn\\IP\\Version\\Version4Interface' => __DIR__ . '/..' . '/darsyn/ip/src/Version/Version4Interface.php',
-        'Darsyn\\IP\\Version\\Version6Interface' => __DIR__ . '/..' . '/darsyn/ip/src/Version/Version6Interface.php',
         'JAMA\\EigenvalueDecomposition' => __DIR__ . '/..' . '/rubix/tensor/lib/JAMA/EigenvalueDecomposition.php',
         'JAMA\\Matrix' => __DIR__ . '/..' . '/rubix/tensor/lib/JAMA/Matrix.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',

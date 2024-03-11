@@ -151,9 +151,8 @@ webroot of your nginx installation. In this example it is
 <span class="c1"># Set the `immutable` cache control options only for assets with a cache busting `v` argument</span>
 <span class="k">map</span><span class="w"> </span><span class="nv">$arg_v</span><span class="w"> </span><span class="nv">$asset_immutable</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">&quot;&quot;</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;immutable&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;,</span><span class="w"> </span><span class="s">immutable&quot;</span><span class="p">;</span>
 <span class="p">}</span>
-
 
 <span class="k">server</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
@@ -225,13 +224,14 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># Remove X-Powered-By, which is an information leak</span>
 <span class="w">    </span><span class="kn">fastcgi_hide_header</span><span class="w"> </span><span class="s">X-Powered-By</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1"># Add .mjs as a file extension for javascript</span>
+<span class="w">    </span><span class="c1"># Set .mjs and .wasm MIME types</span>
 <span class="w">    </span><span class="c1"># Either include it in the default mime.types list</span>
-<span class="w">    </span><span class="c1"># or include you can include that list explicitly and add the file extension</span>
+<span class="w">    </span><span class="c1"># and include that list explicitly or add the file extension</span>
 <span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
 <span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">	</span><span class="kn">application/wasm</span><span class="w"> </span><span class="s">wasm</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1"># Specify how to handle directories -- specifying `/index.php$request_uri`</span>
@@ -313,12 +313,15 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># Serve static files</span>
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
-<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Referrer-Policy</span><span class="w">                   </span><span class="s">&quot;no-referrer&quot;</span><span class="w">       </span><span class="s">always</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Content-Type-Options</span><span class="w">            </span><span class="s">&quot;nosniff&quot;</span><span class="w">           </span><span class="s">always</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
-
-<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.wasm$</span><span class="w"> </span><span class="p">{</span>
-<span class="w">            </span><span class="kn">default_type</span><span class="w"> </span><span class="s">application/wasm</span><span class="p">;</span>
-<span class="w">        </span><span class="p">}</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.woff2?$</span><span class="w"> </span><span class="p">{</span>
@@ -361,7 +364,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="c1"># Set the `immutable` cache control options only for assets with a cache busting `v` argument</span>
 <span class="k">map</span><span class="w"> </span><span class="nv">$arg_v</span><span class="w"> </span><span class="nv">$asset_immutable</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">&quot;&quot;</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;immutable&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">default</span><span class="w"> </span><span class="s">&quot;,</span><span class="w"> </span><span class="s">immutable&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">server</span><span class="w"> </span><span class="p">{</span>
@@ -402,13 +405,14 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="c1"># could take several months.</span>
 <span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload&quot; always;</span>
 
-<span class="w">    </span><span class="c1"># Add .mjs as a file extension for javascript</span>
+<span class="w">    </span><span class="c1"># Set .mjs and .wasm MIME types</span>
 <span class="w">    </span><span class="c1"># Either include it in the default mime.types list</span>
-<span class="w">    </span><span class="c1"># or include you can include that list explicitly and add the file extension</span>
+<span class="w">    </span><span class="c1"># and include that list explicitly or add the file extension</span>
 <span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
 <span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">	</span><span class="kn">application/wasm</span><span class="w"> </span><span class="s">wasm</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">/robots.txt</span><span class="w"> </span><span class="p">{</span>
@@ -521,12 +525,15 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="c1"># Serve static files</span>
 <span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
-<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w"> </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463,</span><span class="w"> </span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Referrer-Policy</span><span class="w">                   </span><span class="s">&quot;no-referrer&quot;</span><span class="w">       </span><span class="s">always</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Content-Type-Options</span><span class="w">            </span><span class="s">&quot;nosniff&quot;</span><span class="w">           </span><span class="s">always</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
-
-<span class="w">            </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.wasm$</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="kn">default_type</span><span class="w"> </span><span class="s">application/wasm</span><span class="p">;</span>
-<span class="w">            </span><span class="p">}</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.woff2?$</span><span class="w"> </span><span class="p">{</span>

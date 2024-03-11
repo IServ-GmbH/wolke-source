@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Dosya diske yazılamadı",
     "A PHP extension stopped the file upload" : "Bir PHP eklentisi dosyanın yüklenmesini engelledi",
     "No file uploaded" : "Henüz bir dosya yüklenmemiş",
-    "Failed to clean up the old administration theming images folder" : "Eski yönetim temasının images klasörü temizlenemedi",
-    "Failed to clean up the old administration image folder" : "Eski yönetim image klasörü temizlenemedi",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "Zaten özel bir tema kullanıyorsunuz. Tema uygulaması ayarları bu değer ile değiştirilebilir.",
     "Theming" : "Tema",
     "Appearance and accessibility" : "Görünüm ve erişilebilirlik",
@@ -109,9 +107,11 @@ OC.L10N.register(
     "Default app priority" : "Varsayılan uygulama önceliği",
     "If an app is not enabled for a user, the next app with lower priority is used." : "Bir uygulama bir kullanıcıda etkin değilse, daha düşük öncelikli bir sonraki uygulama kullanılır.",
     "Could not set global default apps" : "Genel varsayılan uygulamalar ayarlanamadı",
-    "Select a custom color" : "Özel bir renk seçin",
     "Reset to default" : "Varsayılanlara dön",
     "Upload" : "Yükle",
-    "Remove background image" : "Arka plan görselini kaldır"
+    "Remove background image" : "Arka plan görselini kaldır",
+    "Failed to clean up the old administration theming images folder" : "Eski yönetim temasının images klasörü temizlenemedi",
+    "Failed to clean up the old administration image folder" : "Eski yönetim image klasörü temizlenemedi",
+    "Select a custom color" : "Özel bir renk seçin"
 },
 "nplurals=2; plural=(n > 1);");

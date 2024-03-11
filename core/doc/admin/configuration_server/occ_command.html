@@ -425,6 +425,10 @@ enabled or disabled:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">update</span> <span class="o">--</span><span class="nb">all</span>
 </pre></div>
 </div>
+<p>To show available update(s) without updating:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">update</span> <span class="o">--</span><span class="n">showonly</span>
+</pre></div>
+</div>
 </section>
 <section id="background-jobs-selector">
 <span id="background-jobs-selector-label"></span><h2>Background jobs selector<a class="headerlink" href="#background-jobs-selector" title="Permalink to this headline"></a></h2>
@@ -1186,6 +1190,7 @@ change to existing files.</p>
 <span id="security-commands-label"></span><h2>Security<a class="headerlink" href="#security" title="Permalink to this headline"></a></h2>
 <p>Use these commands to manage server-wide SSL certificates or reset brute-force slow-downs. These are useful when you create federation shares with other Nextcloud servers that use self-signed certificates:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">security</span>
+ <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">attempts</span>  <span class="nb">list</span> <span class="n">brute</span><span class="o">-</span><span class="n">force</span> <span class="n">attemps</span> <span class="k">for</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
  <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">reset</span>     <span class="n">resets</span> <span class="n">brute</span><span class="o">-</span><span class="n">force</span> <span class="n">attemps</span> <span class="k">for</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
  <span class="n">security</span><span class="p">:</span><span class="n">certificates</span>         <span class="nb">list</span> <span class="n">trusted</span> <span class="n">certificates</span>
  <span class="n">security</span><span class="p">:</span><span class="n">certificates</span><span class="p">:</span><span class="kn">import</span>  <span class="nn">import</span> <span class="n">trusted</span> <span class="n">certificate</span>

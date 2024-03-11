@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "A fájlt nem sikerült a lemezre írni",
     "A PHP extension stopped the file upload" : "Egy PHP kiterjesztés megállította a fájl feltöltését",
     "No file uploaded" : "Nincs fájl feltöltve",
-    "Failed to clean up the old administration theming images folder" : "Nem sikerült megtisztítani a régi rendszergazdai témaképek mappát",
-    "Failed to clean up the old administration image folder" : "Nem sikerült megtisztítani a régi rendszergazdai képmappát",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "Már egyéni témát használ. Lehet, hogy a témázó alkalmazás beállításai felülírták.",
     "Theming" : "Témázás",
     "Appearance and accessibility" : "Megjelenés és akadálymentesítés",
@@ -98,9 +96,11 @@ OC.L10N.register(
     "Global default apps" : "Globális alapértelmezett alkalmazások",
     "Default app priority" : "Alapértelmezett alkalmazás prioritás",
     "Could not set global default apps" : "Nem sikerült a globális alapértelmezett alkalmazások beállítása",
-    "Select a custom color" : "Válasszon egyéni színt",
     "Reset to default" : "Visszaállítás alapértelmezettre",
     "Upload" : "Feltöltés",
-    "Remove background image" : "Háttérkép eltávolítása"
+    "Remove background image" : "Háttérkép eltávolítása",
+    "Failed to clean up the old administration theming images folder" : "Nem sikerült megtisztítani a régi rendszergazdai témaképek mappát",
+    "Failed to clean up the old administration image folder" : "Nem sikerült megtisztítani a régi rendszergazdai képmappát",
+    "Select a custom color" : "Válasszon egyéni színt"
 },
 "nplurals=2; plural=(n != 1);");

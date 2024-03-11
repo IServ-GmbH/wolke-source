@@ -8,6 +8,8 @@ OC.L10N.register(
     "guest" : "অতিথি",
     "Saved" : "সংরক্ষণ করা হলো",
     "Keyboard shortcuts" : "কী-বোর্ড শর্টকাট",
+    "Cancel" : "বাতিল করুন",
+    "URL" : "URL",
     "to" : "প্রতি",
     "Info" : "Info",
     "Warning" : "সতর্কবাণী",

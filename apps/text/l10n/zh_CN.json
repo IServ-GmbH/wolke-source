@@ -33,6 +33,7 @@
     "Offline" : "离线",
     "Saving …" : "保存中 …",
     "Saved" : "已保存",
+    "Last saved {lastSave}" : "最近保存 {lastSave}",
     "Unsaved changes" : "未保存的更改",
     "Formatting help" : "排版帮助",
     "Speed up your writing with simple shortcuts." : "利用简单快捷键加速写作",
@@ -64,9 +65,15 @@
     "Quoted text" : "引用文本",
     "Code block" : "代码块",
     "Some code" : "一些代码",
+    "Edit link" : "编辑链接",
+    "Save changes" : "保存更改",
+    "Remove link" : "删除链接",
+    "Cancel" : "取消",
+    "URL" : "URL",
+    "Cannot copy, please copy the link manually" : "无法复制，请手动复制链接",
+    "Copy link to clipboard" : "复制链接到剪贴板",
     "Upload from computer" : "从电脑上传",
     "Insert from Files" : "从文件插入",
-    "Remove link" : "删除链接",
     "Update link" : "更新链接",
     "Select file or folder to link to" : "选择需要链接的文件或文件夹",
     "_%n word_::_%n words_" : ["%n 字"],
@@ -77,6 +84,7 @@
     "Replace" : "替换",
     "Detect language" : "检测语言",
     "Translation failed" : "翻译失败",
+    "Copy code block" : "复制代码块",
     "Source code" : "源代码",
     "Both" : "都是",
     "Hide outline" : "隐藏大纲",
@@ -101,7 +109,9 @@
     "Add notes, lists or links …" : "添加笔记、列表或链接...",
     "Edit" : "编辑",
     "Add description" : "添加描述",
+    "Target language" : "目标语言",
     "Unsupported image type" : "不支持图片格式",
-    "Show rich workspaces" : "显示富文本编辑区"
+    "Show rich workspaces" : "显示富文本编辑区",
+    "e.g. php, javascript, json, ..." : "例如：php、javascript、json 等"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

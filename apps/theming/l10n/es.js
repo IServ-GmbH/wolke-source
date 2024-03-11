@@ -24,8 +24,6 @@ OC.L10N.register(
     "Could not write file to disk" : "No se puede escribir el archivo en el disco",
     "A PHP extension stopped the file upload" : "Una extensión PHP ha cancelado la subida de archivos",
     "No file uploaded" : "No se ha subido archivo",
-    "Failed to clean up the old administration theming images folder" : "Fallo al limpiar la carpeta antigua del administrador con las imágenes de temas",
-    "Failed to clean up the old administration image folder" : "Fallo al limpiar la carpeta de imágenes de administración antigua",
     "You are already using a custom theme. Theming app settings might be overwritten by that." : "Ya estás usando un tema personalizado. La configuración de la aplicación de temas puede ser sobrescrita por el.",
     "Theming" : "Tema",
     "Appearance and accessibility" : "Apariencia y accesibilidad",
@@ -109,9 +107,11 @@ OC.L10N.register(
     "Default app priority" : "Prioridad de aplicaciones para mostrarse por defecto",
     "If an app is not enabled for a user, the next app with lower priority is used." : "Si una aplicación no está habilitada para un usuario, la siguiente aplicación por orden de prioridad será seleccionada.",
     "Could not set global default apps" : "No se pudo guardar los ajustes de aplicación por defecto global",
-    "Select a custom color" : "Seleccionar un color personalizado",
     "Reset to default" : "Vovler a configuración por defecto",
     "Upload" : "Subir",
-    "Remove background image" : "Eliminar imagen de fondo"
+    "Remove background image" : "Eliminar imagen de fondo",
+    "Failed to clean up the old administration theming images folder" : "Fallo al limpiar la carpeta antigua del administrador con las imágenes de temas",
+    "Failed to clean up the old administration image folder" : "Fallo al limpiar la carpeta de imágenes de administración antigua",
+    "Select a custom color" : "Seleccionar un color personalizado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

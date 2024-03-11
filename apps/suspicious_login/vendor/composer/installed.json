@@ -515,68 +515,6 @@
             "install-path": "../amphp/sync"
         },
         {
-            "name": "darsyn/ip",
-            "version": "4.1.0",
-            "version_normalized": "4.1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/darsyn/ip.git",
-                "reference": "93b139036afc9c45f6a36b83480a7302161665fc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/darsyn/ip/zipball/93b139036afc9c45f6a36b83480a7302161665fc",
-                "reference": "93b139036afc9c45f6a36b83480a7302161665fc",
-                "shasum": ""
-            },
-            "require": {
-                "php-64bit": ">=5.6",
-                "php-ipv6": ">=5.6"
-            },
-            "require-dev": {
-                "doctrine/dbal": "^2.3",
-                "ext-pdo": "*",
-                "phpunit/phpunit": "*"
-            },
-            "suggest": {
-                "doctrine/dbal": "to use IP as a column type"
-            },
-            "time": "2022-05-19T09:01:05+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "Darsyn\\IP\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Zan Baldwin",
-                    "email": "hello@zanbaldwin.com",
-                    "homepage": "https://zanbaldwin.com"
-                }
-            ],
-            "description": "An immutable IP Address value object that provides several different notations, including helper functions.",
-            "homepage": "https://github.com/darsyn/ip",
-            "keywords": [
-                "IP",
-                "immutable",
-                "ipv4",
-                "ipv6",
-                "library",
-                "value-object"
-            ],
-            "support": {
-                "issues": "https://github.com/darsyn/ip/issues",
-                "source": "https://github.com/darsyn/ip/tree/4.1.0"
-            },
-            "install-path": "../darsyn/ip"
-        },
-        {
             "name": "league/flysystem",
             "version": "2.5.0",
             "version_normalized": "2.5.0.0",

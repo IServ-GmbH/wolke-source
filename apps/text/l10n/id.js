@@ -22,6 +22,8 @@ OC.L10N.register(
     "Saved" : "Disimpan",
     "Formatting help" : "Bantuan pemformatan",
     "Keyboard shortcuts" : "Pintasan keyboard",
+    "Cancel" : "Batal",
+    "URL" : "URL",
     "Select file or folder to link to" : "Pilih berkas atau folder untuk ditautkan",
     "to" : "untuk",
     "Replace" : "Timpa",
