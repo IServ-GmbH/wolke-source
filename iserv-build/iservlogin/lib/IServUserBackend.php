@@ -38,7 +38,7 @@ class IServUserBackend implements UserInterface, IUserBackend
      */
     public function implementsActions($actions): bool
     {
-        return (bool)($actions & (Backend::CHECK_PASSWORD));
+        return (bool) ($actions & (Backend::CHECK_PASSWORD));
     }
 
     public function checkPassword(string $loginName, string $password): string|bool

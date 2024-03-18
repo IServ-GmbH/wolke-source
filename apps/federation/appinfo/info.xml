@@ -26,6 +26,9 @@
 
 	<commands>
 		<command>OCA\Federation\Command\SyncFederationAddressBooks</command>
+		<command>OCA\Federation\Command\AddTrustedServer</command>
+		<command>OCA\Federation\Command\ListTrustedServer</command>
+		<command>OCA\Federation\Command\RemoveTrustedServer</command>
 	</commands>
 
 	<settings>

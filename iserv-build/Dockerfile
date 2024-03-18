@@ -40,6 +40,9 @@ RUN cd /usr/src/nextcloud && patch -p1 < /patches/cleanup_activity.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_send_mails.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_activity_jobs.patch
 RUN cd /usr/src/nextcloud && patch -p1 < /patches/show_share_owner.patch
+RUN cd /usr/src/nextcloud && patch apps/federation/appinfo/info.xml < /patches/federation_app_patches/info.xml.patch
+RUN cd /usr/src/nextcloud && patch apps/federation/composer/composer/autoload_classmap.php < /patches/federation_app_patches/autoload_classmap.patch
+RUN cd /usr/src/nextcloud && patch apps/federation/composer/composer/autoload_static.php < /patches/federation_app_patches/autoload_static.patch
 
 # Frontend patches
 RUN cd /usr/src/nextcloud && git apply /patches/generated/generated_combined.patch

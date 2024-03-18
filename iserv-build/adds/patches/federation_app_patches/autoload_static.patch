@@ -1,0 +1,12 @@
+--- autoload_static.php	2024-02-16 09:54:56.980031524 +0100
++++ autoload_static.php.patch	2024-02-29 08:08:08.478623496 +0100
+@@ -25,6 +25,9 @@
+         'OCA\\Federation\\AppInfo\\Application' => __DIR__ . '/..' . '/../lib/AppInfo/Application.php',
+         'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/GetSharedSecret.php',
+         'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/RequestSharedSecret.php',
++        'OCA\\Federation\\Command\\AddTrustedServer' => __DIR__ . '/..' . '/../lib/Command/AddTrustedServer.php',
++        'OCA\\Federation\\Command\\ListTrustedServer' => __DIR__ . '/..' . '/../lib/Command/ListTrustedServer.php',
++        'OCA\\Federation\\Command\\RemoveTrustedServer' => __DIR__ . '/..' . '/../lib/Command/RemoveTrustedServer.php',
+         'OCA\\Federation\\Command\\SyncFederationAddressBooks' => __DIR__ . '/..' . '/../lib/Command/SyncFederationAddressBooks.php',
+         'OCA\\Federation\\Controller\\OCSAuthAPIController' => __DIR__ . '/..' . '/../lib/Controller/OCSAuthAPIController.php',
+         'OCA\\Federation\\Controller\\SettingsController' => __DIR__ . '/..' . '/../lib/Controller/SettingsController.php',
