@@ -2,16 +2,17 @@ diff --git a/apps/files_sharing/src/views/SharingDetailsTab.vue b/apps/files_sha
 index 67bfac3..5cb49a3 100644
 --- a/apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ b/apps/files_sharing/src/views/SharingDetailsTab.vue
-@@ -16,7 +16,7 @@
- 			</span>
- 		</div>
- 		<div class="sharingTabDetailsView__wrapper">
--			<div ref="quickPermissions" class="sharingTabDetailsView__quick-permissions">
-+			<div v-if="canEditFileType || isFolder" ref="quickPermissions" class="sharingTabDetailsView__quick-permissions">
- 				<div>
- 					<NcCheckboxRadioSwitch :button-variant="true"
+@@ -28,7 +28,8 @@
+ 						<ViewIcon :size="20" />
+ 						<span>{{ t('files_sharing', 'View only') }}</span>
+ 					</NcCheckboxRadioSwitch>
+-					<NcCheckboxRadioSwitch :button-variant="true"
++					<NcCheckboxRadioSwitch v-if="canEditFileType && !isPublicShare"
++                        :button-variant="true"
  						:checked.sync="sharingPermission"
-@@ -36,36 +36,10 @@
+ 						:value="bundledPermissions.ALL.toString()"
+ 						name="sharing_permission_radio"
+@@ -36,10 +37,7 @@
  						button-variant-grouped="vertical"
  						@update:checked="toggleCustomPermissions">
  						<EditIcon :size="20" />
@@ -23,63 +24,29 @@ index 67bfac3..5cb49a3 100644
  							<span>{{ t('files_sharing', 'Allow editing') }}</span>
  						</template>
  					</NcCheckboxRadioSwitch>
--					<NcCheckboxRadioSwitch v-if="allowsFileDrop"
--						:button-variant="true"
--						:checked.sync="sharingPermission"
--						:value="bundledPermissions.FILE_DROP.toString()"
--						name="sharing_permission_radio"
--						type="radio"
--						button-variant-grouped="vertical"
--						@update:checked="toggleCustomPermissions">
--						<UploadIcon :size="20" />
--						<span>{{ t('files_sharing', 'File drop') }}</span>
--						<small>{{ t('files_sharing', 'Upload only') }}</small>
--					</NcCheckboxRadioSwitch>
--					<NcCheckboxRadioSwitch :button-variant="true"
--						:checked.sync="sharingPermission"
--						:value="'custom'"
--						name="sharing_permission_radio"
--						type="radio"
--						button-variant-grouped="vertical"
--						@update:checked="expandCustomPermissions">
--						<DotsHorizontalIcon :size="20" />
--						<span>{{ t('files_sharing', 'Custom permissions') }}</span>
--						<small>{{ customPermissionsList }}</small>
--					</NcCheckboxRadioSwitch>
- 				</div>
- 			</div>
- 			<div class="sharingTabDetailsView__advanced-control">
-@@ -146,29 +120,6 @@
+@@ -146,10 +144,10 @@
  						</label>
  						<textarea id="share-note-textarea" :value="share.note" @input="share.note = $event.target.value" />
  					</template>
 -					<NcCheckboxRadioSwitch :checked.sync="setCustomPermissions">
--						{{ t('files_sharing', 'Custom permissions') }}
--					</NcCheckboxRadioSwitch>
++					<NcCheckboxRadioSwitch v-if="!isPublicShare" :checked.sync="setCustomPermissions">
+ 						{{ t('files_sharing', 'Custom permissions') }}
+ 					</NcCheckboxRadioSwitch>
 -					<section v-if="setCustomPermissions" class="custom-permissions-group">
--						<NcCheckboxRadioSwitch :disabled="!allowsFileDrop && share.type === SHARE_TYPES.SHARE_TYPE_LINK"
--							:checked.sync="hasRead">
--							{{ t('files_sharing', 'Read') }}
--						</NcCheckboxRadioSwitch>
--						<NcCheckboxRadioSwitch v-if="isFolder" :disabled="!canSetCreate" :checked.sync="canCreate">
--							{{ t('files_sharing', 'Create') }}
--						</NcCheckboxRadioSwitch>
++					<section v-if="setCustomPermissions && !isPublicShare" class="custom-permissions-group">
+ 						<NcCheckboxRadioSwitch :disabled="!allowsFileDrop && share.type === SHARE_TYPES.SHARE_TYPE_LINK"
+ 							:checked.sync="hasRead">
+ 							{{ t('files_sharing', 'Read') }}
+@@ -157,7 +155,7 @@
+ 						<NcCheckboxRadioSwitch v-if="isFolder" :disabled="!canSetCreate" :checked.sync="canCreate">
+ 							{{ t('files_sharing', 'Create') }}
+ 						</NcCheckboxRadioSwitch>
 -						<NcCheckboxRadioSwitch :disabled="!canSetEdit" :checked.sync="canEdit">
--							{{ t('files_sharing', 'Update') }}
--						</NcCheckboxRadioSwitch>
--						<NcCheckboxRadioSwitch v-if="config.isResharingAllowed && share.type !== SHARE_TYPES.SHARE_TYPE_LINK"
--							:disabled="!canSetReshare"
--							:checked.sync="canReshare">
--							{{ t('files_sharing', 'Share') }}
--						</NcCheckboxRadioSwitch>
--						<NcCheckboxRadioSwitch :disabled="!canSetDelete" :checked.sync="canDelete">
--							{{ t('files_sharing', 'Delete') }}
--						</NcCheckboxRadioSwitch>
--					</section>
- 				</section>
- 			</div>
- 		</div>
-@@ -284,6 +235,35 @@ export default {
++						<NcCheckboxRadioSwitch :disabled="!canSetEdit || !canEditFileType" :checked.sync="canEdit">
+ 							{{ t('files_sharing', 'Update') }}
+ 						</NcCheckboxRadioSwitch>
+ 						<NcCheckboxRadioSwitch v-if="config.isResharingAllowed && share.type !== SHARE_TYPES.SHARE_TYPE_LINK"
+@@ -284,6 +282,35 @@ export default {
  	},
 
  	computed: {
@@ -110,7 +77,7 @@ index 67bfac3..5cb49a3 100644
 +                'text/x-python',
 +                'text/x-shellscript'
 +            ];
-+            return supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
++            return this.isFolder || supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
 +        },
  		title() {
  			let title = t('files_sharing', 'Share with ')
