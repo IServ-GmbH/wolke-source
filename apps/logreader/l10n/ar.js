@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Logging" : "تسجيل الحركات Logging",
     "Errors in the log" : "أخطاء في تسجيل الحركات",
+    "Failed to get an iterator for log entries: %s" : "تعذّر الحصول على مُكرِّر لإدخاليات سجل الحركات: %s",
     "No errors in the logs since %s" : "لم تُسجَّل أيّ أخطاء منذ %s",
     "_%n error in the logs since %s_::_%n errors in the logs since %s_" : ["%nخطأً تمّ تسجيله منذ %s","%n خطأً تمّ تسجيله منذ %s","%n خطأً تمّ تسجيله منذ %s","%n أخطاء تمّ تسجيلها منذ %s","%n خطأً تمّ تسجيله منذ %s","%n خطأً تمّ تسجيله منذ %s"],
     "_%n warning in the logs since %s_::_%n warnings in the logs since %s_" : ["%n تحذيراً تمّ تسجيله منذ %s","%n تحذيراً تمّ تسجيله منذ %s","%n تحذيراً تمّ تسجيله منذ %s","%n تحذيرات تمّ تسجيلها منذ %s","%n تحذيراُ تمّ تسجيله منذ %s","%nتحذيراً تمّ تسجيله منذ %s"],
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Raw data" : "البيانات الخام",
     "Local time" : "الوقت المحلي",
     "UTC time" : "التوقيت العالمي الموحد UTC",
+    "Relative" : "مرتبط",
     "Time format used for displaying the timestamp" : "تنسيق الوقت المستخدم لعرض الطابع الزمني timestamp",
     "(Local log files only support the \"raw\" time format)" : "(تدعم ملفات السجل المحلي تنسيق الوقت \"الخام\" فقط)",
     "Could not change date time format." : "لا يمكن تغيير تنسيق الوقت و التاريخ",

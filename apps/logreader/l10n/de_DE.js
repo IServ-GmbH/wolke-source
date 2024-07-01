@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Logging" : "Protokollierung",
     "Errors in the log" : "Fehler im Protokoll\n \n \n ",
+    "Failed to get an iterator for log entries: %s" : "Es konnte kein Iterator für Protokolleinträge abgerufen werden: %s",
     "No errors in the logs since %s" : "Keine Fehler in den Protokollen seit %s",
     "_%n error in the logs since %s_::_%n errors in the logs since %s_" : ["%n Fehler in den Protokollen seit %s","%n Fehler in den Protokollen seit %s"],
     "_%n warning in the logs since %s_::_%n warnings in the logs since %s_" : ["%n Warnungen in den Protokollen seit %s","%n Warnungen in den Protokollen seit %s"],
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Raw data" : "Rohdaten",
     "Local time" : "Lokale Zeit",
     "UTC time" : "UTC-Zeit",
+    "Relative" : "Relativ",
     "Time format used for displaying the timestamp" : "Zeitformat, das zur Anzeige des Zeitstempels verwendet wird",
     "(Local log files only support the \"raw\" time format)" : "(Lokale Protokolldateien unterstützen nur das „rohe“ Zeitformat)",
     "Could not change date time format." : "Das Datum-Uhrzeit-Format konnte nicht geändert werden.",

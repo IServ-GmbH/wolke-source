@@ -3,7 +3,7 @@
         'name' => 'nextcloud/circles',
         'pretty_version' => 'dev-stable27',
         'version' => 'dev-stable27',
-        'reference' => '18a820dee2b0ced473b3d7823e99295ff5903662',
+        'reference' => 'b99f22fdf1fb3e063fd4001c48c0a6341f0761a4',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'nextcloud/circles' => array(
             'pretty_version' => 'dev-stable27',
             'version' => 'dev-stable27',
-            'reference' => '18a820dee2b0ced473b3d7823e99295ff5903662',
+            'reference' => 'b99f22fdf1fb3e063fd4001c48c0a6341f0761a4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

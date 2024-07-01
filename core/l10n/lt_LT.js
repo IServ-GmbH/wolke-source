@@ -60,7 +60,6 @@ OC.L10N.register(
     "%s (incompatible)" : "%s (nesuderinama)",
     "The following apps have been disabled: %s" : "Šios programėlės buvo išjungtos: %s",
     "Already up to date" : "Naudojama naujausia versija",
-    "Your web server is not yet properly set up to allow file synchronization, because the WebDAV interface seems to be broken." : "Jūsų svetainės serveris nėra tinkamai sukonfiguruotas, Failų sinchronizavimas negalimas, nes neveikia WebDAV interfeisas.",
     "Error occurred while checking server setup" : "Tikrinant serverio sąranką, įvyko klaida",
     "For more details see the {linkstart}documentation ↗{linkend}." : "Išsamesnei informacijai, žiūrėkite {linkstart}dokumentaciją ↗{linkend}.",
     "unknown text" : "nežinomas tekstas",
@@ -136,7 +135,6 @@ OC.L10N.register(
     "You have not added any info yet" : "Jūs kol kas nesate pridėję jokios informacijos",
     "{user} has not added any info yet" : "Naudotojas {user} kol kas nėra pridėjęs jokios informacijos",
     "Search {types} …" : "Ieškoti {types}…",
-    "Apps and Settings" : "Programėlės ir nustatymai",
     "Date" : "Data",
     "Today" : "Šiandien",
     "Not found" : "Nerasta",
@@ -292,6 +290,7 @@ OC.L10N.register(
     "This page will refresh itself when the instance is available again." : "Šis puslapis bus įkeltas iš naujo, kai egzempliorius bus ir vėl prieinamas.",
     "Contact your system administrator if this message persists or appeared unexpectedly." : "Susisiekite su savo sistemos administratoriumi, jei šis pranešimas nedingsta arba, jei jis pasirodė netikėtai.",
     "The user limit of this instance is reached." : "Yra pasiekta šio egzemplioriaus naudotojų riba.",
+    "Your web server is not yet properly set up to allow file synchronization, because the WebDAV interface seems to be broken." : "Jūsų svetainės serveris nėra tinkamai sukonfiguruotas, Failų sinchronizavimas negalimas, nes neveikia WebDAV interfeisas.",
     "It was not possible to execute the cron job via CLI. The following technical errors have appeared:" : "Buvo neįmanoma įvykdyti cron užduotį per komandų eilutę. Atsirado šios techninės klaidos:",
     "Your PHP does not have FreeType support, resulting in breakage of profile pictures and the settings interface." : "Jūsų PHP neturi FreeType palaikymo, kas savo ruožtu sąlygoja profilio paveikslėlių ir nustatymų sąsajos neteisingą atvaizdavimą.",
     "Missing optional column \"{columnName}\" in table \"{tableName}\"." : "Lentelėje „{tableName}“ trūksta nebūtino stulpelio „{columnName}“.",
@@ -334,6 +333,7 @@ OC.L10N.register(
     "Confirm your password" : "Patvirtinkite savo slaptažodį",
     "App token" : "Išorinės sistemos įskiepio kodas",
     "Alternative log in using app token" : "Alternatyvus prisijungimas naudojant programėlės atpažinimo raktą",
-    "Please use the command line updater because you have a big instance with more than 50 users." : "Naudokite komandų eilutės atnaujinimo programą, nes turite didelį egzempliorių su daugiau nei 50 naudotojų."
+    "Please use the command line updater because you have a big instance with more than 50 users." : "Naudokite komandų eilutės atnaujinimo programą, nes turite didelį egzempliorių su daugiau nei 50 naudotojų.",
+    "Apps and Settings" : "Programėlės ir nustatymai"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

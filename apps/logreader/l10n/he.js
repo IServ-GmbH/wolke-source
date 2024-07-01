@@ -9,6 +9,7 @@ OC.L10N.register(
     "App" : "יישומון",
     "Time" : "זמן",
     "Download logs" : "הורדת רישומים",
+    "Relative" : "יחסי",
     "Message" : "הודעה",
     "Show details" : "הצגת פרטים",
     "Info" : "פרטים",
@@ -26,4 +27,4 @@ OC.L10N.register(
     "Log content" : "תוכן הרישום",
     "Live update" : "עדכון חי"
 },
-"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
+"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

@@ -44,6 +44,7 @@ use OCP\Files\IHomeStorage;
 use OCP\Files\Node;
 use OC\Files\Storage\FailedStorage;
 use OC\Files\Storage\Wrapper\PermissionsMask;
+use OC\Files\Storage\Wrapper\Wrapper;
 use OC\User\NoUserException;
 use OCA\Files_External\Config\ExternalMountPoint;
 use OCP\Constants;
@@ -98,6 +99,14 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 	private string $sourcePath = '';
 
+	private static int $initDepth = 0;
+
+	/**
+	 * @psalm-suppress NonInvariantDocblockPropertyType
+	 * @var ?\OC\Files\Storage\Storage $storage
+	 */
+	protected $storage;
+
 	public function __construct($arguments) {
 		$this->ownerView = $arguments['ownerView'];
 		$this->logger = \OC::$server->getLogger();
@@ -133,12 +142,32 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 		return $this->sourceRootInfo;
 	}
 
+	/**
+	 * @psalm-assert \OC\Files\Storage\Storage $this->storage
+	 */
 	private function init() {
 		if ($this->initialized) {
+			if (!$this->storage) {
+				// marked as initialized but no storage set
+				// this is probably because some code path has caused recursion during the share setup
+				// we setup a "failed storage" so `getWrapperStorage` doesn't return null.
+				// If the share setup completes after this the "failed storage" will be overwritten by the correct one
+				$this->logger->warning('Possible share setup recursion detected');
+				$this->storage = new FailedStorage(['exception' => new \Exception('Possible share setup recursion detected')]);
+				$this->cache = new FailedCache();
+				$this->rootPath = '';
+			}
 			return;
 		}
+
 		$this->initialized = true;
+		self::$initDepth++;
+
 		try {
+			if (self::$initDepth > 10) {
+				throw new \Exception("Maximum share depth reached");
+			}
+
 			/** @var IRootFolder $rootFolder */
 			$rootFolder = \OC::$server->get(IRootFolder::class);
 			$this->ownerUserFolder = $rootFolder->getUserFolder($this->superShare->getShareOwner());
@@ -151,6 +180,9 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 				$this->cache = new FailedCache();
 				$this->rootPath = '';
 			} else {
+				if ($this->nonMaskedStorage instanceof Wrapper && $this->nonMaskedStorage->isWrapperOf($this)) {
+					throw new \Exception('recursive share detected');
+				}
 				$this->nonMaskedStorage = $ownerNode->getStorage();
 				$this->sourcePath = $ownerNode->getPath();
 				$this->rootPath = $ownerNode->getInternalPath();
@@ -179,6 +211,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 		if (!$this->nonMaskedStorage) {
 			$this->nonMaskedStorage = $this->storage;
 		}
+		self::$initDepth--;
 	}
 
 	/**
@@ -531,6 +564,16 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 	public function getWrapperStorage() {
 		$this->init();
+
+		/**
+		 * @psalm-suppress DocblockTypeContradiction
+		 */
+		if (!$this->storage) {
+			$message = "no storage set after init for share " . $this->getShareId();
+			$this->logger->error($message);
+			$this->storage = new FailedStorage(['exception' => new \Exception($message)]);
+		}
+
 		return $this->storage;
 	}
 

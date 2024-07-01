@@ -168,7 +168,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-occ-command">
-<h1>Using the occ command<a class="headerlink" href="#using-the-occ-command" title="Permalink to this headline"></a></h1>
+<span id="occ"></span><h1>Using the occ command<a class="headerlink" href="#using-the-occ-command" title="Permalink to this headline"></a></h1>
 <p>Nextcloud’s <code class="docutils literal notranslate"><span class="pre">occ</span></code> command (origins from “ownCloud Console”) is Nextcloud’s command-line
 interface. You can perform many common server operations with <code class="docutils literal notranslate"><span class="pre">occ</span></code>, such as
 installing and upgrading Nextcloud, manage users, encryption, passwords, LDAP
@@ -618,16 +618,16 @@ before. If you want to be notified in that case, set the
 <span id="dav-label"></span><h2>Dav commands<a class="headerlink" href="#dav-commands" title="Permalink to this headline"></a></h2>
 <p>A set of commands to create and manage addressbooks and calendars:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dav</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">addressbook</span>        <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">addressbook</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">calendar</span>           <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">delete</span><span class="o">-</span><span class="n">calendar</span>           <span class="n">Delete</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
- <span class="n">dav</span><span class="p">:</span><span class="nb">list</span><span class="o">-</span><span class="n">calendars</span>            <span class="n">List</span> <span class="nb">all</span> <span class="n">calendars</span> <span class="n">of</span> <span class="n">a</span> <span class="n">user</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">move</span><span class="o">-</span><span class="n">calendar</span>             <span class="n">Move</span> <span class="n">a</span> <span class="n">calendar</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">user</span> <span class="n">to</span> <span class="n">another</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">remove</span><span class="o">-</span><span class="n">invalid</span><span class="o">-</span><span class="n">shares</span>     <span class="n">Remove</span> <span class="n">invalid</span> <span class="n">dav</span> <span class="n">shares</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">send</span><span class="o">-</span><span class="n">event</span><span class="o">-</span><span class="n">reminders</span>      <span class="n">Sends</span> <span class="n">event</span> <span class="n">reminders</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">birthday</span><span class="o">-</span><span class="n">calendar</span>    <span class="n">Synchronizes</span> <span class="n">the</span> <span class="n">birthday</span> <span class="n">calendar</span>
- <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">addressbook</span>   <span class="n">Synchronizes</span> <span class="n">users</span> <span class="n">to</span> <span class="n">the</span> <span class="n">system</span>
-                               <span class="n">addressbook</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">addressbook</span>                 <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">addressbook</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">calendar</span>                    <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">delete</span><span class="o">-</span><span class="n">calendar</span>                    <span class="n">Delete</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">missing</span><span class="o">-</span><span class="n">caldav</span><span class="o">-</span><span class="n">changes</span>         <span class="n">Insert</span> <span class="n">missing</span> <span class="n">calendarchanges</span> <span class="n">rows</span> <span class="k">for</span> <span class="n">existing</span> <span class="n">events</span>
+ <span class="n">dav</span><span class="p">:</span><span class="nb">list</span><span class="o">-</span><span class="n">calendars</span>                     <span class="n">List</span> <span class="nb">all</span> <span class="n">calendars</span> <span class="n">of</span> <span class="n">a</span> <span class="n">user</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">move</span><span class="o">-</span><span class="n">calendar</span>                      <span class="n">Move</span> <span class="n">a</span> <span class="n">calendar</span> <span class="kn">from</span> <span class="nn">an</span> <span class="n">user</span> <span class="n">to</span> <span class="n">another</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">remove</span><span class="o">-</span><span class="n">invalid</span><span class="o">-</span><span class="n">shares</span>              <span class="n">Remove</span> <span class="n">invalid</span> <span class="n">dav</span> <span class="n">shares</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">send</span><span class="o">-</span><span class="n">event</span><span class="o">-</span><span class="n">reminders</span>               <span class="n">Sends</span> <span class="n">event</span> <span class="n">reminders</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">birthday</span><span class="o">-</span><span class="n">calendar</span>             <span class="n">Synchronizes</span> <span class="n">the</span> <span class="n">birthday</span> <span class="n">calendar</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">addressbook</span>            <span class="n">Synchronizes</span> <span class="n">users</span> <span class="n">to</span> <span class="n">the</span> <span class="n">system</span> <span class="n">addressbook</span>
 </pre></div>
 </div>
 <p>The syntax for <code class="docutils literal notranslate"><span class="pre">dav:create-addressbook</span></code> and  <code class="docutils literal notranslate"><span class="pre">dav:create-calendar</span></code> is
@@ -658,6 +658,7 @@ This example will list all calendars for user annie:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="nb">list</span><span class="o">-</span><span class="n">calendars</span> <span class="n">annie</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">dav:dav:fix-missing-caldav-changes</span> <span class="pre">[user]</span></code> tries to restore calendar sync changes when data in the calendarchanges table has been lost. If the user ID is omitted, the command runs for all users. This can take a while.</p>
 <p><code class="docutils literal notranslate"><span class="pre">dav::move-calendar</span> <span class="pre">[name]</span> <span class="pre">[sourceuid]</span> <span class="pre">[destinationuid]</span></code> allows the admin
 to move a calendar named <code class="docutils literal notranslate"><span class="pre">name</span></code> from a user <code class="docutils literal notranslate"><span class="pre">sourceuid</span></code> to the user
 <code class="docutils literal notranslate"><span class="pre">destinationuid</span></code>. You can use the force option <cite>-f</cite> to enforce the move if there
@@ -730,6 +731,7 @@ following command:</p>
  encryption:decrypt-all               Disable server-side encryption and
                                       decrypt all files
  encryption:disable                   Disable encryption
+ encryption:drop-legacy-filekey       Drop legacy filekey for files still using it
  encryption:enable                    Enable encryption
  encryption:enable-master-key         Enable the master key. Only available
                                       for fresh installations with no existing
@@ -787,6 +789,12 @@ user data instead of individual user keys. This is especially useful to enable
 single-sign on. Use this only on fresh installations with no existing data, or
 on systems where encryption has not already been enabled. It is not possible to
 disable it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">encryption:drop-legacy-filekey</span></code> scans the files for the legacy filekey
+format using RC4 and get rid of it (if master key is enabled). The operation can
+be quite slow as it needs to rewrite each encrypted file. If you do not do it files
+will be migrated to drop their legacy filekey on the first modification. If you have
+old files from Nextcloud&lt;25 still using base64 encoding this will migrate them to the
+binary format and save about 33% disk space.</p>
 <p>See <a class="reference internal" href="../configuration_files/encryption_configuration.html"><span class="doc">Encryption configuration</span></a> to learn more.</p>
 </section>
 <section id="federation-sync">
@@ -1184,14 +1192,17 @@ with changed mimetypes found in <code class="docutils literal notranslate"><span
 command after modifying <code class="docutils literal notranslate"><span class="pre">config/mimetypemapping.json</span></code>. If you change a
 mimetype, run <code class="docutils literal notranslate"><span class="pre">maintenance:mimetype:update-db</span> <span class="pre">--repair-filecache</span></code> to apply the
 change to existing files.</p>
-<p>Run the <code class="docutils literal notranslate"><span class="pre">maintenance:theme:update</span></code> command if the icons of your custom theme are not updated correctly. This updates the mimetypelist.js and cleares the image cache.</p>
+<p>Run the <code class="docutils literal notranslate"><span class="pre">maintenance:theme:update</span></code> command if the icons of your custom theme are not
+updated correctly. This updates the mimetypelist.js and cleares the image cache.</p>
 </section>
 <section id="security">
 <span id="security-commands-label"></span><h2>Security<a class="headerlink" href="#security" title="Permalink to this headline"></a></h2>
-<p>Use these commands to manage server-wide SSL certificates or reset brute-force slow-downs. These are useful when you create federation shares with other Nextcloud servers that use self-signed certificates:</p>
+<p>Use these commands to manage server-wide security related parameters. Currently this
+includes <a class="reference internal" href="bruteforce_configuration.html"><span class="doc">Brute force protection</span></a> and SSL certificates (the latter are useful when
+creating federation connections with other Nextcloud servers that use self-signed certificates:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">security</span>
- <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">attempts</span>  <span class="nb">list</span> <span class="n">brute</span><span class="o">-</span><span class="n">force</span> <span class="n">attemps</span> <span class="k">for</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
- <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">reset</span>     <span class="n">resets</span> <span class="n">brute</span><span class="o">-</span><span class="n">force</span> <span class="n">attemps</span> <span class="k">for</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
+ <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">attempts</span>  <span class="n">show</span> <span class="n">bruteforce</span> <span class="n">attempts</span> <span class="n">status</span> <span class="k">for</span> <span class="n">a</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
+ <span class="n">security</span><span class="p">:</span><span class="n">bruteforce</span><span class="p">:</span><span class="n">reset</span>     <span class="n">resets</span> <span class="n">bruteforce</span> <span class="n">attempts</span> <span class="k">for</span> <span class="n">a</span> <span class="n">given</span> <span class="n">IP</span> <span class="n">address</span>
  <span class="n">security</span><span class="p">:</span><span class="n">certificates</span>         <span class="nb">list</span> <span class="n">trusted</span> <span class="n">certificates</span>
  <span class="n">security</span><span class="p">:</span><span class="n">certificates</span><span class="p">:</span><span class="kn">import</span>  <span class="nn">import</span> <span class="n">trusted</span> <span class="n">certificate</span>
  <span class="n">security</span><span class="p">:</span><span class="n">certificates</span><span class="p">:</span><span class="n">remove</span>  <span class="n">remove</span> <span class="n">trusted</span> <span class="n">certificate</span>
@@ -1717,7 +1728,7 @@ or to use in a bug report:</p>
 In the case of a user losing access to the second factor (e.g. lost phone with
 two-factor SMS verification), the admin can try to disable the two-factor
 check for that user via the occ command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactor</span><span class="p">:</span><span class="n">disable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactorauth</span><span class="p">:</span><span class="n">disable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -1725,7 +1736,7 @@ check for that user via the occ command:</p>
 <p>This is not supported by all providers.</p>
 </div>
 <p>To re-enable two-factor auth again use the following commmand:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactor</span><span class="p">:</span><span class="n">enable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactorauth</span><span class="p">:</span><span class="n">enable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <div class="admonition note">

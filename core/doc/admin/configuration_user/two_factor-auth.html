@@ -57,7 +57,9 @@
 <li class="toctree-l2"><a class="reference internal" href="user_password_policy.html">User password policy</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Two-factor authentication</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-two-factor-authentication">Enabling two-factor authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disabling-two-factor-authentication">Disabling two-factor authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enforcing-two-factor-authentication">Enforcing two-factor authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#provider-removal">Provider removal</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ftp_smb_imap.html">User authentication with IMAP, SMB, FTP and others</a></li>
@@ -107,7 +109,7 @@
            <div itemprop="articleBody">
              
   <section id="two-factor-authentication">
-<h1>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Permalink to this headline"></a></h1>
+<span id="two-factor-auth"></span><h1>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Permalink to this headline"></a></h1>
 <p>Two-factor authentication adds an additional layer of security to user accounts. In order to log
 in on an account with two-factor authentication (2FA) enabled, it is necessary to provide both the
 login password and another factor. 2FA in Nextcloud is pluggable, meaning that they are not part
@@ -127,6 +129,18 @@ you want, 2FA will be installed and enabled on your Nextcloud server.</p>
 </figure>
 <p>Once 2FA has been enabled, users have to <a class="reference external" href="https://docs.nextcloud.com/server/27/user_manual/en/user_2fa.html">activate it in their personal settings.</a></p>
 </section>
+<section id="disabling-two-factor-authentication">
+<h2>Disabling two-factor authentication<a class="headerlink" href="#disabling-two-factor-authentication" title="Permalink to this headline"></a></h2>
+<p>Two-factor providers can be disabled via <a class="reference internal" href="../configuration_server/occ_command.html#occ"><span class="std std-ref">occ</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactorauth</span><span class="p">:</span><span class="n">disable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>User are free to enable this provider again via their personal settings.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation has to be supported by the provider. If this support is missing, Nextcloud will abort and show an error.</p>
+</div>
+</section>
 <section id="enforcing-two-factor-authentication">
 <h2>Enforcing two-factor authentication<a class="headerlink" href="#enforcing-two-factor-authentication" title="Permalink to this headline"></a></h2>
 <p>By default 2FA is <em>optional</em>, hence users are given the choice whether to enable
@@ -144,6 +158,18 @@ a user has 2FA enforced:</p>
 <li><p>If groups are selected, 2FA is enabled for all members of these. If a user is both in a
 selected <em>and</em> excluded group, the selected takes precedence and 2FA is enforced.</p></li>
 </ul>
+</section>
+<section id="provider-removal">
+<h2>Provider removal<a class="headerlink" href="#provider-removal" title="Permalink to this headline"></a></h2>
+<p>Nextcloud keeps records about the enabled two-factor authentication providers of every user. If a provider is simply removed/<a class="reference internal" href="../configuration_server/occ_command.html#apps-commands-label"><span class="std std-ref">disabled</span></a>, Nextcloud will still consider the provider active for the user at login and show a warning like <em>Could not load at least one of your enabled two-factor auth methods</em>.</p>
+<p>The associations of removed providers can be cleaned up via <a class="reference internal" href="../configuration_server/occ_command.html#occ"><span class="std std-ref">occ</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactorauth</span><span class="p">:</span><span class="n">cleanup</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This operation is irreversible. Only run it for providers you do not intend to enable again.</p>
+</div>
 </section>
 </section>
 

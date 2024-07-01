@@ -227,6 +227,7 @@ OC.L10N.register(
     "Open the files app settings" : "Apri le impostazioni dell'applicazione File",
     "Files settings" : "Impostazioni File",
     "File cannot be accessed" : "Il file non possono essere acceduti",
+    "Open in files" : "Apri in file",
     "Sort favorites first" : "Ordina prima i preferiti",
     "Show hidden files" : "Mostra i file nascosti",
     "Crop image previews" : "Ritaglia le anteprime delle immagini",
@@ -318,7 +319,6 @@ OC.L10N.register(
     "Search for an account" : "Cerca un account",
     "Choose" : "Scegli",
     "No files or folders have been deleted yet" : "Nessun file o cartella è stato ancora eliminato",
-    "Add" : "Aggiungi",
     "The files is locked" : "Il file è bloccato"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

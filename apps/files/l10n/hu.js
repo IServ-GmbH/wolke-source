@@ -226,6 +226,7 @@ OC.L10N.register(
     "Open the files app settings" : "Nyissa meg a Fájlok lalkalmazás beállításait",
     "Files settings" : "Fájlok beállításai",
     "File cannot be accessed" : "A fájl nem érhető el",
+    "Open in files" : "Megnyitás a Files-ban",
     "Sort favorites first" : "Kedvencek előre rendezése",
     "Show hidden files" : "Rejtett fájlok megjelenítése",
     "Crop image previews" : "Kép előnézetek vágása",
@@ -313,7 +314,6 @@ OC.L10N.register(
     "Search for an account" : "Fiók keresése",
     "Choose" : "Válasszon",
     "No files or folders have been deleted yet" : "Még nem lettek fájlok vagy mappák törölve",
-    "Add" : "Hozzáadás",
     "The files is locked" : "Ez a fájl zárolva van"
 },
 "nplurals=2; plural=(n != 1);");

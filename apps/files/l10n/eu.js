@@ -237,6 +237,7 @@ OC.L10N.register(
     "Files settings" : "FItxategien ezarpenak",
     "File cannot be accessed" : "Ezin da fitxategia atzitu",
     "The file could not be found or you do not have permissions to view it. Ask the sender to share it." : "Ezin izan da fitxategia aurkitu edo ez duzu ikusteko baimenik. Eskatu bidaltzaileari partekatzeko.",
+    "Open in files" : "Ireki Fitxategiak aplikazioan",
     "Sort favorites first" : "Ordenatu gogokoak lehenengo",
     "Sort folders before files" : "Ordenatu karpetak fitxategien aurretik",
     "Show hidden files" : "Erakutsi ezkutuko fitxategiak",
@@ -333,7 +334,6 @@ OC.L10N.register(
     "Search for an account" : "Bilatu kontu bat",
     "Choose" : "Aukeratu",
     "No files or folders have been deleted yet" : "Oraindik ez da ezabatu fitxategirik edo karpetarik",
-    "Add" : "Gehitu",
     "The files is locked" : "Fixategiak blokeatuta dago"
 },
 "nplurals=2; plural=(n != 1);");

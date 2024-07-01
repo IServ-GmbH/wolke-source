@@ -3,7 +3,7 @@
 # IMPORTANT: Update version in build.sh as well!
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:27.1.7-apache
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:27.1.8-apache
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 

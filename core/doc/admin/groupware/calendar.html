@@ -237,18 +237,18 @@ If you need to allow this, change the following parameter to:</p>
 <h2>Rate limits<a class="headerlink" href="#rate-limits" title="Permalink to this headline"></a></h2>
 <p>Nextcloud rate limits the creation of calendars and subscriptions if too many items are created within a short time frame. The default is 10 calendars or subscriptions per hour. This can be customized as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set limit to 15 items per 30 minutes</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
 </pre></div>
 </div>
 <p>Additionally, the maximum number of calendars and subscriptions a user may create is limited to 30 items. This can be customized too:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create 50 calendars/subscriptions</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
 </pre></div>
 </div>
 <p>or:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create calendars/subscriptions without restriction</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
 </pre></div>
 </div>
 </section>

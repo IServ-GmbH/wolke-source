@@ -54,6 +54,7 @@ use OCP\Files\Mount\IMountManager;
 use OCP\Files\Node;
 use OCP\HintException;
 use OCP\IConfig;
+use OCP\IDateTimeZone;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -119,6 +120,7 @@ class Manager implements IManager {
 	/** @var KnownUserService */
 	private $knownUserService;
 	private ShareDisableChecker $shareDisableChecker;
+	private IDateTimeZone $dateTimeZone;
 
 	public function __construct(
 		LoggerInterface $logger,
@@ -139,7 +141,8 @@ class Manager implements IManager {
 		IEventDispatcher $dispatcher,
 		IUserSession $userSession,
 		KnownUserService $knownUserService,
-		ShareDisableChecker $shareDisableChecker
+		ShareDisableChecker $shareDisableChecker,
+		IDateTimeZone $dateTimeZone,
 	) {
 		$this->logger = $logger;
 		$this->config = $config;
@@ -163,6 +166,7 @@ class Manager implements IManager {
 		$this->userSession = $userSession;
 		$this->knownUserService = $knownUserService;
 		$this->shareDisableChecker = $shareDisableChecker;
+		$this->dateTimeZone = $dateTimeZone;
 	}
 
 	/**
@@ -208,7 +212,7 @@ class Manager implements IManager {
 	 *
 	 * @suppress PhanUndeclaredClassMethod
 	 */
-	protected function generalCreateChecks(IShare $share) {
+	protected function generalCreateChecks(IShare $share, bool $isUpdate = false) {
 		if ($share->getShareType() === IShare::TYPE_USER) {
 			// We expect a valid user as sharedWith for user shares
 			if (!$this->userManager->userExists($share->getSharedWith())) {
@@ -294,8 +298,14 @@ class Manager implements IManager {
 
 		$isFederatedShare = $share->getNode()->getStorage()->instanceOfStorage('\OCA\Files_Sharing\External\Storage');
 		$permissions = 0;
+		
+		$isReshare = $share->getNode()->getOwner() && $share->getNode()->getOwner()->getUID() !== $share->getSharedBy();
+		if (!$isReshare && $isUpdate) {
+			// in case of update on owner-less filesystem, we use share owner to improve reshare detection
+			$isReshare = $share->getShareOwner() !== $share->getSharedBy();
+		}
 
-		if (!$isFederatedShare && $share->getNode()->getOwner() && $share->getNode()->getOwner()->getUID() !== $share->getSharedBy()) {
+		if (!$isFederatedShare && $isReshare) {
 			$userMounts = array_filter($userFolder->getById($share->getNode()->getId()), function ($mount) {
 				// We need to filter since there might be other mountpoints that contain the file
 				// e.g. if the user has access to the same external storage that the file is originating from
@@ -383,10 +393,10 @@ class Manager implements IManager {
 		$expirationDate = $share->getExpirationDate();
 
 		if ($expirationDate !== null) {
-			//Make sure the expiration date is a date
+			$expirationDate->setTimezone($this->dateTimeZone->getTimeZone());
 			$expirationDate->setTime(0, 0, 0);
 
-			$date = new \DateTime();
+			$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$date->setTime(0, 0, 0);
 			if ($date >= $expirationDate) {
 				$message = $this->l->t('Expiration date is in the past');
@@ -414,9 +424,8 @@ class Manager implements IManager {
 			$isEnforced = $this->shareApiInternalDefaultExpireDateEnforced();
 		}
 		if ($fullId === null && $expirationDate === null && $defaultExpireDate) {
-			$expirationDate = new \DateTime();
+			$expirationDate = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$expirationDate->setTime(0, 0, 0);
-
 			$days = (int)$this->config->getAppValue('core', $configProp, (string)$defaultExpireDays);
 			if ($days > $defaultExpireDays) {
 				$days = $defaultExpireDays;
@@ -430,7 +439,7 @@ class Manager implements IManager {
 				throw new \InvalidArgumentException('Expiration date is enforced');
 			}
 
-			$date = new \DateTime();
+			$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$date->setTime(0, 0, 0);
 			$date->add(new \DateInterval('P' . $defaultExpireDays . 'D'));
 			if ($date < $expirationDate) {
@@ -470,10 +479,10 @@ class Manager implements IManager {
 		$expirationDate = $share->getExpirationDate();
 
 		if ($expirationDate !== null) {
-			//Make sure the expiration date is a date
+			$expirationDate->setTimezone($this->dateTimeZone->getTimeZone());
 			$expirationDate->setTime(0, 0, 0);
 
-			$date = new \DateTime();
+			$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$date->setTime(0, 0, 0);
 			if ($date >= $expirationDate) {
 				$message = $this->l->t('Expiration date is in the past');
@@ -490,7 +499,7 @@ class Manager implements IManager {
 		}
 
 		if ($fullId === null && $expirationDate === null && $this->shareApiLinkDefaultExpireDate()) {
-			$expirationDate = new \DateTime();
+			$expirationDate = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$expirationDate->setTime(0, 0, 0);
 
 			$days = (int)$this->config->getAppValue('core', 'link_defaultExpDays', (string)$this->shareApiLinkDefaultExpireDays());
@@ -506,7 +515,7 @@ class Manager implements IManager {
 				throw new \InvalidArgumentException('Expiration date is enforced');
 			}
 
-			$date = new \DateTime();
+			$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 			$date->setTime(0, 0, 0);
 			$date->add(new \DateInterval('P' . $this->shareApiLinkDefaultExpireDays() . 'D'));
 			if ($date < $expirationDate) {
@@ -528,6 +537,9 @@ class Manager implements IManager {
 			throw new \Exception($message);
 		}
 
+		if ($expirationDate instanceof \DateTime) {
+			$expirationDate->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+		}
 		$share->setExpirationDate($expirationDate);
 
 		return $share;
@@ -991,7 +1003,7 @@ class Manager implements IManager {
 			throw new \InvalidArgumentException('Cannot share with the share owner');
 		}
 
-		$this->generalCreateChecks($share);
+		$this->generalCreateChecks($share, true);
 
 		if ($share->getShareType() === IShare::TYPE_USER) {
 			$this->userCreateChecks($share);

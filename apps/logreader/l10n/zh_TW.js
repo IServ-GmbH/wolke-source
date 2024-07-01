@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Logging" : "記錄",
     "Errors in the log" : "紀錄檔中的錯誤",
+    "Failed to get an iterator for log entries: %s" : "無法取得日誌條目的迭代器：%s",
     "No errors in the logs since %s" : "從 %s 開始，紀錄檔中沒有錯誤",
     "_%n error in the logs since %s_::_%n errors in the logs since %s_" : ["從 %s 開始，紀錄檔中有 %n 個錯誤"],
     "_%n warning in the logs since %s_::_%n warnings in the logs since %s_" : ["從 %s 開始，紀錄檔中有 %n 個警告"],
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Raw data" : "原始資料",
     "Local time" : "本地時間",
     "UTC time" : "UTC 時間",
+    "Relative" : "相對",
     "Time format used for displaying the timestamp" : "用於顯示時間戳的時間格式",
     "(Local log files only support the \"raw\" time format)" : "（本機紀錄檔僅支援「原始」時間格式）",
     "Could not change date time format." : "無法變更日期時間格式",

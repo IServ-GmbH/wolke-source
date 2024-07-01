@@ -40,6 +40,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Constants;
 use OCP\DB\Exception;
 use OCP\DirectEditing\IManager;
+use OCP\Files\AlreadyExistsException;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -158,7 +159,7 @@ class DocumentService {
 		} catch (Exception $e) {
 			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				// Document might have been created in the meantime
-				return $this->documentMapper->find($file->getId());
+				throw new AlreadyExistsException();
 			}
 
 			throw $e;
@@ -210,11 +211,14 @@ class DocumentService {
 	 * @param $sessionId
 	 * @param $steps
 	 * @param $version
+	 * @param $shareToken
 	 * @return array
-	 * @throws DoesNotExistException
 	 * @throws InvalidArgumentException
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws DoesNotExistException
 	 */
-	public function addStep(Document $document, Session $session, $steps, $version): array {
+	public function addStep(Document $document, Session $session, $steps, $version, $shareToken): array {
 		$sessionId = $session->getId();
 		$documentId = $session->getDocumentId();
 		$stepsToInsert = [];
@@ -233,6 +237,9 @@ class DocumentService {
 			}
 		}
 		if (sizeof($stepsToInsert) > 0) {
+			if ($this->isReadOnly($this->getFileForSession($session, $shareToken), $shareToken)) {
+				throw new NotPermittedException('Read-only client tries to push steps with changes');
+			}
 			$newVersion = $this->insertSteps($document, $session, $stepsToInsert, $version);
 		}
 		// If there were any queries in the steps send the entire history

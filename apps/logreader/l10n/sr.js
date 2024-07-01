@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Logging" : "Уписивање у дневник",
     "Errors in the log" : "Грешке у дневнику",
+    "Failed to get an iterator for log entries: %s" : "Није успело преузимање итератора за ставке дневника: %s",
     "No errors in the logs since %s" : "У дневнику нема грешака од %s",
     "_%n error in the logs since %s_::_%n errors in the logs since %s_" : ["У дневнику има %n грешка од %s","У дневнику има %n грешке од %s","У дневнику има %n грешака од %s"],
     "_%n warning in the logs since %s_::_%n warnings in the logs since %s_" : ["У дневнику има %n упозорење од %s","У дневнику има %n упозорења од %s","У дневнику има %n упозорења од %s"],
@@ -45,6 +46,7 @@ OC.L10N.register(
     "Raw data" : "Сирови подаци",
     "Local time" : "Локално време",
     "UTC time" : "UTC време",
+    "Relative" : "Релативно",
     "Time format used for displaying the timestamp" : "Формат времена који се користи за приказ временске ознаке",
     "(Local log files only support the \"raw\" time format)" : "(Локални фајлови дневника подржавају само „raw” формат времена)",
     "Could not change date time format." : "Не може да се промени формат датума и времена.",

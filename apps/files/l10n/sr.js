@@ -241,6 +241,8 @@ OC.L10N.register(
     "Files settings" : "Подешавања фајлова",
     "File cannot be accessed" : "Фајлу не може да се приступи",
     "The file could not be found or you do not have permissions to view it. Ask the sender to share it." : "Фајл није могао да се пронађе или немате дозволу да га прегледате. Замолите пошиљаоца да га подели.",
+    "Your files" : "Ваши фајлови",
+    "Open in files" : "Отвори у фајловима",
     "Sort favorites first" : "Сортирај прво омиљене",
     "Sort folders before files" : "Поређај фолдере испред фајлова",
     "Show hidden files" : "Прикажи скривене фајлове",
@@ -274,6 +276,7 @@ OC.L10N.register(
     "(copy %n)" : "(копирано %n)",
     "Move cancelled" : "Премештање је отказано",
     "A file or folder with that name already exists in this folder" : "У овом фолдеру већ постоји фајл или фолдер са тим именом",
+    "The files are locked" : "Фајлови су закључани",
     "The file does not exist anymore" : "Фајл више не постоји",
     "Choose destination" : "Изаберите одредиште",
     "Copy to {target}" : "Копирај у {target}",
@@ -292,6 +295,8 @@ OC.L10N.register(
     "Create new templates folder" : "Креирај нови фолдер шаблона",
     "Templates" : "Шаблони",
     "New template folder" : "Нови фолдер шаблона",
+    "In folder" : "У фолдеру",
+    "Search in folder: {folder}" : "Претрага у фолдеру: {folder}",
     "One of the dropped files could not be processed" : "Један од упуштених фајлова не може да се обради",
     "Uploading \"{filename}\" failed" : "Није успело отпремање „{filename}”",
     "_{folderCount} folder_::_{folderCount} folders_" : ["{folderCount} фолдер","{folderCount} фолдера","{folderCount} фолдера"],
@@ -344,7 +349,6 @@ OC.L10N.register(
     "Search for an account" : "Претражите налог",
     "Choose" : "Изаберите",
     "No files or folders have been deleted yet" : "Још увек није обрисан ниједан фајл или фолдер",
-    "Add" : "Додај",
     "The files is locked" : "Фајл је закључан"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

@@ -127,6 +127,10 @@ created.</p>
 <p>The Versions app never uses more than 50% of the user’s currently available
 free space. If the stored versions exceed this limit, Nextcloud deletes the
 oldest file versions until it meets the disk space limit again.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Versions named by a user will never be deleted.</p>
+</div>
 <p>You may alter the default pattern in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default setting is
 <code class="docutils literal notranslate"><span class="pre">auto</span></code>, which sets the default pattern:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;versions_retention_obligation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>

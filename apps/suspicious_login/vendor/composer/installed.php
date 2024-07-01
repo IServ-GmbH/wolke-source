@@ -3,7 +3,7 @@
         'name' => 'christophwurst/suspicious_login',
         'pretty_version' => 'dev-stable27',
         'version' => 'dev-stable27',
-        'reference' => '0ce89d60f15617ab4c8a781010c6e0b2bfae21a2',
+        'reference' => 'e4d0403ac9821796145bf226b1baf299ae8a38d6',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -76,7 +76,7 @@
         'christophwurst/suspicious_login' => array(
             'pretty_version' => 'dev-stable27',
             'version' => 'dev-stable27',
-            'reference' => '0ce89d60f15617ab4c8a781010c6e0b2bfae21a2',
+            'reference' => 'e4d0403ac9821796145bf226b1baf299ae8a38d6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
