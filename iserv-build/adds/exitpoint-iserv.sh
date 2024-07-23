@@ -34,6 +34,9 @@ echo "Set trusted domains"
 php /var/www/html/occ config:system:set trusted_domains 1 --value=cloudfiles.$SUBDOMAIN_ROOT
 php /var/www/html/occ config:system:set trusted_domains 2 --value=cloudfiles.docker.$SUBDOMAIN_ROOT
 
+echo "Set trusted proxies"
+php /var/www/html/occ config:system:set trusted_proxies 0 --value=$TRUSTED_PROXIES
+
 echo "Configuring theme..."
 /theming-config.sh
 echo "Configured theme."
