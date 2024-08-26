@@ -1,9 +1,12 @@
-diff --git a/apps/dav/appinfo/info.xml b/apps/dav/appinfo/info.xml
-index 4e4387071a2..1618fc406e0 100644
---- a/apps/dav/appinfo/info.xml
-+++ b/apps/dav/appinfo/info.xml
-@@ -63,29 +63,6 @@
+diff --git apps/dav/appinfo/info.xml apps/dav/appinfo/info.xml
+index 9140c67..2c14f23 100644
+--- apps/dav/appinfo/info.xml
++++ apps/dav/appinfo/info.xml
+@@ -61,32 +61,8 @@
+ 
+ 	<settings>
  		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
+-		<personal>OCA\DAV\Settings\AvailabilitySettings</personal>
  	</settings>
  
 -	<activity>

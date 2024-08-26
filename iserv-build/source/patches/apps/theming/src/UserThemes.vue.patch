@@ -1,0 +1,13 @@
+diff --git apps/theming/src/UserThemes.vue apps/theming/src/UserThemes.vue
+index bb04035..58d5663 100644
+--- apps/theming/src/UserThemes.vue
++++ apps/theming/src/UserThemes.vue
+@@ -26,8 +26,6 @@
+ 		<NcSettingsSection :title="t('theming', 'Appearance and accessibility')"
+ 			:limit-width="false"
+ 			class="theming">
+-			<p v-html="description" />
+-			<p v-html="descriptionDetail" />
+ 
+ 			<div class="theming__preview-list">
+ 				<ItemPreview v-for="theme in themes"

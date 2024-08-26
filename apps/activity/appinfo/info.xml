@@ -37,7 +37,9 @@
 	</dependencies>
 
 	<background-jobs>
+		<job>OCA\Activity\BackgroundJob\EmailNotification</job>
 		<job>OCA\Activity\BackgroundJob\ExpireActivities</job>
+		<job>OCA\Activity\BackgroundJob\DigestMail</job>
 	</background-jobs>
 
 	<commands>

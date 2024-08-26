@@ -1,12 +1,14 @@
---- apps/federation/appinfo/info.xml	2024-02-28 10:48:11.481673019 +0100
-+++ apps/federation/appinfo/diff_info.xml	2024-02-29 08:08:08.478623496 +0100
+diff --git apps/federation/appinfo/info.xml apps/federation/appinfo/info.xml
+index 0dc4c3c..10ead2c 100644
+--- apps/federation/appinfo/info.xml
++++ apps/federation/appinfo/info.xml
 @@ -26,6 +26,9 @@
-
+ 
  	<commands>
  		<command>OCA\Federation\Command\SyncFederationAddressBooks</command>
 +		<command>OCA\Federation\Command\AddTrustedServer</command>
 +		<command>OCA\Federation\Command\ListTrustedServer</command>
 +		<command>OCA\Federation\Command\RemoveTrustedServer</command>
  	</commands>
-
+ 
  	<settings>

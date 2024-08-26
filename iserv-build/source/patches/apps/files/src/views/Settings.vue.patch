@@ -1,0 +1,24 @@
+diff --git apps/files/src/views/Settings.vue apps/files/src/views/Settings.vue
+index efd9f8c..cfeeefc 100644
+--- apps/files/src/views/Settings.vue
++++ apps/files/src/views/Settings.vue
+@@ -61,18 +61,7 @@
+ 				</template>
+ 			</NcInputField>
+ 			<em>
+-				<a class="setting-link"
+-					:href="webdavDocs"
+-					target="_blank"
+-					rel="noreferrer noopener">
+-					{{ t('files', 'Use this address to access your Files via WebDAV') }} ↗
+-				</a>
+-			</em>
+-			<br>
+-			<em>
+-				<a class="setting-link" :href="appPasswordUrl">
+-					{{ t('files', 'If you have enabled 2FA, you must create and use a new app password by clicking here.') }} ↗
+-				</a>
++                {{ t('files', 'Use this address to access your Files via WebDAV') }}
+ 			</em>
+ 		</NcAppSettingsSection>
+ 	</NcAppSettingsDialog>

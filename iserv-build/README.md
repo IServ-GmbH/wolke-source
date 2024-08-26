@@ -4,26 +4,47 @@ This folder contains everything needed to build the docker image. Run `./build.s
 
 ## How it works
 
-The Image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).
-The source code in the image is then modified by [a number of patches disabling or altering the functionality](README.md#Documentation of patches).
-These patches are located in `./adds/patches/`.\
-Patches that affect the generated JS are generated automatically by the scripts in `./build-steps` and are located in `./adds/patches/generated/`. The patches to the JS source-code pre-compilation are located in `./build-steps/patches`.
-
+The image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).
+The source code in the image is then modified by [a number of patches or added files disabling or altering the functionality](README.md#Documentation of patches).
+These patches are located in `./source/patches/`.
+There is exactly one patch file for every changed file.
+Completely new files are located in `./source/added/`.
 The patches were created based on [nextcloud/server](https://github.com/nextcloud/server) and [nextcloud/activity](https://github.com/nextcloud/activity).
 
-## How to get the source code itself
+When the Docker image is being built, in the first stage, `clone_and_apply_patches.sh` applies patches and copies the added files into a freshly checked out working copy of the Nextcloud version to be built.
+Then `create_combined_patches.sh` builds the JavaScript assets and creates temporary (binary) patch files representing all changes.
+These binary patches will be applied to the production code in the second build stage.
 
-To get the source code found in this repo:
+## How to create new patches
 
-```shell
-./build.sh
-docker create --name source-image iserv/cloudfiles
-mkdir source
-docker cp source-image:/usr/src/nextcloud/. source/
-docker rm source-image
-```
+Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server`.
+The arguments are the Nextcloud version that is currently used for the image and a destination path for the checked out repository.
+The existing patches should have been applied correctly and the checked out code shows several changes/untracked files when calling `git status`.
 
-The source-code will be located in the `source` folder.
+Do your modifications without committing.
+
+Then call `extract_patches.sh ~/nextcloud-server`. This will create or update the files in `./source/added/` and `./source/patches/`.
+
+Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`, as well as the changes in `./source/added/` and `./source/patches/`.
+
+## How to upgrade
+
+Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` (using the new version number you want to upgrade to).
+
+Check if all patches have been applied successfully.
+
+If a patch has failed:
+1. Move the affected patch file out of `./source/patches`.
+2. Run `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` again.
+3. Repeat steps 1 and 2 until all remaining patches have been successfully applied.
+4. Manually apply the changes of the moved patch files to the affected files in the working copy `~/nextcloud-server`.
+5. Run `extract_patches.sh ~/nextcloud-server` to re-generate the patches.
+
+Once all patches can be applied to the new version
+
+* update the version number in the Dockerfile,
+* add/commit the patches in case there have been changes,
+* Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`.
 
 ## Running the image
 
@@ -49,36 +70,36 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
 
 ### Backend
 
-- `remove_contactsmenu.patch`
-   Hides contacts menu and disables related routes. #52541
-
-- `cleanup_settings.patch`
-   Removes unneeded options and information from settings page. Re-routes default-endpoint to security endpoint. Clicking profile image -> settings should not lead to an empty page. #52547
-
-- `cleanup_activity.patch`
-   Removes several unneeded stuff from the sidebar of the activity tab. #52547
-
-- `deactivate_send_mails.patch`
-   Disables sending mails when you share a file with a note to a specific user. #54341
-
-- `deactivate_activity_jobs.patch`
-   Deactivates unneeded background cron jobs. #54341
-
-- `show_share_owner.patch`
-   Always display name of user that shared a file, even if it's shared publicly. #52635
+- Hide contacts menu and disable related routes. #52541
+  - core/routes.php
+  - core/templates/layout.user.php
+- Remove unneeded options and information from settings page. Re-route default-endpoint to security endpoint. Clicking profile image -> settings should not lead to an empty page. #52547
+  - apps/dav/appinfo/info.xml
+  - apps/federatedfilesharing/appinfo/info.xml
+  - apps/settings/appinfo/info.xml
+  - apps/settings/appinfo/routes.php
+  - apps/activity/appinfo/info.xml
+- Remove several unneeded stuff from the sidebar of the activity tab. #52547
+  - apps/dav/appinfo/info.xml
+- Disable sending mails when you share a file with a note to a specific user. #54341
+  - lib/private/Mail/Mailer.php 
+- Deactivate unneeded background cron jobs. #54341
+  - apps/activity/appinfo/info.xml
+- Always display name of user that shared a file, even if it's shared publicly. #52635
+  - apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php 
 
 ### Frontend
 
-- `01_limit_link_share_edit.patch`
-  Hides "Allow edit" menu entry when publicly sharing files that cannot be edited in the browser. #54278
-- `02_hide_accessibility_description.patch`
-  Hides the description text with links to Nextcloud's documentation on top of the theme/accessibility settings page. #52676
-- `03_remove_webdav_documentation_link.patch`
-  Removes link to Nextcloud's WebDAV documentation when opening Files - File settings. #52676
-- `04_remove_quick_share_select.patch`
-  Removes Pop-Up for quick select of editing rights because we could not only patch a certain entry (custom permissions) of the Pop-Up.
+- Hide "Allow edit" menu entry when publicly sharing files that cannot be edited in the browser. #54278
+  - apps/files_sharing/src/views/SharingDetailsTab.vue
+- Hide the description text with links to Nextcloud's documentation on top of the theme/accessibility settings page. #52676
+  - apps/theming/src/UserThemes.vue
+- Remove link to Nextcloud's WebDAV documentation when opening Files - File settings. #52676
+  - apps/files/src/views/Settings.vue
+- Remove Pop-Up for quick select of editing rights because we could not only patch a certain entry (custom permissions) of the Pop-Up.
+  - apps/files_sharing/src/components/SharingEntry.vue
+  - apps/files_sharing/src/components/SharingEntryLink.vue
 
 ### Theme
 
 - `theme/core/css/server.css` contains some further customizations
-

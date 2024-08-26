@@ -1,0 +1,12 @@
+diff --git core/templates/layout.user.php core/templates/layout.user.php
+index 5d5b416..5b2c843 100644
+--- core/templates/layout.user.php
++++ core/templates/layout.user.php
+@@ -70,7 +70,6 @@ p($theme->getTitle());
+ 			<div class="header-right">
+ 				<div id="unified-search"></div>
+ 				<div id="notifications"></div>
+-				<div id="contactsmenu"></div>
+ 				<div id="user-menu"></div>
+ 			</div>
+ 		</header>

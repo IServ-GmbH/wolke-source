@@ -1,6 +1,8 @@
---- apps/federation/composer/composer/autoload_classmap.php	2024-02-16 09:54:49.856156471 +0100
-+++ apps/federation/composer/composer/autoload_classmap_patched.php	2024-02-29 08:08:08.478623496 +0100
-@@ -11,6 +11,9 @@
+diff --git apps/federation/composer/composer/autoload_classmap.php apps/federation/composer/composer/autoload_classmap.php
+index 1be343a..e63ace6 100644
+--- apps/federation/composer/composer/autoload_classmap.php
++++ apps/federation/composer/composer/autoload_classmap.php
+@@ -11,6 +11,9 @@ return array(
      'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => $baseDir . '/../lib/BackgroundJob/GetSharedSecret.php',
      'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => $baseDir . '/../lib/BackgroundJob/RequestSharedSecret.php',
      'OCA\\Federation\\Command\\SyncFederationAddressBooks' => $baseDir . '/../lib/Command/SyncFederationAddressBooks.php',

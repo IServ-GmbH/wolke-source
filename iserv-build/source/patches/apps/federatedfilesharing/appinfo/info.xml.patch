@@ -1,0 +1,12 @@
+diff --git apps/federatedfilesharing/appinfo/info.xml apps/federatedfilesharing/appinfo/info.xml
+index 158b099..0bd76d7 100644
+--- apps/federatedfilesharing/appinfo/info.xml
++++ apps/federatedfilesharing/appinfo/info.xml
+@@ -20,7 +20,5 @@
+ 
+ 	<settings>
+ 		<admin>OCA\FederatedFileSharing\Settings\Admin</admin>
+-		<personal>OCA\FederatedFileSharing\Settings\Personal</personal>
+-		<personal-section>OCA\FederatedFileSharing\Settings\PersonalSection</personal-section>
+ 	</settings>
+ </info>

@@ -1,6 +1,8 @@
---- autoload_static.php	2024-02-16 09:54:56.980031524 +0100
-+++ autoload_static.php.patch	2024-02-29 08:08:08.478623496 +0100
-@@ -25,6 +25,9 @@
+diff --git apps/federation/composer/composer/autoload_static.php apps/federation/composer/composer/autoload_static.php
+index 927aca6..0c37eaf 100644
+--- apps/federation/composer/composer/autoload_static.php
++++ apps/federation/composer/composer/autoload_static.php
+@@ -25,6 +25,9 @@ class ComposerStaticInitFederation
          'OCA\\Federation\\AppInfo\\Application' => __DIR__ . '/..' . '/../lib/AppInfo/Application.php',
          'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/GetSharedSecret.php',
          'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/RequestSharedSecret.php',

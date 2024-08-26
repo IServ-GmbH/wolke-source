@@ -1,9 +1,25 @@
 # WARNING: When updating adhere to the guidelines for valid updates as provided in the README
 # TLDR: No skipping major releases. Only upgrade major release if on the last minor release.
-# IMPORTANT: Update version in build.sh as well!
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:27.1.8-apache
+# The default version specified here will be used by the CI pipeline.
+ARG VERSION=27.1.8
+
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/alpine:3.20 AS patchstage
+ARG VERSION
+
+RUN apk update
+RUN apk upgrade
+RUN apk add bash git make npm patch
+
+COPY ./source /source
+
+RUN /source/clone_and_apply_patches.sh "${VERSION}" /nextcloud-server
+RUN /source/create_combined_patches.sh /nextcloud-server /
+
+# TODO: Here we could execute the tests. #73704
+
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-apache
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
@@ -27,25 +43,17 @@ RUN mkdir /iserv-apps \
 
 # Theme to fix some css errors created by our patches
 COPY ./theme /usr/src/nextcloud/themes/iserv
-# Contains patches and config scripts
+# Contains config scripts
 COPY ./adds /
 
-# Apply patches - Refer to README.md for description of individual patches.
+# Copy added files
+COPY ./source/added /usr/src/nextcloud
 
-# Backend patches
-# This is not the most efficient way in term of image layers but it's easier to find faulty patches during updates
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/remove_contactsmenu.patch
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/cleanup_settings.patch
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/cleanup_activity.patch
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_send_mails.patch
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/deactivate_activity_jobs.patch
-RUN cd /usr/src/nextcloud && patch -p1 < /patches/show_share_owner.patch
-RUN cd /usr/src/nextcloud && patch apps/federation/appinfo/info.xml < /patches/federation_app_patches/info.xml.patch
-RUN cd /usr/src/nextcloud && patch apps/federation/composer/composer/autoload_classmap.php < /patches/federation_app_patches/autoload_classmap.patch
-RUN cd /usr/src/nextcloud && patch apps/federation/composer/composer/autoload_static.php < /patches/federation_app_patches/autoload_static.patch
-
-# Frontend patches
-RUN cd /usr/src/nextcloud && git apply /patches/generated/generated_combined.patch
+# Apply combined patches
+COPY --from=patchstage /*.patch /
+RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
+RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
+RUN rm /*.patch
 
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart
 # This makes config updates easier

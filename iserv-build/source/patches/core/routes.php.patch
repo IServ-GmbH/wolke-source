@@ -1,8 +1,8 @@
-diff --git a/core/routes.php b/core/routes.php
-index 0f9729e54eb..fdba244a1c8 100644
---- a/core/routes.php
-+++ b/core/routes.php
-@@ -86,8 +86,6 @@ $application->registerRoutes($this, [
+diff --git core/routes.php core/routes.php
+index fcb5a15..e031b4f 100644
+--- core/routes.php
++++ core/routes.php
+@@ -87,8 +87,6 @@ $application->registerRoutes($this, [
  		['name' => 'Reference#preview', 'url' => '/core/references/preview/{referenceId}', 'verb' => 'GET'],
  		['name' => 'Css#getCss', 'url' => '/css/{appName}/{fileName}', 'verb' => 'GET'],
  		['name' => 'Js#getJs', 'url' => '/js/{appName}/{fileName}', 'verb' => 'GET'],
@@ -11,15 +11,3 @@ index 0f9729e54eb..fdba244a1c8 100644
  		['name' => 'WalledGarden#get', 'url' => '/204', 'verb' => 'GET'],
  		['name' => 'Search#search', 'url' => '/core/search', 'verb' => 'GET'],
  		['name' => 'Wipe#checkWipe', 'url' => '/core/wipe/check', 'verb' => 'POST'],
-diff --git a/core/templates/layout.user.php b/core/templates/layout.user.php
-index 1a55c0ab64d..111991f308e 100644
---- a/core/templates/layout.user.php
-+++ b/core/templates/layout.user.php
-@@ -73,7 +73,6 @@ p($theme->getTitle());
- 			<div class="header-right">
- 				<div id="unified-search"></div>
- 				<div id="notifications"></div>
--				<div id="contactsmenu"></div>
- 				<div id="user-menu"></div>
- 			</div>
- 		</header>
