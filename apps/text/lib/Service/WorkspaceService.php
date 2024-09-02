@@ -6,6 +6,7 @@ namespace OCA\Text\Service;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
+use OCP\Files\StorageInvalidException;
 use OCP\IL10N;
 
 class WorkspaceService {
@@ -29,14 +30,16 @@ class WorkspaceService {
 					if ($file instanceof File) {
 						return $file;
 					}
-				} catch (NotFoundException $e) {
+				} catch (NotFoundException|StorageInvalidException) {
+					return null;
 				}
 			}
 		}
 		return null;
 	}
 
-	public function getSupportedFilenames() {
+	/** @return string[] */
+	public function getSupportedFilenames(): array {
 		return array_merge([
 			$this->l10n->t('Readme') . '.md'
 		], self::SUPPORTED_STATIC_FILENAMES);

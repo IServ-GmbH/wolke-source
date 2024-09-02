@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Upgrade via built-in updater &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -68,6 +76,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#using-the-web-based-updater">Using the web based updater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-the-command-line-based-updater">Using the command line based updater</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#batch-mode-for-command-line-based-updater">Batch mode for command line based updater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="manual_upgrade.html">Upgrade manually</a></li>
@@ -106,7 +115,7 @@
            <div itemprop="articleBody">
              
   <section id="upgrade-via-built-in-updater">
-<h1>Upgrade via built-in updater<a class="headerlink" href="#upgrade-via-built-in-updater" title="Permalink to this headline"></a></h1>
+<h1>Upgrade via built-in updater<a class="headerlink" href="#upgrade-via-built-in-updater" title="Link to this heading"></a></h1>
 <p>The built-in updater automates many of the steps of upgrading a Nextcloud
 installation. It is useful for installations that do not have root access,
 such as shared hosting, for installations with a smaller number of users
@@ -120,17 +129,22 @@ restore your data from backup. Before doing this, file a support ticket if
 you have paid support or ask for help in the Nextcloud forums to see if your
 issue can be resolved without downgrading.</p>
 </div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
 <p>You should maintain regular backups (see <a class="reference internal" href="backup.html"><span class="doc">Backup</span></a>), and make a backup
 before every update. The built-in updater does not backup your database or data
 directory.</p>
+</div>
 <section id="what-does-the-updater-do">
-<h2>What does the updater do?<a class="headerlink" href="#what-does-the-updater-do" title="Permalink to this headline"></a></h2>
+<h2>What does the updater do?<a class="headerlink" href="#what-does-the-updater-do" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The updater itself only replaces the existing files with the ones from the
-version it updates to. The migration steps needs to be executed afterwards.
-The command line mode provides a way to do this right after the code was
-successfully replaced.</p>
+<p>The built-in updater itself only replaces the existing files with the ones from the
+version it updates to. The migration phase, which upgrades your database and apps,
+needs to be executed afterwards. In command line mode, the updater offers to trigger this
+for you right after the code was successfully replaced by running <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> for you.
+In web mode, the updater finishes and then offers to send you back to your instance’s main
+URL to trigger the migration phase’s web UI.</p>
 </div>
 <p>The built-in updater performs these operations:</p>
 <ul class="simple">
@@ -172,7 +186,7 @@ migration steps.</p></li>
 </ul>
 </section>
 <section id="using-the-web-based-updater">
-<h2>Using the web based updater<a class="headerlink" href="#using-the-web-based-updater" title="Permalink to this headline"></a></h2>
+<h2>Using the web based updater<a class="headerlink" href="#using-the-web-based-updater" title="Link to this heading"></a></h2>
 <p>Using the built-in updater to update your Nextcloud installation is just a few
 steps:</p>
 <ol class="arabic simple">
@@ -262,7 +276,7 @@ Reset log level
 </div>
 </section>
 <section id="using-the-command-line-based-updater">
-<h2>Using the command line based updater<a class="headerlink" href="#using-the-command-line-based-updater" title="Permalink to this headline"></a></h2>
+<h2>Using the command line based updater<a class="headerlink" href="#using-the-command-line-based-updater" title="Link to this heading"></a></h2>
 <p>The command line based updater works in the exact same way the web based
 updater works. The steps and checks are the very same.</p>
 <div class="admonition warning">
@@ -315,7 +329,7 @@ should be kept active.</p></li>
 <img alt="../_images/updater-cli-7-maintenance.png" class="terminal-image" src="../_images/updater-cli-7-maintenance.png" />
 </section>
 <section id="batch-mode-for-command-line-based-updater">
-<h2>Batch mode for command line based updater<a class="headerlink" href="#batch-mode-for-command-line-based-updater" title="Permalink to this headline"></a></h2>
+<h2>Batch mode for command line based updater<a class="headerlink" href="#batch-mode-for-command-line-based-updater" title="Link to this heading"></a></h2>
 <p>It is possible to run the command line based updater in a non-interactive mode.
 The updater then doesn’t ask any interactive questions. It is assumed that if
 an update is available it should be installed and the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> command
@@ -325,6 +339,30 @@ code.</p>
 <p>To execute this, run the command with the <code class="docutils literal notranslate"><span class="pre">--no-interaction</span></code> option. (i.e.
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">/var/www/nextcloud/updater/updater.phar</span> <span class="pre">--no-interaction</span></code>)</p>
 <img alt="../_images/updater-cli-8-no-interaction.png" class="terminal-image" src="../_images/updater-cli-8-no-interaction.png" />
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>The built-in updater logs all of its actions to a dedicated log file called
+<code class="docutils literal notranslate"><span class="pre">updater.log</span></code> located in your configured <code class="docutils literal notranslate"><span class="pre">datadirectory</span></code>
+(e.g. <code class="docutils literal notranslate"><span class="pre">/var/www/html/data/updater.log</span></code>). This file can be helpful in isolating
+where things are failing. It will also be needed if you reach out for assistance
+on the community help forum (<a class="reference external" href="https://help.nextcloud.com">https://help.nextcloud.com</a>).</p></li>
+<li><p>If you are having problems using the Updater in web-mode, you should try using
+command-line mode (if it’s an option in your environment). Command-line avoids
+issues with web server timeouts, which can be problematic since sometimes the
+Updater can take a long time to complete certain steps.</p></li>
+<li><p>If the problem seems to be during the backup step, you can try disabling the
+backups the updater automatically creates of the installation files. Keep in
+mind these backups do <strong>not</strong> include your data (which you are already hopefully
+doing). The backup step can only be disabled while in command-line mode. Append
+the option <code class="docutils literal notranslate"><span class="pre">--no-backup</span></code> to the <code class="docutils literal notranslate"><span class="pre">updater.phar</span></code> command.</p></li>
+<li><p>If you accidentally say no when the command-line mode of the updater asks if you’d
+like to run <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code>, you can safely execute <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> manually or
+simply visit the URL of your instance to complete the database migrations and app
+upgrade phase.</p></li>
+<li><p>Reach out to the community help forum for assistance (<a class="reference external" href="https://help.nextcloud.com">https://help.nextcloud.com</a>)</p></li>
+</ul>
 </section>
 </section>
 

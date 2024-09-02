@@ -78,12 +78,12 @@ class FreeBSD implements IOperatingSystem {
 
 		try {
 			$model = $this->executeCommand('/sbin/sysctl -n hw.model');
-			$cores = $this->executeCommand('/sbin/sysctl -n kern.smp.cpus');
+			$threads = $this->executeCommand('/sbin/sysctl -n kern.smp.cpus');
 
-			if ((int)$cores === 1) {
-				$data = $model . ' (1 core)';
+			if ((int)$threads === 1) {
+				$data = $model . ' (1 thread)';
 			} else {
-				$data = $model . ' (' . $cores . ' cores)';
+				$data = $model . ' (' . $threads . ' threads)';
 			}
 		} catch (RuntimeException $e) {
 			return $data;
@@ -138,7 +138,13 @@ class FreeBSD implements IOperatingSystem {
 	public function getNetworkInterfaces(): array {
 		$data = [];
 
-		foreach ($this->getNetInterfaces() as $interfaceName => $interface) {
+		try {
+			$interfaces = $this->getNetInterfaces();
+		} catch (RuntimeException) {
+			return $data;
+		}
+
+		foreach ($interfaces as $interfaceName => $interface) {
 			$netInterface = new NetInterface($interfaceName, $interface['up']);
 			$data[] = $netInterface;
 
@@ -227,11 +233,23 @@ class FreeBSD implements IOperatingSystem {
 		return [];
 	}
 
+	/**
+	 * Execute a command with shell_exec.
+	 *
+	 * The command will be escaped with escapeshellcmd.
+	 *
+	 * @throws RuntimeException if shell_exec is unavailable, the command failed or an empty response.
+	 */
 	protected function executeCommand(string $command): string {
-		$output = @shell_exec(escapeshellcmd($command));
-		if ($output === null || $output === '' || $output === false) {
+		if (function_exists('shell_exec') === false) {
+			throw new RuntimeException('shell_exec unavailable');
+		}
+
+		$output = shell_exec(escapeshellcmd($command));
+		if ($output === false || $output === null || $output === '') {
 			throw new RuntimeException('No output for command: "' . $command . '"');
 		}
+
 		return $output;
 	}
 

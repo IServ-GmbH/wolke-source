@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using two-factor authentication &mdash; Nextcloud latest User Manual latest documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=91d07486"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=f281be69"></script>
+        <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -90,7 +98,7 @@
            <div itemprop="articleBody">
              
   <section id="using-two-factor-authentication">
-<h1>Using two-factor authentication<a class="headerlink" href="#using-two-factor-authentication" title="Permalink to this headline"></a></h1>
+<h1>Using two-factor authentication<a class="headerlink" href="#using-two-factor-authentication" title="Link to this heading"></a></h1>
 <p>Two-factor authentication (2FA) is a way to protect your Nextcloud account
 against unauthorized access. It works by requiring two different ‘proofs’ of
 your identity. For example, <em>something you know</em> (like a password) and
@@ -103,7 +111,7 @@ more can be added.</p>
 you can enable and configure it in <a class="reference internal" href="userpreferences.html"><span class="doc">Setting your preferences</span></a>. Below you can
 see how.</p>
 <section id="configuring-two-factor-authentication">
-<h2>Configuring two-factor authentication<a class="headerlink" href="#configuring-two-factor-authentication" title="Permalink to this headline"></a></h2>
+<h2>Configuring two-factor authentication<a class="headerlink" href="#configuring-two-factor-authentication" title="Link to this heading"></a></h2>
 <p>In your Personal Settings look up the Second-factor Auth setting. In this
 example this is TOTP, a Google Authenticator compatible time-based code:</p>
 <figure class="align-default">
@@ -115,7 +123,7 @@ code or scan the QR and your device will show a login code which changes
 every 30 seconds.</p>
 </section>
 <section id="recovery-codes-in-case-you-lost-your-2nd-factor">
-<h2>Recovery codes in case you lost your 2nd factor<a class="headerlink" href="#recovery-codes-in-case-you-lost-your-2nd-factor" title="Permalink to this headline"></a></h2>
+<h2>Recovery codes in case you lost your 2nd factor<a class="headerlink" href="#recovery-codes-in-case-you-lost-your-2nd-factor" title="Link to this heading"></a></h2>
 <p>You should always generate backup codes for 2FA. If your 2nd factor device
 gets stolen or is not working, you will be able to use one of these codes to
 unlock your account. It effectively functions as a backup 2nd factor. To
@@ -134,7 +142,7 @@ if you lose one, you still have the other. Keeping them at home is probably
 the best thing to do.</p>
 </section>
 <section id="logging-in-with-two-factor-authentication">
-<h2>Logging in with two-factor authentication<a class="headerlink" href="#logging-in-with-two-factor-authentication" title="Permalink to this headline"></a></h2>
+<h2>Logging in with two-factor authentication<a class="headerlink" href="#logging-in-with-two-factor-authentication" title="Link to this heading"></a></h2>
 <p>After you have logged out and need to log in again, you will see a request to
 enter the TOTP code in your browser. If you enable not only the TOTP factor
 but another one, you will see a selection screen on which you can choose
@@ -155,7 +163,7 @@ won’t be a problem.</p>
 </div>
 </section>
 <section id="using-two-factor-authentication-with-hardware-tokens">
-<h2>Using two-factor authentication with hardware tokens<a class="headerlink" href="#using-two-factor-authentication-with-hardware-tokens" title="Permalink to this headline"></a></h2>
+<h2>Using two-factor authentication with hardware tokens<a class="headerlink" href="#using-two-factor-authentication-with-hardware-tokens" title="Link to this heading"></a></h2>
 <p>You can use two-factor authentication based on hardware tokens. The following devices are known to work:</p>
 <ul class="simple">
 <li><p>TOTP based:</p>
@@ -172,14 +180,14 @@ won’t be a problem.</p>
 </ul>
 </section>
 <section id="using-client-applications-with-two-factor-authentication">
-<h2>Using client applications with two-factor authentication<a class="headerlink" href="#using-client-applications-with-two-factor-authentication" title="Permalink to this headline"></a></h2>
+<h2>Using client applications with two-factor authentication<a class="headerlink" href="#using-client-applications-with-two-factor-authentication" title="Link to this heading"></a></h2>
 <p>Once you have enabled 2FA, your clients will no longer be able to connect with
 just your password unless they also have support for two-factor authentication.
 To solve this, you should generate device specific passwords for them. See
 <a class="reference internal" href="session_management.html"><span class="doc">Manage connected browsers and devices</span></a> for more information on how to do this.</p>
 </section>
 <section id="considerations">
-<h2>Considerations<a class="headerlink" href="#considerations" title="Permalink to this headline"></a></h2>
+<h2>Considerations<a class="headerlink" href="#considerations" title="Link to this heading"></a></h2>
 <p>If you use WebAuthn to login to your Nextcloud be sure to not use the same token for 2FA. As this
 would mean you are again only using a single factor.</p>
 </section>

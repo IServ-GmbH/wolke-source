@@ -437,7 +437,7 @@ class Circle extends ManagedModel implements IEntity, IDeserializable, IQueryRow
 	}
 
 	/**
-	 * @param array $members
+	 * @param Member[] $members
 	 *
 	 * @return self
 	 */
@@ -448,7 +448,7 @@ class Circle extends ManagedModel implements IEntity, IDeserializable, IQueryRow
 	}
 
 	/**
-	 * @return array
+	 * @return Member[]
 	 */
 	public function getMembers(): array {
 		if (!$this->hasMembers()) {
@@ -473,7 +473,7 @@ class Circle extends ManagedModel implements IEntity, IDeserializable, IQueryRow
 	}
 
 	/**
-	 * @param array $members
+	 * @param Member[] $members
 	 *
 	 * @return Circle
 	 */
@@ -910,7 +910,9 @@ class Circle extends ManagedModel implements IEntity, IDeserializable, IQueryRow
 			 ->setDescription($this->get($prefix . 'description', $data));
 
 		$creation = $this->get($prefix . 'creation', $data);
-		$this->setCreation(DateTime::createFromFormat('Y-m-d H:i:s', $creation)->getTimestamp());
+		$dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $creation);
+		$timestamp = $dateTime ? $dateTime->getTimestamp() : (int) strtotime($creation);
+		$this->setCreation($timestamp);
 
 		$this->setPopulation($this->getInt('population', $this->getSettings()));
 		$this->setPopulationInherited($this->getInt('populationInherited', $this->getSettings()));

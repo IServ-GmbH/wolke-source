@@ -27,6 +27,7 @@ namespace OCP\Group\Backend;
 
 /**
  * @since 14.0.0
+ * @deprecated 30.0.0 Use ICreateNamedGroupBackend instead
  */
 interface ICreateGroupBackend {
 	/**

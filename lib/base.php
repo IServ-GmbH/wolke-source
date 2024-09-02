@@ -67,7 +67,6 @@ declare(strict_types=1);
  */
 
 use OC\Encryption\HookManager;
-use OC\EventDispatcher\SymfonyAdapter;
 use OC\Share20\Hooks;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\UserRemovedEvent;
@@ -75,6 +74,7 @@ use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\Security\Bruteforce\IThrottler;
 use OCP\Server;
 use OCP\Share;
 use OCP\User\Events\UserChangedEvent;
@@ -656,11 +656,11 @@ class OC {
 		//this doesn´t work always depending on the webserver and php configuration.
 		//Let´s try to overwrite some defaults if they are smaller than 1 hour
 
-		if (intval(@ini_get('max_execution_time') ?? 0) < 3600) {
+		if (intval(@ini_get('max_execution_time') ?: 0) < 3600) {
 			@ini_set('max_execution_time', strval(3600));
 		}
 
-		if (intval(@ini_get('max_input_time') ?? 0) < 3600) {
+		if (intval(@ini_get('max_input_time') ?: 0) < 3600) {
 			@ini_set('max_input_time', strval(3600));
 		}
 
@@ -869,7 +869,7 @@ class OC {
 					// reset brute force delay for this IP address and username
 					$uid = $userSession->getUser()->getUID();
 					$request = Server::get(IRequest::class);
-					$throttler = Server::get(\OC\Security\Bruteforce\Throttler::class);
+					$throttler = Server::get(IThrottler::class);
 					$throttler->resetDelay($request->getRemoteAddress(), 'login', ['user' => $uid]);
 				}
 
@@ -936,7 +936,7 @@ class OC {
 	}
 
 	private static function registerResourceCollectionHooks(): void {
-		\OC\Collaboration\Resources\Listener::register(Server::get(SymfonyAdapter::class), Server::get(IEventDispatcher::class));
+		\OC\Collaboration\Resources\Listener::register(Server::get(IEventDispatcher::class));
 	}
 
 	private static function registerFileReferenceEventListener(): void {
@@ -988,16 +988,17 @@ class OC {
 		// Check if Nextcloud is installed or in maintenance (update) mode
 		if (!$systemConfig->getValue('installed', false)) {
 			\OC::$server->getSession()->clear();
+			$logger = Server::get(\Psr\Log\LoggerInterface::class);
 			$setupHelper = new OC\Setup(
 				$systemConfig,
 				Server::get(\bantu\IniGetWrapper\IniGetWrapper::class),
 				Server::get(\OCP\L10N\IFactory::class)->get('lib'),
 				Server::get(\OCP\Defaults::class),
-				Server::get(\Psr\Log\LoggerInterface::class),
+				$logger,
 				Server::get(\OCP\Security\ISecureRandom::class),
 				Server::get(\OC\Installer::class)
 			);
-			$controller = new OC\Core\Controller\SetupController($setupHelper);
+			$controller = new OC\Core\Controller\SetupController($setupHelper, $logger);
 			$controller->run($_POST);
 			exit();
 		}
@@ -1120,7 +1121,7 @@ class OC {
 			}
 			$l = Server::get(\OCP\L10N\IFactory::class)->get('lib');
 			OC_Template::printErrorPage(
-				$l->t('404'),
+				'404',
 				$l->t('The page could not be found on the server.'),
 				404
 			);
@@ -1131,6 +1132,9 @@ class OC {
 	 * Check login: apache auth, auth token, basic auth
 	 */
 	public static function handleLogin(OCP\IRequest $request): bool {
+		if ($request->getHeader('X-Nextcloud-Federation')) {
+			return false;
+		}
 		$userSession = Server::get(\OC\User\Session::class);
 		if (OC_User::handleApacheAuth()) {
 			return true;
@@ -1147,7 +1151,7 @@ class OC {
 			&& $userSession->loginWithCookie($_COOKIE['nc_username'], $_COOKIE['nc_token'], $_COOKIE['nc_session_id'])) {
 			return true;
 		}
-		if ($userSession->tryBasicAuthLogin($request, Server::get(\OC\Security\Bruteforce\Throttler::class))) {
+		if ($userSession->tryBasicAuthLogin($request, Server::get(IThrottler::class))) {
 			return true;
 		}
 		return false;

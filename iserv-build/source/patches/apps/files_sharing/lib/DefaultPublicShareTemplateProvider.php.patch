@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-index 9c95428..1b3241d 100644
+index 8af1c80..f731fcb 100644
 --- apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
 +++ apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-@@ -101,13 +101,9 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
+@@ -100,13 +100,9 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
  
  		$owner = $this->userManager->get($share->getShareOwner());
  		if ($owner instanceof IUser) {

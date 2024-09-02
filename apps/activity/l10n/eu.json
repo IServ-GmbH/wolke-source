@@ -9,7 +9,7 @@
     "No activities" : "Ez da jarduerarik",
     "More activities" : "Jarduera gehiago",
     "Daily activity summary for %s" : "%s-(r)en eguneko jardueren laburpena",
-    "_and %n more _::_and %n more _" : ["eta %n gehiago","eta %n gehiago"],
+    "_and %n more…_::_and %n more…_" : ["eta %n gehiago…","eta %n gehiago…"],
     "All activities" : "Jarduera guztiak",
     "By others" : "Besteenak",
     "By you" : "Zureak",
@@ -17,6 +17,7 @@
     "Hello %s" : "Kaixo %s",
     "Hello %s," : "Kaixo %s,",
     "There was some activity at %s" : "%s-(e)n jarduera egon da",
+    "_and %n more _::_and %n more _" : ["eta %n gehiago","eta %n gehiago"],
     "Mail" : "Epostaz",
     "Push" : "Push",
     "Activity" : "Jarduerak",
@@ -64,14 +65,6 @@
     "Configure the default notification settings for new accounts." : "Konfiguratu jakinarazpen-ezarpen lehenetsiak kontu berrietarako.",
     "Unable to save the settings" : "Ezin izan dira ezarpenak gorde",
     "No more events to load" : "Ez dago kargatzeko gertaera gehiagorik",
-    "Copied!" : "Kopiatuta!",
-    "Not supported!" : "Ez da onartzen!",
-    "Press ⌘-C to copy." : "Sakatu ⌘-C kopiatzeko.",
-    "Press Ctrl-C to copy." : "Sakatu Ctrl-C kopiatzeko.",
-    "{name} (invisible)" : "{name} (ikusezina)",
-    "{name} (restricted)" : "{name} (mugatua)",
-    "There are no events for this filter" : "Ez dago gertaerarik iragazki honetarako",
-    "Activities" : "Jarduerak",
     "Could not load activites" : "Ezin izan dira jarduerak kargatu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

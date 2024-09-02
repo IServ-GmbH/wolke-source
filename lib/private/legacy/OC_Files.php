@@ -43,10 +43,10 @@
 use bantu\IniGetWrapper\IniGetWrapper;
 use OC\Files\View;
 use OC\Streamer;
-use OCP\Lock\ILockingProvider;
-use OCP\Files\Events\BeforeZipCreatedEvent;
-use OCP\Files\Events\BeforeDirectFileDownloadEvent;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Events\BeforeDirectFileDownloadEvent;
+use OCP\Files\Events\BeforeZipCreatedEvent;
+use OCP\Lock\ILockingProvider;
 
 /**
  * Class for file server access
@@ -76,7 +76,6 @@ class OC_Files {
 	private static function sendHeaders($filename, $name, array $rangeArray): void {
 		OC_Response::setContentDispositionHeader($name, 'attachment');
 		header('Content-Transfer-Encoding: binary', true);
-		header('Pragma: public');// enable caching in IE
 		header('Expires: 0');
 		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 		$fileSize = \OC\Files\Filesystem::filesize($filename);
@@ -179,7 +178,7 @@ class OC_Files {
 
 			$streamer->sendHeaders($name);
 			$executionTime = (int)OC::$server->get(IniGetWrapper::class)->getNumeric('max_execution_time');
-			if (strpos(@ini_get('disable_functions'), 'set_time_limit') === false) {
+			if (!str_contains(@ini_get('disable_functions'), 'set_time_limit')) {
 				@set_time_limit(0);
 			}
 			ignore_user_abort(true);
@@ -337,7 +336,7 @@ class OC_Files {
 			$rangeArray = self::parseHttpRangeHeader(substr($params['range'], 6), $fileSize);
 		}
 
-		$dispatcher = \OC::$server->query(IEventDispatcher::class);
+		$dispatcher = \OCP\Server::get(IEventDispatcher::class);
 		$event = new BeforeDirectFileDownloadEvent($filename);
 		$dispatcher->dispatchTyped($event);
 

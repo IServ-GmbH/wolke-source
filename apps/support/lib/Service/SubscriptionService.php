@@ -28,6 +28,7 @@ use GuzzleHttp\Exception\RequestException;
 use OC\User\Backend;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
@@ -71,6 +72,7 @@ class SubscriptionService {
 		IGroupManager $groupManager,
 		IMailer $mailer,
 		IFactory $l10nFactory,
+		private ICacheFactory $cacheFactory,
 		private IAppConfig $appConfig
 	) {
 		$this->config = $config;
@@ -220,6 +222,11 @@ class SubscriptionService {
 				$notification->setApp('support')
 					->setSubject('subscription_info');
 				$this->notifications->markProcessed($notification);
+
+				// hide push fair use warning
+				$cacheNotifications = $this->cacheFactory->createDistributed('notifications');
+				$cacheNotifications->remove('push_fair_use');
+
 				return;
 			}
 

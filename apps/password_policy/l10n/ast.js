@@ -15,7 +15,7 @@ OC.L10N.register(
     "Minimum password length" : "Llongura mínima de la contraseña",
     "User password history" : "Historial de contraseñes del usuariu",
     "Number of days until user password expires" : "Númberu de díes hasta que la contraseña del usuariu caduque",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Númberu d'intentos d'aniciar la sesión enantes de bloquiar la cuenta (0 pa nun tener llende)",
+    "Number of login attempts before the user account will be disabled until manual action is taken. (0 for no limit)" : "El númberu d'intentos p'aniciar la sesión enantes de que la cuenta del usuariu se desactive hasta que faiga una aición manual (0 pa nun tener llende)",
     "Forbid common passwords" : "Prohibir les contraseñes habituales",
     "Enforce upper and lower case characters" : "Obligar a poner mayúscules y minúscules",
     "Enforce numeric characters" : "Obligar a poner númberos",
@@ -29,7 +29,6 @@ OC.L10N.register(
     "Maximum login attempts have to be a non negative number" : "Los intentos máximos d'aniciar la sesión tienen de ser númberos positivos",
     "Settings saved" : "Guardóse la configuración",
     "Error while saving settings" : "Hebo un error mentanto se guardaba la configuración",
-    "Saved" : "Guardóse",
-    "Error while saving" : "Hebo un error mentanto se guardaba"
+    "Please note, that this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Decátate qu'esta opción ta destinada a protexer cuentes protexíes con contraseña. L'alministración tien de volver activar manualmente les cuentes desactivaes. La proteición escontra la fuerza bruta va bloquiar les IPs de los atacadores que tenten d'aldovinar les contraseñes de les cuentes, independientemente d'esta configuración."
 },
 "nplurals=2; plural=(n != 1);");

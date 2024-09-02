@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
@@ -24,6 +25,7 @@ declare(strict_types=1);
  */
 namespace OCA\Theming\Themes;
 
+use OC\AppFramework\Http\Request;
 use OCA\Theming\ImageManager;
 use OCA\Theming\ITheme;
 use OCA\Theming\Service\BackgroundService;
@@ -32,45 +34,31 @@ use OCA\Theming\Util;
 use OCP\App\IAppManager;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 
 class DefaultTheme implements ITheme {
 	use CommonThemeTrait;
 
-	public Util $util;
-	public ThemingDefaults $themingDefaults;
-	public IUserSession $userSession;
-	public IURLGenerator $urlGenerator;
-	public ImageManager $imageManager;
-	public IConfig $config;
-	public IL10N $l;
-	public IAppManager $appManager;
-
 	public string $defaultPrimaryColor;
 	public string $primaryColor;
 
-	public function __construct(Util $util,
-								ThemingDefaults $themingDefaults,
-								IUserSession $userSession,
-								IURLGenerator $urlGenerator,
-								ImageManager $imageManager,
-								IConfig $config,
-								IL10N $l,
-								IAppManager $appManager) {
-		$this->util = $util;
-		$this->themingDefaults = $themingDefaults;
-		$this->userSession = $userSession;
-		$this->urlGenerator = $urlGenerator;
-		$this->imageManager = $imageManager;
-		$this->config = $config;
-		$this->l = $l;
-		$this->appManager = $appManager;
-
+	public function __construct(
+		public Util $util,
+		public ThemingDefaults $themingDefaults,
+		public IUserSession $userSession,
+		public IURLGenerator $urlGenerator,
+		public ImageManager $imageManager,
+		public IConfig $config,
+		public IL10N $l,
+		public IAppManager $appManager,
+		private ?IRequest $request,
+	) {
 		$this->defaultPrimaryColor = $this->themingDefaults->getDefaultColorPrimary();
 		$this->primaryColor = $this->themingDefaults->getColorPrimary();
 
-		// Override default defaultPrimaryColor if set to improve accessibility
+		// Override primary colors (if set) to improve accessibility
 		if ($this->primaryColor === BackgroundService::DEFAULT_COLOR) {
 			$this->primaryColor = BackgroundService::DEFAULT_ACCESSIBLE_COLOR;
 		}
@@ -103,18 +91,41 @@ class DefaultTheme implements ITheme {
 	public function getCSSVariables(): array {
 		$colorMainText = '#222222';
 		$colorMainTextRgb = join(',', $this->util->hexToRGB($colorMainText));
-		$colorTextMaxcontrast = $this->util->lighten($colorMainText, 33);
+		// Color that still provides enough contrast for text, so we need a ratio of 4.5:1 on main background AND hover
+		$colorTextMaxcontrast = '#6b6b6b'; // 4.5 : 1 for hover background and background dark
 		$colorMainBackground = '#ffffff';
 		$colorMainBackgroundRGB = join(',', $this->util->hexToRGB($colorMainBackground));
 		$colorBoxShadow = $this->util->darken($colorMainBackground, 70);
 		$colorBoxShadowRGB = join(',', $this->util->hexToRGB($colorBoxShadow));
+
+		$colorError = '#DB0606';
+		$colorWarning = '#A37200';
+		$colorSuccess = '#2d7b41';
+		$colorInfo = '#0071ad';
+
+		$user = $this->userSession->getUser();
+		// Chromium based browsers currently (2024) have huge performance issues with blur filters
+		$isChromium = $this->request !== null && $this->request->isUserAgent([Request::USER_AGENT_CHROME, Request::USER_AGENT_MS_EDGE]);
+		// Ignore MacOS because they always have hardware accelartion
+		$isChromium = $isChromium && !$this->request->isUserAgent(['/Macintosh/']);
+		// Allow to force the blur filter
+		$forceEnableBlur = $user === null ? false : $this->config->getUserValue(
+			$user->getUID(),
+			'theming',
+			'force_enable_blur_filter',
+		);
+		$workingBlur = match($forceEnableBlur) {
+			'yes' => true,
+			'no' => false,
+			default => !$isChromium
+		};
 
 		$variables = [
 			'--color-main-background' => $colorMainBackground,
 			'--color-main-background-rgb' => $colorMainBackgroundRGB,
 			'--color-main-background-translucent' => 'rgba(var(--color-main-background-rgb), .97)',
 			'--color-main-background-blur' => 'rgba(var(--color-main-background-rgb), .8)',
-			'--filter-background-blur' => 'blur(25px)',
+			'--filter-background-blur' => $workingBlur ? 'blur(25px)' : 'none',
 
 			// to use like this: background-image: linear-gradient(0, var('--gradient-main-background));
 			'--gradient-main-background' => 'var(--color-main-background) 0%, var(--color-main-background-translucent) 85%, transparent 100%',
@@ -132,24 +143,28 @@ class DefaultTheme implements ITheme {
 			'--color-text-maxcontrast' => $colorTextMaxcontrast,
 			'--color-text-maxcontrast-default' => $colorTextMaxcontrast,
 			'--color-text-maxcontrast-background-blur' => $this->util->darken($colorTextMaxcontrast, 7),
-			'--color-text-light' => $colorMainText,
-			'--color-text-lighter' => $this->util->lighten($colorMainText, 33),
+			'--color-text-light' => 'var(--color-main-text)', // deprecated
+			'--color-text-lighter' => 'var(--color-text-maxcontrast)', // deprecated
 
 			'--color-scrollbar' => 'rgba(' . $colorMainTextRgb . ', .15)',
 
-			// info/warning/success feedback colours
-			'--color-error' => '#e9322d',
-			'--color-error-rgb' => join(',', $this->util->hexToRGB('#e9322d')),
-			'--color-error-hover' => $this->util->mix('#e9322d', $colorMainBackground, 60),
-			'--color-warning' => '#eca700',
-			'--color-warning-rgb' => join(',', $this->util->hexToRGB('#eca700')),
-			'--color-warning-hover' => $this->util->mix('#eca700', $colorMainBackground, 60),
-			'--color-success' => '#46ba61',
-			'--color-success-rgb' => join(',', $this->util->hexToRGB('#46ba61')),
-			'--color-success-hover' => $this->util->mix('#46ba61', $colorMainBackground, 60),
-			'--color-info' => '#006aa3',
-			'--color-info-rgb' => join(',', $this->util->hexToRGB('#006aa3')),
-			'--color-info-hover' => $this->util->mix('#006aa3', $colorMainBackground, 60),
+			// error/warning/success/info feedback colours
+			'--color-error' => $colorError,
+			'--color-error-rgb' => join(',', $this->util->hexToRGB($colorError)),
+			'--color-error-hover' => $this->util->mix($colorError, $colorMainBackground, 75),
+			'--color-error-text' => $this->util->darken($colorError, 5),
+			'--color-warning' => $colorWarning,
+			'--color-warning-rgb' => join(',', $this->util->hexToRGB($colorWarning)),
+			'--color-warning-hover' => $this->util->darken($colorWarning, 5),
+			'--color-warning-text' => $this->util->darken($colorWarning, 7),
+			'--color-success' => $colorSuccess,
+			'--color-success-rgb' => join(',', $this->util->hexToRGB($colorSuccess)),
+			'--color-success-hover' => $this->util->mix($colorSuccess, $colorMainBackground, 80),
+			'--color-success-text' => $this->util->darken($colorSuccess, 4),
+			'--color-info' => $colorInfo,
+			'--color-info-rgb' => join(',', $this->util->hexToRGB($colorInfo)),
+			'--color-info-hover' => $this->util->mix($colorInfo, $colorMainBackground, 80),
+			'--color-info-text' => $this->util->darken($colorInfo, 4),
 
 			// used for the icon loading animation
 			'--color-loading-light' => '#cccccc',
@@ -160,9 +175,9 @@ class DefaultTheme implements ITheme {
 
 			'--color-border' => $this->util->darken($colorMainBackground, 7),
 			'--color-border-dark' => $this->util->darken($colorMainBackground, 14),
-			'--color-border-maxcontrast' => $this->util->darken($colorMainBackground, 42),
+			'--color-border-maxcontrast' => $this->util->darken($colorMainBackground, 51),
 
-			'--font-face' => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'",
+			'--font-face' => "system-ui, -apple-system, 'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', 'Noto Sans', 'Liberation Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
 			'--default-font-size' => '15px',
 
 			// TODO: support "(prefers-reduced-motion)"
@@ -195,6 +210,7 @@ class DefaultTheme implements ITheme {
 			'--background-invert-if-dark' => 'no',
 			'--background-invert-if-bright' => 'invert(100%)',
 			'--background-image-invert-if-bright' => 'no',
+			'--background-image-color-text' => '#ffffff',
 		];
 
 		// Primary variables

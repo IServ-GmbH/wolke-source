@@ -46,10 +46,11 @@ use OCA\Circles\Events\PreparingCircleMemberEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
 use OCA\Circles\Events\RequestingCircleMemberEvent;
 use OCA\Circles\Handlers\WebfingerHandler;
-use OCA\Circles\Listeners\DeprecatedListener;
+use OCA\Circles\Listeners\AccountUpdated;
 use OCA\Circles\Listeners\Files\AddingMemberSendMail as ListenerFilesAddingMemberSendMail;
 use OCA\Circles\Listeners\Files\CreatingShareSendMail as ListenerFilesCreatingShareSendMail;
 use OCA\Circles\Listeners\Files\DestroyingCircle as ListenerFilesDestroyingCircle;
+use OCA\Circles\Listeners\Files\ListenerFilesLoadScripts;
 use OCA\Circles\Listeners\Files\MemberAddedSendMail as ListenerFilesMemberAddedSendMail;
 use OCA\Circles\Listeners\Files\PreparingMemberSendMail as ListenerFilesPreparingMemberSendMail;
 use OCA\Circles\Listeners\Files\PreparingShareSendMail as ListenerFilesPreparingShareSendMail;
@@ -66,9 +67,9 @@ use OCA\Circles\MountManager\CircleMountProvider;
 use OCA\Circles\Notification\Notifier;
 use OCA\Circles\Search\UnifiedSearchProvider;
 use OCA\Circles\Service\ConfigService;
-use OCA\Circles\Service\DavService;
 use OCA\Files\App as FilesApp;
-use OCP\App\ManagerEvent;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCP\Accounts\UserUpdatedEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -79,11 +80,9 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IServerContainer;
-use OCP\IUser;
+use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserCreatedEvent;
 use OCP\User\Events\UserDeletedEvent;
-use OCP\Util;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Throwable;
 
 /**
@@ -102,24 +101,12 @@ class Application extends App implements IBootstrap {
 
 	public const CLIENT_TIMEOUT = 3;
 
+	private ConfigService $configService;
 
-	/** @var ConfigService */
-	private $configService;
-
-
-	/**
-	 * Application constructor.
-	 *
-	 * @param array $params
-	 */
 	public function __construct(array $params = []) {
 		parent::__construct(self::APP_ID, $params);
 	}
 
-
-	/**
-	 * @param IRegistrationContext $context
-	 */
 	public function register(IRegistrationContext $context): void {
 		$context->registerCapability(Capabilities::class);
 
@@ -128,6 +115,8 @@ class Application extends App implements IBootstrap {
 
 		// User Events
 		$context->registerEventListener(UserCreatedEvent::class, UserCreated::class);
+		$context->registerEventListener(UserUpdatedEvent::class, AccountUpdated::class);
+		$context->registerEventListener(UserChangedEvent::class, AccountUpdated::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeleted::class);
 
 		// Group Events
@@ -137,48 +126,17 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(UserRemovedEvent::class, GroupMemberRemoved::class);
 
 		// Local Events (for Files/Shares/Notifications management)
-		$context->registerEventListener(
-			PreparingCircleMemberEvent::class,
-			ListenerFilesPreparingMemberSendMail::class
-		);
-		$context->registerEventListener(
-			AddingCircleMemberEvent::class,
-			ListenerFilesAddingMemberSendMail::class
-		);
-		$context->registerEventListener(
-			CircleMemberAddedEvent::class,
-			ListenerFilesMemberAddedSendMail::class
-		);
-		$context->registerEventListener(
-			PreparingFileShareEvent::class,
-			ListenerFilesPreparingShareSendMail::class
-		);
-		$context->registerEventListener(
-			CreatingFileShareEvent::class,
-			ListenerFilesCreatingShareSendMail::class
-		);
-		$context->registerEventListener(
-			FileShareCreatedEvent::class,
-			ListenerFilesShareCreatedSendMail::class
-		);
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, ListenerFilesLoadScripts::class);
+		$context->registerEventListener(PreparingCircleMemberEvent::class, ListenerFilesPreparingMemberSendMail::class);
+		$context->registerEventListener(AddingCircleMemberEvent::class, ListenerFilesAddingMemberSendMail::class);
+		$context->registerEventListener(AddingCircleMemberEvent::class, ListenerNotificationsRequestingMember::class);
+		$context->registerEventListener(CircleMemberAddedEvent::class, ListenerFilesMemberAddedSendMail::class);
+		$context->registerEventListener(PreparingFileShareEvent::class, ListenerFilesPreparingShareSendMail::class);
+		$context->registerEventListener(CreatingFileShareEvent::class, ListenerFilesCreatingShareSendMail::class);
+		$context->registerEventListener(FileShareCreatedEvent::class, ListenerFilesShareCreatedSendMail::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, ListenerFilesRemovingMember::class);
-		$context->registerEventListener(
-			RequestingCircleMemberEvent::class,
-			ListenerNotificationsRequestingMember::class
-		);
+		$context->registerEventListener(RequestingCircleMemberEvent::class, ListenerNotificationsRequestingMember::class);
 		$context->registerEventListener(DestroyingCircleEvent::class, ListenerFilesDestroyingCircle::class);
-
-		// It seems that AccountManager use deprecated dispatcher, let's use a deprecated listener
-		$dispatcher = OC::$server->getEventDispatcher();
-		$dispatcher->addListener(
-			'OC\AccountManager::userUpdated', function (GenericEvent $event) {
-				/** @var IUser $user */
-				$user = $event->getSubject();
-				/** @var DeprecatedListener $deprecatedListener */
-				$deprecatedListener = OC::$server->get(DeprecatedListener::class);
-				$deprecatedListener->userAccountUpdated($user);
-			}
-		);
 
 		$context->registerSearchProvider(UnifiedSearchProvider::class);
 		$context->registerWellKnownHandler(WebfingerHandler::class);
@@ -197,16 +155,10 @@ class Application extends App implements IBootstrap {
 									   ->get(ConfigService::class);
 
 		$context->injectFn(Closure::fromCallable([$this, 'registerMountProvider']));
-//		$context->injectFn(Closure::fromCallable([$this, 'registerDavHooks']));
-
 		$context->injectFn(Closure::fromCallable([$this, 'registerFilesNavigation']));
-		$context->injectFn(Closure::fromCallable([$this, 'registerFilesPlugin']));
 	}
 
 
-	/**
-	 * @param IServerContainer $container
-	 */
 	public function registerMountProvider(IServerContainer $container) {
 		if (!$this->configService->isGSAvailable()) {
 			return;
@@ -216,46 +168,6 @@ class Application extends App implements IBootstrap {
 		$mountProviderCollection->registerProvider($container->get(CircleMountProvider::class));
 	}
 
-
-	/**
-	 * @param IServerContainer $container
-	 */
-	public function registerDavHooks(IServerContainer $container) {
-		if (!$this->configService->isContactsBackend()) {
-			return;
-		}
-
-		/** @var DavService $davService */
-		$davService = $container->get(DavService::class);
-
-		$event = OC::$server->getEventDispatcher();
-		$event->addListener(ManagerEvent::EVENT_APP_ENABLE, [$davService, 'onAppEnabled']);
-		$event->addListener('\OCA\DAV\CardDAV\CardDavBackend::createCard', [$davService, 'onCreateCard']);
-		$event->addListener('\OCA\DAV\CardDAV\CardDavBackend::updateCard', [$davService, 'onUpdateCard']);
-		$event->addListener('\OCA\DAV\CardDAV\CardDavBackend::deleteCard', [$davService, 'onDeleteCard']);
-	}
-
-
-	/**
-	 * @param IServerContainer $container
-	 */
-	public function registerFilesPlugin(IServerContainer $container) {
-		$eventDispatcher = $container->getEventDispatcher();
-		$eventDispatcher->addListener(
-			'OCA\Files::loadAdditionalScripts',
-			function () {
-				Util::addScript('circles', 'files/circles.files.app');
-				Util::addScript('circles', 'files/circles.files.list');
-
-				Util::addStyle('circles', 'files/circles.filelist');
-			}
-		);
-	}
-
-
-	/**
-	 *
-	 */
 	public function registerFilesNavigation() {
 		$appManager = FilesApp::getNavigationManager();
 		$appManager->add(

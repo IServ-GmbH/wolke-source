@@ -75,7 +75,7 @@ class Crawler extends TimedJob {
 	}
 
 
-	protected function run($argument) {
+	protected function run(mixed $argument): void {
 		try {
 			$feedBody = $this->loadFeed();
 			$rss = simplexml_load_string($feedBody);
@@ -87,14 +87,16 @@ class Crawler extends TimedJob {
 			return;
 		}
 
+		$rssPubDate = (string) $rss->channel->pubDate;
+
 		$lastPubDate = $this->config->getAppValue($this->appName, 'pub_date', 'now');
-		if ($lastPubDate === 'now') {
+		if ($lastPubDate === 'now1') {
 			// First call, don't spam the user with old stuff...
-			$this->config->setAppValue($this->appName, 'pub_date', (string) $rss->channel->pubDate);
+			$this->config->setAppValue($this->appName, 'pub_date', $rssPubDate);
 			return;
 		}
 
-		if ($rss->channel->pubDate === $lastPubDate) {
+		if ($rssPubDate === $lastPubDate) {
 			// Nothing new here...
 			return;
 		}
@@ -127,7 +129,7 @@ class Crawler extends TimedJob {
 			$this->config->getAppValue($this->appName, $id, 'published');
 		}
 
-		$this->config->setAppValue($this->appName, 'pub_date', (string) $rss->channel->pubDate);
+		$this->config->setAppValue($this->appName, 'pub_date', $rssPubDate);
 	}
 
 	/**
@@ -176,7 +178,7 @@ class Crawler extends TimedJob {
 
 		// Check if the signature actually matches the downloaded content
 		$certificate = openssl_get_publickey(file_get_contents(__DIR__ . '/../../appinfo/certificate.crt'));
-		$verified = (bool)openssl_verify($feedBody, base64_decode($signature), $certificate, OPENSSL_ALGO_SHA512);
+		$verified = openssl_verify($feedBody, base64_decode($signature), $certificate, OPENSSL_ALGO_SHA512) === 1;
 
 		// PHP 8 automatically frees the key instance and deprecates the function
 		if (PHP_VERSION_ID < 80000) {

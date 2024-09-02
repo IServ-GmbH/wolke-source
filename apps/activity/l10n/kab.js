@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Ulac armud",
     "More activities" : "Ugar n yirmad",
     "Daily activity summary for %s" : "Agzul n urmud n yal ass i %s",
-    "_and %n more _::_and %n more _" : ["akked %n nniḍen","akked %n nniḍen "],
     "All activities" : "Akk irmuden",
     "By others" : "Sɣur wiyaḍ",
     "By you" : "Sɣur-k",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Azul %s",
     "Hello %s," : "Azul %s,",
     "There was some activity at %s" : "Yella yiwen n urmud deg %s",
+    "_and %n more _::_and %n more _" : ["akked %n nniḍen","akked %n nniḍen "],
     "Mail" : "Tirawt",
     "Push" : "Degger",
     "Activity" : "Armud",
@@ -45,14 +45,6 @@ OC.L10N.register(
     "Default settings" : "Iɣewwaren n lexṣas",
     "Configure the default notification settings for new accounts." : "Sesteb iɣewwaren n yilɣa imezwer i yimiḍanen imaynuten.",
     "Unable to save the settings" : "D awezɣi ad ttwaskelsen yiɣewwaren",
-    "No more events to load" : "Dayen ulac ineḍruyen ara yettwazedmen",
-    "Copied!" : "Yenɣel!",
-    "Not supported!" : "Ur yettusefrak ara!",
-    "Press ⌘-C to copy." : "Senned ɣef ⌘-C akken ad tneɣleḍ.",
-    "Press Ctrl-C to copy." : "Senned ɣef Ctrl-C akken ad tneɣleḍ.",
-    "{name} (invisible)" : "{isem} (uffir)",
-    "{name} (restricted)" : "{isem} (yegdel)",
-    "There are no events for this filter" : "Ulac ineḍruyen i testayt-agi",
-    "Activities" : "Irmuden"
+    "No more events to load" : "Dayen ulac ineḍruyen ara yettwazedmen"
 },
 "nplurals=2; plural=(n != 1);");

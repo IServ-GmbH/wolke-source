@@ -25,6 +25,7 @@ declare(strict_types=1);
 use OCA\ServerInfo\Resources\Disk;
 use OCA\ServerInfo\Resources\Memory;
 use OCA\ServerInfo\Resources\NetInterface;
+use OCA\ServerInfo\Resources\ThermalZone;
 use OCP\Util;
 
 script('serverinfo', 'script');
@@ -43,12 +44,18 @@ function FormatMegabytes(int $byte): string {
 	return number_format($byte, 2, '.', '.') . ' ' . $unim[$count];
 }
 
+/** @var array $_ */
+
 /** @var Memory $memory */
 $memory = $_['memory'];
 /** @var Disk[] $disks */
 $disks = $_['diskinfo'];
 /** @var NetInterface[] $interfaces */
 $interfaces = $_['networkinterfaces'];
+/** @var ThermalZone[] $thermalZones */
+$thermalZones = $_['thermalzones'];
+/** @var bool $phpinfo */
+$phpinfo = $_['phpinfo'];
 
 ?>
 
@@ -76,6 +83,7 @@ $interfaces = $_['networkinterfaces'];
 				<p><?php p($l->t('Uptime:')); ?> <strong id="numFilesStorage"><span class="info" id="uptime"></span></strong></p>
 			</div>
 
+			<?php if (count($thermalZones) > 0): ?>
 			<div class="col col-6 col-l-12">
 				<h2>
 					<img class="infoicon" src="<?php p(image_path('serverinfo', 'app-dark.svg')); ?>">
@@ -86,16 +94,17 @@ $interfaces = $_['networkinterfaces'];
 						<thead>
 						</thead>
 						<tbody>
-						<?php foreach ($_['thermalzones'] as $thermalzone): ?>
+						<?php foreach ($thermalZones as $thermalZone): ?>
 						<tr>
-							<td><?php p($thermalzone['type'] . ':') ?></td>
-							<td><span class="info" id="<?php p($thermalzone['hash']) ?>"></span>°C</td>
+							<td><?php p($thermalZone->getType()) ?>:</td>
+							<td>&nbsp;<span class="info" id="<?php p($thermalZone->getZone()) ?>"><?php p($thermalZone->getTemp()) ?></span>°C</td>
 						</tr>
 						<?php endforeach; ?>
 						</tbody>
 					</table>
 				</div>
 			</div>
+			<?php endif; ?>
 		</div>
 	</div>
 
@@ -354,9 +363,18 @@ $interfaces = $_['networkinterfaces'];
 							<em id="phpUploadMaxSize"><?php p($_['php']['upload_max_filesize']); ?></em>
 						</p>
 						<p>
+							<?php p($l->t('OPcache Revalidate Frequency:')); ?>
+							<em id="phpOpcacheRevalidateFreq"><?php p($_['php']['opcache_revalidate_freq']); ?></em>
+						</p>
+						<p>
 							<?php p($l->t('Extensions:')); ?>
 							<em id="phpExtensions"><?php p($_['php']['extensions'] !== null ? implode(', ', $_['php']['extensions']) : $l->t('Unable to list extensions')); ?></em>
 						</p>
+						<?php if ($phpinfo): ?>
+						<p>
+							<a target="_blank" href="<?= $_['phpinfoUrl'] ?>"><?php p($l->t('Show phpinfo')) ?></a>
+						</p>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
@@ -407,8 +425,12 @@ $interfaces = $_['networkinterfaces'];
 						<label for="format_json"><?php p($l->t('Output in JSON')) ?></label>
 					</div>
 					<div class="monitoring-url-param">
-						<input type="checkbox" class="update-monitoring-endpoint-url" name="skip_apps" id="skip_apps">
-						<label for="skip_apps"><?php p($l->t('Skip app updates (including app updates will send an external request to the app store)')) ?></label>
+						<input type="checkbox" class="update-monitoring-endpoint-url" name="skip_apps" id="skip_apps" checked>
+						<label for="skip_apps"><?php p($l->t('Skip apps section (including apps section will send an external request to the app store)')) ?></label>
+					</div>
+					<div class="monitoring-url-param">
+						<input type="checkbox" class="update-monitoring-endpoint-url" name="skip_update" id="skip_update" checked>
+						<label for="skip_update"><?php p($l->t('Skip server update')) ?></label>
 					</div>
 				</div>
 

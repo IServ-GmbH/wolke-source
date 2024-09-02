@@ -3,18 +3,21 @@
 namespace OCA\Photos\Listener;
 
 use OCA\Photos\Album\AlbumMapper;
-use OCP\Files\File;
-use OCP\Files\Folder;
-use OCP\Files\Node;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\Events\Node\NodeDeletedEvent;
+use OCP\Files\File;
+use OCP\Files\Folder;
+use OCP\Files\Node;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\Share\Events\ShareDeletedEvent;
 use OCP\User\Events\UserDeletedEvent;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @template-implements IEventListener<Event|NodeDeletedEvent|GroupDeletedEvent|ShareDeletedEvent|UserDeletedEvent>
+ */
 class AlbumsManagementEventListener implements IEventListener {
 	private AlbumMapper $albumMapper;
 	private LoggerInterface $logger;
@@ -46,6 +49,11 @@ class AlbumsManagementEventListener implements IEventListener {
 			$albums = $this->albumMapper->getForUser($event->getUser()->getUID());
 			foreach ($albums as $album) {
 				$this->albumMapper->delete($album->getId());
+			}
+
+			$sharedAlbums = $this->albumMapper->getSharedAlbumsForCollaborator($event->getUser()->getUID(), AlbumMapper::TYPE_USER);
+			foreach ($sharedAlbums as $album) {
+				$this->albumMapper->deleteUserFromAlbumCollaboratorsList($event->getUser()->getUID(), $album->getId());
 			}
 		} elseif ($event instanceof ShareDeletedEvent) {
 			$receiverId = $event->getShare()->getSharedWith();

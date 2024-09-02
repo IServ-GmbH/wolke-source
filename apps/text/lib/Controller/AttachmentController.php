@@ -87,7 +87,7 @@ class AttachmentController extends ApiController implements ISessionAwareControl
 	#[PublicPage]
 	#[RequireDocumentSessionOrUserOrShareToken]
 	public function getAttachmentList(?string $shareToken = null): DataResponse {
-		$documentId = $this->getDocument()->getId();
+		$documentId = $this->getDocumentId();
 		try {
 			$session = $this->getSession();
 		} catch (InvalidSessionException) {
@@ -184,6 +184,10 @@ class AttachmentController extends ApiController implements ISessionAwareControl
 
 	/**
 	 * Serve the image files in the editor
+	 *
+	 * @return DataDownloadResponse|DataResponse
+	 *
+	 * @psalm-return DataDownloadResponse<200, string, array<never, never>>|DataResponse<404, '', array<never, never>>
 	 */
 	#[NoAdminRequired]
 	#[PublicPage]
@@ -191,7 +195,7 @@ class AttachmentController extends ApiController implements ISessionAwareControl
 	#[RequireDocumentSessionOrUserOrShareToken]
 	public function getImageFile(string $imageFileName, ?string $shareToken = null,
 		int $preferRawImage = 0): DataResponse|DataDownloadResponse {
-		$documentId = $this->getDocument()->getId();
+		$documentId = $this->getDocumentId();
 
 		try {
 			if ($shareToken) {
@@ -215,13 +219,17 @@ class AttachmentController extends ApiController implements ISessionAwareControl
 
 	/**
 	 * Serve the media files in the editor
+	 *
+	 * @return DataDownloadResponse|DataResponse
+	 *
+	 * @psalm-return DataDownloadResponse<200, string, array<never, never>>|DataResponse<404, '', array<never, never>>
 	 */
 	#[NoAdminRequired]
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[RequireDocumentSessionOrUserOrShareToken]
 	public function getMediaFile(string $mediaFileName, ?string $shareToken = null): DataResponse|DataDownloadResponse {
-		$documentId = $this->getDocument()->getId();
+		$documentId = $this->getDocumentId();
 
 		try {
 			if ($shareToken) {
@@ -252,7 +260,7 @@ class AttachmentController extends ApiController implements ISessionAwareControl
 	#[NoCSRFRequired]
 	#[RequireDocumentSessionOrUserOrShareToken]
 	public function getMediaFilePreview(string $mediaFileName, ?string $shareToken = null) {
-		$documentId = $this->getDocument()->getId();
+		$documentId = $this->getDocumentId();
 
 		try {
 			if ($shareToken) {

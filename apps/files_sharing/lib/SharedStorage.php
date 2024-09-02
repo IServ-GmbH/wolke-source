@@ -37,24 +37,25 @@ use OC\Files\Cache\NullWatcher;
 use OC\Files\Cache\Watcher;
 use OC\Files\ObjectStore\HomeObjectStoreStorage;
 use OC\Files\Storage\Common;
-use OC\Files\Storage\Home;
-use OC\User\DisplayNameCache;
-use OCP\Files\Folder;
-use OCP\Files\IHomeStorage;
-use OCP\Files\Node;
 use OC\Files\Storage\FailedStorage;
+use OC\Files\Storage\Home;
 use OC\Files\Storage\Wrapper\PermissionsMask;
 use OC\Files\Storage\Wrapper\Wrapper;
+use OC\User\DisplayNameCache;
 use OC\User\NoUserException;
 use OCA\Files_External\Config\ExternalMountPoint;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
+use OCP\Files\Folder;
+use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IDisableEncryptionStorage;
 use OCP\Files\Storage\IStorage;
 use OCP\Lock\ILockingProvider;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 /**
  * Convert target path to source path and pass the function call to the correct storage provider
@@ -81,10 +82,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	/** @var string */
 	private $user;
 
-	/**
-	 * @var \OCP\ILogger
-	 */
-	private $logger;
+	private LoggerInterface $logger;
 
 	/** @var  IStorage */
 	private $nonMaskedStorage;
@@ -99,17 +97,17 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 	private string $sourcePath = '';
 
-	private static int $initDepth = 0;
-
 	/**
 	 * @psalm-suppress NonInvariantDocblockPropertyType
 	 * @var ?\OC\Files\Storage\Storage $storage
 	 */
 	protected $storage;
 
+	private static int $initDepth = 0;
+
 	public function __construct($arguments) {
 		$this->ownerView = $arguments['ownerView'];
-		$this->logger = \OC::$server->getLogger();
+		$this->logger = \OC::$server->get(LoggerInterface::class);
 
 		$this->superShare = $arguments['superShare'];
 		$this->groupedShares = $arguments['groupedShares'];
@@ -173,19 +171,29 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 			$this->ownerUserFolder = $rootFolder->getUserFolder($this->superShare->getShareOwner());
 			$sourceId = $this->superShare->getNodeId();
 			$ownerNodes = $this->ownerUserFolder->getById($sourceId);
-			/** @var Node|false $ownerNode */
-			$ownerNode = current($ownerNodes);
-			if (!$ownerNode) {
+
+			if (count($ownerNodes) === 0) {
 				$this->storage = new FailedStorage(['exception' => new NotFoundException("File by id $sourceId not found")]);
 				$this->cache = new FailedCache();
 				$this->rootPath = '';
 			} else {
-				if ($this->nonMaskedStorage instanceof Wrapper && $this->nonMaskedStorage->isWrapperOf($this)) {
+				foreach ($ownerNodes as $ownerNode) {
+					$nonMaskedStorage = $ownerNode->getStorage();
+
+					// check if potential source node would lead to a recursive share setup
+					if ($nonMaskedStorage instanceof Wrapper && $nonMaskedStorage->isWrapperOf($this)) {
+						continue;
+					}
+					$this->nonMaskedStorage = $nonMaskedStorage;
+					$this->sourcePath = $ownerNode->getPath();
+					$this->rootPath = $ownerNode->getInternalPath();
+					$this->cache = null;
+					break;
+				}
+				if (!$this->nonMaskedStorage) {
+					// all potential source nodes would have been recursive
 					throw new \Exception('recursive share detected');
 				}
-				$this->nonMaskedStorage = $ownerNode->getStorage();
-				$this->sourcePath = $ownerNode->getPath();
-				$this->rootPath = $ownerNode->getInternalPath();
 				$this->storage = new PermissionsMask([
 					'storage' => $this->nonMaskedStorage,
 					'mask' => $this->superShare->getPermissions(),
@@ -205,7 +213,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 			$this->storage = new FailedStorage(['exception' => $e]);
 			$this->cache = new FailedCache();
 			$this->rootPath = '';
-			$this->logger->logException($e);
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
 		if (!$this->nonMaskedStorage) {

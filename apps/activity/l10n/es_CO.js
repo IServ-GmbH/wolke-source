@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "No hay actividades",
     "More activities" : "Más actividades",
     "Daily activity summary for %s" : "Resumen de actividad diaria para 1%s",
-    "_and %n more _::_and %n more _" : ["y %n más","y %n más","y %n más"],
     "All activities" : "Todas las actividades",
     "By others" : "Por otros",
     "By you" : "Por usted",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Hola %s",
     "Hello %s," : "Hola %s,",
     "There was some activity at %s" : "Se tuvo algo de actividad en %s",
+    "_and %n more _::_and %n more _" : ["y %n más","y %n más","y %n más"],
     "Mail" : "Correo",
     "Push" : "Notificación",
     "Activity" : "Actividad",
@@ -56,14 +56,6 @@ OC.L10N.register(
     "Default settings" : "Configuraciones predeterminadas",
     "Configure the default notification settings for new accounts." : "Configure los ajustes de notificación predeterminados para nuevas cuentas de usuario.",
     "Unable to save the settings" : "No se ha podido guardar la configuración",
-    "No more events to load" : "No hay más eventos por cargar",
-    "Copied!" : "¡Copiado!",
-    "Not supported!" : "¡No soportado!",
-    "Press ⌘-C to copy." : "Presiona ⌘-C para copiar.",
-    "Press Ctrl-C to copy." : "Presiona Ctrl-C para copiar.",
-    "{name} (invisible)" : "{name} (invisible)",
-    "{name} (restricted)" : "{name} (restringido)",
-    "There are no events for this filter" : "No hay eventos para este filtro",
-    "Activities" : "Actividades"
+    "No more events to load" : "No hay más eventos por cargar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

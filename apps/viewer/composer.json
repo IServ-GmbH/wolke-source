@@ -4,7 +4,7 @@
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "8.0"
+			"php": "8.0.2"
 		}
 	},
 	"scripts": {
@@ -19,7 +19,7 @@
 	"require-dev": {
 		"nextcloud/coding-standard": "^1.0.0",
 		"phpunit/phpunit": "^9",
-		"vimeo/psalm": "^4.3.2",
-		"nextcloud/ocp": "dev-stable27"
+		"vimeo/psalm": "^5.15.0",
+		"nextcloud/ocp": "dev-stable28"
 	}
 }

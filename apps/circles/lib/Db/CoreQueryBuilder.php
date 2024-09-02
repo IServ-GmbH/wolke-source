@@ -369,7 +369,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	 * @param array $files
 	 */
 	public function limitToFileSourceArray(array $files): void {
-		$this->limitArray('file_source', $files);
+		$this->limitInArray('file_source', $files, type: IQueryBuilder::PARAM_INT_ARRAY);
 	}
 
 
@@ -1346,8 +1346,10 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$aliasMembershipCircle = $this->generateAlias($aliasMembership, self::CONFIG, $options);
 		$levelCheck = [$aliasMembership];
 
+		$directMember = '';
 		if ($this->getBool('initiatorDirectMember', $options, false)) {
-			array_push($levelCheck, $this->generateAlias($alias, self::DIRECT_INITIATOR, $options));
+			$directMember = $this->generateAlias($alias, self::DIRECT_INITIATOR, $options);
+			array_push($levelCheck, $directMember);
 		}
 
 		$expr = $this->expr();
@@ -1395,6 +1397,13 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		}
 		$orX->add($andXMember);
 
+		if ($directMember !== '' && $this->getBool('allowRequestingMembership', $options, false)) {
+			$orX->add($expr->orX(
+				$this->exprLimit('status', Member::STATUS_REQUEST, $directMember),
+				$this->exprLimit('status', Member::STATUS_INVITED, $directMember)
+			));
+		}
+
 		if ($minimumLevel === 0 && $alias === self::CIRCLE) {
 			$orX->add($this->exprLimitBitwise('config', Circle::CFG_VISIBLE, $alias));
 		}
@@ -1424,22 +1433,6 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$this->andWhere($orX);
 
 		return $orX;
-//		$orTypes = $this->generateLimit($qb, $circleUniqueId, $userId, $type, $name, $forceAll);
-//		if (sizeof($orTypes) === 0) {
-//			throw new ConfigNoCircleAvailableException(
-//				$this->l10n->t(
-//					'You cannot use the Circles Application until your administrator has allowed at least one type of circles'
-//				)
-//			);
-//		}
-
-//		$orXTypes = $this->expr()
-//						 ->orX();
-//		foreach ($orTypes as $orType) {
-//			$orXTypes->add($orType);
-//		}
-//
-//		$qb->andWhere($orXTypes);
 	}
 
 
@@ -1564,16 +1557,24 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	 * @param FederatedUser $federatedUser
 	 * @param bool $reshares
 	 */
-	public function limitToShareOwner(string $alias, FederatedUser $federatedUser, bool $reshares): void {
+	public function limitToShareOwner(
+		string $alias,
+		FederatedUser $federatedUser,
+		bool $reshares,
+		int $nodeId = 0
+	): void {
 		$expr = $this->expr();
 
-		$orX = $expr->orX($this->exprLimit('uid_initiator', $federatedUser->getUserId(), $alias));
-
-		if ($reshares) {
-			$orX->add($this->exprLimit('uid_owner', $federatedUser->getUserId(), $alias));
+		if ($reshares === false) {
+			$this->andWhere($this->exprLimit('uid_initiator', $federatedUser->getUserId(), $alias));
+		} elseif ($nodeId === 0) {
+			$this->andWhere(
+				$expr->orX(
+					$this->exprLimit('uid_owner', $federatedUser->getUserId(), $alias),
+					$this->exprLimit('uid_initiator', $federatedUser->getUserId(), $alias)
+				)
+			);
 		}
-
-		$this->andWhere($orX);
 	}
 
 

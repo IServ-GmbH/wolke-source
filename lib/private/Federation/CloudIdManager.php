@@ -81,7 +81,7 @@ class CloudIdManager implements ICloudIdManager {
 		if ($event instanceof CardUpdatedEvent) {
 			$data = $event->getCardData()['carddata'];
 			foreach (explode("\r\n", $data) as $line) {
-				if (strpos($line, "CLOUD;") === 0) {
+				if (str_starts_with($line, "CLOUD;")) {
 					$parts = explode(':', $line, 2);
 					if (isset($parts[1])) {
 						$key = $parts[1];
@@ -247,6 +247,6 @@ class CloudIdManager implements ICloudIdManager {
 	 * @return bool
 	 */
 	public function isValidCloudId(string $cloudId): bool {
-		return strpos($cloudId, '@') !== false;
+		return str_contains($cloudId, '@');
 	}
 }

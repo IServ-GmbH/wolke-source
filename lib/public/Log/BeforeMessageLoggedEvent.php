@@ -28,7 +28,7 @@ use OCP\EventDispatcher\Event;
 /**
  * Even for when a log item is being logged
  *
- * @since 27.0.1
+ * @since 28.0.0
  */
 class BeforeMessageLoggedEvent extends Event {
 	private int $level;
@@ -36,9 +36,12 @@ class BeforeMessageLoggedEvent extends Event {
 	private $message;
 
 	/**
-	 * @since 27.0.1
+	 * @param string $app
+	 * @param int $level
+	 * @param array $message
+	 * @since 28.0.0
 	 */
-	public function __construct(string $app, int $level, $message) {
+	public function __construct(string $app, int $level, array $message) {
 		$this->level = $level;
 		$this->app = $app;
 		$this->message = $message;
@@ -48,7 +51,7 @@ class BeforeMessageLoggedEvent extends Event {
 	 * Get the level of the log item
 	 *
 	 * @return int
-	 * @since 27.0.1
+	 * @since 28.0.0
 	 */
 	public function getLevel(): int {
 		return $this->level;
@@ -59,7 +62,7 @@ class BeforeMessageLoggedEvent extends Event {
 	 * Get the app context of the log item
 	 *
 	 * @return string
-	 * @since 27.0.1
+	 * @since 28.0.0
 	 */
 	public function getApp(): string {
 		return $this->app;
@@ -70,7 +73,7 @@ class BeforeMessageLoggedEvent extends Event {
 	 * Get the message of the log item
 	 *
 	 * @return array
-	 * @since 27.0.1
+	 * @since 28.0.0
 	 */
 	public function getMessage(): array {
 		return $this->message;

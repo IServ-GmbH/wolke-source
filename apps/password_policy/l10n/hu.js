@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Minimális jelszóhossz",
     "User password history" : "Felhasználói jelszó előzményei",
     "Number of days until user password expires" : "A felhasználói jelszó lejártáig eltelt napok száma",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "A felhasználói fiók blokkolása előtti bejelentkezési kísérletek száma (0: korlátozás nélkül)",
     "Forbid common passwords" : "Gyakori jelszavak tiltása",
     "Enforce upper and lower case characters" : "Nagy- és kisbetűs karakterek megkövetelése",
     "Enforce numeric characters" : "Numerikus karakterek megkövetelése",
@@ -28,8 +27,6 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "A lejárat napjainak számának nem negatív számnak kell lennie",
     "Maximum login attempts have to be a non negative number" : "A maximális bejelentkezési kísérletnek nem negatív számnak kell lennie",
     "Settings saved" : "Beállítások mentve",
-    "Error while saving settings" : "Hiba a beállítások mentése során",
-    "Saved" : "Mentve",
-    "Error while saving" : "Hiba a mentés során"
+    "Error while saving settings" : "Hiba a beállítások mentése során"
 },
 "nplurals=2; plural=(n != 1);");

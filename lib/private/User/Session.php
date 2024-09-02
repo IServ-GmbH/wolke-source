@@ -39,21 +39,25 @@
 namespace OC\User;
 
 use OC;
-use OC\Authentication\Exceptions\ExpiredTokenException;
-use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Exceptions\PasswordlessTokenException;
 use OC\Authentication\Exceptions\PasswordLoginForbiddenException;
 use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
+use OC\Authentication\Token\PublicKeyToken;
 use OC\Hooks\Emitter;
 use OC\Hooks\PublicEmitter;
 use OC_User;
 use OC_Util;
 use OCA\DAV\Connector\Sabre\Auth;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Authentication\Exceptions\ExpiredTokenException;
+use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUser;
@@ -63,9 +67,9 @@ use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\ISecureRandom;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 use OCP\User\Events\PostLoginEvent;
+use OCP\User\Events\UserFirstTimeLoggedInEvent;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Class Session
@@ -90,53 +94,22 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @package OC\User
  */
 class Session implements IUserSession, Emitter {
-	/** @var Manager $manager */
-	private $manager;
-
-	/** @var ISession $session */
-	private $session;
-
-	/** @var ITimeFactory */
-	private $timeFactory;
-
-	/** @var IProvider */
-	private $tokenProvider;
-
-	/** @var IConfig */
-	private $config;
+	use TTransactional;
 
 	/** @var User $activeUser */
 	protected $activeUser;
 
-	/** @var ISecureRandom */
-	private $random;
-
-	/** @var ILockdownManager  */
-	private $lockdownManager;
-
-	private LoggerInterface $logger;
-	/** @var IEventDispatcher */
-	private $dispatcher;
-
-	public function __construct(Manager $manager,
-								ISession $session,
-								ITimeFactory $timeFactory,
-								?IProvider $tokenProvider,
-								IConfig $config,
-								ISecureRandom $random,
-								ILockdownManager $lockdownManager,
-								LoggerInterface $logger,
-								IEventDispatcher $dispatcher
+	public function __construct(
+		private Manager          $manager,
+		private ISession         $session,
+		private ITimeFactory     $timeFactory,
+		private ?IProvider       $tokenProvider,
+		private IConfig          $config,
+		private ISecureRandom    $random,
+		private ILockdownManager $lockdownManager,
+		private LoggerInterface  $logger,
+		private IEventDispatcher $dispatcher,
 	) {
-		$this->manager = $manager;
-		$this->session = $session;
-		$this->timeFactory = $timeFactory;
-		$this->tokenProvider = $tokenProvider;
-		$this->config = $config;
-		$this->random = $random;
-		$this->lockdownManager = $lockdownManager;
-		$this->logger = $logger;
-		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -206,6 +179,15 @@ class Session implements IUserSession, Emitter {
 		} else {
 			$this->session->set('user_id', $user->getUID());
 		}
+		$this->activeUser = $user;
+	}
+
+	/**
+	 * Temporarily set the currently active user without persisting in the session
+	 *
+	 * @param IUser|null $user
+	 */
+	public function setVolatileActiveUser(?IUser $user): void {
 		$this->activeUser = $user;
 	}
 
@@ -418,15 +400,15 @@ class Session implements IUserSession, Emitter {
 	 * @param string $user
 	 * @param string $password
 	 * @param IRequest $request
-	 * @param OC\Security\Bruteforce\Throttler $throttler
+	 * @param IThrottler $throttler
 	 * @throws LoginException
 	 * @throws PasswordLoginForbiddenException
 	 * @return boolean
 	 */
 	public function logClientIn($user,
-								$password,
-								IRequest $request,
-								OC\Security\Bruteforce\Throttler $throttler) {
+		$password,
+		IRequest $request,
+		IThrottler $throttler) {
 		$remoteAddress = $request->getRemoteAddress();
 		$currentDelay = $throttler->sleepDelayOrThrowOnMax($remoteAddress, 'login');
 
@@ -571,7 +553,8 @@ class Session implements IUserSession, Emitter {
 			}
 
 			// trigger any other initialization
-			\OC::$server->getEventDispatcher()->dispatch(IUser::class . '::firstLogin', new GenericEvent($this->getUser()));
+			\OC::$server->get(IEventDispatcher::class)->dispatch(IUser::class . '::firstLogin', new GenericEvent($this->getUser()));
+			\OC::$server->get(IEventDispatcher::class)->dispatchTyped(new UserFirstTimeLoggedInEvent($this->getUser()));
 		}
 	}
 
@@ -580,11 +563,11 @@ class Session implements IUserSession, Emitter {
 	 *
 	 * @todo do not allow basic auth if the user is 2FA enforced
 	 * @param IRequest $request
-	 * @param OC\Security\Bruteforce\Throttler $throttler
+	 * @param IThrottler $throttler
 	 * @return boolean if the login was successful
 	 */
 	public function tryBasicAuthLogin(IRequest $request,
-									  OC\Security\Bruteforce\Throttler $throttler) {
+		IThrottler $throttler) {
 		if (!empty($request->server['PHP_AUTH_USER']) && !empty($request->server['PHP_AUTH_PW'])) {
 			try {
 				if ($this->logClientIn($request->server['PHP_AUTH_USER'], $request->server['PHP_AUTH_PW'], $request, $throttler)) {
@@ -692,8 +675,10 @@ class Session implements IUserSession, Emitter {
 			$sessionId = $this->session->getId();
 			$pwd = $this->getPassword($password);
 			// Make sure the current sessionId has no leftover tokens
-			$this->tokenProvider->invalidateToken($sessionId);
-			$this->tokenProvider->generateToken($sessionId, $uid, $loginName, $pwd, $name, IToken::TEMPORARY_TOKEN, $remember);
+			$this->atomic(function () use ($sessionId, $uid, $loginName, $pwd, $name, $remember) {
+				$this->tokenProvider->invalidateToken($sessionId);
+				$this->tokenProvider->generateToken($sessionId, $uid, $loginName, $pwd, $name, IToken::TEMPORARY_TOKEN, $remember);
+			}, \OCP\Server::get(IDBConnection::class));
 			return true;
 		} catch (SessionNotAvailableException $ex) {
 			// This can happen with OCC, where a memory session is used
@@ -755,8 +740,6 @@ class Session implements IUserSession, Emitter {
 				return false;
 			}
 
-			$dbToken->setLastCheck($now);
-			$this->tokenProvider->updateToken($dbToken);
 			return true;
 		}
 
@@ -774,6 +757,9 @@ class Session implements IUserSession, Emitter {
 		}
 
 		$dbToken->setLastCheck($now);
+		if ($dbToken instanceof PublicKeyToken) {
+			$dbToken->setLastActivity($now);
+		}
 		$this->tokenProvider->updateToken($dbToken);
 		return true;
 	}
@@ -849,7 +835,7 @@ class Session implements IUserSession, Emitter {
 	 */
 	public function tryTokenLogin(IRequest $request) {
 		$authHeader = $request->getHeader('Authorization');
-		if (strpos($authHeader, 'Bearer ') === 0) {
+		if (str_starts_with($authHeader, 'Bearer ')) {
 			$token = substr($authHeader, 7);
 		} elseif ($request->getCookie($this->config->getSystemValueString('instanceid')) !== null) {
 			// No auth header, let's try session id, but only if this is an existing

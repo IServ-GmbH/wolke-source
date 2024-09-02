@@ -41,15 +41,16 @@
 namespace OC\Files\Cache;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use OC\DB\Exceptions\DbalException;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OC\Files\Storage\Wrapper\Encryption;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Cache\CacheEntryInsertedEvent;
+use OCP\Files\Cache\CacheEntryRemovedEvent;
 use OCP\Files\Cache\CacheEntryUpdatedEvent;
 use OCP\Files\Cache\CacheInsertEvent;
-use OCP\Files\Cache\CacheEntryRemovedEvent;
 use OCP\Files\Cache\CacheUpdateEvent;
 use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\ICacheEntry;
@@ -59,6 +60,7 @@ use OCP\Files\Search\ISearchComparison;
 use OCP\Files\Search\ISearchOperator;
 use OCP\Files\Search\ISearchQuery;
 use OCP\Files\Storage\IStorage;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IDBConnection;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
@@ -125,14 +127,15 @@ class Cache implements ICache {
 		$this->mimetypeLoader = \OC::$server->getMimeTypeLoader();
 		$this->connection = \OC::$server->getDatabaseConnection();
 		$this->eventDispatcher = \OC::$server->get(IEventDispatcher::class);
-		$this->querySearchHelper = \OC::$server->query(QuerySearchHelper::class);
+		$this->querySearchHelper = \OCP\Server::get(QuerySearchHelper::class);
 	}
 
 	protected function getQueryBuilder() {
 		return new CacheQueryBuilder(
 			$this->connection,
 			\OC::$server->getSystemConfig(),
-			\OC::$server->get(LoggerInterface::class)
+			\OC::$server->get(LoggerInterface::class),
+			\OC::$server->get(IFilesMetadataManager::class),
 		);
 	}
 
@@ -154,6 +157,7 @@ class Cache implements ICache {
 	public function get($file) {
 		$query = $this->getQueryBuilder();
 		$query->selectFileCache();
+		$metadataQuery = $query->selectMetadata();
 
 		if (is_string($file) || $file == '') {
 			// normalize file
@@ -175,6 +179,7 @@ class Cache implements ICache {
 		} elseif (!$data) {
 			return $data;
 		} else {
+			$data['metadata'] = $metadataQuery?->extractMetadata($data)->asArray() ?? [];
 			return self::cacheEntryFromData($data, $this->mimetypeLoader);
 		}
 	}
@@ -239,11 +244,14 @@ class Cache implements ICache {
 				->whereParent($fileId)
 				->orderBy('name', 'ASC');
 
+			$metadataQuery = $query->selectMetadata();
+
 			$result = $query->execute();
 			$files = $result->fetchAll();
 			$result->closeCursor();
 
-			return array_map(function (array $data) {
+			return array_map(function (array $data) use ($metadataQuery) {
+				$data['metadata'] = $metadataQuery?->extractMetadata($data)->asArray() ?? [];
 				return self::cacheEntryFromData($data, $this->mimetypeLoader);
 			}, $files);
 		}
@@ -447,7 +455,7 @@ class Cache implements ICache {
 		$params = [];
 		$extensionParams = [];
 		foreach ($data as $name => $value) {
-			if (array_search($name, $fields) !== false) {
+			if (in_array($name, $fields)) {
 				if ($name === 'path') {
 					$params['path_hash'] = md5($value);
 				} elseif ($name === 'mimetype') {
@@ -467,7 +475,7 @@ class Cache implements ICache {
 				}
 				$params[$name] = $value;
 			}
-			if (array_search($name, $extensionFields) !== false) {
+			if (in_array($name, $extensionFields)) {
 				$extensionParams[$name] = $value;
 			}
 		}
@@ -564,19 +572,6 @@ class Cache implements ICache {
 	}
 
 	/**
-	 * Get all sub folders of a folder
-	 *
-	 * @param ICacheEntry $entry the cache entry of the folder to get the subfolders for
-	 * @return ICacheEntry[] the cache entries for the subfolders
-	 */
-	private function getSubFolders(ICacheEntry $entry) {
-		$children = $this->getFolderContentsById($entry->getId());
-		return array_filter($children, function ($child) {
-			return $child->getMimeType() == FileInfo::MIMETYPE_FOLDER;
-		});
-	}
-
-	/**
 	 * Remove all children of a folder
 	 *
 	 * @param ICacheEntry $entry the cache entry of the folder to remove the children of
@@ -628,6 +623,9 @@ class Cache implements ICache {
 		$query->delete('filecache')
 			->whereParentInParameter('parentIds');
 
+		// Sorting before chunking allows the db to find the entries close to each
+		// other in the index
+		sort($parentIds, SORT_NUMERIC);
 		foreach (array_chunk($parentIds, 1000) as $parentIdChunk) {
 			$query->setParameter('parentIds', $parentIdChunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$query->execute();
@@ -701,10 +699,14 @@ class Cache implements ICache {
 				throw new \Exception('Invalid target storage id: ' . $targetStorageId);
 			}
 
-			$this->connection->beginTransaction();
 			if ($sourceData['mimetype'] === 'httpd/unix-directory') {
 				//update all child entries
 				$sourceLength = mb_strlen($sourcePath);
+
+				$childIds = $this->getChildIds($sourceStorageId, $sourcePath);
+
+				$childChunks = array_chunk($childIds, 1000);
+
 				$query = $this->connection->getQueryBuilder();
 
 				$fun = $query->func();
@@ -717,19 +719,45 @@ class Cache implements ICache {
 					->set('path_hash', $fun->md5($newPathFunction))
 					->set('path', $newPathFunction)
 					->where($query->expr()->eq('storage', $query->createNamedParameter($sourceStorageId, IQueryBuilder::PARAM_INT)))
-					->andWhere($query->expr()->like('path', $query->createNamedParameter($this->connection->escapeLikeParameter($sourcePath) . '/%')));
+					->andWhere($query->expr()->in('fileid', $query->createParameter('files')));
 
 				// when moving from an encrypted storage to a non-encrypted storage remove the `encrypted` mark
 				if ($sourceCache->hasEncryptionWrapper() && !$this->hasEncryptionWrapper()) {
 					$query->set('encrypted', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT));
 				}
 
-				try {
-					$query->execute();
-				} catch (\OC\DatabaseException $e) {
-					$this->connection->rollBack();
-					throw $e;
+				// Retry transaction in case of RetryableException like deadlocks.
+				// Retry up to 4 times because we should receive up to 4 concurrent requests from the frontend
+				$retryLimit = 4;
+				for ($i = 1; $i <= $retryLimit; $i++) {
+					try {
+						$this->connection->beginTransaction();
+						foreach ($childChunks as $chunk) {
+							$query->setParameter('files', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
+							$query->executeStatement();
+						}
+						break;
+					} catch (\OC\DatabaseException $e) {
+						$this->connection->rollBack();
+						throw $e;
+					} catch (DbalException $e) {
+						$this->connection->rollBack();
+
+						if (!$e->isRetryable()) {
+							throw $e;
+						}
+
+						// Simply throw if we already retried 4 times.
+						if ($i === $retryLimit) {
+							throw $e;
+						}
+
+						// Sleep a bit to give some time to the other transaction to finish.
+						usleep(100 * 1000 * $i);
+					}
 				}
+			} else {
+				$this->connection->beginTransaction();
 			}
 
 			$query = $this->getQueryBuilder();
@@ -763,6 +791,15 @@ class Cache implements ICache {
 		} else {
 			$this->moveFromCacheFallback($sourceCache, $sourcePath, $targetPath);
 		}
+	}
+
+	private function getChildIds(int $storageId, string $path): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('fileid')
+			->from('filecache')
+			->where($query->expr()->eq('storage', $query->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->like('path', $query->createNamedParameter($this->connection->escapeLikeParameter($path) . '/%')));
+		return $query->executeQuery()->fetchAll(\PDO::FETCH_COLUMN);
 	}
 
 	/**
@@ -840,7 +877,7 @@ class Cache implements ICache {
 	 * @return ICacheEntry[] an array of cache entries where the mimetype matches the search
 	 */
 	public function searchByMime($mimetype) {
-		if (strpos($mimetype, '/') === false) {
+		if (!str_contains($mimetype, '/')) {
 			$operator = new SearchComparison(ISearchComparison::COMPARE_LIKE, 'mimetype', $mimetype . '/%');
 		} else {
 			$operator = new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $mimetype);

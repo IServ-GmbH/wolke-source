@@ -3,7 +3,7 @@
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
 # The default version specified here will be used by the CI pipeline.
-ARG VERSION=27.1.8
+ARG VERSION=28.0.9
 
 FROM git.iserv.eu:443/iserv/dependency_proxy/containers/alpine:3.20 AS patchstage
 ARG VERSION
@@ -36,7 +36,7 @@ RUN apt-get update \
 # Include required third-party apps in the image to avoid dependency on external network during runtime
 # https://apps.nextcloud.com/apps/user_saml
 RUN mkdir /iserv-apps \
-    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v5.2.0/user_saml-v5.2.0.tar.gz" \
+    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.2.0/user_saml-v6.2.0.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz
@@ -46,10 +46,7 @@ COPY ./theme /usr/src/nextcloud/themes/iserv
 # Contains config scripts
 COPY ./adds /
 
-# Copy added files
-COPY ./source/added /usr/src/nextcloud
-
-# Apply combined patches
+# Apply combined patches (will include added files)
 COPY --from=patchstage /*.patch /
 RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch

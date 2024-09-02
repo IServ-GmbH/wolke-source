@@ -139,9 +139,6 @@
 
 			this._setupEvents();
 
-			this._debouncedPersistShowHiddenFilesState = _.debounce(this._persistShowHiddenFilesState, 1200);
-			this._debouncedPersistCropImagePreviewsState = _.debounce(this._persistCropImagePreviewsState, 1200);
-
 			if (sessionStorage.getItem('WhatsNewServerCheck') < (Date.now() - 3600*1000)) {
 				OCP.WhatsNew.query(); // for Nextcloud server
 				sessionStorage.setItem('WhatsNewServerCheck', Date.now());
@@ -219,12 +216,10 @@
 		/**
 		 * Sets the currently active view
 		 * @param viewId view id
-		 * @param {Object} options options
-		 * @param {boolean} [options.silent=false] if true, the view will not be shown immediately
 		 */
-		setActiveView: function (viewId, { silent = false } = {}) {
+		setActiveView: function(viewId) {
 			// The Navigation API will handle the final event
-			window._nc_event_bus.emit('files:legacy-navigation:changed', { id: viewId, silent })
+			window._nc_event_bus.emit('files:legacy-navigation:changed', { id: viewId })
 		},
 
 		/**

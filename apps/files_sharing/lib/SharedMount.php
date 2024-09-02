@@ -29,11 +29,11 @@
 
 namespace OCA\Files_Sharing;
 
-use OCP\Cache\CappedMemoryCache;
 use OC\Files\Filesystem;
 use OC\Files\Mount\MountPoint;
 use OC\Files\Mount\MoveableMount;
 use OC\Files\View;
+use OCP\Cache\CappedMemoryCache;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Events\InvalidateMountCacheEvent;
 use OCP\Files\Storage\IStorageFactory;
@@ -117,8 +117,9 @@ class SharedMount extends MountPoint implements MoveableMount, ISharedMountPoint
 		$this->eventDispatcher->dispatchTyped($event);
 		$parent = $event->getParent();
 
-		if ($folderExistCache->hasKey($parent)) {
-			$parentExists = $folderExistCache->get($parent);
+		$cached = $folderExistCache->get($parent);
+		if ($cached) {
+			$parentExists = $cached;
 		} else {
 			$parentExists = $this->recipientView->is_dir($parent);
 			$folderExistCache->set($parent, $parentExists);

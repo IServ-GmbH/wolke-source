@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patching Nextcloud &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,11 +112,11 @@
            <div itemprop="articleBody">
              
   <section id="patching-nextcloud">
-<h1>Patching Nextcloud<a class="headerlink" href="#patching-nextcloud" title="Permalink to this headline"></a></h1>
+<h1>Patching Nextcloud<a class="headerlink" href="#patching-nextcloud" title="Link to this heading"></a></h1>
 <section id="applying-a-patch">
-<h2>Applying a patch<a class="headerlink" href="#applying-a-patch" title="Permalink to this headline"></a></h2>
+<h2>Applying a patch<a class="headerlink" href="#applying-a-patch" title="Link to this heading"></a></h2>
 <section id="patching-server">
-<h3>Patching server<a class="headerlink" href="#patching-server" title="Permalink to this headline"></a></h3>
+<h3>Patching server<a class="headerlink" href="#patching-server" title="Link to this heading"></a></h3>
 <ol class="arabic">
 <li><p>Navigate into your Nextcloud server’s root directory (contains the <code class="docutils literal notranslate"><span class="pre">status.php</span></code> file)</p></li>
 <li><p>Now apply the patch with the following command:</p>
@@ -123,7 +131,7 @@
 </div>
 </section>
 <section id="patching-apps">
-<h3>Patching apps<a class="headerlink" href="#patching-apps" title="Permalink to this headline"></a></h3>
+<h3>Patching apps<a class="headerlink" href="#patching-apps" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Navigate to the root of this app (mostly <code class="docutils literal notranslate"><span class="pre">apps/[APPID]/</span></code>), if you can not find the app there use the <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">occ</span> <span class="pre">app:getpath</span> <span class="pre">APPID</span></code> command to find the path.</p></li>
 <li><p>Now apply the patch with the same command as in <a class="reference internal" href="#patching-server">Patching server</a></p></li>
@@ -131,7 +139,7 @@
 </section>
 </section>
 <section id="reverting-a-patch">
-<h2>Reverting a patch<a class="headerlink" href="#reverting-a-patch" title="Permalink to this headline"></a></h2>
+<h2>Reverting a patch<a class="headerlink" href="#reverting-a-patch" title="Link to this heading"></a></h2>
 <ol class="arabic">
 <li><p>Navigate to the directory where you applied the patch.</p></li>
 <li><p>Now revert the patch with the <code class="docutils literal notranslate"><span class="pre">-R</span></code> option:</p>
@@ -142,7 +150,7 @@
 </ol>
 </section>
 <section id="getting-a-patch-from-a-github-pull-request">
-<h2>Getting a patch from a GitHub pull request<a class="headerlink" href="#getting-a-patch-from-a-github-pull-request" title="Permalink to this headline"></a></h2>
+<h2>Getting a patch from a GitHub pull request<a class="headerlink" href="#getting-a-patch-from-a-github-pull-request" title="Link to this heading"></a></h2>
 <p>If you found a related pull request on GitHub that solves your issue, or you want to help developers and verify a fix works, you can get a patch for the pull request.</p>
 <ol class="arabic simple">
 <li><p>Using <a class="reference external" href="https://github.com/nextcloud/server/pull/26396">https://github.com/nextcloud/server/pull/26396</a> as an example.</p></li>

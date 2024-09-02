@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the occ command &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Activity app" href="activity_configuration.html" />
+    <link rel="next" title="Configuration Parameters" href="config_sample_php_parameters.html" />
     <link rel="prev" title="Warnings on admin page" href="security_setup_warnings.html" /> 
 </head>
 
@@ -108,23 +116,24 @@
 <li class="toctree-l3"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html">Dashboard app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 <li class="toctree-l2"><a class="reference internal" href="email_configuration.html">Email</a></li>
 <li class="toctree-l2"><a class="reference internal" href="external_sites.html">Linking external sites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="language_configuration.html">Language &amp; Locale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="logging_configuration.html">Logging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
-<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
@@ -168,7 +177,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-occ-command">
-<span id="occ"></span><h1>Using the occ command<a class="headerlink" href="#using-the-occ-command" title="Permalink to this headline"></a></h1>
+<span id="occ"></span><h1>Using the occ command<a class="headerlink" href="#using-the-occ-command" title="Link to this heading"></a></h1>
 <p>Nextcloud’s <code class="docutils literal notranslate"><span class="pre">occ</span></code> command (origins from “ownCloud Console”) is Nextcloud’s command-line
 interface. You can perform many common server operations with <code class="docutils literal notranslate"><span class="pre">occ</span></code>, such as
 installing and upgrading Nextcloud, manage users, encryption, passwords, LDAP
@@ -178,7 +187,7 @@ setting, and more.</p>
 run it as your HTTP user</strong> to ensure that the correct permissions are maintained
 on your Nextcloud files and directories.</p>
 <section id="occ-command-directory">
-<h2>occ command Directory<a class="headerlink" href="#occ-command-directory" title="Permalink to this headline"></a></h2>
+<h2>occ command Directory<a class="headerlink" href="#occ-command-directory" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#http-user-label"><span class="std std-ref">Run occ as your HTTP user</span></a></p></li>
 <li><p><a class="reference internal" href="#run-commands-in-maintenance-mode"><span class="std std-ref">Run commands in maintenance mode</span></a></p></li>
@@ -211,7 +220,7 @@ on your Nextcloud files and directories.</p>
 </ul>
 </section>
 <section id="run-occ-as-your-http-user">
-<span id="http-user-label"></span><h2>Run occ as your HTTP user<a class="headerlink" href="#run-occ-as-your-http-user" title="Permalink to this headline"></a></h2>
+<span id="http-user-label"></span><h2>Run occ as your HTTP user<a class="headerlink" href="#run-occ-as-your-http-user" title="Link to this heading"></a></h2>
 <p>The HTTP user is different on the various Linux distributions:</p>
 <ul class="simple">
 <li><p>The HTTP user and group in Debian/Ubuntu is www-data.</p></li>
@@ -326,7 +335,7 @@ The default is plain text, but it can also be <code class="docutils literal notr
 <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">app:list</span></code>, <code class="docutils literal notranslate"><span class="pre">config:list</span></code>, <code class="docutils literal notranslate"><span class="pre">encryption:status</span></code>
 and <code class="docutils literal notranslate"><span class="pre">encryption:list-modules</span></code></p>
 <section id="environment-variables">
-<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline"></a></h3>
+<h3>Environment variables<a class="headerlink" href="#environment-variables" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">sudo</span></code> does not forward environment variables by default. Put the variables before the <code class="docutils literal notranslate"><span class="pre">php</span></code> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">NC_debug</span><span class="o">=</span><span class="n">true</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">status</span>
 </pre></div>
@@ -338,7 +347,7 @@ and <code class="docutils literal notranslate"><span class="pre">encryption:list
 </section>
 </section>
 <section id="enabling-autocompletion">
-<h2>Enabling autocompletion<a class="headerlink" href="#enabling-autocompletion" title="Permalink to this headline"></a></h2>
+<h2>Enabling autocompletion<a class="headerlink" href="#enabling-autocompletion" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Command autocompletion currently only works if the user you use to execute the occ commands has a profile.
@@ -363,21 +372,23 @@ you need to specify <code class="docutils literal notranslate"><span class="pre"
 shell’s profile (eg. <code class="docutils literal notranslate"><span class="pre">~/.bash_profile</span></code> or <code class="docutils literal notranslate"><span class="pre">~/.zshrc</span></code>).</p>
 </section>
 <section id="run-commands-in-maintenance-mode">
-<span id="id1"></span><h2>Run commands in maintenance mode<a class="headerlink" href="#run-commands-in-maintenance-mode" title="Permalink to this headline"></a></h2>
-<p>In maintenance mode, apps are not loaded <a class="footnote-reference brackets" href="#id4" id="id2">1</a>, so commands from apps are unavailable. Commands integrated into Nextcloud server are available in maintenance mode.</p>
+<span id="id1"></span><h2>Run commands in maintenance mode<a class="headerlink" href="#run-commands-in-maintenance-mode" title="Link to this heading"></a></h2>
+<p>In maintenance mode, apps are not loaded <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, so commands from apps are unavailable. Commands integrated into Nextcloud server are available in maintenance mode.</p>
 <p>We discourage the use of maintenance mode unless the command explicitly prompts you to do so or unless the commands’ documentation explicitly states that maintenance mode should be used.</p>
-<p>A command may use events to communicate with other apps. An app can only react to an event when loaded. Example: The command user:delete deletes a user account. UserDeletedEvent is emitted. Calendar app implements an event listener to delete user data <a class="footnote-reference brackets" href="#id5" id="id3">2</a>. In maintenance mode, the Calendar app is not loaded, and hence the user data not deleted.</p>
-<dl class="footnote brackets">
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
-<dd><p>Exception: <a class="reference external" href="https://github.com/nextcloud/server/blob/75f17b60945e15effc3eea41393eef2b13937226/lib/base.php#L780">The settings app is loaded</a></p>
-</dd>
-<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p><a class="reference external" href="https://github.com/nextcloud/calendar/blob/87e8586971a8676dc15a90f0cd969274678b7009/lib/Listener/UserDeletedListener.php">Calendar app event listener for UserDeletedEvent</a></p>
-</dd>
-</dl>
+<p>A command may use events to communicate with other apps. An app can only react to an event when loaded. Example: The command user:delete deletes a user account. UserDeletedEvent is emitted. Calendar app implements an event listener to delete user data <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. In maintenance mode, the Calendar app is not loaded, and hence the user data not deleted.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>Exception: <a class="reference external" href="https://github.com/nextcloud/server/blob/75f17b60945e15effc3eea41393eef2b13937226/lib/base.php#L780">The settings app is loaded</a></p>
+</aside>
+<aside class="footnote brackets" id="id5" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://github.com/nextcloud/calendar/blob/87e8586971a8676dc15a90f0cd969274678b7009/lib/Listener/UserDeletedListener.php">Calendar app event listener for UserDeletedEvent</a></p>
+</aside>
+</aside>
 </section>
 <section id="apps-commands">
-<span id="apps-commands-label"></span><h2>Apps commands<a class="headerlink" href="#apps-commands" title="Permalink to this headline"></a></h2>
+<span id="apps-commands-label"></span><h2>Apps commands<a class="headerlink" href="#apps-commands" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">app</span></code> commands list, enable, and disable apps:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">app</span>
  <span class="n">app</span><span class="p">:</span><span class="n">install</span>      <span class="n">install</span> <span class="n">selected</span> <span class="n">app</span>
@@ -431,7 +442,7 @@ enabled or disabled:</p>
 </div>
 </section>
 <section id="background-jobs-selector">
-<span id="background-jobs-selector-label"></span><h2>Background jobs selector<a class="headerlink" href="#background-jobs-selector" title="Permalink to this headline"></a></h2>
+<span id="background-jobs-selector-label"></span><h2>Background jobs selector<a class="headerlink" href="#background-jobs-selector" title="Link to this heading"></a></h2>
 <p>Use the <code class="docutils literal notranslate"><span class="pre">background</span></code> command to select which scheduler you want to use for
 controlling background jobs, Ajax, Webcron, or Cron. This is the same as using
 the <strong>Cron</strong> section on your Nextcloud Admin page:</p>
@@ -454,7 +465,7 @@ the <strong>Cron</strong> section on your Nextcloud Admin page:</p>
 <p>See <a class="reference internal" href="background_jobs_configuration.html"><span class="doc">Background jobs</span></a> to learn more.</p>
 </section>
 <section id="config-commands">
-<span id="config-commands-label"></span><h2>Config commands<a class="headerlink" href="#config-commands" title="Permalink to this headline"></a></h2>
+<span id="config-commands-label"></span><h2>Config commands<a class="headerlink" href="#config-commands" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">config</span></code> commands are used to configure the Nextcloud server:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">config</span>
  <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="n">delete</span>      <span class="n">Delete</span> <span class="n">an</span> <span class="n">app</span> <span class="n">config</span> <span class="n">value</span>
@@ -497,7 +508,7 @@ directly. Use the <code class="docutils literal notranslate"><span class="pre">o
 commands instead.</p>
 </div>
 <section id="getting-a-single-configuration-value">
-<h3>Getting a single configuration value<a class="headerlink" href="#getting-a-single-configuration-value" title="Permalink to this headline"></a></h3>
+<h3>Getting a single configuration value<a class="headerlink" href="#getting-a-single-configuration-value" title="Link to this heading"></a></h3>
 <p>These commands get the value of a single app or system configuration:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="n">get</span> <span class="n">version</span>
 <span class="mf">19.0.0.12</span>
@@ -508,7 +519,7 @@ commands instead.</p>
 </div>
 </section>
 <section id="setting-a-single-configuration-value">
-<h3>Setting a single configuration value<a class="headerlink" href="#setting-a-single-configuration-value" title="Permalink to this headline"></a></h3>
+<h3>Setting a single configuration value<a class="headerlink" href="#setting-a-single-configuration-value" title="Link to this heading"></a></h3>
 <p>These commands set the value of a single app or system configuration:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="nb">set</span> <span class="n">logtimezone</span>
 <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;Europe/Berlin&quot;</span>
@@ -545,7 +556,7 @@ known:</p>
 </div>
 </section>
 <section id="setting-an-array-configuration-value">
-<h3>Setting an array configuration value<a class="headerlink" href="#setting-an-array-configuration-value" title="Permalink to this headline"></a></h3>
+<h3>Setting an array configuration value<a class="headerlink" href="#setting-an-array-configuration-value" title="Link to this heading"></a></h3>
 <p>Some configurations (e.g. the trusted domain setting) are an array of data.
 In this case, <code class="docutils literal notranslate"><span class="pre">config:system:get</span></code> for this key will return multiple values:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="n">get</span> <span class="n">trusted_domains</span>
@@ -570,7 +581,7 @@ space. For example, to replace <code class="docutils literal notranslate"><span 
 </div>
 </section>
 <section id="setting-a-hierarchical-configuration-value">
-<h3>Setting a hierarchical configuration value<a class="headerlink" href="#setting-a-hierarchical-configuration-value" title="Permalink to this headline"></a></h3>
+<h3>Setting a hierarchical configuration value<a class="headerlink" href="#setting-a-hierarchical-configuration-value" title="Link to this heading"></a></h3>
 <p>Some configurations use hierarchical data. For example, the settings
 for the Redis cache would look like this in the <code class="docutils literal notranslate"><span class="pre">config.php</span></code> file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(</span>
@@ -594,7 +605,7 @@ value above. For this Redis example, use the following commands:</p>
 </div>
 </section>
 <section id="deleting-a-single-configuration-value">
-<h3>Deleting a single configuration value<a class="headerlink" href="#deleting-a-single-configuration-value" title="Permalink to this headline"></a></h3>
+<h3>Deleting a single configuration value<a class="headerlink" href="#deleting-a-single-configuration-value" title="Link to this heading"></a></h3>
 <p>These commands delete the configuration of an app or system configuration:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="n">delete</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">mode</span>
 <span class="n">System</span> <span class="n">config</span> <span class="n">value</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">mode</span> <span class="n">deleted</span>
@@ -615,7 +626,7 @@ before. If you want to be notified in that case, set the
 </section>
 </section>
 <section id="dav-commands">
-<span id="dav-label"></span><h2>Dav commands<a class="headerlink" href="#dav-commands" title="Permalink to this headline"></a></h2>
+<span id="dav-label"></span><h2>Dav commands<a class="headerlink" href="#dav-commands" title="Link to this heading"></a></h2>
 <p>A set of commands to create and manage addressbooks and calendars:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dav</span>
  <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">addressbook</span>                 <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">addressbook</span>
@@ -679,7 +690,7 @@ bernie:</p>
 </pre></div>
 </div>
 <section id="sync-system-address-book">
-<span id="occ-dav-sync-system-address-book"></span><h3>Sync system address book<a class="headerlink" href="#sync-system-address-book" title="Permalink to this headline"></a></h3>
+<span id="occ-dav-sync-system-address-book"></span><h3>Sync system address book<a class="headerlink" href="#sync-system-address-book" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">dav:sync-system-addressbook</span></code> synchronizes all users to the <a class="reference internal" href="../groupware/contacts.html#system-address-book"><span class="std std-ref">system
 address book</span></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="n">sync</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">addressbook</span>
@@ -688,7 +699,7 @@ address book</span></a>:</p>
 </section>
 </section>
 <section id="database-conversion">
-<span id="database-conversion-label"></span><h2>Database conversion<a class="headerlink" href="#database-conversion" title="Permalink to this headline"></a></h2>
+<span id="database-conversion-label"></span><h2>Database conversion<a class="headerlink" href="#database-conversion" title="Link to this heading"></a></h2>
 <p>The SQLite database is good for testing, and for Nextcloud servers with small
 single-user workloads that do not use sync clients, but production servers with
 multiple users should use MariaDB, MySQL, or PostgreSQL. You can use <code class="docutils literal notranslate"><span class="pre">occ</span></code> to
@@ -715,16 +726,17 @@ convert from SQLite to one of these other databases.</p>
 <a class="reference internal" href="../configuration_database/db_conversion.html"><span class="doc">Converting database type</span></a></p>
 </section>
 <section id="add-missing-indices">
-<span id="database-add-indices-label"></span><h2>Add missing indices<a class="headerlink" href="#add-missing-indices" title="Permalink to this headline"></a></h2>
+<span id="database-add-indices-label"></span><h2>Add missing indices<a class="headerlink" href="#add-missing-indices" title="Link to this heading"></a></h2>
 <p>It might happen that we add from time to time new indices to already existing database tables,
 for example to improve performance. In order to check your database for missing indices run
 following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">add</span><span class="o">-</span><span class="n">missing</span><span class="o">-</span><span class="n">indices</span>
 </pre></div>
 </div>
+<p>Use option <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> to output the SQL queries without running them.</p>
 </section>
 <section id="encryption">
-<span id="encryption-label"></span><h2>Encryption<a class="headerlink" href="#encryption" title="Permalink to this headline"></a></h2>
+<span id="encryption-label"></span><h2>Encryption<a class="headerlink" href="#encryption" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">occ</span></code> includes a complete set of commands for managing encryption:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>encryption
  encryption:change-key-storage-root   Change key storage root
@@ -798,7 +810,7 @@ binary format and save about 33% disk space.</p>
 <p>See <a class="reference internal" href="../configuration_files/encryption_configuration.html"><span class="doc">Encryption configuration</span></a> to learn more.</p>
 </section>
 <section id="federation-sync">
-<span id="federation-sync-label"></span><h2>Federation sync<a class="headerlink" href="#federation-sync" title="Permalink to this headline"></a></h2>
+<span id="federation-sync-label"></span><h2>Federation sync<a class="headerlink" href="#federation-sync" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This command is only available when the “Federation” app (<code class="docutils literal notranslate"><span class="pre">federation</span></code>) is
@@ -817,7 +829,7 @@ to synchronize federated servers:</p>
 </div>
 </section>
 <section id="file-operations">
-<span id="file-operations-label"></span><h2>File operations<a class="headerlink" href="#file-operations" title="Permalink to this headline"></a></h2>
+<span id="file-operations-label"></span><h2>File operations<a class="headerlink" href="#file-operations" title="Link to this heading"></a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">occ</span></code> has three commands for managing files in Nextcloud:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files</span>
  <span class="n">files</span><span class="p">:</span><span class="n">cleanup</span>              <span class="n">Cleanup</span> <span class="n">filecache</span>
@@ -832,7 +844,7 @@ to synchronize federated servers:</p>
 </pre></div>
 </div>
 <section id="scan">
-<span id="occ-files-scan-label"></span><h3>Scan<a class="headerlink" href="#scan" title="Permalink to this headline"></a></h3>
+<span id="occ-files-scan-label"></span><h3>Scan<a class="headerlink" href="#scan" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">files:scan</span></code> command scans for new files and updates the file cache. You
 may rescan all files, per-user, a space-delimited list of users, and limit the
 search path. If not using <code class="docutils literal notranslate"><span class="pre">--quiet</span></code>, statistics will be shown at the end of
@@ -888,7 +900,7 @@ path component given.</p>
 one must be specified.</p>
 </section>
 <section id="scan-appdata">
-<h3>Scan appdata<a class="headerlink" href="#scan-appdata" title="Permalink to this headline"></a></h3>
+<h3>Scan appdata<a class="headerlink" href="#scan-appdata" title="Link to this heading"></a></h3>
 <p>Appdata is a folder inside of the data directory which contains files that
 are shared between users and can be put there by the server or apps like
 avatar images, file previews and cached CSS files for example.</p>
@@ -904,12 +916,12 @@ with the files on the actual storage.:</p>
 </div>
 </section>
 <section id="cleanup">
-<h3>Cleanup<a class="headerlink" href="#cleanup" title="Permalink to this headline"></a></h3>
+<h3>Cleanup<a class="headerlink" href="#cleanup" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">files:cleanup</span></code> tidies up the server’s file cache by deleting all file
 entries that have no matching entries in the storage table.</p>
 </section>
 <section id="repair-tree">
-<h3>Repair-Tree<a class="headerlink" href="#repair-tree" title="Permalink to this headline"></a></h3>
+<h3>Repair-Tree<a class="headerlink" href="#repair-tree" title="Link to this heading"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">files:repair-tree</span></code> try and repair malformed filesystem tree structures.
 If for any reason the path of an entry in the filecache doesn’t match with
 it’s expected path, based on the path of it’s parent node, you end up with an
@@ -922,7 +934,7 @@ doesn’t match the expected path based on it’s parent path and filename and r
 path to the expected one.</p>
 </section>
 <section id="transfer">
-<h3>Transfer<a class="headerlink" href="#transfer" title="Permalink to this headline"></a></h3>
+<h3>Transfer<a class="headerlink" href="#transfer" title="Link to this heading"></a></h3>
 <p>The command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">files:transfer-ownership</span></code> can be used to transfer files from one user to another:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span>
   <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
@@ -966,20 +978,21 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>Users may also transfer files or folders selectively by themselves.
-See <a class="reference external" href="https://docs.nextcloud.com/server/27/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 </section>
 <section id="files-sharing">
-<span id="occ-sharing-label"></span><h2>Files Sharing<a class="headerlink" href="#files-sharing" title="Permalink to this headline"></a></h2>
+<span id="occ-sharing-label"></span><h2>Files Sharing<a class="headerlink" href="#files-sharing" title="Link to this heading"></a></h2>
 <p>Commands for handling shares:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sharing</span>
  <span class="n">sharing</span><span class="p">:</span><span class="n">cleanup</span><span class="o">-</span><span class="n">remote</span><span class="o">-</span><span class="n">storages</span>  <span class="n">Cleanup</span> <span class="n">shared</span> <span class="n">storage</span> <span class="n">entries</span> <span class="n">that</span> <span class="n">have</span> <span class="n">no</span> <span class="n">matching</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">shares_external</span> <span class="n">table</span>
  <span class="n">sharing</span><span class="p">:</span><span class="n">expiration</span><span class="o">-</span><span class="n">notification</span>  <span class="n">Notify</span> <span class="n">share</span> <span class="n">initiators</span> <span class="n">when</span> <span class="n">a</span> <span class="n">share</span> <span class="n">will</span> <span class="n">expire</span> <span class="n">the</span> <span class="nb">next</span> <span class="n">day</span>
+ <span class="n">sharing</span><span class="p">:</span><span class="n">delete</span><span class="o">-</span><span class="n">orphan</span><span class="o">-</span><span class="n">shares</span>     <span class="n">Delete</span> <span class="n">shares</span> <span class="n">where</span> <span class="n">the</span> <span class="n">owner</span> <span class="n">no</span> <span class="n">longer</span> <span class="n">has</span> <span class="n">access</span> <span class="n">to</span> <span class="n">the</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">available</span> <span class="n">anymore</span>
 </pre></div>
 </div>
 </section>
 <section id="files-external">
-<span id="files-external-label"></span><h2>Files external<a class="headerlink" href="#files-external" title="Permalink to this headline"></a></h2>
+<span id="files-external-label"></span><h2>Files external<a class="headerlink" href="#files-external" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>These commands are only available when the “External storage support” app
@@ -1009,7 +1022,7 @@ Nextcloud user.</p>
 and to copy external mount configurations to another Nextcloud server.</p>
 </section>
 <section id="integrity-check">
-<span id="integrity-check-label"></span><h2>Integrity check<a class="headerlink" href="#integrity-check" title="Permalink to this headline"></a></h2>
+<span id="integrity-check-label"></span><h2>Integrity check<a class="headerlink" href="#integrity-check" title="Link to this heading"></a></h2>
 <p>Apps which have a <code class="docutils literal notranslate"><span class="pre">Featured</span></code> tag MUST be code signed with Nextcloud. Unsigned featured apps won’t be installable anymore. Code signing is optional for all third-party applications:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">integrity</span>
  <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span>                 <span class="n">Check</span> <span class="n">app</span> <span class="n">integrity</span> <span class="n">using</span> <span class="n">a</span> <span class="n">signature</span><span class="o">.</span>
@@ -1026,17 +1039,17 @@ and to copy external mount configurations to another Nextcloud server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">pathto</span><span class="o">/</span><span class="n">app</span> <span class="n">appname</span>
 </pre></div>
 </div>
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/27/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
+<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">integrity:sign-core</span></code> is for Nextcloud core developers only.</p>
 <p>See <a class="reference internal" href="../issues/code_signing.html"><span class="doc">Code signing</span></a> to learn more.</p>
 </section>
 <section id="l10n-create-javascript-translation-files-for-apps">
-<span id="create-javascript-translation-files-label"></span><h2>l10n, create JavaScript translation files for apps<a class="headerlink" href="#l10n-create-javascript-translation-files-for-apps" title="Permalink to this headline"></a></h2>
+<span id="create-javascript-translation-files-label"></span><h2>l10n, create JavaScript translation files for apps<a class="headerlink" href="#l10n-create-javascript-translation-files-for-apps" title="Link to this heading"></a></h2>
 <p>This command is for app developers to update their translation mechanism from
 ownCloud 7 to Nextcloud.</p>
 </section>
 <section id="ldap-commands">
-<span id="ldap-commands-label"></span><h2>LDAP commands<a class="headerlink" href="#ldap-commands" title="Permalink to this headline"></a></h2>
+<span id="ldap-commands-label"></span><h2>LDAP commands<a class="headerlink" href="#ldap-commands" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>These commands are only available when the “LDAP user and group backend” app
@@ -1046,6 +1059,7 @@ ownCloud 7 to Nextcloud.</p>
 you can run the following LDAP commands with <code class="docutils literal notranslate"><span class="pre">occ</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ldap</span>
  <span class="n">ldap</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">user</span>               <span class="n">checks</span> <span class="n">whether</span> <span class="n">a</span> <span class="n">user</span> <span class="n">exists</span> <span class="n">on</span> <span class="n">LDAP</span><span class="o">.</span>
+ <span class="n">ldap</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">group</span>              <span class="n">checks</span> <span class="n">whether</span> <span class="n">a</span> <span class="n">group</span> <span class="n">exists</span> <span class="n">on</span> <span class="n">LDAP</span><span class="o">.</span>
  <span class="n">ldap</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">empty</span><span class="o">-</span><span class="n">config</span>      <span class="n">creates</span> <span class="n">an</span> <span class="n">empty</span> <span class="n">LDAP</span> <span class="n">configuration</span>
  <span class="n">ldap</span><span class="p">:</span><span class="n">delete</span><span class="o">-</span><span class="n">config</span>            <span class="n">deletes</span> <span class="n">an</span> <span class="n">existing</span> <span class="n">LDAP</span> <span class="n">configuration</span>
  <span class="n">ldap</span><span class="p">:</span><span class="n">search</span>                   <span class="n">executes</span> <span class="n">a</span> <span class="n">user</span> <span class="ow">or</span> <span class="n">group</span> <span class="n">search</span>
@@ -1090,6 +1104,11 @@ use the <code class="docutils literal notranslate"><span class="pre">--force</sp
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">ldap</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">user</span> <span class="o">--</span><span class="n">force</span> <span class="n">robert</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">ldap:check-group</span></code> checks whether a group still exists in the LDAP directory.
+Use with <code class="docutils literal notranslate"><span class="pre">--update</span></code> to update the group membership cache on the Nextcloud side:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">ldap</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">group</span> <span class="o">--</span><span class="n">update</span> <span class="n">mygroup</span>
+</pre></div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">ldap:create-empty-config</span></code> creates an empty LDAP configuration. The first
 one you create has <code class="docutils literal notranslate"><span class="pre">configID</span></code> <code class="docutils literal notranslate"><span class="pre">s01</span></code>, and all subsequent configurations
 that you create are automatically assigned IDs:</p>
@@ -1126,7 +1145,7 @@ The configuration is valid and the connection could be established!
 documented in <a class="reference internal" href="../configuration_user/user_auth_ldap_cleanup.html"><span class="doc">LDAP user cleanup</span></a>.</p>
 </section>
 <section id="logging-commands">
-<span id="logging-commands-label"></span><h2>Logging commands<a class="headerlink" href="#logging-commands" title="Permalink to this headline"></a></h2>
+<span id="logging-commands-label"></span><h2>Logging commands<a class="headerlink" href="#logging-commands" title="Link to this heading"></a></h2>
 <p>These commands view and configure your Nextcloud logging preferences:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">log</span>
  <span class="n">log</span><span class="p">:</span><span class="n">file</span>        <span class="n">manipulate</span> <span class="n">Nextcloud</span> <span class="n">logging</span> <span class="n">backend</span>
@@ -1156,7 +1175,7 @@ are <code class="docutils literal notranslate"><span class="pre">file</span></co
 </ul>
 </section>
 <section id="maintenance-commands">
-<span id="maintenance-commands-label"></span><h2>Maintenance commands<a class="headerlink" href="#maintenance-commands" title="Permalink to this headline"></a></h2>
+<span id="maintenance-commands-label"></span><h2>Maintenance commands<a class="headerlink" href="#maintenance-commands" title="Link to this heading"></a></h2>
 <p>Use these commands when you upgrade Nextcloud, manage encryption, perform
 backups and other tasks that require locking users out until you are finished:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">maintenance</span>
@@ -1196,7 +1215,7 @@ change to existing files.</p>
 updated correctly. This updates the mimetypelist.js and cleares the image cache.</p>
 </section>
 <section id="security">
-<span id="security-commands-label"></span><h2>Security<a class="headerlink" href="#security" title="Permalink to this headline"></a></h2>
+<span id="security-commands-label"></span><h2>Security<a class="headerlink" href="#security" title="Link to this heading"></a></h2>
 <p>Use these commands to manage server-wide security related parameters. Currently this
 includes <a class="reference internal" href="bruteforce_configuration.html"><span class="doc">Brute force protection</span></a> and SSL certificates (the latter are useful when
 creating federation connections with other Nextcloud servers that use self-signed certificates:</p>
@@ -1226,7 +1245,7 @@ creating federation connections with other Nextcloud servers that use self-signe
 </div>
 </section>
 <section id="status">
-<h2>Status<a class="headerlink" href="#status" title="Permalink to this headline"></a></h2>
+<h2>Status<a class="headerlink" href="#status" title="Link to this heading"></a></h2>
 <p>Use the status command to retrieve information about the current installation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -u www-data php occ status
   - installed: true
@@ -1254,7 +1273,7 @@ creating federation connections with other Nextcloud servers that use self-signe
 </pre></div>
 </div>
 <section id="status-return-code">
-<h3>Status return code<a class="headerlink" href="#status-return-code" title="Permalink to this headline"></a></h3>
+<h3>Status return code<a class="headerlink" href="#status-return-code" title="Link to this heading"></a></h3>
 <p>And finally, the <code class="docutils literal notranslate"><span class="pre">-e</span></code> (for exit code) parameter can be used to check
 the state of the nextcloud installation via return code:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ php occ status -e
@@ -1276,10 +1295,6 @@ $ echo $?
 intentional, so it can be used in scripts, monitoring checks, and systemd
 units.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 81%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Return code</p></th>
 <th class="head"><p>Description</p></th>
@@ -1301,7 +1316,7 @@ unavailable to users.</p></td>
 </section>
 </section>
 <section id="trashbin">
-<span id="trashbin-label"></span><h2>Trashbin<a class="headerlink" href="#trashbin" title="Permalink to this headline"></a></h2>
+<span id="trashbin-label"></span><h2>Trashbin<a class="headerlink" href="#trashbin" title="Link to this heading"></a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trashbin</span>
  <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Permanently</span> <span class="n">remove</span> <span class="n">deleted</span> <span class="n">files</span>
  <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">scope</span><span class="p">[</span><span class="o">=</span><span class="n">SCOPE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">since</span><span class="p">[</span><span class="o">=</span><span class="n">SINCE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">until</span><span class="p">[</span><span class="o">=</span><span class="n">UNTIL</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Restore</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">according</span> <span class="n">to</span> <span class="n">the</span> <span class="n">given</span> <span class="n">filters</span>
@@ -1314,7 +1329,7 @@ unavailable to users.</p></td>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">trashbin:cleanup</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command removes the deleted files of the specified
 users in a space-delimited list, or all users if –all-users is specified.</p>
-<p>This example removes the deleted files of all users:</p>
+<p>This example permanently removes the deleted files of all users:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span>
 <span class="n">Remove</span> <span class="nb">all</span> <span class="n">deleted</span> <span class="n">files</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">users</span>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="k">for</span> <span class="n">users</span> <span class="n">on</span> <span class="n">backend</span> <span class="n">Database</span>
@@ -1325,7 +1340,7 @@ users in a space-delimited list, or all users if –all-users is specified.</p>
  <span class="n">edward</span>
 </pre></div>
 </div>
-<p>This example removes the deleted files of users molly and freda:</p>
+<p>This example permanently removes the deleted files of users molly and freda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span> <span class="n">molly</span> <span class="n">freda</span>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">of</span>   <span class="n">molly</span>
 <span class="n">Remove</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">of</span>   <span class="n">freda</span>
@@ -1361,7 +1376,7 @@ the restore process and why some files might be skipped.</p>
 </div>
 </section>
 <section id="user-commands">
-<span id="user-commands-label"></span><h2>User commands<a class="headerlink" href="#user-commands" title="Permalink to this headline"></a></h2>
+<span id="user-commands-label"></span><h2>User commands<a class="headerlink" href="#user-commands" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">user</span></code> commands create and remove users, reset passwords, display a simple
 report showing how many users you have, and when a user was last logged in:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span>
@@ -1485,7 +1500,7 @@ authentication servers such as LDAP:</p>
 </div>
 </section>
 <section id="group-commands">
-<span id="group-commands-label"></span><h2>Group commands<a class="headerlink" href="#group-commands" title="Permalink to this headline"></a></h2>
+<span id="group-commands-label"></span><h2>Group commands<a class="headerlink" href="#group-commands" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">group</span></code> commands create and remove groups, add and remove users in
 groups, display a list of all users in a group:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">group</span>
@@ -1537,7 +1552,7 @@ removes the existing group “beer”:</p>
 plain.</p>
 </section>
 <section id="versions">
-<span id="versions-label"></span><h2>Versions<a class="headerlink" href="#versions" title="Permalink to this headline"></a></h2>
+<span id="versions-label"></span><h2>Versions<a class="headerlink" href="#versions" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This command is only available when the “Versions” app (<code class="docutils literal notranslate"><span class="pre">files_versions</span></code>) is
@@ -1569,7 +1584,7 @@ when none are specified:</p>
 </div>
 </section>
 <section id="command-line-installation">
-<span id="command-line-installation-label"></span><h2>Command line installation<a class="headerlink" href="#command-line-installation" title="Permalink to this headline"></a></h2>
+<span id="command-line-installation-label"></span><h2>Command line installation<a class="headerlink" href="#command-line-installation" title="Link to this heading"></a></h2>
 <p>These commands are available only after you have downloaded and unpacked the
 Nextcloud archive, and taken no further installation steps.</p>
 <p>You can install Nextcloud entirely from the command line. After downloading the
@@ -1652,7 +1667,7 @@ commands in place of running the graphical Installation Wizard.</p>
 </div>
 </section>
 <section id="command-line-upgrade">
-<span id="command-line-upgrade-label"></span><h2>Command line upgrade<a class="headerlink" href="#command-line-upgrade" title="Permalink to this headline"></a></h2>
+<span id="command-line-upgrade-label"></span><h2>Command line upgrade<a class="headerlink" href="#command-line-upgrade" title="Link to this heading"></a></h2>
 <p>These commands are available only after you have downloaded upgraded packages or
 tar archives, and before you complete the upgrade.</p>
 <p>List all options, like this example on CentOS Linux:</p>
@@ -1722,7 +1737,7 @@ or to use in a bug report:</p>
 </div>
 </section>
 <section id="two-factor-authentication">
-<span id="two-factor-auth-label"></span><h2>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Permalink to this headline"></a></h2>
+<span id="two-factor-auth-label"></span><h2>Two-factor authentication<a class="headerlink" href="#two-factor-authentication" title="Link to this heading"></a></h2>
 <p>If a two-factor provider app is enabled, it is enabled for all users by default
 (though the provider can decide whether or not the user has to pass the challenge).
 In the case of a user losing access to the second factor (e.g. lost phone with
@@ -1745,7 +1760,7 @@ check for that user via the occ command:</p>
 </div>
 </section>
 <section id="disable-users">
-<span id="disable-user-label"></span><h2>Disable users<a class="headerlink" href="#disable-users" title="Permalink to this headline"></a></h2>
+<span id="disable-user-label"></span><h2>Disable users<a class="headerlink" href="#disable-users" title="Link to this heading"></a></h2>
 <p>Admins can disable users via the occ command too:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">disable</span> <span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span>
 </pre></div>
@@ -1757,7 +1772,7 @@ check for that user via the occ command:</p>
 <p>Note that once users are disabled, their connected browsers will be disconnected.</p>
 </section>
 <section id="system-tags">
-<span id="system-tags-commands-label"></span><h2>System Tags<a class="headerlink" href="#system-tags" title="Permalink to this headline"></a></h2>
+<span id="system-tags-commands-label"></span><h2>System Tags<a class="headerlink" href="#system-tags" title="Link to this heading"></a></h2>
 <p>List tags:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">tag</span><span class="p">:</span><span class="nb">list</span>
 </pre></div>
@@ -1777,11 +1792,6 @@ check for that user via the occ command:</p>
 </div>
 <p>Access level</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 34%" />
-<col style="width: 28%" />
-<col style="width: 38%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Level</p></th>
 <th class="head"><p>Visible¹</p></th>
@@ -1809,7 +1819,7 @@ check for that user via the occ command:</p>
 </div>
 </section>
 <section id="debugging">
-<span id="occ-debugging"></span><h2>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline"></a></h2>
+<span id="occ-debugging"></span><h2>Debugging<a class="headerlink" href="#debugging" title="Link to this heading"></a></h2>
 <p>In certain situations it’s necessary to generate debugging information, e.g. before submitting a bug report. You can run <code class="docutils literal notranslate"><span class="pre">occ</span></code> with debug logging:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">NC_loglevel</span><span class="o">=</span><span class="mi">0</span> <span class="n">php</span> <span class="n">occ</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
@@ -1822,7 +1832,7 @@ check for that user via the occ command:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="security_setup_warnings.html" class="btn btn-neutral float-left" title="Warnings on admin page" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="activity_configuration.html" class="btn btn-neutral float-right" title="Activity app" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="config_sample_php_parameters.html" class="btn btn-neutral float-right" title="Configuration Parameters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

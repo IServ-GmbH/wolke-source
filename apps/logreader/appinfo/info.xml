@@ -5,9 +5,10 @@
 	<name>Log Reader</name>
 	<summary>A log reader for Nextcloud</summary>
 	<description>Log reader for Nextcloud</description>
-	<version>2.12.0</version>
+	<version>2.13.0</version>
 	<licence>agpl</licence>
 	<author>Robin Appelman</author>
+	<author>Ferdinand Thiessen</author>
 	<namespace>LogReader</namespace>
 	<default_enable/>
 
@@ -24,7 +25,7 @@
 	</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="27" max-version="27" />
+		<nextcloud min-version="28" max-version="28" />
 	</dependencies>
 
 	<commands>

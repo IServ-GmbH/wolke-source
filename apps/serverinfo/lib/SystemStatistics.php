@@ -51,7 +51,7 @@ class SystemStatistics {
 	 *
 	 * @throws \OCP\Files\InvalidPathException
 	 */
-	public function getSystemStatistics(bool $skipApps = false): array {
+	public function getSystemStatistics(bool $skipApps = false, bool $skipUpdate = true): array {
 		$processorUsage = $this->getProcessorUsage();
 		$memoryUsage = $this->os->getMemory();
 
@@ -77,7 +77,33 @@ class SystemStatistics {
 			$data['apps'] = $this->getAppsInfo();
 		}
 
+		if (!$skipUpdate) {
+			$data['update'] = $this->getServerUpdateInfo();
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Get info about server updates and last checked timestamp
+	 *
+	 * @return array information about core updates
+	 */
+	protected function getServerUpdateInfo(): array {
+		$updateInfo = [
+			'lastupdatedat' => (int) $this->config->getAppValue('core', 'lastupdatedat'),
+			'available' => false,
+		];
+
+		$lastUpdateResult = json_decode($this->config->getAppValue('core', 'lastupdateResult'), true);
+		if (is_array($lastUpdateResult)) {
+			$updateInfo['available'] = (count($lastUpdateResult) > 0);
+			if (array_key_exists('version', $lastUpdateResult)) {
+				$updateInfo['available_version'] = $lastUpdateResult['version'];
+			}
+		}
+
+		return $updateInfo;
 	}
 
 	/**
@@ -117,8 +143,8 @@ class SystemStatistics {
 	 * @return array{loadavg: array|string} load average with three values, 1/5/15 minutes average.
 	 */
 	protected function getProcessorUsage(): array {
-		// get current system load average.
-		$loadavg = sys_getloadavg();
+		// get current system load average - if we can
+		$loadavg = (function_exists('sys_getloadavg')) ? sys_getloadavg() : false;
 
 		// check if we got any values back.
 		if ($loadavg === false || count($loadavg) !== 3) {

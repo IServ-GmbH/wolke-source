@@ -70,10 +70,10 @@ class URLGenerator implements IURLGenerator {
 	private ?IAppManager $appManager = null;
 
 	public function __construct(IConfig $config,
-								IUserSession $userSession,
-								ICacheFactory $cacheFactory,
-								IRequest $request,
-								Router $router
+		IUserSession $userSession,
+		ICacheFactory $cacheFactory,
+		IRequest $request,
+		Router $router
 	) {
 		$this->config = $config;
 		$this->userSession = $userSession;
@@ -156,7 +156,7 @@ class URLGenerator implements IURLGenerator {
 			$app_path = $this->getAppManager()->getAppPath($appName);
 			// Check if the app is in the app folder
 			if (file_exists($app_path . '/' . $file)) {
-				if (substr($file, -3) === 'php') {
+				if (str_ends_with($file, 'php')) {
 					$urlLinkTo = \OC::$WEBROOT . '/index.php/apps/' . $appName;
 					if ($frontControllerActive) {
 						$urlLinkTo = \OC::$WEBROOT . '/apps/' . $appName;
@@ -281,13 +281,13 @@ class URLGenerator implements IURLGenerator {
 	 * @return string the absolute version of the url
 	 */
 	public function getAbsoluteURL(string $url): string {
-		$separator = strpos($url, '/') === 0 ? '' : '/';
+		$separator = str_starts_with($url, '/') ? '' : '/';
 
 		if (\OC::$CLI && !\defined('PHPUNIT_RUN')) {
 			return rtrim($this->config->getSystemValueString('overwrite.cli.url'), '/') . '/' . ltrim($url, '/');
 		}
 		// The ownCloud web root can already be prepended.
-		if (\OC::$WEBROOT !== '' && strpos($url, \OC::$WEBROOT) === 0) {
+		if (\OC::$WEBROOT !== '' && str_starts_with($url, \OC::$WEBROOT)) {
 			$url = substr($url, \strlen(\OC::$WEBROOT));
 		}
 
@@ -311,7 +311,7 @@ class URLGenerator implements IURLGenerator {
 	public function linkToDefaultPageUrl(): string {
 		// Deny the redirect if the URL contains a @
 		// This prevents unvalidated redirects like ?redirect_url=:user@domain.com
-		if (isset($_REQUEST['redirect_url']) && strpos($_REQUEST['redirect_url'], '@') === false) {
+		if (isset($_REQUEST['redirect_url']) && !str_contains($_REQUEST['redirect_url'], '@')) {
 			return $this->getAbsoluteURL(urldecode($_REQUEST['redirect_url']));
 		}
 

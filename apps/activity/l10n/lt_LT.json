@@ -9,7 +9,6 @@
     "No activities" : "Nėra vaiklų",
     "More activities" : "Daugiau veiklų",
     "Daily activity summary for %s" : "Kasdienių %s veiklų apžvalga ",
-    "_and %n more _::_and %n more _" : ["ir %n kitas","ir %n kiti","ir %n kitų","ir %n kitų"],
     "All activities" : "Visos veiklos",
     "By others" : "Kitų",
     "By you" : "Jūsų",
@@ -17,6 +16,7 @@
     "Hello %s" : "Sveiki, %s",
     "Hello %s," : "Sveiki, %s,",
     "There was some activity at %s" : "%s buvo veiklos",
+    "_and %n more _::_and %n more _" : ["ir %n kitas","ir %n kiti","ir %n kitų","ir %n kitų"],
     "Mail" : "Paštas",
     "Push" : "Spausti",
     "Activity" : "Veikla",
@@ -44,6 +44,7 @@
     "No activity yet" : "Kol kas nėra veiklos",
     "Loading more activities" : "Įkeliama daugiau veiklų",
     "No more activities." : "Daugiau nebėra veiklų.",
+    "Could not load activities" : "Nepavyko įkelti veiklų",
     "Activity settings" : "Veiklos nustatymai",
     "Enable RSS feed" : "Įjungti RSS sklaidos kanalą",
     "RSS feed" : "RSS kanalas",
@@ -63,14 +64,6 @@
     "Configure the default notification settings for new accounts." : "Nustatyti numatytuosius pranešimų parametrus naujiems vartotojams.",
     "Unable to save the settings" : "Nepavyko įrašyti nustatymų",
     "No more events to load" : "Nėra daugiau rodytinų įvykių",
-    "Copied!" : "Nukopijuota!",
-    "Not supported!" : "Nepalaikoma!",
-    "Press ⌘-C to copy." : "Norėdami nukopijuoti, paspauskite ⌘-C.",
-    "Press Ctrl-C to copy." : "Paspauskite Ctrl-C, kad nukopijuotumėte.",
-    "{name} (invisible)" : "{name} (nematomas)",
-    "{name} (restricted)" : "{name} (apribotas)",
-    "There are no events for this filter" : "Nėra įvykių pasirinktam filtrui",
-    "Activities" : "Veiklos",
     "Could not load activites" : "Nepavyko įkelti veiklų"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

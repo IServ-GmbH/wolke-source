@@ -32,10 +32,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class BruteforceResetAttempts extends Base {
-	protected IThrottler $throttler;
-
-	public function __construct(IThrottler $throttler) {
-		$this->throttler = $throttler;
+	public function __construct(
+		protected IThrottler $throttler,
+	) {
 		parent::__construct();
 	}
 

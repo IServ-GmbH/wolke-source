@@ -29,7 +29,7 @@ use OCA\Text\Controller;
 
 return [
 	'routes' => [
-		/** @see Controller\AttachmentController::getAttachmentFile() */
+		/** @see Controller\AttachmentController::getAttachmentList() */
 		['name' => 'Attachment#getAttachmentList', 'url' => '/attachments', 'verb' => 'POST'],
 		/** @see Controller\AttachmentController::insertAttachmentFile() */
 		['name' => 'Attachment#insertAttachmentFile', 'url' => '/attachment/filepath', 'verb' => 'POST'],
@@ -43,26 +43,30 @@ return [
 		['name' => 'Attachment#getMediaFilePreview', 'url' => '/mediaPreview', 'verb' => 'GET'],
 
 		/** @see Controller\SessionController::create() */
-		['name' => 'Session#create', 'url' => '/session/create', 'verb' => 'PUT'],
+		['name' => 'Session#create', 'url' => '/session/{documentId}/create', 'verb' => 'PUT'],
+		/** @see Controller\SessionController::save() */
+		['name' => 'Session#save', 'url' => '/session/{documentId}/save', 'verb' => 'POST'],
 		/** @see Controller\SessionController::sync() */
-		['name' => 'Session#sync', 'url' => '/session/sync', 'verb' => 'POST'],
+		['name' => 'Session#sync', 'url' => '/session/{documentId}/sync', 'verb' => 'POST'],
 		/** @see Controller\SessionController::push() */
-		['name' => 'Session#push', 'url' => '/session/push', 'verb' => 'POST'],
+		['name' => 'Session#push', 'url' => '/session/{documentId}/push', 'verb' => 'POST'],
 		/** @see Controller\SessionController::close() */
-		['name' => 'Session#close', 'url' => '/session/close', 'verb' => 'POST'],
+		['name' => 'Session#close', 'url' => '/session/{documentId}/close', 'verb' => 'POST'],
 		/** @see Controller\SessionController::mention() */
-		['name' => 'Session#mention', 'url' => '/session/mention', 'verb' => 'PUT'],
+		['name' => 'Session#mention', 'url' => '/session/{documentId}/mention', 'verb' => 'PUT'],
 
 		/** @see Controller\PublicSessionController::create() */
-		['name' => 'PublicSession#create', 'url' => '/public/session/create', 'verb' => 'PUT'],
+		['name' => 'PublicSession#create', 'url' => '/public/session/{documentId}/create', 'verb' => 'PUT'],
 		/** @see Controller\PublicSessionController::updateSession() */
-		['name' => 'PublicSession#updateSession', 'url' => '/public/session', 'verb' => 'POST'],
+		['name' => 'PublicSession#updateSession', 'url' => '/public/session/{documentId}/session', 'verb' => 'POST'],
+		/** @see Controller\PublicSessionController::save() */
+		['name' => 'PublicSession#save', 'url' => '/public/session/{documentId}/save', 'verb' => 'POST'],
 		/** @see Controller\PublicSessionController::sync() */
-		['name' => 'PublicSession#sync', 'url' => '/public/session/sync', 'verb' => 'POST'],
+		['name' => 'PublicSession#sync', 'url' => '/public/session/{documentId}/sync', 'verb' => 'POST'],
 		/** @see Controller\PublicSessionController::push() */
-		['name' => 'PublicSession#push', 'url' => '/public/session/push', 'verb' => 'POST'],
+		['name' => 'PublicSession#push', 'url' => '/public/session/{documentId}/push', 'verb' => 'POST'],
 		/** @see Controller\PublicSessionController::close() */
-		['name' => 'PublicSession#close', 'url' => '/public/session/close', 'verb' => 'POST'],
+		['name' => 'PublicSession#close', 'url' => '/public/session/{documentId}/close', 'verb' => 'POST'],
 
 		/** @see Controller\SettingsController::updateConfig() */
 		['name' => 'Settings#updateConfig', 'url' => '/settings', 'verb' => 'POST'],

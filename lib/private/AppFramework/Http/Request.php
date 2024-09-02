@@ -67,7 +67,7 @@ use Symfony\Component\HttpFoundation\IpUtils;
 class Request implements \ArrayAccess, \Countable, IRequest {
 	public const USER_AGENT_IE = '/(MSIE)|(Trident)/';
 	// Microsoft Edge User Agent from https://msdn.microsoft.com/en-us/library/hh869301(v=vs.85).aspx
-	public const USER_AGENT_MS_EDGE = '/^Mozilla\/5\.0 \([^)]+\) AppleWebKit\/[0-9.]+ \(KHTML, like Gecko\) Chrome\/[0-9.]+ (Mobile Safari|Safari)\/[0-9.]+ Edge\/[0-9.]+$/';
+	public const USER_AGENT_MS_EDGE = '/^Mozilla\/5\.0 \([^)]+\) AppleWebKit\/[0-9.]+ \(KHTML, like Gecko\) Chrome\/[0-9.]+ (Mobile Safari|Safari)\/[0-9.]+ Edge?\/[0-9.]+$/';
 	// Firefox User Agent from https://developer.mozilla.org/en-US/docs/Web/HTTP/Gecko_user_agent_string_reference
 	public const USER_AGENT_FIREFOX = '/^Mozilla\/5\.0 \([^)]+\) Gecko\/[0-9.]+ Firefox\/[0-9.]+$/';
 	// Chrome User Agent from https://developer.chrome.com/multidevice/user-agent
@@ -118,10 +118,10 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @see https://www.php.net/manual/en/reserved.variables.php
 	 */
 	public function __construct(array $vars,
-								IRequestId $requestId,
-								IConfig $config,
-								CsrfTokenManager $csrfTokenManager = null,
-								string $stream = 'php://input') {
+		IRequestId $requestId,
+		IConfig $config,
+		CsrfTokenManager $csrfTokenManager = null,
+		string $stream = 'php://input') {
 		$this->inputStream = $stream;
 		$this->items['params'] = [];
 		$this->requestId = $requestId;
@@ -193,9 +193,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetGet($offset) {
-		return isset($this->items['parameters'][$offset])
-			? $this->items['parameters'][$offset]
-			: null;
+		return $this->items['parameters'][$offset] ?? null;
 	}
 
 	/**
@@ -255,9 +253,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 			case 'cookies':
 			case 'urlParams':
 			case 'method':
-				return isset($this->items[$name])
-					? $this->items[$name]
-					: null;
+				return $this->items[$name] ?? null;
 			case 'parameters':
 			case 'params':
 				if ($this->isPutStreamContent()) {
@@ -413,8 +409,8 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 		return $this->method === 'PUT'
 			&& $this->getHeader('Content-Length') !== '0'
 			&& $this->getHeader('Content-Length') !== ''
-			&& strpos($this->getHeader('Content-Type'), 'application/x-www-form-urlencoded') === false
-			&& strpos($this->getHeader('Content-Type'), 'application/json') === false;
+			&& !str_contains($this->getHeader('Content-Type'), 'application/x-www-form-urlencoded')
+			&& !str_contains($this->getHeader('Content-Type'), 'application/json');
 	}
 
 	/**
@@ -439,7 +435,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 		// or post correctly
 		} elseif ($this->method !== 'GET'
 				&& $this->method !== 'POST'
-				&& strpos($this->getHeader('Content-Type'), 'application/x-www-form-urlencoded') !== false) {
+				&& str_contains($this->getHeader('Content-Type'), 'application/x-www-form-urlencoded')) {
 			parse_str(file_get_contents($this->inputStream), $params);
 			if (\is_array($params)) {
 				$this->items['params'] = $params;
@@ -612,7 +608,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 						$IP = trim($IP);
 
 						// remove brackets from IPv6 addresses
-						if (strpos($IP, '[') === 0 && substr($IP, -1) === ']') {
+						if (str_starts_with($IP, '[') && str_ends_with($IP, ']')) {
 							$IP = substr($IP, 1, -1);
 						}
 
@@ -653,7 +649,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 		}
 
 		if ($this->fromTrustedProxy() && isset($this->server['HTTP_X_FORWARDED_PROTO'])) {
-			if (strpos($this->server['HTTP_X_FORWARDED_PROTO'], ',') !== false) {
+			if (str_contains($this->server['HTTP_X_FORWARDED_PROTO'], ',')) {
 				$parts = explode(',', $this->server['HTTP_X_FORWARDED_PROTO']);
 				$proto = strtolower(trim($parts[0]));
 			} else {
@@ -735,7 +731,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 		// FIXME: Sabre does not really belong here
 		[$path, $name] = \Sabre\Uri\split($scriptName);
 		if (!empty($path)) {
-			if ($path === $pathInfo || strpos($pathInfo, $path.'/') === 0) {
+			if ($path === $pathInfo || str_starts_with($pathInfo, $path . '/')) {
 				$pathInfo = substr($pathInfo, \strlen($path));
 			} else {
 				throw new \Exception("The requested uri($requestUri) cannot be processed by the script '$scriptName')");
@@ -745,10 +741,10 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 			$name = '';
 		}
 
-		if (strpos($pathInfo, '/'.$name) === 0) {
+		if (str_starts_with($pathInfo, '/' . $name)) {
 			$pathInfo = substr($pathInfo, \strlen($name) + 1);
 		}
-		if ($name !== '' && strpos($pathInfo, $name) === 0) {
+		if ($name !== '' && str_starts_with($pathInfo, $name)) {
 			$pathInfo = substr($pathInfo, \strlen($name));
 		}
 		if ($pathInfo === false || $pathInfo === '/') {
@@ -814,7 +810,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 
 		$host = 'localhost';
 		if ($this->fromTrustedProxy() && isset($this->server['HTTP_X_FORWARDED_HOST'])) {
-			if (strpos($this->server['HTTP_X_FORWARDED_HOST'], ',') !== false) {
+			if (str_contains($this->server['HTTP_X_FORWARDED_HOST'], ',')) {
 				$parts = explode(',', $this->server['HTTP_X_FORWARDED_HOST']);
 				$host = trim(current($parts));
 			} else {

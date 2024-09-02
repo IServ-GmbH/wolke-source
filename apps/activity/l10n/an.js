@@ -9,7 +9,6 @@ OC.L10N.register(
     "Recent activity" : "Actividat rezién",
     "No activities" : "No i hai actividat",
     "Daily activity summary for %s" : "Resumen de l'actividat diaria de %s",
-    "_and %n more _::_and %n more _" : ["y %n más","y %n más"],
     "All activities" : "Totas as actividat",
     "By others" : "Por atros",
     "By you" : "Por tu",
@@ -17,6 +16,7 @@ OC.L10N.register(
     "Hello %s" : "Hola %s",
     "Hello %s," : "Hola %s,",
     "There was some activity at %s" : "I abió bella mica d'actividat en %s",
+    "_and %n more _::_and %n more _" : ["y %n más","y %n más"],
     "Mail" : "Correu",
     "Push" : "Empentar",
     "Activity" : "Actividat",
@@ -50,14 +50,6 @@ OC.L10N.register(
     "Send daily activity summary in the morning" : "Inviar resumen d'actividat diaria por o maitín.",
     "Default settings" : "Configurazión per defeuto",
     "Unable to save the settings" : "No se puede alzar a configurazión",
-    "No more events to load" : "No i hai más eventos que cargar",
-    "Copied!" : "Copiado!",
-    "Not supported!" : "No suportau!",
-    "Press ⌘-C to copy." : "Pretar ⌘-C pa copiar.",
-    "Press Ctrl-C to copy." : "Pretar Ctrl-C pa copiar.",
-    "{name} (invisible)" : "{nombre} (invisible)",
-    "{name} (restricted)" : "{nombre} (restrinchiu)",
-    "There are no events for this filter" : "No i hai eventos pa iste filtro",
-    "Activities" : "Actividat"
+    "No more events to load" : "No i hai más eventos que cargar"
 },
 "nplurals=2; plural=(n != 1);");

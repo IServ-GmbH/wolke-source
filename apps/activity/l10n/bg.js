@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Няма активности",
     "More activities" : "Още активности",
     "Daily activity summary for %s" : "Обобщение на дневната активност за %s",
-    "_and %n more _::_and %n more _" : ["и %n още ","и %n още "],
     "All activities" : "Всички активности",
     "By others" : "От други",
     "By you" : "От Вас",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Здравейте %s",
     "Hello %s," : "Здравейте %s,",
     "There was some activity at %s" : "Имаше събитие в %s",
+    "_and %n more _::_and %n more _" : ["и %n още ","и %n още "],
     "Mail" : "Поща",
     "Push" : "Директно /push/",
     "Activity" : "Активност",
@@ -57,14 +57,6 @@ OC.L10N.register(
     "Default settings" : "Стандартни настройкки",
     "Configure the default notification settings for new accounts." : "Конфигуриране по подразбиране на настройките при известие за уведомяване за нови профили.",
     "Unable to save the settings" : "Настройките не могат да бъдат запазени",
-    "No more events to load" : "Няма повече известия за зареждане",
-    "Copied!" : "Копирано!",
-    "Not supported!" : "Не се поддържа!",
-    "Press ⌘-C to copy." : "За копиране натиснете ⌘-C",
-    "Press Ctrl-C to copy." : "За копиране натиснете Ctrl-C",
-    "{name} (invisible)" : "{name} (невидим)",
-    "{name} (restricted)" : "{name} (ограничен)",
-    "There are no events for this filter" : "Няма събития от този филтър",
-    "Activities" : "Активности /дейности/"
+    "No more events to load" : "Няма повече известия за зареждане"
 },
 "nplurals=2; plural=(n != 1);");

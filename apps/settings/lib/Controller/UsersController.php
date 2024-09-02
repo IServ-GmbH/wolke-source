@@ -16,6 +16,7 @@ declare(strict_types=1);
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  * @author Vincent Petry <vincent@nextcloud.com>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license AGPL-3.0
  *
@@ -54,6 +55,7 @@ use OCP\Accounts\IAccountManager;
 use OCP\Accounts\PropertyDoesNotExistException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -71,6 +73,7 @@ use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use function in_array;
 
+#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class UsersController extends Controller {
 	/** @var UserManager */
 	private $userManager;
@@ -80,8 +83,6 @@ class UsersController extends Controller {
 	private $userSession;
 	/** @var IConfig */
 	private $config;
-	/** @var bool */
-	private $isAdmin;
 	/** @var IL10N */
 	private $l10n;
 	/** @var IMailer */
@@ -111,7 +112,6 @@ class UsersController extends Controller {
 		IGroupManager $groupManager,
 		IUserSession $userSession,
 		IConfig $config,
-		bool $isAdmin,
 		IL10N $l10n,
 		IMailer $mailer,
 		IFactory $l10nFactory,
@@ -128,7 +128,6 @@ class UsersController extends Controller {
 		$this->groupManager = $groupManager;
 		$this->userSession = $userSession;
 		$this->config = $config;
-		$this->isAdmin = $isAdmin;
 		$this->l10n = $l10n;
 		$this->mailer = $mailer;
 		$this->l10nFactory = $l10nFactory;
@@ -165,6 +164,7 @@ class UsersController extends Controller {
 	public function usersList(): TemplateResponse {
 		$user = $this->userSession->getUser();
 		$uid = $user->getUID();
+		$isAdmin = $this->groupManager->isAdmin($uid);
 
 		\OC::$server->getNavigationManager()->setActiveEntry('core_users');
 
@@ -189,7 +189,7 @@ class UsersController extends Controller {
 		/* GROUPS */
 		$groupsInfo = new \OC\Group\MetaData(
 			$uid,
-			$this->isAdmin,
+			$isAdmin,
 			$this->groupManager,
 			$this->userSession
 		);
@@ -207,7 +207,7 @@ class UsersController extends Controller {
 		$userCount = 0;
 
 		if (!$isLDAPUsed) {
-			if ($this->isAdmin) {
+			if ($isAdmin) {
 				$disabledUsers = $this->userManager->countDisabledUsers();
 				$userCount = array_reduce($this->userManager->countUsers(), function ($v, $w) {
 					return $v + (int)$w;
@@ -220,7 +220,7 @@ class UsersController extends Controller {
 
 				foreach ($groups as $key => $group) {
 					// $userCount += (int)$group['usercount'];
-					array_push($groupsNames, $group['name']);
+					$groupsNames[] = $group['name'];
 					// we prevent subadmins from looking up themselves
 					// so we lower the count of the groups he belongs to
 					if (array_key_exists($group['id'], $userGroups)) {
@@ -262,7 +262,7 @@ class UsersController extends Controller {
 		// groups
 		$serverData['groups'] = array_merge_recursive($adminGroup, [$disabledUsersGroup], $groups);
 		// Various data
-		$serverData['isAdmin'] = $this->isAdmin;
+		$serverData['isAdmin'] = $isAdmin;
 		$serverData['sortGroups'] = $sortGroupsBy;
 		$serverData['quotaPreset'] = $quotaPreset;
 		$serverData['allowUnlimitedQuota'] = $allowUnlimitedQuota;
@@ -364,20 +364,20 @@ class UsersController extends Controller {
 	 * @return DataResponse
 	 */
 	public function setUserSettings(?string $avatarScope = null,
-									?string $displayname = null,
-									?string $displaynameScope = null,
-									?string $phone = null,
-									?string $phoneScope = null,
-									?string $email = null,
-									?string $emailScope = null,
-									?string $website = null,
-									?string $websiteScope = null,
-									?string $address = null,
-									?string $addressScope = null,
-									?string $twitter = null,
-									?string $twitterScope = null,
-									?string $fediverse = null,
-									?string $fediverseScope = null
+		?string $displayname = null,
+		?string $displaynameScope = null,
+		?string $phone = null,
+		?string $phoneScope = null,
+		?string $email = null,
+		?string $emailScope = null,
+		?string $website = null,
+		?string $websiteScope = null,
+		?string $address = null,
+		?string $addressScope = null,
+		?string $twitter = null,
+		?string $twitterScope = null,
+		?string $fediverse = null,
+		?string $fediverseScope = null
 	) {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {

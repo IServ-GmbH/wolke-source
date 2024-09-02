@@ -35,56 +35,20 @@ use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
 
 class SettingsController extends Controller {
-	/** @var \OCP\IConfig */
-	protected $config;
 
-	/** @var \OCP\Security\ISecureRandom */
-	protected $random;
+	protected string $user;
 
-	/** @var \OCP\IURLGenerator */
-	protected $urlGenerator;
-
-	/** @var IManager */
-	protected $manager;
-
-	/** @var \OCA\Activity\UserSettings */
-	protected $userSettings;
-
-	/** @var \OCP\IL10N */
-	protected $l10n;
-
-	/** @var string */
-	protected $user;
-
-	/**
-	 * constructor of the controller
-	 *
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IConfig $config
-	 * @param ISecureRandom $random
-	 * @param IURLGenerator $urlGenerator
-	 * @param IManager $manager
-	 * @param UserSettings $userSettings
-	 * @param IL10N $l10n
-	 * @param CurrentUser $currentUser
-	 */
-	public function __construct($appName,
-								IRequest $request,
-								IConfig $config,
-								ISecureRandom $random,
-								IURLGenerator $urlGenerator,
-								IManager $manager,
-								UserSettings $userSettings,
-								IL10N $l10n,
-								CurrentUser $currentUser) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		protected IConfig $config,
+		protected ISecureRandom $random,
+		protected IURLGenerator $urlGenerator,
+		protected IManager $manager,
+		protected UserSettings $userSettings,
+		protected IL10N $l10n,
+		CurrentUser $currentUser) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
-		$this->random = $random;
-		$this->urlGenerator = $urlGenerator;
-		$this->manager = $manager;
-		$this->userSettings = $userSettings;
-		$this->l10n = $l10n;
 		$this->user = (string) $currentUser->getUID();
 	}
 
@@ -98,10 +62,10 @@ class SettingsController extends Controller {
 	 * @return DataResponse
 	 */
 	public function personal(
-			$notify_setting_batchtime = UserSettings::EMAIL_SEND_HOURLY,
-			$notify_setting_self = false,
-			$notify_setting_selfemail = false,
-			$activity_digest = false
+		$notify_setting_batchtime = UserSettings::EMAIL_SEND_HOURLY,
+		$notify_setting_self = false,
+		$notify_setting_selfemail = false,
+		$activity_digest = false
 	) {
 		$settings = $this->manager->getSettings();
 		foreach ($settings as $setting) {
@@ -164,9 +128,9 @@ class SettingsController extends Controller {
 	 * @return DataResponse
 	 */
 	public function admin(
-			$notify_setting_batchtime = UserSettings::EMAIL_SEND_HOURLY,
-			$notify_setting_self = false,
-			$notify_setting_selfemail = false) {
+		$notify_setting_batchtime = UserSettings::EMAIL_SEND_HOURLY,
+		$notify_setting_self = false,
+		$notify_setting_selfemail = false) {
 		$settings = $this->manager->getSettings();
 		foreach ($settings as $setting) {
 			$this->config->setAppValue(
@@ -219,13 +183,13 @@ class SettingsController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string $enable	'true' if the feed is enabled
+	 * @param bool $enable true if the feed is enabled
 	 * @return DataResponse
 	 */
-	public function feed($enable) {
+	public function feed(bool $enable) {
 		$token = $tokenUrl = '';
 
-		if ($enable === 'true') {
+		if ($enable === true) {
 			$conflicts = true;
 
 			// Check for collisions
@@ -242,7 +206,7 @@ class SettingsController extends Controller {
 		return new DataResponse([
 			'data' => [
 				'message' => $this->l10n->t('Your settings have been updated.'),
-				'rsslink' => $tokenUrl,
+				'rsslink' => trim($tokenUrl),
 			],
 		]);
 	}

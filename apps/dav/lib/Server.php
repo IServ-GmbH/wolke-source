@@ -11,6 +11,7 @@
  * @author Joas Schilling <coding@schilljs.com>
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Maxence Lange <maxence@artificial-owl.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Robin Appelman <robin@icewind.nl>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -39,10 +40,13 @@ use OCA\DAV\AppInfo\PluginManager;
 use OCA\DAV\BulkUpload\BulkUploadPlugin;
 use OCA\DAV\CalDAV\BirthdayService;
 use OCA\DAV\CalDAV\Security\RateLimitingPlugin;
+use OCA\DAV\CalDAV\Validation\CalDavValidatePlugin;
 use OCA\DAV\CardDAV\HasPhotoPlugin;
 use OCA\DAV\CardDAV\ImageExportPlugin;
 use OCA\DAV\CardDAV\MultiGetExportPlugin;
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\DAV\CardDAV\Security\CardDavRateLimitingPlugin;
+use OCA\DAV\CardDAV\Validation\CardDavValidatePlugin;
 use OCA\DAV\Comments\CommentsPlugin;
 use OCA\DAV\Connector\Sabre\AnonymousOptionsPlugin;
 use OCA\DAV\Connector\Sabre\Auth;
@@ -65,6 +69,7 @@ use OCA\DAV\Connector\Sabre\TagsPlugin;
 use OCA\DAV\DAV\CustomPropertiesBackend;
 use OCA\DAV\DAV\PublicAuth;
 use OCA\DAV\DAV\ViewOnlyPlugin;
+use OCA\DAV\Events\SabrePluginAddEvent;
 use OCA\DAV\Events\SabrePluginAuthInitEvent;
 use OCA\DAV\Files\BrowserErrorPagePlugin;
 use OCA\DAV\Files\LazySearchBackend;
@@ -76,6 +81,7 @@ use OCA\DAV\Upload\ChunkingV2Plugin;
 use OCP\AppFramework\Http\Response;
 use OCP\Diagnostics\IEventLogger;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\ICacheFactory;
 use OCP\IRequest;
 use OCP\Profiler\IProfiler;
@@ -103,9 +109,8 @@ class Server {
 		$this->request = $request;
 		$this->baseUri = $baseUri;
 		$logger = \OC::$server->get(LoggerInterface::class);
-		$dispatcher = \OC::$server->getEventDispatcher();
-		/** @var IEventDispatcher $newDispatcher */
-		$newDispatcher = \OC::$server->query(IEventDispatcher::class);
+		/** @var IEventDispatcher $dispatcher */
+		$dispatcher = \OC::$server->get(IEventDispatcher::class);
 
 		$root = new RootCollection();
 		$this->server = new \OCA\DAV\Connector\Sabre\Server(new CachingTree($root));
@@ -140,7 +145,7 @@ class Server {
 		$dispatcher->dispatch('OCA\DAV\Connector\Sabre::authInit', $event);
 
 		$newAuthEvent = new SabrePluginAuthInitEvent($this->server);
-		$newDispatcher->dispatchTyped($newAuthEvent);
+		$dispatcher->dispatchTyped($newAuthEvent);
 
 		$bearerAuthBackend = new BearerAuth(
 			\OC::$server->getUserSession(),
@@ -195,6 +200,7 @@ class Server {
 			));
 
 			$this->server->addPlugin(\OCP\Server::get(RateLimitingPlugin::class));
+			$this->server->addPlugin(\OCP\Server::get(CalDavValidatePlugin::class));
 		}
 
 		// addressbook plugins
@@ -208,6 +214,9 @@ class Server {
 				\OC::$server->getAppDataDir('dav-photocache'),
 				$logger)
 			));
+
+			$this->server->addPlugin(\OCP\Server::get(CardDavRateLimitingPlugin::class));
+			$this->server->addPlugin(\OCP\Server::get(CardDavValidatePlugin::class));
 		}
 
 		// system tags plugins
@@ -226,6 +235,8 @@ class Server {
 
 		// allow setup of additional plugins
 		$dispatcher->dispatch('OCA\DAV\Connector\Sabre::addPlugin', $event);
+		$typedEvent = new SabrePluginAddEvent($this->server);
+		$dispatcher->dispatchTyped($typedEvent);
 
 		// Some WebDAV clients do require Class 2 WebDAV support (locking), since
 		// we do not provide locking we emulate it using a fake locking plugin.
@@ -287,13 +298,15 @@ class Server {
 						$this->server->tree, \OC::$server->getTagManager()
 					)
 				);
+
 				// TODO: switch to LazyUserFolder
 				$userFolder = \OC::$server->getUserFolder();
+				$shareManager = \OCP\Server::get(\OCP\Share\IManager::class);
 				$this->server->addPlugin(new SharesPlugin(
 					$this->server->tree,
 					$userSession,
 					$userFolder,
-					\OC::$server->getShareManager()
+					$shareManager,
 				));
 				$this->server->addPlugin(new CommentPropertiesPlugin(
 					\OC::$server->getCommentsManager(),
@@ -316,8 +329,9 @@ class Server {
 						$this->server->tree,
 						$user,
 						\OC::$server->getRootFolder(),
-						\OC::$server->getShareManager(),
-						$view
+						$shareManager,
+						$view,
+						\OCP\Server::get(IFilesMetadataManager::class)
 					));
 					$this->server->addPlugin(
 						new BulkUploadPlugin(
@@ -377,10 +391,14 @@ class Server {
 	private function requestIsForSubtree(array $subTrees): bool {
 		foreach ($subTrees as $subTree) {
 			$subTree = trim($subTree, ' /');
-			if (strpos($this->server->getRequestUri(), $subTree.'/') === 0) {
+			if (str_starts_with($this->server->getRequestUri(), $subTree . '/')) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public function getSabreServer(): Connector\Sabre\Server {
+		return $this->server;
 	}
 }

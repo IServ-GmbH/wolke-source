@@ -16,6 +16,7 @@ declare(strict_types=1);
  * @author Michael Weimann <mail@michael-weimann.eu>
  * @author Rayn0r <andrew@ilpss8.myfirewall.org>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license AGPL-3.0
  *
@@ -34,14 +35,18 @@ declare(strict_types=1);
  */
 namespace OC\Core\Controller;
 
+use OC\AppFramework\Http\Request;
 use OC\Authentication\Login\Chain;
 use OC\Authentication\Login\LoginData;
 use OC\Authentication\WebAuthn\Manager as WebAuthnManager;
-use OC\Security\Bruteforce\Throttler;
 use OC\User\Session;
 use OC_App;
+use OCA\User_LDAP\Configuration;
+use OCA\User_LDAP\Helper;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -55,53 +60,33 @@ use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IUserSession;
 use OCP\Notification\IManager;
+use OCP\Security\Bruteforce\IThrottler;
 use OCP\Util;
 
+#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class LoginController extends Controller {
 	public const LOGIN_MSG_INVALIDPASSWORD = 'invalidpassword';
 	public const LOGIN_MSG_USERDISABLED = 'userdisabled';
 	public const LOGIN_MSG_CSRFCHECKFAILED = 'csrfCheckFailed';
 
-	private IUserManager $userManager;
-	private IConfig $config;
-	private ISession $session;
-	/** @var Session */
-	private $userSession;
-	private IURLGenerator $urlGenerator;
-	private Defaults $defaults;
-	private Throttler $throttler;
-	private IInitialStateService $initialStateService;
-	private WebAuthnManager $webAuthnManager;
-	private IManager $manager;
-	private IL10N $l10n;
-
-	public function __construct(?string $appName,
-								IRequest $request,
-								IUserManager $userManager,
-								IConfig $config,
-								ISession $session,
-								IUserSession $userSession,
-								IURLGenerator $urlGenerator,
-								Defaults $defaults,
-								Throttler $throttler,
-								IInitialStateService $initialStateService,
-								WebAuthnManager $webAuthnManager,
-								IManager $manager,
-								IL10N $l10n) {
+	public function __construct(
+		?string $appName,
+		IRequest $request,
+		private IUserManager $userManager,
+		private IConfig $config,
+		private ISession $session,
+		private Session $userSession,
+		private IURLGenerator $urlGenerator,
+		private Defaults $defaults,
+		private IThrottler $throttler,
+		private IInitialStateService $initialStateService,
+		private WebAuthnManager $webAuthnManager,
+		private IManager $manager,
+		private IL10N $l10n,
+		private IAppManager $appManager,
+	) {
 		parent::__construct($appName, $request);
-		$this->userManager = $userManager;
-		$this->config = $config;
-		$this->session = $session;
-		$this->userSession = $userSession;
-		$this->urlGenerator = $urlGenerator;
-		$this->defaults = $defaults;
-		$this->throttler = $throttler;
-		$this->initialStateService = $initialStateService;
-		$this->webAuthnManager = $webAuthnManager;
-		$this->manager = $manager;
-		$this->l10n = $l10n;
 	}
 
 	/**
@@ -125,8 +110,10 @@ class LoginController extends Controller {
 		$this->session->set('clearingExecutionContexts', '1');
 		$this->session->close();
 
-		if ($this->request->getServerProtocol() === 'https') {
-			// This feature is available only in secure contexts
+		if (
+			$this->request->getServerProtocol() === 'https' &&
+			!$this->request->isUserAgent([Request::USER_AGENT_CHROME, Request::USER_AGENT_ANDROID_MOBILE_CHROME])
+		) {
 			$response->addHeader('Clear-Site-Data', '"cache", "storage"');
 		}
 
@@ -189,6 +176,8 @@ class LoginController extends Controller {
 
 		$this->setPasswordResetInitialState($user);
 
+		$this->setEmailStates();
+
 		$this->initialStateService->provideInitialState('core', 'webauthn-available', $this->webAuthnManager->isWebAuthnAvailable());
 
 		$this->initialStateService->provideInitialState('core', 'hideLoginForm', $this->config->getSystemValueBool('hide_login_form', false));
@@ -245,6 +234,31 @@ class LoginController extends Controller {
 	}
 
 	/**
+	 * Sets the initial state of whether or not a user is allowed to login with their email
+	 * initial state is passed in the array of 1 for email allowed and 0 for not allowed
+	 */
+	private function setEmailStates(): void {
+		$emailStates = []; // true: can login with email, false otherwise - default to true
+
+		// check if user_ldap is enabled, and the required classes exist
+		if ($this->appManager->isAppLoaded('user_ldap')
+			&& class_exists(Helper::class)) {
+			$helper = \OCP\Server::get(Helper::class);
+			$allPrefixes = $helper->getServerConfigurationPrefixes();
+			// check each LDAP server the user is connected too
+			foreach ($allPrefixes as $prefix) {
+				$emailConfig = new Configuration($prefix);
+				array_push($emailStates, $emailConfig->__get('ldapLoginFilterEmail'));
+			}
+		}
+		$this->initialStateService->
+			provideInitialState(
+				'core',
+				'emailStates',
+				$emailStates);
+	}
+
+	/**
 	 * @param string|null $passwordLink
 	 * @param IUser|null $user
 	 *
@@ -276,7 +290,7 @@ class LoginController extends Controller {
 			$location = $this->urlGenerator->getAbsoluteURL($redirectUrl);
 			// Deny the redirect if the URL contains a @
 			// This prevents unvalidated redirects like ?redirect_url=:user@domain.com
-			if (strpos($location, '@') === false) {
+			if (!str_contains($location, '@')) {
 				return new RedirectResponse($location);
 			}
 		}
@@ -292,11 +306,11 @@ class LoginController extends Controller {
 	 */
 	#[UseSession]
 	public function tryLogin(Chain $loginChain,
-							 string $user = '',
-							 string $password = '',
-							 string $redirect_url = null,
-							 string $timezone = '',
-							 string $timezone_offset = ''): RedirectResponse {
+		string $user = '',
+		string $password = '',
+		string $redirect_url = null,
+		string $timezone = '',
+		string $timezone_offset = ''): RedirectResponse {
 		if (!$this->request->passesCSRFCheck()) {
 			if ($this->userSession->isLoggedIn()) {
 				// If the user is already logged in and the CSRF check does not pass then
@@ -312,13 +326,25 @@ class LoginController extends Controller {
 				$user,
 				$user,
 				$redirect_url,
-				self::LOGIN_MSG_CSRFCHECKFAILED
+				self::LOGIN_MSG_CSRFCHECKFAILED,
+				false,
+			);
+		}
+
+		$user = trim($user);
+
+		if (strlen($user) > 255) {
+			return $this->createLoginFailedResponse(
+				$user,
+				$user,
+				$redirect_url,
+				$this->l10n->t('Unsupported email length (>255)')
 			);
 		}
 
 		$data = new LoginData(
 			$this->request,
-			trim($user),
+			$user,
 			$password,
 			$redirect_url,
 			$timezone,
@@ -351,7 +377,12 @@ class LoginController extends Controller {
 	 * @return RedirectResponse
 	 */
 	private function createLoginFailedResponse(
-		$user, $originalUser, $redirect_url, string $loginMessage) {
+		$user,
+		$originalUser,
+		$redirect_url,
+		string $loginMessage,
+		bool $throttle = true,
+	) {
 		// Read current user and append if possible we need to
 		// return the unmodified user otherwise we will leak the login name
 		$args = $user !== null ? ['user' => $originalUser, 'direct' => 1] : [];
@@ -361,7 +392,9 @@ class LoginController extends Controller {
 		$response = new RedirectResponse(
 			$this->urlGenerator->linkToRoute('core.login.showLoginForm', $args)
 		);
-		$response->throttle(['user' => substr($user, 0, 64)]);
+		if ($throttle) {
+			$response->throttle(['user' => substr($user, 0, 64)]);
+		}
 		$this->session->set('loginMessages', [
 			[$loginMessage], []
 		]);
@@ -381,12 +414,13 @@ class LoginController extends Controller {
 		$loginResult = $this->userManager->checkPassword($loginName, $password);
 		if ($loginResult === false) {
 			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
-			$response->throttle();
+			$response->throttle(['loginName' => $loginName]);
 			return $response;
 		}
 
 		$confirmTimestamp = time();
 		$this->session->set('last-password-confirm', $confirmTimestamp);
+		$this->throttler->resetDelay($this->request->getRemoteAddress(), 'sudo', ['loginName' => $loginName]);
 		return new DataResponse(['lastLogin' => $confirmTimestamp], Http::STATUS_OK);
 	}
 }

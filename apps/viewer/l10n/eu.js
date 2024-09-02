@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error saving image" : "Errorea irudia gordetzean",
     "Unsaved changes" : "Gorde gabeko aldaketak",
     "Drop changes" : "Jaregin aldaketak",
+    "Play the live photo" : "Erreproduzitu zuzeneko argazkia",
     "LIVE" : "ZUZENEAN",
     "Your browser does not support videos." : "Zure nabigatzaileak ez ditu bideoak onartzen.",
     "Edit" : "Aldatu",
@@ -109,7 +110,6 @@ OC.L10N.register(
     "Saved image size (width x height)" : "Gordetako irudiaren tamaina (zabalera x altuera)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Kontuan izan hautatutako mozte-eremua aplikatutako tamaina baino txikiagoa dela eta horrek kalitatea gutxitzea eragin dezakeela",
     "Actual size (100%)" : "Benetako tamaina (% 100)",
-    "Fit size" : "Egokitu tamaina",
-    "\"{fileName}\"" : "\"{fileName}\""
+    "Fit size" : "Egokitu tamaina"
 },
 "nplurals=2; plural=(n != 1);");

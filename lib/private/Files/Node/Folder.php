@@ -37,6 +37,7 @@ use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchOrder;
 use OC\Files\Search\SearchQuery;
 use OC\Files\Utils\PathHelper;
+use OC\User\LazyUser;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\FileInfo;
 use OCP\Files\Mount\IMountPoint;
@@ -51,6 +52,9 @@ use OCP\Files\Search\ISearchQuery;
 use OCP\IUserManager;
 
 class Folder extends Node implements \OCP\Files\Folder {
+
+	private ?IUserManager $userManager = null;
+
 	/**
 	 * Creates a Folder that represents a non-existing path
 	 *
@@ -89,7 +93,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 	 * @return bool
 	 */
 	public function isSubNode($node) {
-		return strpos($node->getPath(), $this->path . '/') === 0;
+		return str_starts_with($node->getPath(), $this->path . '/');
 	}
 
 	/**
@@ -158,7 +162,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 			$fullPath = $this->getFullPath($path);
 			$nonExisting = new NonExistingFolder($this->root, $this->view, $fullPath);
 			$this->sendHooks(['preWrite', 'preCreate'], [$nonExisting]);
-			if (!$this->view->mkdir($fullPath)) {
+			if (!$this->view->mkdir($fullPath) && !$this->view->is_dir($fullPath)) {
 				throw new NotPermittedException('Could not create folder "' . $fullPath . '"');
 			}
 			$parent = dirname($fullPath) === $this->getPath() ? $this : null;
@@ -177,7 +181,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 	 * @throws \OCP\Files\NotPermittedException
 	 */
 	public function newFile($path, $content = null) {
-		if (empty($path)) {
+		if ($path === '') {
 			throw new NotPermittedException('Could not create as provided path is empty');
 		}
 		if ($this->checkPermissions(\OCP\Constants::PERMISSION_CREATE)) {
@@ -204,7 +208,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 			$user = null;
 		} else {
 			/** @var IUserManager $userManager */
-			$userManager = \OC::$server->query(IUserManager::class);
+			$userManager = \OCP\Server::get(IUserManager::class);
 			$user = $userManager->get($uid);
 		}
 		return new SearchQuery($operator, $limit, $offset, [], $user);
@@ -270,7 +274,26 @@ class Folder extends Node implements \OCP\Files\Folder {
 		$cacheEntry['internalPath'] = $cacheEntry['path'];
 		$cacheEntry['path'] = rtrim($appendRoot . $cacheEntry->getPath(), '/');
 		$subPath = $cacheEntry['path'] !== '' ? '/' . $cacheEntry['path'] : '';
-		return new \OC\Files\FileInfo($this->path . $subPath, $mount->getStorage(), $cacheEntry['internalPath'], $cacheEntry, $mount);
+		$storage = $mount->getStorage();
+
+		$owner = null;
+		$ownerId = $storage->getOwner($cacheEntry['internalPath']);
+		if (!empty($ownerId)) {
+			// Cache the user manager (for performance)
+			if ($this->userManager === null) {
+				$this->userManager = \OCP\Server::get(IUserManager::class);
+			}
+			$owner = new LazyUser($ownerId, $this->userManager);
+		}
+
+		return new \OC\Files\FileInfo(
+			$this->path . $subPath,
+			$storage,
+			$cacheEntry['internalPath'],
+			$cacheEntry,
+			$mount,
+			$owner,
+		);
 	}
 
 	/**
@@ -280,7 +303,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 	 * @return Node[]
 	 */
 	public function searchByMime($mimetype) {
-		if (strpos($mimetype, '/') === false) {
+		if (!str_contains($mimetype, '/')) {
 			$query = $this->queryFromOperator(new SearchComparison(ISearchComparison::COMPARE_LIKE, 'mimetype', $mimetype . '/%'));
 		} else {
 			$query = $this->queryFromOperator(new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'mimetype', $mimetype));
@@ -347,7 +370,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 		$absolutePath = '/' . ltrim($cacheEntry->getPath(), '/');
 		$currentPath = rtrim($this->path, '/') . '/';
 
-		if (strpos($absolutePath, $currentPath) !== 0) {
+		if (!str_starts_with($absolutePath, $currentPath)) {
 			return [];
 		}
 

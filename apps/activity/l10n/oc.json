@@ -8,7 +8,6 @@
     "No activities" : "Cap d’activitat",
     "More activities" : "Mai d’activitats",
     "Daily activity summary for %s" : "Resumit d’activitat quotidian per%s",
-    "_and %n more _::_and %n more _" : ["e %n mai","e %n mai "],
     "All activities" : "Totas las activitats",
     "By others" : "Per d’autres",
     "By you" : "Per vos",
@@ -16,6 +15,7 @@
     "Hello %s" : "Adieu %s",
     "Hello %s," : "Adieu %s,",
     "There was some activity at %s" : "I a agut una activitat a %s",
+    "_and %n more _::_and %n more _" : ["e %n mai","e %n mai "],
     "Mail" : "Mail",
     "Activity" : "Activitat",
     "Notifications" : "Notificacions",
@@ -44,14 +44,6 @@
     "Daily activity summary" : "Resumit d’activitat quotidian",
     "Send daily activity summary in the morning" : "Envejar lo resumit d'activitat quotidian lo maitin",
     "Default settings" : "Paramètres par defaut",
-    "No more events to load" : "Pas mai d’eveniment de cargar",
-    "Copied!" : "Copiat !",
-    "Not supported!" : "Pas pres en carga !",
-    "Press ⌘-C to copy." : "Quichar ⌘-C per copiar.",
-    "Press Ctrl-C to copy." : "Quichar Ctrl-C per copiar.",
-    "{name} (invisible)" : "{name} (invisible)",
-    "{name} (restricted)" : "{name} (restricted)",
-    "There are no events for this filter" : "Cap d’eveniment per aqueste filtre",
-    "Activities" : "Activitats"
+    "No more events to load" : "Pas mai d’eveniment de cargar"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

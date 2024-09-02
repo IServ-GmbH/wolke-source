@@ -1,5 +1,4 @@
-/* eslint-disable node/no-extraneous-import */
-/* eslint-disable node/no-unpublished-import */
+/* eslint-disable n/no-extraneous-import */
 import fs from 'fs'
 import path from 'path'
 import webpack from 'webpack'
@@ -30,15 +29,9 @@ webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
 	'toastify-js',
 ])
 
-webpackRules.RULE_TS = {
-	test: /\.ts$/,
-	use: [{
-		loader: 'ts-loader',
-		options: {
-			// skip typechecking for speed
-			transpileOnly: true,
-		},
-	}],
+webpackRules.RULE_SVG = {
+	resourceQuery: /raw/,
+	type: 'asset/source',
 }
 
 // Replaces rules array
@@ -52,7 +45,7 @@ webpackConfig.plugins.push(...[
 	}),
 ])
 
-// Add proper typescript support
-webpackConfig.resolve.extensions = ['.ts', '.tsx', '.js', '.jsx', '.cjs', '.vue']
+// Clean dist folder
+webpackConfig.output.clean = true
 
 export default webpackConfig

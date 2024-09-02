@@ -16,7 +16,7 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Tree
+class Tree implements INodeByPath
 {
     /**
      * The root node.
@@ -62,20 +62,38 @@ class Tree
             return $this->rootNode;
         }
 
-        // Attempting to fetch its parent
-        list($parentName, $baseName) = Uri\split($path);
+        $node = $this->rootNode;
 
-        // If there was no parent, we must simply ask it from the root node.
-        if ('' === $parentName) {
-            $node = $this->rootNode->getChild($baseName);
-        } else {
-            // Otherwise, we recursively grab the parent and ask him/her.
-            $parent = $this->getNodeForPath($parentName);
+        // look for any cached parent and collect the parts below the parent
+        $parts = [];
+        $remainingPath = $path;
+        do {
+            list($remainingPath, $baseName) = Uri\split($remainingPath);
+            array_unshift($parts, $baseName);
 
-            if (!($parent instanceof ICollection)) {
+            if (isset($this->cache[$remainingPath])) {
+                $node = $this->cache[$remainingPath];
+                break;
+            }
+        } while ('' !== $remainingPath);
+
+        while (count($parts)) {
+            if (!($node instanceof ICollection)) {
                 throw new Exception\NotFound('Could not find node at path: '.$path);
             }
-            $node = $parent->getChild($baseName);
+
+            if ($node instanceof INodeByPath) {
+                $targetNode = $node->getNodeForPath(implode('/', $parts));
+                if ($targetNode instanceof Node) {
+                    $node = $targetNode;
+                    break;
+                }
+            }
+
+            $part = array_shift($parts);
+            if ('' !== $part) {
+                $node = $node->getChild($part);
+            }
         }
 
         $this->cache[$path] = $node;

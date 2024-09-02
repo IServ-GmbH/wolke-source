@@ -48,27 +48,29 @@ use Exception;
 use OC\ServerNotAvailableException;
 use OCA\User_LDAP\User\OfflineUser;
 use OCP\Cache\CappedMemoryCache;
-use OCP\Group\Backend\IIsAdminBackend;
-use OCP\GroupInterface;
+use OCP\Group\Backend\ABackend;
 use OCP\Group\Backend\IDeleteGroupBackend;
 use OCP\Group\Backend\IGetDisplayNameBackend;
+use OCP\Group\Backend\IIsAdminBackend;
+use OCP\GroupInterface;
 use OCP\IConfig;
 use OCP\IUserManager;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 use function json_decode;
 
-class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend, IDeleteGroupBackend, IIsAdminBackend {
+class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend, IDeleteGroupBackend, IIsAdminBackend {
 	protected bool $enabled = false;
 
-	/** @var CappedMemoryCache<string[]> $cachedGroupMembers array of users with gid as key */
+	/** @var CappedMemoryCache<string[]> $cachedGroupMembers array of user DN with gid as key */
 	protected CappedMemoryCache $cachedGroupMembers;
-	/** @var CappedMemoryCache<array[]> $cachedGroupsByMember array of groups with uid as key */
+	/** @var CappedMemoryCache<array[]> $cachedGroupsByMember array of groups with user DN as key */
 	protected CappedMemoryCache $cachedGroupsByMember;
 	/** @var CappedMemoryCache<string[]> $cachedNestedGroups array of groups with gid (DN) as key */
 	protected CappedMemoryCache $cachedNestedGroups;
 	protected GroupPluginManager $groupPluginManager;
 	protected LoggerInterface $logger;
+	protected Access $access;
 
 	/**
 	 * @var string $ldapGroupMemberAssocAttr contains the LDAP setting (in lower case) with the same name
@@ -83,7 +85,7 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 		IConfig $config,
 		IUserManager $ncUserManager
 	) {
-		parent::__construct($access);
+		$this->access = $access;
 		$filter = $this->access->connection->ldapGroupFilter;
 		$gAssoc = $this->access->connection->ldapGroupMemberAssocAttr;
 		if (!empty($filter) && !empty($gAssoc)) {
@@ -1162,31 +1164,43 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 	 * @throws ServerNotAvailableException
 	 */
 	public function groupExists($gid) {
-		$groupExists = $this->access->connection->getFromCache('groupExists' . $gid);
-		if (!is_null($groupExists)) {
-			return (bool)$groupExists;
+		return $this->groupExistsOnLDAP($gid, false);
+	}
+
+	/**
+	 * Check if a group exists
+	 *
+	 * @throws ServerNotAvailableException
+	 */
+	public function groupExistsOnLDAP(string $gid, bool $ignoreCache = false): bool {
+		$cacheKey = 'groupExists' . $gid;
+		if (!$ignoreCache) {
+			$groupExists = $this->access->connection->getFromCache($cacheKey);
+			if (!is_null($groupExists)) {
+				return (bool)$groupExists;
+			}
 		}
 
 		//getting dn, if false the group does not exist. If dn, it may be mapped
 		//only, requires more checking.
 		$dn = $this->access->groupname2dn($gid);
 		if (!$dn) {
-			$this->access->connection->writeToCache('groupExists' . $gid, false);
+			$this->access->connection->writeToCache($cacheKey, false);
 			return false;
 		}
 
 		if (!$this->access->isDNPartOfBase($dn, $this->access->connection->ldapBaseGroups)) {
-			$this->access->connection->writeToCache('groupExists' . $gid, false);
+			$this->access->connection->writeToCache($cacheKey, false);
 			return false;
 		}
 
 		//if group really still exists, we will be able to read its objectClass
 		if (!is_array($this->access->readAttribute($dn, '', $this->access->connection->ldapGroupFilter))) {
-			$this->access->connection->writeToCache('groupExists' . $gid, false);
+			$this->access->connection->writeToCache($cacheKey, false);
 			return false;
 		}
 
-		$this->access->connection->writeToCache('groupExists' . $gid, true);
+		$this->access->connection->writeToCache($cacheKey, true);
 		return true;
 	}
 
@@ -1393,6 +1407,44 @@ class Group_LDAP extends BackendUtility implements GroupInterface, IGroupLDAP, I
 
 		$this->access->connection->writeToCache($cacheKey, $displayName);
 		return $displayName;
+	}
+
+	/**
+	 * returns the groupname for the given LDAP DN, if available
+	 */
+	public function dn2GroupName(string $dn): string|false {
+		return $this->access->dn2groupname($dn);
+	}
+
+	public function addRelationshipToCaches(string $uid, ?string $dnUser, string $gid): void {
+		$dnGroup = $this->access->groupname2dn($gid);
+		$dnUser ??= $this->access->username2dn($uid);
+		if ($dnUser === false || $dnGroup === false) {
+			return;
+		}
+		if (isset($this->cachedGroupMembers[$gid])) {
+			$this->cachedGroupMembers[$gid] = array_merge($this->cachedGroupMembers[$gid], [$dnUser]);
+		}
+		unset($this->cachedGroupsByMember[$dnUser]);
+		unset($this->cachedNestedGroups[$gid]);
+		$cacheKey = 'inGroup' . $uid . ':' . $gid;
+		$this->access->connection->writeToCache($cacheKey, true);
+		$cacheKeyMembers = 'inGroup-members:' . $gid;
+		if (!is_null($data = $this->access->connection->getFromCache($cacheKeyMembers))) {
+			$this->access->connection->writeToCache($cacheKeyMembers, array_merge($data, [$dnUser]));
+		}
+		$cacheKey = '_groupMembers' . $dnGroup;
+		if (!is_null($data = $this->access->connection->getFromCache($cacheKey))) {
+			$this->access->connection->writeToCache($cacheKey, array_merge($data, [$dnUser]));
+		}
+		$cacheKey = 'getUserGroups' . $uid;
+		if (!is_null($data = $this->access->connection->getFromCache($cacheKey))) {
+			$this->access->connection->writeToCache($cacheKey, array_merge($data, [$gid]));
+		}
+		// These cache keys cannot be easily updated:
+		// $cacheKey = 'usersInGroup-' . $gid . '-' . $search . '-' . $limit . '-' . $offset;
+		// $cacheKey = 'usersInGroup-' . $gid . '-' . $search;
+		// $cacheKey = 'countUsersInGroup-' . $gid . '-' . $search;
 	}
 
 	/**

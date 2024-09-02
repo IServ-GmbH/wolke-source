@@ -88,14 +88,14 @@ class Dispatcher {
 	 * @param IEventLogger $eventLogger
 	 */
 	public function __construct(Http $protocol,
-								MiddlewareDispatcher $middlewareDispatcher,
-								ControllerMethodReflector $reflector,
-								IRequest $request,
-								IConfig $config,
-								ConnectionAdapter $connection,
-								LoggerInterface $logger,
-								IEventLogger $eventLogger,
-								ContainerInterface $appContainer) {
+		MiddlewareDispatcher $middlewareDispatcher,
+		ControllerMethodReflector $reflector,
+		IRequest $request,
+		IConfig $config,
+		ConnectionAdapter $connection,
+		LoggerInterface $logger,
+		IEventLogger $eventLogger,
+		ContainerInterface $appContainer) {
 		$this->protocol = $protocol;
 		$this->middlewareDispatcher = $middlewareDispatcher;
 		$this->reflector = $reflector;
@@ -212,8 +212,8 @@ class Dispatcher {
 				$value === 'false' &&
 				(
 					$this->request->method === 'GET' ||
-					strpos($this->request->getHeader('Content-Type'),
-						'application/x-www-form-urlencoded') !== false
+					str_contains($this->request->getHeader('Content-Type'),
+						'application/x-www-form-urlencoded')
 				)
 			) {
 				$value = false;

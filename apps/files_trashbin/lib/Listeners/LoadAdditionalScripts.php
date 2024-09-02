@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -24,8 +25,8 @@ declare(strict_types=1);
  */
 namespace OCA\Files_Trashbin\Listeners;
 
-use OCA\Files_Trashbin\AppInfo\Application;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
+use OCA\Files_Trashbin\AppInfo\Application;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
@@ -36,6 +37,6 @@ class LoadAdditionalScripts implements IEventListener {
 			return;
 		}
 
-		Util::addScript(Application::APP_ID, 'main');
+		Util::addInitScript(Application::APP_ID, 'init');
 	}
 }

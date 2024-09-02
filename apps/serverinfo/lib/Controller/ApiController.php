@@ -113,7 +113,7 @@ class ApiController extends OCSController {
 	 * @PublicPage
 	 * @BruteForceProtection(action=serverinfo)
 	 */
-	public function info(bool $skipApps = false): DataResponse {
+	public function info(bool $skipApps = true, bool $skipUpdate = true): DataResponse {
 		if (!$this->checkAuthorized()) {
 			$response = new DataResponse(['message' => 'Unauthorized']);
 			$response->throttle();
@@ -122,7 +122,7 @@ class ApiController extends OCSController {
 		}
 		return new DataResponse([
 			'nextcloud' => [
-				'system' => $this->systemStatistics->getSystemStatistics($skipApps),
+				'system' => $this->systemStatistics->getSystemStatistics($skipApps, $skipUpdate),
 				'storage' => $this->storageStatistics->getStorageStatistics(),
 				'shares' => $this->shareStatistics->getShareStatistics()
 			],
@@ -138,12 +138,11 @@ class ApiController extends OCSController {
 	public function BasicData(): DataResponse {
 		$servertime = $this->os->getTime();
 		$uptime = $this->formatUptime($this->os->getUptime());
-		$thermalzones = $this->os->getThermalZones();
 
 		return new DataResponse([
 			'servertime' => $servertime,
 			'uptime' => $uptime,
-			'thermalzones' => $thermalzones
+			'thermalzones' => $this->os->getThermalZones()
 		]);
 	}
 

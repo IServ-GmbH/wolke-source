@@ -33,8 +33,8 @@ declare(strict_types=1);
  */
 namespace OC\Session;
 
-use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Token\IProvider;
+use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 
 /**
@@ -52,6 +52,7 @@ class Internal extends Session {
 	public function __construct(string $name) {
 		set_error_handler([$this, 'trapError']);
 		$this->invoke('session_name', [$name]);
+		$this->invoke('session_cache_limiter', ['']);
 		try {
 			$this->startSession();
 		} catch (\Exception $e) {
@@ -149,7 +150,7 @@ class Internal extends Session {
 			$newId = $this->getId();
 
 			/** @var IProvider $tokenProvider */
-			$tokenProvider = \OC::$server->query(IProvider::class);
+			$tokenProvider = \OCP\Server::get(IProvider::class);
 
 			try {
 				$tokenProvider->renewSessionToken($oldId, $newId);
@@ -195,15 +196,6 @@ class Internal extends Session {
 	public function trapError(int $errorNumber, string $errorString) {
 		if ($errorNumber & E_ERROR) {
 			throw new \ErrorException($errorString);
-		}
-	}
-
-	/**
-	 * @throws \Exception
-	 */
-	private function validateSession() {
-		if ($this->sessionClosed) {
-			throw new SessionNotAvailableException('Session has been closed - no further changes to the session are allowed');
 		}
 	}
 

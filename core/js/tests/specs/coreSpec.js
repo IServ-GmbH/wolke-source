@@ -337,7 +337,7 @@ describe('Core base tests', function() {
 					['-1234 B', null],
 					['B', null],
 					['40/0', null],
-					['40,30 kb', 41267],
+					['40,30 kb', null],
 					[' 122.1 MB ', 128031130],
 					['122.1 MB ', 128031130],
 					[' 122.1 MB ', 128031130],
@@ -1293,67 +1293,6 @@ describe('Core base tests', function() {
 			expect(snapperStub.enable.called).toBe(false);
 			expect(snapperStub.disable.calledTwice).toBe(true);
 			expect(snapperStub.close.calledTwice).toBe(true);
-		});
-	});
-	describe('Requires password confirmation', function () {
-		var stubMomentNow;
-		var stubJsPageLoadTime;
-
-		afterEach(function () {
-			delete window.nc_pageLoad;
-			delete window.nc_lastLogin;
-			delete window.backendAllowsPasswordConfirmation;
-
-			stubMomentNow.restore();
-			stubJsPageLoadTime.restore();
-		});
-
-		it('should not show the password confirmation dialog when server time is earlier than local time', function () {
-			// add server variables
-			window.nc_pageLoad = parseInt(new Date(2018, 0, 3, 1, 15, 0).getTime() / 1000);
-			window.nc_lastLogin = parseInt(new Date(2018, 0, 3, 1, 0, 0).getTime() / 1000);
-			window.backendAllowsPasswordConfirmation = true;
-
-			stubJsPageLoadTime = sinon.stub(OC.PasswordConfirmation, 'pageLoadTime').value(new Date(2018, 0, 3, 12, 15, 0).getTime());
-			stubMomentNow = sinon.stub(moment, 'now').returns(new Date(2018, 0, 3, 12, 20, 0).getTime());
-
-			expect(OC.PasswordConfirmation.requiresPasswordConfirmation()).toBeFalsy();
-		});
-
-		it('should show the password confirmation dialog when server time is earlier than local time', function () {
-			// add server variables
-			window.nc_pageLoad = parseInt(new Date(2018, 0, 3, 1, 15, 0).getTime() / 1000);
-			window.nc_lastLogin = parseInt(new Date(2018, 0, 3, 1, 0, 0).getTime() / 1000);
-			window.backendAllowsPasswordConfirmation = true;
-
-			stubJsPageLoadTime = sinon.stub(OC.PasswordConfirmation, 'pageLoadTime').value(new Date(2018, 0, 3, 12, 15, 0).getTime());
-			stubMomentNow = sinon.stub(moment, 'now').returns(new Date(2018, 0, 3, 12, 31, 0).getTime());
-
-			expect(OC.PasswordConfirmation.requiresPasswordConfirmation()).toBeTruthy();
-		});
-
-		it('should not show the password confirmation dialog when server time is later than local time', function () {
-			// add server variables
-			window.nc_pageLoad = parseInt(new Date(2018, 0, 3, 23, 15, 0).getTime() / 1000);
-			window.nc_lastLogin = parseInt(new Date(2018, 0, 3, 23, 0, 0).getTime() / 1000);
-			window.backendAllowsPasswordConfirmation = true;
-
-			stubJsPageLoadTime = sinon.stub(OC.PasswordConfirmation, 'pageLoadTime').value(new Date(2018, 0, 3, 12, 15, 0).getTime());
-			stubMomentNow = sinon.stub(moment, 'now').returns(new Date(2018, 0, 3, 12, 20, 0).getTime());
-
-			expect(OC.PasswordConfirmation.requiresPasswordConfirmation()).toBeFalsy();
-		});
-
-		it('should show the password confirmation dialog when server time is later than local time', function () {
-			// add server variables
-			window.nc_pageLoad = parseInt(new Date(2018, 0, 3, 23, 15, 0).getTime() / 1000);
-			window.nc_lastLogin = parseInt(new Date(2018, 0, 3, 23, 0, 0).getTime() / 1000);
-			window.backendAllowsPasswordConfirmation = true;
-
-			stubJsPageLoadTime = sinon.stub(OC.PasswordConfirmation, 'pageLoadTime').value(new Date(2018, 0, 3, 12, 15, 0).getTime());
-			stubMomentNow = sinon.stub(moment, 'now').returns(new Date(2018, 0, 3, 12, 31, 0).getTime());
-
-			expect(OC.PasswordConfirmation.requiresPasswordConfirmation()).toBeTruthy();
 		});
 	});
 });

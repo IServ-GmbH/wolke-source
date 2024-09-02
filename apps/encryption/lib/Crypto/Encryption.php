@@ -42,18 +42,13 @@ use OCA\Encryption\Session;
 use OCA\Encryption\Util;
 use OCP\Encryption\IEncryptionModule;
 use OCP\IL10N;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Encryption implements IEncryptionModule {
 	public const ID = 'OC_DEFAULT_MODULE';
 	public const DISPLAY_NAME = 'Default encryption module';
-
-	/**
-	 * @var Crypt
-	 */
-	private $crypt;
 
 	/** @var string */
 	private $cipher;
@@ -64,8 +59,7 @@ class Encryption implements IEncryptionModule {
 	/** @var string */
 	private $user;
 
-	/** @var  array */
-	private $owner;
+	private array $owner;
 
 	/** @var string */
 	private $fileKey;
@@ -73,76 +67,34 @@ class Encryption implements IEncryptionModule {
 	/** @var string */
 	private $writeCache;
 
-	/** @var KeyManager */
-	private $keyManager;
-
 	/** @var array */
 	private $accessList;
 
 	/** @var boolean */
 	private $isWriteOperation;
 
-	/** @var Util */
-	private $util;
-
-	/** @var  Session */
-	private $session;
-
-	/** @var  ILogger */
-	private $logger;
-
-	/** @var IL10N */
-	private $l;
-
-	/** @var EncryptAll */
-	private $encryptAll;
-
-	/** @var  bool */
-	private $useMasterPassword;
-
-	/** @var DecryptAll  */
-	private $decryptAll;
+	private bool $useMasterPassword;
 
 	private bool $useLegacyBase64Encoding = false;
 
 	/** @var int Current version of the file */
-	private $version = 0;
-
-	private bool $useLegacyFileKey = true;
+	private int $version = 0;
 
 	/** @var array remember encryption signature version */
 	private static $rememberVersion = [];
 
-
-	/**
-	 *
-	 * @param Crypt $crypt
-	 * @param KeyManager $keyManager
-	 * @param Util $util
-	 * @param Session $session
-	 * @param EncryptAll $encryptAll
-	 * @param DecryptAll $decryptAll
-	 * @param ILogger $logger
-	 * @param IL10N $il10n
-	 */
-	public function __construct(Crypt $crypt,
-								KeyManager $keyManager,
-								Util $util,
-								Session $session,
-								EncryptAll $encryptAll,
-								DecryptAll $decryptAll,
-								ILogger $logger,
-								IL10N $il10n) {
-		$this->crypt = $crypt;
-		$this->keyManager = $keyManager;
-		$this->util = $util;
-		$this->session = $session;
-		$this->encryptAll = $encryptAll;
-		$this->decryptAll = $decryptAll;
-		$this->logger = $logger;
-		$this->l = $il10n;
+	public function __construct(
+		private Crypt $crypt,
+		private KeyManager $keyManager,
+		private Util $util,
+		private Session $session,
+		private EncryptAll $encryptAll,
+		private DecryptAll $decryptAll,
+		private LoggerInterface $logger,
+		private IL10N $l,
+	) {
 		$this->owner = [];
-		$this->useMasterPassword = $util->isMasterKeyEnabled();
+		$this->useMasterPassword = $this->util->isMasterKeyEnabled();
 	}
 
 	/**
@@ -184,7 +136,6 @@ class Encryption implements IEncryptionModule {
 		$this->writeCache = '';
 		$this->useLegacyBase64Encoding = true;
 
-		$this->useLegacyFileKey = ($header['useLegacyFileKey'] ?? 'true') !== 'false';
 
 		if (isset($header['encoding'])) {
 			$this->useLegacyBase64Encoding = $header['encoding'] !== Crypt::BINARY_ENCODING_FORMAT;
@@ -198,19 +149,10 @@ class Encryption implements IEncryptionModule {
 			}
 		}
 
-		if ($this->session->decryptAllModeActivated()) {
-			$shareKey = $this->keyManager->getShareKey($this->path, $this->session->getDecryptAllUid());
-			if ($this->useLegacyFileKey) {
-				$encryptedFileKey = $this->keyManager->getEncryptedFileKey($this->path);
-				$this->fileKey = $this->crypt->multiKeyDecryptLegacy($encryptedFileKey,
-					$shareKey,
-					$this->session->getDecryptAllKey());
-			} else {
-				$this->fileKey = $this->crypt->multiKeyDecrypt($shareKey, $this->session->getDecryptAllKey());
-			}
-		} else {
-			$this->fileKey = $this->keyManager->getFileKey($this->path, $this->user, $this->useLegacyFileKey);
-		}
+		/* If useLegacyFileKey is not specified in header, auto-detect, to be safe */
+		$useLegacyFileKey = (($header['useLegacyFileKey'] ?? '') == 'false' ? false : null);
+
+		$this->fileKey = $this->keyManager->getFileKey($this->path, $this->user, $useLegacyFileKey, $this->session->decryptAllModeActivated());
 
 		// always use the version from the original file, also part files
 		// need to have a correct version number if they get moved over to the

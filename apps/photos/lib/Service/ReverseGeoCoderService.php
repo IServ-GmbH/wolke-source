@@ -24,40 +24,47 @@ declare(strict_types=1);
  */
 namespace OCA\Photos\Service;
 
-use OCP\Files\IAppData;
-use OCP\Files\SimpleFS\ISimpleFolder;
-use OCP\Files\NotFoundException;
-use OCP\Http\Client\IClientService;
-use Hexogen\KDTree\FSTreePersister;
 use Hexogen\KDTree\FSKDTree;
-use Hexogen\KDTree\KDTree;
+use Hexogen\KDTree\FSTreePersister;
 use Hexogen\KDTree\Item;
-use Hexogen\KDTree\ItemList;
 use Hexogen\KDTree\ItemFactory;
+use Hexogen\KDTree\ItemList;
+use Hexogen\KDTree\KDTree;
 use Hexogen\KDTree\NearestSearch;
 use Hexogen\KDTree\Point;
+use OCP\Files\IAppData;
+use OCP\Files\NotFoundException;
+use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\Http\Client\IClientService;
 
 class ReverseGeoCoderService {
-	private ISimpleFolder $geoNameFolder;
+	private ?ISimpleFolder $geoNameFolderCache = null;
 	private ?NearestSearch $fsSearcher = null;
 	/** @var array<int, string> */
 	private ?array $citiesMapping = null;
 
 	public function __construct(
-		IAppData $appData,
+		private IAppData $appData,
 		private IClientService $clientService,
 	) {
-		try {
-			$this->geoNameFolder = $appData->getFolder("geonames");
-		} catch (NotFoundException $ex) {
-			$this->geoNameFolder = $appData->newFolder("geonames");
-		}
 	}
 
 	public function getPlaceForCoordinates(float $latitude, float $longitude): string {
 		$this->loadKdTree();
 		$result = $this->fsSearcher->search(new Point([$latitude, $longitude]), 1);
 		return $this->getPlaceNameForPlaceId($result[0]->getId());
+	}
+
+	private function geoNameFolder(): ISimpleFolder {
+		if ($this->geoNameFolderCache === null) {
+			try {
+				$this->geoNameFolderCache = $this->appData->getFolder("geonames");
+			} catch (NotFoundException $ex) {
+				$this->geoNameFolderCache = $this->appData->newFolder("geonames");
+			}
+		}
+
+		return $this->geoNameFolderCache;
 	}
 
 	private function getPlaceNameForPlaceId(int $placeId): string {
@@ -74,12 +81,12 @@ class ReverseGeoCoderService {
 	}
 
 	private function downloadCities1000(bool $force = false): void {
-		if ($this->geoNameFolder->fileExists('cities1000.csv') && !$force) {
+		if ($this->geoNameFolder()->fileExists('cities1000.csv') && !$force) {
 			return;
 		}
 
 		// Download zip file to a tmp file.
-		$response = $this->clientService->newClient()->get("https://download.geonames.org/export/dump/cities1000.zip");
+		$response = $this->clientService->newClient()->get("https://download.nextcloud.com/server/apps/photos/cities1000.zip");
 		$tmpFile = tmpfile();
 		$cities1000ZipTmpFileName = stream_get_meta_data($tmpFile)['uri'];
 		fclose($tmpFile);
@@ -94,7 +101,7 @@ class ReverseGeoCoderService {
 		$cities1000TxtSteam = $zip->getStream('cities1000.txt');
 
 		// Dump the txt file info into a smaller csv file.
-		$destinationStream = $this->geoNameFolder->newFile('cities1000.csv')->write();
+		$destinationStream = $this->geoNameFolder()->newFile('cities1000.csv')->write();
 
 		while (($fields = fgetcsv($cities1000TxtSteam, 0, "	")) !== false) {
 			$result = fputcsv(
@@ -116,7 +123,7 @@ class ReverseGeoCoderService {
 	}
 
 	private function loadCities1000(): array {
-		$csvStream = $this->geoNameFolder->getFile('cities1000.csv')->read();
+		$csvStream = $this->geoNameFolder()->getFile('cities1000.csv')->read();
 		$cities = [];
 
 		while (($fields = fgetcsv($csvStream)) !== false) {
@@ -132,7 +139,7 @@ class ReverseGeoCoderService {
 	}
 
 	public function buildKDTree($force = false): void {
-		if ($this->geoNameFolder->fileExists('cities1000.bin') && !$force) {
+		if ($this->geoNameFolder()->fileExists('cities1000.bin') && !$force) {
 			return;
 		}
 
@@ -150,7 +157,7 @@ class ReverseGeoCoderService {
 		$kdTreeTmpFileName = tempnam(sys_get_temp_dir(), "nextcloud_photos_");
 		$persister->convert($tree, $kdTreeTmpFileName);
 		$kdTreeString = file_get_contents($kdTreeTmpFileName);
-		$this->geoNameFolder->newFile('cities1000.bin', $kdTreeString);
+		$this->geoNameFolder()->newFile('cities1000.bin', $kdTreeString);
 	}
 
 	private function loadKdTree(): void {
@@ -159,7 +166,7 @@ class ReverseGeoCoderService {
 		}
 
 		$this->buildKDTree();
-		$kdTreeFileContent = $this->geoNameFolder->getFile("cities1000.bin")->getContent();
+		$kdTreeFileContent = $this->geoNameFolder()->getFile("cities1000.bin")->getContent();
 		$kdTreeTmpFileName = tempnam(sys_get_temp_dir(), "nextcloud_photos_");
 		file_put_contents($kdTreeTmpFileName, $kdTreeFileContent);
 		$fsTree = new FSKDTree($kdTreeTmpFileName, new ItemFactory());

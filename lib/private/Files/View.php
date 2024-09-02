@@ -49,16 +49,17 @@ namespace OC\Files;
 use Icewind\Streams\CallbackWrapper;
 use OC\Files\Mount\MoveableMount;
 use OC\Files\Storage\Storage;
-use OC\User\LazyUser;
 use OC\Share\Share;
-use OC\User\User;
+use OC\User\LazyUser;
 use OC\User\Manager as UserManager;
+use OC\User\User;
 use OCA\Files_Sharing\SharedMount;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\ConnectionLostException;
 use OCP\Files\EmptyFileNameException;
 use OCP\Files\FileNameTooLongException;
+use OCP\Files\ForbiddenException;
 use OCP\Files\InvalidCharacterInPathException;
 use OCP\Files\InvalidDirectoryException;
 use OCP\Files\InvalidPathException;
@@ -169,7 +170,7 @@ class View {
 		// missing slashes can cause wrong matches!
 		$root = rtrim($this->fakeRoot, '/') . '/';
 
-		if (strpos($path, $root) !== 0) {
+		if (!str_starts_with($path, $root)) {
 			return null;
 		} else {
 			$path = substr($path, strlen($this->fakeRoot));
@@ -287,12 +288,12 @@ class View {
 		$this->updaterEnabled = true;
 	}
 
-	protected function writeUpdate(Storage $storage, string $internalPath, ?int $time = null): void {
+	protected function writeUpdate(Storage $storage, string $internalPath, ?int $time = null, ?int $sizeDifference = null): void {
 		if ($this->updaterEnabled) {
 			if (is_null($time)) {
 				$time = time();
 			}
-			$storage->getUpdater()->update($internalPath, $time);
+			$storage->getUpdater()->update($internalPath, $time, $sizeDifference);
 		}
 	}
 
@@ -731,6 +732,11 @@ class View {
 	public function rename($source, $target) {
 		$absolutePath1 = Filesystem::normalizePath($this->getAbsolutePath($source));
 		$absolutePath2 = Filesystem::normalizePath($this->getAbsolutePath($target));
+
+		if (str_starts_with($absolutePath2, $absolutePath1 . '/')) {
+			throw new ForbiddenException("Moving a folder into a child folder is forbidden", false);
+		}
+
 		$result = false;
 		if (
 			Filesystem::isValidPath($target)
@@ -1173,7 +1179,9 @@ class View {
 					$this->removeUpdate($storage, $internalPath);
 				}
 				if ($result !== false && in_array('write', $hooks, true) && $operation !== 'fopen' && $operation !== 'touch') {
-					$this->writeUpdate($storage, $internalPath);
+					$isCreateOperation = $operation === 'mkdir' || ($operation === 'file_put_contents' && in_array('create', $hooks, true));
+					$sizeDifference = $operation === 'mkdir' ? 0 : $result;
+					$this->writeUpdate($storage, $internalPath, null, $isCreateOperation ? $sizeDifference : null);
 				}
 				if ($result !== false && in_array('touch', $hooks)) {
 					$this->writeUpdate($storage, $internalPath, $extraParam);
@@ -1361,9 +1369,6 @@ class View {
 		if (!Filesystem::isValidPath($path)) {
 			return false;
 		}
-		if (Cache\Scanner::isPartialFile($path)) {
-			return $this->getPartFileInfo($path);
-		}
 		$relativePath = $path;
 		$path = Filesystem::normalizePath($this->fakeRoot . '/' . $path);
 
@@ -1374,12 +1379,20 @@ class View {
 			$data = $this->getCacheEntry($storage, $internalPath, $relativePath);
 
 			if (!$data instanceof ICacheEntry) {
+				if (Cache\Scanner::isPartialFile($relativePath)) {
+					return $this->getPartFileInfo($relativePath);
+				}
+
 				return false;
 			}
 
 			if ($mount instanceof MoveableMount && $internalPath === '') {
 				$data['permissions'] |= \OCP\Constants::PERMISSION_DELETE;
 			}
+			if ($internalPath === '' && $data['name']) {
+				$data['name'] = basename($path);
+			}
+
 			$ownerId = $storage->getOwner($internalPath);
 			$owner = null;
 			if ($ownerId !== null && $ownerId !== false) {
@@ -2104,7 +2117,7 @@ class View {
 			return ($pathSegments[2] === 'files') && (count($pathSegments) > 3);
 		}
 
-		return strpos($path, '/appdata_') !== 0;
+		return !str_starts_with($path, '/appdata_');
 	}
 
 	/**

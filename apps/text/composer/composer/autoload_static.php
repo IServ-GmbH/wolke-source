@@ -46,6 +46,7 @@ class ComposerStaticInitText
         'OCA\\Text\\Event\\LoadEditor' => __DIR__ . '/..' . '/../lib/Event/LoadEditor.php',
         'OCA\\Text\\Exception\\DocumentHasUnsavedChangesException' => __DIR__ . '/..' . '/../lib/Exception/DocumentHasUnsavedChangesException.php',
         'OCA\\Text\\Exception\\DocumentSaveConflictException' => __DIR__ . '/..' . '/../lib/Exception/DocumentSaveConflictException.php',
+        'OCA\\Text\\Exception\\InvalidDocumentBaseVersionEtagException' => __DIR__ . '/..' . '/../lib/Exception/InvalidDocumentBaseVersionEtagException.php',
         'OCA\\Text\\Exception\\InvalidSessionException' => __DIR__ . '/..' . '/../lib/Exception/InvalidSessionException.php',
         'OCA\\Text\\Exception\\UploadException' => __DIR__ . '/..' . '/../lib/Exception/UploadException.php',
         'OCA\\Text\\Exception\\VersionMismatchException' => __DIR__ . '/..' . '/../lib/Exception/VersionMismatchException.php',
@@ -53,12 +54,14 @@ class ComposerStaticInitText
         'OCA\\Text\\Listeners\\BeforeAssistantNotificationListener' => __DIR__ . '/..' . '/../lib/Listeners/BeforeAssistantNotificationListener.php',
         'OCA\\Text\\Listeners\\BeforeNodeDeletedListener' => __DIR__ . '/..' . '/../lib/Listeners/BeforeNodeDeletedListener.php',
         'OCA\\Text\\Listeners\\BeforeNodeRenamedListener' => __DIR__ . '/..' . '/../lib/Listeners/BeforeNodeRenamedListener.php',
+        'OCA\\Text\\Listeners\\BeforeNodeWrittenListener' => __DIR__ . '/..' . '/../lib/Listeners/BeforeNodeWrittenListener.php',
         'OCA\\Text\\Listeners\\FilesLoadAdditionalScriptsListener' => __DIR__ . '/..' . '/../lib/Listeners/FilesLoadAdditionalScriptsListener.php',
         'OCA\\Text\\Listeners\\FilesSharingLoadAdditionalScriptsListener' => __DIR__ . '/..' . '/../lib/Listeners/FilesSharingLoadAdditionalScriptsListener.php',
         'OCA\\Text\\Listeners\\LoadEditorListener' => __DIR__ . '/..' . '/../lib/Listeners/LoadEditorListener.php',
         'OCA\\Text\\Listeners\\LoadViewerListener' => __DIR__ . '/..' . '/../lib/Listeners/LoadViewerListener.php',
         'OCA\\Text\\Listeners\\NodeCopiedListener' => __DIR__ . '/..' . '/../lib/Listeners/NodeCopiedListener.php',
         'OCA\\Text\\Listeners\\RegisterDirectEditorEventListener' => __DIR__ . '/..' . '/../lib/Listeners/RegisterDirectEditorEventListener.php',
+        'OCA\\Text\\Middleware\\Attribute\\RequireDocumentBaseVersionEtag' => __DIR__ . '/..' . '/../lib/Middleware/Attribute/RequireDocumentBaseVersionEtag.php',
         'OCA\\Text\\Middleware\\Attribute\\RequireDocumentSession' => __DIR__ . '/..' . '/../lib/Middleware/Attribute/RequireDocumentSession.php',
         'OCA\\Text\\Middleware\\Attribute\\RequireDocumentSessionOrUserOrShareToken' => __DIR__ . '/..' . '/../lib/Middleware/Attribute/RequireDocumentSessionOrUserOrShareToken.php',
         'OCA\\Text\\Middleware\\SessionMiddleware' => __DIR__ . '/..' . '/../lib/Middleware/SessionMiddleware.php',
@@ -69,6 +72,7 @@ class ComposerStaticInitText
         'OCA\\Text\\Migration\\Version030201Date20201116123153' => __DIR__ . '/..' . '/../lib/Migration/Version030201Date20201116123153.php',
         'OCA\\Text\\Migration\\Version030501Date20220202101853' => __DIR__ . '/..' . '/../lib/Migration/Version030501Date20220202101853.php',
         'OCA\\Text\\Migration\\Version030701Date20230207131313' => __DIR__ . '/..' . '/../lib/Migration/Version030701Date20230207131313.php',
+        'OCA\\Text\\Migration\\Version030901Date20231114150437' => __DIR__ . '/..' . '/../lib/Migration/Version030901Date20231114150437.php',
         'OCA\\Text\\Notification\\Notifier' => __DIR__ . '/..' . '/../lib/Notification/Notifier.php',
         'OCA\\Text\\Service\\ApiService' => __DIR__ . '/..' . '/../lib/Service/ApiService.php',
         'OCA\\Text\\Service\\AttachmentService' => __DIR__ . '/..' . '/../lib/Service/AttachmentService.php',
@@ -80,6 +84,7 @@ class ComposerStaticInitText
         'OCA\\Text\\Service\\SessionService' => __DIR__ . '/..' . '/../lib/Service/SessionService.php',
         'OCA\\Text\\Service\\WorkspaceService' => __DIR__ . '/..' . '/../lib/Service/WorkspaceService.php',
         'OCA\\Text\\TextFile' => __DIR__ . '/..' . '/../lib/TextFile.php',
+        'OCA\\Text\\YjsMessage' => __DIR__ . '/..' . '/../lib/YjsMessage.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

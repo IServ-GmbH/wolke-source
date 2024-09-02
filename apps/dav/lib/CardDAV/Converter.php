@@ -30,20 +30,24 @@ namespace OCA\DAV\CardDAV;
 use Exception;
 use OCP\Accounts\IAccountManager;
 use OCP\IImage;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Property\Text;
 
 class Converter {
+	/** @var IURLGenerator */
+	private $urlGenerator;
 	/** @var IAccountManager */
 	private $accountManager;
 	private IUserManager $userManager;
 
 	public function __construct(IAccountManager $accountManager,
-		IUserManager $userManager) {
+		IUserManager $userManager, IURLGenerator $urlGenerator) {
 		$this->accountManager = $accountManager;
 		$this->userManager = $userManager;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function createCardFromUser(IUser $user): ?VCard {
@@ -87,6 +91,21 @@ class Converter {
 					break;
 				case IAccountManager::PROPERTY_WEBSITE:
 					$vCard->add(new Text($vCard, 'URL', $property->getValue(), ['X-NC-SCOPE' => $scope]));
+					break;
+				case IAccountManager::PROPERTY_PROFILE_ENABLED:
+					if ($property->getValue()) {
+						$vCard->add(
+							new Text(
+								$vCard,
+								'X-SOCIALPROFILE',
+								$this->urlGenerator->linkToRouteAbsolute('core.ProfilePage.index', ['targetUserId' => $user->getUID()]),
+								[
+									'TYPE' => 'NEXTCLOUD',
+									'X-NC-SCOPE' => IAccountManager::SCOPE_PUBLISHED
+								]
+							)
+						);
+					}
 					break;
 				case IAccountManager::PROPERTY_PHONE:
 					$vCard->add(new Text($vCard, 'TEL', $property->getValue(), ['TYPE' => 'VOICE', 'X-NC-SCOPE' => $scope]));

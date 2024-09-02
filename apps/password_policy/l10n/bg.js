@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Минимална дължина на паролата",
     "User password history" : "История на потребителската парола",
     "Number of days until user password expires" : "Брой дни до изтичане на паролата на потребителя",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Брой опити за влизане преди потребителският профил да се блокира (0 без ограничение)",
     "Forbid common passwords" : "Забранени са лесните пароли",
     "Enforce upper and lower case characters" : "Изискват се главни и малки букви",
     "Enforce numeric characters" : "Изискват се числа",
@@ -28,8 +27,6 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Срокът на  валидност не трябва да е отрицателно число",
     "Maximum login attempts have to be a non negative number" : "Максималният брой опити за влизане не трябва да е отрицателно число",
     "Settings saved" : "Настройките са запазени",
-    "Error while saving settings" : "Грешка при запазване на настройките",
-    "Saved" : "Запазено",
-    "Error while saving" : "Грешка при запазване"
+    "Error while saving settings" : "Грешка при запазване на настройките"
 },
 "nplurals=2; plural=(n != 1);");

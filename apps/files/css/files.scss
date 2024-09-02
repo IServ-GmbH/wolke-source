@@ -140,44 +140,6 @@
 	background-color: var(--color-primary-element-light) !important;
 }
 
-/* icons for sidebar */
-.nav-icon-files {
-	@include icon-color('folder', 'files', variables.$color-black);
-}
-.nav-icon-recent {
-	@include icon-color('recent', 'files', variables.$color-black);
-}
-.nav-icon-favorites {
-	@include icon-color('starred', 'actions', variables.$color-black, 2, true);
-}
-.nav-icon-sharingin,
-.nav-icon-sharingout,
-.nav-icon-pendingshares,
-.nav-icon-shareoverview {
-	@include icon-color('share', 'files', variables.$color-black);
-}
-.nav-icon-sharinglinks {
-	@include icon-color('public', 'files', variables.$color-black);
-}
-.nav-icon-extstoragemounts {
-	@include icon-color('external', 'files', variables.$color-black);
-}
-.nav-icon-trashbin {
-	@include icon-color('delete', 'files', variables.$color-black);
-}
-.nav-icon-trashbin-starred {
-	@include icon-color('delete', 'files', #ff0000);
-}
-.nav-icon-deletedshares {
-	@include icon-color('unshare', 'files', variables.$color-black);
-}
-.nav-icon-favorites-starred {
-	@include icon-color('starred', 'actions', variables.$color-yellow, 2, true);
-}
-
-#app-navigation .nav-files a.nav-icon-files {
-	width: auto;
-}
 /* button needs overrides due to navigation styles */
 #app-navigation .nav-files a.new {
 	width: 40px;
@@ -444,41 +406,6 @@ table {
 			z-index: 10;
 			padding: 0 20px 0 0;
 		}
-
-		/* System tags */
-		.system-tags {
-			--min-size: 32px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			flex: 1 1 100%;
-			min-width: calc(var(--min-size) * 2);
-			max-width: 300px;
-
-			.system-tags__tag {
-				padding: 5px 10px;
-				border: 1px solid;
-				border-radius: var(--border-radius-pill);
-				border-color: var(--color-border);
-				color: var(--color-text-maxcontrast);
-				height: var(--min-size);
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				line-height: 22px; // min-size - 2 * 5px padding
-				text-align: center;
-
-				&--more {
-					overflow: visible;
-					text-overflow: initial;
-				}
-
-				// Proper spacing if multiple shown
-				& + .system-tags__tag {
-					margin-left: 5px;
-				}
-			}
-		}
 	}
 }
 
@@ -591,10 +518,25 @@ table td.selection {
 .files-fileList tr td.filename .favorite-mark {
 	position: absolute;
 	display: block;
-	top: -6px;
-	right: -6px;
+	top: -8px;
+	right: -8px;
 	line-height: 100%;
 	text-align: center;
+	&.permanent {
+		// Create background around the favorite marker to ensure there is enough contrast
+		background-color: var(--color-main-background);
+		mask: var(--icon-star-rounded-white) no-repeat;
+		mask-size: 22px 22px;
+
+		width: 22px;
+		height: 22px;
+		display: flex;
+		align-content: center;
+		justify-content: center;
+	}
+}
+.files-fileList tr:hover td.filename .favorite-mark.permanent {
+	background-color: var(--color-background-hover);
 }
 
 #uploadsize-message,#delete-confirm { display:none; }
@@ -1098,10 +1040,9 @@ table.dragshadow td.size {
 						 * Position is inherited from the selection while in grid view
 						 */
 						.favorite-mark {
-							padding: $grid-pad;
 							left: auto;
-							top: -22px; // center in corner of thumbnail
-							right: -22px; // center in corner of thumbnail
+							top: -11px; // center in corner of thumbnail
+							right: -11px; // center in corner of thumbnail
 						}
 					}
 				}
@@ -1236,10 +1177,7 @@ table.dragshadow td.size {
 				top: -8px; // half the checkbox width, center on corner of thumbnail
 				left: -8px; // half the checkbox width, center on corner of thumbnail
 				display: flex;
-				width: 44px;
-				height: 44px;
 				z-index: 10;
-				background: transparent;
 
 				label {
 					width: 44px;

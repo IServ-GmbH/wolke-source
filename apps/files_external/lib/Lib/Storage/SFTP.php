@@ -39,7 +39,6 @@ namespace OCA\Files_External\Lib\Storage;
 use Icewind\Streams\CountWrapper;
 use Icewind\Streams\IteratorDirectory;
 use Icewind\Streams\RetryWrapper;
-use OC\Files\Filesystem;
 use OC\Files\Storage\Common;
 use OCP\Constants;
 use OCP\Files\FileInfo;
@@ -64,7 +63,7 @@ class SFTP extends Common {
 	protected $client;
 	private IMimeTypeDetector $mimeTypeDetector;
 
-	const COPY_CHUNK_SIZE = 8 * 1024 * 1024;
+	public const COPY_CHUNK_SIZE = 8 * 1024 * 1024;
 
 	/**
 	 * @param string $host protocol://server:port
@@ -72,7 +71,7 @@ class SFTP extends Common {
 	 */
 	private function splitHost($host) {
 		$input = $host;
-		if (strpos($host, '://') === false) {
+		if (!str_contains($host, '://')) {
 			// add a protocol to fix parse_url behavior with ipv6
 			$host = 'http://' . $host;
 		}
@@ -225,12 +224,14 @@ class SFTP extends Common {
 	 */
 	private function hostKeysPath() {
 		try {
-			$storage_view = \OCP\Files::getStorage('files_external');
-			if ($storage_view) {
-				return \OC::$server->getConfig()->getSystemValue('datadirectory', \OC::$SERVERROOT . '/data') .
-					$storage_view->getAbsolutePath('') .
-					'ssh_hostKeys';
+			$userId = \OC_User::getUser();
+			if ($userId === false) {
+				return false;
 			}
+
+			$view = new \OC\Files\View('/' . $userId . '/files_external');
+
+			return $view->getLocalFile('ssh_hostKeys');
 		} catch (\Exception $e) {
 		}
 		return false;

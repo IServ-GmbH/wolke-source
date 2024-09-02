@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Ակտիվություններ առկա չեն",
     "More activities" : "Ավելի շատ գործունեություն",
     "Daily activity summary for %s" : "Օրական գործունեության ամփոփ %s ֊ի համար",
-    "_and %n more _::_and %n more _" : ["և %n ավելի","և"],
     "All activities" : "Բոլոր ակտիվությունները",
     "By others" : "Մյուսների կողմից",
     "By you" : "Ձեր կողմից",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Բարև %s",
     "Hello %s," : "Բարև %s,",
     "There was some activity at %s" : "%s ֊ում նկատվել է որոշ ակտիվություն ",
+    "_and %n more _::_and %n more _" : ["և %n ավելի","և"],
     "Mail" : "Փոստ",
     "Push" : "Սեղմել",
     "Activity" : "Գործունեություն",
@@ -54,14 +54,6 @@ OC.L10N.register(
     "Default settings" : "Լռելայն կարգավորումներ",
     "Configure the default notification settings for new accounts." : "Կարգաբերել ծանուցման լռելայն կարգավորումները նոր հաշիվների համար։",
     "Unable to save the settings" : "Չի ստացվում պահել կարգավորումները",
-    "No more events to load" : "Առկա չէ այլ իրադարձություններ բեռնելու համար",
-    "Copied!" : "Պատճենված է․",
-    "Not supported!" : "Չի՛ սպասարկվում։",
-    "Press ⌘-C to copy." : "Սեղմել ⌘-C պատճենելու համար։",
-    "Press Ctrl-C to copy." : "Սեղմել  Ctrl-C պատճենելու համար։",
-    "{name} (invisible)" : "{անուն} (անտեսանելի)",
-    "{name} (restricted)" : "{անուն} (սահմանափակ)",
-    "There are no events for this filter" : "Այս զտման համար իրադարձություն առկա չէ",
-    "Activities" : "Ակտիվություններ"
+    "No more events to load" : "Առկա չէ այլ իրադարձություններ բեռնելու համար"
 },
 "nplurals=2; plural=(n != 1);");

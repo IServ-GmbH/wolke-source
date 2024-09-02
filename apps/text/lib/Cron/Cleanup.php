@@ -28,7 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Text\Cron;
 
-use OCA\Text\Service\AttachmentService;
+use OCA\Text\Exception\DocumentHasUnsavedChangesException;
 use OCA\Text\Service\DocumentService;
 use OCA\Text\Service\SessionService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -39,41 +39,41 @@ class Cleanup extends TimedJob {
 	private SessionService $sessionService;
 	private DocumentService $documentService;
 	private LoggerInterface $logger;
-	private AttachmentService $attachmentService;
 
 	public function __construct(ITimeFactory $time,
 		SessionService $sessionService,
 		DocumentService $documentService,
-		AttachmentService $attachmentService,
 		LoggerInterface $logger) {
 		parent::__construct($time);
 		$this->sessionService = $sessionService;
 		$this->documentService = $documentService;
-		$this->attachmentService = $attachmentService;
 		$this->logger = $logger;
 		$this->setInterval(SessionService::SESSION_VALID_TIME);
 	}
 
-	protected function run($argument) {
+	/**
+	 * @param array $argument
+	 */
+	protected function run($argument): void {
 		$this->logger->debug('Run cleanup job for text documents');
-		$documents = $this->documentService->getAll();
-		foreach ($documents as $document) {
-			$allSessions = $this->sessionService->getAllSessions($document->getId());
-			if (count($allSessions) > 0) {
+		foreach ($this->documentService->getAll() as $document) {
+			if ($this->sessionService->countAllSessions($document->getId()) > 0) {
 				// Do not reset if there are any sessions left
 				// Inactive sessions will get removed further down and will trigger a reset next time
 				continue;
 			}
 
-			if ($this->documentService->hasUnsavedChanges($document)) {
-				continue;
+			try {
+				$this->documentService->resetDocument($document->getId());
+			} catch (DocumentHasUnsavedChangesException) {
 			}
-
-			$this->documentService->resetDocument($document->getId());
 		}
 
 		$this->logger->debug('Run cleanup job for text sessions');
 		$removedSessions = $this->sessionService->removeInactiveSessionsWithoutSteps(null);
 		$this->logger->debug('Removed ' . $removedSessions . ' inactive sessions');
+
+		$this->logger->debug('Run cleanup job for obsolete documents folders');
+		$this->documentService->cleanupOldDocumentsFolders();
 	}
 }

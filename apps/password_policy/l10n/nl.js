@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Minimale wachtwoordsterkte",
     "User password history" : "Wachtwoordhistorie gebruiker",
     "Number of days until user password expires" : "Aantal dagen tot het wachtwoord van de gebruiker verloopt",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Aantal inlogpogingen voordat het gebruikersaccount wordt geblokkeerd (0 voor onbeperkt)",
     "Forbid common passwords" : "Verbied algemene wachtwoorden",
     "Enforce upper and lower case characters" : "Hoofdletters en kleine letters verplichten",
     "Enforce numeric characters" : "Cijfers verplichten",
@@ -28,8 +27,6 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Vervaldagen moet een niet-negatief getal zijn",
     "Maximum login attempts have to be a non negative number" : "Maximum aantal inlogpogingen moet een niet-negatief getal zijn",
     "Settings saved" : "Instellingen opgeslagen",
-    "Error while saving settings" : "Probleem tijdens het opslaan van instellingen",
-    "Saved" : "Opgeslagen",
-    "Error while saving" : "Fout bij opslaan"
+    "Error while saving settings" : "Probleem tijdens het opslaan van instellingen"
 },
 "nplurals=2; plural=(n != 1);");

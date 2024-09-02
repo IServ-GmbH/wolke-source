@@ -2,10 +2,10 @@ OC.L10N.register(
     "suspicious_login",
     {
     "New login location detected" : "Detectouse unha nova localización de acceso",
+    "More info about the suspicious IP address available on %s" : "Dispón de máis información sobre o enderezo IP sospeitoso en %s",
     "A new login into your account was detected. The IP address %s was classified as suspicious. If this was you, you can ignore this message. Otherwise you should change your password." : "Detectouse un novo acceso na súa conta. O enderezo IP %s cualificouse como sospeitoso. Se foi Vde., pode ignorar esta mensaxe. Se non, debería cambiar o seu contrasinal.",
+    "Open %s ↗" : "Abrir %s ↗",
     "Suspicious Login" : "Acceso sospeitoso",
-    "More information ↗" : "Máis información ↗",
-    "You can get more info by pressing the button which will open %s and show info about the suspicious IP-address." : "Pode obter máis información premendo o botón que abrirá %s e amosará información sobre o enderezo IP sospeitoso.",
     "New login detected" : "Detectouse un novo acceso",
     "Detect and warn about suspicious IPs logging into Nextcloud\n\t" : "Detectar e alertar sobre enderezos IP sospeitosos accedendo a Nextcloud\n\t",
     "Suspicious login detection" : "Detección de accesos sospeitosos",
@@ -18,6 +18,8 @@ OC.L10N.register(
     "No classifier model has been trained yet. This most likely means that you just enabled the app recently. Because the training of a model requires good data, the app waits until logins of at least {days} days have been captured." : "Aínda non se adestrou ningún modelo de clasificador. Isto probabelmente significa que activou recentemente a aplicación. Por mor de que o adestramento dun modelo precisa uns bos datos, a aplicación agarda ata que se teñan capturados os accesos de polo menos {days} días.",
     "During evaluation, the latest model (trained {time}) has shown to capture {recall}% of all suspicious logins (recall), whereas {precision}% of the logins classified as suspicious are indeed suspicious (precision). Below you see a visualization of historic model performance." : "Durante a avaliación, o último modelo (adestrado {time}) amosou capturar {recall}% de todos os accesos sospeitosos (lembrar), mentres que {precision}% dos accesos clasificados como sospeitosos son realmente sospeitosos (precisión). A seguir amosase unha vista do rendemento do modelo histórico.",
     "Precision" : "Precisión",
-    "Recall" : "Lembrar"
+    "Recall" : "Lembrar",
+    "More information ↗" : "Máis información ↗",
+    "You can get more info by pressing the button which will open %s and show info about the suspicious IP-address." : "Pode obter máis información premendo o botón que abrirá %s e amosará información sobre o enderezo IP sospeitoso."
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mimetypes management &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -94,9 +102,9 @@
            <div itemprop="articleBody">
              
   <section id="mimetypes-management">
-<h1>Mimetypes management<a class="headerlink" href="#mimetypes-management" title="Permalink to this headline"></a></h1>
+<h1>Mimetypes management<a class="headerlink" href="#mimetypes-management" title="Link to this heading"></a></h1>
 <section id="mimetype-aliases">
-<h2>Mimetype aliases<a class="headerlink" href="#mimetype-aliases" title="Permalink to this headline"></a></h2>
+<h2>Mimetype aliases<a class="headerlink" href="#mimetype-aliases" title="Link to this heading"></a></h2>
 <p>Nextcloud allows you to create aliases for mimetypes, so that you can display
 custom icons for files. For example, you might want a nice audio icon for audio
 files instead of the default file icon.</p>
@@ -137,7 +145,7 @@ $ sudo -u www-data php occ maintenance:mimetype:update-db --repair-filecache
 </dl>
 </section>
 <section id="mimetype-mapping">
-<h2>Mimetype mapping<a class="headerlink" href="#mimetype-mapping" title="Permalink to this headline"></a></h2>
+<h2>Mimetype mapping<a class="headerlink" href="#mimetype-mapping" title="Link to this heading"></a></h2>
 <p>Nextcloud allows administrators to specify the mapping of a file extension to a
 mimetype. For example files ending in <code class="docutils literal notranslate"><span class="pre">mp3</span></code> map to <code class="docutils literal notranslate"><span class="pre">audio/mpeg</span></code>. Which
 then in turn allows Nextcloud to show the audio icon.</p>
@@ -148,7 +156,7 @@ of Nextcloud. Instead the file <code class="docutils literal notranslate"><span 
 modified, this file has precedence over the shipped file.</p>
 </section>
 <section id="icon-retrieval">
-<h2>Icon retrieval<a class="headerlink" href="#icon-retrieval" title="Permalink to this headline"></a></h2>
+<h2>Icon retrieval<a class="headerlink" href="#icon-retrieval" title="Link to this heading"></a></h2>
 <p>When an icon is retrieved for a mimetype, if the full mimetype cannot be found,
 the search will fallback to looking for the part before the slash. Given a file
 with the mimetype ‘image/my-custom-image’, if no icon exists for the full

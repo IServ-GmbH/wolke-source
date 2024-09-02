@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Migration from Collabora Online &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -101,14 +109,14 @@
            <div itemprop="articleBody">
              
   <section id="migration-from-collabora-online">
-<h1>Migration from Collabora Online<a class="headerlink" href="#migration-from-collabora-online" title="Permalink to this headline"></a></h1>
+<h1>Migration from Collabora Online<a class="headerlink" href="#migration-from-collabora-online" title="Link to this heading"></a></h1>
 <p>Nextcloud Office is based on Collabora Online so for enabling all Nextcloud Office functionality it would be enough to update to the most recent release. Nextcloud Office is available since CODE 21.11.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This upgrade guide is aimed for upgrading from CODE 6.4 to CODE 21.11.</p>
 </div>
 <section id="update-the-reverse-proxy-configuration">
-<h2>Update the reverse proxy configuration<a class="headerlink" href="#update-the-reverse-proxy-configuration" title="Permalink to this headline"></a></h2>
+<h2>Update the reverse proxy configuration<a class="headerlink" href="#update-the-reverse-proxy-configuration" title="Link to this heading"></a></h2>
 <p>Due to naming changes in the Collabora Online releases it may be required to adjust reverse proxy configurations that are already in use for previously existing setups.</p>
 <ul class="simple">
 <li><p>Paths with <code class="docutils literal notranslate"><span class="pre">lool</span></code> have been renamed to <code class="docutils literal notranslate"><span class="pre">cool</span></code></p></li>
@@ -117,7 +125,7 @@
 <p>Fully detailed reverse proxy configuration guides for various solutions can be found at <a class="reference external" href="https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html">https://sdk.collaboraonline.com/docs/installation/Proxy_settings.html</a></p>
 </section>
 <section id="upgrade-distribution-packages">
-<h2>Upgrade distribution packages<a class="headerlink" href="#upgrade-distribution-packages" title="Permalink to this headline"></a></h2>
+<h2>Upgrade distribution packages<a class="headerlink" href="#upgrade-distribution-packages" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>The main service has been renamed from <code class="docutils literal notranslate"><span class="pre">loolwsd</span></code> to <code class="docutils literal notranslate"><span class="pre">coolwsd</span></code></p></li>
 <li><p>The service rename also affects the location of the configuration file <code class="docutils literal notranslate"><span class="pre">/etc/coolwsd/coolwsd.xml</span></code></p></li>
@@ -134,7 +142,7 @@
 </ul>
 </section>
 <section id="upgrade-the-docker-image">
-<h2>Upgrade the docker image<a class="headerlink" href="#upgrade-the-docker-image" title="Permalink to this headline"></a></h2>
+<h2>Upgrade the docker image<a class="headerlink" href="#upgrade-the-docker-image" title="Link to this heading"></a></h2>
 <p>For upgrading the docker images it is enough to pull the latest CODE image from Docker Hub.</p>
 </section>
 </section>

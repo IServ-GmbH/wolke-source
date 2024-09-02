@@ -975,14 +975,10 @@ class QueryBuilder implements IQueryBuilder {
 	 *
 	 * @return $this This QueryBuilder instance.
 	 */
-	public function addGroupBy(...$groupBys) {
-		if (count($groupBys) === 1 && is_array($groupBys[0])) {
-			$$groupBys = $groupBys[0];
-		}
-
+	public function addGroupBy(...$groupBy) {
 		call_user_func_array(
 			[$this->queryBuilder, 'addGroupBy'],
-			$this->helper->quoteColumnNames($groupBys)
+			$this->helper->quoteColumnNames($groupBy)
 		);
 
 		return $this;
@@ -1202,7 +1198,7 @@ class QueryBuilder implements IQueryBuilder {
 	 * @link http://www.zetacomponents.org
 	 *
 	 * @param mixed $value
-	 * @param mixed $type
+	 * @param IQueryBuilder::PARAM_* $type
 	 * @param string $placeHolder The name to bind with. The string must start with a colon ':'.
 	 *
 	 * @return IParameter the placeholder name used.
@@ -1229,7 +1225,7 @@ class QueryBuilder implements IQueryBuilder {
 	 * </code>
 	 *
 	 * @param mixed $value
-	 * @param integer $type
+	 * @param IQueryBuilder::PARAM_* $type
 	 *
 	 * @return IParameter
 	 */
@@ -1321,7 +1317,7 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return string
 	 */
 	protected function prefixTableName($table) {
-		if ($this->automaticTablePrefix === false || strpos($table, '*PREFIX*') === 0) {
+		if ($this->automaticTablePrefix === false || str_starts_with($table, '*PREFIX*')) {
 			return $table;
 		}
 

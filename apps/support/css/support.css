@@ -171,3 +171,11 @@ p.text-center {
 	background-color: #ffffff !important;
 	border-color: #0082c9 !important;
 }
+
+.subscription-key-offline-activation {
+	margin-top: 20px;
+}
+
+.subscription-key-offline-activation textarea {
+	width: 450px;
+}

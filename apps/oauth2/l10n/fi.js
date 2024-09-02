@@ -10,10 +10,11 @@ OC.L10N.register(
     "Redirection URI" : "Uudelleenohjaus URI",
     "Client Identifier" : "Asiakkaan tunniste",
     "Secret key" : "Salainen avain",
+    "Delete client" : "Poista asiakas",
     "Add client" : "Lisää asiakas",
     "Add" : "Lisää",
     "Delete" : "Poista",
     "Show client secret" : "Näytä asiakkaan salaisuus",
-    "Secret" : "Salaisuus"
+    "Hide client secret" : "Piilota asiakkaan salaisuus"
 },
 "nplurals=2; plural=(n != 1);");

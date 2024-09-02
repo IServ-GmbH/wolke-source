@@ -220,7 +220,7 @@ class UserMountCache implements IUserMountCache {
 			$row['mount_point'],
 			$row['mount_provider_class'] ?? '',
 			$mount_id,
-			isset($row['path']) ? $row['path'] : '',
+			$row['path'] ?? '',
 		);
 	}
 
@@ -477,7 +477,7 @@ class UserMountCache implements IUserMountCache {
 		$path = rtrim($path, '/') . '/';
 		$mounts = $this->getMountsForUser($user);
 		return array_filter($mounts, function (ICachedMountInfo $mount) use ($path) {
-			return $mount->getMountPoint() !== $path && strpos($mount->getMountPoint(), $path) === 0;
+			return $mount->getMountPoint() !== $path && str_starts_with($mount->getMountPoint(), $path);
 		});
 	}
 }

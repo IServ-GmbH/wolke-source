@@ -587,6 +587,8 @@ following command::
 
  sudo -u www-data php occ db:add-missing-indices
 
+Use option ``--dry-run`` to output the SQL queries without running them.
+
 .. _encryption_label:
 
 Encryption
@@ -860,7 +862,7 @@ The command line option ``--transfer-incoming-shares`` overwrites the config.php
  sudo -u www-data php occ files:transfer-ownership --transfer-incoming-shares=0 <source-user> <destination-user>
 
 Users may also transfer files or folders selectively by themselves.
-See `user documentation <https://docs.nextcloud.com/server/27/user_manual/en/files/transfer_ownership.html>`_ for details.
+See `user documentation <https://docs.nextcloud.com/server/latest/user_manual/en/files/transfer_ownership.html>`_ for details.
 
 .. TODO ON RELEASE: Update version number above on release
 
@@ -874,6 +876,7 @@ Commands for handling shares::
  sharing
   sharing:cleanup-remote-storages  Cleanup shared storage entries that have no matching entry in the shares_external table
   sharing:expiration-notification  Notify share initiators when a share will expire the next day
+  sharing:delete-orphan-shares     Delete shares where the owner no longer has access to the file or the file is not available anymore
 
 .. _files_external_label:
 
@@ -931,7 +934,7 @@ Verify your app::
   sudo -u www-data php occ integrity:check-app --path=/pathto/app appname
 
 When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See `Code Signing
-<https://docs.nextcloud.com/server/27/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
+<https://docs.nextcloud.com/server/latest/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed>`_ in the Developer manual for more detailed information.
 
 .. TODO ON RELEASE: Update version number above on release
 
@@ -961,6 +964,7 @@ you can run the following LDAP commands with ``occ``::
 
  ldap
   ldap:check-user               checks whether a user exists on LDAP.
+  ldap:check-group              checks whether a group exists on LDAP.
   ldap:create-empty-config      creates an empty LDAP configuration
   ldap:delete-config            deletes an existing LDAP configuration
   ldap:search                   executes a user or group search
@@ -1004,6 +1008,11 @@ is not in one of the disabled connections, and exists on an active connection,
 use the ``--force`` option to force it to check all active LDAP connections::
 
  sudo -u www-data php occ ldap:check-user --force robert
+
+``ldap:check-group`` checks whether a group still exists in the LDAP directory.
+Use with ``--update`` to update the group membership cache on the Nextcloud side::
+
+ sudo -u www-data php occ ldap:check-group --update mygroup
 
 ``ldap:create-empty-config`` creates an empty LDAP configuration. The first
 one you create has ``configID`` ``s01``, and all subsequent configurations
@@ -1231,7 +1240,7 @@ Trashbin
 The ``trashbin:cleanup  [--all-users] [--] [<user_id>...]`` command removes the deleted files of the specified
 users in a space-delimited list, or all users if --all-users is specified.
 
-This example removes the deleted files of all users::
+This example permanently removes the deleted files of all users::
 
   sudo -u www-data php occ trashbin:cleanup --all-users
   Remove all deleted files for all users
@@ -1242,7 +1251,7 @@ This example removes the deleted files of all users::
    rosa
    edward
 
-This example removes the deleted files of users molly and freda::
+This example permanently removes the deleted files of users molly and freda::
 
  sudo -u www-data php occ trashbin:cleanup molly freda
  Remove deleted files of   molly

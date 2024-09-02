@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Instruction set for users &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -56,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="reset_user_password.html">Resetting a user password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_password_policy.html">User password policy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="two_factor-auth.html">Two-factor authentication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_auth_ftp_smb_imap.html">User authentication with IMAP, SMB, FTP and others</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap.html">User authentication with LDAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_cleanup.html">LDAP user cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_api.html">The LDAP configuration API</a></li>
@@ -126,9 +133,9 @@
            <div itemprop="articleBody">
              
   <section id="instruction-set-for-users">
-<h1>Instruction set for users<a class="headerlink" href="#instruction-set-for-users" title="Permalink to this headline"></a></h1>
+<h1>Instruction set for users<a class="headerlink" href="#instruction-set-for-users" title="Link to this heading"></a></h1>
 <section id="add-a-new-user">
-<h2>Add a new user<a class="headerlink" href="#add-a-new-user" title="Permalink to this headline"></a></h2>
+<h2>Add a new user<a class="headerlink" href="#add-a-new-user" title="Link to this heading"></a></h2>
 <p>Create a new user on the Nextcloud server. Authentication is done by sending a
 basic HTTP authentication header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users</strong></p>
@@ -157,8 +164,8 @@ basic HTTP authentication header.</p>
 <li><p>109 - invitation email cannot be send</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users -d userid=&quot;Frank&quot; -d password=&quot;frankspassword&quot;
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users -d userid=&quot;Frank&quot; -d password=&quot;frankspassword&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -168,7 +175,7 @@ basic HTTP authentication header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w"> </span><span class="nt">&lt;meta&gt;</span>
@@ -183,7 +190,7 @@ basic HTTP authentication header.</p>
 </section>
 </section>
 <section id="search-get-users">
-<h2>Search/get users<a class="headerlink" href="#search-get-users" title="Permalink to this headline"></a></h2>
+<h2>Search/get users<a class="headerlink" href="#search-get-users" title="Link to this heading"></a></h2>
 <p>Retrieves a list of users from the Nextcloud server. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users</strong></p>
@@ -198,8 +205,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users?search=Frank
+<h3>Example<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users?search=Frank -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -207,7 +214,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -225,7 +232,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-data-of-a-single-user">
-<h2>Get data of a single user<a class="headerlink" href="#get-data-of-a-single-user" title="Permalink to this headline"></a></h2>
+<h2>Get data of a single user<a class="headerlink" href="#get-data-of-a-single-user" title="Link to this heading"></a></h2>
 <p>Retrieves information about a single user. Authentication is done by sending a
 Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}</strong></p>
@@ -237,8 +244,8 @@ Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank
+<h3>Example<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -246,7 +253,7 @@ Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -275,7 +282,7 @@ Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="edit-data-of-a-single-user">
-<h2>Edit data of a single user<a class="headerlink" href="#edit-data-of-a-single-user" title="Permalink to this headline"></a></h2>
+<h2>Edit data of a single user<a class="headerlink" href="#edit-data-of-a-single-user" title="Link to this heading"></a></h2>
 <p>Edits attributes related to a user. Users are able to edit email, displayname
 and password; admins can also edit the quota value. Further restrictions may apply,
 check the <a class="reference internal" href="#list-of-editable-data-fields">List of editable data fields</a> endpoint. Authentication
@@ -305,14 +312,14 @@ is done by sending a Basic HTTP Authorization header.</p>
 <li><p>102 - invalid input data</p></li>
 </ul>
 <section id="examples">
-<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -d key=&quot;email&quot; -d value=&quot;franksnewemail@example.org&quot;
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -d key=&quot;email&quot; -d value=&quot;franksnewemail@example.org&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Updates the email address for the user <code class="docutils literal notranslate"><span class="pre">Frank</span></code></p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -d key=&quot;quota&quot; -d value=&quot;100MB&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -d key=&quot;quota&quot; -d value=&quot;100MB&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -320,7 +327,7 @@ is done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id5">
-<h3>XML output<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -334,7 +341,7 @@ is done by sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="list-of-editable-data-fields">
-<span id="editable-field-list"></span><h2>List of editable data fields<a class="headerlink" href="#list-of-editable-data-fields" title="Permalink to this headline"></a></h2>
+<span id="editable-field-list"></span><h2>List of editable data fields<a class="headerlink" href="#list-of-editable-data-fields" title="Link to this heading"></a></h2>
 <p>Edits attributes related to a user. Users are able to edit email, displayname
 and password; admins can also edit the quota value. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
@@ -347,8 +354,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id6">
-<h3>Examples<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/user/fields
+<h3>Examples<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/user/fields -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -356,7 +363,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id7">
-<h3>XML output<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w"> </span><span class="nt">&lt;meta&gt;</span>
@@ -378,7 +385,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="disable-a-user">
-<h2>Disable a user<a class="headerlink" href="#disable-a-user" title="Permalink to this headline"></a></h2>
+<h2>Disable a user<a class="headerlink" href="#disable-a-user" title="Link to this heading"></a></h2>
 <p>Disables a user on the Nextcloud server so that the user cannot login anymore.
 Authentication is done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/disable</strong></p>
@@ -391,8 +398,8 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 <li><p>101 - failure</p></li>
 </ul>
 <section id="id8">
-<h3>Example<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/disable
+<h3>Example<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/disable -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -400,7 +407,7 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id9">
-<h3>XML output<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -415,7 +422,7 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="enable-a-user">
-<h2>Enable a user<a class="headerlink" href="#enable-a-user" title="Permalink to this headline"></a></h2>
+<h2>Enable a user<a class="headerlink" href="#enable-a-user" title="Link to this heading"></a></h2>
 <p>Enables a user on the Nextcloud server so that the user can login again.
 Authentication is done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/enable</strong></p>
@@ -428,8 +435,8 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 <li><p>101 - failure</p></li>
 </ul>
 <section id="id10">
-<h3>Example<a class="headerlink" href="#id10" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/enable
+<h3>Example<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/enable -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -437,7 +444,7 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id11">
-<h3>XML output<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -452,7 +459,7 @@ Authentication is done by sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="delete-a-user">
-<h2>Delete a user<a class="headerlink" href="#delete-a-user" title="Permalink to this headline"></a></h2>
+<h2>Delete a user<a class="headerlink" href="#delete-a-user" title="Link to this heading"></a></h2>
 <p>Deletes a user from the Nextcloud server. Authentication is done by sending a
 Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}</strong></p>
@@ -465,8 +472,8 @@ Basic HTTP Authorization header.</p>
 <li><p>101 - failure</p></li>
 </ul>
 <section id="id12">
-<h3>Example<a class="headerlink" href="#id12" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank
+<h3>Example<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -474,7 +481,7 @@ Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id13">
-<h3>XML output<a class="headerlink" href="#id13" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -488,7 +495,7 @@ Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-user-s-groups">
-<h2>Get user’s groups<a class="headerlink" href="#get-user-s-groups" title="Permalink to this headline"></a></h2>
+<h2>Get user’s groups<a class="headerlink" href="#get-user-s-groups" title="Link to this heading"></a></h2>
 <p>Retrieves a list of groups the specified user is a member of. Authentication is
 done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/groups</strong></p>
@@ -500,8 +507,8 @@ done by sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id14">
-<h3>Example<a class="headerlink" href="#id14" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups
+<h3>Example<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -509,7 +516,7 @@ done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id15">
-<h3>XML output<a class="headerlink" href="#id15" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -528,7 +535,7 @@ done by sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="add-user-to-group">
-<h2>Add user to group<a class="headerlink" href="#add-user-to-group" title="Permalink to this headline"></a></h2>
+<h2>Add user to group<a class="headerlink" href="#add-user-to-group" title="Link to this heading"></a></h2>
 <p>Adds the specified user to the specified group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/groups</strong></p>
@@ -546,8 +553,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>105 - failed to add user to group</p></li>
 </ul>
 <section id="id16">
-<h3>Example<a class="headerlink" href="#id16" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid=&quot;newgroup&quot;
+<h3>Example<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid=&quot;newgroup&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -555,7 +562,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id17">
-<h3>XML output<a class="headerlink" href="#id17" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -569,7 +576,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="remove-user-from-group">
-<h2>Remove user from group<a class="headerlink" href="#remove-user-from-group" title="Permalink to this headline"></a></h2>
+<h2>Remove user from group<a class="headerlink" href="#remove-user-from-group" title="Link to this heading"></a></h2>
 <p>Removes the specified user from the specified group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/groups</strong></p>
@@ -587,8 +594,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>105 - failed to remove user from group</p></li>
 </ul>
 <section id="id18">
-<h3>Example<a class="headerlink" href="#id18" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid=&quot;newgroup&quot;
+<h3>Example<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/groups -d groupid=&quot;newgroup&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -596,7 +603,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id19">
-<h3>XML output<a class="headerlink" href="#id19" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -610,7 +617,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="promote-user-to-subadmin">
-<h2>Promote user to subadmin<a class="headerlink" href="#promote-user-to-subadmin" title="Permalink to this headline"></a></h2>
+<h2>Promote user to subadmin<a class="headerlink" href="#promote-user-to-subadmin" title="Link to this heading"></a></h2>
 <p>Makes a user the subadmin of a group. Authentication is done by sending a Basic
 HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/subadmins</strong></p>
@@ -627,8 +634,8 @@ subadmin</p></li>
 <li><p>103 - unknown failure</p></li>
 </ul>
 <section id="id20">
-<h3>Example<a class="headerlink" href="#id20" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid=&quot;group&quot;
+<h3>Example<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid=&quot;group&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -636,7 +643,7 @@ subadmin</p></li>
 </ul>
 </section>
 <section id="id21">
-<h3>XML output<a class="headerlink" href="#id21" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -650,7 +657,7 @@ subadmin</p></li>
 </section>
 </section>
 <section id="demote-user-from-subadmin">
-<h2>Demote user from subadmin<a class="headerlink" href="#demote-user-from-subadmin" title="Permalink to this headline"></a></h2>
+<h2>Demote user from subadmin<a class="headerlink" href="#demote-user-from-subadmin" title="Link to this heading"></a></h2>
 <p>Removes the subadmin rights for the user specified from the group specified.
 Authentication is done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/subadmins</strong></p>
@@ -667,8 +674,8 @@ subadmin rights</p></li>
 <li><p>103 - unknown failure</p></li>
 </ul>
 <section id="id22">
-<h3>Example<a class="headerlink" href="#id22" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid=&quot;oldgroup&quot;
+<h3>Example<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -d groupid=&quot;oldgroup&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -676,7 +683,7 @@ subadmin rights</p></li>
 </ul>
 </section>
 <section id="id23">
-<h3>XML output<a class="headerlink" href="#id23" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -690,7 +697,7 @@ subadmin rights</p></li>
 </section>
 </section>
 <section id="get-user-s-subadmin-groups">
-<h2>Get user’s subadmin groups<a class="headerlink" href="#get-user-s-subadmin-groups" title="Permalink to this headline"></a></h2>
+<h2>Get user’s subadmin groups<a class="headerlink" href="#get-user-s-subadmin-groups" title="Link to this heading"></a></h2>
 <p>Returns the groups in which the user is a subadmin. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/subadmins</strong></p>
@@ -704,8 +711,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>102 - unknown failure</p></li>
 </ul>
 <section id="id24">
-<h3>Example<a class="headerlink" href="#id24" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins
+<h3>Example<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/subadmins -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -713,7 +720,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id25">
-<h3>XML output<a class="headerlink" href="#id25" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -730,7 +737,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="resend-the-welcome-email">
-<h2>Resend the welcome email<a class="headerlink" href="#resend-the-welcome-email" title="Permalink to this headline"></a></h2>
+<h2>Resend the welcome email<a class="headerlink" href="#resend-the-welcome-email" title="Link to this heading"></a></h2>
 <p>The request to this endpoint triggers the welcome email for this user again.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/users/{userid}/welcome</strong></p>
 <ul class="simple">
@@ -743,8 +750,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>102 - sending email failed</p></li>
 </ul>
 <section id="id26">
-<h3>Example<a class="headerlink" href="#id26" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/welcome
+<h3>Example<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://admin:secret@example.com/ocs/v1.php/cloud/users/Frank/welcome -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -752,7 +759,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id27">
-<h3>XML output<a class="headerlink" href="#id27" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>

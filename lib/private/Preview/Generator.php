@@ -44,8 +44,6 @@ use OCP\IStreamImage;
 use OCP\Preview\BeforePreviewFetchedEvent;
 use OCP\Preview\IProviderV2;
 use OCP\Preview\IVersionedPreviewFile;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Generator {
 	public const SEMAPHORE_ID_ALL = 0x0a11;
@@ -59,8 +57,6 @@ class Generator {
 	private $appData;
 	/** @var GeneratorHelper */
 	private $helper;
-	/** @var EventDispatcherInterface */
-	private $legacyEventDispatcher;
 	/** @var IEventDispatcher */
 	private $eventDispatcher;
 
@@ -69,14 +65,12 @@ class Generator {
 		IPreview $previewManager,
 		IAppData $appData,
 		GeneratorHelper $helper,
-		EventDispatcherInterface $legacyEventDispatcher,
 		IEventDispatcher $eventDispatcher
 	) {
 		$this->config = $config;
 		$this->previewManager = $previewManager;
 		$this->appData = $appData;
 		$this->helper = $helper;
-		$this->legacyEventDispatcher = $legacyEventDispatcher;
 		$this->eventDispatcher = $eventDispatcher;
 	}
 
@@ -91,7 +85,7 @@ class Generator {
 	 * @param int $height
 	 * @param bool $crop
 	 * @param string $mode
-	 * @param string $mimeType
+	 * @param string|null $mimeType
 	 * @return ISimpleFile
 	 * @throws NotFoundException
 	 * @throws \InvalidArgumentException if the preview would be invalid (in case the original image is invalid)
@@ -104,12 +98,12 @@ class Generator {
 			'mode' => $mode,
 		];
 
-		$this->legacyEventDispatcher->dispatch(
-			IPreview::EVENT,
-			new GenericEvent($file, $specification)
-		);
 		$this->eventDispatcher->dispatchTyped(new BeforePreviewFetchedEvent(
-			$file
+			$file,
+			$width,
+			$height,
+			$crop,
+			$mode,
 		));
 
 		// since we only ask for one preview, and the generate method return the last one it created, it returns the one we want
@@ -332,7 +326,7 @@ class Generator {
 		// It might have been generated with a higher resolution than the current value.
 		foreach ($previewFiles as $node) {
 			$name = $node->getName();
-			if (($prefix === '' || strpos($name, $prefix) === 0) && strpos($name, 'max')) {
+			if (($prefix === '' || str_starts_with($name, $prefix)) && strpos($name, 'max')) {
 				return $node;
 			}
 		}
@@ -627,6 +621,8 @@ class Generator {
 				return 'png';
 			case 'image/jpeg':
 				return 'jpg';
+			case 'image/webp':
+				return 'webp';
 			case 'image/gif':
 				return 'gif';
 			default:

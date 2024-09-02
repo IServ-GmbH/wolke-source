@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Troubleshooting &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -99,7 +107,7 @@
            <div itemprop="articleBody">
              
   <section id="troubleshooting">
-<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h1>
+<h1>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h1>
 <p>In case of connectivity issues, ensure that the following required connections are possible and not blocked by any firewall:</p>
 <ul class="simple">
 <li><p>The users browser can reach both the Nextcloud Server as well as the Collabora Online server through HTTP(S)</p></li>
@@ -134,7 +142,7 @@
 </li>
 </ul>
 <section id="frequently-asked-questions">
-<h2>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline"></a></h2>
+<h2>Frequently asked questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading"></a></h2>
 <dl>
 <dt>Issue: I get connection errors when trying to open documents</dt><dd><p>Be sure to check the error log from docker through <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">logs</span> <span class="pre">container-id</span></code>. If the logs note something like:
 <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">acceptable</span> <span class="pre">WOPI</span> <span class="pre">hosts</span> <span class="pre">found</span> <span class="pre">matching</span> <span class="pre">the</span> <span class="pre">target</span> <span class="pre">host</span> <span class="pre">[YOUR</span> <span class="pre">NEXTCLOUD</span> <span class="pre">DOMAIN]</span> <span class="pre">in</span> <span class="pre">config.</span></code>

@@ -21,25 +21,31 @@
 
 namespace OCA\LogReader\Settings;
 
+use OCA\LogReader\Service\SettingsService;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IL10N;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\IDelegatedSettings;
+use OCP\Util;
 
 class Admin implements IDelegatedSettings {
-	/** @var IL10N */
-	private $l;
 
-	public function __construct(IL10N $l) {
-		$this->l = $l;
+	public function __construct(
+		private string $appName,
+		private IInitialState $initialState,
+		private SettingsService $settingsService,
+	) {
 	}
+
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm() {
-		return new TemplateResponse('logreader',
-			'index',
-			['appId' => 'logreader', 'inline-settings' => 'true'],
-			'');
+		Util::addScript($this->appName, 'logreader-main');
+		Util::addStyle($this->appName, 'logreader-main');
+
+		$this->initialState->provideInitialState('settings', $this->settingsService->getAppSettings());
+
+		return new TemplateResponse($this->appName, 'index');
 	}
 
 	/**

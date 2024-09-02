@@ -112,9 +112,9 @@ $CONFIG = [
 
 /**
  * Your host server name, for example ``localhost``, ``hostname``,
- * ``hostname.example.com``, or the IP address. To specify a port use
- * ``hostname:####``; to specify a Unix socket use
- * ``/path/to/directory/containing/socket`` e.g. ``/run/postgresql/``.
+ * ``hostname.example.com``, or the IP address.
+ * To specify a port use ``hostname:####``, for IPv6 addresses use the URI notation ``[ip]:port``.
+ * To specify a Unix socket use ``/path/to/directory/containing/socket``, e.g. ``/run/postgresql/``.
  */
 'dbhost' => '',
 
@@ -150,6 +150,13 @@ $CONFIG = [
  * uses the PDO::ATTR_PERSISTENT option from the pdo driver.
  */
 'dbpersistent' => '',
+
+/**
+ * Add request id to the database query in a comment.
+ *
+ * This can be enabled to assist in mapping database logs to Nextcloud logs.
+ */
+'db.log_request_id' => false,
 
 /**
  * Indicates whether the Nextcloud instance was installed successfully; ``true``
@@ -229,10 +236,26 @@ $CONFIG = [
 'force_locale' => 'en_US',
 
 /**
+ * This sets the default timezone on your Nextcloud server, using IANA
+ * identifiers like ``Europe/Berlin`` or ``Pacific/Auckland``. The default
+ * timezone parameter is only used when the timezone of the user can't be
+ * determined.
+ *
+ * Defaults to ``UTC``
+ */
+'default_timezone' => 'Europe/Berlin',
+
+/**
  * ``true`` enables the Help menu item in the user menu (top right of the
  * Nextcloud Web interface). ``false`` removes the Help item.
  */
 'knowledgebaseenabled' => true,
+
+/**
+ * ``true`` embeds the documentation in an iframe inside Nextcloud.
+ * ``false`` only shows buttons to the online documentation.
+ */
+'knowledgebase.embedded' => false,
 
 /**
  * ``true`` allows users to change their display names (on their Personal
@@ -339,7 +362,7 @@ $CONFIG = [
  * Tokens are still checked every 5 minutes for validity
  * max value: 300
  *
- * Defaults to ``300``
+ * Defaults to ``60``
  */
 'token_auth_activity_update' => 60,
 
@@ -447,6 +470,8 @@ $CONFIG = [
 
 /**
  * Enable SMTP class debugging.
+ * NOTE: ``loglevel`` will likely need to be adjusted too. See docs: 
+ *   https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/email_configuration.html#enabling-debug-mode
  *
  * Defaults to ``false``
  */
@@ -1012,6 +1037,16 @@ $CONFIG = [
 ],
 
 /**
+ * Enables logging a backtrace with each log line. Normally, only Exceptions
+ * are carrying backtrace information which are logged automatically. This
+ * switch turns them on for any log message. Enabling this option will lead
+ * to increased log data size.
+ *
+ * Defaults to ``false``.
+ */
+'log.backtrace' => false,
+
+/**
  * This uses PHP.date formatting; see https://www.php.net/manual/en/function.date.php
  *
  * Defaults to ISO 8601 ``2005-08-15T15:52:01+00:00`` - see \DateTime::ATOM
@@ -1069,6 +1104,7 @@ $CONFIG = [
  * - Android client: ``https://play.google.com/store/apps/details?id=com.nextcloud.client``
  * - iOS client: ``https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8``
  * - iOS client app id: ``1125420102``
+ * - F-Droid client: ``https://f-droid.org/packages/com.nextcloud.client/``
  */
 'customclient_desktop' =>
 	'https://nextcloud.com/install/#install-clients',
@@ -1078,6 +1114,8 @@ $CONFIG = [
 	'https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8',
 'customclient_ios_appid' =>
 		'1125420102',
+'customclient_fdroid' =>
+	'https://f-droid.org/packages/com.nextcloud.client/',
 /**
  * Apps
  *
@@ -1221,14 +1259,6 @@ $CONFIG = [
  * Defaults to ``''`` (empty string)
  */
 'preview_libreoffice_path' => '/usr/bin/libreoffice',
-/**
- * Use this if LibreOffice/OpenOffice requires additional arguments.
- *
- * Defaults to ``''`` (empty string)
- */
-'preview_office_cl_parameters' =>
-	' --headless --nologo --nofirststartwizard --invisible --norestore '.
-	'--convert-to png --outdir ',
 
 /**
  * custom path for ffmpeg binary
@@ -1246,13 +1276,19 @@ $CONFIG = [
 'preview_imaginary_url' => 'http://previews_hpb:8088/',
 
 /**
+ * If you want set a api key for imaginary.
+ */
+'preview_imaginary_key' => 'secret',
+
+/**
  * Only register providers that have been explicitly enabled
  *
  * The following providers are disabled by default due to performance or privacy
  * concerns:
  *
- *  - ``OC\Preview\Illustrator``
+ *  - ``OC\Preview\Font``
  *  - ``OC\Preview\HEIC``
+ *  - ``OC\Preview\Illustrator``
  *  - ``OC\Preview\Movie``
  *  - ``OC\Preview\MSOffice2003``
  *  - ``OC\Preview\MSOffice2007``
@@ -1263,7 +1299,7 @@ $CONFIG = [
  *  - ``OC\Preview\StarOffice``
  *  - ``OC\Preview\SVG``
  *  - ``OC\Preview\TIFF``
- *  - ``OC\Preview\Font``
+ *  - ``OC\Preview\EMF``
  *
  *
  * Defaults to the following providers:
@@ -1271,25 +1307,25 @@ $CONFIG = [
  *  - ``OC\Preview\BMP``
  *  - ``OC\Preview\GIF``
  *  - ``OC\Preview\JPEG``
+ *  - ``OC\Preview\Krita``
  *  - ``OC\Preview\MarkDown``
  *  - ``OC\Preview\MP3``
+ *  - ``OC\Preview\OpenDocument``
  *  - ``OC\Preview\PNG``
  *  - ``OC\Preview\TXT``
  *  - ``OC\Preview\XBitmap``
- *  - ``OC\Preview\OpenDocument``
- *  - ``OC\Preview\Krita``
  */
 'enabledPreviewProviders' => [
-	'OC\Preview\PNG',
-	'OC\Preview\JPEG',
-	'OC\Preview\GIF',
 	'OC\Preview\BMP',
-	'OC\Preview\XBitmap',
-	'OC\Preview\MP3',
-	'OC\Preview\TXT',
-	'OC\Preview\MarkDown',
-	'OC\Preview\OpenDocument',
+	'OC\Preview\GIF',
+	'OC\Preview\JPEG',
 	'OC\Preview\Krita',
+	'OC\Preview\MarkDown',
+	'OC\Preview\MP3',
+	'OC\Preview\OpenDocument',
+	'OC\Preview\PNG',
+	'OC\Preview\TXT',
+	'OC\Preview\XBitmap',
 ],
 
 /**
@@ -1576,7 +1612,6 @@ $CONFIG = [
  * filesystem and encryption will cause severe overhead because key files need
  * to be fetched in addition to any requested file.
  *
- * One way to test is applying for a trystack account at http://trystack.org/
  */
 'objectstore' => [
 	'class' => 'OC\\Files\\ObjectStore\\Swift',
@@ -1922,6 +1957,17 @@ $CONFIG = [
 'blacklisted_files' => ['.htaccess'],
 
 /**
+ * Blacklist characters from being used in filenames. This is useful if you
+ * have a filesystem or OS which does not support certain characters like windows.
+ *
+ * Example for windows systems: ``array('?', '<', '>', ':', '*', '|', '"', chr(0), "\n", "\r")``
+ * see https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
+ *
+ * Defaults to ``array()``
+ */
+'forbidden_chars' => [],
+
+/**
  * If you are applying a theme to Nextcloud, enter the name of the theme here.
  * The default location for themes is ``nextcloud/themes/``.
  *
@@ -1932,7 +1978,7 @@ $CONFIG = [
 /**
  * Enforce the user theme. This will disable the user theming settings
  * This must be a valid ITheme ID.
- * E.g. light, dark, highcontrast, dark-highcontrast...
+ * E.g. dark, dark-highcontrast, default, light, light-highcontrast, opendyslexic
  */
 'enforce_theme' => '',
 
@@ -2317,17 +2363,6 @@ $CONFIG = [
 'profile.enabled' => true,
 
 /**
- * Enable file metadata collection
- *
- * This is helpful for the mobile clients and will enable few optimizations in
- * the future for the preview generation.
- *
- * Note that when enabled, this data will be stored in the database and might increase
- * the database storage.
- */
-'enable_file_metadata' => true,
-
-/**
  * Allows to override the default scopes for Account data.
  * The list of overridable properties and valid values for scopes are in
  * ``OCP\Accounts\IAccountManager``. Values added here are merged with
@@ -2366,4 +2401,18 @@ $CONFIG = [
  * Defaults to ``true``
  */
 'reference_opengraph' => true,
+
+/**
+ * Enable use of old unified search
+ *
+ * Defaults to ``false``
+ */
+'unified_search.enabled' => false,
+
+/**
+ * Enable features that are do respect accessibility standards yet.
+ *
+ * Defaults to ``true``
+ */
+'enable_non-accessible_features' => true,
 ];

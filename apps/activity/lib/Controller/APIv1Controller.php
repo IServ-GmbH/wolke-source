@@ -30,18 +30,6 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 class APIv1Controller extends OCSController {
-	/** @var Data */
-	protected $data;
-
-	/** @var GroupHelper */
-	protected $groupHelper;
-
-	/** @var UserSettings */
-	protected $userSettings;
-
-	/** @var CurrentUser */
-	protected $currentUser;
-
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
@@ -51,17 +39,12 @@ class APIv1Controller extends OCSController {
 	 * @param CurrentUser $currentUser
 	 */
 	public function __construct($appName,
-								IRequest $request,
-								Data $data,
-								GroupHelper $groupHelper,
-								UserSettings $userSettings,
-								CurrentUser $currentUser) {
+		IRequest $request,
+		protected Data $data,
+		protected GroupHelper $groupHelper,
+		protected UserSettings $userSettings,
+		protected CurrentUser $currentUser) {
 		parent::__construct($appName, $request);
-
-		$this->data = $data;
-		$this->userSettings = $userSettings;
-		$this->groupHelper = $groupHelper;
-		$this->currentUser = $currentUser;
 	}
 
 	/**

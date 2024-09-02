@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2024 Julien Veyssier <julien-nc@posteo.net>
+ * @copyright Copyright (c) 2023 Julien Veyssier <julien-nc@posteo.net>
  *
  * @author Julien Veyssier <julien-nc@posteo.net>
  *

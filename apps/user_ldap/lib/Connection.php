@@ -63,6 +63,7 @@ use Psr\Log\LoggerInterface;
  * @property string ldapEmailAttribute
  * @property string ldapExtStorageHomeAttribute
  * @property string homeFolderNamingRule
+ * @property bool|string markRemnantsAsDisabled
  * @property bool|string ldapNestedGroups
  * @property string[] ldapBaseGroups
  * @property string ldapGroupFilter
@@ -382,7 +383,7 @@ class Connection extends LDAPUtility {
 		foreach ($cta as $dbkey => $configkey) {
 			switch ($configkey) {
 				case 'homeFolderNamingRule':
-					if (strpos($config[$configkey], 'attr:') === 0) {
+					if (str_starts_with($config[$configkey], 'attr:')) {
 						$result[$dbkey] = substr($config[$configkey], 5);
 					} else {
 						$result[$dbkey] = '';
@@ -437,7 +438,7 @@ class Connection extends LDAPUtility {
 
 		$backupPort = (int)$this->configuration->ldapBackupPort;
 		if ($backupPort <= 0) {
-			$this->configuration->backupPort = $this->configuration->ldapPort;
+			$this->configuration->ldapBackupPort = $this->configuration->ldapPort;
 		}
 
 		//make sure empty search attributes are saved as simple, empty array

@@ -12,6 +12,12 @@ In mailcow, for example, the setting is called *Also allowed to send as user*.
 .. warning:: Unless paired with shared *Sent* mailboxes or handled otherwise by the mail server, sent messages will be stored in the sender's personal *Sent* mailbox.
 
 
+Snooze and scheduled sending
+----------------------------
+
+.. note:: If AJAX is selected for cron job execution in the admin settings, the snooze feature and scheduled sending are deactivated because of unreliable execution.
+
+
 XOAUTH2 Authentication with Microsoft Azure AD
 ----------------------------------------------
 
@@ -76,12 +82,32 @@ Congratulations! You are now able to use hosted Microsoft Outlook accounts in th
 
 .. figure:: images/azure_xoauth2/10.png
 
+Mailbox Share
+-------------
+Users can share mailboxes with each other. So far, there is no UI for users to change the ACL in the Mail app, but if you want to use it, you need to enable it on the IMAP sever and configure the shares there.
+
 Thread Summary
 --------------
-The mail app supports summarizing message threads that contain 3 or more messages. 
+
+.. _mail_thread_summary:
+
+The mail app supports summarizing message threads that contain 3 or more messages.
 
 .. warning:: `A text generation AI integration <https://apps.nextcloud.com/apps/integration_openai>`_ should be already in place to enable this feature.
 
 The feature is opt-in, it is disabled by default and can be enabled in mail adminstration settings.
 
-Adminstration settings > Groupware > Mail app > Enable thread summary
+Administration settings > Groupware > Mail app > Enable thread summary
+
+Smart Replies
+--------------
+
+.. versionadded:: 3.6.0
+
+The Mail app supports smart replies, based on processing emails with AI.
+
+.. note:: `A text generation AI integration <https://apps.nextcloud.com/apps/integration_openai>`_ has to be available to enable this feature.
+
+The feature is opt-in, it is disabled by default and can be enabled in Mail adminstration settings.
+
+Administration settings > Groupware > Mail app > Enable smart replies

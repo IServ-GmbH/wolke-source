@@ -276,6 +276,34 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 
 
 	/**
+	 * returns all share, related to a list of fileids.
+	 * if $getData is true, will return details about the recipient circle.
+	 *
+	 * @param array $fileIds
+	 * @param bool $getData
+	 *
+	 * @return ShareWrapper[]
+	 * @throws RequestBuilderException
+	 */
+	public function getSharesByFileIds(array $fileIds, bool $getData = false, bool $getChild = false): array {
+		$qb = $this->getShareSelectSql();
+		$qb->limitToFileSourceArray($fileIds);
+
+		if ($getData) {
+			$qb->setOptions([CoreQueryBuilder::SHARE], ['getData' => $getData]);
+			$qb->leftJoinCircle(CoreQueryBuilder::SHARE, null, 'share_with');
+		}
+
+		if ($getChild) {
+			$qb->orderBy('parent', 'asc');
+		} else {
+			$qb->limitNull('parent', false);
+		}
+		return $this->getItemsFromRequest($qb);
+	}
+
+
+	/**
 	 * @param FederatedUser $federatedUser
 	 * @param int $nodeId
 	 * @param int $offset
@@ -343,7 +371,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb->setOptions([CoreQueryBuilder::SHARE], ['getData' => $getData]);
 		$qb->leftJoinCircle(CoreQueryBuilder::SHARE, null, 'share_with');
 
-		$qb->limitToShareOwner(CoreQueryBuilder::SHARE, $federatedUser, $reshares);
+		$qb->limitToShareOwner(CoreQueryBuilder::SHARE, $federatedUser, $reshares, $nodeId);
 		$qb->limitNull('parent', false);
 
 		if ($nodeId > 0) {

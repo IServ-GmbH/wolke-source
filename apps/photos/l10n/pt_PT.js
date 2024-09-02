@@ -4,7 +4,9 @@ OC.L10N.register(
     "Public link" : "Hiperligação Pública",
     "Photos" : "Fotos",
     "Your memories under your control" : "As suas memórias estão sob o seu controlo",
-    "Videos" : "Videos",
+    "Videos" : "Vídeos",
+    "Albums" : "Álbuns",
+    "Collaborative albums" : "Álbuns colaborativos",
     "Folders" : "Pastas",
     "Favorites" : "Favoritos",
     "Shared with you" : "Partilhado consigo",
@@ -31,8 +33,6 @@ OC.L10N.register(
     "Add" : "Adicionar",
     "Tagged photos" : "Fotos marcadas",
     "Details" : "Detalhes",
-    "Failed to delete {fileName}." : "Falha ao remover {fileName}.",
-    "Open the \"{name}\" sub-directory" : "Abrir a sub-diretoria \"{name}\"",
-    "Shared albums" : "Álbuns partilhados"
+    "Failed to delete {fileName}." : "Falha ao remover {fileName}."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

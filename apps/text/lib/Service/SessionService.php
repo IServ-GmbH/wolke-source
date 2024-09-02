@@ -28,6 +28,7 @@ namespace OCA\Text\Service;
 
 use OCA\Text\Db\Session;
 use OCA\Text\Db\SessionMapper;
+use OCA\Text\YjsMessage;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DirectEditing\IManager;
@@ -60,7 +61,7 @@ class SessionService {
 		IAvatarManager $avatarManager,
 		IRequest $request,
 		IManager $directManager,
-		$userId,
+		?string $userId,
 		ICacheFactory $cacheFactory
 	) {
 		$this->sessionMapper = $sessionMapper;
@@ -84,7 +85,7 @@ class SessionService {
 		$this->cache = $cacheFactory->createDistributed('text_sessions');
 	}
 
-	public function initSession($documentId, $guestName = null): Session {
+	public function initSession(int $documentId, string $guestName = null): Session {
 		$session = new Session();
 		$session->setDocumentId($documentId);
 		$userName = $this->userId ? $this->userId : $guestName;
@@ -92,9 +93,9 @@ class SessionService {
 		$session->setToken($this->secureRandom->generate(64));
 		$session->setColor($this->getColorForGuestName($guestName));
 		if ($this->userId === null) {
-			$session->setGuestName($guestName);
+			$session->setGuestName($guestName ?? '');
 		}
-		$session->setLastContact($this->timeFactory->getTime());
+		$session->setLastContact($this->timeFactory->now()->getTimestamp());
 
 		$session = $this->sessionMapper->insert($session);
 		$this->cache->set($session->getToken(), json_encode($session), self::SESSION_VALID_TIME);
@@ -115,40 +116,42 @@ class SessionService {
 		$sessions = $this->sessionMapper->findAll($documentId);
 		return array_map(function (Session $session) {
 			$result = $session->jsonSerialize();
-			$userId = $session->getUserId();
-			if ($userId !== null) {
-				$result['displayName'] = $this->userManager->getDisplayName($userId);
+			if (!$session->isGuest()) {
+				$result['displayName'] = $this->userManager->getDisplayName($session->getUserId());
 			}
 			return $result;
 		}, $sessions);
+	}
+
+	public function countAllSessions(int $documentId): int {
+		return $this->sessionMapper->countAll($documentId);
 	}
 
 	public function getActiveSessions(int $documentId): array {
 		$sessions = $this->sessionMapper->findAllActive($documentId);
 		return array_map(function (Session $session) {
 			$result = $session->jsonSerialize();
-			$userId = $session->getUserId();
-			if ($userId !== null) {
-				$result['displayName'] = $this->userManager->getDisplayName($userId);
+			if (!$session->isGuest()) {
+				$result['displayName'] = $this->userManager->getDisplayName($session->getUserId());
 			}
 			return $result;
 		}, $sessions);
 	}
 
 	public function getNameForSession(Session $session): ?string {
-		$userId = $session->getUserId();
-		if ($userId !== null) {
-			return $this->userManager->getDisplayName($userId);
+		if (!$session->isGuest()) {
+			return $this->userManager->getDisplayName($session->getUserId());
 		}
 
 		return $session->getGuestName();
 	}
 
-	public function findAllInactive() {
+	/** @return Session[] */
+	public function findAllInactive(): array {
 		return $this->sessionMapper->findAllInactive();
 	}
 
-	public function removeInactiveSessionsWithoutSteps(?int $documentId = null) {
+	public function removeInactiveSessionsWithoutSteps(?int $documentId = null): int {
 		// No need to clear the cache here as we already set a TTL
 		return $this->sessionMapper->deleteInactiveWithoutSteps($documentId);
 	}
@@ -186,7 +189,7 @@ class SessionService {
 			return null;
 		}
 
-		$currentTime = $this->timeFactory->getTime();
+		$currentTime = $this->timeFactory->now()->getTimestamp();
 		if (($currentTime - $session->getLastContact()) >= 30) {
 			/*
 			 * We need to update the timestamp.
@@ -199,7 +202,7 @@ class SessionService {
 				$this->cache->remove($token);
 				return null;
 			}
-			$session->setLastContact($this->timeFactory->getTime());
+			$session->setLastContact($this->timeFactory->now()->getTimestamp());
 			$this->sessionMapper->update($session);
 			$this->cache->set($token, json_encode($session), self::SESSION_VALID_TIME - 30);
 			$this->session = $session;
@@ -208,16 +211,7 @@ class SessionService {
 		return $session;
 	}
 
-	public function isValidSession($documentId, $sessionId, $token): bool {
-		return $this->getValidSession($documentId, $sessionId, $token) !== null;
-	}
-
 	/**
-	 * @param $documentId
-	 * @param $sessionId
-	 * @param $sessionToken
-	 * @param $guestName
-	 * @return Session
 	 * @throws DoesNotExistException
 	 */
 	public function updateSession(Session $session, string $guestName): Session {
@@ -230,17 +224,18 @@ class SessionService {
 	}
 
 	/**
-	 * @param $documentId
-	 * @param $sessionId
-	 * @param $sessionToken
-	 * @param $message
-	 * @return Session
 	 * @throws DoesNotExistException
 	 */
 	public function updateSessionAwareness(Session $session, string $message): Session {
 		if (empty($message)) {
 			return $session;
 		}
+
+		$decoded = YjsMessage::fromBase64($message);
+		if ($decoded->getYjsMessageType() !== YjsMessage::YJS_MESSAGE_AWARENESS) {
+			throw new \ValueError('Message passed was not an awareness message');
+		}
+
 		$session->setLastAwarenessMessage($message);
 		return $this->sessionMapper->update($session);
 	}

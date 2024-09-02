@@ -396,7 +396,7 @@
 				self.do_delete(filename, directory);
 			});
 
-			this.$fileList.on('click', 'td.selection', _.bind(this._onClickFileCheckbox, this));
+			this.$fileList.on('change', 'td.selection>.selectCheckBox', _.bind(this._onClickFileCheckbox, this));
 			this.$fileList.on('mouseover', 'td.selection', _.bind(this._onMouseOverCheckbox, this));
 			this.$el.on('show', _.bind(this._onShow, this));
 			this.$el.on('urlChanged', _.bind(this._onUrlChanged, this));
@@ -410,7 +410,7 @@
 
 			if (options.scrollTo) {
 				this.$fileList.one('updated', function() {
-					self.scrollTo(options.scrollTo, !options.openFile);
+					self.scrollTo(options.scrollTo);
 				});
 			}
 
@@ -764,6 +764,13 @@
 		 */
 		_onShow: function(e) {
 			OCA.Files.App && OCA.Files.App.updateCurrentFileList(this);
+			if (e.itemId === this.id) {
+				this._setCurrentDir('/', false);
+			}
+			// Only reload if we don't navigate to a different directory
+			if (typeof e.dir === 'undefined' || e.dir === this.getCurrentDirectory()) {
+				this.reload();
+			}
 		},
 
 		/**
@@ -944,10 +951,8 @@
 		 * Event handler for when clicking on a file's checkbox
 		 */
 		_onClickFileCheckbox: function(e) {
-			// to prevent double click, prevent default
-			e.preventDefault()
 			var $tr = $(e.target).closest('tr');
-			if(this._allowSelection && e.shiftKey) {
+			if(this._getCurrentSelectionMode() === 'range') {
 				this._selectRange($tr);
 			} else {
 				this._selectSingle($tr);
@@ -1230,10 +1235,6 @@
 			if (this.$table.hasClass('multiselect')) {
 				return;
 			}
-
-			// Ensure the url does not change
-			e.preventDefault();
-	
 			var $target = $(e.target);
 			var sort;
 			if (!$target.is('a')) {
@@ -1797,7 +1798,7 @@
 
 			// size column
 			if (typeof(fileData.size) !== 'undefined' && fileData.size >= 0) {
-				simpleSize = OC.Util.humanFileSize(parseInt(fileData.size, 10), true);
+				simpleSize = OC.Util.humanFileSize(parseInt(fileData.size, 10), true, false);
 				// rgb(118, 118, 118) / #767676
 				// min. color contrast for normal text on white background according to WCAG AA
 				sizeColor = Math.round(118-Math.pow((fileData.size/(1024*1024)), 2));
@@ -2184,22 +2185,11 @@
 			}
 
 			if (persist && OC.getCurrentUser().uid) {
-				$.ajax({
-					type: 'PUT',
-					url: OC.generateUrl('apps/files/api/v1/views/files/sorting_mode'),
-					contentType: 'application/json',
-					data: JSON.stringify({
-						// Compatibility with new files-to-vue API
-						value: sort === 'name' ? 'basename' : sort,
-					})
-				});
-				$.ajax({
-					type: 'PUT',
-					url: OC.generateUrl('apps/files/api/v1/views/files/sorting_direction'),
-					contentType: 'application/json',
-					data: JSON.stringify({
-						value: direction,
-					})
+				$.post(OC.generateUrl('/apps/files/api/v1/sorting'), {
+					// Compatibility with new files-to-vue API
+					mode: sort === 'name' ? 'basename' : sort,
+					direction: direction,
+					view: 'files'
 				});
 			}
 		},
@@ -2619,7 +2609,7 @@
 							var oldSize = oldFile.data('size');
 							var newSize = oldSize + newFile.data('size');
 							oldFile.data('size', newSize);
-							oldFile.find('td.filesize').text(OC.Util.humanFileSize(newSize));
+							oldFile.find('td.filesize').text(OC.Util.humanFileSize(newSize, false, false));
 
 							self.remove(fileName);
 						}
@@ -2762,7 +2752,7 @@
 							var oldSize = oldFile.data('size');
 							var newSize = oldSize + newFile.data('size');
 							oldFile.data('size', newSize);
-							oldFile.find('td.filesize').text(OC.Util.humanFileSize(newSize));
+							oldFile.find('td.filesize').text(OC.Util.humanFileSize(newSize, false, false));
 						}
 						self.reload();
 					})
@@ -3353,14 +3343,11 @@
 			this.$el.find('.mask').remove();
 			this.$table.removeClass('hidden');
 		},
-		scrollTo:function(file, showDetails) {
-			if (showDetails === undefined) {
-				showDetails = true
-			}
+		scrollTo:function(file) {
 			if (!_.isArray(file)) {
 				file = [file];
 			}
-			if (file.length === 1 && showDetails) {
+			if (file.length === 1) {
 				_.defer(function() {
 					if (document.documentElement.clientWidth > 1024) {
 						this.showDetailsView(file[0]);
@@ -3476,7 +3463,7 @@
 			}
 			else {
 				this.$el.find('.selectedActions').removeClass('hidden');
-				this.$el.find('.column-size a>span:first').text(OC.Util.humanFileSize(summary.totalSize));
+				this.$el.find('.column-size a>span:first').text(OC.Util.humanFileSize(summary.totalSize, false, false));
 
 				var directoryInfo = n('files', '%n folder', '%n folders', summary.totalDirs);
 				var fileInfo = n('files', '%n file', '%n files', summary.totalFiles);

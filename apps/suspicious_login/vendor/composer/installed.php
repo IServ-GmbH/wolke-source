@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'christophwurst/suspicious_login',
-        'pretty_version' => 'dev-stable27',
-        'version' => 'dev-stable27',
-        'reference' => 'e4d0403ac9821796145bf226b1baf299ae8a38d6',
+        'pretty_version' => 'dev-stable28',
+        'version' => 'dev-stable28',
+        'reference' => 'cbd9bea26816f5944cf918bc817bf54b82868867',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -74,9 +74,9 @@
             'dev_requirement' => false,
         ),
         'christophwurst/suspicious_login' => array(
-            'pretty_version' => 'dev-stable27',
-            'version' => 'dev-stable27',
-            'reference' => 'e4d0403ac9821796145bf226b1baf299ae8a38d6',
+            'pretty_version' => 'dev-stable28',
+            'version' => 'dev-stable28',
+            'reference' => 'cbd9bea26816f5944cf918bc817bf54b82868867',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

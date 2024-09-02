@@ -86,14 +86,14 @@ class IMipPlugin extends SabreIMipPlugin {
 	private EventComparisonService $eventComparisonService;
 
 	public function __construct(IConfig $config,
-								IMailer $mailer,
-								LoggerInterface $logger,
-								ITimeFactory $timeFactory,
-								Defaults $defaults,
-								IUserManager $userManager,
-								$userId,
-								IMipService $imipService,
-								EventComparisonService $eventComparisonService) {
+		IMailer $mailer,
+		LoggerInterface $logger,
+		ITimeFactory $timeFactory,
+		Defaults $defaults,
+		IUserManager $userManager,
+		$userId,
+		IMipService $imipService,
+		EventComparisonService $eventComparisonService) {
 		parent::__construct('');
 		$this->userId = $userId;
 		$this->config = $config;
@@ -192,7 +192,7 @@ class IMipPlugin extends SabreIMipPlugin {
 		if($attendee === null) {
 			$uid = $vEvent->UID ?? 'no UID found';
 			$this->logger->debug('Could not find recipient ' . $recipient . ' as attendee for event with UID ' . $uid);
-			$iTipMessage->scheduleStatus = '5.0;EMail delivery failed';
+			$iTipMessage->scheduleStatus = '5.0; EMail delivery failed';
 			return;
 		}
 		// Don't send emails to things
@@ -305,9 +305,9 @@ class IMipPlugin extends SabreIMipPlugin {
 
 		$itip_msg = $iTipMessage->message->serialize();
 		$message->attachInline(
-				$itip_msg,
+			$itip_msg,
 			'event.ics',
-				'text/calendar; method=' . $iTipMessage->method,
+			'text/calendar; method=' . $iTipMessage->method,
 		);
 
 		try {

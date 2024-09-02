@@ -46,28 +46,21 @@ use Symfony\Component\Mime\Exception\RfcComplianceException;
  * @package OC\Mail
  */
 class Message implements IMessage {
-	private Email $symfonyEmail;
-	private bool $plainTextOnly;
+	private array $to = [];
+	private array $from = [];
+	private array $replyTo = [];
+	private array $cc = [];
+	private array $bcc = [];
 
-	private array $to;
-	private array $from;
-	private array $replyTo;
-	private array $cc;
-	private array $bcc;
-
-	public function __construct(Email $symfonyEmail, bool $plainTextOnly) {
-		$this->symfonyEmail = $symfonyEmail;
-		$this->plainTextOnly = $plainTextOnly;
-		$this->to = [];
-		$this->from = [];
-		$this->replyTo = [];
-		$this->cc = [];
-		$this->bcc = [];
+	public function __construct(
+		private Email $symfonyEmail,
+		private bool $plainTextOnly,
+	) {
 	}
 
 	/**
-	 * @return $this
 	 * @since 13.0.0
+	 * @return $this
 	 */
 	public function attach(IAttachment $attachment): IMessage {
 		/** @var Attachment $attachment */
@@ -138,7 +131,6 @@ class Message implements IMessage {
 
 	/**
 	 * Set the Reply-To address of this message
-	 *
 	 * @return $this
 	 */
 	public function setReplyTo(array $addresses): IMessage {
@@ -208,8 +200,6 @@ class Message implements IMessage {
 	}
 
 	/**
-	 * Set the subject of this message.
-	 *
 	 * @return $this
 	 */
 	public function setSubject(string $subject): IMessage {
@@ -225,7 +215,6 @@ class Message implements IMessage {
 	}
 
 	/**
-	 * Set the plain-text body of this message.
 	 * @return $this
 	 */
 	public function setPlainBody(string $body): IMessage {
@@ -243,7 +232,6 @@ class Message implements IMessage {
 	}
 
 	/**
-	 * Set the HTML body of this message. Consider also sending a plain-text body instead of only an HTML one.
 	 * @return $this
 	 */
 	public function setHtmlBody(string $body): IMessage {
@@ -254,7 +242,7 @@ class Message implements IMessage {
 	}
 
 	/**
-	 * Set the underlying Email intance
+	 * Set the underlying Email instance
 	 */
 	public function setSymfonyEmail(Email $symfonyEmail): void {
 		$this->symfonyEmail = $symfonyEmail;
@@ -297,10 +285,9 @@ class Message implements IMessage {
 	 * we wrap the calls here. We then have the validation errors all in one place and can
 	 * throw shortly before \OC\Mail\Mailer::send
 	 *
-	 * @return void
 	 * @throws InvalidArgumentException|RfcComplianceException
 	 */
-	public function setRecipients() {
+	public function setRecipients(): void {
 		$this->symfonyEmail->to(...$this->convertAddresses($this->getTo()));
 		$this->symfonyEmail->from(...$this->convertAddresses($this->getFrom()));
 		$this->symfonyEmail->replyTo(...$this->convertAddresses($this->getReplyTo()));
@@ -348,8 +335,6 @@ class Message implements IMessage {
 	/**
 	 * Get the current value of the Auto-Submitted header. Defaults to "no"
 	 * which is equivalent to the header not existing at all
-	 *
-	 * @return string
 	 */
 	public function getAutoSubmitted(): string {
 		$headers = $this->symfonyEmail->getHeaders();

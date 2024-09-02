@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example installation on Ubuntu 22.04 LTS &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -50,6 +58,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
@@ -108,7 +117,7 @@
            <div itemprop="articleBody">
              
   <section id="example-installation-on-ubuntu-22-04-lts">
-<span id="ubuntu-installation-label"></span><h1>Example installation on Ubuntu 22.04 LTS<a class="headerlink" href="#example-installation-on-ubuntu-22-04-lts" title="Permalink to this headline"></a></h1>
+<span id="ubuntu-installation-label"></span><h1>Example installation on Ubuntu 22.04 LTS<a class="headerlink" href="#example-installation-on-ubuntu-22-04-lts" title="Link to this heading"></a></h1>
 <p>You can use .deb packages to install the required and recommended modules for a
 typical Nextcloud installation, using Apache and MariaDB, by issuing the
 following commands in a terminal:</p>
@@ -120,7 +129,7 @@ following commands in a terminal:</p>
 <ul class="simple">
 <li><p>This installs the packages for the Nextcloud core system.
 If you are planning on running additional apps, keep in mind that they might
-require additional packages.  See <span class="xref std std-ref">prerequisites_label</span> for details.</p></li>
+require additional packages.  See <a class="reference external" href="https://docs.nextcloud.com/server/latest/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation">Prerequisites for manual installation</a> for details.</p></li>
 </ul>
 <p>Now you need to create a database user and the database itself by using the
 MySQL command line interface. The database tables will be created by Nextcloud
@@ -191,7 +200,7 @@ user:</p>
 <p>On other HTTP servers it is recommended to install Nextcloud outside of the
 document root.</p>
 <section id="next-steps">
-<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline"></a></h2>
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
 <p>After installing the prerequisites and extracting the nextcloud directory, you
 should follow the instructions for Apache configuration at
 <a class="reference internal" href="source_installation.html#apache-configuration-label"><span class="std std-ref">Apache Web server configuration</span></a>. Once Apache is installed, you can optionally

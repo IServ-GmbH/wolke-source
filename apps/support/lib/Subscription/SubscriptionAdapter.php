@@ -100,7 +100,6 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'files_fulltextsearch_tesseract',
 			'files_pdfviewer',
 			'files_retention',
-			'files_rightclick',
 			'files_sharing',
 			'files_trashbin',
 			'files_versions',

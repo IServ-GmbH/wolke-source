@@ -28,33 +28,31 @@ use OCP\Log\IFileBased;
 use OCP\Log\ILogFactory;
 
 class LogIteratorFactory {
-	private $config;
-	private $logFactory;
-
-	public function __construct(IConfig $config, ILogFactory $logFactory) {
-		$this->config = $config;
-		$this->logFactory = $logFactory;
+	public function __construct(
+		private IConfig $config,
+		private ILogFactory $logFactory,
+	) {
 	}
 
 	/**
 	 * @return \Iterator
-	 * @param string $levelsString
+	 * @param int[] $levels Array of levels to show
 	 * @throws \Exception
 	 */
-	public function getLogIterator($levelsString) {
-		$levels = str_split($levelsString);
-		$levels = array_map(function ($level) {
-			return $level === '1';
-		}, $levels);
+	public function getLogIterator(array $levels): \Iterator {
 		$dateFormat = $this->config->getSystemValue('logdateformat', \DateTime::ATOM);
 		$timezone = $this->config->getSystemValue('logtimezone', 'UTC');
+		$logType = $this->config->getSystemValue('log_type', 'file');
+		if ($logType !== 'file') {
+			throw new \Exception('Logreader application only supports "file" log_type');
+		}
 		$log = $this->logFactory->get('file');
 		if ($log instanceof IFileBased) {
 			$handle = fopen($log->getLogFilePath(), 'rb');
 			if ($handle) {
 				$iterator = new LogIterator($handle, $dateFormat, $timezone);
 				return new \CallbackFilterIterator($iterator, function ($logItem) use ($levels) {
-					return $logItem && isset($levels[$logItem['level']]) && $levels[$logItem['level']];
+					return $logItem && in_array($logItem['level'], $levels);
 				});
 			} else {
 				throw new \Exception("Error while opening " . $log->getLogFilePath());

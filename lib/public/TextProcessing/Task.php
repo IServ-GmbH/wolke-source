@@ -33,6 +33,7 @@ namespace OCP\TextProcessing;
 final class Task implements \JsonSerializable {
 	protected ?int $id = null;
 	protected ?string $output = null;
+	private ?\DateTime $completionExpectedAt = null;
 
 	/**
 	 * @since 27.1.0
@@ -96,6 +97,9 @@ final class Task implements \JsonSerializable {
 	 */
 	public function visitProvider(IProvider $provider): string {
 		if ($this->canUseProvider($provider)) {
+			if ($provider instanceof IProviderWithUserId) {
+				$provider->setUserId($this->getUserId());
+			}
 			return $provider->process($this->getInput());
 		} else {
 			throw new \RuntimeException('Task of type ' . $this->getType() . ' cannot visit provider with task type ' . $provider->getTaskType());
@@ -201,7 +205,7 @@ final class Task implements \JsonSerializable {
 	}
 
 	/**
-	 * @psalm-return array{id: ?int, type: class-string<T>, status: 0|1|2|3|4, userId: ?string, appId: string, input: string, output: ?string, identifier: string}
+	 * @psalm-return array{id: ?int, type: class-string<T>, status: 0|1|2|3|4, userId: ?string, appId: string, input: string, output: ?string, identifier: string, completionExpectedAt: ?int}
 	 * @since 27.1.0
 	 */
 	public function jsonSerialize(): array {
@@ -214,6 +218,24 @@ final class Task implements \JsonSerializable {
 			'input' => $this->getInput(),
 			'output' => $this->getOutput(),
 			'identifier' => $this->getIdentifier(),
+			'completionExpectedAt' => $this->getCompletionExpectedAt()?->getTimestamp(),
 		];
+	}
+
+	/**
+	 * @param null|\DateTime $completionExpectedAt
+	 * @return void
+	 * @since 28.0.0
+	 */
+	final public function setCompletionExpectedAt(?\DateTime $completionExpectedAt): void {
+		$this->completionExpectedAt = $completionExpectedAt;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 * @since 28.0.0
+	 */
+	final public function getCompletionExpectedAt(): ?\DateTime {
+		return $this->completionExpectedAt;
 	}
 }

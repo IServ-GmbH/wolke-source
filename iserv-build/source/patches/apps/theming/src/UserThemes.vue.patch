@@ -1,12 +1,14 @@
 diff --git apps/theming/src/UserThemes.vue apps/theming/src/UserThemes.vue
-index bb04035..58d5663 100644
+index 75d8896..bbaccb0 100644
 --- apps/theming/src/UserThemes.vue
 +++ apps/theming/src/UserThemes.vue
-@@ -26,8 +26,6 @@
- 		<NcSettingsSection :title="t('theming', 'Appearance and accessibility')"
+@@ -26,10 +26,6 @@
+ 		<NcSettingsSection :name="t('theming', 'Appearance and accessibility settings')"
  			:limit-width="false"
  			class="theming">
+-			<!-- eslint-disable-next-line vue/no-v-html -->
 -			<p v-html="description" />
+-			<!-- eslint-disable-next-line vue/no-v-html -->
 -			<p v-html="descriptionDetail" />
  
  			<div class="theming__preview-list">

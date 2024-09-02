@@ -26,6 +26,7 @@ use OC\BackgroundJob\QueuedJob;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\ILogger;
 
@@ -54,10 +55,10 @@ class BuildSocialSearchIndexBackgroundJob extends QueuedJob {
 	 * @param ITimeFactory $timeFactory
 	 */
 	public function __construct(IDBConnection $db,
-								CardDavBackend $davBackend,
-								ILogger $logger,
-								IJobList $jobList,
-								ITimeFactory $timeFactory) {
+		CardDavBackend $davBackend,
+		ILogger $logger,
+		IJobList $jobList,
+		ITimeFactory $timeFactory) {
 		$this->db = $db;
 		$this->davBackend = $davBackend;
 		$this->logger = $logger;
@@ -98,6 +99,7 @@ class BuildSocialSearchIndexBackgroundJob extends QueuedJob {
 			->from('cards', 'c')
 			->orderBy('id', 'ASC')
 			->where($query->expr()->like('carddata', $query->createNamedParameter('%SOCIALPROFILE%')))
+			->andWhere($query->expr()->gt('id', $query->createNamedParameter((int)$offset, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(100);
 		$social_cards = $query->execute()->fetchAll();
 

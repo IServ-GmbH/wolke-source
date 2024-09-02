@@ -30,7 +30,7 @@ interface IDetail {
 	public const TYPE_COLLAPSIBLE_PREFORMAT = 4;
 
 	public function getTitle(): string;
-	public function getType(): string;
+	public function getSection(): string;
 	public function getInformation(): string;
-	public function getSection(): int;
+	public function getType(): int;
 }

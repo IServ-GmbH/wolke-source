@@ -33,7 +33,10 @@ class StepMapper extends QBMapper {
 		parent::__construct($db, 'text_steps', Step::class);
 	}
 
-	public function find($documentId, $fromVersion) {
+	/**
+	 * @return Step[]
+	 */
+	public function find(int $documentId, int $fromVersion): array {
 		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
@@ -48,7 +51,7 @@ class StepMapper extends QBMapper {
 		return $this->findEntities($qb);
 	}
 
-	public function getLatestVersion($documentId): ?int {
+	public function getLatestVersion(int $documentId): ?int {
 		/* @var $qb IQueryBuilder */
 		$qb = $this->db->getQueryBuilder();
 		$result = $qb->select('id')
@@ -56,7 +59,7 @@ class StepMapper extends QBMapper {
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->setMaxResults(1)
 			->orderBy('id', 'DESC')
-			->execute();
+			->executeQuery();
 
 		$data = $result->fetch();
 		if ($data === false) {
@@ -66,23 +69,29 @@ class StepMapper extends QBMapper {
 		return $data['id'];
 	}
 
-	public function deleteAll($documentId): void {
+	public function deleteAll(int $documentId): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->executeStatement();
 	}
 
-	// not in use right now
-	public function deleteBeforeVersion($documentId, $version): void {
+	public function clearAll(): void {
 		$qb = $this->db->getQueryBuilder();
 		$qb->delete($this->getTableName())
+			->executeStatement();
+	}
+
+	// not in use right now
+	public function deleteBeforeVersion(int $documentId, int $version): int {
+		$qb = $this->db->getQueryBuilder();
+		return $qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))
 			->andWhere($qb->expr()->lte('id', $qb->createNamedParameter($version)))
 			->executeStatement();
 	}
 
-	public function deleteAfterVersion($documentId, $version): int {
+	public function deleteAfterVersion(int $documentId, int $version): int {
 		$qb = $this->db->getQueryBuilder();
 		return $qb->delete($this->getTableName())
 			->where($qb->expr()->eq('document_id', $qb->createNamedParameter($documentId)))

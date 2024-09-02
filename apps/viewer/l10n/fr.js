@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error saving image" : "Erreur lors de l'enregistrement de l'image",
     "Unsaved changes" : "Modifications non enregistrées",
     "Drop changes" : "Abandonner les changements",
+    "Play the live photo" : "Lire la live photo",
     "LIVE" : "EN DIRECT",
     "Your browser does not support videos." : "Votre navigateur ne prend pas en charge les vidéos.",
     "Edit" : "Modifier",
@@ -109,7 +110,6 @@ OC.L10N.register(
     "Saved image size (width x height)" : "Taille de l'image sauvegardée (largeur x hauteur)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Notez que la zone de recadrage sélectionnée est inférieure au redimensionnement appliqué, ce qui peut entraîner une baisse de qualité.",
     "Actual size (100%)" : "Taille actuelle (100%)",
-    "Fit size" : "Adapter à la taille",
-    "\"{fileName}\"" : "« {fileName} »"
+    "Fit size" : "Adapter à la taille"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

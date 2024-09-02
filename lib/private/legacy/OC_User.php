@@ -35,13 +35,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
-
+use OC\Authentication\Token\IProvider;
 use OC\User\LoginException;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\ILogger;
+use OCP\IGroupManager;
+use OCP\ISession;
+use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Server;
 use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\User\Events\UserLoggedInEvent;
+use Psr\Log\LoggerInterface;
 
 /**
  * This class provides wrapper methods for user management. Multiple backends are
@@ -93,7 +97,7 @@ class OC_User {
 				case 'database':
 				case 'mysql':
 				case 'sqlite':
-					\OCP\Util::writeLog('core', 'Adding user backend ' . $backend . '.', ILogger::DEBUG);
+					Server::get(LoggerInterface::class)->debug('Adding user backend ' . $backend . '.', ['app' => 'core']);
 					self::$_usedBackends[$backend] = new \OC\User\Database();
 					\OC::$server->getUserManager()->registerBackend(self::$_usedBackends[$backend]);
 					break;
@@ -102,7 +106,7 @@ class OC_User {
 					\OC::$server->getUserManager()->registerBackend(self::$_usedBackends[$backend]);
 					break;
 				default:
-					\OCP\Util::writeLog('core', 'Adding default user backend ' . $backend . '.', ILogger::DEBUG);
+					Server::get(LoggerInterface::class)->debug('Adding default user backend ' . $backend . '.', ['app' => 'core']);
 					$className = 'OC_USER_' . strtoupper($backend);
 					self::$_usedBackends[$backend] = new $className();
 					\OC::$server->getUserManager()->registerBackend(self::$_usedBackends[$backend]);
@@ -138,7 +142,7 @@ class OC_User {
 			$class = $config['class'];
 			$arguments = $config['arguments'];
 			if (class_exists($class)) {
-				if (array_search($i, self::$_setupedBackends) === false) {
+				if (!in_array($i, self::$_setupedBackends)) {
 					// make a reflection object
 					$reflectionObj = new ReflectionClass($class);
 
@@ -147,10 +151,10 @@ class OC_User {
 					self::useBackend($backend);
 					self::$_setupedBackends[] = $i;
 				} else {
-					\OCP\Util::writeLog('core', 'User backend ' . $class . ' already initialized.', ILogger::DEBUG);
+					Server::get(LoggerInterface::class)->debug('User backend ' . $class . ' already initialized.', ['app' => 'core']);
 				}
 			} else {
-				\OCP\Util::writeLog('core', 'User backend ' . $class . ' not found.', ILogger::ERROR);
+				Server::get(LoggerInterface::class)->error('User backend ' . $class . ' not found.', ['app' => 'core']);
 			}
 		}
 	}
@@ -193,6 +197,17 @@ class OC_User {
 
 				$userSession->createSessionToken($request, $uid, $uid, $password);
 				$userSession->createRememberMeToken($userSession->getUser());
+
+				if (empty($password)) {
+					$tokenProvider = \OC::$server->get(IProvider::class);
+					$token = $tokenProvider->getToken($userSession->getSession()->getId());
+					$token->setScope([
+						'password-unconfirmable' => true,
+						'filesystem' => true,
+					]);
+					$tokenProvider->updateToken($token);
+				}
+
 				// setup the filesystem
 				OC_Util::setupFS($uid);
 				// first call the post_login hooks, the login-process needs to be
@@ -303,7 +318,7 @@ class OC_User {
 		}
 
 		$user = \OC::$server->getUserSession()->getUser();
-		if ($user instanceof \OCP\IUser) {
+		if ($user instanceof IUser) {
 			$backend = $user->getBackend();
 			if ($backend instanceof \OCP\User\Backend\ICustomLogout) {
 				return $backend->getLogoutUrl();
@@ -323,12 +338,9 @@ class OC_User {
 	 * @return bool
 	 */
 	public static function isAdminUser($uid) {
-		$group = \OC::$server->getGroupManager()->get('admin');
-		$user = \OC::$server->getUserManager()->get($uid);
-		if ($group && $user && $group->inGroup($user) && self::$incognitoMode === false) {
-			return true;
-		}
-		return false;
+		$user = Server::get(IUserManager::class)->get($uid);
+		$isAdmin = $user && Server::get(IGroupManager::class)->isAdmin($user->getUID());
+		return $isAdmin && self::$incognitoMode === false;
 	}
 
 
@@ -338,7 +350,7 @@ class OC_User {
 	 * @return string|false uid or false
 	 */
 	public static function getUser() {
-		$uid = \OC::$server->getSession() ? \OC::$server->getSession()->get('user_id') : null;
+		$uid = Server::get(ISession::class)?->get('user_id');
 		if (!is_null($uid) && self::$incognitoMode === false) {
 			return $uid;
 		} else {

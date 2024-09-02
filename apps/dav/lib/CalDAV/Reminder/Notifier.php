@@ -66,8 +66,8 @@ class Notifier implements INotifier {
 	 * @param ITimeFactory $timeFactory
 	 */
 	public function __construct(IFactory $factory,
-								IURLGenerator $urlGenerator,
-								ITimeFactory $timeFactory) {
+		IURLGenerator $urlGenerator,
+		ITimeFactory $timeFactory) {
 		$this->l10nFactory = $factory;
 		$this->urlGenerator = $urlGenerator;
 		$this->timeFactory = $timeFactory;
@@ -102,7 +102,7 @@ class Notifier implements INotifier {
 	 * @throws \Exception
 	 */
 	public function prepare(INotification $notification,
-							string $languageCode):INotification {
+		string $languageCode):INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
 			throw new \InvalidArgumentException('Notification not from this app');
 		}
@@ -170,7 +170,7 @@ class Notifier implements INotifier {
 			$components[] = $this->l10n->n('%n minute', '%n minutes', $diff->i);
 		}
 
-		if (!$this->hasPhpDatetimeDiffBug()) {
+		if (count($components) > 0 && !$this->hasPhpDatetimeDiffBug()) {
 			// Limiting to the first three components to prevent
 			// the string from getting too long
 			$firstThreeComponents = array_slice($components, 0, 2);
@@ -303,7 +303,7 @@ class Notifier implements INotifier {
 	 * @return bool
 	 */
 	private function isDayEqual(DateTime $dtStart,
-								DateTime $dtEnd):bool {
+		DateTime $dtEnd):bool {
 		return $dtStart->format('Y-m-d') === $dtEnd->format('Y-m-d');
 	}
 

@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Email &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Linking external sites" href="external_sites.html" />
-    <link rel="prev" title="Configuration Parameters" href="config_sample_php_parameters.html" /> 
+    <link rel="prev" title="Domain Change" href="domain_change.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,10 +59,16 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html">Using the occ command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html">Dashboard app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Email</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-an-smtp-server">Configuring an SMTP server</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-sendmail-qmail">Configuring Sendmail/qmail</a></li>
@@ -69,22 +83,26 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#send-a-test-email">Send a test email</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#enabling-debug-mode">Enabling debug mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#enabling-debug-mode">Enabling debug mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-is-my-web-domain-different-from-my-mail-domain">Why is my web domain different from my mail domain?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-can-i-find-out-if-an-smtp-server-is-reachable">How can I find out if an SMTP server is reachable?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-can-i-find-out-if-the-smtp-server-is-listening-on-a-specific-tcp-port">How can I find out if the SMTP server is listening on a specific TCP port?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-can-i-determine-if-the-smtp-server-supports-the-smtps-protocol">How can I determine if the SMTP server supports the SMTPS protocol?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-can-i-determine-what-authorization-and-encryption-protocols-the-mail-server-supports">How can I determine what authorization and encryption protocols the mail server supports?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-can-i-send-mail-using-self-signed-certificates-or-use-starttls-with-self-signed-certificates">How can I send mail using self-signed certificates or use STARTTLS with self signed certificates?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#all-emails-keep-getting-rejected-even-though-only-one-email-address-is-invalid">All emails keep getting rejected even though only one email address is invalid.</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="external_sites.html">Linking external sites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="language_configuration.html">Language &amp; Locale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="logging_configuration.html">Logging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
-<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
@@ -128,7 +146,7 @@
            <div itemprop="articleBody">
              
   <section id="email">
-<span id="email-config"></span><h1>Email<a class="headerlink" href="#email" title="Permalink to this headline"></a></h1>
+<span id="email-config"></span><h1>Email<a class="headerlink" href="#email" title="Link to this heading"></a></h1>
 <p>Nextcloud is capable of sending password reset emails, notifying users of new
 file shares, changes in files, and activity notifications. Your users configure
 which notifications they want to receive on their Personal pages.</p>
@@ -155,7 +173,7 @@ drop-in Sendmail replacement such as Postfix, Exim, or Courier. All of
 these include a <code class="docutils literal notranslate"><span class="pre">sendmail</span></code> binary, and are freely-interchangeable.</p>
 </div>
 <section id="configuring-an-smtp-server">
-<span id="email-smtp-config"></span><h2>Configuring an SMTP server<a class="headerlink" href="#configuring-an-smtp-server" title="Permalink to this headline"></a></h2>
+<span id="email-smtp-config"></span><h2>Configuring an SMTP server<a class="headerlink" href="#configuring-an-smtp-server" title="Link to this heading"></a></h2>
 <p>You need the following information from your mail server administrator to
 connect Nextcloud to a remote SMTP server:</p>
 <div class="admonition warning">
@@ -199,14 +217,14 @@ configured on your Personal page. The test message says:</p>
 </div>
 </section>
 <section id="configuring-sendmail-qmail">
-<h2>Configuring Sendmail/qmail<a class="headerlink" href="#configuring-sendmail-qmail" title="Permalink to this headline"></a></h2>
+<h2>Configuring Sendmail/qmail<a class="headerlink" href="#configuring-sendmail-qmail" title="Link to this heading"></a></h2>
 <p>Configuring Sendmail or qmail requires only that you select one of them
 instead of SMTP, and then enter your desired return email address.</p>
 <p>In most cases the <code class="docutils literal notranslate"><span class="pre">SMTP</span></code> option is best, since you will be able to control all
 of your mail server options in one place, in your mail server configuration then.</p>
 </section>
 <section id="using-email-templates">
-<h2>Using email templates<a class="headerlink" href="#using-email-templates" title="Permalink to this headline"></a></h2>
+<h2>Using email templates<a class="headerlink" href="#using-email-templates" title="Link to this heading"></a></h2>
 <p>We designed a mechanism that generates emails which follow the theming
 settings and look the same in all the different email clients out there.</p>
 <div class="admonition note">
@@ -218,7 +236,7 @@ from displaying them and thus any security risk can only be mitigated by disabli
 showing HTML on the client (or removing the HTML part in the mail server).</p>
 </div>
 <section id="modifying-the-look-of-emails-beyond-the-theming-app-capabilities">
-<h3>Modifying the look of emails beyond the theming app capabilities<a class="headerlink" href="#modifying-the-look-of-emails-beyond-the-theming-app-capabilities" title="Permalink to this headline"></a></h3>
+<h3>Modifying the look of emails beyond the theming app capabilities<a class="headerlink" href="#modifying-the-look-of-emails-beyond-the-theming-app-capabilities" title="Link to this heading"></a></h3>
 <p>You can overwrite templates by writing a class that implements the template interface
 (or extends it to not need to copy over everything). Easiest way is to then put this class into
 an app and load it so you do not need to patch it on every update.</p>
@@ -239,7 +257,7 @@ use OC\Mail\EMailTemplate;
 
 class MyClass extends EMailTemplate
 {
-   protected $header = &lt;&lt;&lt;EOF
+   protected string $header = &lt;&lt;&lt;EOF
       &lt;table align=&quot;center&quot; class=&quot;wrapper&quot;&gt;
             // your theme email header modification
       &lt;/table&gt;
@@ -258,11 +276,11 @@ class MyClass extends EMailTemplate
 </section>
 </section>
 <section id="setting-mail-server-parameters-in-config-php">
-<h2>Setting mail server parameters in config.php<a class="headerlink" href="#setting-mail-server-parameters-in-config-php" title="Permalink to this headline"></a></h2>
+<h2>Setting mail server parameters in config.php<a class="headerlink" href="#setting-mail-server-parameters-in-config-php" title="Link to this heading"></a></h2>
 <p>If you prefer, you may set your mail server parameters in <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code>.
 The following examples are for SMTP, Sendmail, and Qmail.</p>
 <section id="smtp">
-<h3>SMTP<a class="headerlink" href="#smtp" title="Permalink to this headline"></a></h3>
+<h3>SMTP<a class="headerlink" href="#smtp" title="Link to this heading"></a></h3>
 <p>If you want to send email using a local or remote SMTP server it is necessary
 to enter the name or IP address of the server, optionally followed by a colon
 separated port number, e.g. <strong>:425</strong>. If this value is not given the default
@@ -312,7 +330,7 @@ and password.</p>
 </div>
 </section>
 <section id="sendmail">
-<h3>Sendmail<a class="headerlink" href="#sendmail" title="Permalink to this headline"></a></h3>
+<h3>Sendmail<a class="headerlink" href="#sendmail" title="Link to this heading"></a></h3>
 <p>If you want to use the well known Sendmail program to send email, it is
 necessary to have an installed and working email system on your *nix server.
 The sendmail binary (<strong>/usr/sbin/sendmail</strong>) is usually part of that system.
@@ -330,7 +348,7 @@ Nextcloud should be able to send email out of the box.</p>
 </div>
 </section>
 <section id="qmail">
-<h3>qmail<a class="headerlink" href="#qmail" title="Permalink to this headline"></a></h3>
+<h3>qmail<a class="headerlink" href="#qmail" title="Link to this heading"></a></h3>
 <p>If you want to use the qmail program to send email, it is necessary to have an
 installed and working qmail email system on your server. The qmail binary
 installed on your server will then be used to send email. Nextcloud should
@@ -349,13 +367,15 @@ be able to send email out of the box.</p>
 </section>
 </section>
 <section id="send-a-test-email">
-<h2>Send a test email<a class="headerlink" href="#send-a-test-email" title="Permalink to this headline"></a></h2>
+<h2>Send a test email<a class="headerlink" href="#send-a-test-email" title="Link to this heading"></a></h2>
 <p>To test your email configuration, save your email address in your personal
 settings and then use the <strong>Send email</strong> button in the <em>Email Server</em> section
 of the Admin settings page.</p>
 </section>
 <section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline"></a></h2>
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<section id="enabling-debug-mode">
+<h3>Enabling debug mode<a class="headerlink" href="#enabling-debug-mode" title="Link to this heading"></a></h3>
 <p>If you are unable to send email, it might be useful to activate further debug
 messages by enabling the <code class="docutils literal notranslate"><span class="pre">mail_smtpdebug</span></code> parameter and temporarily setting your NC loglevel to DEBUG:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpdebug&quot;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
@@ -374,8 +394,10 @@ And don’t forget to set it back to a more reasonable level when you’re done 
 before, several <strong>SMTP -&gt; get_lines(): …</strong> messages appear on the screen.
 This is expected behavior and can be ignored.</p>
 </div>
-<p><strong>Question</strong>: Why is my web domain different from my mail domain?</p>
-<p><strong>Answer</strong>: The default domain name used for the sender address is the hostname
+</section>
+<section id="why-is-my-web-domain-different-from-my-mail-domain">
+<h3>Why is my web domain different from my mail domain?<a class="headerlink" href="#why-is-my-web-domain-different-from-my-mail-domain" title="Link to this heading"></a></h3>
+<p>The default domain name used for the sender address is the hostname
 where your Nextcloud installation is served. If you have a different mail domain
 name you can override this behavior by setting the following configuration
 parameter:</p>
@@ -387,8 +409,10 @@ reset email) having the domain part of the sender address appear as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">no</span><span class="o">-</span><span class="n">reply</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span>
 </pre></div>
 </div>
-<p><strong>Question</strong>: How can I find out if an SMTP server is reachable?</p>
-<p><strong>Answer</strong>: Use the ping command to check the server availability:</p>
+</section>
+<section id="how-can-i-find-out-if-an-smtp-server-is-reachable">
+<h3>How can I find out if an SMTP server is reachable?<a class="headerlink" href="#how-can-i-find-out-if-an-smtp-server-is-reachable" title="Link to this heading"></a></h3>
+<p>Use the ping command to check the server availability:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ping</span> <span class="n">smtp</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">dom</span>
 </pre></div>
 </div>
@@ -397,9 +421,10 @@ reset email) having the domain part of the sender address appear as follows:</p>
 <span class="n">time</span><span class="o">=</span><span class="mf">3.64</span><span class="n">ms</span>
 </pre></div>
 </div>
-<p><strong>Question</strong>: How can I find out if the SMTP server is listening on a specific
-TCP port?</p>
-<p><strong>Answer</strong>: The best way to get mail server information is to ask your mail
+</section>
+<section id="how-can-i-find-out-if-the-smtp-server-is-listening-on-a-specific-tcp-port">
+<h3>How can I find out if the SMTP server is listening on a specific TCP port?<a class="headerlink" href="#how-can-i-find-out-if-the-smtp-server-is-listening-on-a-specific-tcp-port" title="Link to this heading"></a></h3>
+<p>The best way to get mail server information is to ask your mail
 server admin. If you are the mail server admin, or need information in a
 hurry, you can use the <code class="docutils literal notranslate"><span class="pre">netstat</span></code> command. This example shows all active
 servers on your system, and the ports they are listening on. The SMTP server is
@@ -423,13 +448,15 @@ listening on localhost port 25.</p>
 <li><p>993/tcp/udp is encrypted imaps</p></li>
 <li><p>995/tcp/udp is encrypted pop3s</p></li>
 </ul>
-<p><strong>Question</strong>: How can I determine if the SMTP server supports the SMTPS
-protocol?</p>
-<p><strong>Answer</strong>: A good indication that the SMTP server supports the SMTPS protocol
+</section>
+<section id="how-can-i-determine-if-the-smtp-server-supports-the-smtps-protocol">
+<h3>How can I determine if the SMTP server supports the SMTPS protocol?<a class="headerlink" href="#how-can-i-determine-if-the-smtp-server-supports-the-smtps-protocol" title="Link to this heading"></a></h3>
+<p>A good indication that the SMTP server supports the SMTPS protocol
 is that it is listening on the <cite>submissions</cite> port <strong>465</strong>.</p>
-<p><strong>Question</strong>: How can I determine what authorization and encryption protocols
-the mail server supports?</p>
-<p><strong>Answer</strong>: SMTP servers usually announce the availability of STARTTLS
+</section>
+<section id="how-can-i-determine-what-authorization-and-encryption-protocols-the-mail-server-supports">
+<h3>How can I determine what authorization and encryption protocols the mail server supports?<a class="headerlink" href="#how-can-i-determine-what-authorization-and-encryption-protocols-the-mail-server-supports" title="Link to this heading"></a></h3>
+<p>SMTP servers usually announce the availability of STARTTLS
 immediately after a connection has been established. You can easily check this
 using the <code class="docutils literal notranslate"><span class="pre">telnet</span></code> command.</p>
 <div class="admonition note">
@@ -456,8 +483,10 @@ using the <code class="docutils literal notranslate"><span class="pre">telnet</s
 <span class="n">Connection</span> <span class="n">closed</span> <span class="n">by</span> <span class="n">foreign</span> <span class="n">host</span><span class="o">.</span>
 </pre></div>
 </div>
-<p id="tlspeerverification"><strong>Question</strong>: How can I send mail using self-signed certificates or use STARTTLS with self signed certificates?</p>
-<p><strong>Answer</strong>: To disable peer verification or to use self signed certificates, add the following
+</section>
+<section id="how-can-i-send-mail-using-self-signed-certificates-or-use-starttls-with-self-signed-certificates">
+<span id="tlspeerverification"></span><h3>How can I send mail using self-signed certificates or use STARTTLS with self signed certificates?<a class="headerlink" href="#how-can-i-send-mail-using-self-signed-certificates-or-use-starttls-with-self-signed-certificates" title="Link to this heading"></a></h3>
+<p>To disable peer verification or to use self signed certificates, add the following
 to your <code class="docutils literal notranslate"><span class="pre">config/config.php</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpstreamoptions&quot;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(</span>
     <span class="s1">&#39;ssl&#39;</span> <span class="o">=&gt;</span> <span class="n">array</span><span class="p">(</span>
@@ -468,16 +497,10 @@ to your <code class="docutils literal notranslate"><span class="pre">config/conf
 <span class="p">),</span>
 </pre></div>
 </div>
-<p><strong>Question</strong>: All emails keep getting rejected even though only one email address is invalid.</p>
-<p><strong>Answer</strong>: Partial sending, i. e. sending to all but the faulty email address is not possible.</p>
 </section>
-<section id="enabling-debug-mode">
-<h2>Enabling debug mode<a class="headerlink" href="#enabling-debug-mode" title="Permalink to this headline"></a></h2>
-<p>If you are unable to send email, it might be useful to activate further debug
-messages by enabling the <code class="docutils literal notranslate"><span class="pre">mail_smtpdebug</span></code> parameter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;mail_smtpdebug&quot;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
-</pre></div>
-</div>
+<section id="all-emails-keep-getting-rejected-even-though-only-one-email-address-is-invalid">
+<h3>All emails keep getting rejected even though only one email address is invalid.<a class="headerlink" href="#all-emails-keep-getting-rejected-even-though-only-one-email-address-is-invalid" title="Link to this heading"></a></h3>
+<p>Partial sending, i. e. sending to all but the faulty email address is not possible.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Immediately after pressing the <strong>Send email</strong> button, as described
@@ -486,12 +509,13 @@ This is expected behavior and can be ignored.</p>
 </div>
 </section>
 </section>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="config_sample_php_parameters.html" class="btn btn-neutral float-left" title="Configuration Parameters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="domain_change.html" class="btn btn-neutral float-left" title="Domain Change" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="external_sites.html" class="btn btn-neutral float-right" title="Linking external sites" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

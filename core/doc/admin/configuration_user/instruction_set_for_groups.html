@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Instruction set for groups &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -56,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="reset_user_password.html">Resetting a user password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_password_policy.html">User password policy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="two_factor-auth.html">Two-factor authentication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_auth_ftp_smb_imap.html">User authentication with IMAP, SMB, FTP and others</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap.html">User authentication with LDAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_cleanup.html">LDAP user cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_api.html">The LDAP configuration API</a></li>
@@ -117,9 +124,9 @@
            <div itemprop="articleBody">
              
   <section id="instruction-set-for-groups">
-<h1>Instruction set for groups<a class="headerlink" href="#instruction-set-for-groups" title="Permalink to this headline"></a></h1>
+<h1>Instruction set for groups<a class="headerlink" href="#instruction-set-for-groups" title="Link to this heading"></a></h1>
 <section id="search-get-groups">
-<h2>Search/get groups<a class="headerlink" href="#search-get-groups" title="Permalink to this headline"></a></h2>
+<h2>Search/get groups<a class="headerlink" href="#search-get-groups" title="Link to this heading"></a></h2>
 <p>Retrieves a list of groups from the Nextcloud server. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups</strong></p>
@@ -134,8 +141,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups?search=adm
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups?search=adm -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -143,7 +150,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -161,7 +168,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="create-a-group">
-<h2>Create a group<a class="headerlink" href="#create-a-group" title="Permalink to this headline"></a></h2>
+<h2>Create a group<a class="headerlink" href="#create-a-group" title="Link to this heading"></a></h2>
 <p>Adds a new group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups</strong></p>
@@ -177,8 +184,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>103 - failed to add the group</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/groups -d groupid=&quot;newgroup&quot;
+<h3>Example<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/groups -d groupid=&quot;newgroup&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -186,7 +193,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -200,7 +207,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-members-of-a-group">
-<h2>Get members of a group<a class="headerlink" href="#get-members-of-a-group" title="Permalink to this headline"></a></h2>
+<h2>Get members of a group<a class="headerlink" href="#get-members-of-a-group" title="Link to this heading"></a></h2>
 <p>Retrieves a list of group members. Authentication is done by sending a Basic
 HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
@@ -212,8 +219,8 @@ HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups/admin
+<h3>Example<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/groups/admin -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -221,7 +228,7 @@ HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -239,7 +246,7 @@ HTTP Authorization header.</p>
 </section>
 </section>
 <section id="get-subadmins-of-a-group">
-<h2>Get subadmins of a group<a class="headerlink" href="#get-subadmins-of-a-group" title="Permalink to this headline"></a></h2>
+<h2>Get subadmins of a group<a class="headerlink" href="#get-subadmins-of-a-group" title="Link to this heading"></a></h2>
 <p>Returns subadmins of the group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}/subadmins</strong></p>
@@ -253,8 +260,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>102 - unknown failure</p></li>
 </ul>
 <section id="id5">
-<h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup/subadmins
+<h3>Example<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET https://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup/subadmins -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -262,7 +269,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id6">
-<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -279,7 +286,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="edit-data-of-a-single-group">
-<h2>Edit data of a single group<a class="headerlink" href="#edit-data-of-a-single-group" title="Permalink to this headline"></a></h2>
+<h2>Edit data of a single group<a class="headerlink" href="#edit-data-of-a-single-group" title="Link to this heading"></a></h2>
 <p>Edits attributes related to a group. Authentication
 is done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
@@ -298,8 +305,8 @@ is done by sending a Basic HTTP Authorization header.</p>
 <li><p>101 - not supported by backend</p></li>
 </ul>
 <section id="examples">
-<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup -d key=&quot;displayname&quot; -d value=&quot;My Group Name&quot;
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X PUT http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup -d key=&quot;displayname&quot; -d value=&quot;My Group Name&quot; -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -307,7 +314,7 @@ is done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id7">
-<h3>XML output<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -321,7 +328,7 @@ is done by sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="delete-a-group">
-<h2>Delete a group<a class="headerlink" href="#delete-a-group" title="Permalink to this headline"></a></h2>
+<h2>Delete a group<a class="headerlink" href="#delete-a-group" title="Link to this heading"></a></h2>
 <p>Removes a group. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/groups/{groupid}</strong></p>
@@ -335,8 +342,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>102 - failed to delete group</p></li>
 </ul>
 <section id="id8">
-<h3>Example<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup
+<h3>Example<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/groups/mygroup -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -344,7 +351,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id9">
-<h3>XML output<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>

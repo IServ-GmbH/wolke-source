@@ -25,6 +25,7 @@ namespace OCA\Activity\Controller;
 use OCA\Activity\Data;
 use OCA\Activity\GroupHelper;
 use OCA\Activity\UserSettings;
+use OCA\Theming\ThemingDefaults;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -35,62 +36,23 @@ use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
 
 class FeedController extends Controller {
+
 	public const DEFAULT_PAGE_SIZE = 30;
+	protected IL10N $l;
 
-	/** @var \OCA\Activity\Data */
-	protected $data;
-
-	/** @var \OCA\Activity\GroupHelper */
-	protected $helper;
-
-	/** @var \OCA\Activity\UserSettings */
-	protected $settings;
-
-	/** @var IURLGenerator */
-	protected $urlGenerator;
-
-	/** @var IManager */
-	protected $activityManager;
-
-	/** @var IConfig */
-	protected $config;
-
-	/** @var IFactory */
-	protected $l10nFactory;
-
-	/** @var IL10N */
-	protected $l;
-
-	/**
-	 * constructor of the controller
-	 *
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param Data $data
-	 * @param GroupHelper $helper
-	 * @param UserSettings $settings
-	 * @param IURLGenerator $urlGenerator
-	 * @param IManager $activityManager
-	 * @param IFactory $l10nFactory
-	 * @param IConfig $config
-	 */
-	public function __construct($appName,
-								IRequest $request,
-								Data $data,
-								GroupHelper $helper,
-								UserSettings $settings,
-								IURLGenerator $urlGenerator,
-								IManager $activityManager,
-								IFactory $l10nFactory,
-								IConfig $config) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		protected Data $data,
+		protected GroupHelper $helper,
+		protected UserSettings $settings,
+		protected IURLGenerator $urlGenerator,
+		protected IManager $activityManager,
+		protected IFactory $l10nFactory,
+		protected IConfig $config,
+		protected ThemingDefaults $themingDefaults,
+	) {
 		parent::__construct($appName, $request);
-		$this->data = $data;
-		$this->helper = $helper;
-		$this->settings = $settings;
-		$this->urlGenerator = $urlGenerator;
-		$this->activityManager = $activityManager;
-		$this->l10nFactory = $l10nFactory;
-		$this->config = $config;
 	}
 
 	/**
@@ -126,11 +88,13 @@ class FeedController extends Controller {
 			];
 		}
 
+		$title = $this->themingDefaults->getTitle();
 		$response = new TemplateResponse('activity', 'rss', [
 			'rssLang' => $this->l->getLanguageCode(),
 			'rssLink' => $this->urlGenerator->linkToRouteAbsolute('activity.Feed.show'),
 			'rssPubDate' => date('r'),
 			'description' => $description,
+			'title' => $title !== '' ? $this->l->t('Activity feed for %1$s', [$title]) : $this->l->t('Activity feed'),
 			'activities' => $activities,
 		], '');
 

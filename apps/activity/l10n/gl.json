@@ -9,7 +9,7 @@
     "No activities" : "Non hai actividades",
     "More activities" : "Máis actividades",
     "Daily activity summary for %s" : "Resumo diario de actividades para %s",
-    "_and %n more _::_and %n more _" : ["e %n máis","e %n máis"],
+    "_and %n more…_::_and %n more…_" : ["e %n máis…","e %n máis…"],
     "All activities" : "Todas as actividades",
     "By others" : "Por outros",
     "By you" : "Por Vde.",
@@ -17,6 +17,7 @@
     "Hello %s" : "Ola %s",
     "Hello %s," : "Ola %s,",
     "There was some activity at %s" : "Houbo actividade en %s",
+    "_and %n more _::_and %n more _" : ["e %n máis","e %n máis"],
     "Mail" : "Correo",
     "Push" : "Notificación automática",
     "Activity" : "Actividade",
@@ -64,14 +65,6 @@
     "Configure the default notification settings for new accounts." : "Configure os axustes de notificación predeterminados para as contas novas.",
     "Unable to save the settings" : "Non é posíbel gardar os axustes",
     "No more events to load" : "Non hai máis eventos para cargar",
-    "Copied!" : "Copiado!",
-    "Not supported!" : "Non admitido!",
-    "Press ⌘-C to copy." : "Prema ⌘-C para copiar.",
-    "Press Ctrl-C to copy." : "Prema Ctrl-C para copiar.",
-    "{name} (invisible)" : "{name} (invisíbel)",
-    "{name} (restricted)" : "{name} (restrinxido)",
-    "There are no events for this filter" : "Non hai eventos neste filtro",
-    "Activities" : "Actividades",
     "Could not load activites" : "Non foi posíbel cargar as actividades"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

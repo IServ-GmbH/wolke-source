@@ -162,6 +162,16 @@ class Admin implements IDelegatedSettings {
 			'showEnterpriseSupportSection' => $instanceSize !== 'small' && !is_array($subscriptionInfo),
 
 			'subscriptionKeyUrl' => $this->urlGenerator->linkToRoute('support.api.setSubscriptionKey'),
+
+			'offlineActivationData' => [
+				'subscriptionKey' => $potentialSubscriptionKey,
+				'instanceId' => $this->config->getSystemValueString('instanceid', ''),
+				'userCount' => $userCount,
+				'activeUserCount' => $activeUserCount,
+				'version' => implode('.', \OCP\Util::getVersion())
+			],
+
+			'subscriptionEndDate' => $subscriptionEndDate->format('Y-m-d'),
 		];
 
 		return new TemplateResponse('support', 'admin', $params);

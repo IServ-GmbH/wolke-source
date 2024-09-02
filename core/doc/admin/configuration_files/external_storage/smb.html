@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMB/CIFS &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -128,7 +136,7 @@
            <div itemprop="articleBody">
              
   <section id="smb-cifs">
-<h1>SMB/CIFS<a class="headerlink" href="#smb-cifs" title="Permalink to this headline"></a></h1>
+<h1>SMB/CIFS<a class="headerlink" href="#smb-cifs" title="Link to this heading"></a></h1>
 <p>Nextcloud can connect to Windows file servers or other SMB-compatible servers
 with the SMB/CIFS backend.</p>
 <div class="admonition note">
@@ -172,7 +180,7 @@ SMB servers.</p>
 options and information.</p>
 <p>See <a class="reference internal" href="auth_mechanisms.html"><span class="doc">External Storage authentication mechanisms</span></a> for more information on authentication schemes.</p>
 <section id="smb-update-notifications">
-<h2>SMB update notifications<a class="headerlink" href="#smb-update-notifications" title="Permalink to this headline"></a></h2>
+<h2>SMB update notifications<a class="headerlink" href="#smb-update-notifications" title="Link to this heading"></a></h2>
 <p>Nextcloud can use smb update notifications to
 listen for changes made to a configured SMB/CIFS storage and detect external
 changes made to the storage in near real-time.</p>
@@ -195,7 +203,7 @@ is required even when using the PHP module.</p>
 <p>On default this command shows no output, can you see the list of detected changes by
 passing the <code class="docutils literal notranslate"><span class="pre">-v</span></code> option to the command.</p>
 <section id="smb-authentication">
-<h3>SMB authentication<a class="headerlink" href="#smb-authentication" title="Permalink to this headline"></a></h3>
+<h3>SMB authentication<a class="headerlink" href="#smb-authentication" title="Link to this heading"></a></h3>
 <p>Update notifications are not supported when using ‘Login credentials, save in session’ authentication.
 Using update notifications is only supported with ‘Login credentials, save in database’.</p>
 <p>Even when using ‘Login credentials, save in database’ or ‘User entered, stored in database’ authentication the notify process
@@ -203,13 +211,13 @@ can not use the credentials saved to attach to the smb shares because the notify
 in those cases you can provide the username and password using the <code class="docutils literal notranslate"><span class="pre">--username</span></code> and <code class="docutils literal notranslate"><span class="pre">--password</span></code> arguments.</p>
 </section>
 <section id="decrease-sync-delay">
-<h3>Decrease sync delay<a class="headerlink" href="#decrease-sync-delay" title="Permalink to this headline"></a></h3>
+<h3>Decrease sync delay<a class="headerlink" href="#decrease-sync-delay" title="Link to this heading"></a></h3>
 <p>Any updates detected by the notify command will only be synced to the client after the Nextcloud cron job has been executed
 (usually every 15 minutes). If this interval is too high for your use case, you can decrease it by running <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">files:scan</span> <span class="pre">--unscanned</span> <span class="pre">--all</span></code>
 at the desired interval. Note that this might increase the server load and you’ll need to ensure that there is no overlap between runs.</p>
 </section>
 <section id="hidden-files-upload-failure-or-not-shown">
-<h3>Hidden files upload failure or not shown<a class="headerlink" href="#hidden-files-upload-failure-or-not-shown" title="Permalink to this headline"></a></h3>
+<h3>Hidden files upload failure or not shown<a class="headerlink" href="#hidden-files-upload-failure-or-not-shown" title="Link to this heading"></a></h3>
 <p>If you have the configuration <code class="docutils literal notranslate"><span class="pre">hide</span> <span class="pre">dot</span> <span class="pre">files</span> <span class="pre">=</span> <span class="pre">Yes</span></code>, you will not be able to upload a hidden file (dot file) nor will you be able to show hidden files on your filelist (even if the ‘show hidden file’ option is checked on the nextcloud settings.
 Make sure you have the following option in your configuration: <code class="docutils literal notranslate"><span class="pre">hide</span> <span class="pre">dot</span> <span class="pre">files</span> <span class="pre">=</span> <span class="pre">No</span></code></p>
 </section>

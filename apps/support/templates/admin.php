@@ -60,6 +60,9 @@ if ($_['showSubscriptionDetails']) {
 						<?php p($l->t('Subscription key:')); ?> <pre><?php p($_['subscriptionKey']); ?></pre>
 					</li>
 					<li>
+						<?php p($l->t('Expiration date: ') . $_['subscriptionEndDate']); ?>
+					</li>
+					<li>
 						<?php
 						if ($_['validSubscription']) {
 							p($l->t('Expires in: '));
@@ -335,7 +338,9 @@ if ($_['showCommunitySupportSection']) {
 					p($l->t('The subscription key was invalid.'));
 					break;
 				case \OCA\Support\Service\SubscriptionService::ERROR_NO_INTERNET_CONNECTION:
-					p($l->t('The subscription key could not be verified, because this server has no internet connection. Please reach out to the support team to get this resolved.'));
+					p($l->t('The subscription key could not be verified, because this server has no internet connection.'));
+					echo '<br>';
+					p($l->t('Contact our support team if you would like to do an offline activation and provide the following data.'));
 					break;
 				case \OCA\Support\Service\SubscriptionService::ERROR_INVALID_SUBSCRIPTION_KEY:
 					p($l->t('The subscription key had an invalid format.'));
@@ -345,11 +350,16 @@ if ($_['showCommunitySupportSection']) {
 					break;
 			} ?>
 		</p>
+		<?php if ($_['lastError'] === \OCA\Support\Service\SubscriptionService::ERROR_NO_INTERNET_CONNECTION): ?>
+			<div class="subscription-key-offline-activation">
+				<p><?php p($l->t('Data for offline activation:')) ?></p>
+				<textarea rows="7"><?= json_encode($_['offlineActivationData'], JSON_PRETTY_PRINT) ?></textarea>
+			</div>
+		<?php endif; ?>
 		<?php
 	}
 ?>
 </div>
-
 
 <?php
 if (!$_['showSubscriptionDetails']) {

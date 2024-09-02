@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supported apps &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -50,6 +58,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
@@ -112,11 +121,11 @@
            <div itemprop="articleBody">
              
   <section id="supported-apps">
-<h1>Supported apps<a class="headerlink" href="#supported-apps" title="Permalink to this headline"></a></h1>
+<h1>Supported apps<a class="headerlink" href="#supported-apps" title="Link to this heading"></a></h1>
 <p>Below is the list of apps supported for Nextcloud latest. Supported here means that we’ll accept bugreports and resolve them in these apps with regard to functionality and compatibility with Nextcloud latest. To get access to work-arounds, long term support, priority bug fixing and custom consulting, contact Nextcloud GmbH.</p>
 <p>All apps are licensed under <code class="docutils literal notranslate"><span class="pre">AGPLv3</span></code>.</p>
 <section id="nextcloud-files">
-<h2>Nextcloud Files<a class="headerlink" href="#nextcloud-files" title="Permalink to this headline"></a></h2>
+<h2>Nextcloud Files<a class="headerlink" href="#nextcloud-files" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/activity">Activity</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/admin_audit">Auditing / Logging</a></p></li>
@@ -143,6 +152,7 @@
 <li><p><a class="reference external" href="https://github.com/nextcloud/fulltextsearch_elasticsearch">Full Text Search - Elasticsearch Platform</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/files_fulltextsearch">Full Text Search - Files</a></p></li>
 <li><p><a class="reference external" href="https://github.com/daita/files_fulltextsearch_tesseract">Full Text Search - Tesseract OCR</a></p></li>
+<li><p><a class="reference external" href="https://github.com/nextcloud/files_lock">Temporary files lock</a> (this is necessary for “Edit files locally” functionality)</p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/groupfolders">Group folders</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/guests">Guests</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/user_ldap">LDAP user and group backend</a></p></li>
@@ -156,7 +166,6 @@
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/provisioning_api">Provisioning API</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/recommendations">Recommendations</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/related_resources/">Related Resources</a></p></li>
-<li><p><a class="reference external" href="https://github.com/nextcloud/files_rightclick">Right click</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/sharebymail">Share by mail</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/sharepoint">SharePoint Backend</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/suspicious_login">Suspicious Login</a></p></li>
@@ -174,16 +183,16 @@
 <li><p><a class="reference external" href="https://github.com/nextcloud/terms_of_service/">Terms of Service</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/text">Text</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/theming">Theming</a></p></li>
-<li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/twofactor_backupcodes">Two factor backup codes</a></p></li>
-<li><p><a class="reference external" href="https://github.com/nextcloud/twofactor_totp">Two factor TOTP Provider</a></p></li>
-<li><p><a class="reference external" href="https://github.com/nextcloud/twofactor_u2f">Two factor U2F</a></p></li>
+<li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/twofactor_backupcodes">Two-Factor backup codes</a></p></li>
+<li><p><a class="reference external" href="https://github.com/nextcloud/twofactor_totp">Two-Factor TOTP Provider</a></p></li>
+<li><p><a class="reference external" href="https://github.com/nextcloud/twofactor_webauthn">Two-Factor WebAuthn</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/updatenotification">Update Notifications</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/files_versions">Versions</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/dav">WebDAV endpoint</a></p></li>
 </ul>
 </section>
 <section id="nextcloud-groupware">
-<h2>Nextcloud Groupware<a class="headerlink" href="#nextcloud-groupware" title="Permalink to this headline"></a></h2>
+<h2>Nextcloud Groupware<a class="headerlink" href="#nextcloud-groupware" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/calendar">Calendar</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/contacts">Contacts</a></p></li>
@@ -192,20 +201,20 @@
 </ul>
 </section>
 <section id="nextcloud-talk">
-<h2>Nextcloud Talk<a class="headerlink" href="#nextcloud-talk" title="Permalink to this headline"></a></h2>
+<h2>Nextcloud Talk<a class="headerlink" href="#nextcloud-talk" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/spreed">Talk</a></p></li>
 </ul>
 </section>
 <section id="collaborative-editing">
-<h2>Collaborative editing<a class="headerlink" href="#collaborative-editing" title="Permalink to this headline"></a></h2>
+<h2>Collaborative editing<a class="headerlink" href="#collaborative-editing" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/richdocuments">Collabora Online</a></p></li>
 <li><p><a class="reference external" href="https://github.com/ONLYOFFICE/onlyoffice-nextcloud">ONLYOFFICE</a></p></li>
 </ul>
 </section>
 <section id="global-scale">
-<h2>Global Scale<a class="headerlink" href="#global-scale" title="Permalink to this headline"></a></h2>
+<h2>Global Scale<a class="headerlink" href="#global-scale" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/globalsiteselector">Global Site Selector</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/tree/master/apps/lookup_server_connector">Lookup Server Connector</a></p></li>

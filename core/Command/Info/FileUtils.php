@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OC\Core\Command\Info;
 
-use OC\Files\SetupManager;
 use OCA\Circles\MountManager\CircleMount;
 use OCA\Files_External\Config\ExternalMountPoint;
 use OCA\Files_Sharing\SharedMount;
@@ -31,33 +30,21 @@ use OCA\GroupFolders\Mount\GroupMountPoint;
 use OCP\Constants;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\FileInfo;
+use OCP\Files\Folder;
 use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
-use OCP\Files\Mount\IMountManager;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Share\IShare;
 use OCP\Util;
 use Symfony\Component\Console\Output\OutputInterface;
-use OCP\Files\Folder;
 
 class FileUtils {
-	private IRootFolder $rootFolder;
-	private IUserMountCache $userMountCache;
-	private IMountManager $mountManager;
-	private SetupManager $setupManager;
-
 	public function __construct(
-		IRootFolder $rootFolder,
-		IUserMountCache $userMountCache,
-		IMountManager $mountManager,
-		SetupManager $setupManager
+		private IRootFolder $rootFolder,
+		private IUserMountCache $userMountCache,
 	) {
-		$this->rootFolder = $rootFolder;
-		$this->userMountCache = $userMountCache;
-		$this->mountManager = $mountManager;
-		$this->setupManager = $setupManager;
 	}
 
 	/**
@@ -98,7 +85,7 @@ class FileUtils {
 			if (!$mounts) {
 				return null;
 			}
-			$mount = $mounts[0];
+			$mount = reset($mounts);
 			$userFolder = $this->rootFolder->getUserFolder($mount->getUser()->getUID());
 			$nodes = $userFolder->getById((int)$fileInput);
 			if (!$nodes) {

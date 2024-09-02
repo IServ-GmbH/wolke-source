@@ -82,7 +82,6 @@ use OC\DB\Connection;
 use OC\DB\ConnectionAdapter;
 use OC\Diagnostics\EventLogger;
 use OC\Diagnostics\QueryLogger;
-use OC\EventDispatcher\SymfonyAdapter;
 use OC\Federation\CloudFederationFactory;
 use OC\Federation\CloudFederationProviderManager;
 use OC\Federation\CloudIdManager;
@@ -103,6 +102,7 @@ use OC\Files\Storage\StorageFactory;
 use OC\Files\Template\TemplateManager;
 use OC\Files\Type\Loader;
 use OC\Files\View;
+use OC\FilesMetadata\FilesMetadataManager;
 use OC\FullTextSearch\FullTextSearchManager;
 use OC\Http\Client\ClientService;
 use OC\Http\Client\NegativeDnsCache;
@@ -110,8 +110,8 @@ use OC\IntegrityCheck\Checker;
 use OC\IntegrityCheck\Helpers\AppLocator;
 use OC\IntegrityCheck\Helpers\EnvironmentHelper;
 use OC\IntegrityCheck\Helpers\FileAccessHelper;
-use OC\LDAP\NullLDAPProviderFactory;
 use OC\KnownUser\KnownUserService;
+use OC\LDAP\NullLDAPProviderFactory;
 use OC\Lock\DBLockingProvider;
 use OC\Lock\MemcacheLockingProvider;
 use OC\Lock\NoopLockingProvider;
@@ -121,14 +121,15 @@ use OC\Log\PsrLoggerAdapter;
 use OC\Mail\Mailer;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\Factory;
-use OC\Metadata\Capabilities as MetadataCapabilities;
-use OC\Metadata\IMetadataManager;
-use OC\Metadata\MetadataManager;
 use OC\Notification\Manager;
+use OC\OCM\Model\OCMProvider;
 use OC\OCM\OCMDiscoveryService;
 use OC\OCS\DiscoveryService;
 use OC\Preview\GeneratorHelper;
 use OC\Preview\IMagickSupport;
+use OC\Preview\MimeIconProvider;
+use OC\Profile\ProfileManager;
+use OC\Profiler\Profiler;
 use OC\Remote\Api\ApiFactory;
 use OC\Remote\InstanceFactory;
 use OC\RichObjectStrings\Validator;
@@ -143,12 +144,13 @@ use OC\Security\CSP\ContentSecurityPolicyNonceManager;
 use OC\Security\CSRF\CsrfTokenManager;
 use OC\Security\CSRF\TokenStorage\SessionStorage;
 use OC\Security\Hasher;
+use OC\Security\RateLimiting\Limiter;
 use OC\Security\SecureRandom;
 use OC\Security\TrustedDomainHelper;
 use OC\Security\VerificationToken\VerificationToken;
 use OC\Session\CryptoWrapper;
+use OC\SetupCheck\SetupCheckManager;
 use OC\Share20\ProviderFactory;
-use OC\Share20\ShareDisableChecker;
 use OC\Share20\ShareHelper;
 use OC\SpeechToText\SpeechToTextManager;
 use OC\SystemTag\ManagerFactory as SystemTagManagerFactory;
@@ -156,10 +158,15 @@ use OC\Tagging\TagMapper;
 use OC\Talk\Broker;
 use OC\Template\JSCombiner;
 use OC\Translation\TranslationManager;
+use OC\User\AvailabilityCoordinator;
 use OC\User\DisplayNameCache;
 use OC\User\Listeners\BeforeUserDeletedListener;
 use OC\User\Listeners\UserChangedListener;
 use OC\User\Session;
+use OCA\Files_External\Service\BackendService;
+use OCA\Files_External\Service\GlobalStoragesService;
+use OCA\Files_External\Service\UserGlobalStoragesService;
+use OCA\Files_External\Service\UserStoragesService;
 use OCA\Theming\ImageManager;
 use OCA\Theming\ThemingDefaults;
 use OCA\Theming\Util;
@@ -193,32 +200,27 @@ use OCP\Files\Lock\ILockManager;
 use OCP\Files\Mount\IMountManager;
 use OCP\Files\Storage\IStorageFactory;
 use OCP\Files\Template\ITemplateManager;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\FullTextSearch\IFullTextSearchManager;
 use OCP\GlobalScale\IConfig;
-use OCP\Group\Events\BeforeGroupCreatedEvent;
-use OCP\Group\Events\BeforeGroupDeletedEvent;
-use OCP\Group\Events\BeforeUserAddedEvent;
-use OCP\Group\Events\BeforeUserRemovedEvent;
-use OCP\Group\Events\GroupCreatedEvent;
-use OCP\Group\Events\GroupDeletedEvent;
-use OCP\Group\Events\UserAddedEvent;
-use OCP\Group\Events\UserRemovedEvent;
 use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IAvatarManager;
+use OCP\IBinaryFinder;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\ICertificateManager;
-use OCP\IBinaryFinder;
 use OCP\IDateTimeFormatter;
 use OCP\IDateTimeZone;
 use OCP\IDBConnection;
+use OCP\IEventSourceFactory;
 use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\INavigationManager;
+use OCP\IPhoneNumberUtil;
 use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IRequestId;
@@ -238,6 +240,10 @@ use OCP\Lockdown\ILockdownManager;
 use OCP\Log\ILogFactory;
 use OCP\Mail\IMailer;
 use OCP\OCM\IOCMDiscoveryService;
+use OCP\OCM\IOCMProvider;
+use OCP\Preview\IMimeIconProvider;
+use OCP\Profile\IProfileManager;
+use OCP\Profiler\IProfiler;
 use OCP\Remote\Api\IApiFactory;
 use OCP\Remote\IInstanceFactory;
 use OCP\RichObjectStrings\IValidator;
@@ -249,35 +255,29 @@ use OCP\Security\ICrypto;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use OCP\Security\ITrustedDomainHelper;
+use OCP\Security\RateLimiting\ILimiter;
 use OCP\Security\VerificationToken\IVerificationToken;
+use OCP\SetupCheck\ISetupCheckManager;
+use OCP\Share\IProviderFactory;
 use OCP\Share\IShareHelper;
 use OCP\SpeechToText\ISpeechToTextManager;
 use OCP\SystemTag\ISystemTagManager;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\Talk\IBroker;
 use OCP\Translation\ITranslationManager;
-use OCP\User\Events\BeforePasswordUpdatedEvent;
 use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\User\Events\BeforeUserLoggedInWithCookieEvent;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
-use OCP\User\Events\PasswordUpdatedEvent;
 use OCP\User\Events\PostLoginEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserLoggedInEvent;
 use OCP\User\Events\UserLoggedInWithCookieEvent;
 use OCP\User\Events\UserLoggedOutEvent;
+use OCP\User\IAvailabilityCoordinator;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
-use OCA\Files_External\Service\UserStoragesService;
-use OCA\Files_External\Service\UserGlobalStoragesService;
-use OCA\Files_External\Service\GlobalStoragesService;
-use OCA\Files_External\Service\BackendService;
-use OCP\Profiler\IProfiler;
-use OC\Profiler\Profiler;
 
 /**
  * Class Server
@@ -343,7 +343,6 @@ class Server extends ServerContainer implements IServerContainer {
 					$c->get(SystemConfig::class)
 				),
 				$c->get(IEventDispatcher::class),
-				$c->get(SymfonyAdapter::class),
 				$c->get(GeneratorHelper::class),
 				$c->get(ISession::class)->get('user_id'),
 				$c->get(Coordinator::class),
@@ -354,6 +353,7 @@ class Server extends ServerContainer implements IServerContainer {
 		});
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('PreviewManager', IPreview::class);
+		$this->registerAlias(IMimeIconProvider::class, MimeIconProvider::class);
 
 		$this->registerService(\OC\Preview\Watcher::class, function (ContainerInterface $c) {
 			return new \OC\Preview\Watcher(
@@ -469,7 +469,6 @@ class Server extends ServerContainer implements IServerContainer {
 			return new HookConnector(
 				$c->get(IRootFolder::class),
 				new View(),
-				$c->get(\OC\EventDispatcher\SymfonyAdapter::class),
 				$c->get(IEventDispatcher::class)
 			);
 		});
@@ -496,50 +495,10 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerService(\OCP\IGroupManager::class, function (ContainerInterface $c) {
 			$groupManager = new \OC\Group\Manager(
 				$this->get(IUserManager::class),
-				$c->get(SymfonyAdapter::class),
+				$this->get(IEventDispatcher::class),
 				$this->get(LoggerInterface::class),
 				$this->get(ICacheFactory::class)
 			);
-			$groupManager->listen('\OC\Group', 'preCreate', function ($gid) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new BeforeGroupCreatedEvent($gid));
-			});
-			$groupManager->listen('\OC\Group', 'postCreate', function (\OC\Group\Group $group) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new GroupCreatedEvent($group));
-			});
-			$groupManager->listen('\OC\Group', 'preDelete', function (\OC\Group\Group $group) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new BeforeGroupDeletedEvent($group));
-			});
-			$groupManager->listen('\OC\Group', 'postDelete', function (\OC\Group\Group $group) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new GroupDeletedEvent($group));
-			});
-			$groupManager->listen('\OC\Group', 'preAddUser', function (\OC\Group\Group $group, \OC\User\User $user) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new BeforeUserAddedEvent($group, $user));
-			});
-			$groupManager->listen('\OC\Group', 'postAddUser', function (\OC\Group\Group $group, \OC\User\User $user) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new UserAddedEvent($group, $user));
-			});
-			$groupManager->listen('\OC\Group', 'preRemoveUser', function (\OC\Group\Group $group, \OC\User\User $user) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new BeforeUserRemovedEvent($group, $user));
-			});
-			$groupManager->listen('\OC\Group', 'postRemoveUser', function (\OC\Group\Group $group, \OC\User\User $user) {
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new UserRemovedEvent($group, $user));
-			});
 			return $groupManager;
 		});
 		/** @deprecated 19.0.0 */
@@ -571,8 +530,6 @@ class Server extends ServerContainer implements IServerContainer {
 				$provider = null;
 			}
 
-			$legacyDispatcher = $c->get(SymfonyAdapter::class);
-
 			$userSession = new \OC\User\Session(
 				$manager,
 				$session,
@@ -582,7 +539,7 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->get(ISecureRandom::class),
 				$c->getLockdownManager(),
 				$c->get(LoggerInterface::class),
-				$c->get(IEventDispatcher::class)
+				$c->get(IEventDispatcher::class),
 			);
 			/** @deprecated 21.0.0 use BeforeUserCreatedEvent event with the IEventDispatcher instead */
 			$userSession->listen('\OC\User', 'preCreateUser', function ($uid, $password) {
@@ -594,10 +551,9 @@ class Server extends ServerContainer implements IServerContainer {
 				\OC_Hook::emit('OC_User', 'post_createUser', ['uid' => $user->getUID(), 'password' => $password]);
 			});
 			/** @deprecated 21.0.0 use BeforeUserDeletedEvent event with the IEventDispatcher instead */
-			$userSession->listen('\OC\User', 'preDelete', function ($user) use ($legacyDispatcher) {
+			$userSession->listen('\OC\User', 'preDelete', function ($user) {
 				/** @var \OC\User\User $user */
 				\OC_Hook::emit('OC_User', 'pre_deleteUser', ['run' => true, 'uid' => $user->getUID()]);
-				$legacyDispatcher->dispatch('OCP\IUser::preDelete', new GenericEvent($user));
 			});
 			/** @deprecated 21.0.0 use UserDeletedEvent event with the IEventDispatcher instead */
 			$userSession->listen('\OC\User', 'postDelete', function ($user) {
@@ -607,18 +563,10 @@ class Server extends ServerContainer implements IServerContainer {
 			$userSession->listen('\OC\User', 'preSetPassword', function ($user, $password, $recoveryPassword) {
 				/** @var \OC\User\User $user */
 				\OC_Hook::emit('OC_User', 'pre_setPassword', ['run' => true, 'uid' => $user->getUID(), 'password' => $password, 'recoveryPassword' => $recoveryPassword]);
-
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new BeforePasswordUpdatedEvent($user, $password, $recoveryPassword));
 			});
 			$userSession->listen('\OC\User', 'postSetPassword', function ($user, $password, $recoveryPassword) {
 				/** @var \OC\User\User $user */
 				\OC_Hook::emit('OC_User', 'post_setPassword', ['run' => true, 'uid' => $user->getUID(), 'password' => $password, 'recoveryPassword' => $recoveryPassword]);
-
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new PasswordUpdatedEvent($user, $password, $recoveryPassword));
 			});
 			$userSession->listen('\OC\User', 'preLogin', function ($uid, $password) {
 				\OC_Hook::emit('OC_User', 'pre_login', ['run' => true, 'uid' => $uid, 'password' => $password]);
@@ -663,10 +611,6 @@ class Server extends ServerContainer implements IServerContainer {
 			$userSession->listen('\OC\User', 'changeUser', function ($user, $feature, $value, $oldValue) {
 				/** @var \OC\User\User $user */
 				\OC_Hook::emit('OC_User', 'changeUser', ['run' => true, 'user' => $user, 'feature' => $feature, 'value' => $value, 'old_value' => $oldValue]);
-
-				/** @var IEventDispatcher $dispatcher */
-				$dispatcher = $this->get(IEventDispatcher::class);
-				$dispatcher->dispatchTyped(new UserChangedEvent($user, $feature, $value, $oldValue));
 			});
 			return $userSession;
 		});
@@ -734,7 +678,13 @@ class Server extends ServerContainer implements IServerContainer {
 
 			if ($config->getSystemValueBool('installed', false) && !(defined('PHPUNIT_RUN') && PHPUNIT_RUN)) {
 				if (!$config->getSystemValueBool('log_query')) {
-					$v = \OC_App::getAppVersions();
+					try {
+						$v = \OC_App::getAppVersions();
+					} catch (\Doctrine\DBAL\Exception $e) {
+						// Database service probably unavailable
+						// Probably related to https://github.com/nextcloud/server/issues/37424
+						return $arrayCacheFactory;
+					}
 				} else {
 					// If the log_query is enabled, we can not get the app versions
 					// as that does a query, which will be logged and the logging
@@ -937,7 +887,6 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->get(\OC\AppConfig::class),
 				$c->get(IGroupManager::class),
 				$c->get(ICacheFactory::class),
-				$c->get(SymfonyAdapter::class),
 				$c->get(IEventDispatcher::class),
 				$c->get(LoggerInterface::class)
 			);
@@ -1188,9 +1137,6 @@ class Server extends ServerContainer implements IServerContainer {
 			$manager->registerCapability(function () use ($c) {
 				return $c->get(\OC\Security\Bruteforce\Capabilities::class);
 			});
-			$manager->registerCapability(function () use ($c) {
-				return $c->get(MetadataCapabilities::class);
-			});
 			return $manager;
 		});
 		/** @deprecated 19.0.0 */
@@ -1233,7 +1179,7 @@ class Server extends ServerContainer implements IServerContainer {
 					$c->getAppDataDir('theming'),
 					$c->get(IURLGenerator::class),
 					$this->get(ICacheFactory::class),
-					$this->get(ILogger::class),
+					$this->get(LoggerInterface::class),
 					$this->get(ITempManager::class)
 				);
 				return new ThemingDefaults(
@@ -1260,9 +1206,6 @@ class Server extends ServerContainer implements IServerContainer {
 			);
 		});
 		$this->registerAlias(\OCP\EventDispatcher\IEventDispatcher::class, \OC\EventDispatcher\EventDispatcher::class);
-		/** @deprecated 19.0.0 */
-		$this->registerDeprecatedAlias('EventDispatcher', \OC\EventDispatcher\SymfonyAdapter::class);
-		$this->registerAlias(EventDispatcherInterface::class, \OC\EventDispatcher\SymfonyAdapter::class);
 
 		$this->registerService('CryptoWrapper', function (ContainerInterface $c) {
 			// FIXME: Instantiated here due to cyclic dependency
@@ -1298,37 +1241,14 @@ class Server extends ServerContainer implements IServerContainer {
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('ContentSecurityPolicyManager', ContentSecurityPolicyManager::class);
 
-		$this->registerService(\OCP\Share\IManager::class, function (IServerContainer $c) {
+		$this->registerService(IProviderFactory::class, function (ContainerInterface $c) {
 			$config = $c->get(\OCP\IConfig::class);
 			$factoryClass = $config->getSystemValue('sharing.managerFactory', ProviderFactory::class);
 			/** @var \OCP\Share\IProviderFactory $factory */
-			$factory = new $factoryClass($this);
-
-			$manager = new \OC\Share20\Manager(
-				$c->get(LoggerInterface::class),
-				$c->get(\OCP\IConfig::class),
-				$c->get(ISecureRandom::class),
-				$c->get(IHasher::class),
-				$c->get(IMountManager::class),
-				$c->get(IGroupManager::class),
-				$c->getL10N('lib'),
-				$c->get(IFactory::class),
-				$factory,
-				$c->get(IUserManager::class),
-				$c->get(IRootFolder::class),
-				$c->get(SymfonyAdapter::class),
-				$c->get(IMailer::class),
-				$c->get(IURLGenerator::class),
-				$c->get('ThemingDefaults'),
-				$c->get(IEventDispatcher::class),
-				$c->get(IUserSession::class),
-				$c->get(KnownUserService::class),
-				$c->get(ShareDisableChecker::class),
-				$c->get(IDateTimeZone::class),
-			);
-
-			return $manager;
+			return new $factoryClass($this);
 		});
+
+		$this->registerAlias(\OCP\Share\IManager::class, \OC\Share20\Manager::class);
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('ShareManager', \OCP\Share\IManager::class);
 
@@ -1460,6 +1380,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(\OCP\Dashboard\IManager::class, \OC\Dashboard\Manager::class);
 
 		$this->registerAlias(IFullTextSearchManager::class, FullTextSearchManager::class);
+		$this->registerAlias(IFilesMetadataManager::class, FilesMetadataManager::class);
 
 		$this->registerAlias(ISubAdmin::class, SubAdmin::class);
 
@@ -1471,8 +1392,6 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(IBroker::class, Broker::class);
 
-		$this->registerAlias(IMetadataManager::class, MetadataManager::class);
-
 		$this->registerAlias(\OCP\Files\AppData\IAppDataFactory::class, \OC\Files\AppData\Factory::class);
 
 		$this->registerAlias(IBinaryFinder::class, BinaryFinder::class);
@@ -1483,7 +1402,23 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(ISpeechToTextManager::class, SpeechToTextManager::class);
 
+		$this->registerAlias(IEventSourceFactory::class, EventSourceFactory::class);
+
 		$this->registerAlias(\OCP\TextProcessing\IManager::class, \OC\TextProcessing\Manager::class);
+
+		$this->registerAlias(\OCP\TextToImage\IManager::class, \OC\TextToImage\Manager::class);
+
+		$this->registerAlias(ILimiter::class, Limiter::class);
+
+		$this->registerAlias(IPhoneNumberUtil::class, PhoneNumberUtil::class);
+
+		$this->registerAlias(IOCMProvider::class, OCMProvider::class);
+
+		$this->registerAlias(ISetupCheckManager::class, SetupCheckManager::class);
+
+		$this->registerAlias(IProfileManager::class, ProfileManager::class);
+
+		$this->registerAlias(IAvailabilityCoordinator::class, AvailabilityCoordinator::class);
 
 		$this->connectDispatcher();
 	}
@@ -1525,6 +1460,8 @@ class Server extends ServerContainer implements IServerContainer {
 		$eventDispatcher->addServiceListener(PostLoginEvent::class, UserLoggedInListener::class);
 		$eventDispatcher->addServiceListener(UserChangedEvent::class, UserChangedListener::class);
 		$eventDispatcher->addServiceListener(BeforeUserDeletedEvent::class, BeforeUserDeletedListener::class);
+
+		FilesMetadataManager::loadListeners($eventDispatcher);
 	}
 
 	/**
@@ -1947,16 +1884,6 @@ class Server extends ServerContainer implements IServerContainer {
 	}
 
 	/**
-	 * Create a new event source
-	 *
-	 * @return \OCP\IEventSource
-	 * @deprecated 20.0.0
-	 */
-	public function createEventSource() {
-		return new \OC_EventSource();
-	}
-
-	/**
 	 * Get the active event logger
 	 *
 	 * The returned logger only logs data when debug mode is enabled
@@ -2138,17 +2065,6 @@ class Server extends ServerContainer implements IServerContainer {
 	}
 
 	/**
-	 * Get the EventDispatcher
-	 *
-	 * @return EventDispatcherInterface
-	 * @since 8.2.0
-	 * @deprecated 18.0.0 use \OCP\EventDispatcher\IEventDispatcher
-	 */
-	public function getEventDispatcher() {
-		return $this->get(\OC\EventDispatcher\SymfonyAdapter::class);
-	}
-
-	/**
 	 * Get the Notification Manager
 	 *
 	 * @return \OCP\Notification\IManager
@@ -2200,7 +2116,7 @@ class Server extends ServerContainer implements IServerContainer {
 	}
 
 	/**
-	 * @return Throttler
+	 * @return IThrottler
 	 * @deprecated 20.0.0
 	 */
 	public function getBruteForceThrottler() {

@@ -9,6 +9,7 @@ OC.L10N.register(
     "Missing a temporary folder" : "Ontbrekende tydelike gids",
     "A PHP extension stopped the file upload" : "’n PHP-uitbreiding het die oplaai gestaak",
     "text document" : "teksdokument",
+    "File not found" : "Lêer nie gevind nie",
     "Readme" : "Leesmy",
     "Text" : "Teks",
     "📝 Collaborative document editing" : "📝 Samewerkende dokumentredigering",
@@ -17,8 +18,6 @@ OC.L10N.register(
     "Reconnect" : "Herverbind",
     "Guest" : "Gas",
     "guest" : "gas",
-    "Show author colors" : "Toon outeurkleure",
-    "Author colors are only shown until everyone has closed the document." : "Outeurkleure word slegs getoon tot almal die dokument toegemaak het.",
     "Offline" : "Vanlyn",
     "Saving …" : "Bewaar tans…",
     "Saved" : "Bewaar",
@@ -33,6 +32,7 @@ OC.L10N.register(
     "Ordered list" : "Gesorteerde lys",
     "Blockquote" : "Blokaanhaling",
     "to" : "aan",
+    "Edit" : "Wysig",
     "Headings" : "Koppe",
     "Heading 2" : "Kop 2",
     "Heading 3" : "Kop 3",
@@ -41,7 +41,7 @@ OC.L10N.register(
     "Info" : "Inligting",
     "Success" : "Sukses",
     "Warning" : "Waarskuwing",
-    "Edit" : "Wysig",
-    "Unsupported image type" : "Onondersteunde beeldtipe"
+    "Show author colors" : "Toon outeurkleure",
+    "Author colors are only shown until everyone has closed the document." : "Outeurkleure word slegs getoon tot almal die dokument toegemaak het."
 },
 "nplurals=2; plural=(n != 1);");

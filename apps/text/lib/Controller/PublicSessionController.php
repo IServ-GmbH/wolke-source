@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Text\Controller;
 
+use OCA\Text\Middleware\Attribute\RequireDocumentBaseVersionEtag;
 use OCA\Text\Middleware\Attribute\RequireDocumentSession;
 use OCA\Text\Service\ApiService;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -40,7 +41,7 @@ use OCP\Share\IShare;
 class PublicSessionController extends PublicShareController implements ISessionAwareController {
 	use TSessionAwareController;
 
-	private IShare $share;
+	private ?IShare $share = null;
 
 	public function __construct(
 		string $appName,
@@ -52,8 +53,16 @@ class PublicSessionController extends PublicShareController implements ISessionA
 		parent::__construct($appName, $request, $session);
 	}
 
+	private function getShare(): IShare {
+		if ($this->share === null) {
+			throw new \Exception('Share has not been set yet');
+		}
+
+		return $this->share;
+	}
+
 	protected function getPasswordHash(): string {
-		return $this->share->getPassword();
+		return $this->getShare()->getPassword();
 	}
 
 	public function isValidToken(): bool {
@@ -66,13 +75,14 @@ class PublicSessionController extends PublicShareController implements ISessionA
 	}
 
 	protected function isPasswordProtected(): bool {
-		return $this->share->getPassword() !== null;
+		/** @psalm-suppress RedundantConditionGivenDocblockType */
+		return $this->getShare()->getPassword() !== null;
 	}
 
 	#[NoAdminRequired]
 	#[PublicPage]
-	public function create(string $token, string $file = null, $guestName = null): DataResponse {
-		return $this->apiService->create(null, $file, $token, $guestName);
+	public function create(string $token, ?string $file = null, ?string $baseVersionEtag = null, ?string $guestName = null): DataResponse {
+		return $this->apiService->create(null, $file, $baseVersionEtag, $token, $guestName);
 	}
 
 	#[NoAdminRequired]
@@ -83,6 +93,7 @@ class PublicSessionController extends PublicShareController implements ISessionA
 
 	#[NoAdminRequired]
 	#[PublicPage]
+	#[RequireDocumentBaseVersionEtag]
 	#[RequireDocumentSession]
 	public function push(int $documentId, int $sessionId, string $sessionToken, int $version, array $steps, string $awareness, string $token): DataResponse {
 		return $this->apiService->push($this->getSession(), $this->getDocument(), $version, $steps, $awareness, $token);
@@ -90,15 +101,27 @@ class PublicSessionController extends PublicShareController implements ISessionA
 
 	#[NoAdminRequired]
 	#[PublicPage]
+	#[RequireDocumentBaseVersionEtag]
 	#[RequireDocumentSession]
-	public function sync(string $token, int $documentId, int $sessionId, string $sessionToken, int $version = 0, string $autosaveContent = null, string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
-		return $this->apiService->sync($this->getSession(), $this->getDocument(), $version, $autosaveContent, $documentState, $force, $manualSave, $token);
+	public function sync(string $token, int $version = 0): DataResponse {
+		return $this->apiService->sync($this->getSession(), $this->getDocument(), $version, $token);
 	}
 
 	#[NoAdminRequired]
 	#[PublicPage]
+	#[RequireDocumentBaseVersionEtag]
 	#[RequireDocumentSession]
-	public function updateSession(string $guestName) {
+	public function save(string $token, int $version = 0, string $autosaveContent = null, string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
+		return $this->apiService->save($this->getSession(), $this->getDocument(), $version, $autosaveContent, $documentState, $force, $manualSave, $token);
+	}
+
+	/**
+	 * @psalm-return DataResponse<int, array|null|object|scalar, array<string, mixed>>
+	 */
+	#[NoAdminRequired]
+	#[PublicPage]
+	#[RequireDocumentSession]
+	public function updateSession(string $guestName): DataResponse {
 		return $this->apiService->updateSession($this->getSession(), $guestName);
 	}
 }

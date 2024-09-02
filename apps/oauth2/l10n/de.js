@@ -17,6 +17,6 @@ OC.L10N.register(
     "Add" : "Hinzufügen",
     "Delete" : " Löschen",
     "Show client secret" : "Geheime Zeichenkette des Clients anzeigen",
-    "Secret" : "Geheimnis"
+    "Hide client secret" : "Geheime Zeichenkette des Clients ausblenden"
 },
 "nplurals=2; plural=(n != 1);");

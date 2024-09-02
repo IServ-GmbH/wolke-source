@@ -1,26 +1,34 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antivirus scanner &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Reverse proxy" href="reverse_proxy_configuration.html" />
-    <link rel="prev" title="Logging" href="logging_configuration.html" /> 
+    <link rel="next" title="Automatic setup" href="automatic_configuration.html" />
+    <link rel="prev" title="Administration privileges (Delegation)" href="admin_delegation_configuration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,29 +59,31 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html">Using the occ command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="email_configuration.html">Email</a></li>
-<li class="toctree-l2"><a class="reference internal" href="external_sites.html">Linking external sites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="language_configuration.html">Language &amp; Locale</a></li>
-<li class="toctree-l2"><a class="reference internal" href="logging_configuration.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Antivirus scanner</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-clamav">Installing ClamAV</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-the-antivirus-app-for-files">Enabling the antivirus app for files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-clamav-on-nextcloud">Configuring ClamAV on Nextcloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-icap-on-nextcloud">Configuring ICAP on Nextcloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disabling-background-scan-task">Disabling background scan task</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html">Dashboard app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="email_configuration.html">Email</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_sites.html">Linking external sites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_configuration.html">Language &amp; Locale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging_configuration.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
-<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
@@ -117,7 +127,7 @@
            <div itemprop="articleBody">
              
   <section id="antivirus-scanner">
-<h1>Antivirus scanner<a class="headerlink" href="#antivirus-scanner" title="Permalink to this headline"></a></h1>
+<h1>Antivirus scanner<a class="headerlink" href="#antivirus-scanner" title="Link to this heading"></a></h1>
 <p>You can configure your Nextcloud server to automatically run a virus scan on
 newly-uploaded files with the Antivirus app for Files. The Antivirus app for
 Files integrates the open source anti-virus engine <a class="reference external" href="https://www.clamav.net/index.html">ClamAV</a>  with Nextcloud. ClamAV detects all forms
@@ -131,7 +141,7 @@ However, it has only been tested with Nextcloud on Linux, so these instructions
 are for Linux systems. You must first install ClamAV, and then install and
 configure the Antivirus app for Files on Nextcloud.</p>
 <section id="installing-clamav">
-<h2>Installing ClamAV<a class="headerlink" href="#installing-clamav" title="Permalink to this headline"></a></h2>
+<h2>Installing ClamAV<a class="headerlink" href="#installing-clamav" title="Link to this heading"></a></h2>
 <p>As always, the various Linux distributions manage installing and configuring
 ClamAV in different ways.</p>
 <dl>
@@ -212,7 +222,7 @@ This example is based on docker image from <a class="reference external" href="h
 </div>
 </section>
 <section id="enabling-the-antivirus-app-for-files">
-<h2>Enabling the antivirus app for files<a class="headerlink" href="#enabling-the-antivirus-app-for-files" title="Permalink to this headline"></a></h2>
+<h2>Enabling the antivirus app for files<a class="headerlink" href="#enabling-the-antivirus-app-for-files" title="Link to this heading"></a></h2>
 <p>Place the <code class="docutils literal notranslate"><span class="pre">files_antivirus</span></code> app into the <code class="docutils literal notranslate"><span class="pre">apps</span></code> directory of your Nextcloud
 server. Then the app shows up on the Nextcloud Apps page where it simply can be
 enabled.</p>
@@ -221,7 +231,7 @@ enabled.</p>
 </figure>
 </section>
 <section id="configuring-clamav-on-nextcloud">
-<h2>Configuring ClamAV on Nextcloud<a class="headerlink" href="#configuring-clamav-on-nextcloud" title="Permalink to this headline"></a></h2>
+<h2>Configuring ClamAV on Nextcloud<a class="headerlink" href="#configuring-clamav-on-nextcloud" title="Link to this heading"></a></h2>
 <p>Next, go to your Nextcloud Admin page and set your Nextcloud logging level to
 Everything.</p>
 <figure class="align-default">
@@ -279,8 +289,17 @@ interactive ClamAV scanning command. Nextcloud should find it automatically.</p>
 <p>When you are satisfied with how ClamAV is operating, you might want to go
 back and change all of your logging to less verbose levels.</p>
 </section>
+<section id="configuring-icap-on-nextcloud">
+<h2>Configuring ICAP on Nextcloud<a class="headerlink" href="#configuring-icap-on-nextcloud" title="Link to this heading"></a></h2>
+<p>Nextcloud offers the integration of antivirus protection based on the ICAP protocol.
+The settings are outlined here.
+Additional documentation is work in progress.</p>
+<figure class="align-default">
+<img alt="../_images/antivirus-icap.png" src="../_images/antivirus-icap.png" />
+</figure>
+</section>
 <section id="disabling-background-scan-task">
-<h2>Disabling background scan task<a class="headerlink" href="#disabling-background-scan-task" title="Permalink to this headline"></a></h2>
+<h2>Disabling background scan task<a class="headerlink" href="#disabling-background-scan-task" title="Link to this heading"></a></h2>
 <p>You can disable background scan with occ to only scan files during upload.</p>
 <blockquote>
 <div><p>occ config:app:set files_antivirus av_background_scan –value=”off”</p>
@@ -292,8 +311,8 @@ back and change all of your logging to less verbose levels.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="logging_configuration.html" class="btn btn-neutral float-left" title="Logging" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="reverse_proxy_configuration.html" class="btn btn-neutral float-right" title="Reverse proxy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="admin_delegation_configuration.html" class="btn btn-neutral float-left" title="Administration privileges (Delegation)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="automatic_configuration.html" class="btn btn-neutral float-right" title="Automatic setup" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

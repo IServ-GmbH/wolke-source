@@ -44,6 +44,7 @@ return array(
     'OCA\\RelatedResources\\Model\\RelatedResource' => $baseDir . '/lib/Model/RelatedResource.php',
     'OCA\\RelatedResources\\Model\\TalkActor' => $baseDir . '/lib/Model/TalkActor.php',
     'OCA\\RelatedResources\\Model\\TalkRoom' => $baseDir . '/lib/Model/TalkRoom.php',
+    'OCA\\RelatedResources\\RelatedResourceProviders\\AccountRelatedResourceProvider' => $baseDir . '/lib/RelatedResourceProviders/AccountRelatedResourceProvider.php',
     'OCA\\RelatedResources\\RelatedResourceProviders\\CalendarRelatedResourceProvider' => $baseDir . '/lib/RelatedResourceProviders/CalendarRelatedResourceProvider.php',
     'OCA\\RelatedResources\\RelatedResourceProviders\\DeckRelatedResourceProvider' => $baseDir . '/lib/RelatedResourceProviders/DeckRelatedResourceProvider.php',
     'OCA\\RelatedResources\\RelatedResourceProviders\\FilesRelatedResourceProvider' => $baseDir . '/lib/RelatedResourceProviders/FilesRelatedResourceProvider.php',

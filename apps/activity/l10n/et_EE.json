@@ -8,7 +8,6 @@
     "No activities" : "Tegevusi pole",
     "More activities" : "Rohkem tegevusi",
     "Daily activity summary for %s" : "Päevase tegevuse kokkuvõte %s jaoks",
-    "_and %n more _::_and %n more _" : ["ja %n veel","ja %n veel"],
     "All activities" : "Kõik tegevused",
     "By others" : "Teiste poolt",
     "By you" : "Sinu poolt",
@@ -16,6 +15,7 @@
     "Hello %s" : "Tere %s",
     "Hello %s," : "Tere %s,",
     "There was some activity at %s" : "Mõningane tegevus %s",
+    "_and %n more _::_and %n more _" : ["ja %n veel","ja %n veel"],
     "Mail" : "Kirjad",
     "Push" : "Vajuta",
     "Activity" : "Tegevused",
@@ -54,14 +54,6 @@
     "Default settings" : "Vaikeseaded",
     "Configure the default notification settings for new accounts." : "Seadista uute kontode vaikimisi teavituste seaded.",
     "Unable to save the settings" : "Seadeid ei saa salvestada",
-    "No more events to load" : "Pole rohkem sündmusi, mida laadida",
-    "Copied!" : "Kopeeritud!",
-    "Not supported!" : "Pole toetatud!",
-    "Press ⌘-C to copy." : "Kopeerimiseks vajuta ⌘ + C.",
-    "Press Ctrl-C to copy." : "Kopeerimiseks vajuta Ctrl + C.",
-    "{name} (invisible)" : "{name} (nähtamatu)",
-    "{name} (restricted)" : "{name} (piiratud)",
-    "There are no events for this filter" : "Selle filtri jaoks pole ühtegi sündmust",
-    "Activities" : "Tegevused"
+    "No more events to load" : "Pole rohkem sündmusi, mida laadida"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

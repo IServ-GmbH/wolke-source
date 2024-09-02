@@ -1,5 +1,5 @@
 diff --git core/routes.php core/routes.php
-index fcb5a15..e031b4f 100644
+index 82a999f..c50e1c3 100644
 --- core/routes.php
 +++ core/routes.php
 @@ -87,8 +87,6 @@ $application->registerRoutes($this, [

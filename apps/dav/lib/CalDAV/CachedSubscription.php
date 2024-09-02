@@ -73,6 +73,11 @@ class CachedSubscription extends \Sabre\CalDAV\Calendar {
 				'principal' => '{DAV:}authenticated',
 				'protected' => true,
 			],
+			[
+				'privilege' => '{DAV:}write-properties',
+				'principal' => $this->getOwner(),
+				'protected' => true,
+			]
 		];
 	}
 
@@ -97,7 +102,6 @@ class CachedSubscription extends \Sabre\CalDAV\Calendar {
 				'principal' => $this->getOwner() . '/calendar-proxy-read',
 				'protected' => true,
 			],
-
 		];
 	}
 
@@ -169,11 +173,11 @@ class CachedSubscription extends \Sabre\CalDAV\Calendar {
 
 	/**
 	 * @param string $name
-	 * @param null|resource|string $calendarData
+	 * @param null|resource|string $data
 	 * @return null|string
 	 * @throws MethodNotAllowed
 	 */
-	public function createFile($name, $calendarData = null) {
+	public function createFile($name, $data = null) {
 		throw new MethodNotAllowed('Creating objects in cached subscription is not allowed');
 	}
 

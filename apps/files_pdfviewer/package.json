@@ -1,7 +1,7 @@
 {
   "name": "files_pdfviewer",
   "description": "PDF viewer plugin for Nextcloud",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "author": "John Molakvoæ <skjnldsv@protonmail.com>",
   "contributors": [],
   "bugs": {
@@ -26,9 +26,12 @@
     "stylelint:fix": "stylelint src css --fix"
   },
   "dependencies": {
-    "@nextcloud/logger": "^2.5.0",
-    "@nextcloud/router": "^2.1.2",
-    "pdfjs-dist": "^3.6.172"
+    "@nextcloud/auth": "^2.2.1",
+    "@nextcloud/axios": "^2.4.0",
+    "@nextcloud/dialogs": "^4.2.7",
+    "@nextcloud/logger": "^2.7.0",
+    "@nextcloud/router": "^2.2.1",
+    "pdfjs-dist": "^3.11.174"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
@@ -39,11 +42,11 @@
   },
   "devDependencies": {
     "@nextcloud/babel-config": "^1.0.0",
-    "@nextcloud/browserslist-config": "^2.3.0",
-    "@nextcloud/eslint-config": "^8.2.1",
+    "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/eslint-config": "^8.3.0",
     "@nextcloud/stylelint-config": "^2.3.1",
-    "@nextcloud/webpack-vue-config": "^5.5.1",
-    "adm-zip": "^0.5.12",
+    "@nextcloud/webpack-vue-config": "^6.0.0",
+    "adm-zip": "^0.5.15",
     "axios": "^1.6.8",
     "cli-progress": "^3.12.0"
   }

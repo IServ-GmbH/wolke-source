@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Encryption migration &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -112,14 +120,14 @@
            <div itemprop="articleBody">
              
   <section id="encryption-migration">
-<h1>Encryption migration<a class="headerlink" href="#encryption-migration" title="Permalink to this headline"></a></h1>
+<h1>Encryption migration<a class="headerlink" href="#encryption-migration" title="Link to this heading"></a></h1>
 <section id="encryption-format">
-<h2>Encryption format<a class="headerlink" href="#encryption-format" title="Permalink to this headline"></a></h2>
+<h2>Encryption format<a class="headerlink" href="#encryption-format" title="Link to this heading"></a></h2>
 <p>Nextcloud still supports the legacy encryption scheme used for server side encryption where the encrypted files did not contain header information. This may still be used for installations that still have encrypted files from &lt;= ownCloud 6. Files will be updated to the new encryption format once they are written again. However it is recommended to check if you have to still support this scheme.</p>
 <p>Starting with version 20 for new installations the legacy encryption will be off by default.
 However if you are upgrading there is a migration path to check if you can disable legacy encryption.</p>
 <section id="checking-for-old-files">
-<h3>Checking for old files<a class="headerlink" href="#checking-for-old-files" title="Permalink to this headline"></a></h3>
+<h3>Checking for old files<a class="headerlink" href="#checking-for-old-files" title="Link to this heading"></a></h3>
 <p>On the command line run:</p>
 <blockquote>
 <div><p>occ encryption:scan:legacy-format</p>

@@ -38,6 +38,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Constants;
 use OCP\Files\AlreadyExistsException;
+use OCP\Files\InvalidPathException;
 use OCP\Files\Lock\ILock;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -52,14 +53,12 @@ class ApiService {
 	private SessionService $sessionService;
 	private DocumentService $documentService;
 	private LoggerInterface $logger;
-	private AttachmentService $attachmentService;
 	private EncodingService $encodingService;
 	private IL10N $l10n;
 
 	public function __construct(IRequest $request,
 		SessionService $sessionService,
 		DocumentService $documentService,
-		AttachmentService $attachmentService,
 		EncodingService $encodingService,
 		LoggerInterface $logger,
 		IL10N $l10n
@@ -68,12 +67,11 @@ class ApiService {
 		$this->sessionService = $sessionService;
 		$this->documentService = $documentService;
 		$this->logger = $logger;
-		$this->attachmentService = $attachmentService;
 		$this->encodingService = $encodingService;
 		$this->l10n = $l10n;
 	}
 
-	public function create($fileId = null, $filePath = null, ?string $token = null, $guestName = null): DataResponse {
+	public function create(?int $fileId = null, ?string $filePath = null, ?string $baseVersionEtag = null, ?string $token = null, ?string $guestName = null): DataResponse {
 		try {
 			if ($token) {
 				$file = $this->documentService->getFileByShareToken($token, $this->request->getParam('filePath'));
@@ -87,17 +85,19 @@ class ApiService {
 				} catch (NotFoundException $e) {
 					return new DataResponse([], Http::STATUS_NOT_FOUND);
 				} catch (NotPermittedException $e) {
-					return new DataResponse($this->l10n->t('This file cannot be displayed as download is disabled by the share'), 404);
+					return new DataResponse(['error' => $this->l10n->t('This file cannot be displayed as download is disabled by the share')], Http::STATUS_NOT_FOUND);
 				}
 			} elseif ($fileId) {
 				try {
 					$file = $this->documentService->getFileById($fileId);
 				} catch (NotFoundException|NotPermittedException $e) {
 					$this->logger->error('No permission to access this file', [ 'exception' => $e ]);
-					return new DataResponse($this->l10n->t('No permission to access this file.'), Http::STATUS_NOT_FOUND);
+					return new DataResponse([
+						'error' => $this->l10n->t('File not found')
+					], Http::STATUS_NOT_FOUND);
 				}
 			} else {
-				return new DataResponse('No valid file argument provided', Http::STATUS_PRECONDITION_FAILED);
+				return new DataResponse(['error' => 'No valid file argument provided'], Http::STATUS_PRECONDITION_FAILED);
 			}
 
 			$storage = $file->getStorage();
@@ -108,7 +108,7 @@ class ApiService {
 				$share = $storage->getShare();
 				$shareAttribtues = $share->getAttributes();
 				if ($shareAttribtues !== null && $shareAttribtues->getAttribute('permissions', 'download') === false) {
-					return new DataResponse($this->l10n->t('This file cannot be displayed as download is disabled by the share'), 403);
+					return new DataResponse(['error' => $this->l10n->t('This file cannot be displayed as download is disabled by the share')], Http::STATUS_FORBIDDEN);
 				}
 			}
 
@@ -117,6 +117,9 @@ class ApiService {
 			$this->sessionService->removeInactiveSessionsWithoutSteps($file->getId());
 			$document = $this->documentService->getDocument($file->getId());
 			$freshSession = $document === null;
+			if ($baseVersionEtag && $baseVersionEtag !== $document?->getBaseVersionEtag()) {
+				return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
+			}
 
 			if ($freshSession) {
 				$this->logger->info('Create new document of ' . $file->getId());
@@ -131,30 +134,30 @@ class ApiService {
 			}
 		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
-			return new DataResponse('Failed to create the document session', 500);
+			return new DataResponse(['error' => 'Failed to create the document session'], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
+
+		/** @var Document $document */
 
 		$session = $this->sessionService->initSession($document->getId(), $guestName);
 
+		$documentState = null;
+		$content = null;
 		if ($freshSession) {
 			$this->logger->debug('Starting a fresh editing session for ' . $file->getId());
-			$documentState = null;
 			$content = $this->loadContent($file);
 		} else {
 			$this->logger->debug('Loading existing session for ' . $file->getId());
-			$content = null;
 			try {
 				$stateFile = $this->documentService->getStateFile($document->getId());
 				$documentState = $stateFile->getContent();
+				$this->logger->debug('Existing document, state file loaded ' . $file->getId());
 			} catch (NotFoundException $e) {
-				$this->logger->debug('State file not found for ' . $file->getId());
-				$documentState = ''; // no state saved yet.
-				// If there are no steps yet we might still need the content.
-				$steps = $this->documentService->getSteps($document->getId(), 0);
-				if (empty($steps)) {
-					$this->logger->debug('Empty steps, loading content for ' . $file->getId());
-					$content = $this->loadContent($file);
-				}
+				$this->logger->debug('Existing document, but state file not found for ' . $file->getId());
+
+				// If we have no state file we need to load the content from the file
+				// On the client side we use this to initialize a idempotent initial y.js document
+				$content = $this->loadContent($file);
 			}
 		}
 
@@ -163,9 +166,11 @@ class ApiService {
 			$lockInfo = null;
 		}
 
-		$isLocked = $this->documentService->lock($file->getId());
-		if (!$isLocked) {
-			$readOnly = true;
+		if (!$readOnly) {
+			$isLocked = $this->documentService->lock($file->getId());
+			if (!$isLocked) {
+				$readOnly = true;
+			}
 		}
 
 		return new DataResponse([
@@ -178,7 +183,7 @@ class ApiService {
 		]);
 	}
 
-	public function close($documentId, $sessionId, $sessionToken): DataResponse {
+	public function close(int $documentId, int $sessionId, string $sessionToken): DataResponse {
 		$this->sessionService->closeSession($documentId, $sessionId, $sessionToken);
 		$this->sessionService->removeInactiveSessionsWithoutSteps($documentId);
 		$activeSessions = $this->sessionService->getActiveSessions($documentId);
@@ -191,12 +196,12 @@ class ApiService {
 	/**
 	 * @throws NotFoundException
 	 */
-	public function push(Session $session, Document $document, $version, $steps, $awareness, $token = null): DataResponse {
+	public function push(Session $session, Document $document, int $version, array $steps, string $awareness, ?string $token = null): DataResponse {
 		try {
 			$session = $this->sessionService->updateSessionAwareness($session, $awareness);
 		} catch (DoesNotExistException $e) {
 			// Session was removed in the meantime. #3875
-			return new DataResponse([], 403);
+			return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
 		}
 		if (empty($steps)) {
 			return new DataResponse([]);
@@ -204,16 +209,17 @@ class ApiService {
 		try {
 			$result = $this->documentService->addStep($document, $session, $steps, $version, $token);
 		} catch (InvalidArgumentException $e) {
-			return new DataResponse($e->getMessage(), 422);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_UNPROCESSABLE_ENTITY);
 		} catch (DoesNotExistException|NotPermittedException) {
 			// Either no write access or session was removed in the meantime (#3875).
-			return new DataResponse([], 403);
+			return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
 		}
 		return new DataResponse($result);
 	}
 
-	public function sync(Session $session, Document $document, $version = 0, $autosaveContent = null, $documentState = null, bool $force = false, bool $manualSave = false, $token = null): DataResponse {
+	public function sync(Session $session, Document $document, int $version = 0, ?string $shareToken = null): DataResponse {
 		$documentId = $session->getDocumentId();
+		$result = [];
 		try {
 			$result = [
 				'steps' => $this->documentService->getSteps($documentId, $version),
@@ -221,37 +227,65 @@ class ApiService {
 				'document' => $document,
 			];
 
-			$file = $this->documentService->getFileForSession($session, $token);
-		} catch (NotFoundException $e) {
+			// ensure file is still present and accessible
+			$file = $this->documentService->getFileForSession($session, $shareToken);
+			$this->documentService->assertNoOutsideConflict($document, $file);
+		} catch (NotPermittedException|NotFoundException|InvalidPathException $e) {
 			$this->logger->info($e->getMessage(), ['exception' => $e]);
 			return new DataResponse([
 				'message' => 'File not found'
-			], 404);
+			], Http::STATUS_NOT_FOUND);
 		} catch (DoesNotExistException $e) {
 			$this->logger->info($e->getMessage(), ['exception' => $e]);
 			return new DataResponse([
 				'message' => 'Document no longer exists'
-			], 404);
-		}
-
-		try {
-			$result['document'] = $this->documentService->autosave($document, $file, $version, $autosaveContent, $documentState, $force, $manualSave, $token, $this->request->getParam('filePath'));
-		} catch (DocumentSaveConflictException $e) {
+			], Http::STATUS_NOT_FOUND);
+		} catch (DocumentSaveConflictException) {
 			try {
+				/** @psalm-suppress PossiblyUndefinedVariable */
 				$result['outsideChange'] = $file->getContent();
-			} catch (LockedException $e) {
+			} catch (LockedException) {
 				// Ignore locked exception since it might happen due to an autosave action happening at the same time
 			}
-		} catch (NotFoundException $e) {
-			return new DataResponse([], 404);
+		}
+
+		return new DataResponse($result, isset($result['outsideChange']) ? Http::STATUS_CONFLICT : Http::STATUS_OK);
+	}
+
+	public function save(Session $session, Document $document, int $version = 0, ?string $autosaveContent = null, ?string $documentState = null, bool $force = false, bool $manualSave = false, ?string $shareToken = null): DataResponse {
+		try {
+			$file = $this->documentService->getFileForSession($session, $shareToken);
+		} catch (NotPermittedException|NotFoundException $e) {
+			$this->logger->info($e->getMessage(), ['exception' => $e]);
+			return new DataResponse([
+				'message' => 'File not found'
+			], Http::STATUS_NOT_FOUND);
+		} catch (DoesNotExistException $e) {
+			$this->logger->info($e->getMessage(), ['exception' => $e]);
+			return new DataResponse([
+				'message' => 'Document no longer exists'
+			], Http::STATUS_NOT_FOUND);
+		}
+
+		$result = [];
+		try {
+			$result['document'] = $this->documentService->autosave($document, $file, $version, $autosaveContent, $documentState, $force, $manualSave, $shareToken);
+		} catch (DocumentSaveConflictException) {
+			try {
+				$result['outsideChange'] = $file->getContent();
+			} catch (LockedException) {
+				// Ignore locked exception since it might happen due to an autosave action happening at the same time
+			}
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return new DataResponse([
 				'message' => 'Failed to autosave document'
-			], 500);
+			], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		return new DataResponse($result, isset($result['outsideChange']) ? 409 : 200);
+		return new DataResponse($result, isset($result['outsideChange']) ? Http::STATUS_CONFLICT : Http::STATUS_OK);
 	}
 
 	public function updateSession(Session $session, string $guestName): DataResponse {

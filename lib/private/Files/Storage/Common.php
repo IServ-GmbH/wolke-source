@@ -578,7 +578,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 	 */
 	private function scanForInvalidCharacters($fileName, $invalidChars) {
 		foreach (str_split($invalidChars) as $char) {
-			if (strpos($fileName, $char) !== false) {
+			if (str_contains($fileName, $char)) {
 				throw new InvalidCharacterInPathException();
 			}
 		}
@@ -602,7 +602,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage {
 	 * @return mixed
 	 */
 	public function getMountOption($name, $default = null) {
-		return isset($this->mountOptions[$name]) ? $this->mountOptions[$name] : $default;
+		return $this->mountOptions[$name] ?? $default;
 	}
 
 	/**

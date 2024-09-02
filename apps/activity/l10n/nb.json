@@ -9,7 +9,7 @@
     "No activities" : "Ingen aktiviteter",
     "More activities" : "Flere aktiviteter",
     "Daily activity summary for %s" : "Daglig aktivitetssammendrag for %s",
-    "_and %n more _::_and %n more _" : ["og %n til","og %n til"],
+    "_and %n more…_::_and %n more…_" : ["og %n til…","og %n til…"],
     "All activities" : "All aktivitet",
     "By others" : "Av andre",
     "By you" : "Av deg",
@@ -17,6 +17,7 @@
     "Hello %s" : "Hei %s",
     "Hello %s," : "Hei %s,",
     "There was some activity at %s" : "Det har vært aktivitet ved %s",
+    "_and %n more _::_and %n more _" : ["og %n til","og %n til"],
     "Mail" : "E-post",
     "Push" : "Push",
     "Activity" : "Aktivitet",
@@ -64,14 +65,6 @@
     "Configure the default notification settings for new accounts." : "Konfigurer standard varslingsinnstillinger for nye kontoer.",
     "Unable to save the settings" : "Klarte ikke å lagre innstillingene",
     "No more events to load" : "Ingen flere hendelser å laste inn",
-    "Copied!" : "Kopiert!",
-    "Not supported!" : "Ikke støttet!",
-    "Press ⌘-C to copy." : "Trykk ⌘-C for å kopiere",
-    "Press Ctrl-C to copy." : "Trykk Ctrl-C for å kopiere",
-    "{name} (invisible)" : "{name} (invisible)",
-    "{name} (restricted)" : "{name} (restricted)",
-    "There are no events for this filter" : "Det er ingen hendelser for dette filteret",
-    "Activities" : "Aktiviteter",
     "Could not load activites" : "Kunne ikke laste aktiviteter"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -1,8 +1,8 @@
 diff --git apps/settings/appinfo/info.xml apps/settings/appinfo/info.xml
-index 2ec40fd..73bbd34 100644
+index a758b8e..16b1c74 100644
 --- apps/settings/appinfo/info.xml
 +++ apps/settings/appinfo/info.xml
-@@ -26,22 +26,15 @@
+@@ -32,22 +32,15 @@
  		<admin>OCA\Settings\Settings\Admin\Delegation</admin>
  		<admin-section>OCA\Settings\Sections\Admin\Additional</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Delegation</admin-section>

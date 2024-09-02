@@ -28,15 +28,18 @@
  */
 namespace OCA\User_LDAP;
 
+use OC\ServerNotAvailableException;
+use OCP\Group\Backend\IBatchMethodsBackend;
 use OCP\Group\Backend\IDeleteGroupBackend;
 use OCP\Group\Backend\IGetDisplayNameBackend;
+use OCP\Group\Backend\IGroupDetailsBackend;
 use OCP\Group\Backend\IIsAdminBackend;
 use OCP\Group\Backend\INamedBackend;
 use OCP\GroupInterface;
 use OCP\IConfig;
 use OCP\IUserManager;
 
-class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend, IIsAdminBackend {
+class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend, IBatchMethodsBackend, IIsAdminBackend {
 	private $backends = [];
 	private ?Group_LDAP $refBackend = null;
 	private Helper $helper;
@@ -175,7 +178,7 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 			}
 		}
 
-		return $groups;
+		return array_values(array_unique($groups));
 	}
 
 	/**
@@ -266,6 +269,21 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function getGroupsDetails(array $gids): array {
+		if (!($this instanceof IGroupDetailsBackend || $this->implementsActions(GroupInterface::GROUP_DETAILS))) {
+			throw new \Exception("Should not have been called");
+		}
+
+		$groupData = [];
+		foreach ($gids as $gid) {
+			$groupData[$gid] = $this->handleRequest($gid, 'getGroupDetails', [$gid]);
+		}
+		return $groupData;
+	}
+
+	/**
 	 * get a list of all groups
 	 *
 	 * @return string[] with group names
@@ -294,6 +312,33 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 	 */
 	public function groupExists($gid) {
 		return $this->handleRequest($gid, 'groupExists', [$gid]);
+	}
+
+	/**
+	 * Check if a group exists
+	 *
+	 * @throws ServerNotAvailableException
+	 */
+	public function groupExistsOnLDAP(string $gid, bool $ignoreCache = false): bool {
+		return $this->handleRequest($gid, 'groupExistsOnLDAP', [$gid, $ignoreCache]);
+	}
+
+	/**
+	 * returns the groupname for the given LDAP DN, if available
+	 */
+	public function dn2GroupName(string $dn): string|false {
+		$id = 'DN,' . $dn;
+		return $this->handleRequest($id, 'dn2GroupName', [$dn]);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function groupsExists(array $gids): array {
+		return array_values(array_filter(
+			$gids,
+			fn (string $gid): bool => $this->handleRequest($gid, 'groupExists', [$gid]),
+		));
 	}
 
 	/**
@@ -347,6 +392,10 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 
 	public function searchInGroup(string $gid, string $search = '', int $limit = -1, int $offset = 0): array {
 		return $this->handleRequest($gid, 'searchInGroup', [$gid, $search, $limit, $offset]);
+	}
+
+	public function addRelationshipToCaches(string $uid, ?string $dnUser, string $gid): void {
+		$this->handleRequest($gid, 'addRelationshipToCaches', [$uid, $dnUser, $gid]);
 	}
 
 	public function isAdmin(string $uid): bool {

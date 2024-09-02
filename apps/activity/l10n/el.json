@@ -9,7 +9,6 @@
     "No activities" : "Καμία δραστηριότητα",
     "More activities" : "Περισσότερες δραστηριότητες",
     "Daily activity summary for %s" : "Σύνοψη ημερήσιας δραστηριότητας για %s",
-    "_and %n more _::_and %n more _" : ["και %n επιπλέον","και %n επιπλέον"],
     "All activities" : "Όλες οι δραστηριότητες",
     "By others" : "Από άλλους",
     "By you" : "Από εσάς",
@@ -17,6 +16,7 @@
     "Hello %s" : "Γεια σας %s",
     "Hello %s," : "Γεια σας %s,",
     "There was some activity at %s" : "Υπήρξε δραστηριότητα στο %s",
+    "_and %n more _::_and %n more _" : ["και %n επιπλέον","και %n επιπλέον"],
     "Mail" : "Ταχυδρομείο",
     "Push" : "Ειδοποίηση Push",
     "Activity" : "Δραστηριότητα",
@@ -64,14 +64,6 @@
     "Configure the default notification settings for new accounts." : "Καθορίστε τις προεπιλεγμένες ρυθμίσεις ειδοποιήσεων για νέους λογαριασμούς.",
     "Unable to save the settings" : "Αδυναμία αποθήκευσης των ρυθμίσεων",
     "No more events to load" : "Δεν υπάρχουν άλλα γεγονότα προς φόρτωση",
-    "Copied!" : "Αντιγράφτηκε!",
-    "Not supported!" : "Δεν υποστηρίζεται!",
-    "Press ⌘-C to copy." : "Για αντιγραφή πατήστε ⌘-C.",
-    "Press Ctrl-C to copy." : "Για αντιγραφή πατήστε Ctrl-C",
-    "{name} (invisible)" : "{name} (αόρατος/η)",
-    "{name} (restricted)" : "{name} (περιορισμένη πρόσβαση)",
-    "There are no events for this filter" : "Δεν υπάρχουν γεγονότα για αυτό το φίλτρο",
-    "Activities" : "Δραστηριότητες",
     "Could not load activites" : "Δεν ήταν δυνατή η φόρτωση των δραστηριοτήτων"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

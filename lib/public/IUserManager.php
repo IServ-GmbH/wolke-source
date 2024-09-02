@@ -140,6 +140,13 @@ interface IUserManager {
 	public function searchDisplayName($pattern, $limit = null, $offset = null);
 
 	/**
+	 * @return IUser[]
+	 * @since 28.0.0
+	 * @since 28.0.7 $search parameter added
+	 */
+	public function getDisabledUsers(?int $limit = null, int $offset = 0, string $search = ''): array;
+
+	/**
 	 * Search known users (from phonebook sync) by displayName
 	 *
 	 * @param string $searcher

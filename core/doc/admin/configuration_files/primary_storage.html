@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuring Object Storage as Primary Storage &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -57,7 +65,11 @@
 <li class="toctree-l2"><a class="reference internal" href="big_file_upload_configuration.html">Uploading big files &gt; 512MB</a></li>
 <li class="toctree-l2"><a class="reference internal" href="default_files_configuration.html">Providing default files</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Configuring Object Storage as Primary Storage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#implications">Implications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#differences-from-external-storage">Differences from External Storage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#performance-implications">Performance Implications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data-backup-and-recovery-implications">Data Backup and Recovery Implications</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#openstack-swift">OpenStack Swift</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simple-storage-service-s3">Simple Storage Service (S3)</a></li>
@@ -117,7 +129,7 @@
            <div itemprop="articleBody">
              
   <section id="configuring-object-storage-as-primary-storage">
-<h1>Configuring Object Storage as Primary Storage<a class="headerlink" href="#configuring-object-storage-as-primary-storage" title="Permalink to this headline"></a></h1>
+<h1>Configuring Object Storage as Primary Storage<a class="headerlink" href="#configuring-object-storage-as-primary-storage" title="Link to this heading"></a></h1>
 <p>Nextcloud allows to configure object storages like OpenStack Swift or
 Amazon Simple Storage Service (S3) or any compatible S3-implementation
 (e.g. Minio or Ceph Object Gateway) as primary storage replacing the default
@@ -125,20 +137,29 @@ storage of files.</p>
 <p>By default, files are stored in <code class="code docutils literal notranslate"><span class="pre">nextcloud/data</span></code> or another directory configured
 in the <code class="code docutils literal notranslate"><span class="pre">config.php</span></code> of your Nextcloud instance. This data directory might
 still be used for compatibility reasons)</p>
-<section id="implications">
-<h2>Implications<a class="headerlink" href="#implications" title="Permalink to this headline"></a></h2>
-<p>When using an object store as primary storage, Nextcloud assumes exclusive access
-over the bucket being used.</p>
-<p>Contrary to using an object store as external storage, when an object store is used
-as primary storage, no metadata (names, directory structures, etc) is stored in the
-object store. The metadata is only stored in the database and the object store only
-holds the file content by unique identifier.</p>
-<p>Because of this primary object stores usually perform better than when using the same
-object store as external storage but it restricts being able to access the files from
-outside of Nextcloud.</p>
+<section id="differences-from-external-storage">
+<h2>Differences from External Storage<a class="headerlink" href="#differences-from-external-storage" title="Link to this heading"></a></h2>
+<p>When  an object store is used as Primary Storage, Nextcloud requires exclusive access
+over the bucket being used. All metadata (filenames, directory structures, etc)
+is stored in Nextcloud and not in the object store. The metadata is only stored in the database and the
+object store only holds the file content by unique identifier.</p>
+<section id="performance-implications">
+<h3>Performance Implications<a class="headerlink" href="#performance-implications" title="Link to this heading"></a></h3>
+<p>Because of this, object stores configured as Primary Storage usually perform better than
+when using the same object store via the External Storage support application, but the downside
+is being unable to access the files from outside of Nextcloud. This makes using an object store
+as Primary Storage distinct from using an object store via External Storage.</p>
+</section>
+<section id="data-backup-and-recovery-implications">
+<h3>Data Backup and Recovery Implications<a class="headerlink" href="#data-backup-and-recovery-implications" title="Link to this heading"></a></h3>
+<p>One impact of using an object store as Primary Storage is that your data backup strategy
+needs to incorporate this. <strong>Your data is longer stored on your Nextcloud server, but your
+files are also no longer accessible by simply bypassing your Nextcloud server and accessing
+your object store directly.</strong></p>
+</section>
 </section>
 <section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p>Primary object stores need to be configured in <code class="code docutils literal notranslate"><span class="pre">config.php</span></code> by specifying
 the objectstore backend and any backend specific configuration.</p>
 <div class="admonition note">
@@ -156,10 +177,10 @@ make all existing files on the instance inaccessible.</p>
 </pre></div>
 </div>
 <section id="openstack-swift">
-<h3>OpenStack Swift<a class="headerlink" href="#openstack-swift" title="Permalink to this headline"></a></h3>
+<h3>OpenStack Swift<a class="headerlink" href="#openstack-swift" title="Link to this heading"></a></h3>
 <p>The OpenStack Swift backend mounts a container on an OpenStack Object Storage
 server into the virtual filesystem.</p>
-<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\Swift</span></code></p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\OC\Files\ObjectStore\Swift</span></code></p>
 <p>Both openstack v2 and v3 authentication are supported,</p>
 <p>V2 Authentication:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
@@ -212,11 +233,11 @@ server into the virtual filesystem.</p>
 </div>
 </section>
 <section id="simple-storage-service-s3">
-<h3>Simple Storage Service (S3)<a class="headerlink" href="#simple-storage-service-s3" title="Permalink to this headline"></a></h3>
+<h3>Simple Storage Service (S3)<a class="headerlink" href="#simple-storage-service-s3" title="Link to this heading"></a></h3>
 <p>The Simple Storage Service (S3) backend mounts a bucket on an Amazon S3 object
 storage or compatible implementation (e.g. Minio or Ceph Object Gateway) into the
 virtual filesystem.</p>
-<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\S3</span></code></p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\OC\Files\ObjectStore\S3</span></code></p>
 <p>Amazon-hosted S3:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">S3&#39;</span><span class="p">,</span>
@@ -246,7 +267,7 @@ virtual filesystem.</p>
 </div>
 <p>Minimum required parameters are:</p>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">bucket</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">bucket</span></code> [Note: Even if non-Amazon hosted, bucket names must meet AWS S3 naming requirements regardless of what your S3 provider/platform considers acceptable - i.e. no underscores]</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">key</span></code></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">secret</span></code></p></li>
 </ul>
@@ -261,7 +282,7 @@ unconfigured):</p>
 <ul class="simple">
 <li><p><code class="code docutils literal notranslate"><span class="pre">region</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">eu-west-1</span></code></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">storageClass</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">STANDARD</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">hostname</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">s3.REGION.amazonaws.com</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">hostname</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">s3.REGION.amazonaws.com</span></code> [Note: If using this parameter (non-Amazon), specify the generic S3 endpoint hostname, <strong>not</strong> the hostname that contains your bucket name]</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">use_ssl</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 <p>Optional parameters sometimes needing adjustment:</p>
@@ -278,7 +299,7 @@ unconfigured):</p>
 <li><p><code class="code docutils literal notranslate"><span class="pre">putSizeLimit</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">104857600</span></code></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">legacy_auth</span></code> has no default</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">version</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">latest</span></code></p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">verify_bucket_exists</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">true</span></code></p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">verify_bucket_exists</span></code> defaults to <code class="code docutils literal notranslate"><span class="pre">true</span></code> [Note: Setting this to <code class="code docutils literal notranslate"><span class="pre">false</span></code> <em>after</em> confirming the bucket has been created may provide a performance benefit, but may not be possible in multibucket scenarios.]</p></li>
 </ul>
 <p><strong>If you are using Amazon S3:</strong> the <code class="code docutils literal notranslate"><span class="pre">region</span></code> parameter is required unless you’re happy with
 the default of <code class="code docutils literal notranslate"><span class="pre">eu-west-1</span></code>. There is no need to override the <code class="code docutils literal notranslate"><span class="pre">hostname</span></code> or <code class="code docutils literal notranslate"><span class="pre">port</span></code>.
@@ -292,10 +313,10 @@ Setting <code class="code docutils literal notranslate"><span class="pre">use_pa
 <code class="code docutils literal notranslate"><span class="pre">https://hostname.domain/bucket</span></code> instead.</p>
 </section>
 <section id="microsoft-azure-blob-storage">
-<h3>Microsoft Azure Blob Storage<a class="headerlink" href="#microsoft-azure-blob-storage" title="Permalink to this headline"></a></h3>
+<h3>Microsoft Azure Blob Storage<a class="headerlink" href="#microsoft-azure-blob-storage" title="Link to this heading"></a></h3>
 <p>The Azure Blob Storage backend mounts a container on Microsoft’s Azure Blob Storage into the
 virtual filesystem.</p>
-<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\\OC\\Files\\ObjectStore\\Azure</span></code></p>
+<p>The class to be used is <code class="code docutils literal notranslate"><span class="pre">\OC\Files\ObjectStore\Azure</span></code></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">Azure&#39;</span><span class="p">,</span>
         <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
@@ -310,7 +331,7 @@ virtual filesystem.</p>
 </section>
 </section>
 <section id="multibucket-object-store">
-<h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Permalink to this headline"></a></h2>
+<h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Link to this heading"></a></h2>
 <p>It’s possible to configure Nextcloud to distribute the data over multiple buckets
 for scalability purposes.</p>
 <p>To setup multiple buckets, use <code class="code docutils literal notranslate"><span class="pre">'objectstore_multibucket'</span></code> storage backend
@@ -339,7 +360,7 @@ users will be mapped to the updated range of buckets.</p>
 <a class="reference external" href="https://portal.nextcloud.com/article/object-store-as-primary-storage-16.html">Nextcloud customer portal</a>.</p>
 </section>
 <section id="s3-sse-c-encryption-support">
-<h2>S3 SSE-C encryption support<a class="headerlink" href="#s3-sse-c-encryption-support" title="Permalink to this headline"></a></h2>
+<h2>S3 SSE-C encryption support<a class="headerlink" href="#s3-sse-c-encryption-support" title="Link to this heading"></a></h2>
 <p>Nextcloud supports server side encryption, also known as <a class="reference external" href="http://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html">SSE-C</a>, with compatible S3 bucket provider. The encryption and decryption happens on the S3 bucket side with a key provided by the Nextcloud server.</p>
 <p>The key can be specified with the <code class="code docutils literal notranslate"><span class="pre">sse_c_key</span></code> parameter which needs to be provided as a base64 encoded string with a maximum length of 32 bytes. A random key could be generated using the the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openssl</span> <span class="n">rand</span> <span class="mi">32</span> <span class="o">|</span> <span class="n">base64</span>

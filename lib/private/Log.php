@@ -38,6 +38,8 @@ namespace OC;
 
 use Exception;
 use Nextcloud\LogNormalizer\Normalizer;
+use OC\AppFramework\Bootstrap\Coordinator;
+use OC\Log\ExceptionSerializer;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ILogger;
 use OCP\IUserSession;
@@ -46,8 +48,6 @@ use OCP\Log\IDataLogger;
 use OCP\Log\IFileBased;
 use OCP\Log\IWriter;
 use OCP\Support\CrashReport\IRegistry;
-use OC\AppFramework\Bootstrap\Coordinator;
-use OC\Log\ExceptionSerializer;
 use Throwable;
 use function array_merge;
 use function strtr;
@@ -221,6 +221,12 @@ class Log implements ILogger, IDataLogger {
 			$this->eventDispatcher->dispatchTyped(new BeforeMessageLoggedEvent($app, $level, $entry));
 		}
 
+		$hasBacktrace = isset($entry['exception']);
+		$logBacktrace = $this->config->getValue('log.backtrace', false);
+		if (!$hasBacktrace && $logBacktrace) {
+			$entry['backtrace'] = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+
 		try {
 			if ($level >= $minLevel) {
 				$this->writeLog($app, $entry, $level);
@@ -260,8 +266,8 @@ class Log implements ILogger, IDataLogger {
 					$request = \OC::$server->getRequest();
 
 					if ($request->getMethod() === 'PUT' &&
-						strpos($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded') === false &&
-						strpos($request->getHeader('Content-Type'), 'application/json') === false) {
+						!str_contains($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded') &&
+						!str_contains($request->getHeader('Content-Type'), 'application/json')) {
 						$logSecretRequest = '';
 					} else {
 						$logSecretRequest = $request->getParam('log_secret', '');
@@ -384,6 +390,7 @@ class Log implements ILogger, IDataLogger {
 			$context['level'] = $level;
 		} catch (Throwable $e) {
 			// make sure we dont hard crash if logging fails
+			error_log('Error when trying to log exception: ' . $e->getMessage() . ' ' . $e->getTraceAsString());
 		}
 	}
 
@@ -416,7 +423,7 @@ class Log implements ILogger, IDataLogger {
 		foreach ($context as $key => $val) {
 			$fullKey = '{' . $key . '}';
 			$replace[$fullKey] = $val;
-			if (strpos($message, $fullKey) !== false) {
+			if (str_contains($message, $fullKey)) {
 				$usedContextKeys[$key] = true;
 			}
 		}

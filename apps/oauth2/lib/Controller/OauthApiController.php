@@ -8,6 +8,7 @@ declare(strict_types=1);
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -27,10 +28,7 @@ declare(strict_types=1);
  */
 namespace OCA\OAuth2\Controller;
 
-use OC\Authentication\Exceptions\ExpiredTokenException;
-use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Token\IProvider as TokenProvider;
-use OC\Security\Bruteforce\Throttler;
 use OCA\OAuth2\Db\AccessTokenMapper;
 use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\AccessTokenNotFoundException;
@@ -39,8 +37,11 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Authentication\Exceptions\ExpiredTokenException;
+use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\DB\Exception;
 use OCP\IRequest;
+use OCP\Security\Bruteforce\IThrottler;
 use OCP\Security\ICrypto;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
@@ -57,9 +58,10 @@ class OauthApiController extends Controller {
 		private ClientMapper $clientMapper,
 		private TokenProvider $tokenProvider,
 		private ISecureRandom $secureRandom,
-		private ITimeFactory $timeFactory,
+		private ITimeFactory $time,
 		private LoggerInterface $logger,
-		private Throttler $throttler,
+		private IThrottler $throttler,
+		private ITimeFactory $timeFactory,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -69,13 +71,18 @@ class OauthApiController extends Controller {
 	 * @NoCSRFRequired
 	 * @BruteForceProtection(action=oauth2GetToken)
 	 *
-	 * @param string $grant_type
-	 * @param string|null $code
-	 * @param string|null $refresh_token
-	 * @param string|null $client_id
-	 * @param string|null $client_secret
-	 * @return JSONResponse
+	 * Get a token
+	 *
+	 * @param string $grant_type Token type that should be granted
+	 * @param ?string $code Code of the flow
+	 * @param ?string $refresh_token Refresh token
+	 * @param ?string $client_id Client ID
+	 * @param ?string $client_secret Client secret
 	 * @throws Exception
+	 * @return JSONResponse<Http::STATUS_OK, array{access_token: string, token_type: string, expires_in: int, refresh_token: string, user_id: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{error: string}, array{}>
+	 *
+	 * 200: Token returned
+	 * 400: Getting token is not possible
 	 */
 	public function getToken(
 		string $grant_type, ?string $code, ?string $refresh_token,
@@ -193,7 +200,7 @@ class OauthApiController extends Controller {
 		);
 
 		// Expiration is in 1 hour again
-		$appToken->setExpires($this->timeFactory->getTime() + 3600);
+		$appToken->setExpires($this->time->getTime() + 3600);
 		$this->tokenProvider->updateToken($appToken);
 
 		// Generate a new refresh token and encrypt the new apptoken in the DB

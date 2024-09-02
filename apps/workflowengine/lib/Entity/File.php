@@ -28,15 +28,14 @@ declare(strict_types=1);
 namespace OCA\WorkflowEngine\Entity;
 
 use OC\Files\Config\UserMountCache;
-use OC\Files\Mount\Manager as MountManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\GenericEvent;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
+use OCP\Files\Mount\IMountManager;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -61,8 +60,6 @@ class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 	protected $urlGenerator;
 	/** @var IRootFolder */
 	protected $root;
-	/** @var ILogger */
-	protected $logger;
 	/** @var string */
 	protected $eventName;
 	/** @var Event */
@@ -79,24 +76,22 @@ class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 	private $userManager;
 	/** @var UserMountCache */
 	private $userMountCache;
-	/** @var MountManager */
+	/** @var IMountManager */
 	private $mountManager;
 
 	public function __construct(
 		IL10N $l10n,
 		IURLGenerator $urlGenerator,
 		IRootFolder $root,
-		ILogger $logger,
 		IUserSession $userSession,
 		ISystemTagManager $tagManager,
 		IUserManager $userManager,
 		UserMountCache $userMountCache,
-		MountManager $mountManager
+		IMountManager $mountManager
 	) {
 		$this->l10n = $l10n;
 		$this->urlGenerator = $urlGenerator;
 		$this->root = $root;
-		$this->logger = $logger;
 		$this->userSession = $userSession;
 		$this->tagManager = $tagManager;
 		$this->userManager = $userManager;
@@ -149,7 +144,7 @@ class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 
 			if ($this->eventName === self::EVENT_NAMESPACE . 'postDelete') {
 				// At postDelete, the file no longer exists. Check for parent folder instead.
-				$fileId = $node->getParent()->getId();
+				$fileId = $node->getParentId();
 			} else {
 				$fileId = $node->getId();
 			}

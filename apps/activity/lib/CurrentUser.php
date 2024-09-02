@@ -24,17 +24,11 @@ namespace OCA\Activity;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Share\IShare;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
+use OCP\Share\IShare;
 
 class CurrentUser {
-	/** @var IUserSession */
-	protected $userSession;
-	/** @var IRequest */
-	protected $request;
-	/** @var IManager */
-	protected $shareManager;
 
 	/** @var string */
 	protected $identifier;
@@ -48,10 +42,10 @@ class CurrentUser {
 	 * @param IRequest $request
 	 * @param IManager $shareManager
 	 */
-	public function __construct(IUserSession $userSession, IRequest $request, IManager $shareManager) {
-		$this->userSession = $userSession;
-		$this->request = $request;
-		$this->shareManager = $shareManager;
+	public function __construct(
+		protected IUserSession $userSession,
+		protected IRequest $request,
+		protected IManager $shareManager) {
 		$this->cloudId = false;
 		$this->sessionUser = false;
 	}

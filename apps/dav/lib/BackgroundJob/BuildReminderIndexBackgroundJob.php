@@ -59,10 +59,10 @@ class BuildReminderIndexBackgroundJob extends QueuedJob {
 	 * BuildReminderIndexBackgroundJob constructor.
 	 */
 	public function __construct(IDBConnection $db,
-								ReminderService $reminderService,
-								LoggerInterface $logger,
-								IJobList $jobList,
-								ITimeFactory $timeFactory) {
+		ReminderService $reminderService,
+		LoggerInterface $logger,
+		IJobList $jobList,
+		ITimeFactory $timeFactory) {
 		parent::__construct($timeFactory);
 		$this->db = $db;
 		$this->reminderService = $reminderService;
@@ -107,7 +107,7 @@ class BuildReminderIndexBackgroundJob extends QueuedJob {
 
 		$result = $query->executeQuery();
 		while ($row = $result->fetch(\PDO::FETCH_ASSOC)) {
-			$offset = $row['id'];
+			$offset = (int) $row['id'];
 			if (is_resource($row['calendardata'])) {
 				$row['calendardata'] = stream_get_contents($row['calendardata']);
 			}

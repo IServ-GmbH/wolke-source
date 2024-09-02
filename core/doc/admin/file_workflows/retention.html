@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Retention of files &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -104,13 +112,13 @@
            <div itemprop="articleBody">
              
   <section id="retention-of-files">
-<h1>Retention of files<a class="headerlink" href="#retention-of-files" title="Permalink to this headline"></a></h1>
+<h1>Retention of files<a class="headerlink" href="#retention-of-files" title="Link to this heading"></a></h1>
 <p>Nextcloud’s Files Retention app allows to automatically delete files that
 are tagged with a collaborative tag and have a certain age.</p>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
 <p>After installing the Retention app as described in <a class="reference internal" href="../apps_management.html"><span class="doc">Apps management</span></a>
-navigate to the configuration and locate the Workflow settings.</p>
+navigate to Administration settings and then to Flow.</p>
 <blockquote>
 <div><figure class="align-default">
 <img alt="Sample rule to delete files after 14 days after creation." src="../_images/retention_sample.png" />
@@ -121,15 +129,15 @@ navigate to the configuration and locate the Workflow settings.</p>
 make sure the file owner will get a notification before a file will be deleted.</p>
 </section>
 <section id="common-misconfigurations">
-<h2>Common misconfigurations<a class="headerlink" href="#common-misconfigurations" title="Permalink to this headline"></a></h2>
+<h2>Common misconfigurations<a class="headerlink" href="#common-misconfigurations" title="Link to this heading"></a></h2>
 <section id="public-collaborative-tag">
-<h3>Public collaborative tag<a class="headerlink" href="#public-collaborative-tag" title="Permalink to this headline"></a></h3>
+<h3>Public collaborative tag<a class="headerlink" href="#public-collaborative-tag" title="Link to this heading"></a></h3>
 <p>Similar to <a class="reference internal" href="access_control.html"><span class="doc">Files access control</span></a> retention should use <code class="docutils literal notranslate"><span class="pre">restricted</span></code> or <code class="docutils literal notranslate"><span class="pre">invisible</span></code>
 tags. Otherwise any user can remove the tag and the file is not removed after the given
 period. Use <a class="reference internal" href="automated_tagging.html"><span class="doc">Automated tagging of files</span></a> to assign such tags to newly uploaded files.</p>
 </section>
 <section id="file-age">
-<h3>File age<a class="headerlink" href="#file-age" title="Permalink to this headline"></a></h3>
+<h3>File age<a class="headerlink" href="#file-age" title="Link to this heading"></a></h3>
 <p>Currently retention is based on the creation date of the file. The sync client sends
 the <strong>original</strong> creation date to the server, while uploading through the web interface
 will create a new file with a <strong>new</strong> creation date.

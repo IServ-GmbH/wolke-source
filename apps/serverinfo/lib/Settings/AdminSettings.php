@@ -33,6 +33,7 @@ use OCA\ServerInfo\ShareStatistics;
 use OCA\ServerInfo\StorageStatistics;
 use OCA\ServerInfo\SystemStatistics;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
@@ -56,7 +57,8 @@ class AdminSettings implements ISettings {
 		DatabaseStatistics $databaseStatistics,
 		ShareStatistics $shareStatistics,
 		SessionStatistics $sessionStatistics,
-		SystemStatistics $systemStatistics
+		SystemStatistics $systemStatistics,
+		private IConfig $config
 	) {
 		$this->os = $os;
 		$this->l = $l;
@@ -85,8 +87,10 @@ class AdminSettings implements ISettings {
 			'php' => $this->phpStatistics->getPhpStatistics(),
 			'database' => $this->databaseStatistics->getDatabaseStatistics(),
 			'activeUsers' => $this->sessionStatistics->getSessionStatistics(),
-			'system' => $this->systemStatistics->getSystemStatistics(true),
-			'thermalzones' => $this->os->getThermalZones()
+			'system' => $this->systemStatistics->getSystemStatistics(true, true),
+			'thermalzones' => $this->os->getThermalZones(),
+			'phpinfo' => $this->config->getAppValue('serverinfo', 'phpinfo', 'no') === 'yes',
+			'phpinfoUrl' => $this->urlGenerator->linkToRoute('serverinfo.page.phpinfo')
 		];
 
 		return new TemplateResponse('serverinfo', 'settings-admin', $params);

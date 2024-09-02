@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Support\AppInfo;
 
+use OCA\Support\Capabilities;
 use OCA\Support\Notification\Notifier;
 use OCA\Support\Settings\Admin;
 use OCA\Support\Settings\Section;
@@ -48,6 +49,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
+		$context->registerCapability(Capabilities::class);
 	}
 
 	public function boot(IBootContext $context): void {

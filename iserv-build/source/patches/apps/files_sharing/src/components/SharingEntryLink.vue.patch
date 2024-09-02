@@ -1,12 +1,12 @@
 diff --git apps/files_sharing/src/components/SharingEntryLink.vue apps/files_sharing/src/components/SharingEntryLink.vue
-index ad4ffa9..196369e 100644
+index 8c6235a..2735761 100644
 --- apps/files_sharing/src/components/SharingEntryLink.vue
 +++ apps/files_sharing/src/components/SharingEntryLink.vue
-@@ -27,18 +27,13 @@
+@@ -27,17 +27,13 @@
  			class="sharing-entry__avatar" />
  
  		<div class="sharing-entry__summary">
--			<div class="sharing-entry__desc" @click.prevent="toggleQuickShareSelect">
+-			<div class="sharing-entry__desc">
 +			<div class="sharing-entry__summary__desc" style="align-self: center;">
  				<span class="sharing-entry__title" :title="title">
  					{{ title }}
@@ -14,10 +14,9 @@ index ad4ffa9..196369e 100644
  				<p v-if="subtitle">
  					{{ subtitle }}
  				</p>
--				<QuickShareSelect v-if="share && share.permissions !== undefined"
+-				<SharingEntryQuickShareSelect v-if="share && share.permissions !== undefined"
 -					:share="share"
 -					:file-info="fileInfo"
--					:toggle="showDropdown"
 -					@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  			</div>
  

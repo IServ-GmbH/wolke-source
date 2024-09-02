@@ -59,6 +59,7 @@ class ComposerStaticInitRelatedResources
         'OCA\\RelatedResources\\Model\\RelatedResource' => __DIR__ . '/../..' . '/lib/Model/RelatedResource.php',
         'OCA\\RelatedResources\\Model\\TalkActor' => __DIR__ . '/../..' . '/lib/Model/TalkActor.php',
         'OCA\\RelatedResources\\Model\\TalkRoom' => __DIR__ . '/../..' . '/lib/Model/TalkRoom.php',
+        'OCA\\RelatedResources\\RelatedResourceProviders\\AccountRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/AccountRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\CalendarRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/CalendarRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\DeckRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/DeckRelatedResourceProvider.php',
         'OCA\\RelatedResources\\RelatedResourceProviders\\FilesRelatedResourceProvider' => __DIR__ . '/../..' . '/lib/RelatedResourceProviders/FilesRelatedResourceProvider.php',

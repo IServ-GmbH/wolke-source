@@ -37,14 +37,15 @@ namespace OC\Files\Cache;
 
 use Doctrine\DBAL\Exception;
 use OC\Files\Storage\Wrapper\Encryption;
+use OC\Files\Storage\Wrapper\Jail;
+use OC\Hooks\BasicEmitter;
+use OC\SystemConfig;
 use OCP\Files\Cache\IScanner;
 use OCP\Files\ForbiddenException;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IReliableEtagStorage;
 use OCP\IDBConnection;
 use OCP\Lock\ILockingProvider;
-use OC\Files\Storage\Wrapper\Jail;
-use OC\Hooks\BasicEmitter;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -95,7 +96,10 @@ class Scanner extends BasicEmitter implements IScanner {
 		$this->storage = $storage;
 		$this->storageId = $this->storage->getId();
 		$this->cache = $storage->getCache();
-		$this->cacheActive = !\OC::$server->getConfig()->getSystemValueBool('filesystem_cache_readonly', false);
+		/** @var SystemConfig $config */
+		$config = \OC::$server->get(SystemConfig::class);
+		$this->cacheActive = !$config->getValue('filesystem_cache_readonly', false);
+		$this->useTransactions = !$config->getValue('filescanner_no_transactions', false);
 		$this->lockingProvider = \OC::$server->getLockingProvider();
 		$this->connection = \OC::$server->get(IDBConnection::class);
 	}
@@ -221,8 +225,9 @@ class Scanner extends BasicEmitter implements IScanner {
 						}
 
 						// Only update metadata that has changed
-						$newData = array_diff_assoc($data, $cacheData->getData());
-
+						// i.e. get all the values in $data that are not present in the cache already
+						$newData = $this->array_diff_assoc_multi($data, $cacheData->getData());
+						
 						// make it known to the caller that etag has been changed and needs propagation
 						if (isset($newData['etag'])) {
 							$data['etag_changed'] = true;
@@ -298,7 +303,7 @@ class Scanner extends BasicEmitter implements IScanner {
 			$data['permissions'] = $data['scan_permissions'];
 		}
 		\OC_Hook::emit('Scanner', 'addToCache', ['file' => $path, 'data' => $data]);
-		$this->emit('\OC\Files\Cache\Scanner', 'addToCache', [$path, $this->storageId, $data]);
+		$this->emit('\OC\Files\Cache\Scanner', 'addToCache', [$path, $this->storageId, $data, $fileId]);
 		if ($this->cacheActive) {
 			if ($fileId !== -1) {
 				$this->cache->update($fileId, $data);
@@ -367,6 +372,50 @@ class Scanner extends BasicEmitter implements IScanner {
 			}
 		}
 		return $data;
+	}
+
+	/**
+	 * Compares $array1 against $array2 and returns all the values in $array1 that are not in $array2
+	 * Note this is a one-way check - i.e. we don't care about things that are in $array2 that aren't in $array1
+	 *
+	 * Supports multi-dimensional arrays
+	 * Also checks keys/indexes
+	 * Comparisons are strict just like array_diff_assoc
+	 * Order of keys/values does not matter
+	 *
+	 * @param array $array1
+	 * @param array $array2
+	 * @return array with the differences between $array1 and $array1
+	 * @throws \InvalidArgumentException if $array1 isn't an actual array
+	 *
+	 */
+	protected function array_diff_assoc_multi(array $array1, array $array2) {
+		
+		$result = [];
+
+		foreach ($array1 as $key => $value) {
+		
+			// if $array2 doesn't have the same key, that's a result
+			if (!array_key_exists($key, $array2)) {
+				$result[$key] = $value;
+				continue;
+			}
+		
+			// if $array2's value for the same key is different, that's a result
+			if ($array2[$key] !== $value && !is_array($value)) {
+				$result[$key] = $value;
+				continue;
+			}
+		
+			if (is_array($value)) {
+				$nestedDiff = $this->array_diff_assoc_multi($value, $array2[$key]);
+				if (!empty($nestedDiff)) {
+					$result[$key] = $nestedDiff;
+					continue;
+				}
+			}
+		}
+		return $result;
 	}
 
 	/**
@@ -459,7 +508,7 @@ class Scanner extends BasicEmitter implements IScanner {
 		$childQueue = [];
 		$newChildNames = [];
 		foreach ($newChildren as $fileMeta) {
-			$permissions = isset($fileMeta['scan_permissions']) ? $fileMeta['scan_permissions'] : $fileMeta['permissions'];
+			$permissions = $fileMeta['scan_permissions'] ?? $fileMeta['permissions'];
 			if ($permissions === 0) {
 				continue;
 			}
@@ -476,7 +525,7 @@ class Scanner extends BasicEmitter implements IScanner {
 			$newChildNames[] = $file;
 			$child = $path ? $path . '/' . $file : $file;
 			try {
-				$existingData = isset($existingChildren[$file]) ? $existingChildren[$file] : false;
+				$existingData = $existingChildren[$file] ?? false;
 				$data = $this->scanFile($child, $reuse, $folderId, $existingData, $lock, $fileMeta);
 				if ($data) {
 					if ($data['mimetype'] === 'httpd/unix-directory' && $recursive === self::SCAN_RECURSIVE) {
@@ -544,7 +593,7 @@ class Scanner extends BasicEmitter implements IScanner {
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'part') {
 			return true;
 		}
-		if (strpos($file, '.part/') !== false) {
+		if (str_contains($file, '.part/')) {
 			return true;
 		}
 

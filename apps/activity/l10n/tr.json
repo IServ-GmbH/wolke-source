@@ -9,7 +9,7 @@
     "No activities" : "Herhangi bir işlem yok",
     "More activities" : "Diğer işlemler",
     "Daily activity summary for %s" : "%s için günlük işlem özeti",
-    "_and %n more _::_and %n more _" : ["ve %n diğer","ve %n diğer"],
+    "_and %n more…_::_and %n more…_" : ["ve %n diğer...","ve %n diğer..."],
     "All activities" : "Tüm işlemler",
     "By others" : "Diğerleri tarafından",
     "By you" : "Sizin tarafınızdan",
@@ -17,6 +17,7 @@
     "Hello %s" : "Merhaba %s",
     "Hello %s," : "Merhaba %s,",
     "There was some activity at %s" : "%s üzerinde bazı işlemler yapıldı",
+    "_and %n more _::_and %n more _" : ["ve %n diğer","ve %n diğer"],
     "Mail" : "E-posta",
     "Push" : "Anında",
     "Activity" : "İşlem",
@@ -64,14 +65,6 @@
     "Configure the default notification settings for new accounts." : "Yeni hesaplar için varsayılan bildirim ayarlarını yapılandırın.",
     "Unable to save the settings" : "Ayarlar kaydedilemedi",
     "No more events to load" : "Yüklenecek başka bir olay yok",
-    "Copied!" : "Kopyalandı!",
-    "Not supported!" : "Desteklenmiyor!",
-    "Press ⌘-C to copy." : "Kopyalamak için ⌘-C tuşlarına basın.",
-    "Press Ctrl-C to copy." : "Kopyalamak için Ctrl-C tuşlarına basın.",
-    "{name} (invisible)" : "{name} (görüntülenmez)",
-    "{name} (restricted)" : "{name} (kısıtlanmış)",
-    "There are no events for this filter" : "Bu süzgeçte herhangi bir olay yok",
-    "Activities" : "Etkinlikler",
     "Could not load activites" : "İşlemler yüklenemedi"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

@@ -40,15 +40,15 @@ class Detail implements IDetail {
 		return $this->title;
 	}
 
-	public function getType(): string {
-		return $this->type;
+	public function getSection(): string {
+		return $this->section;
 	}
 
 	public function getInformation(): string {
 		return $this->information;
 	}
 
-	public function getSection(): int {
-		return $this->section;
+	public function getType(): int {
+		return $this->type;
 	}
 }

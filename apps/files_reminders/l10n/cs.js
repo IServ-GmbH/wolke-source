@@ -10,12 +10,13 @@ OC.L10N.register(
     "We will remind you of this file" : "Připomeneme vám tento soubor",
     "Please choose a valid date & time" : "Zvolte platný datum a čas",
     "Cancel" : "Storno",
+    "Clear reminder" : "Vyčistit připomínku",
     "Set reminder" : "Nastavit připomínku",
     "Set reminder for \"{fileName}\"" : "Nastavit připomínku pro „{fileName}",
     "Set reminder at custom date & time" : "Nastavit připomínku na uživatelsky určené datum a čas",
-    "Clear reminder" : "Vyčistit připomínku",
     "Reminder set for \"{fileName}\"" : "Nastavena připomínka ohledně „{fileName}“",
     "Failed to set reminder" : "Připomínku se nepodařilo nastavit",
+    "Failed to clear reminder" : "Připomínku se nepodařilo vyčistit",
     "Set custom reminder" : "Nastavit uživatelsky určenou připomínku",
     "Later today" : "Později dnes",
     "Set reminder for later today" : "Nastavit připomínku na později dnes",
@@ -24,10 +25,6 @@ OC.L10N.register(
     "This weekend" : "Tento víkend",
     "Set reminder for this weekend" : "Nastavit připomínku na tento víkend",
     "Next week" : "Příští týden",
-    "Set reminder for next week" : "Nastavit připomínku pro příští týden",
-    "Back" : "Zpět",
-    "Reminder cleared" : "Připomínka vyčištěna",
-    "Failed to clear reminder" : "Připomínku se nepodařilo vyčistit",
-    "Failed to load reminder" : "Připomínku se nepodařilo načíst"
+    "Set reminder for next week" : "Nastavit připomínku pro příští týden"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

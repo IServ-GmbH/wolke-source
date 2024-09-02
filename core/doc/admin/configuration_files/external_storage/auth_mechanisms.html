@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>External Storage authentication mechanisms &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
+        <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -112,7 +120,7 @@
            <div itemprop="articleBody">
              
   <section id="external-storage-authentication-mechanisms">
-<h1>External Storage authentication mechanisms<a class="headerlink" href="#external-storage-authentication-mechanisms" title="Permalink to this headline"></a></h1>
+<h1>External Storage authentication mechanisms<a class="headerlink" href="#external-storage-authentication-mechanisms" title="Link to this heading"></a></h1>
 <p>Nextcloud storage backends accept one or more authentication schemes such as
 passwords, OAuth, or token-based, to name a few examples. Each authentication
 scheme may be implemented by combining multiple authentication mechanisms. Different
@@ -122,7 +130,7 @@ behavior.</p>
 <img alt="Authentication types" src="../../_images/authentication-types.png" />
 </figure>
 <section id="special-mechanisms">
-<h2>Special mechanisms<a class="headerlink" href="#special-mechanisms" title="Permalink to this headline"></a></h2>
+<h2>Special mechanisms<a class="headerlink" href="#special-mechanisms" title="Link to this heading"></a></h2>
 <p>The <strong>None</strong> authentication mechanism requires no configuration parameters, and
 is used when a backend requires no authentication.</p>
 <p>The <strong>Built-in</strong> authentication mechanism itself requires no configuration
@@ -131,7 +139,7 @@ migrated to the new system and do not take advantage of generic authentication
 mechanisms. The authentication parameters are provided directly by the backend.</p>
 </section>
 <section id="password-based-mechanisms">
-<h2>Password-based mechanisms<a class="headerlink" href="#password-based-mechanisms" title="Permalink to this headline"></a></h2>
+<h2>Password-based mechanisms<a class="headerlink" href="#password-based-mechanisms" title="Link to this heading"></a></h2>
 <p>The <strong>Username and password</strong> mechanism requires a manually-defined username and
 password. These get passed directly to the backend and are specified during the
 setup of the mount point.</p>
@@ -165,7 +173,7 @@ credentials instead of individual credentials for a mount point.</p>
 <p><a class="reference internal" href="#considerations-for-shared-storage-label"><span class="std std-ref">Considerations for shared storage</span></a></p>
 </section>
 <section id="public-key-mechanisms">
-<h2>Public-key mechanisms<a class="headerlink" href="#public-key-mechanisms" title="Permalink to this headline"></a></h2>
+<h2>Public-key mechanisms<a class="headerlink" href="#public-key-mechanisms" title="Link to this heading"></a></h2>
 <p>Currently only the RSA mechanism is implemented, where a public/private
 keypair is generated by Nextcloud and the public half shown in the GUI. The keys
 are generated in the SSH format, and are currently 1024 bits in length. Keys
@@ -178,7 +186,7 @@ destination server to <code class="docutils literal notranslate"><span class="pr
 </figure>
 </section>
 <section id="considerations-for-shared-storage">
-<span id="considerations-for-shared-storage-label"></span><h2>Considerations for shared storage<a class="headerlink" href="#considerations-for-shared-storage" title="Permalink to this headline"></a></h2>
+<span id="considerations-for-shared-storage-label"></span><h2>Considerations for shared storage<a class="headerlink" href="#considerations-for-shared-storage" title="Link to this heading"></a></h2>
 <p>Every external storage, which is using user specific authentication, is connected individually.
 Even if several users connect to the same folder, the files are regarded as separate files per user.
 Nextcloud can not recognize if two users access the very same file if they follow individual connections.</p>

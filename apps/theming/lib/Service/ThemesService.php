@@ -33,48 +33,68 @@ use OCA\Theming\Themes\LightTheme;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 class ThemesService {
-	private IUserSession $userSession;
-	private IConfig $config;
-
 	/** @var ITheme[] */
 	private array $themesProviders;
 
-	public function __construct(IUserSession $userSession,
-								IConfig $config,
-								DefaultTheme $defaultTheme,
-								LightTheme $lightTheme,
-								DarkTheme $darkTheme,
-								HighContrastTheme $highContrastTheme,
-								DarkHighContrastTheme $darkHighContrastTheme,
-								DyslexiaFont $dyslexiaFont) {
-		$this->userSession = $userSession;
-		$this->config = $config;
+	public function __construct(
+		private IUserSession $userSession,
+		private IConfig $config,
+		private LoggerInterface $logger,
+		private DefaultTheme $defaultTheme,
+		LightTheme $lightTheme,
+		private DarkTheme $darkTheme,
+		HighContrastTheme $highContrastTheme,
+		DarkHighContrastTheme $darkHighContrastTheme,
+		DyslexiaFont $dyslexiaFont) {
 
 		// Register themes
 		$this->themesProviders = [
-			$defaultTheme->getId()			=> $defaultTheme,
-			$lightTheme->getId()			=> $lightTheme,
-			$darkTheme->getId()				=> $darkTheme,
-			$highContrastTheme->getId()		=> $highContrastTheme,
-			$darkHighContrastTheme->getId()	=> $darkHighContrastTheme,
-			$dyslexiaFont->getId()			=> $dyslexiaFont,
+			$defaultTheme->getId() => $defaultTheme,
+			$lightTheme->getId() => $lightTheme,
+			$darkTheme->getId() => $darkTheme,
+			$highContrastTheme->getId() => $highContrastTheme,
+			$darkHighContrastTheme->getId() => $darkHighContrastTheme,
+			$dyslexiaFont->getId() => $dyslexiaFont,
 		];
 	}
 
 	/**
 	 * Get the list of all registered themes
-	 * 
+	 *
 	 * @return ITheme[]
 	 */
 	public function getThemes(): array {
+		// Enforced theme if configured
+		$enforcedTheme = $this->config->getSystemValueString('enforce_theme', '');
+		if ($enforcedTheme !== '') {
+			if (!isset($this->themesProviders[$enforcedTheme])) {
+				$this->logger->error('Enforced theme not found', ['theme' => $enforcedTheme]);
+				return $this->themesProviders;
+			}
+
+			$defaultTheme = $this->themesProviders[$this->defaultTheme->getId()];
+			$darkTheme = $this->themesProviders[$this->darkTheme->getId()];
+			$theme = $this->themesProviders[$enforcedTheme];
+			return [
+				// Leave the default theme as a fallback
+				$defaultTheme->getId() => $defaultTheme,
+				// Make sure we also have the dark theme to allow apps
+				// to scope sections of their UI to the dark theme
+				$darkTheme->getId() => $darkTheme,
+				// Finally, the enforced theme
+				$theme->getId() => $theme,
+			];
+		}
+
 		return $this->themesProviders;
 	}
 
 	/**
 	 * Enable a theme for the logged-in user
-	 * 
+	 *
 	 * @param ITheme $theme the theme to enable
 	 * @return string[] the enabled themes
 	 */
@@ -87,18 +107,18 @@ class ThemesService {
 		}
 
 		/** @var ITheme[] */
-		$themes = array_filter(array_map(function($themeId) {
+		$themes = array_filter(array_map(function ($themeId) {
 			return $this->getThemes()[$themeId];
 		}, $themesIds));
 
 		// Filtering all themes with the same type
-		$filteredThemes = array_filter($themes, function(ITheme $t) use ($theme) {
+		$filteredThemes = array_filter($themes, function (ITheme $t) use ($theme) {
 			return $theme->getType() === $t->getType();
 		});
 
 		// Retrieve IDs only
 		/** @var string[] */
-		$filteredThemesIds = array_map(function(ITheme $t) {
+		$filteredThemesIds = array_map(function (ITheme $t) {
 			return $t->getId();
 		}, array_values($filteredThemes));
 
@@ -110,7 +130,7 @@ class ThemesService {
 
 	/**
 	 * Disable a theme for the logged-in user
-	 * 
+	 *
 	 * @param ITheme $theme the theme to disable
 	 * @return string[] the enabled themes
 	 */
@@ -130,7 +150,7 @@ class ThemesService {
 	/**
 	 * Check whether a theme is enabled or not
 	 * for the logged-in user
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function isEnabled(ITheme $theme): bool {
@@ -146,7 +166,7 @@ class ThemesService {
 	/**
 	 * Get the list of all enabled themes IDs
 	 * for the logged-in user
-	 * 
+	 *
 	 * @return string[]
 	 */
 	public function getEnabledThemes(): array {
@@ -169,9 +189,9 @@ class ThemesService {
 	}
 
 	/**
-	 * Set the list of enabled themes 
+	 * Set the list of enabled themes
 	 * for the logged-in user
-	 * 
+	 *
 	 * @param string[] $themes the list of enabled themes IDs
 	 */
 	private function setEnabledThemes(array $themes): void {

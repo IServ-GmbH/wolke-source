@@ -10,6 +10,7 @@ OC.L10N.register(
     "Error saving image" : "Produciuse un erro ao gardar a imaxe",
     "Unsaved changes" : "Cambios sen gardar",
     "Drop changes" : "Desbotar os cambios",
+    "Play the live photo" : "Reproducir Live Photo",
     "LIVE" : "DIRECTO",
     "Your browser does not support videos." : "O seu navegador non admite vídeos",
     "Edit" : "Editar",
@@ -95,7 +96,7 @@ OC.L10N.register(
     "Choose watermark type" : "Escoller o tipo de marca de auga",
     "Upload watermark" : "Enviar a marca de auga",
     "Add as text" : "Engadir como texto",
-    "Padding" : "Recheo",
+    "Padding" : "Enchedura",
     "Shadow" : "Sombra",
     "Horizontal" : "Horizontal",
     "Vertical" : "Vertical",
@@ -109,7 +110,6 @@ OC.L10N.register(
     "Saved image size (width x height)" : "Tamaño da imaxe gardada (largo x alto)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Teña en conta que a área de recorte seleccionada é inferior ao cambio de tamaño aplicado, o que pode provocar unha diminución da calidade",
     "Actual size (100%)" : "Tamaño real (100%)",
-    "Fit size" : "Axuste de tamaño",
-    "\"{fileName}\"" : "«{fileName}»"
+    "Fit size" : "Axuste de tamaño"
 },
 "nplurals=2; plural=(n != 1);");

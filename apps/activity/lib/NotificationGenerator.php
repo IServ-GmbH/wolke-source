@@ -25,24 +25,19 @@ namespace OCA\Activity;
 
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager as ActivityManager;
-use OCP\Notification\IManager as NotificationManager;
 use OCP\IL10N;
+use OCP\Notification\IManager as NotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 
 class NotificationGenerator implements INotifier {
-	protected $data;
-	protected $activityManager;
-	protected $userSettings;
-	protected $l10n;
-	protected $notificationManager;
 
-	public function __construct(Data $data, ActivityManager $activityManager, NotificationManager $notificationManager, UserSettings $userSettings, IL10N $l10n) {
-		$this->data = $data;
-		$this->activityManager = $activityManager;
-		$this->notificationManager = $notificationManager;
-		$this->userSettings = $userSettings;
-		$this->l10n = $l10n;
+	public function __construct(
+		protected Data $data,
+		protected ActivityManager $activityManager,
+		protected NotificationManager $notificationManager,
+		protected UserSettings $userSettings,
+		protected IL10N $l10n) {
 	}
 
 	public function deferNotifications(): bool {

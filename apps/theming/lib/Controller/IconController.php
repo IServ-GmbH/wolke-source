@@ -8,6 +8,7 @@
  * @author Julius Härtl <jus@bitgrid.net>
  * @author Michael Weimann <mail@michael-weimann.eu>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -75,10 +76,15 @@ class IconController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * @param $app string app name
-	 * @param $image string image file name (svg required)
-	 * @return FileDisplayResponse|NotFoundResponse
+	 * Get a themed icon
+	 *
+	 * @param string $app ID of the app
+	 * @param string $image image file name (svg required)
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: 'image/svg+xml'}>|NotFoundResponse<Http::STATUS_NOT_FOUND, array{}>
 	 * @throws \Exception
+	 *
+	 * 200: Themed icon returned
+	 * 404: Themed icon not found
 	 */
 	public function getThemedIcon(string $app, string $image): Response {
 		if ($app !== 'core' && !$this->appManager->isEnabledForUser($app)) {
@@ -94,7 +100,7 @@ class IconController extends Controller {
 			if ($icon === false || $icon === '') {
 				return new NotFoundResponse();
 			}
-			$iconFileName = $this->imageManager->setCachedImage('icon-' . $app . '-' . $color . str_replace('/', '_', $image),  $icon);
+			$iconFileName = $this->imageManager->setCachedImage('icon-' . $app . '-' . $color . str_replace('/', '_', $image), $icon);
 		}
 		$response = new FileDisplayResponse($iconFileName, Http::STATUS_OK, ['Content-Type' => 'image/svg+xml']);
 		$response->cacheFor(86400, false, true);
@@ -107,9 +113,12 @@ class IconController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * @param $app string app name
-	 * @return FileDisplayResponse|DataDisplayResponse|NotFoundResponse
+	 * @param string $app ID of the app
+	 * @return DataDisplayResponse<Http::STATUS_OK, array{Content-Type: 'image/x-icon'}>|FileDisplayResponse<Http::STATUS_OK, array{Content-Type: 'image/x-icon'}>|NotFoundResponse<Http::STATUS_NOT_FOUND, array{}>
 	 * @throws \Exception
+	 *
+	 * 200: Favicon returned
+	 * 404: Favicon not found
 	 */
 	public function getFavicon(string $app = 'core'): Response {
 		if ($app !== 'core' && !$this->appManager->isEnabledForUser($app)) {
@@ -150,9 +159,12 @@ class IconController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * @param $app string app name
-	 * @return DataDisplayResponse|FileDisplayResponse|NotFoundResponse
+	 * @param string $app ID of the app
+	 * @return DataDisplayResponse<Http::STATUS_OK, array{Content-Type: 'image/png'}>|FileDisplayResponse<Http::STATUS_OK, array{Content-Type: 'image/x-icon'|'image/png'}>|NotFoundResponse<Http::STATUS_NOT_FOUND, array{}>
 	 * @throws \Exception
+	 *
+	 * 200: Touch icon returned
+	 * 404: Touch icon not found
 	 */
 	public function getTouchIcon(string $app = 'core'): Response {
 		if ($app !== 'core' && !$this->appManager->isEnabledForUser($app)) {

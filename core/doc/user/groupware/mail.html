@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Mail app &mdash; Nextcloud latest User Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=91d07486"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Synchronizing with Android" href="sync_android.html" />
+    <link rel="next" title="Setting out-of-office messages" href="absence.html" />
     <link rel="prev" title="Using the Calendar app" href="calendar.html" /> 
 </head>
 
@@ -53,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="calendar.html">Using the Calendar app</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Using the Mail app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#managing-your-mail-account">Managing your mail account</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#switch-layout">Switch layout</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-new-mail-account">Add a new mail account</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#change-sort-order">Change sort order</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scheduled-messages">Scheduled messages</a></li>
@@ -69,6 +78,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#minimize-the-composer-modal">Minimize the composer modal</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#outbox">Outbox</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mailbox-actions">Mailbox actions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-mailbox">Add a mailbox</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-submailbox">Add a submailbox</a></li>
@@ -83,10 +93,17 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#message-actions">Message actions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#unsubscribe-from-a-mailing-list">Unsubscribe from a mailing list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#snooze">Snooze</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smart-replies">Smart replies</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#filtering-and-autoresponder">Filtering and autoresponder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#autoresponders">Autoresponders</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="absence.html">Setting out-of-office messages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_android.html">Synchronizing with Android</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_ios.html">Synchronizing with iOS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_osx.html">Synchronizing with macOS</a></li>
@@ -130,7 +147,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-mail-app">
-<h1>Using the Mail app<a class="headerlink" href="#using-the-mail-app" title="Permalink to this headline"></a></h1>
+<h1>Using the Mail app<a class="headerlink" href="#using-the-mail-app" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The Mail app comes installed with Nextcloud Hub by default, but can be disabled.
@@ -140,9 +157,24 @@ Please ask your Administrator for it.</p>
 <img alt="../_images/mail.png" src="../_images/mail.png" />
 </figure>
 <section id="managing-your-mail-account">
-<h2>Managing your mail account<a class="headerlink" href="#managing-your-mail-account" title="Permalink to this headline"></a></h2>
+<h2>Managing your mail account<a class="headerlink" href="#managing-your-mail-account" title="Link to this heading"></a></h2>
+<section id="switch-layout">
+<h3>Switch layout<a class="headerlink" href="#switch-layout" title="Link to this heading"></a></h3>
+<blockquote>
+<div><div class="versionadded">
+<p><span class="versionmodified added">New in version 3.6.</span></p>
+</div>
+</div></blockquote>
+<ol class="arabic simple">
+<li><p>Visit mail settings</p></li>
+<li><p>Choose between <em>List</em>, <em>Vertical split</em> and <em>Horizontal split</em></p></li>
+</ol>
+<figure class="align-default">
+<img alt="../_images/mail_layout.png" src="../_images/mail_layout.png" />
+</figure>
+</section>
 <section id="add-a-new-mail-account">
-<h3>Add a new mail account<a class="headerlink" href="#add-a-new-mail-account" title="Permalink to this headline"></a></h3>
+<h3>Add a new mail account<a class="headerlink" href="#add-a-new-mail-account" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Enable mail app from the apps</p></li>
 <li><p>Click the mail icon on the header</p></li>
@@ -153,7 +185,7 @@ Please ask your Administrator for it.</p>
 </figure>
 </section>
 <section id="change-sort-order">
-<h3>Change sort order<a class="headerlink" href="#change-sort-order" title="Permalink to this headline"></a></h3>
+<h3>Change sort order<a class="headerlink" href="#change-sort-order" title="Link to this heading"></a></h3>
 <blockquote>
 <div><div class="versionadded">
 <p><span class="versionmodified added">New in version 3.5.</span></p>
@@ -170,7 +202,7 @@ Please ask your Administrator for it.</p>
 </div>
 </section>
 <section id="scheduled-messages">
-<h3>Scheduled messages<a class="headerlink" href="#scheduled-messages" title="Permalink to this headline"></a></h3>
+<span id="mail-scheduled-messages"></span><h3>Scheduled messages<a class="headerlink" href="#scheduled-messages" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Click new message button on top left of your screen</p></li>
 <li><p>Click the (…) action menu on the modal composer</p></li>
@@ -181,7 +213,7 @@ Please ask your Administrator for it.</p>
 </figure>
 </section>
 <section id="priority-inbox">
-<h3>Priority inbox<a class="headerlink" href="#priority-inbox" title="Permalink to this headline"></a></h3>
+<h3>Priority inbox<a class="headerlink" href="#priority-inbox" title="Link to this heading"></a></h3>
 <p>Priority inbox has 2 section <em>Important</em> and <em>Others</em>.
 Messages will automatically be marked as important based on which messages you interacted with or marked as important. In the beginning you might have to manually change the importance to teach the system, but it will improve over time.</p>
 <figure class="align-default">
@@ -189,23 +221,24 @@ Messages will automatically be marked as important based on which messages you i
 </figure>
 </section>
 <section id="all-inboxes">
-<h3>All inboxes<a class="headerlink" href="#all-inboxes" title="Permalink to this headline"></a></h3>
+<h3>All inboxes<a class="headerlink" href="#all-inboxes" title="Link to this heading"></a></h3>
 <p>All messages from all the accounts you have logged in, will be shown here chronologically.</p>
 </section>
 <section id="account-settings">
-<h3>Account settings<a class="headerlink" href="#account-settings" title="Permalink to this headline"></a></h3>
+<span id="mail-account-settings"></span><h3>Account settings<a class="headerlink" href="#account-settings" title="Link to this heading"></a></h3>
 <p>Your account settings such as:</p>
 <ol class="arabic simple">
 <li><p>Aliases</p></li>
 <li><p>Signature</p></li>
 <li><p>Default Folders</p></li>
 <li><p>Autoresponder</p></li>
-<li><p>Trusted server ect</p></li>
+<li><p>Trusted senders</p></li>
+<li><p>..and more</p></li>
 </ol>
 <p>Can be found in the action menu of a mail account. There you can edit, add or remove settings depending on your need.</p>
 </section>
 <section id="move-messages-to-junk-folder">
-<h3>Move messages to Junk folder<a class="headerlink" href="#move-messages-to-junk-folder" title="Permalink to this headline"></a></h3>
+<h3>Move messages to Junk folder<a class="headerlink" href="#move-messages-to-junk-folder" title="Link to this heading"></a></h3>
 <blockquote>
 <div><div class="versionadded">
 <p><span class="versionmodified added">New in version 3.4.</span></p>
@@ -225,7 +258,7 @@ Messages will automatically be marked as important based on which messages you i
 </ol>
 </section>
 <section id="enable-mail-body-search">
-<h3>Enable mail body search<a class="headerlink" href="#enable-mail-body-search" title="Permalink to this headline"></a></h3>
+<h3>Enable mail body search<a class="headerlink" href="#enable-mail-body-search" title="Link to this heading"></a></h3>
 <blockquote>
 <div><div class="versionadded">
 <p><span class="versionmodified added">New in version 3.5.</span></p>
@@ -246,7 +279,7 @@ Messages will automatically be marked as important based on which messages you i
 will appear in advanced search.</p>
 </section>
 <section id="account-delegation">
-<h3>Account delegation<a class="headerlink" href="#account-delegation" title="Permalink to this headline"></a></h3>
+<h3>Account delegation<a class="headerlink" href="#account-delegation" title="Link to this heading"></a></h3>
 <p>The app allows account delegation so that one user can send emails from the address of another.</p>
 <ol class="arabic simple">
 <li><p>The delegation has to be configured on the mail server by an admin</p></li>
@@ -259,7 +292,7 @@ will appear in advanced search.</p>
 </div>
 </section>
 <section id="automatic-trash-deletion">
-<h3>Automatic trash deletion<a class="headerlink" href="#automatic-trash-deletion" title="Permalink to this headline"></a></h3>
+<h3>Automatic trash deletion<a class="headerlink" href="#automatic-trash-deletion" title="Link to this heading"></a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.4.</span></p>
 </div>
@@ -280,13 +313,13 @@ will appear in advanced search.</p>
 </section>
 </section>
 <section id="compose-messages">
-<h2>Compose messages<a class="headerlink" href="#compose-messages" title="Permalink to this headline"></a></h2>
+<h2>Compose messages<a class="headerlink" href="#compose-messages" title="Link to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Click new message on the top left of your screen</p></li>
 <li><p>Start writing your message</p></li>
 </ol>
 <section id="minimize-the-composer-modal">
-<h3>Minimize the composer modal<a class="headerlink" href="#minimize-the-composer-modal" title="Permalink to this headline"></a></h3>
+<h3>Minimize the composer modal<a class="headerlink" href="#minimize-the-composer-modal" title="Link to this heading"></a></h3>
 <blockquote>
 <div><div class="versionadded">
 <p><span class="versionmodified added">New in version 3.2.</span></p>
@@ -307,24 +340,43 @@ will appear in advanced search.</p>
 <p>Press the close button on the modal or the indicator in the bottom right corner to stop editing a message. A draft will be saved automatically into your draft mailbox.</p>
 </section>
 </section>
+<section id="outbox">
+<h2>Outbox<a class="headerlink" href="#outbox" title="Link to this heading"></a></h2>
+<p>When a message has been composed and the “Send” button was clicked, the message is added to the outbox which can be found in the bottom left corner of the left sidebar.</p>
+<p>You can also set the date and time for the send operation to a point in the future (see <a class="reference internal" href="#mail-scheduled-messages"><span class="std std-ref">Scheduled messages</span></a>)- the message will be kept in the outbox until your choosen date and time arrives, then it will be sent automatically.</p>
+<p>The outbox is only visible when there is a message waiting to be handled by the outbox.</p>
+<p>You can re- open the composer for a message in the outbox any time before the “send”- operation is triggered.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When an error occurs during sending, three error messages are possible:</p>
+<dl class="simple">
+<dt>Could not copy to “Sent” mailbox</dt><dd><p>The mail was sent but couldn’t be copied to the “Sent” mailbox. This error will be handled by the outbox and the copy operation will be tried again.</p>
+</dd>
+<dt>Mail server error</dt><dd><p>Sending was unsuccessful with a state than can be retried (ex: the SMTP server couldn’t be reached). The outbox will retry sending the message.</p>
+</dd>
+<dt>Message could not be sent</dt><dd><p>Sending might or might not have failed. The mail server can’t tell us the state of the message. Since the Mail app has no way to determine the state of the message (sent or unsent) the message will stay in the outbox and the account user has to decide how to proceed.</p>
+</dd>
+</dl>
+</div>
+</section>
 <section id="mailbox-actions">
-<h2>Mailbox actions<a class="headerlink" href="#mailbox-actions" title="Permalink to this headline"></a></h2>
+<h2>Mailbox actions<a class="headerlink" href="#mailbox-actions" title="Link to this heading"></a></h2>
 <section id="add-a-mailbox">
-<h3>Add a mailbox<a class="headerlink" href="#add-a-mailbox" title="Permalink to this headline"></a></h3>
+<h3>Add a mailbox<a class="headerlink" href="#add-a-mailbox" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Open the action menu of an account</p></li>
 <li><p>Click add mailbox</p></li>
 </ol>
 </section>
 <section id="add-a-submailbox">
-<h3>Add a submailbox<a class="headerlink" href="#add-a-submailbox" title="Permalink to this headline"></a></h3>
+<h3>Add a submailbox<a class="headerlink" href="#add-a-submailbox" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Open the action menu of a mailbox</p></li>
 <li><p>Click add submailbox</p></li>
 </ol>
 </section>
 <section id="shared-mailbox">
-<h3>Shared mailbox<a class="headerlink" href="#shared-mailbox" title="Permalink to this headline"></a></h3>
+<h3>Shared mailbox<a class="headerlink" href="#shared-mailbox" title="Link to this heading"></a></h3>
 <p>If a mailbox was shared with you with some specific rights, that mailbox will show as a new mailbox with a shared icon as below:</p>
 <figure class="align-default">
 <img alt="../_images/shared-mailbox-icon.png" src="../_images/shared-mailbox-icon.png" />
@@ -332,9 +384,9 @@ will appear in advanced search.</p>
 </section>
 </section>
 <section id="envelope-actions">
-<h2>Envelope actions<a class="headerlink" href="#envelope-actions" title="Permalink to this headline"></a></h2>
+<h2>Envelope actions<a class="headerlink" href="#envelope-actions" title="Link to this heading"></a></h2>
 <section id="create-an-event">
-<h3>Create an event<a class="headerlink" href="#create-an-event" title="Permalink to this headline"></a></h3>
+<h3>Create an event<a class="headerlink" href="#create-an-event" title="Link to this heading"></a></h3>
 <p>Create an event for a certain message/thread directly via mail app</p>
 <ol class="arabic simple">
 <li><p>Open action menu of an envelope</p></li>
@@ -343,7 +395,7 @@ will appear in advanced search.</p>
 </ol>
 </section>
 <section id="create-a-task">
-<h3>Create a task<a class="headerlink" href="#create-a-task" title="Permalink to this headline"></a></h3>
+<h3>Create a task<a class="headerlink" href="#create-a-task" title="Link to this heading"></a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.2.</span></p>
 </div>
@@ -359,7 +411,7 @@ will appear in advanced search.</p>
 </div>
 </section>
 <section id="edit-tags">
-<h3>Edit tags<a class="headerlink" href="#edit-tags" title="Permalink to this headline"></a></h3>
+<h3>Edit tags<a class="headerlink" href="#edit-tags" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Open action menu of an envelope</p></li>
 <li><p>Click <em>Edit tags</em></p></li>
@@ -368,13 +420,51 @@ will appear in advanced search.</p>
 </section>
 </section>
 <section id="message-actions">
-<h2>Message actions<a class="headerlink" href="#message-actions" title="Permalink to this headline"></a></h2>
+<h2>Message actions<a class="headerlink" href="#message-actions" title="Link to this heading"></a></h2>
 <section id="unsubscribe-from-a-mailing-list">
-<h3>Unsubscribe from a mailing list<a class="headerlink" href="#unsubscribe-from-a-mailing-list" title="Permalink to this headline"></a></h3>
+<h3>Unsubscribe from a mailing list<a class="headerlink" href="#unsubscribe-from-a-mailing-list" title="Link to this heading"></a></h3>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 3.1.</span></p>
 </div>
 <p>Some mailing lists and newsletters allow to be unsubscribed easily. If the Mail app detects messages from such a sender, it will show an <em>Unsubscribe</em> button next to the sender information. Click and confirm to unsubscribe from the list.</p>
+</section>
+<section id="snooze">
+<h3>Snooze<a class="headerlink" href="#snooze" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.</span></p>
+</div>
+<p>Snoozing a message or thread moves it into a dedicated mailbox until the selected snooze date is reached and the message or thread is moved back to the original mailbox.</p>
+<ol class="arabic simple">
+<li><p>Open action menu of an envelope or thread</p></li>
+<li><p>Click <em>Snooze</em></p></li>
+<li><p>Select how long the message or thread should be snoozed</p></li>
+</ol>
+</section>
+<section id="smart-replies">
+<h3>Smart replies<a class="headerlink" href="#smart-replies" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.6.</span></p>
+</div>
+<p>When you open a message in the Mail app, it proposes AI-generated replies. By simply clicking on a suggested reply, the composer opens with the response pre-filled.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the feature has to be enabled by the administrator</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Supported languages depend on the used large language model</p>
+</div>
+</section>
+</section>
+<section id="filtering-and-autoresponder">
+<h2>Filtering and autoresponder<a class="headerlink" href="#filtering-and-autoresponder" title="Link to this heading"></a></h2>
+<p>The Mail app has a simple editor for Sieve scripts and an interface to configure autoresponders. Sieve has to be enabled in the <a class="reference internal" href="#mail-account-settings"><span class="std std-ref">account settings</span></a>.</p>
+<section id="autoresponders">
+<h3>Autoresponders<a class="headerlink" href="#autoresponders" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.5: </span>Autoresponder can follow system settings.</p>
+</div>
+<p>The autoresponder is off by default. It can be set manually, or follow the system settings. Following system settings means that the long absence message entered on the <a class="reference internal" href="absence.html#groupware-absence"><span class="std std-ref">Absence settings section</span></a> is applied automatically.</p>
 </section>
 </section>
 </section>
@@ -384,7 +474,7 @@ will appear in advanced search.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="calendar.html" class="btn btn-neutral float-left" title="Using the Calendar app" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="sync_android.html" class="btn btn-neutral float-right" title="Synchronizing with Android" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="absence.html" class="btn btn-neutral float-right" title="Setting out-of-office messages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -37,6 +37,10 @@ OC.L10N.register(
     "1 week" : "1 semana",
     "Your settings have been updated." : "Suas configurações foram atualizadas.",
     "An error occurred while updating your settings." : "Ocorreu um erro ao atualizar suas configurações.",
-    "You need to set up your email address before you can receive notification emails." : "Você precisa configurar seu endereço de e-mail antes de receber e-mails de notificação."
+    "You need to set up your email address before you can receive notification emails." : "Você precisa configurar seu endereço de e-mail antes de receber e-mails de notificação.",
+    "Also repeat sound on a secondary speaker" : "Repita também o som em um alto-falante secundário",
+    "Selection of the speaker device is currently not supported by Safari" : "A seleção do dispositivo de alto-falante não é atualmente suportada pelo Safari",
+    "Select a device" : "Selecione um dispositivo",
+    "None" : "Nenhum"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

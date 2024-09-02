@@ -9,7 +9,6 @@ OC.L10N.register(
     "Recent activity" : "សកម្មភាពថ្មីៗ",
     "No activities" : "គ្មានសកម្មភាពទេ",
     "Daily activity summary for %s" : "សកម្មភាពប្រចាំថ្ងៃសង្ខេបសម្រាប់ %s",
-    "_and %n more _::_and %n more _" : ["និង %n ទៀត"],
     "All activities" : "សកម្មភាពទាំងអស់",
     "By others" : "ដោយអ្នកផ្សេង",
     "By you" : "ដោយអ្នក",
@@ -17,6 +16,7 @@ OC.L10N.register(
     "Hello %s" : "សួស្ដី %s",
     "Hello %s," : "សួស្ដី %s,",
     "There was some activity at %s" : "មានសកម្មភាពមួយចំនួននៅ %s",
+    "_and %n more _::_and %n more _" : ["និង %n ទៀត"],
     "Mail" : "សំបុត្រ",
     "Push" : "រុញ",
     "Activity" : "សកម្មភាព",
@@ -43,13 +43,6 @@ OC.L10N.register(
     "Daily activity summary" : "សង្ខេបនៃសកម្មភាពប្រចាំថ្ងៃ",
     "Send daily activity summary in the morning" : "ផ្ញើសង្ខេបនៃសកម្មភាពប្រចាំថ្ងៃនៅពេលព្រឹក",
     "Default settings" : "ការកំណត់លំនាំដើម",
-    "No more events to load" : "គ្មាន​ព្រឹត្តិការណ៍​ច្រើនទៀតសម្រាប់ទាញយកមកទេ",
-    "Copied!" : "បានចម្លង",
-    "Press ⌘-C to copy." : " ចុច ⌘-C ដើម្បីចម្លង",
-    "Press Ctrl-C to copy." : "ចុច Ctrl-C ដើម្បីចម្លង",
-    "{name} (invisible)" : "{name} (ដែលមើលមិនឃើញ)",
-    "{name} (restricted)" : "{name} (ដែលហាមឃាត់)",
-    "There are no events for this filter" : "គ្មានព្រឹត្តិការណ៍សម្រាប់ចម្រោះនេះ",
-    "Activities" : "សកម្មភាពផ្សេងៗ"
+    "No more events to load" : "គ្មាន​ព្រឹត្តិការណ៍​ច្រើនទៀតសម្រាប់ទាញយកមកទេ"
 },
 "nplurals=1; plural=0;");

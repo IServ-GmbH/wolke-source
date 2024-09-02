@@ -26,7 +26,9 @@ namespace OCP\Files;
 
 use OC\Hooks\Emitter;
 use OC\User\NoUserException;
+use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Mount\IMountPoint;
+use OCP\Files\Node as INode;
 
 /**
  * Interface IRootFolder
@@ -60,12 +62,22 @@ interface IRootFolder extends Folder, Emitter {
 	/**
 	 * @return IMountPoint[]
 	 *
-	 * @since 27.0.1
+	 * @since 28.0.0
 	 */
 	public function getMountsIn(string $mountPoint): array;
 
 	/**
-	 * @since 27.0.1
+	 * Create a `Node` for a file or folder from the cache entry and mountpoint
+	 *
+	 * @param ICacheEntry $cacheEntry
+	 * @param IMountPoint $mountPoint
+	 * @return Node
+	 * @since 28.0.0
+	 */
+	public function getNodeFromCacheEntryAndMount(ICacheEntry $cacheEntry, IMountPoint $mountPoint): INode;
+
+	/**
+	 * @since 28.0.0
 	 */
 	public function getMount(string $mountPoint): IMountPoint;
 }

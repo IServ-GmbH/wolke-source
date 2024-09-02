@@ -5,13 +5,13 @@
     "No activities" : "ບໍ່ມີກິດຈະກຳ",
     "More activities" : "ກິດຈະກຳອື່ນໆ",
     "Daily activity summary for %s" : "ສະຫຼຸບກິດຈະກຳປະຈຳວັນ %s",
-    "_and %n more _::_and %n more _" : ["ແລະ 1%n ອື່ນໆ "],
     "All activities" : "ກິດຈະກຳທັງໝົດ",
     "By others" : "ໂດຍຄົນອື່ນ",
     "By you" : "ໂດຍ ເຈົ້າ",
     "Activity at %s" : "ກິດຈະກຳ ທີ່ 1%s",
     "Hello %s" : "ສະບາຍດີ 1%s",
     "Hello %s," : "ສະບາຍດີ 1%s ,",
+    "_and %n more _::_and %n more _" : ["ແລະ 1%n ອື່ນໆ "],
     "Mail" : "ຈົດໝາຍ",
     "Push" : "ກົດ",
     "Activity" : "ກິດຈະກໍາ",
@@ -36,10 +36,6 @@
     "Send daily activity summary in the morning" : "ສົ່ງສະຫຼຸບກິດຈະກຳປະຈຳວັນໃນຕອນເຊົ້າ",
     "Default settings" : "ການຕັ້ງຄ່າເລີ່ມຕົ້ນ",
     "Unable to save the settings" : "ບໍ່ສາມາດບັນທຶກການຕັ້ງຄ່າ",
-    "No more events to load" : "ບໍ່ມີເຫດການໃຫ້ໂຫລດອີກ",
-    "Copied!" : "ກ໋ອບປີ້ແລ້ວ",
-    "Not supported!" : "ບໍ່ຊັບຟອດ",
-    "Press Ctrl-C to copy." : "ກົດ Ctrl-C ເພື່ອ copy",
-    "Activities" : "ບັນດາກິດຈະກຳ"
+    "No more events to load" : "ບໍ່ມີເຫດການໃຫ້ໂຫລດອີກ"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

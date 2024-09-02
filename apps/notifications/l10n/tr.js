@@ -37,6 +37,10 @@ OC.L10N.register(
     "1 week" : "1 hafta",
     "Your settings have been updated." : "Ayarlarınız güncellendi.",
     "An error occurred while updating your settings." : "Ayarlarınız güncellenirken bir sorun çıktı.",
-    "You need to set up your email address before you can receive notification emails." : "Bildirim e-postalarını alabilmek için e-posta adresinizi belirtmelisiniz."
+    "You need to set up your email address before you can receive notification emails." : "Bildirim e-postalarını alabilmek için e-posta adresinizi belirtmelisiniz.",
+    "Also repeat sound on a secondary speaker" : "Ses ikinci bir hoparlörde yinelensin",
+    "Selection of the speaker device is currently not supported by Safari" : "Safari şu anda hoparlör seçilmesini desteklemiyor",
+    "Select a device" : "Bir aygıt seçin",
+    "None" : "Yok"
 },
 "nplurals=2; plural=(n > 1);");

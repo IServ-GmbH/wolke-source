@@ -9,11 +9,12 @@ OC.L10N.register(
     "guest" : "hospite",
     "Saved" : "Salveguardate",
     "Keyboard shortcuts" : "Combinationes de claves",
+    "Link" : "Ligamine",
+    "Undo" : "Disfacer",
     "URL" : "URL",
     "to" : "a",
-    "Undo" : "Disfacer",
+    "Edit" : "Modificar",
     "Info" : "Info",
-    "Warning" : "Aviso",
-    "Edit" : "Modificar"
+    "Warning" : "Aviso"
 },
 "nplurals=2; plural=(n != 1);");

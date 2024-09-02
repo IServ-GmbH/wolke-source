@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace OC\OCM\Model;
 
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\OCM\Events\ResourceTypeRegisterEvent;
 use OCP\OCM\Exceptions\OCMArgumentException;
 use OCP\OCM\Exceptions\OCMProviderException;
 use OCP\OCM\IOCMProvider;
@@ -40,6 +42,13 @@ class OCMProvider implements IOCMProvider {
 	private string $endPoint = '';
 	/** @var IOCMResource[] */
 	private array $resourceTypes = [];
+
+	private bool $emittedEvent = false;
+
+	public function __construct(
+		protected IEventDispatcher $dispatcher,
+	) {
+	}
 
 	/**
 	 * @param bool $enabled
@@ -96,6 +105,14 @@ class OCMProvider implements IOCMProvider {
 	}
 
 	/**
+	 * create a new resource to later add it with {@see IOCMProvider::addResourceType()}
+	 * @return IOCMResource
+	 */
+	public function createNewResourceType(): IOCMResource {
+		return new OCMResource();
+	}
+
+	/**
 	 * @param IOCMResource $resource
 	 *
 	 * @return $this
@@ -121,6 +138,12 @@ class OCMProvider implements IOCMProvider {
 	 * @return IOCMResource[]
 	 */
 	public function getResourceTypes(): array {
+		if (!$this->emittedEvent) {
+			$this->emittedEvent = true;
+			$event = new ResourceTypeRegisterEvent($this);
+			$this->dispatcher->dispatchTyped($event);
+		}
+
 		return $this->resourceTypes;
 	}
 

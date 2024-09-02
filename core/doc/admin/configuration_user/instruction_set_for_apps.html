@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Instruction set for apps &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -56,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="reset_user_password.html">Resetting a user password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_password_policy.html">User password policy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="two_factor-auth.html">Two-factor authentication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="user_auth_ftp_smb_imap.html">User authentication with IMAP, SMB, FTP and others</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap.html">User authentication with LDAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_cleanup.html">LDAP user cleanup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_api.html">The LDAP configuration API</a></li>
@@ -115,9 +122,9 @@
            <div itemprop="articleBody">
              
   <section id="instruction-set-for-apps">
-<h1>Instruction set for apps<a class="headerlink" href="#instruction-set-for-apps" title="Permalink to this headline"></a></h1>
+<h1>Instruction set for apps<a class="headerlink" href="#instruction-set-for-apps" title="Link to this heading"></a></h1>
 <section id="get-list-of-apps">
-<h2>Get list of apps<a class="headerlink" href="#get-list-of-apps" title="Permalink to this headline"></a></h2>
+<h2>Get list of apps<a class="headerlink" href="#get-list-of-apps" title="Link to this heading"></a></h2>
 <p>Returns a list of apps installed on the Nextcloud server. Authentication is done
 by sending a Basic HTTP Authorization
 header.</p>
@@ -132,8 +139,8 @@ header.</p>
 <li><p>101 - invalid input data</p></li>
 </ul>
 <section id="example">
-<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps?filter=enabled
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps?filter=enabled -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -141,7 +148,7 @@ header.</p>
 </ul>
 </section>
 <section id="xml-output">
-<h3>XML output<a class="headerlink" href="#xml-output" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#xml-output" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -160,7 +167,7 @@ header.</p>
 </section>
 </section>
 <section id="get-app-info">
-<h2>Get app info<a class="headerlink" href="#get-app-info" title="Permalink to this headline"></a></h2>
+<h2>Get app info<a class="headerlink" href="#get-app-info" title="Link to this heading"></a></h2>
 <p>Provides information on a specific application. Authentication is done by
 sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -172,8 +179,8 @@ sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id1">
-<h3>Example<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps/files
+<h3>Example<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X GET http://admin:secret@example.com/ocs/v1.php/cloud/apps/files -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -181,7 +188,7 @@ sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id2">
-<h3>XML output<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -216,7 +223,7 @@ sending a Basic HTTP Authorization header.</p>
 </section>
 </section>
 <section id="enable-an-app">
-<h2>Enable an app<a class="headerlink" href="#enable-an-app" title="Permalink to this headline"></a></h2>
+<h2>Enable an app<a class="headerlink" href="#enable-an-app" title="Link to this heading"></a></h2>
 <p>Enable an app.  Authentication is done by sending a Basic HTTP Authorization
 header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -228,8 +235,8 @@ header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id3">
-<h3>Example<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
+<h3>Example<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X POST http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -237,7 +244,7 @@ header.</p>
 </ul>
 </section>
 <section id="id4">
-<h3>XML output<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>
@@ -250,7 +257,7 @@ header.</p>
 </section>
 </section>
 <section id="disable-an-app">
-<h2>Disable an app<a class="headerlink" href="#disable-an-app" title="Permalink to this headline"></a></h2>
+<h2>Disable an app<a class="headerlink" href="#disable-an-app" title="Link to this heading"></a></h2>
 <p>Disables the specified app. Authentication is
 done by sending a Basic HTTP Authorization header.</p>
 <p><strong>Syntax: ocs/v1.php/cloud/apps/{appid}</strong></p>
@@ -262,8 +269,8 @@ done by sending a Basic HTTP Authorization header.</p>
 <li><p>100 - successful</p></li>
 </ul>
 <section id="id5">
-<h3>Example<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor
+<h3>Example<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ curl -X DELETE http://admin:secret@example.com/ocs/v1.php/cloud/apps/files_texteditor -H &quot;OCS-APIRequest: true&quot;
 </pre></div>
 </div>
 <ul class="simple">
@@ -271,7 +278,7 @@ done by sending a Basic HTTP Authorization header.</p>
 </ul>
 </section>
 <section id="id6">
-<h3>XML output<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<h3>XML output<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 <span class="nt">&lt;ocs&gt;</span>
 <span class="w">  </span><span class="nt">&lt;meta&gt;</span>

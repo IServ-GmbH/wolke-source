@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Contacts app &mdash; Nextcloud latest User Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=91d07486"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -63,12 +71,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#circle-roles">Circle roles</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#add-members-to-a-circle">Add members to a circle</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#circle-options">Circle options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#shared-items">Shared items</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="calendar.html">Using the Calendar app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html">Using the Mail app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="absence.html">Setting out-of-office messages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_android.html">Synchronizing with Android</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_ios.html">Synchronizing with iOS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_osx.html">Synchronizing with macOS</a></li>
@@ -112,7 +122,7 @@
            <div itemprop="articleBody">
              
   <section id="using-the-contacts-app">
-<h1>Using the Contacts app<a class="headerlink" href="#using-the-contacts-app" title="Permalink to this headline"></a></h1>
+<h1>Using the Contacts app<a class="headerlink" href="#using-the-contacts-app" title="Link to this heading"></a></h1>
 <p>The Contacts app is not enabled by default in Nextcloud latest and needs to
 be installed separately from our App Store.</p>
 <p>The Nextcloud Contacts app is similar to other mobile contact applications, but
@@ -122,13 +132,13 @@ in the application.</p>
 <p>Below, you will learn how to add contacts, edit or remove contacts, upload a
 contact picture and manage your address books.</p>
 <section id="adding-contacts">
-<h2>Adding Contacts<a class="headerlink" href="#adding-contacts" title="Permalink to this headline"></a></h2>
+<h2>Adding Contacts<a class="headerlink" href="#adding-contacts" title="Link to this heading"></a></h2>
 <p>When you first access the Contacts app, the system address book containing all
 users on the instance you are allowed to see, plus an empty default address book becomes available:</p>
 <figure class="align-default" id="id1">
 <img alt="../_images/contacts_empty.png" src="../_images/contacts_empty.png" />
 <figcaption>
-<p><span class="caption-text"><em>Default Address Book (empty)</em></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<p><span class="caption-text"><em>Default Address Book (empty)</em></span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>To add contacts into your address book, you can use one of the following methods:</p>
@@ -139,7 +149,7 @@ users on the instance you are allowed to see, plus an empty default address book
 <p>The fastest way to add a contact is to use a Virtual Contact File
 (VCF/vCard) file.</p>
 <section id="importing-virtual-contacts">
-<h3>Importing Virtual Contacts<a class="headerlink" href="#importing-virtual-contacts" title="Permalink to this headline"></a></h3>
+<h3>Importing Virtual Contacts<a class="headerlink" href="#importing-virtual-contacts" title="Link to this heading"></a></h3>
 <p>To Import Contacts Using a VCF/vCard File:</p>
 <ol class="arabic">
 <li><p>On top left of the screen you have “Import contacts” button that is shown only when you don’t have any contacts yet.</p></li>
@@ -168,7 +178,7 @@ users on the instance you are allowed to see, plus an empty default address book
 <p>After the import is complete, you will see your new contact in your address book.</p>
 </section>
 <section id="adding-contacts-manually">
-<h3>Adding Contacts Manually<a class="headerlink" href="#adding-contacts-manually" title="Permalink to this headline"></a></h3>
+<h3>Adding Contacts Manually<a class="headerlink" href="#adding-contacts-manually" title="Link to this heading"></a></h3>
 <p>If you can’t import virtual contacts, the Contacts app enables you to <strong>add contacts</strong> manually.</p>
 <p>To Create a New Contact:</p>
 <ol class="arabic">
@@ -185,12 +195,14 @@ users on the instance you are allowed to see, plus an empty default address book
 <li><p>Specify the new contact information then click Save.</p></li>
 <li><p>The View mode will be shown with the data you added</p></li>
 </ol>
-<figure class="align-default">
+<blockquote>
+<div><figure class="align-default">
 <img alt="../_images/contact_view_mode.png" src="../_images/contact_view_mode.png" />
 </figure>
+</div></blockquote>
 </section>
 <section id="edit-or-remove-contact-information">
-<h3>Edit or Remove Contact Information<a class="headerlink" href="#edit-or-remove-contact-information" title="Permalink to this headline"></a></h3>
+<h3>Edit or Remove Contact Information<a class="headerlink" href="#edit-or-remove-contact-information" title="Link to this heading"></a></h3>
 <p>The Contacts app enables you to edit or remove contact information.</p>
 <p>To edit or remove contact information:</p>
 <ol class="arabic simple">
@@ -203,7 +215,7 @@ users on the instance you are allowed to see, plus an empty default address book
 someone elses data, only your own. Your own data can also be modified in the <a class="reference internal" href="../userpreferences.html"><span class="doc">user settings</span></a>.</p>
 </section>
 <section id="contact-picture">
-<h3>Contact Picture<a class="headerlink" href="#contact-picture" title="Permalink to this headline"></a></h3>
+<h3>Contact Picture<a class="headerlink" href="#contact-picture" title="Link to this heading"></a></h3>
 <p>To add a picture for your new contacts, click on the upload button:</p>
 <figure class="align-default">
 <img alt="Contact picture (upload button)" src="../_images/contact_picture.png" />
@@ -220,7 +232,7 @@ click on the contacts picture for the following options to appear:</p>
 </section>
 </section>
 <section id="adding-and-managing-address-books">
-<h2>Adding and Managing Address Books<a class="headerlink" href="#adding-and-managing-address-books" title="Permalink to this headline"></a></h2>
+<h2>Adding and Managing Address Books<a class="headerlink" href="#adding-and-managing-address-books" title="Link to this heading"></a></h2>
 <p>Clicking on the “Settings” (gear) button at the bottom of the left sidebar
 provides access to Contacts app settings. This field shows all
 available address books, certain options for each address book, and enables you
@@ -233,14 +245,14 @@ to create new address books, simply by specifying an address books name:</p>
 with iOS, macOS, Thunderbird and other CardDAV clients.</p>
 </section>
 <section id="circles">
-<h2>Circles<a class="headerlink" href="#circles" title="Permalink to this headline"></a></h2>
+<h2>Circles<a class="headerlink" href="#circles" title="Link to this heading"></a></h2>
 <p>Informal collaboration takes place within organizations: an event to organize for a few weeks, a short ideation session between members from differents entities, workshops, a place to joke around and support team building, or simply in very organic organizations where formal structure is kept to a minimum.</p>
 <p>For all these reasons, Nextcloud supports Circles, a feature embedded in the Contacts app, where every user is able to create its own circle, a user-defined aggregate of accounts. Circles can be used later on to share files and folders, added to Talk conversations, like a regular group.</p>
 <figure class="align-default">
 <img alt="Circle in the Contacts app left menu" src="../_images/circle.png" />
 </figure>
 <section id="create-a-circle">
-<h3>Create a circle<a class="headerlink" href="#create-a-circle" title="Permalink to this headline"></a></h3>
+<h3>Create a circle<a class="headerlink" href="#create-a-circle" title="Link to this heading"></a></h3>
 <p>In the left menu, click on the + next to Circles.
 Set a circle name
 Landing on the circle configuration screen, you can:
@@ -248,12 +260,14 @@ Landing on the circle configuration screen, you can:
 - clicking on the three dot menu next to a user allow you to modify its role within the circle.</p>
 </section>
 <section id="circle-roles">
-<h3>Circle roles<a class="headerlink" href="#circle-roles" title="Permalink to this headline"></a></h3>
-<p>Circles support 4 types of roles:
-- Member
-- Moderator
-- Admin can configure circle options (+moderator permissions)
-- Owner</p>
+<h3>Circle roles<a class="headerlink" href="#circle-roles" title="Link to this heading"></a></h3>
+<p>Circles support 4 types of roles:</p>
+<ul class="simple">
+<li><p>Member</p></li>
+<li><p>Moderator</p></li>
+<li><p>Admin can configure circle options (+moderator permissions)</p></li>
+<li><p>Owner</p></li>
+</ul>
 <p><strong>Member</strong></p>
 <p>Member is the role with the lowest permissions. A member can only access the resources shared with the circle, and view the members of the circle.</p>
 <p><strong>Moderator</strong></p>
@@ -264,13 +278,23 @@ Landing on the circle configuration screen, you can:
 <p>In addition to admin permissions, an owner can transfer the circle ownership to another member of the circle. There can be only one single owner per circle.</p>
 </section>
 <section id="add-members-to-a-circle">
-<h3>Add members to a circle<a class="headerlink" href="#add-members-to-a-circle" title="Permalink to this headline"></a></h3>
+<h3>Add members to a circle<a class="headerlink" href="#add-members-to-a-circle" title="Link to this heading"></a></h3>
 <p>Local accounts, groups, email addresses or other circles can be added as members to a circle.
 For a group or a circle, the role applies to all members of the group or circle.</p>
 </section>
 <section id="circle-options">
-<h3>Circle options<a class="headerlink" href="#circle-options" title="Permalink to this headline"></a></h3>
+<h3>Circle options<a class="headerlink" href="#circle-options" title="Link to this heading"></a></h3>
 <p>Various self-explanatory options are available to configure a circle, to manage invites and membership, visibility of the circle, allowance of other circle membership and password protection.</p>
+</section>
+<section id="shared-items">
+<h3>Shared items<a class="headerlink" href="#shared-items" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 5.5.</span></p>
+</div>
+<figure class="align-default">
+<img alt="../_images/shared-items.png" src="../_images/shared-items.png" />
+</figure>
+<p>Items that are shared between two contacts will be displayed in the contact app. This includes media, calendar events, chat rooms, and shared deck cards, all of which will be visible in the contact details. This functionality is limited to contacts listed in the system address book. Currently, our system only supports shared items between two contacts.</p>
 </section>
 </section>
 </section>

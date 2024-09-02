@@ -35,13 +35,13 @@ use OCP\Lock\LockedException;
 class MemcacheLockingProvider extends AbstractLockingProvider {
 	/** @var array<string, array{time: int, ttl: int}> */
 	private array $oldTTLs = [];
-	private IMemcache $memcache;
-	private ITimeFactory $timeFactory;
 
-	public function __construct(IMemcache $memcache, ITimeFactory $timeFactory, int $ttl = 3600) {
-		$this->memcache = $memcache;
-		$this->timeFactory = $timeFactory;
-		$this->ttl = $ttl;
+	public function __construct(
+		private IMemcache $memcache,
+		private ITimeFactory $timeFactory,
+		int $ttl = 3600,
+	) {
+		parent::__construct($ttl);
 	}
 
 	private function setTTL(string $path, int $ttl = null, ?int $compare = null): void {

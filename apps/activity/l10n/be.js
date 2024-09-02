@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Няма дзеянняў",
     "More activities" : "Больш актыўнасцей",
     "Daily activity summary for %s" : "Зводка штодзённай дзейнасці для %s",
-    "_and %n more _::_and %n more _" : ["і яшчэ %n","і яшчэ %n","і яшчэ %n","і яшчэ %n"],
     "All activities" : "Уся дзейнасць",
     "By others" : "Іншымі",
     "By you" : "Вамі",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Прывітанне %s",
     "Hello %s," : "Прывітанне %s,",
     "There was some activity at %s" : "Была нейкая актыўнасць на %s",
+    "_and %n more _::_and %n more _" : ["і яшчэ %n","і яшчэ %n","і яшчэ %n","і яшчэ %n"],
     "Mail" : "Пошта",
     "Push" : "Push-паведамлення",
     "Activity" : "Падзеі",
@@ -52,14 +52,6 @@ OC.L10N.register(
     "Default settings" : "Прадвызначаныя налады",
     "Configure the default notification settings for new accounts." : "Наладзь прадвызначаныя налады абвяшчэння для новых акаўнтаў.",
     "Unable to save the settings" : "Не магчыма захаваць налады",
-    "No more events to load" : "Няма больш падзей для загрузкі",
-    "Copied!" : "Скапіявана!",
-    "Not supported!" : "Не падтрымліваецца!",
-    "Press ⌘-C to copy." : "Націсніце ⌘-C для капіявання.",
-    "Press Ctrl-C to copy." : "Націсніце Ctrl-C для капіявання.",
-    "{name} (invisible)" : "{name} (нябачны)",
-    "{name} (restricted)" : "{name} (абмежаваны)",
-    "There are no events for this filter" : "Для гэтага фільтра няма падзей",
-    "Activities" : "Дзеянні"
+    "No more events to load" : "Няма больш падзей для загрузкі"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

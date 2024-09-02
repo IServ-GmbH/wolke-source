@@ -129,7 +129,7 @@
 			});
 		}
 
-		$cpuFooterInfo.text(t('serverinfo', 'Load average: {cpu} (last minute)', { cpu: cpu1 }));
+		$cpuFooterInfo.text(t('serverinfo', 'Load average: {cpu} (last minute)', { cpu: cpu1.toFixed(2) }));
 		cpuLoadLine.append(new Date().getTime(), cpu1);
 	}
 
@@ -293,8 +293,8 @@
 					var data = response.ocs.data;
 					document.getElementById("servertime").innerHTML = data.servertime;
 					document.getElementById("uptime").innerHTML = data.uptime;
-					for (i in data.thermalzones) {
-						document.getElementById(data.thermalzones[i]['hash']).innerHTML = data.thermalzones[i]['temp'];
+					for (const thermalzone of data.thermalzones) {
+						document.getElementById(thermalzone.zone).textContent = thermalzone.temp;
 					}
 				},
 				error: function (data) {
@@ -318,13 +318,17 @@ function updateMonitoringUrl(event) {
 	const url = new URL($endpointUrl.value)
 	url.searchParams.delete('format')
 	url.searchParams.delete('skipApps')
+	url.searchParams.delete('skipUpdate')
 
 	for (const $param of $params) {
 		if ($param.name === 'format_json' && $param.checked) {
 			url.searchParams.set('format', 'json')
 		}
-		if ($param.name === 'skip_apps' && $param.checked) {
-			url.searchParams.set('skipApps', 'true')
+		if ($param.name === 'skip_apps' && !$param.checked) {
+			url.searchParams.set('skipApps', 'false')
+		}
+		if ($param.name === 'skip_update' && !$param.checked) {
+			url.searchParams.set('skipUpdate', 'false')
 		}
 	}
 

@@ -35,7 +35,6 @@ OC.L10N.register(
     "Free Space:" : "Voľné miesto:",
     "Network" : "Sieť",
     "Hostname:" : "Názov servera:",
-    "DNS:" : "DNS:",
     "Gateway:" : "Brána:",
     "Status:" : "Stav:",
     "Speed:" : "Rýchlosť:",
@@ -53,12 +52,15 @@ OC.L10N.register(
     "Groups:" : "Skupiny:",
     "Links:" : "Odkazy:",
     "Emails:" : "E-maily:",
+    "Federated sent:" : "Združené odoslané:",
+    "Federated received:" : "Združené prijaté:",
     "Talk conversations:" : "Talk /Rozhovor/ konverzácia",
     "PHP" : "PHP",
     "Version:" : "Verzia:",
     "Memory limit:" : "Obmedzenie pamäte:",
     "Max execution time:" : "Maximálny čas spustenia:",
     "Upload max size:" : "Maximálna veľkosť pre nahratie:",
+    "OPcache Revalidate Frequency:" : "Frekvencia opätovného overenia pamäte OPcache:",
     "Extensions:" : "Rozšírenia:",
     "Unable to list extensions" : "Nepodarilo sa zobraziť rozšírenia",
     "Show phpinfo" : "Zobraziť phpinfo",
@@ -70,6 +72,7 @@ OC.L10N.register(
     "Output in JSON" : "Výstup v JSON",
     "Skip server update" : "Preskočiť aktualizáciu servera",
     "To use an access token, please generate one then set it using the following command:" : "Pre používanie prístupového tokenu ho vygenerujte a potom ho nastavte použitím nasledujúceho príkazu:",
-    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Pri dotazovaní na vyššie uvedenú adresu URL potom poslať token s hlavičkou „NC-Token“."
+    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Pri dotazovaní na vyššie uvedenú adresu URL potom poslať token s hlavičkou „NC-Token“.",
+    "DNS:" : "DNS:"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example installation on OpenBSD &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -50,6 +58,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
@@ -115,7 +124,7 @@
            <div itemprop="articleBody">
              
   <section id="example-installation-on-openbsd">
-<span id="openbsd-installation-label"></span><h1>Example installation on OpenBSD<a class="headerlink" href="#example-installation-on-openbsd" title="Permalink to this headline"></a></h1>
+<span id="openbsd-installation-label"></span><h1>Example installation on OpenBSD<a class="headerlink" href="#example-installation-on-openbsd" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Nextcloud does not have official OpenBSD or other BSDs support</p>
@@ -131,7 +140,7 @@
 </div>
 <p>This will take care of your dependencies and give you the options to choose which PHP version do you want.</p>
 <section id="httpd-8">
-<h2>HTTPD(8)<a class="headerlink" href="#httpd-8" title="Permalink to this headline"></a></h2>
+<h2>HTTPD(8)<a class="headerlink" href="#httpd-8" title="Link to this heading"></a></h2>
 <p>Create a virtualhost in <code class="docutils literal notranslate"><span class="pre">/etc/httpd.conf</span></code> and add the following content to it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">server</span> <span class="s2">&quot;domain.tld&quot;</span> <span class="p">{</span>
       <span class="n">listen</span> <span class="n">on</span> <span class="n">egress</span> <span class="n">tls</span> <span class="n">port</span> <span class="mi">443</span>
@@ -213,7 +222,7 @@
 </div>
 </section>
 <section id="php">
-<h2>PHP<a class="headerlink" href="#php" title="Permalink to this headline"></a></h2>
+<h2>PHP<a class="headerlink" href="#php" title="Link to this heading"></a></h2>
 <p>Assuming that you are on OpenBSD -current (or &gt;= 6.8-stable) you could use PHP 7.4 so I will keep this version, but the concept is the same for other version.</p>
 <p>The PHP packages will be available since you installed Nextcloud with pkg_add, so you just need to adjust a bit your php.ini.</p>
 <p>It is recommended to add opcache to it:</p>
@@ -244,7 +253,7 @@
 </div>
 </section>
 <section id="database">
-<h2>Database<a class="headerlink" href="#database" title="Permalink to this headline"></a></h2>
+<h2>Database<a class="headerlink" href="#database" title="Link to this heading"></a></h2>
 <p>As mentioned, we will be using PostgreSQL as our database, and we already installed it, now we need to initialised:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ su - _postgresql
 $ mkdir /var/postgresql/data
@@ -271,7 +280,7 @@ $ exit
 <p>You can follow the README on <code class="docutils literal notranslate"><span class="pre">/usr/local/share/doc/pkg-readmes/postgresql-server</span></code> to create users and permission.</p>
 </section>
 <section id="redis">
-<h2>Redis<a class="headerlink" href="#redis" title="Permalink to this headline"></a></h2>
+<h2>Redis<a class="headerlink" href="#redis" title="Link to this heading"></a></h2>
 <p>We installed redis before, we need to enable it and start it and also add it to the Nextcloud conf:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rcctl enable redis</span>
 <span class="c1"># rcctl start redis</span>
@@ -288,14 +297,14 @@ $ exit
 </div>
 </section>
 <section id="cron-job">
-<h2>Cron job<a class="headerlink" href="#cron-job" title="Permalink to this headline"></a></h2>
+<h2>Cron job<a class="headerlink" href="#cron-job" title="Link to this heading"></a></h2>
 <p>We need to add the Nextcloud cron job to get some tasks done by adding this entry on your cronjob:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*/</span><span class="mi">5</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">ftp</span> <span class="o">-</span><span class="n">Vo</span> <span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">domain</span><span class="o">.</span><span class="n">tld</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">php</span> <span class="o">&gt;/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span>
 </pre></div>
 </div>
 </section>
 <section id="chroot">
-<h2>Chroot<a class="headerlink" href="#chroot" title="Permalink to this headline"></a></h2>
+<h2>Chroot<a class="headerlink" href="#chroot" title="Link to this heading"></a></h2>
 <p>Since in OpenBSD httpd(8) works with a chroot(8) by default, we need to be sure that we have the relevant files into the /var/www jail:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># mkdir -p /var/www/etc/ssl</span>
 <span class="c1"># install -m 444 -o root -g bin /etc/ssl/cert.pem /etc/ssl/openssl.cnf \</span>
@@ -305,7 +314,7 @@ $ exit
 </div>
 </section>
 <section id="nextcloud-final-steps">
-<h2>Nextcloud final steps<a class="headerlink" href="#nextcloud-final-steps" title="Permalink to this headline"></a></h2>
+<h2>Nextcloud final steps<a class="headerlink" href="#nextcloud-final-steps" title="Link to this heading"></a></h2>
 <p>Now that we have all in place, you should go to your browser with your URL (I am asuming you have an SSL already installed):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">domain</span><span class="o">.</span><span class="n">tld</span>
 </pre></div>
@@ -322,7 +331,7 @@ $ exit
 <p>Then you just follow the steps from your browser.</p>
 </section>
 <section id="note">
-<h2>NOTE<a class="headerlink" href="#note" title="Permalink to this headline"></a></h2>
+<h2>NOTE<a class="headerlink" href="#note" title="Link to this heading"></a></h2>
 <p>Remember always to read all the READMES from the OpenBSD packages on:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">pkg</span><span class="o">-</span><span class="n">readmes</span><span class="o">/</span>
 </pre></div>

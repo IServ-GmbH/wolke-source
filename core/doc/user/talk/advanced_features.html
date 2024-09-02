@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced Talk features &mdash; Nextcloud latest User Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=91d07486"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -62,6 +70,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#manage-breakout-rooms">Manage breakout rooms</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#call-recording">Call recording</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#manage-a-recording">Manage a recording</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#recording-consent">Recording consent</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="join_a_call_or_chat_as_guest.html">Join a call or chat as guest</a></li>
@@ -100,23 +113,23 @@
            <div itemprop="articleBody">
              
   <section id="advanced-talk-features">
-<h1>Advanced Talk features<a class="headerlink" href="#advanced-talk-features" title="Permalink to this headline"></a></h1>
+<h1>Advanced Talk features<a class="headerlink" href="#advanced-talk-features" title="Link to this heading"></a></h1>
 <p>Nextcloud Talk has a number of advanced features users might find useful.</p>
 <section id="matterbridge">
-<h2>Matterbridge<a class="headerlink" href="#matterbridge" title="Permalink to this headline"></a></h2>
+<h2>Matterbridge<a class="headerlink" href="#matterbridge" title="Link to this heading"></a></h2>
 <p>Matterbridge integration in Nextcloud Talk makes it possible to create ‘bridges’ between Talk conversations and conversations on other chat services like MS Teams, Discord, Matrix and others. You can find a list of supported protocols <a class="reference external" href="https://github.com/42wim/matterbridge#features">on the Matterbridge github page.</a></p>
 <p>A moderator can add a Matterbridge connection in the chat conversation settings.</p>
 <img alt="../_images/matterbridge-settings.png" src="../_images/matterbridge-settings.png" />
 <p>Each of the bridges has its own need in terms of configuration. Information for most is available on the Matterbridge wiki and can be accessed behind <code class="docutils literal notranslate"><span class="pre">more</span> <span class="pre">information</span></code> menu in the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu. You can also <a class="reference external" href="https://github.com/42wim/matterbridge/wiki">access the wiki directly.</a></p>
 </section>
 <section id="lobby">
-<h2>Lobby<a class="headerlink" href="#lobby" title="Permalink to this headline"></a></h2>
+<h2>Lobby<a class="headerlink" href="#lobby" title="Link to this heading"></a></h2>
 <p>The lobby feature allows you to show guests a waiting screen until the call starts. This is ideal for webinars with external participants, for example.</p>
 <img alt="../_images/lobby-in-talk.png" src="../_images/lobby-in-talk.png" />
 <p>You can choose to let the participants join the call at a specific time, or when you dismiss the lobby manually.</p>
 </section>
 <section id="commands">
-<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline"></a></h2>
+<h2>Commands<a class="headerlink" href="#commands" title="Link to this heading"></a></h2>
 <p>Nextcloud allows users to execute actions using commands. A command typically looks like:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">/wiki</span> <span class="pre">airplanes</span></code></p>
@@ -129,7 +142,7 @@
 <p>Find more information in the <a class="reference external" href="https://nextcloud-talk.readthedocs.io/en/stable/commands/">administrative documentation for Talk.</a></p>
 </section>
 <section id="talk-from-files">
-<h2>Talk from Files<a class="headerlink" href="#talk-from-files" title="Permalink to this headline"></a></h2>
+<h2>Talk from Files<a class="headerlink" href="#talk-from-files" title="Link to this heading"></a></h2>
 <p>In the Files app, you can chat about files in the sidebar, and even have a call while editing it. You first have to join the chat.</p>
 <img alt="../_images/join-chat.png" src="../_images/join-chat.png" />
 <img alt="../_images/sidebar-chat.png" src="../_images/sidebar-chat.png" />
@@ -139,7 +152,7 @@
 <img alt="../_images/file-room.png" src="../_images/file-room.png" />
 </section>
 <section id="create-tasks-from-chat-or-share-tasks-in-chat">
-<h2>Create tasks from chat or share tasks in chat<a class="headerlink" href="#create-tasks-from-chat-or-share-tasks-in-chat" title="Permalink to this headline"></a></h2>
+<h2>Create tasks from chat or share tasks in chat<a class="headerlink" href="#create-tasks-from-chat-or-share-tasks-in-chat" title="Link to this heading"></a></h2>
 <p>If Deck is installed, you can use the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu of a chat message and turn the message into a Deck task.</p>
 <img alt="../_images/deck-talk-create-card-menu.png" src="../_images/deck-talk-create-card-menu.png" />
 <img alt="../_images/deck-talk-create-card-dialog.png" src="../_images/deck-talk-create-card-dialog.png" />
@@ -148,11 +161,11 @@
 <img alt="../_images/deck-talk-share-card-to-chat-in-talk.png" src="../_images/deck-talk-share-card-to-chat-in-talk.png" />
 </section>
 <section id="breakout-rooms">
-<h2>Breakout rooms<a class="headerlink" href="#breakout-rooms" title="Permalink to this headline"></a></h2>
+<h2>Breakout rooms<a class="headerlink" href="#breakout-rooms" title="Link to this heading"></a></h2>
 <p>Breakout rooms allow you to divide a Nextcloud Talk call into smaller groups for more focused discussions. The moderator
 of the call can create multiple breakout rooms and assign participants to each room.</p>
 <section id="configure-breakout-rooms">
-<h3>Configure breakout rooms<a class="headerlink" href="#configure-breakout-rooms" title="Permalink to this headline"></a></h3>
+<h3>Configure breakout rooms<a class="headerlink" href="#configure-breakout-rooms" title="Link to this heading"></a></h3>
 <p>To create breakout rooms, you need to be a moderator in a group conversation. Click on the top-bar menu and click on
 “Setup breakout rooms”.</p>
 <img alt="../_images/talk-breakout-rooms-setup.png" src="../_images/talk-breakout-rooms-setup.png" />
@@ -166,19 +179,58 @@ Here you’ll be presented with 3 options:</p>
 <img alt="../_images/talk-breakout-rooms-setup-dialog.png" src="../_images/talk-breakout-rooms-setup-dialog.png" />
 </section>
 <section id="manage-breakout-rooms">
-<h3>Manage breakout rooms<a class="headerlink" href="#manage-breakout-rooms" title="Permalink to this headline"></a></h3>
+<h3>Manage breakout rooms<a class="headerlink" href="#manage-breakout-rooms" title="Link to this heading"></a></h3>
 <p>Once the breakout rooms are created, you will be able to see them in the sidebar.</p>
 <img alt="../_images/talk-breakout-rooms-sidebar.png" src="../_images/talk-breakout-rooms-sidebar.png" />
 <p>From the sidebar header</p>
 <ul class="simple">
 <li><p><strong>Start and stop the breakout rooms</strong>: this will move all the users in the parent conversation to their respective breakout rooms.</p></li>
 <li><p><strong>Broadcast a message to all the rooms</strong>: this will send a message to all the rooms at the same time.</p></li>
-<li><p><strong>Make changes to the assigned participants</strong>: this will open the participants editor where you can change which participans are assigned to which breakout room. From this dialog it’s also possible to delete the breakout rooms.</p></li>
+<li><p><strong>Make changes to the assigned participants</strong>: this will open the participants editor where you can change which participants are assigned to which breakout room. From this dialog it’s also possible to delete the breakout rooms.</p></li>
 </ul>
 <img alt="../_images/talk-breakout-rooms-sidebar-header.png" src="../_images/talk-breakout-rooms-sidebar-header.png" />
 <p>From the breakout room element in the sidebar, you can also join a particular breakout room or send a message to a
 specific room.</p>
 <img alt="../_images/talk-breakout-rooms-sidebar-item.png" src="../_images/talk-breakout-rooms-sidebar-item.png" />
+</section>
+</section>
+<section id="call-recording">
+<h2>Call recording<a class="headerlink" href="#call-recording" title="Link to this heading"></a></h2>
+<p>The recording feature provides users with an opportunity to:</p>
+<ul class="simple">
+<li><p>Start and stop recordings during a call.</p></li>
+<li><p>Record the video and audio stream of the speaker, as well as screen share.</p></li>
+<li><p>Access, share and download recorded files for future reference or distribution.</p></li>
+</ul>
+<p>Enabling this feature requires the recording server to be set up by the system administration.</p>
+<section id="manage-a-recording">
+<h3>Manage a recording<a class="headerlink" href="#manage-a-recording" title="Link to this heading"></a></h3>
+<p>The moderator of the conversation can start a recording together with a call start or anytime during a call:</p>
+<ul class="simple">
+<li><p><strong>Before the call</strong>: tick the checkbox “Start recording immediately with the call” in “Media settings”, then click on “Start call”.</p></li>
+<li><p><strong>During the call</strong>: click on the top-bar menu, then click “Start recording”.</p></li>
+</ul>
+<img alt="../_images/start-recording-before-call.png" src="../_images/start-recording-before-call.png" />
+<img alt="../_images/start-recording-in-call.png" src="../_images/start-recording-in-call.png" />
+<p>The recording will start shortly, and you will see a red indicator next to the call time. You can stop the recording at any time while the call is still ongoing by clicking on that indicator and selecting “Stop recording”, or by using the same action in the top-bar menu. If you do not manually stop the recording, it will end automatically when the call ends.</p>
+<img alt="../_images/stop-recording.png" src="../_images/stop-recording.png" />
+<p>After stopping a recording, the server will take some time to prepare and save the recorded file. The moderator, who started the recording, receives a notification when the file is uploaded. From there, it can be shared in the chat.</p>
+<img alt="../_images/share-recording-notification.png" src="../_images/share-recording-notification.png" />
+<img alt="../_images/shared-recordings.png" src="../_images/shared-recordings.png" />
+</section>
+<section id="recording-consent">
+<h3>Recording consent<a class="headerlink" href="#recording-consent" title="Link to this heading"></a></h3>
+<p>For compliance reasons with various privacy rights, it is possible to ask participants for consent to be recorded before joining the call. The system administration has the flexibility to utilize this feature in several ways:</p>
+<ul class="simple">
+<li><p>Disable consent completely.</p></li>
+<li><p>Enable mandatory consent system-wide, requiring consent for all conversations.</p></li>
+<li><p>Allow moderators to configure this option on a conversation level. In such cases, moderators can access the conversation settings to configure this option accordingly:</p></li>
+</ul>
+<img alt="../_images/enable-recording-consent.png" src="../_images/enable-recording-consent.png" />
+<p>If recording consent is enabled, every participant, including moderators, will see a highlighted section in the “Media settings” before joining a call.
+This section informs participants that the call may be recorded. To give explicit consent for recording, participants must check the box. If they do not give consent, they will not be allowed to join the call.</p>
+<img alt="../_images/give-recording-consent.png" src="../_images/give-recording-consent.png" />
+<img alt="../_images/give-recording-consent-checked.png" src="../_images/give-recording-consent-checked.png" />
 </section>
 </section>
 </section>

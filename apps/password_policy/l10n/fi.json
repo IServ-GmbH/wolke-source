@@ -13,7 +13,6 @@
     "Minimum password length" : "Salasanan vähimmäispituus",
     "User password history" : "Käyttäjän salasanahistoria",
     "Number of days until user password expires" : "Salasanan vanhenemisen aika päivissä",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Sisäänkirjautumisyritysten määrä, ennen kuin käyttäjätili estetään (0 tarkoittaa ei rajoitusta)",
     "Forbid common passwords" : "Kiellä yleisimmät salasanat",
     "Enforce upper and lower case characters" : "Pakota käyttämään isoja ja pieniä kirjaimia",
     "Enforce numeric characters" : "Pakota käyttämään numeroita",
@@ -21,8 +20,6 @@
     "Check password against the list of breached passwords from haveibeenpwned.com" : "Tarkista salasanan vastaavuus haveibeenpwned.comin keräämiin vuotaneisiin salasanoihin",
     "Unknown error" : "Tuntematon virhe",
     "Settings saved" : "Asetukset tallennettu",
-    "Error while saving settings" : "Virhe tallennettaessa asetuksia",
-    "Saved" : "Tallennettu",
-    "Error while saving" : "Virhe tallentaessa"
+    "Error while saving settings" : "Virhe tallennettaessa asetuksia"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

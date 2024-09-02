@@ -23,13 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Photos\Sabre\Album;
 
-use Sabre\DAV\Exception\Forbidden;
-use Sabre\DAV\Exception\Conflict;
 use OCA\Photos\Album\AlbumMapper;
 use OCA\Photos\Album\AlbumWithFiles;
 use OCA\Photos\Service\UserConfigService;
 use OCP\Files\IRootFolder;
 use OCP\IUserManager;
+use Sabre\DAV\Exception\Conflict;
+use Sabre\DAV\Exception\Forbidden;
 
 class SharedAlbumRoot extends AlbumRoot {
 	private IUserManager $userManager;
@@ -89,7 +89,7 @@ class SharedAlbumRoot extends AlbumRoot {
 			'nc:collaborator' => [
 				'id' => $this->album->getAlbum()->getUserId(),
 				'label' => $this->userManager->get($this->album->getAlbum()->getUserId())->getDisplayName(),
-				'type' => 1,
+				'type' => $this->album->getAlbum()->getReceivedFrom(),
 			],
 		]];
 	}

@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Minimalna długość hasła",
     "User password history" : "Historia haseł użytkownika",
     "Number of days until user password expires" : "Liczba dni do wygaśnięcia hasła użytkownika",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Liczba prób logowania przed zablokowaniem konta użytkownika (0 bez limitu)",
     "Forbid common passwords" : "Zabroń takich samych haseł",
     "Enforce upper and lower case characters" : "Wymuś wielkie i małe litery",
     "Enforce numeric characters" : "Wymuś znaki numeryczne",
@@ -28,8 +27,6 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Dni do wygaśnięcia muszą być liczbą nieujemną",
     "Maximum login attempts have to be a non negative number" : "Maksymalna liczba prób logowania musi być liczbą nieujemną",
     "Settings saved" : "Ustawienia zapisane",
-    "Error while saving settings" : "Błąd podczas zapisywania ustawień",
-    "Saved" : "Zapisano",
-    "Error while saving" : "Błąd podczas zapisywania"
+    "Error while saving settings" : "Błąd podczas zapisywania ustawień"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

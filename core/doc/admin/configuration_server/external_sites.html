@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Linking external sites &mdash; Nextcloud latest Administration Manual latest documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -51,10 +59,16 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html">Using the occ command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
-<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html">Memory caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html">Dashboard app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 <li class="toctree-l2"><a class="reference internal" href="email_configuration.html">Email</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Linking external sites</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configurations-preventing-embedding">Configurations preventing embedding</a></li>
@@ -62,15 +76,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="language_configuration.html">Language &amp; Locale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="logging_configuration.html">Logging</a></li>
-<li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html">Brute force protection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
-<li class="toctree-l2"><a class="reference internal" href="oauth2.html">OAuth2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Admin right privilege</a></li>
-<li class="toctree-l2"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
@@ -114,13 +123,13 @@
            <div itemprop="articleBody">
              
   <section id="linking-external-sites">
-<h1>Linking external sites<a class="headerlink" href="#linking-external-sites" title="Permalink to this headline"></a></h1>
+<h1>Linking external sites<a class="headerlink" href="#linking-external-sites" title="Link to this heading"></a></h1>
 <p>You can embed external websites or documents inside your Nextcloud pages with the <strong>External
 sites</strong> app, as this screenshot shows.</p>
 <figure class="align-default" id="id1">
 <img alt="../_images/external-sites-1.png" src="../_images/external-sites-1.png" />
 <figcaption>
-<p><span class="caption-text"><em>Click to enlarge</em></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<p><span class="caption-text"><em>Click to enlarge</em></span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>This is useful for quick access to important pages such as the
@@ -139,7 +148,7 @@ Currently the following options are available: All devices, Android app, iOS app
 <figure class="align-default" id="id2">
 <img alt="../_images/external-sites-2.png" src="../_images/external-sites-2.png" />
 <figcaption>
-<p><span class="caption-text"><em>Click to enlarge</em></span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+<p><span class="caption-text"><em>Click to enlarge</em></span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
 </figcaption>
 </figure>
 <p>The links appear in the Nextcloud menu on the top or in the settings menu, after
@@ -148,7 +157,7 @@ reloading the page.</p>
 <img alt="../_images/external-sites-3.png" src="../_images/external-sites-3.png" />
 </figure>
 <section id="configurations-preventing-embedding">
-<h2>Configurations preventing embedding<a class="headerlink" href="#configurations-preventing-embedding" title="Permalink to this headline"></a></h2>
+<h2>Configurations preventing embedding<a class="headerlink" href="#configurations-preventing-embedding" title="Link to this heading"></a></h2>
 <p>Your links may or may not work correctly due to the various ways that Web
 browsers and Web sites handle HTTP and HTTPS URLs, and because the External
 Sites app embeds external links in IFrames. Modern Web browsers try very hard

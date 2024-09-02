@@ -1,24 +1,14 @@
 diff --git apps/files_sharing/src/components/SharingEntry.vue apps/files_sharing/src/components/SharingEntry.vue
-index 4b8c2c5..11bfc34 100644
+index 6417ef0..ec59111 100644
 --- apps/files_sharing/src/components/SharingEntry.vue
 +++ apps/files_sharing/src/components/SharingEntry.vue
-@@ -29,7 +29,7 @@
- 			:menu-position="'left'"
- 			:url="share.shareWithAvatar" />
- 
--		<div class="sharing-entry__summary" @click.prevent="toggleQuickShareSelect">
-+		<div class="sharing-entry__summary">
- 			<component :is="share.shareWithLink ? 'a' : 'div'"
- 				:title="tooltip"
- 				:aria-label="tooltip"
-@@ -41,10 +41,6 @@
+@@ -41,9 +41,6 @@
  					<small v-if="hasStatus && share.status.message">({{ share.status.message }})</small>
  				</span>
  			</component>
--			<QuickShareSelect :share="share"
+-			<SharingEntryQuickShareSelect :share="share"
 -				:file-info="fileInfo"
--				:toggle="showDropdown"
 -				@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  		</div>
  		<NcButton class="sharing-entry__action"
- 			:aria-label="t('files_sharing', 'Open Sharing Details')"
+ 			data-cy-files-sharing-share-actions

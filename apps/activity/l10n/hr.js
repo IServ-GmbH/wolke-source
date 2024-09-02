@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Nema aktivnosti",
     "More activities" : "Više aktivnosti",
     "Daily activity summary for %s" : "Dnevni sažetak aktivnosti za %s",
-    "_and %n more _::_and %n more _" : ["i još %n ","i još %n ","i još %n "],
     "All activities" : "Sve aktivnosti",
     "By others" : "Od drugih",
     "By you" : "Vaše",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Pozdrav %s",
     "Hello %s," : "Pozdrav %s",
     "There was some activity at %s" : "Bilo je aktivnosti na %s",
+    "_and %n more _::_and %n more _" : ["i još %n ","i još %n ","i još %n "],
     "Mail" : "Pošta",
     "Push" : "Push",
     "Activity" : "Aktivnost",
@@ -56,14 +56,6 @@ OC.L10N.register(
     "Default settings" : "Zadane postavke",
     "Configure the default notification settings for new accounts." : "Konfiguriraj zadane postavke obavijesti za nove račune.",
     "Unable to save the settings" : "Nije moguće spremiti postavke",
-    "No more events to load" : "Nema više događaja za učitavanje",
-    "Copied!" : "Kopirano!",
-    "Not supported!" : "Nije podržano!",
-    "Press ⌘-C to copy." : "Pritisnite ⌘-C za kopiranje.",
-    "Press Ctrl-C to copy." : "Pritisnite Ctrl-C za kopiranje.",
-    "{name} (invisible)" : "{name} (nevidljivo)",
-    "{name} (restricted)" : "{name} (ograničeno)",
-    "There are no events for this filter" : "Nema događaja koji odgovaraju ovom filtru",
-    "Activities" : "Aktivnosti"
+    "No more events to load" : "Nema više događaja za učitavanje"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

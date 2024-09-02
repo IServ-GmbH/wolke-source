@@ -279,6 +279,8 @@ class Access extends LDAPUtility {
 	 * Normalizes a result grom getAttributes(), i.e. handles DNs and binary
 	 * data if present.
 	 *
+	 * DN values are escaped as per RFC 2253
+	 *
 	 * @param array $result from ILDAPWrapper::getAttributes()
 	 * @param string $attribute the attribute name that was read
 	 * @return string[]
@@ -313,9 +315,9 @@ class Access extends LDAPUtility {
 	public function extractRangeData($result, $attribute) {
 		$keys = array_keys($result);
 		foreach ($keys as $key) {
-			if ($key !== $attribute && strpos((string)$key, $attribute) === 0) {
+			if ($key !== $attribute && str_starts_with((string)$key, $attribute)) {
 				$queryData = explode(';', (string)$key);
-				if (strpos($queryData[1], 'range=') === 0) {
+				if (str_starts_with($queryData[1], 'range=')) {
 					$high = substr($queryData[1], 1 + strpos($queryData[1], '-'));
 					$data = [
 						'values' => $result[$key],
@@ -405,7 +407,7 @@ class Access extends LDAPUtility {
 		$domainParts = [];
 		$dcFound = false;
 		foreach ($allParts as $part) {
-			if (!$dcFound && strpos($part, 'dc=') === 0) {
+			if (!$dcFound && str_starts_with($part, 'dc=')) {
 				$dcFound = true;
 			}
 			if ($dcFound) {
@@ -1260,6 +1262,8 @@ class Access extends LDAPUtility {
 	/**
 	 * Executes an LDAP search
 	 *
+	 * DN values in the result set are escaped as per RFC 2253
+	 *
 	 * @throws ServerNotAvailableException
 	 */
 	public function search(
@@ -1528,7 +1532,7 @@ class Access extends LDAPUtility {
 	private function getFilterPartForSearch(string $search, $searchAttributes, string $fallbackAttribute): string {
 		$filter = [];
 		$haveMultiSearchAttributes = (is_array($searchAttributes) && count($searchAttributes) > 0);
-		if ($haveMultiSearchAttributes && strpos(trim($search), ' ') !== false) {
+		if ($haveMultiSearchAttributes && str_contains(trim($search), ' ')) {
 			try {
 				return $this->getAdvancedFilterPartForSearch($search, $searchAttributes);
 			} catch (DomainException $e) {
@@ -1742,7 +1746,7 @@ class Access extends LDAPUtility {
 		$uuid = false;
 		if ($this->detectUuidAttribute($dn, $isUser, false, $ldapRecord)) {
 			$attr = $this->connection->$uuidAttr;
-			$uuid = isset($ldapRecord[$attr]) ? $ldapRecord[$attr] : $this->readAttribute($dn, $attr);
+			$uuid = $ldapRecord[$attr] ?? $this->readAttribute($dn, $attr);
 			if (!is_array($uuid)
 				&& $uuidOverride !== ''
 				&& $this->detectUuidAttribute($dn, $isUser, true, $ldapRecord)) {
@@ -1993,8 +1997,15 @@ class Access extends LDAPUtility {
 				// no cookie known from a potential previous search. We need
 				// to start from 0 to come to the desired page. cookie value
 				// of '0' is valid, because 389ds
-				$reOffset = ($offset - $pageSize) < 0 ? 0 : $offset - $pageSize;
-				$this->search($filter, $base, $attr, $pageSize, $reOffset, true);
+				$defaultPageSize = (int)$this->connection->ldapPagingSize;
+				if ($offset < $defaultPageSize) {
+					/* Make a search with offset as page size and dismiss the result, to init the cookie */
+					$this->search($filter, $base, $attr, $offset, 0, true);
+				} else {
+					/* Make a search for previous page and dismiss the result, to init the cookie */
+					$reOffset = $offset - $defaultPageSize;
+					$this->search($filter, $base, $attr, $defaultPageSize, $reOffset, true);
+				}
 				if (!$this->hasMoreResults()) {
 					// when the cookie is reset with != 0 offset, there are no further
 					// results, so stop.
@@ -2007,12 +2018,12 @@ class Access extends LDAPUtility {
 			}
 			$this->logger->debug('Ready for a paged search', ['app' => 'user_ldap']);
 			return [true, $pageSize, $this->lastCookie];
-			/* ++ Fixing RHDS searches with pages with zero results ++
-			 * We couldn't get paged searches working with our RHDS for login ($limit = 0),
-			 * due to pages with zero results.
-			 * So we added "&& !empty($this->lastCookie)" to this test to ignore pagination
-			 * if we don't have a previous paged search.
-			 */
+		/* ++ Fixing RHDS searches with pages with zero results ++
+		 * We couldn't get paged searches working with our RHDS for login ($limit = 0),
+		 * due to pages with zero results.
+		 * So we added "&& !empty($this->lastCookie)" to this test to ignore pagination
+		 * if we don't have a previous paged search.
+		 */
 		} elseif ($this->lastCookie !== '') {
 			// a search without limit was requested. However, if we do use
 			// Paged Search once, we always must do it. This requires us to

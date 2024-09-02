@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Минимална должина на лозинка",
     "User password history" : "Историја на лозинки за корисник",
     "Number of days until user password expires" : "Број на денови до истекување на лозинка на корисник",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Број на обиди за најава пред да се блокира корисничката сметка. (0 без ограничување)",
     "Forbid common passwords" : "Забранети обични лозинки",
     "Enforce upper and lower case characters" : "Задолжителни карактери со големи и мали букви",
     "Enforce numeric characters" : "Задолжителни карактери со броеви",
@@ -27,8 +26,6 @@ OC.L10N.register(
     "History size has to be a non negative number" : "Историската должина неможе да биде негативен број",
     "Expiration days have to be a non negative number" : "Датумот на истекување неможе да биде негативен број",
     "Maximum login attempts have to be a non negative number" : "Максималниот број на обиди неможе да биде негативен број",
-    "Settings saved" : "Параматрите се зачувани",
-    "Saved" : "Зачувано",
-    "Error while saving" : "Грешка при зачувување"
+    "Settings saved" : "Параматрите се зачувани"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

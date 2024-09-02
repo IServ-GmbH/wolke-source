@@ -15,7 +15,6 @@ OC.L10N.register(
     "Minimum password length" : "Longària mìnima de crae",
     "User password history" : "Cronologia de is craes de s'utente",
     "Number of days until user password expires" : "Nùmeru de dies in antis de s'iscadèntzia de sa crae",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Nùmeru de tentativos de intrada in antis de su blocu de su contu (0 pro perunu lìmite)",
     "Forbid common passwords" : "Proibi is craes comunes",
     "Enforce upper and lower case characters" : "Pone caràteres a piticu e a mannu",
     "Enforce numeric characters" : "Pone caràtere numèricos",
@@ -27,7 +26,6 @@ OC.L10N.register(
     "History size has to be a non negative number" : "Sa mannària de sa cronologia deper èssere unu nùmeru positivu",
     "Expiration days have to be a non negative number" : "Is dies de iscadèntzia depent èssere unu nùmeru positivu",
     "Maximum login attempts have to be a non negative number" : "Is tentativos de intrada màssimos depent èssere unu nùmeru positivu",
-    "Settings saved" : "Cunfiguratzione sarvada",
-    "Saved" : "Sarvadu"
+    "Settings saved" : "Cunfiguratzione sarvada"
 },
 "nplurals=2; plural=(n != 1);");

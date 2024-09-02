@@ -25,7 +25,7 @@ body {
 	/* bring the default font size up to 14px */
 	font-size: .875em;
 	line-height: 1.6em;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, Ubuntu, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	color: var(--color-text);
 	text-align: center;
 	/* As guest, there is no color-background-plain */
@@ -107,7 +107,7 @@ body {
 .wrapper {
 	width: 100%;
 	max-width: 700px;
-	margin-top: 10vh;
+	margin-block: 10vh auto;
 }
 
 /* Default FORM */
@@ -215,7 +215,7 @@ form #datadirField legend {
 
 
 input, textarea, select, button, div[contenteditable=true] {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	font-family: system-ui, -apple-system, "Segoe UI", Roboto, Oxygen-Sans, Cantarell, Ubuntu, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 input,
 input:not([type='range']),
@@ -736,12 +736,11 @@ img.icon-loading-small-dark, object.icon-loading-small-dark, video.icon-loading-
 
 /* FOOTER */
 footer {
-	margin-top: auto;
 	.info .entity-name {
 		font-weight: bold;
 	}
 
-	&[role="contentinfo"] {
+	&.guest-box {
 		padding: 6px 24px;
 		margin-bottom: 1rem;
 
@@ -803,6 +802,9 @@ a.legal {
 }
 
 .guest-box, .body-login-container {
+	// Ensure the maxcontrast color is set for the background
+	--color-text-maxcontrast: var(--color-text-maxcontrast-background-blur, var(--color-main-text));
+
 	color: var(--color-main-text);
 	background-color: var(--color-main-background-blur);
 	padding: $guest-container-padding;

@@ -51,6 +51,7 @@ use OCP\Files\ForbiddenException;
 use OCP\Files\GenericFileException;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\Storage\IStorage;
+use OCP\Files\StorageNotAvailableException;
 use OCP\IConfig;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
@@ -87,7 +88,7 @@ class Local extends \OC\Files\Storage\Common {
 			$realPath = realpath($this->datadir) ?: $this->datadir;
 			$this->realDataDir = rtrim($realPath, '/') . '/';
 		}
-		if (substr($this->datadir, -1) !== '/') {
+		if (!str_ends_with($this->datadir, '/')) {
 			$this->datadir .= '/';
 		}
 		$this->dataDirLength = strlen($this->realDataDir);
@@ -98,6 +99,12 @@ class Local extends \OC\Files\Storage\Common {
 
 		// support Write-Once-Read-Many file systems
 		$this->unlinkOnTruncate = $this->config->getSystemValueBool('localstorage.unlink_on_truncate', false);
+
+		if (isset($arguments['isExternal']) && $arguments['isExternal'] && !$this->stat('')) {
+			// data dir not accessible or available, can happen when using an external storage of type Local
+			// on an unmounted system mount point
+			throw new StorageNotAvailableException('Local storage path does not exist "' . $this->getSourcePath('') . '"');
+		}
 	}
 
 	public function __destruct() {
@@ -139,10 +146,10 @@ class Local extends \OC\Files\Storage\Common {
 				if (in_array($file->getBasename(), ['.', '..'])) {
 					$it->next();
 					continue;
-				} elseif ($file->isDir()) {
-					rmdir($file->getPathname());
 				} elseif ($file->isFile() || $file->isLink()) {
 					unlink($file->getPathname());
+				} elseif ($file->isDir()) {
+					rmdir($file->getPathname());
 				}
 				$it->next();
 			}
@@ -161,7 +168,7 @@ class Local extends \OC\Files\Storage\Common {
 		if ($this->caseInsensitive && !$this->file_exists($path)) {
 			return false;
 		}
-		if (substr($path, -1) == '/') {
+		if (str_ends_with($path, '/')) {
 			$path = substr($path, 0, -1);
 		}
 		return is_dir($this->getSourcePath($path));
@@ -354,7 +361,7 @@ class Local extends \OC\Files\Storage\Common {
 		}
 	}
 
-	public function rename($source, $target) {
+	public function rename($source, $target): bool {
 		$srcParent = dirname($source);
 		$dstParent = dirname($target);
 
@@ -380,21 +387,10 @@ class Local extends \OC\Files\Storage\Common {
 		}
 
 		if ($this->is_dir($source)) {
-			// we can't move folders across devices, use copy instead
-			$stat1 = stat(dirname($this->getSourcePath($source)));
-			$stat2 = stat(dirname($this->getSourcePath($target)));
-			if ($stat1['dev'] !== $stat2['dev']) {
-				$result = $this->copy($source, $target);
-				if ($result) {
-					$result &= $this->rmdir($source);
-				}
-				return $result;
-			}
-
 			$this->checkTreeForForbiddenItems($this->getSourcePath($source));
 		}
 
-		if (rename($this->getSourcePath($source), $this->getSourcePath($target))) {
+		if (@rename($this->getSourcePath($source), $this->getSourcePath($target))) {
 			if ($this->caseInsensitive) {
 				if (mb_strtolower($target) === mb_strtolower($source) && !$this->file_exists($target)) {
 					return false;
@@ -403,7 +399,7 @@ class Local extends \OC\Files\Storage\Common {
 			return true;
 		}
 
-		return false;
+		return $this->copy($source, $target) && $this->unlink($source);
 	}
 
 	public function copy($source, $target) {
@@ -588,11 +584,14 @@ class Local extends \OC\Files\Storage\Common {
 	}
 
 	private function canDoCrossStorageMove(IStorage $sourceStorage) {
+		/** @psalm-suppress UndefinedClass */
 		return $sourceStorage->instanceOfStorage(Local::class)
 			// Don't treat ACLStorageWrapper like local storage where copy can be done directly.
 			// Instead, use the slower recursive copying in php from Common::copyFromStorage with
 			// more permissions checks.
 			&& !$sourceStorage->instanceOfStorage('OCA\GroupFolders\ACL\ACLStorageWrapper')
+			// Same for access control
+			&& !$sourceStorage->instanceOfStorage(\OCA\FilesAccessControl\StorageWrapper::class)
 			// when moving encrypted files we have to handle keys and the target might not be encrypted
 			&& !$sourceStorage->instanceOfStorage(Encryption::class);
 	}

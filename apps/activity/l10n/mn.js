@@ -10,7 +10,6 @@ OC.L10N.register(
     "No activities" : "Үйлдэл алга",
     "More activities" : "Дэлгэрэнгүй",
     "Daily activity summary for %s" : "%s-ийн өдөр тутмын үйлдлийн хураангуй",
-    "_and %n more _::_and %n more _" : ["ба дахиад %n","ба дахиад %n"],
     "All activities" : "Бүх үйлдэлүүд",
     "By others" : "Бусдын үйлдлүүд",
     "By you" : "Таны үйлдлүүд",
@@ -18,6 +17,7 @@ OC.L10N.register(
     "Hello %s" : "Сайн байна уу, %s",
     "Hello %s," : "Сайн байна уу, %s,",
     "There was some activity at %s" : "%s дээр үйлдэл хийсэн байна.",
+    "_and %n more _::_and %n more _" : ["ба дахиад %n","ба дахиад %n"],
     "Mail" : "Цахим шуудан",
     "Push" : "Дарах",
     "Activity" : "Үйлдлүүд",
@@ -56,14 +56,6 @@ OC.L10N.register(
     "Default settings" : "Анхдагч тохиргоо",
     "Configure the default notification settings for new accounts." : "Шинэ хэрэглэгчдийн \"Үйлдлүүд\" хэсгийн анхдагч тохиргоог тохируулах",
     "Unable to save the settings" : "Тохиргоог хадгалах боломжгүй байна",
-    "No more events to load" : "Өөр харуулах үйл явдал байхгүй байна",
-    "Copied!" : "Хуулав!",
-    "Not supported!" : "Дэмжихгүй!",
-    "Press ⌘-C to copy." : "Хуулахын тулд ⌘-C дарна уу.",
-    "Press Ctrl-C to copy." : "Хуулахын тулд Ctrl-C дарна уу.",
-    "{name} (invisible)" : "{name} (үл харагдах)",
-    "{name} (restricted)" : "{name} (хязгаартай)",
-    "There are no events for this filter" : "Энд ямар нэг үйл явдал алга",
-    "Activities" : "Үйлдлүүд"
+    "No more events to load" : "Өөр харуулах үйл явдал байхгүй байна"
 },
 "nplurals=2; plural=(n != 1);");

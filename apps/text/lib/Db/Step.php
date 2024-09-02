@@ -63,14 +63,14 @@ class Step extends Entity implements JsonSerializable {
 		if (\json_last_error() !== JSON_ERROR_NONE) {
 			throw new \InvalidArgumentException('Failed to parse step data');
 		}
-		$version = $this->version === self::VERSION_STORED_IN_ID
-			? $this->id
+		$version = $this->getVersion() === self::VERSION_STORED_IN_ID
+			? $this->getId()
 			: $this->getVersion();
 		return [
-			'id' => $this->id,
+			'id' => $this->getId(),
 			'data' => $jsonData,
 			'version' => $version,
-			'sessionId' => $this->sessionId
+			'sessionId' => $this->getSessionId()
 		];
 	}
 }

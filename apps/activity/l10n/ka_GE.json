@@ -5,13 +5,13 @@
     "Your settings have been updated." : "თქვენი პარამეტრები განახლდა.",
     "Settings have been updated." : "პარამეტრები განახლდა.",
     "No activities" : "აქტივობები არაა",
-    "_and %n more _::_and %n more _" : ["და კიდევ %n","და კიდევ %n"],
     "All activities" : "ყველა აქტივობა",
     "By others" : "სხვების მიერ",
     "By you" : "თქვენს მიერ",
     "Hello %s" : "გამარჯობა, %s",
     "Hello %s," : "გამარჯობა, %s,",
     "There was some activity at %s" : "%s-ზე იყო გარკვეული აქტივობა",
+    "_and %n more _::_and %n more _" : ["და კიდევ %n","და კიდევ %n"],
     "Mail" : "ფოსტა",
     "Activity" : "აქტივობა",
     "Notifications" : "შეტყობინებები",
@@ -33,14 +33,6 @@
     "RSS feed" : "RSS ლენტა",
     "Notification" : "შეტყობინება",
     "Default settings" : "საწყისი პარამეტრები",
-    "No more events to load" : "ყველა მოვლენა ჩამოტვირთულია",
-    "Copied!" : "კოპირებულია!",
-    "Not supported!" : "არ არის მხარდაჭერილი!",
-    "Press ⌘-C to copy." : "კოპირებისთვის დააჭირეთ ⌘-C-ს.",
-    "Press Ctrl-C to copy." : "კოპირებისთვის დააჭირეთ Ctrl-C-ს.",
-    "{name} (invisible)" : "{name} (უჩინარი)",
-    "{name} (restricted)" : "{name} (აკრძალული)",
-    "There are no events for this filter" : "ამ ფილტრის შესაბამისი მოვლენები არაა",
-    "Activities" : "აქტივობები"
+    "No more events to load" : "ყველა მოვლენა ჩამოტვირთულია"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

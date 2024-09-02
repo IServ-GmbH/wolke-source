@@ -27,10 +27,12 @@ echo "Build JS artefacts..."
 make -C "$REPO_PATH" build-js-production
 
 echo "Creating main.patch..."
+git -C "$REPO_PATH" add -N . # required to include newly added files
 # --binary is required for the "compiled" JavaScript files
 # Vue files are not part of the release tarball, thus we skip them when creating the patch.
 # The non-core-repo-apps in apps/ are ignored automatically because they're part of .gitignore.
 git -C "$REPO_PATH" diff --binary ':!*.vue' > "$PATCH_DESTINATION/main.patch"
 
 echo "Creating apps_activity.patch..."
+git -C "$REPO_PATH/apps/activity" add -N .
 git -C "$REPO_PATH/apps/activity" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_activity.patch"

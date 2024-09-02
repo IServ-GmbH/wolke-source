@@ -115,6 +115,7 @@ class Configuration {
 		'ldapExpertUsernameAttr' => null,
 		'ldapExpertUUIDUserAttr' => null,
 		'ldapExpertUUIDGroupAttr' => null,
+		'markRemnantsAsDisabled' => false,
 		'lastJpegPhotoLookup' => null,
 		'ldapNestedGroups' => false,
 		'ldapPagingSize' => null,
@@ -177,7 +178,7 @@ class Configuration {
 	public function setConfiguration(array $config, array &$applied = null): void {
 		$cta = $this->getConfigTranslationArray();
 		foreach ($config as $inputKey => $val) {
-			if (strpos($inputKey, '_') !== false && array_key_exists($inputKey, $cta)) {
+			if (str_contains($inputKey, '_') && array_key_exists($inputKey, $cta)) {
 				$key = $cta[$inputKey];
 			} elseif (array_key_exists($inputKey, $this->config)) {
 				$key = $inputKey;
@@ -192,7 +193,7 @@ class Configuration {
 					break;
 				case 'homeFolderNamingRule':
 					$trimmedVal = trim($val);
-					if ($trimmedVal !== '' && strpos($val, 'attr:') === false) {
+					if ($trimmedVal !== '' && !str_contains($val, 'attr:')) {
 						$val = 'attr:'.$trimmedVal;
 					}
 					break;
@@ -469,6 +470,7 @@ class Configuration {
 			'ldap_expert_uuid_group_attr' => '',
 			'has_memberof_filter_support' => 0,
 			'use_memberof_to_detect_membership' => 1,
+			'ldap_mark_remnants_as_disabled' => 0,
 			'last_jpegPhoto_lookup' => 0,
 			'ldap_nested_groups' => 0,
 			'ldap_paging_size' => 500,
@@ -545,6 +547,7 @@ class Configuration {
 			'ldap_expert_uuid_group_attr' => 'ldapExpertUUIDGroupAttr',
 			'has_memberof_filter_support' => 'hasMemberOfFilterSupport',
 			'use_memberof_to_detect_membership' => 'useMemberOfToDetectMembership',
+			'ldap_mark_remnants_as_disabled' => 'markRemnantsAsDisabled',
 			'last_jpegPhoto_lookup' => 'lastJpegPhotoLookup',
 			'ldap_nested_groups' => 'ldapNestedGroups',
 			'ldap_paging_size' => 'ldapPagingSize',
@@ -587,7 +590,7 @@ class Configuration {
 		if ($value === self::AVATAR_PREFIX_NONE) {
 			return [];
 		}
-		if (strpos($value, self::AVATAR_PREFIX_DATA_ATTRIBUTE) === 0) {
+		if (str_starts_with($value, self::AVATAR_PREFIX_DATA_ATTRIBUTE)) {
 			$attribute = trim(substr($value, strlen(self::AVATAR_PREFIX_DATA_ATTRIBUTE)));
 			if ($attribute === '') {
 				return $defaultAttributes;

@@ -9,7 +9,7 @@
     "No activities" : "Nessuna attività",
     "More activities" : "Altre attività",
     "Daily activity summary for %s" : "Riepilogo giornaliero delle attività per %s",
-    "_and %n more _::_and %n more _" : ["e %n altro ","e %n altri ","e %n altri "],
+    "_and %n more…_::_and %n more…_" : ["e %n altro…","e altri %n …","e altri %n …"],
     "All activities" : "Tutte le attività",
     "By others" : "Di altri",
     "By you" : "Tue",
@@ -17,6 +17,7 @@
     "Hello %s" : "Ciao %s",
     "Hello %s," : "Ciao %s,",
     "There was some activity at %s" : "Attività registrata su %s",
+    "_and %n more _::_and %n more _" : ["e %n altro ","e %n altri ","e %n altri "],
     "Mail" : "Posta",
     "Push" : "Push",
     "Activity" : "Attività",
@@ -64,14 +65,6 @@
     "Configure the default notification settings for new accounts." : "Configura le impostazioni predefinite di notifica per i nuovi account.",
     "Unable to save the settings" : "Impossibile salvare le impostazioni",
     "No more events to load" : "Non ci sono altri eventi da caricare",
-    "Copied!" : "Copiato!",
-    "Not supported!" : "Non supportato!",
-    "Press ⌘-C to copy." : "Premi ⌘-C per copiare.",
-    "Press Ctrl-C to copy." : "Premi Ctrl-C per copiare.",
-    "{name} (invisible)" : "{name} (invisibile)",
-    "{name} (restricted)" : "{name} (limitato)",
-    "There are no events for this filter" : "Non ci sono eventi per questo filtro",
-    "Activities" : "Attività",
     "Could not load activites" : "Impossibile caricare le attività"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

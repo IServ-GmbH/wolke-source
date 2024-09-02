@@ -8,14 +8,15 @@ OC.L10N.register(
     "Password needs to be at least %s characters long." : "Довжина пароля має бути не менше %s символів.",
     "Password needs to contain at least one numeric character." : "Пароль має містити принаймні одну цифру.",
     "Password needs to contain at least one special character." : "Пароль повинен містити хоча б один спеціальний символ.",
-    "Password needs to contain at least one lower and one upper case character." : "Пароль повинен містити принаймні один нижній і один верхній регістри.",
+    "Password needs to contain at least one lower and one upper case character." : "Пароль повинен містити принаймні один символ у нижньому та один у верхньому регістрах.",
     "Password policy" : "Політика паролів",
     "Allows admins to configure a password policy" : "Дозволяє адміністраторам налаштовувати політику паролів",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Дозволити адміністратору визначати певні попередні умови для пароля, напр. дотримуватися мінімальної довжини",
     "Minimum password length" : "Мінімальна довжина пароля",
     "User password history" : "Історія паролів користувача",
     "Number of days until user password expires" : "Кількість днів до закінчення терміну дії пароля користувача",
-    "Number of login attempts before the user account is blocked (0 for no limit)" : "Кількість спроб входу до блокування облікового запису користувача (0 без обмежень)",
+    "Number of login attempts before the user account will be disabled until manual action is taken. (0 for no limit)" : "Кількість спроб авторизації перед тим, як обліковий запис користувача буде вимкнено автоматично (0 - без обмежень)",
+    "Please note, this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Зверніть увагу, що цей параметр означає налаштування захисту для облікових записів, що перебувають під атакою. Вимкнені облікові записи потрібно буде адміністраторові повторно вручну увімкнути. Незалежно від цих налаштувань адреси IP тих, хто намагається підібрати пароль для авторизацію, буде заблоковано за допомогою захисту від підбору паролів.",
     "Forbid common passwords" : "Заборонити загальні паролі",
     "Enforce upper and lower case characters" : "Застосування символів верхнього та нижнього регістру",
     "Enforce numeric characters" : "Застосування цифрових символів",
@@ -29,7 +30,6 @@ OC.L10N.register(
     "Maximum login attempts have to be a non negative number" : "Максимальна кількість спроб входу має бути невід’ємним числом",
     "Settings saved" : "Налаштування збережено",
     "Error while saving settings" : "Помилка під час збереження налаштувань",
-    "Saved" : "Збережено",
-    "Error while saving" : "Помилка під час збереження"
+    "Please note, that this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Зверніть увагу, що цей параметр означає налаштування захисту для облікових записів, що перебувають під атакою. Вимкнені облікові записи потрібно буде адміністраторові повторно вручну увімкнути. Незалежно від цих налаштувань адреси IP тих, хто намагається підібрати пароль для авторизацію, буде заблоковано за допомогою захисту від підбору паролів."
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

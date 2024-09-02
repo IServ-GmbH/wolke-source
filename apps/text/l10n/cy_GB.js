@@ -9,12 +9,13 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Llwybrau byr bysellfwrdd",
     "Bold" : "Trwm",
     "Italic" : "Italig",
+    "Link" : "Dolen",
+    "Undo" : "Dadwneud",
     "URL" : "URL",
     "to" : "at",
+    "Edit" : "Golygu",
     "Source code" : "Cod ffynhonnell",
-    "Undo" : "Dadwneud",
     "Info" : "Info",
-    "Warning" : "Rhybudd",
-    "Edit" : "Golygu"
+    "Warning" : "Rhybudd"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

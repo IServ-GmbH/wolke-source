@@ -42,18 +42,18 @@ use Doctrine\DBAL\Driver;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Platforms\OraclePlatform;
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Statement;
+use OC\DB\QueryBuilder\QueryBuilder;
+use OC\SystemConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Diagnostics\IEventLogger;
 use OCP\IRequestId;
 use OCP\PreConditionNotMetException;
 use OCP\Profiler\IProfiler;
-use OC\DB\QueryBuilder\QueryBuilder;
-use OC\SystemConfig;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class Connection extends \Doctrine\DBAL\Connection {
@@ -78,6 +78,12 @@ class Connection extends \Doctrine\DBAL\Connection {
 
 	/** @var DbDataCollector|null */
 	protected $dbDataCollector = null;
+
+	protected bool $logDbException = false;
+	private ?array $transactionBacktrace = null;
+
+	protected bool $logRequestId;
+	protected string $requestId;
 
 	/**
 	 * Initializes a new instance of the Connection class.
@@ -105,6 +111,10 @@ class Connection extends \Doctrine\DBAL\Connection {
 
 		$this->systemConfig = \OC::$server->getSystemConfig();
 		$this->logger = \OC::$server->get(LoggerInterface::class);
+
+		$this->logRequestId = $this->systemConfig->getValue('db.log_request_id', false);
+		$this->logDbException = $this->systemConfig->getValue('db.log_exceptions', false);
+		$this->requestId = Server::get(IRequestId::class)->getId();
 
 		/** @var \OCP\Profiler\IProfiler */
 		$profiler = \OC::$server->get(IProfiler::class);
@@ -220,7 +230,7 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 * @return Statement The prepared statement.
 	 * @throws Exception
 	 */
-	public function prepare($statement, $limit = null, $offset = null): Statement {
+	public function prepare($sql, $limit = null, $offset = null): Statement {
 		if ($limit === -1 || $limit === null) {
 			$limit = null;
 		} else {
@@ -231,10 +241,9 @@ class Connection extends \Doctrine\DBAL\Connection {
 		}
 		if (!is_null($limit)) {
 			$platform = $this->getDatabasePlatform();
-			$statement = $platform->modifyLimitQuery($statement, $limit, $offset);
+			$sql = $platform->modifyLimitQuery($sql, $limit, $offset);
 		}
-		$statement = $this->replaceTablePrefix($statement);
-		$statement = $this->adapter->fixupStatement($statement);
+		$statement = $this->finishQuery($sql);
 
 		return parent::prepare($statement);
 	}
@@ -255,19 +264,22 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 * @throws \Doctrine\DBAL\Exception
 	 */
 	public function executeQuery(string $sql, array $params = [], $types = [], QueryCacheProfile $qcp = null): Result {
-		$sql = $this->replaceTablePrefix($sql);
-		$sql = $this->adapter->fixupStatement($sql);
+		$sql = $this->finishQuery($sql);
 		$this->queriesExecuted++;
 		$this->logQueryToFile($sql);
-		return parent::executeQuery($sql, $params, $types, $qcp);
+		try {
+			return parent::executeQuery($sql, $params, $types, $qcp);
+		} catch (\Exception $e) {
+			$this->logDatabaseException($e);
+			throw $e;
+		}
 	}
 
 	/**
 	 * @throws Exception
 	 */
 	public function executeUpdate(string $sql, array $params = [], array $types = []): int {
-		$sql = $this->replaceTablePrefix($sql);
-		$sql = $this->adapter->fixupStatement($sql);
+		$sql = $this->finishQuery($sql);
 		$this->queriesExecuted++;
 		$this->logQueryToFile($sql);
 		return parent::executeUpdate($sql, $params, $types);
@@ -288,11 +300,15 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 * @throws \Doctrine\DBAL\Exception
 	 */
 	public function executeStatement($sql, array $params = [], array $types = []): int {
-		$sql = $this->replaceTablePrefix($sql);
-		$sql = $this->adapter->fixupStatement($sql);
+		$sql = $this->finishQuery($sql);
 		$this->queriesExecuted++;
 		$this->logQueryToFile($sql);
-		return (int)parent::executeStatement($sql, $params, $types);
+		try {
+			return (int)parent::executeStatement($sql, $params, $types);
+		} catch (\Exception $e) {
+			$this->logDatabaseException($e);
+			throw $e;
+		}
 	}
 
 	protected function logQueryToFile(string $sql): void {
@@ -321,14 +337,14 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 *
 	 * @param string $seqName Name of the sequence object from which the ID should be returned.
 	 *
-	 * @return string the last inserted ID.
+	 * @return int the last inserted ID.
 	 * @throws Exception
 	 */
-	public function lastInsertId($seqName = null) {
-		if ($seqName) {
-			$seqName = $this->replaceTablePrefix($seqName);
+	public function lastInsertId($name = null): int {
+		if ($name) {
+			$name = $this->replaceTablePrefix($name);
 		}
-		return $this->adapter->lastInsertId($seqName);
+		return $this->adapter->lastInsertId($name);
 	}
 
 	/**
@@ -354,11 +370,21 @@ class Connection extends \Doctrine\DBAL\Connection {
 	 * @deprecated 15.0.0 - use unique index and "try { $db->insert() } catch (UniqueConstraintViolationException $e) {}" instead, because it is more reliable and does not have the risk for deadlocks - see https://github.com/nextcloud/server/pull/12371
 	 */
 	public function insertIfNotExist($table, $input, array $compare = null) {
-		return $this->adapter->insertIfNotExist($table, $input, $compare);
+		try {
+			return $this->adapter->insertIfNotExist($table, $input, $compare);
+		} catch (\Exception $e) {
+			$this->logDatabaseException($e);
+			throw $e;
+		}
 	}
 
 	public function insertIgnoreConflict(string $table, array $values) : int {
-		return $this->adapter->insertIgnoreConflict($table, $values);
+		try {
+			return $this->adapter->insertIgnoreConflict($table, $values);
+		} catch (\Exception $e) {
+			$this->logDatabaseException($e);
+			throw $e;
+		}
 	}
 
 	private function getType($value) {
@@ -516,6 +542,16 @@ class Connection extends \Doctrine\DBAL\Connection {
 		return $schema->tablesExist([$table]);
 	}
 
+	protected function finishQuery(string $statement): string {
+		$statement = $this->replaceTablePrefix($statement);
+		$statement = $this->adapter->fixupStatement($statement);
+		if ($this->logRequestId) {
+			return $statement . " /* reqid: " . $this->requestId . " */";
+		} else {
+			return $statement;
+		}
+	}
+
 	// internal use
 	/**
 	 * @param string $statement
@@ -600,12 +636,47 @@ class Connection extends \Doctrine\DBAL\Connection {
 			return new SQLiteMigrator($this, $config, $dispatcher);
 		} elseif ($platform instanceof OraclePlatform) {
 			return new OracleMigrator($this, $config, $dispatcher);
-		} elseif ($platform instanceof MySQLPlatform) {
-			return new MySQLMigrator($this, $config, $dispatcher);
-		} elseif ($platform instanceof PostgreSQL94Platform) {
-			return new PostgreSqlMigrator($this, $config, $dispatcher);
 		} else {
 			return new Migrator($this, $config, $dispatcher);
+		}
+	}
+
+	public function beginTransaction() {
+		if (!$this->inTransaction()) {
+			$this->transactionBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		}
+		return parent::beginTransaction();
+	}
+
+	public function commit() {
+		$result = parent::commit();
+		if ($this->getTransactionNestingLevel() === 0) {
+			$this->transactionBacktrace = null;
+		}
+		return $result;
+	}
+
+	public function rollBack() {
+		$result = parent::rollBack();
+		if ($this->getTransactionNestingLevel() === 0) {
+			$this->transactionBacktrace = null;
+		}
+		return $result;
+	}
+
+	/**
+	 * Log a database exception if enabled
+	 *
+	 * @param \Exception $exception
+	 * @return void
+	 */
+	public function logDatabaseException(\Exception $exception): void {
+		if ($this->logDbException) {
+			if ($exception instanceof Exception\UniqueConstraintViolationException) {
+				$this->logger->info($exception->getMessage(), ['exception' => $exception, 'transaction' => $this->transactionBacktrace]);
+			} else {
+				$this->logger->error($exception->getMessage(), ['exception' => $exception, 'transaction' => $this->transactionBacktrace]);
+			}
 		}
 	}
 }
