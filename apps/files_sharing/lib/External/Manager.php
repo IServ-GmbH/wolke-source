@@ -38,6 +38,7 @@ use Doctrine\DBAL\Driver\Exception;
 use OC\Files\Filesystem;
 use OCA\FederatedFileSharing\Events\FederatedShareAddedEvent;
 use OCA\Files_Sharing\Helper;
+use OCP\Collaboration\Collaborators\ISearch;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
@@ -98,6 +99,9 @@ class Manager {
 	/** @var LoggerInterface */
 	private $logger;
 
+	/** @var ISearch */
+	private $collaboratorSearch;
+
 	public function __construct(
 		IDBConnection                   $connection,
 		\OC\Files\Mount\Manager         $mountManager,
@@ -111,7 +115,8 @@ class Manager {
 		IUserManager                    $userManager,
 		IUserSession                    $userSession,
 		IEventDispatcher                $eventDispatcher,
-		LoggerInterface                 $logger
+		LoggerInterface                 $logger,
+		ISearch                         $collaboratorSearch
 	) {
 		$user = $userSession->getUser();
 		$this->connection = $connection;
@@ -127,6 +132,7 @@ class Manager {
 		$this->userManager = $userManager;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->logger = $logger;
+		$this->collaboratorSearch = $collaboratorSearch;
 	}
 
 	/**
@@ -759,7 +765,7 @@ class Manager {
 	 * @return array list of open server-to-server shares
 	 */
 	public function getOpenShares() {
-		return $this->getShares(false);
+		return $this->populateOwnerNames($this->getShares(false));
 	}
 
 	/**
@@ -822,10 +828,31 @@ class Manager {
 					return (bool)$share['accepted'] === $accepted;
 				});
 			}
+
 			return array_values($shares);
 		} catch (\Doctrine\DBAL\Exception $e) {
 			$this->logger->emergency('Error when retrieving shares', ['exception' => $e]);
 			return [];
 		}
+	}
+
+	/**
+	 * Populates the 'ownerDisplayName' for each remote share in a list.
+	 * This modifies the share in the list.
+	 *
+	 * @param array $shares List of remote shares
+	 * @return array The populated list for chaining
+	 */
+	private function populateOwnerNames(array $shares): array {
+		// set owner display name for shares
+		foreach ($shares as &$share) {
+			// remote search saves the results in 'remotes'
+			[$ownerResults,] = $this->collaboratorSearch->search($share['owner'], [IShare::TYPE_REMOTE], false, 1, 0);
+			// 0 is the index for the first and only result if any.
+			if (isset($ownerResults['remotes'][0]['name'])) {
+				$share['ownerDisplayName'] = $ownerResults['remotes'][0]['name'];
+			}
+		}
+		return $shares;
 	}
 }
