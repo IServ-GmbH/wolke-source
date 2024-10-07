@@ -90,8 +90,9 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
 
 ### Frontend
 
-- Hide "Allow edit" menu entry when publicly sharing files that cannot be edited in the browser. #54278
+- Disabled "Allow edit" menu entry when publicly sharing files that cannot be edited in the browser. #54278
   - apps/files_sharing/src/views/SharingDetailsTab.vue
+  - Hide "Allow edit", "Allow delete" for folders
 - Hide the description text with links to Nextcloud's documentation on top of the theme/accessibility settings page. #52676
   - apps/theming/src/UserThemes.vue
 - Remove link to Nextcloud's WebDAV documentation when opening Files - File settings. #52676

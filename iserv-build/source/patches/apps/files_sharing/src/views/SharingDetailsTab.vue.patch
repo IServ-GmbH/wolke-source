@@ -2,39 +2,15 @@ diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing
 index b0cb044..fe6b66d 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
-@@ -33,16 +33,14 @@
+@@ -32,6 +32,7 @@
+ 						</template>
  					</NcCheckboxRadioSwitch>
  					<NcCheckboxRadioSwitch :button-variant="true"
++                        v-if="canEditFileType"
  						data-cy-files-sharing-share-permissions-bundle="upload-edit"
-+						v-if="canEditFileType && !isPublicShare"
  						:checked.sync="sharingPermission"
  						:value="bundledPermissions.ALL.toString()"
- 						name="sharing_permission_radio"
- 						type="radio"
- 						button-variant-grouped="vertical"
- 						@update:checked="toggleCustomPermissions">
--						<template v-if="allowsFileDrop">
--							{{ t('files_sharing', 'Allow upload and editing') }}
--						</template>
--						<template v-else>
-+						<template>
- 							{{ t('files_sharing', 'Allow editing') }}
- 						</template>
- 						<template #icon>
-@@ -165,10 +163,10 @@
- 						</label>
- 						<textarea id="share-note-textarea" :value="share.note" @input="share.note = $event.target.value" />
- 					</template>
--					<NcCheckboxRadioSwitch :checked.sync="setCustomPermissions">
-+					<NcCheckboxRadioSwitch v-if="!isPublicShare" :checked.sync="setCustomPermissions">
- 						{{ t('files_sharing', 'Custom permissions') }}
- 					</NcCheckboxRadioSwitch>
--					<section v-if="setCustomPermissions" class="custom-permissions-group">
-+					<section v-if="setCustomPermissions && !isPublicShare" class="custom-permissions-group">
- 						<NcCheckboxRadioSwitch :disabled="!canRemoveReadPermission"
- 							:checked.sync="hasRead"
- 							data-cy-files-sharing-share-permissions-checkbox="read">
-@@ -180,7 +178,7 @@
+@@ -180,7 +181,7 @@
  							data-cy-files-sharing-share-permissions-checkbox="create">
  							{{ t('files_sharing', 'Create') }}
  						</NcCheckboxRadioSwitch>
@@ -43,12 +19,12 @@ index b0cb044..fe6b66d 100644
  							:checked.sync="canEdit"
  							data-cy-files-sharing-share-permissions-checkbox="update">
  							{{ t('files_sharing', 'Edit') }}
-@@ -325,6 +323,35 @@ export default {
+@@ -325,6 +326,36 @@ export default {
  	},
- 
+
  	computed: {
 +        canEditFileType () {
-+            // Taken from https://github.com/nextcloud/text/blob/0320046ffe8b853e8e329a9b865cdf3633228509/lib/DirectEditing/TextDirectEditor.php#L83
++            // Taken from https://github.com/nextcloud/text/blob/81f3256c03ebf2692e803486c0dcb6a8b442ce67/lib/DirectEditing/TextDirectEditor.php#L86
 +            const supportedMimeTypes = [
 +                'text/markdown',
 +                'text/plain',
@@ -72,10 +48,20 @@ index b0cb044..fe6b66d 100644
 +                'text/x-java-source',
 +                'text/x-ldif',
 +                'text/x-python',
-+                'text/x-shellscript'
++                'text/x-shellscript',
++                'application/pdf',
 +            ];
 +            return this.isFolder || supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
 +        },
  		title() {
  			switch (this.share.type) {
  			case this.SHARE_TYPES.SHARE_TYPE_USER:
+@@ -360,7 +391,7 @@ export default {
+ 		 */
+ 		canEdit: {
+ 			get() {
+-				return this.share.hasUpdatePermission
++				return this.share.hasUpdatePermission && this.canEditFileType
+ 			},
+ 			set(checked) {
+ 				this.updateAtomicPermissions({ isEditChecked: checked })
