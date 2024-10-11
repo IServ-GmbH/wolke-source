@@ -1,0 +1,14 @@
+diff --git apps/settings/composer/composer/autoload_classmap.php apps/settings/composer/composer/autoload_classmap.php
+index 599e601..7008c7d 100644
+--- apps/settings/composer/composer/autoload_classmap.php
++++ apps/settings/composer/composer/autoload_classmap.php
+@@ -19,7 +19,8 @@ return array(
+     'OCA\\Settings\\Command\\AdminDelegation\\Add' => $baseDir . '/../lib/Command/AdminDelegation/Add.php',
+     'OCA\\Settings\\Command\\AdminDelegation\\Remove' => $baseDir . '/../lib/Command/AdminDelegation/Remove.php',
+     'OCA\\Settings\\Command\\AdminDelegation\\Show' => $baseDir . '/../lib/Command/AdminDelegation/Show.php',
+-    'OCA\\Settings\\Controller\\AISettingsController' => $baseDir . '/../lib/Controller/AISettingsController.php',
++	'OCA\\Settings\\Command\\AdminDelegation\\Check' => $baseDir . '/../lib/Command/AdminDelegation/Check.php',
++	'OCA\\Settings\\Controller\\AISettingsController' => $baseDir . '/../lib/Controller/AISettingsController.php',
+     'OCA\\Settings\\Controller\\AdminSettingsController' => $baseDir . '/../lib/Controller/AdminSettingsController.php',
+     'OCA\\Settings\\Controller\\AppSettingsController' => $baseDir . '/../lib/Controller/AppSettingsController.php',
+     'OCA\\Settings\\Controller\\AuthSettingsController' => $baseDir . '/../lib/Controller/AuthSettingsController.php',

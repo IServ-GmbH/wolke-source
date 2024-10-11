@@ -20,6 +20,7 @@
 		<command>OCA\Settings\Command\AdminDelegation\Show</command>
 		<command>OCA\Settings\Command\AdminDelegation\Add</command>
 		<command>OCA\Settings\Command\AdminDelegation\Remove</command>
+		<command>OCA\Settings\Command\AdminDelegation\Check</command>
 	</commands>
 
 	<settings>

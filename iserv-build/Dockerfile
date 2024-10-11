@@ -36,6 +36,10 @@ RUN apt-get update \
 # Include required third-party apps in the image to avoid dependency on external network during runtime
 # https://apps.nextcloud.com/apps/user_saml
 RUN mkdir /iserv-apps \
+    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v16.0.9/groupfolders-v16.0.9.tar.gz" \
+    && tar -xf groupfolders.tar.gz \
+    && mv groupfolders /iserv-apps \
+    && rm groupfolders.tar.gz \
     && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.2.0/user_saml-v6.2.0.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
