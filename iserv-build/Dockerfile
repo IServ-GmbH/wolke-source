@@ -5,12 +5,14 @@
 # The default version specified here will be used by the CI pipeline.
 ARG VERSION=28.0.9
 
-FROM git.iserv.eu:443/iserv/dependency_proxy/containers/alpine:3.20 AS patchstage
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/node:22-alpine AS patchstage
 ARG VERSION
 
 RUN apk update
 RUN apk upgrade
-RUN apk add bash git make npm patch
+RUN apk add bash git make patch
+
+RUN npm config set registry https://npm.iserv.eu/ && npm config set audit false
 
 COPY ./source /source
 
@@ -36,6 +38,10 @@ RUN apt-get update \
 # Include required third-party apps in the image to avoid dependency on external network during runtime
 # https://apps.nextcloud.com/apps/user_saml
 RUN mkdir /iserv-apps \
+    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.17.2/files_retention-v1.17.2.tar.gz" \
+    && tar -xf files_retention.tar.gz \
+    && mv files_retention /iserv-apps \
+    && rm files_retention.tar.gz \
     && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v16.0.9/groupfolders-v16.0.9.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
@@ -54,6 +60,8 @@ COPY ./adds /
 COPY --from=patchstage /*.patch /
 RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
+RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
+
 RUN rm /*.patch
 
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart

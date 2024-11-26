@@ -27,6 +27,8 @@ Then call `extract_patches.sh ~/nextcloud-server`. This will create or update th
 
 Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`, as well as the changes in `./source/added/` and `./source/patches/`.
 
+If patches need to be created for Nextcloud apps, corresponding changes must be made to scripts `clone_and_apply_patches.sh` , `create_combined_patches.sh` , and `extract_patches.sh`.
+
 ## How to upgrade
 
 Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` (using the new version number you want to upgrade to).
@@ -38,7 +40,8 @@ If a patch has failed:
 2. Run `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` again.
 3. Repeat steps 1 and 2 until all remaining patches have been successfully applied.
 4. Manually apply the changes of the moved patch files to the affected files in the working copy `~/nextcloud-server`.
-5. Run `extract_patches.sh ~/nextcloud-server` to re-generate the patches.
+5. Check if (none-)core apps need to be upgraded.
+6. Run `extract_patches.sh ~/nextcloud-server` to re-generate the patches.
 
 Once all patches can be applied to the new version
 

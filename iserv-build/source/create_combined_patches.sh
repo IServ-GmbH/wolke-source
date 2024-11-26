@@ -19,7 +19,9 @@ then
 fi
 
 echo "Downloading JS dependencies..."
-make -C "$REPO_PATH" npm-init
+# make -C "$REPO_PATH" npm-init
+# Workaround for #76306 - see https://github.com/puppeteer/puppeteer/issues/12094
+cd "$REPO_PATH" && PUPPETEER_DOWNLOAD_BASE_URL="https://storage.googleapis.com/chrome-for-testing-public" npm ci && cd -
 
 echo "Build JS artefacts..."
 # Note from past self: You cannot use the MODULE env var to speed this build up.
@@ -36,3 +38,7 @@ git -C "$REPO_PATH" diff --binary ':!*.vue' > "$PATCH_DESTINATION/main.patch"
 echo "Creating apps_activity.patch..."
 git -C "$REPO_PATH/apps/activity" add -N .
 git -C "$REPO_PATH/apps/activity" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_activity.patch"
+
+echo "Creating apps_files_retention.patch..."
+git -C "$REPO_PATH/apps/files_retention" add -N .
+git -C "$REPO_PATH/apps/files_retention" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_files_retention.patch"

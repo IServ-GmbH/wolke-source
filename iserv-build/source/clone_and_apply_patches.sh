@@ -20,6 +20,26 @@ print_help()
   exit 1
 }
 
+fetch_latest_version_for_apps() {
+  GITHUB_USER="$1"
+  APP="$2"
+  BRANCH="$3"
+
+  REPO_URL="https://github.com/$GITHUB_USER/$APP"
+  git clone --no-checkout -c advice.detachedHead=false $REPO_URL "$DESTINATION/apps/$APP"
+  cd "$DESTINATION/apps/$APP" || exit
+  git fetch --all
+  git fetch --tags
+  LATEST_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:strip=2)' refs/tags --merged origin/$BRANCH | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+  if [ -z "$LATEST_TAG" ]; then
+    echo "No versiontag found on branch $BRANCH ."
+    exit 1
+  fi
+  echo "Latest versiontag of branch $BRANCH is: $LATEST_TAG"
+  git checkout "tags/$LATEST_TAG"
+  echo "Checked out latest versiontag($LATEST_TAG) ."
+}
+
 while getopts "mh" FLAG ; do
   case "$FLAG" in
       m) MERGE=1 ;;
@@ -57,6 +77,12 @@ else
 
   echo "Cloning version $VERSION of upstream app repos..."
   git clone --branch "$UPSTREAM_VERSION_TAG" --depth 1 -c advice.detachedHead=false "https://github.com/nextcloud/activity.git" "$DESTINATION/apps/activity"
+
+  echo "Cloning version $VERSION of upstream app repos with deviating versioning..."
+  MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
+  BRANCH="stable${MAJOR_VERSION}"
+  fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
+  fetch_latest_version_for_apps "te-online" "files_linkeditor" "stable" # this app does not use usual branch naming
 fi
 
 echo "Copying added files into repo directories..."
