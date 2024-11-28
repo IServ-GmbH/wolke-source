@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace OCA\IServLogin;
 
-use IServ\Library\SessAuth\Secret;
-use IServ\Library\SessAuth\SessAuthException;
-use IServ\Library\SessAuth\SystemSessAuth;
 use OC\User\Backend;
+use OCP\Http\Client\IClientService;
 use OCP\IUserBackend;
 use OCP\UserInterface;
 use Psr\Log\LoggerInterface;
@@ -15,12 +13,14 @@ use Psr\Log\LoggerInterface;
 class IServUserBackend implements UserInterface, IUserBackend
 {
     private LoggerInterface $logger;
-    private SystemSessAuth $sessAuth;
 
-    public function __construct()
-    {
+    private IClientService $clientService;
+
+    public function __construct(
+        private readonly string $serverDomain
+    ) {
         $this->logger = \OC::$server->get(LoggerInterface::class);
-        $this->sessAuth = new SystemSessAuth('unix:///sessauthd/socket');
+        $this->clientService = \OC::$server->get(IClientService::class);
     }
 
     public function getBackendName(): string
@@ -28,31 +28,39 @@ class IServUserBackend implements UserInterface, IUserBackend
         return 'iserv_login';
     }
 
-    public function log(mixed ...$values)
-    {
-        $this->logger->error('IServUserBackend: ' . json_encode($values, JSON_THROW_ON_ERROR));
-    }
-
     /**
      * @inheritDoc
      */
     public function implementsActions($actions): bool
     {
-        return (bool) ($actions & (Backend::CHECK_PASSWORD));
+        return (bool)($actions & (Backend::CHECK_PASSWORD));
     }
 
     public function checkPassword(string $loginName, string $password): string|bool
     {
-        $secret = new Secret();
-        $secret->secret = $password;
-
-        try {
-            return $this->sessAuth->execute($loginName, $secret, 'cloudfiles')->successful() ? $loginName : false;
-        } catch (SessAuthException $e) {
-            $this->log($e->getMessage());
-
+        if ($loginName !== 'iserv_oauth-access-token') {
             return false;
         }
+
+        // maybe we need to cache the introspection result here
+        $introspector = new TokenIntrospection($this->clientService->newClient(), $this->serverDomain);
+        try {
+            $token = $introspector->userInformationFromToken($password);
+            $requiredScopesGranted =
+                in_array('iserv:web-ui', $token->scopes, true)
+                || in_array('iserv:cloudfiles', $token->scopes, true);
+
+            if ($token->active && $requiredScopesGranted) {
+                return $token->uuid;
+            }
+        } catch (IntrospectionFailed $e) {
+            $this->logger->error(
+                'introspection failed',
+                ['exception' => $e]
+            );
+        }
+
+        return false;
     }
 
     public function deleteUser($uid)

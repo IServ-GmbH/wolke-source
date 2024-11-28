@@ -51,6 +51,8 @@ RUN mkdir /iserv-apps \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz
 
+COPY ./iservlogin /iserv-apps/iservlogin
+
 # Theme to fix some css errors created by our patches
 COPY ./theme /usr/src/nextcloud/themes/iserv
 # Contains config scripts

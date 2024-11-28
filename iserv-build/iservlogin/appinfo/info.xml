@@ -16,6 +16,6 @@
 		<authentication/>
 	</types>
     <dependencies>
-        <nextcloud min-version="22" max-version="24"/>
+        <nextcloud min-version="28" max-version="29"/>
     </dependencies>
 </info>

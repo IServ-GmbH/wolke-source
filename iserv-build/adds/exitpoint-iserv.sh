@@ -13,7 +13,7 @@ echo "enable provided apps (to allow upgrading)"
 cp -r /iserv-apps/files_retention /var/www/html/apps/
 cp -r /iserv-apps/groupfolders /var/www/html/apps/
 cp -r /iserv-apps/user_saml /var/www/html/apps/
-# cp -r /iserv-apps/iservlogin /var/www/html/apps/
+cp -r /iserv-apps/iservlogin /var/www/html/apps/
 
 echo "Trying to upgrade apps"
 # execute upgrade to trigger app updates (if required)
@@ -26,7 +26,7 @@ cp /var/www/html/version.php /version/version.php
 
 php /var/www/html/occ app:enable files_retention
 php /var/www/html/occ app:enable groupfolders
-# php /var/www/html/occ app:enable iservlogin
+php /var/www/html/occ app:enable iservlogin
 
 echo "configure options not available in config file"
 # nextcloud should expect cron via normal cronjob
