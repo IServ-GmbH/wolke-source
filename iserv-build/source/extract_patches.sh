@@ -58,3 +58,4 @@ create_patches_for_repo()
 create_patches_for_repo "$REPO_DIR" "$ADDED_DIR" "$PATCHES_DIR" ""
 create_patches_for_repo "$REPO_DIR/apps/activity" "$ADDED_DIR/apps/activity" "$PATCHES_DIR/apps/activity" "apps/activity/"
 create_patches_for_repo "$REPO_DIR/apps/files_retention" "$ADDED_DIR/apps/files_retention" "$PATCHES_DIR/apps/files_retention" "apps/files_retention/"
+create_patches_for_repo "$REPO_DIR/apps/files_linkeditor" "$ADDED_DIR/apps/files_linkeditor" "$PATCHES_DIR/apps/files_linkeditor" "apps/files_linkeditor/"

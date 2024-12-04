@@ -42,6 +42,10 @@ RUN mkdir /iserv-apps \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
+    && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.21/files_linkeditor.tar.gz" \
+    && tar -xf files_linkeditor.tar.gz \
+    && mv files_linkeditor /iserv-apps \
+    && rm files_linkeditor.tar.gz \
     && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v16.0.9/groupfolders-v16.0.9.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
@@ -63,7 +67,7 @@ COPY --from=patchstage /*.patch /
 RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
 RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
-
+RUN cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch
 RUN rm /*.patch
 
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart

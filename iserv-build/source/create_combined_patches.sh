@@ -42,3 +42,12 @@ git -C "$REPO_PATH/apps/activity" diff --binary ':!*.vue' > "$PATCH_DESTINATION/
 echo "Creating apps_files_retention.patch..."
 git -C "$REPO_PATH/apps/files_retention" add -N .
 git -C "$REPO_PATH/apps/files_retention" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_files_retention.patch"
+
+echo "Creating apps_files_linkeditor.patch..."
+# For this app we need to build the JS, because we are changing frontend code.
+cd "$REPO_PATH/apps/files_linkeditor"
+npm ci
+npm run build
+cd ../../..
+git -C "$REPO_PATH/apps/files_linkeditor" add -N .
+git -C "$REPO_PATH/apps/files_linkeditor" diff --binary ':!*.svelte' > "$PATCH_DESTINATION/apps_files_linkeditor.patch"
