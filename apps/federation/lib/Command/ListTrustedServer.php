@@ -10,6 +10,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListTrustedServer extends Base
 {
+    private const HEALTHY_SERVER_STATUSES = [
+        TrustedServers::STATUS_OK,
+        TrustedServers::STATUS_PENDING,
+    ];
+
     protected string $defaultOutputFormat = self::OUTPUT_FORMAT_JSON;
     private TrustedServers $trustedServers;
 
@@ -47,7 +52,10 @@ class ListTrustedServer extends Base
     {
         $adjustedServer = [];
         foreach ($serverList as $server) {
-            $adjustedServer[]['url'] = $server['url'];
+            $adjustedServer[] = [
+                'url' => $server['url'],
+                'healthy' => in_array($server['status'], self::HEALTHY_SERVER_STATUSES, true),
+            ];
         }
 
         return  $adjustedServer;
