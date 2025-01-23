@@ -10,7 +10,7 @@ use OCP\IUserBackend;
 use OCP\UserInterface;
 use Psr\Log\LoggerInterface;
 
-class IServUserBackend implements UserInterface, IUserBackend
+class IServUserBackend extends Backend implements UserInterface, IUserBackend
 {
     private LoggerInterface $logger;
 
@@ -26,14 +26,6 @@ class IServUserBackend implements UserInterface, IUserBackend
     public function getBackendName(): string
     {
         return 'iserv_login';
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function implementsActions($actions): bool
-    {
-        return (bool)($actions & (Backend::CHECK_PASSWORD));
     }
 
     public function checkPassword(string $loginName, string $password): string|bool
@@ -61,35 +53,5 @@ class IServUserBackend implements UserInterface, IUserBackend
         }
 
         return false;
-    }
-
-    public function deleteUser($uid)
-    {
-        // NOOP
-    }
-
-    public function getUsers($search = '', $limit = null, $offset = null)
-    {
-        // NOOP
-    }
-
-    public function userExists($uid)
-    {
-        // NOOP
-    }
-
-    public function getDisplayName($uid)
-    {
-        // NOOP
-    }
-
-    public function getDisplayNames($search = '', $limit = null, $offset = null)
-    {
-        // NOOP
-    }
-
-    public function hasUserListings()
-    {
-        // NOOP
     }
 }
