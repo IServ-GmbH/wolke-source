@@ -34,13 +34,13 @@ echo "configure options not available in config file"
 # nextcloud should expect cron via normal cronjob
 php /var/www/html/occ config:app:set core backgroundjobs_mode --value cron
 
-php /var/www/html/occ config:system:set overwrite.cli.url --value="https://cloudfiles.$SUBDOMAIN_ROOT" --type=string
+php /var/www/html/occ config:system:set overwrite.cli.url --value="https://$INSTANCE_NAME.$SUBDOMAIN_ROOT" --type=string
 
 echo "Disallow public uploads in shares"
 php /var/www/html/occ config:app:set core shareapi_allow_public_upload --value "no"
 echo "Set trusted domains"
-php /var/www/html/occ config:system:set trusted_domains 1 --value=cloudfiles.$SUBDOMAIN_ROOT
-php /var/www/html/occ config:system:set trusted_domains 2 --value=cloudfiles.docker.$SUBDOMAIN_ROOT
+php /var/www/html/occ config:system:set trusted_domains 1 --value="$INSTANCE_NAME.$SUBDOMAIN_ROOT"
+php /var/www/html/occ config:system:set trusted_domains 2 --value="$INSTANCE_NAME.docker.$SUBDOMAIN_ROOT"
 
 echo "Set trusted proxies"
 php /var/www/html/occ config:system:set trusted_proxies 0 --value=$TRUSTED_PROXIES
