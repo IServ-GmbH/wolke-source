@@ -42,7 +42,7 @@ RUN mkdir /iserv-apps \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
-    && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.21/files_linkeditor.tar.gz" \
+    && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.22/files_linkeditor.tar.gz" \
     && tar -xf files_linkeditor.tar.gz \
     && mv files_linkeditor /iserv-apps \
     && rm files_linkeditor.tar.gz \
