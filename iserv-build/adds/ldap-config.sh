@@ -7,7 +7,7 @@ do
     php /var/www/html/occ ldap:create-empty-config
 done
 
-php /var/www/html/occ ldap:set-config s01 ldapAgentName "cn=cloudfiles,ou=ldap,$LDAP_BASE_DN"
+php /var/www/html/occ ldap:set-config s01 ldapAgentName "cn=$INSTANCE_NAME,ou=ldap,$LDAP_BASE_DN"
 php /var/www/html/occ ldap:set-config s01 ldapAgentPassword "$(cat /ldap_pass.txt)"
 php /var/www/html/occ ldap:set-config s01 ldapHost "ldaps://$ISERV_DOMAIN"
 php /var/www/html/occ ldap:set-config s01 ldapPort "10636"

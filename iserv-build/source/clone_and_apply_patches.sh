@@ -37,7 +37,21 @@ fetch_latest_version_for_apps() {
   fi
   echo "Latest versiontag of branch $BRANCH is: $LATEST_TAG"
   git checkout "tags/$LATEST_TAG"
-  echo "Checked out latest versiontag($LATEST_TAG) ."
+  echo "Checked out latest version tag ($LATEST_TAG) ."
+}
+
+fetch_specific_tag_for_apps() {
+  GITHUB_USER="$1"
+  APP="$2"
+  TAG="$3"
+
+  REPO_URL="https://github.com/$GITHUB_USER/$APP"
+  git clone --no-checkout -c advice.detachedHead=false $REPO_URL "$DESTINATION/apps/$APP"
+  cd "$DESTINATION/apps/$APP" || exit
+  git fetch --all
+  git fetch --tags
+  git checkout "tags/$TAG"
+  echo "Checked out version tag $TAG."
 }
 
 while getopts "mh" FLAG ; do
@@ -82,7 +96,10 @@ else
   MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
   BRANCH="stable${MAJOR_VERSION}"
   fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
-  fetch_latest_version_for_apps "te-online" "files_linkeditor" "stable" # this app does not use usual branch naming
+
+  # files_linkeditor does not use usual branch naming - keep in sync with version number in Dockerfile
+  # TODO: Have a central place to keep the app versions #76427
+  fetch_specific_tag_for_apps "te-online" "files_linkeditor" "v1.1.22"
 fi
 
 echo "Copying added files into repo directories..."
