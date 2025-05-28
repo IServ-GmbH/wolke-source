@@ -103,6 +103,15 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
 - Remove Pop-Up for quick select of editing rights because we could not only patch a certain entry (custom permissions) of the Pop-Up.
   - apps/files_sharing/src/components/SharingEntry.vue
   - apps/files_sharing/src/components/SharingEntryLink.vue
+- Add internet links as files. #70071
+  - apps/files_linkeditor/src/views/Editor.svelte
+- Added configuration option to disable download buttons. #75297
+  - iconf/etc/iserv/docker-cloudfiles/iserv.config.php/00docker-cloudfiles.sh
+  - lib/private/Template/JSConfigHelper.php
+  - apps/files/src/components/FilesListTableHeaderActions.vue
+  - apps/files/src/components/FileEntry/FileEntryActions.vue
+  - apps/files_versions/src/components/Version.vue
+  - apps/viewer/src/views/Viewer.vue
 
 ### Theme
 

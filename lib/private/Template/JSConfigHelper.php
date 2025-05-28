@@ -258,6 +258,7 @@ class JSConfigHelper {
 					'defaultRemoteExpireDateEnabled' => $defaultRemoteExpireDateEnabled,
 					'defaultRemoteExpireDate' => $defaultRemoteExpireDate,
 					'defaultRemoteExpireDateEnforced' => $defaultRemoteExpireDateEnforced,
+					'disableFileDownloads' => $this->config->getSystemValue('iserv_disable_file_downloads', true),
 				]
 			]),
 			"_theme" => json_encode([

@@ -97,6 +97,9 @@ else
   BRANCH="stable${MAJOR_VERSION}"
   fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
 
+  echo "Cloning version $VERSION of upstream app repos..."
+  git clone --branch "$UPSTREAM_VERSION_TAG" --depth 1 -c advice.detachedHead=false "https://github.com/nextcloud/viewer.git" "$DESTINATION/apps/viewer"
+
   # files_linkeditor does not use usual branch naming - keep in sync with version number in Dockerfile
   # TODO: Have a central place to keep the app versions #76427
   fetch_specific_tag_for_apps "te-online" "files_linkeditor" "v1.1.22"

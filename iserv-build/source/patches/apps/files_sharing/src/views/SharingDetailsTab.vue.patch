@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing/src/views/SharingDetailsTab.vue
-index b0cb044..fe6b66d 100644
+index b0cb044..e74a241 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
 @@ -32,6 +32,7 @@
@@ -21,7 +21,7 @@ index b0cb044..fe6b66d 100644
  							{{ t('files_sharing', 'Edit') }}
 @@ -325,6 +326,36 @@ export default {
  	},
-
+ 
  	computed: {
 +        canEditFileType () {
 +            // Taken from https://github.com/nextcloud/text/blob/81f3256c03ebf2692e803486c0dcb6a8b442ce67/lib/DirectEditing/TextDirectEditor.php#L86

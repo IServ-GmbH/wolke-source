@@ -45,6 +45,11 @@ php /var/www/html/occ config:system:set trusted_domains 2 --value="$INSTANCE_NAM
 echo "Set trusted proxies"
 php /var/www/html/occ config:system:set trusted_proxies 0 --value=$TRUSTED_PROXIES
 
+# enforce passwords on public share links for cloudsafe
+if [ -n "$SHAREAPI_ENFORCE_LINKS_PASSWORD" -a "$SHAREAPI_ENFORCE_LINKS_PASSWORD" = "1" ]; then
+  php /var/www/html/occ config:app:set core shareapi_enforce_links_password --value="yes"
+fi
+
 echo "Configuring theme..."
 /theming-config.sh
 echo "Configured theme."

@@ -1,0 +1,12 @@
+diff --git lib/private/Template/JSConfigHelper.php lib/private/Template/JSConfigHelper.php
+index f255da9..d2802b7 100644
+--- lib/private/Template/JSConfigHelper.php
++++ lib/private/Template/JSConfigHelper.php
+@@ -258,6 +258,7 @@ class JSConfigHelper {
+ 					'defaultRemoteExpireDateEnabled' => $defaultRemoteExpireDateEnabled,
+ 					'defaultRemoteExpireDate' => $defaultRemoteExpireDate,
+ 					'defaultRemoteExpireDateEnforced' => $defaultRemoteExpireDateEnforced,
++					'disableFileDownloads' => $this->config->getSystemValue('iserv_disable_file_downloads', true),
+ 				]
+ 			]),
+ 			"_theme" => json_encode([

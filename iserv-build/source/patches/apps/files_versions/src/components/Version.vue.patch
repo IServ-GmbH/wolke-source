@@ -1,0 +1,16 @@
+diff --git apps/files_versions/src/components/Version.vue apps/files_versions/src/components/Version.vue
+index 6824267..e3b6c7a 100644
+--- apps/files_versions/src/components/Version.vue
++++ apps/files_versions/src/components/Version.vue
+@@ -246,6 +246,11 @@ export default {
+ 
+ 		/** @return {boolean} */
+ 		isDownloadable() {
++			// Configuration option to disable download buttons
++			if (OC.appConfig.core.disableFileDownloads) {
++				return false
++			}
++
+ 			if ((this.fileInfo.permissions & Permission.READ) === 0) {
+ 				return false
+ 			}

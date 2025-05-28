@@ -17,6 +17,12 @@ php /var/www/html/occ app:disable updatenotification
 php /var/www/html/occ app:disable serverinfo
 php /var/www/html/occ app:disable federation
 php /var/www/html/occ app:disable notifications
+
+# Disables photos app for cloudsafe
+if [ "$INSTANCE_NAME" = "cloudsafe" ]; then
+  php /var/www/html/occ app:disable photos
+fi
+
 # password_policy seems to be incompatible with LDAP or SAML
 # (failing with "OCA\\Password_Policy\\ComplianceService::entryControl(): Argument #2 ($password) must be of type string, null given")
 # As of 2023-06-01

@@ -1,0 +1,32 @@
+diff --git apps/files/src/components/FilesListTableHeaderActions.vue apps/files/src/components/FilesListTableHeaderActions.vue
+index c10b567..155bb5c 100644
+--- apps/files/src/components/FilesListTableHeaderActions.vue
++++ apps/files/src/components/FilesListTableHeaderActions.vue
+@@ -27,7 +27,7 @@
+ 			:inline="inlineActions"
+ 			:menu-name="inlineActions <= 1 ? t('files', 'Actions') : null"
+ 			:open.sync="openedMenu">
+-			<NcActionButton v-for="action in enabledActions"
++			<NcActionButton v-for="action in actions"
+ 				:key="action.id"
+ 				:class="'files-list__row-actions-batch-' + action.id"
+ 				@click="onActionClick(action)">
+@@ -146,6 +146,18 @@ export default defineComponent({
+ 			}
+ 			return 3
+ 		},
++
++		// Configuration option to disable download buttons
++		enabledActionsWithoutDownload() {
++			// Filter out download from enabledActions
++			return this.enabledActions.filter(action => action.id !== 'download')
++		},
++
++		// Configuration option to disable download buttons
++		actions() {
++			// Checks deactivation of the file download
++			return OC.appConfig.core.disableFileDownloads ? this.enabledActionsWithoutDownload : this.enabledActions
++		},
+ 	},
+ 
+ 	methods: {

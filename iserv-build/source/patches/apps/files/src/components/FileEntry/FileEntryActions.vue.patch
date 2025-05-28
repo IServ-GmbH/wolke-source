@@ -1,0 +1,32 @@
+diff --git apps/files/src/components/FileEntry/FileEntryActions.vue apps/files/src/components/FileEntry/FileEntryActions.vue
+index c6ee7b9..6f32bf6 100644
+--- apps/files/src/components/FileEntry/FileEntryActions.vue
++++ apps/files/src/components/FileEntry/FileEntryActions.vue
+@@ -42,7 +42,7 @@
+ 			:open.sync="openedMenu"
+ 			@close="openedSubmenu = null">
+ 			<!-- Default actions list-->
+-			<NcActionButton v-for="action in enabledMenuActions"
++			<NcActionButton v-for="action in menuActions"
+ 				:key="action.id"
+ 				:ref="`action-${action.id}`"
+ 				:class="{
+@@ -265,6 +265,18 @@ export default defineComponent({
+ 		mountType() {
+ 			return this.source.attributes['mount-type']
+ 		},
++
++		// Configuration option to disable download buttons
++		enabledMenuActionsWithoutDownload() {
++			// Filter out download from enabledMenuActions
++			return this.enabledMenuActions.filter(action => action.id !== 'download')
++		},
++
++		// Configuration option to disable download buttons
++		menuActions() {
++			// Checks deactivation of the file download
++			return OC.appConfig.core.disableFileDownloads ? this.enabledMenuActionsWithoutDownload : this.enabledMenuActions
++		},
+ 	},
+ 
+ 	methods: {

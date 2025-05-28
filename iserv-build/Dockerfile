@@ -69,6 +69,7 @@ COPY --from=patchstage /*.patch /
 RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
 RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
+RUN cd /usr/src/nextcloud/apps/viewer && git apply --verbose --allow-empty /apps_viewer.patch
 RUN cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch
 RUN rm /*.patch
 

@@ -1,5 +1,5 @@
 diff --git apps/settings/composer/composer/autoload_static.php apps/settings/composer/composer/autoload_static.php
-index 32a323a..f6b96cf 100644
+index 32a323a..c8fbc46 100644
 --- apps/settings/composer/composer/autoload_static.php
 +++ apps/settings/composer/composer/autoload_static.php
 @@ -34,6 +34,7 @@ class ComposerStaticInitSettings
