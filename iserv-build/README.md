@@ -17,13 +17,16 @@ These binary patches will be applied to the production code in the second build 
 
 ## How to create new patches
 
-Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server`.
-The arguments are the Nextcloud version that is currently used for the image and a destination path for the checked out repository.
-The existing patches should have been applied correctly and the checked out code shows several changes/untracked files when calling `git status`.
+Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` from this project's root directory.
+The arguments are the Nextcloud version that is currently used for the image and a destination path for the checked-out repository.
+The checked-out repository will be cloned to a directory called nextcloud-server in /home/<username> directory.
+The existing patches should have been applied correctly, and the checked-out code shows several changes/untracked files when calling `git status`.
 
-Do your modifications without committing.
+Do your modifications **without committing anything** to the nextcloud project.
+Remember to add your changes to the [bottom of this page](#documentation-of-patches--customizations).
 
-Then call `extract_patches.sh ~/nextcloud-server`. This will create or update the files in `./source/added/` and `./source/patches/`.
+Then come back to this project and call `extract_patches.sh ~/nextcloud-server` in the project root directory.
+This will create or update the files in `./source/added/` and `./source/patches/`.
 
 Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`, as well as the changes in `./source/added/` and `./source/patches/`.
 
@@ -112,6 +115,8 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/files/src/components/FileEntry/FileEntryActions.vue
   - apps/files_versions/src/components/Version.vue
   - apps/viewer/src/views/Viewer.vue
+- Hide options to alter background color and images on the theme settings page. #81451
+  - apps/theming/src/UserThemes.vue
 
 ### Theme
 
