@@ -1,0 +1,40 @@
+diff --git apps/richdocuments/src/view/Office.vue apps/richdocuments/src/view/Office.vue
+index 1b82ddb28..571286e16 100644
+--- apps/richdocuments/src/view/Office.vue
++++ apps/richdocuments/src/view/Office.vue
+@@ -42,7 +42,7 @@
+ 				<template #description>
+ 					<p>{{ errorMessage }}</p>
+ 					<p v-if="showAdminStorageFailure">
+-						{{ t('richdocuments', 'Please check the Collabora Online server log for more details and make sure that Nextcloud can be reached from there.') }}
++						{{ t('richdocuments', 'Please check the Collabora Online server log for more details and make sure that cloudfiles can be reached from there.') }}
+ 					</p>
+ 					<p v-if="showAdminWebsocketFailure">
+ 						{{ t('richdocuments', 'Socket connection closed unexpectedly. The reverse proxy might be misconfigured, please contact the administrator.') }}
+@@ -204,7 +204,7 @@ export default {
+ 			return this.loading >= LOADING_STATE.FRAME_READY || this.debug
+ 		},
+ 		iframeTitle() {
+-			return loadState('richdocuments', 'productName', 'Nextcloud Office')
++			return loadState('richdocuments', 'productName', 'IServ Office')
+ 		},
+ 		showLoadingIndicator() {
+ 			return this.loading < LOADING_STATE.FRAME_READY
+@@ -212,7 +212,7 @@ export default {
+ 		errorMessage() {
+ 			switch (parseInt(this.error)) {
+ 			case LOADING_ERROR.COLLABORA_UNCONFIGURED:
+-				return t('richdocuments', '{productName} is not configured', { productName: loadState('richdocuments', 'productName', 'Nextcloud Office') })
++				return t('richdocuments', '{productName} is not configured', { productName: loadState('richdocuments', 'productName', 'IServ Office') })
+ 			case LOADING_ERROR.PROXY_FAILED:
+ 				return t('richdocuments', 'Starting the built-in CODE server failed')
+ 			default:
+@@ -327,7 +327,7 @@ export default {
+ 			this.loadingTimeout = setTimeout(() => {
+ 				console.error('Document loading failed due to timeout: Please check for failing network requests')
+ 				this.loading = LOADING_STATE.FAILED
+-				this.error = t('richdocuments', 'Failed to load {productName} - please try again later', { productName: loadState('richdocuments', 'productName', 'Nextcloud Office') })
++				this.error = t('richdocuments', 'Failed to load {productName} - please try again later', { productName: loadState('richdocuments', 'productName', 'IServ Office') })
+ 			}, (getCapabilities().richdocuments.config.timeout * 1000 || 15000))
+ 		},
+ 		sendPostMessage(msgId, values = {}) {

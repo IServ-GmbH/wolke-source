@@ -96,6 +96,7 @@ else
   MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
   BRANCH="stable${MAJOR_VERSION}"
   fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
+  fetch_latest_version_for_apps "nextcloud" "richdocuments" "$BRANCH"
 
   echo "Cloning version $VERSION of upstream app repos..."
   git clone --branch "$UPSTREAM_VERSION_TAG" --depth 1 -c advice.detachedHead=false "https://github.com/nextcloud/viewer.git" "$DESTINATION/apps/viewer"

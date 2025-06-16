@@ -32,6 +32,15 @@ Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`, as well as th
 
 If patches need to be created for Nextcloud apps, corresponding changes must be made to scripts `clone_and_apply_patches.sh` , `create_combined_patches.sh` , and `extract_patches.sh`.
 
+### Patching a new app
+
+In case the patches need to be applied to an app that has not been patched yet, make sure to update the following scripts as well.
+
+* Dockerfile
+* clone_and_apply_patches.sh
+* create_combined_patches.sh
+* extract_patches.sh
+
 ## How to upgrade
 
 Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` (using the new version number you want to upgrade to).
@@ -93,6 +102,8 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/activity/appinfo/info.xml
 - Always display name of user that shared a file, even if it's shared publicly. #52635
   - apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php 
+- Remove settings for office integration. #70070
+  - apps/richdocuments/appinfo/info.xml
 
 ### Frontend
 
@@ -106,6 +117,9 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
 - Remove Pop-Up for quick select of editing rights because we could not only patch a certain entry (custom permissions) of the Pop-Up.
   - apps/files_sharing/src/components/SharingEntry.vue
   - apps/files_sharing/src/components/SharingEntryLink.vue
+- Remove namings of Nextcloud from office integration #70070
+  - apps/richdocuments/src/view/Office.vue
+  - apps/richdocuments/src/document.js
 - Add internet links as files. #70071
   - apps/files_linkeditor/src/views/Editor.svelte
 - Added configuration option to disable download buttons. #75297

@@ -43,6 +43,14 @@ echo "Creating apps_files_retention.patch..."
 git -C "$REPO_PATH/apps/files_retention" add -N .
 git -C "$REPO_PATH/apps/files_retention" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_files_retention.patch"
 
+echo "Creating apps_richdocuments.patch..."
+cd "$REPO_PATH/apps/richdocuments"
+npm ci
+npm run build
+cd ../../..
+git -C "$REPO_PATH/apps/richdocuments" add -N .
+git -C "$REPO_PATH/apps/richdocuments" diff --binary ':!*.vue' ':!*.js' > "$PATCH_DESTINATION/apps_richdocuments.patch"
+
 echo "Creating apps_viewer.patch..."
 # For this app we need to build the JS, because we are changing frontend code.
 cd "$REPO_PATH/apps/viewer"

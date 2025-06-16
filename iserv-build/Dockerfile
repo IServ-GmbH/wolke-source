@@ -55,7 +55,11 @@ RUN mkdir /iserv-apps \
     && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.2.0/user_saml-v6.2.0.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
-    && rm user_saml.tar.gz
+    && rm user_saml.tar.gz \
+    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.3.13/richdocuments-v8.3.13.tar.gz" \
+    && tar -xf richdocuments.tar.gz \
+    && mv richdocuments /iserv-apps \
+    && rm richdocuments.tar.gz
 
 COPY ./iservlogin /iserv-apps/iservlogin
 
@@ -69,6 +73,7 @@ COPY --from=patchstage /*.patch /
 RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
 RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
+RUN cd /iserv-apps/richdocuments && git apply --verbose --allow-empty /apps_richdocuments.patch
 RUN cd /usr/src/nextcloud/apps/viewer && git apply --verbose --allow-empty /apps_viewer.patch
 RUN cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch
 RUN rm /*.patch

@@ -15,6 +15,7 @@ cp -r /iserv-apps/files_linkeditor /var/www/html/apps/
 cp -r /iserv-apps/groupfolders /var/www/html/apps/
 cp -r /iserv-apps/user_saml /var/www/html/apps/
 cp -r /iserv-apps/iservlogin /var/www/html/apps/
+cp -r /iserv-apps/richdocuments /var/www/html/apps/
 
 echo "Trying to upgrade apps"
 # execute upgrade to trigger app updates (if required)

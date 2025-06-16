@@ -1,0 +1,12 @@
+diff --git apps/richdocuments/appinfo/info.xml apps/richdocuments/appinfo/info.xml
+index b4231fe1c..6c2d8d0b8 100644
+--- apps/richdocuments/appinfo/info.xml
++++ apps/richdocuments/appinfo/info.xml
+@@ -45,7 +45,5 @@ You can also edit your documents off-line with the Collabora Office app from the
+ 	<settings>
+ 		<admin>OCA\Richdocuments\Settings\Admin</admin>
+ 		<admin-section>OCA\Richdocuments\Settings\Section</admin-section>
+-		<personal>OCA\Richdocuments\Settings\Personal</personal>
+-		<personal-section>OCA\Richdocuments\Settings\Section</personal-section>
+ 	</settings>
+ </info>
