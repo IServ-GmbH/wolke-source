@@ -115,6 +115,9 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/files/src/components/FileEntry/FileEntryActions.vue
   - apps/files_versions/src/components/Version.vue
   - apps/viewer/src/views/Viewer.vue
+- Added option to filter share targets to local users. #81450
+  - lib/private/Template/JSConfigHelper.php
+  - apps/files_sharing/src/components/SharingInput.vue
 - Hide options to alter background color and images on the theme settings page. #81451
   - apps/theming/src/UserThemes.vue
 

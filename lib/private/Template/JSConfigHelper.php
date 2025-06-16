@@ -259,6 +259,7 @@ class JSConfigHelper {
 					'defaultRemoteExpireDate' => $defaultRemoteExpireDate,
 					'defaultRemoteExpireDateEnforced' => $defaultRemoteExpireDateEnforced,
 					'disableFileDownloads' => $this->config->getSystemValue('iserv_disable_file_downloads', true),
+					'isFederationAppInstalled' => $this->appManager->isInstalled('federation'),
 				]
 			]),
 			"_theme" => json_encode([

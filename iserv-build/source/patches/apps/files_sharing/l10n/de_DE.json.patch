@@ -1,0 +1,15 @@
+diff --git apps/files_sharing/l10n/de_DE.json apps/files_sharing/l10n/de_DE.json
+index 958fd97..25e00f7 100644
+--- apps/files_sharing/l10n/de_DE.json
++++ apps/files_sharing/l10n/de_DE.json
+@@ -386,6 +386,7 @@
+     "the item was removed" : "Das Element wurde entfernt",
+     "the link expired" : "Der Link ist abgelaufen",
+     "sharing is disabled" : "Teilen ist deaktiviert",
+-    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wenden Sie sich bitte an die Person, die Ihnen diesen Link geschickt hat."
++    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wenden Sie sich bitte an die Person, die Ihnen diesen Link geschickt hat.",
++	"Only local users": "Nur lokale Benutzer"
+ },"pluralForm" :"nplurals=2; plural=(n != 1);"
+-}
+\ No newline at end of file
++}

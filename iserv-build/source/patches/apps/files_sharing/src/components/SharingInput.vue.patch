@@ -1,0 +1,87 @@
+diff --git apps/files_sharing/src/components/SharingInput.vue apps/files_sharing/src/components/SharingInput.vue
+index 519c6bf..4d3d621 100644
+--- apps/files_sharing/src/components/SharingInput.vue
++++ apps/files_sharing/src/components/SharingInput.vue
+@@ -40,6 +40,14 @@
+ 				{{ search ? noResultText : t('files_sharing', 'No recommendations. Start typing.') }}
+ 			</template>
+ 		</NcSelect>
++		<NcCheckboxRadioSwitch
++			v-if="isFederationAppInstalled"
++			type="switch"
++			:checked="onlyLocalUsers"
++			@update:checked="sharingTargets"
++		>
++			{{ t('files_sharing', 'Only local users') }}
++		</NcCheckboxRadioSwitch>
+ 	</div>
+ </template>
+ 
+@@ -58,11 +66,14 @@ import ShareRequests from '../mixins/ShareRequests.js'
+ import ShareTypes from '../mixins/ShareTypes.js'
+ import ShareDetails from '../mixins/ShareDetails.js'
+ 
++import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
++
+ export default {
+ 	name: 'SharingInput',
+ 
+ 	components: {
+ 		NcSelect,
++		NcCheckboxRadioSwitch,
+ 	},
+ 
+ 	mixins: [ShareTypes, ShareRequests, ShareDetails],
+@@ -102,6 +113,7 @@ export default {
+ 			ShareSearch: OCA.Sharing.ShareSearch.state,
+ 			suggestions: [],
+ 			value: null,
++			onlyLocalUsers: false,
+ 		}
+ 	},
+ 
+@@ -148,6 +160,11 @@ export default {
+ 			}
+ 			return t('files_sharing', 'No elements found.')
+ 		},
++
++		isFederationAppInstalled() {
++			return OC.appConfig.core.isFederationAppInstalled;
++		},
++
+ 	},
+ 
+ 	mounted() {
+@@ -188,8 +205,6 @@ export default {
+ 			const shareType = [
+ 				this.SHARE_TYPES.SHARE_TYPE_USER,
+ 				this.SHARE_TYPES.SHARE_TYPE_GROUP,
+-				this.SHARE_TYPES.SHARE_TYPE_REMOTE,
+-				this.SHARE_TYPES.SHARE_TYPE_REMOTE_GROUP,
+ 				this.SHARE_TYPES.SHARE_TYPE_CIRCLE,
+ 				this.SHARE_TYPES.SHARE_TYPE_ROOM,
+ 				this.SHARE_TYPES.SHARE_TYPE_GUEST,
+@@ -197,6 +212,11 @@ export default {
+ 				this.SHARE_TYPES.SHARE_TYPE_SCIENCEMESH,
+ 			]
+ 
++			if (!this.onlyLocalUsers) {
++				shareType.push(this.SHARE_TYPES.SHARE_TYPE_REMOTE);
++				shareType.push(this.SHARE_TYPES.SHARE_TYPE_REMOTE_GROUP);
++			}
++
+ 			if (getCapabilities().files_sharing.public.enabled === true) {
+ 				shareType.push(this.SHARE_TYPES.SHARE_TYPE_EMAIL)
+ 			}
+@@ -462,6 +482,11 @@ export default {
+ 				...this.shareTypeToIcon(result.value.shareType),
+ 			}
+ 		},
++
++		sharingTargets(value) {
++			this.onlyLocalUsers = value
++			this.asyncFind(this.query)
++		}
+ 	},
+ }
+ </script>
