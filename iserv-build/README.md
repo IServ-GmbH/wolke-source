@@ -104,6 +104,8 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php 
 - Remove settings for office integration. #70070
   - apps/richdocuments/appinfo/info.xml
+- Rename Nextcloud Office to IServ Office #81827
+  - apps/richdocuments/lib/Service/CapabilitiesService.php
 
 ### Frontend
 
@@ -134,6 +136,11 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/files_sharing/src/components/SharingInput.vue
 - Hide options to alter background color and images on the theme settings page. #81451
   - apps/theming/src/UserThemes.vue
+- Rename Nextcloud Office to IServ Office #81827
+  - apps/richdocuments/src/view/Office.vue
+  - apps/richdocuments/src/components/AdminSettings.vue
+  - core/src/components/setup/RecommendedApps.vue.patch
+  - apps/richdocuments/cypress/e2e/open.spec.js
 
 ### Theme
 

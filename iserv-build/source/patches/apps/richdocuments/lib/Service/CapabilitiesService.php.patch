@@ -1,0 +1,13 @@
+diff --git apps/richdocuments/lib/Service/CapabilitiesService.php apps/richdocuments/lib/Service/CapabilitiesService.php
+index df9df32b8..4ecd60a5d 100644
+--- apps/richdocuments/lib/Service/CapabilitiesService.php
++++ apps/richdocuments/lib/Service/CapabilitiesService.php
+@@ -121,7 +121,7 @@ class CapabilitiesService {
+ 			return $this->capabilitites['productName'];
+ 		}
+ 
+-		return $this->l10n->t('Nextcloud Office');
++		return $this->l10n->t('IServ Office');
+ 	}
+ 
+ 	public function hasOtherOOXMLApps(): bool {

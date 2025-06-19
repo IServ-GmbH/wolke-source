@@ -1,0 +1,13 @@
+diff --git apps/richdocuments/cypress/e2e/open.spec.js apps/richdocuments/cypress/e2e/open.spec.js
+index 3aef98379..78b9599a7 100644
+--- apps/richdocuments/cypress/e2e/open.spec.js
++++ apps/richdocuments/cypress/e2e/open.spec.js
+@@ -146,7 +146,7 @@ describe('Open PDF with richdocuments', () => {
+ 			.find('.action-item__menutoggle')
+ 			.click()
+ 		cy.get('.action-button__longtext')
+-			.contains('Edit with Nextcloud Office')
++			.contains('Edit with IServ Office')
+ 			.click()
+ 
+ 		// Wait for Collabora to open
