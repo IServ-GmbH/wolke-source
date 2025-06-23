@@ -104,6 +104,9 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php 
 - Remove settings for office integration. #70070
   - apps/richdocuments/appinfo/info.xml
+- Desable app passwords for cloudsafe #81355
+  - apps/settings/lib/Settings/Personal/Security/Authtokens.php
+  - apps/settings/lib/Controller/AuthSettingsController.php
 - Rename Nextcloud Office to IServ Office #81827
   - apps/richdocuments/lib/Service/CapabilitiesService.php
 

@@ -31,6 +31,7 @@ use OC\Authentication\Token\IToken;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\IConfig;
 use OCP\ISession;
 use OCP\IUserSession;
 use OCP\Session\Exceptions\SessionNotAvailableException;
@@ -41,6 +42,9 @@ class Authtokens implements ISettings {
 
 	/** @var IAuthTokenProvider */
 	private $tokenProvider;
+
+	/** @var IConfig */
+	private $config;
 
 	/** @var ISession */
 	private $session;
@@ -55,11 +59,13 @@ class Authtokens implements ISettings {
 	private $userSession;
 
 	public function __construct(IAuthTokenProvider $tokenProvider,
+		IConfig $config,
 		ISession $session,
 		IUserSession $userSession,
 		IInitialState $initialState,
 		?string $UserId) {
 		$this->tokenProvider = $tokenProvider;
+		$this->config = $config;
 		$this->session = $session;
 		$this->initialState = $initialState;
 		$this->uid = $UserId;
@@ -74,7 +80,7 @@ class Authtokens implements ISettings {
 
 		$this->initialState->provideInitialState(
 			'can_create_app_token',
-			$this->userSession->getImpersonatingUserID() === null
+			($this->userSession->getImpersonatingUserID() === null) && !($this->config->getSystemValueBool('iserv_disable_app_passwords'))
 		);
 
 		return new TemplateResponse('settings', 'settings/personal/security/authtokens');

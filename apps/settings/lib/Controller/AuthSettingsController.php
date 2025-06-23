@@ -47,6 +47,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\Authentication\Exceptions\WipeTokenException;
 use OCP\Authentication\Token\IToken;
 use OCP\IRequest;
+use OCP\IConfig;
 use OCP\ISession;
 use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
@@ -56,6 +57,9 @@ use Psr\Log\LoggerInterface;
 class AuthSettingsController extends Controller {
 	/** @var IProvider */
 	private $tokenProvider;
+
+	/** @var IConfig */
+	private $config;
 
 	/** @var ISession */
 	private $session;
@@ -93,6 +97,7 @@ class AuthSettingsController extends Controller {
 	public function __construct(string $appName,
 		IRequest $request,
 		IProvider $tokenProvider,
+		IConfig $config,
 		ISession $session,
 		ISecureRandom $random,
 		?string $userId,
@@ -102,6 +107,7 @@ class AuthSettingsController extends Controller {
 		LoggerInterface $logger) {
 		parent::__construct($appName, $request);
 		$this->tokenProvider = $tokenProvider;
+		$this->config = $config;
 		$this->uid = $userId;
 		$this->userSession = $userSession;
 		$this->session = $session;
@@ -120,6 +126,12 @@ class AuthSettingsController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function create($name) {
+
+		// Don't create app auth token if disallowed in configuration.
+		if ($this->config->getSystemValueBool('iserv_disable_app_passwords')) {
+			return $this->getServiceNotAvailableResponse();
+		}
+
 		if ($this->checkAppToken()) {
 			return $this->getServiceNotAvailableResponse();
 		}
