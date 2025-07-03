@@ -37,8 +37,16 @@ php /var/www/html/occ config:app:set core backgroundjobs_mode --value cron
 
 php /var/www/html/occ config:system:set overwrite.cli.url --value="https://$INSTANCE_NAME.$SUBDOMAIN_ROOT" --type=string
 
-echo "Disallow public uploads in shares"
-php /var/www/html/occ config:app:set core shareapi_allow_public_upload --value "no"
+# set public_upload
+echo "Allow public uploads in shares"
+if [ "$ENABLE_PUBLIC_UPLOAD" = "1" ] && [ "$INSTANCE_NAME" = "cloudfiles" ]; then
+  php /var/www/html/occ config:app:set core shareapi_allow_public_upload --value "yes"
+  php /var/www/html/occ config:app:set core shareapi_allow_links_exclude_groups --value '["00_STUDENT"]'
+else
+  echo "Disallow public uploads in shares"
+  php /var/www/html/occ config:app:set core shareapi_allow_public_upload --value "no"
+fi
+
 echo "Set trusted domains"
 php /var/www/html/occ config:system:set trusted_domains 1 --value="$INSTANCE_NAME.$SUBDOMAIN_ROOT"
 php /var/www/html/occ config:system:set trusted_domains 2 --value="$INSTANCE_NAME.docker.$SUBDOMAIN_ROOT"
