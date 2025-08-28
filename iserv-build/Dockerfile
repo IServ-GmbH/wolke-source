@@ -52,7 +52,7 @@ RUN mkdir /iserv-apps \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
     && rm groupfolders.tar.gz \
-    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.2.0/user_saml-v6.2.0.tar.gz" \
+    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.6.0/user_saml-v6.6.0.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz \
@@ -74,6 +74,7 @@ RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
 RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
 RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
 RUN cd /iserv-apps/richdocuments && git apply --verbose --allow-empty /apps_richdocuments.patch
+RUN cd /iserv-apps/user_saml && git apply --verbose --allow-empty /apps_user_saml.patch
 RUN cd /usr/src/nextcloud/apps/viewer && git apply --verbose --allow-empty /apps_viewer.patch
 RUN cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch
 RUN rm /*.patch

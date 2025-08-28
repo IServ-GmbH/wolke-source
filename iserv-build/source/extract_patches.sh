@@ -61,3 +61,4 @@ create_patches_for_repo "$REPO_DIR/apps/files_retention" "$ADDED_DIR/apps/files_
 create_patches_for_repo "$REPO_DIR/apps/richdocuments" "$ADDED_DIR/apps/richdocuments" "$PATCHES_DIR/apps/richdocuments" "apps/richdocuments/"
 create_patches_for_repo "$REPO_DIR/apps/viewer" "$ADDED_DIR/apps/viewer" "$PATCHES_DIR/apps/viewer" "apps/viewer/"
 create_patches_for_repo "$REPO_DIR/apps/files_linkeditor" "$ADDED_DIR/apps/files_linkeditor" "$PATCHES_DIR/apps/files_linkeditor" "apps/files_linkeditor/"
+create_patches_for_repo "$REPO_DIR/apps/user_saml" "$ADDED_DIR/apps/user_saml" "$PATCHES_DIR/apps/user_saml" "apps/user_saml/"

@@ -109,6 +109,8 @@ If using `tmpfs` for the `/var/www/html` folder, as mentioned earlier, the `NEXT
   - apps/settings/lib/Controller/AuthSettingsController.php
 - Rename Nextcloud Office to IServ Office #81827
   - apps/richdocuments/lib/Service/CapabilitiesService.php
+- Added config option for SAML ForceAuthn #83117
+  - apps/user_saml/lib/Controller/SAMLController.php
 
 ### Frontend
 

@@ -43,6 +43,10 @@ echo "Creating apps_files_retention.patch..."
 git -C "$REPO_PATH/apps/files_retention" add -N .
 git -C "$REPO_PATH/apps/files_retention" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_files_retention.patch"
 
+echo "Creating apps_user_saml.patch..."
+git -C "$REPO_PATH/apps/user_saml" add -N .
+git -C "$REPO_PATH/apps/user_saml" diff --binary ':!*.vue' > "$PATCH_DESTINATION/apps_user_saml.patch"
+
 echo "Creating apps_richdocuments.patch..."
 cd "$REPO_PATH/apps/richdocuments"
 npm ci

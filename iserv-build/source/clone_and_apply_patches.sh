@@ -3,6 +3,8 @@
 # Clone upstream repositories, copy added files and apply patches
 set -e
 
+USER_SAML_BRANCH="stable-6"
+
 print_help()
 {
   echo "Usage: $0 [OPTION]... VERSION DESTINATION"
@@ -32,7 +34,7 @@ fetch_latest_version_for_apps() {
   git fetch --tags
   LATEST_TAG=$(git for-each-ref --sort=-creatordate --format '%(refname:strip=2)' refs/tags --merged origin/$BRANCH | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
   if [ -z "$LATEST_TAG" ]; then
-    echo "No versiontag found on branch $BRANCH ."
+    echo "No versiontag found on branch $BRANCH for app $APP."
     exit 1
   fi
   echo "Latest versiontag of branch $BRANCH is: $LATEST_TAG"
@@ -97,6 +99,7 @@ else
   BRANCH="stable${MAJOR_VERSION}"
   fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
   fetch_latest_version_for_apps "nextcloud" "richdocuments" "$BRANCH"
+  fetch_latest_version_for_apps "nextcloud" "user_saml" "$USER_SAML_BRANCH"
 
   echo "Cloning version $VERSION of upstream app repos..."
   git clone --branch "$UPSTREAM_VERSION_TAG" --depth 1 -c advice.detachedHead=false "https://github.com/nextcloud/viewer.git" "$DESTINATION/apps/viewer"
