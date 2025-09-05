@@ -1,6 +1,8 @@
 # Building Docker Image
 
 This folder contains everything needed to build the docker image. Run `./build.sh` to build it.
+This depends on you being logged into the `git.iserv.eu` docker registry. (`docker login git.iserv.eu:443 -u <dein.name>`)
+(Caution: Do not login on your VM where others might have access to your session.)
 
 ## How it works
 

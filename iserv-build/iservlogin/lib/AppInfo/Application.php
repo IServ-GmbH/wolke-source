@@ -21,7 +21,6 @@ class Application extends App implements IBootstrap
 
     public function register(IRegistrationContext $context): void
     {
-        // Register the composer autoloader for packages shipped by this app, if applicable
-        include_once __DIR__ . '/../../vendor/autoload.php';
+        // NOOP
     }
 }

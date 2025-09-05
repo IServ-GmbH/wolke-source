@@ -10,11 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListTrustedServer extends Base
 {
-    private const HEALTHY_SERVER_STATUSES = [
-        TrustedServers::STATUS_OK,
-        TrustedServers::STATUS_PENDING,
-    ];
-
     protected string $defaultOutputFormat = self::OUTPUT_FORMAT_JSON;
     private TrustedServers $trustedServers;
 
@@ -50,11 +45,21 @@ class ListTrustedServer extends Base
 
     private function formatGetServersResult(array $serverList): array
     {
+        /**
+         * A server is considered healthy if we were not denied by it and the secret share was successful
+         * If the shared secret is null, it means the shared secret handshake did not succeed yet.
+         * We assume that the handshake takes up to a day for a server to be considered healthy.
+         * Status 3 (error occurred) may just be a network hiccup, so we consider it healthy as well.
+         * Status 2 with a shared secret means, the handshake was successful, but the address-book-sync did not happen yet.
+         * Status 4 is unhealthy, because the server intentionally denied us. The shared secret is probably wrong, we need a new handshake.
+         *
+         * We remove unhealthy servers and readd them again. This is the only mechanism to restart the shared secret handshake.
+         */
         $adjustedServer = [];
         foreach ($serverList as $server) {
             $adjustedServer[] = [
                 'url' => $server['url'],
-                'healthy' => in_array($server['status'], self::HEALTHY_SERVER_STATUSES, true),
+                'healthy' => $server['status'] !== TrustedServers::STATUS_ACCESS_REVOKED,
             ];
         }
 
