@@ -6,31 +6,86 @@ This depends on you being logged into the `git.iserv.eu` docker registry. (`dock
 
 ## How it works
 
-The image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).
-The source code in the image is then modified by [a number of patches or added files disabling or altering the functionality](README.md#Documentation of patches).
-These patches are located in `./source/patches/`.
-There is exactly one patch file for every changed file.
-Completely new files are located in `./source/added/`.
-The patches were created based on [nextcloud/server](https://github.com/nextcloud/server) and [nextcloud/activity](https://github.com/nextcloud/activity).
+- The image is based on the official Nextcloud Docker [nextcloud/docker](https://github.com/nextcloud/docker).
+- The source code in the image is then modified by [a number of patches or added files disabling or altering the functionality](#documentation-of-patches--customizations).
+  - These patches are located in `./source/patches/`.
+  - There is exactly one patch file for every changed file.
+  - Completely new files are located in `./source/added/`.
+- The patches were created based on [nextcloud/server](https://github.com/nextcloud/server) and [nextcloud/activity](https://github.com/nextcloud/activity).
 
-When the Docker image is being built, in the first stage, `clone_and_apply_patches.sh` applies patches and copies the added files into a freshly checked out working copy of the Nextcloud version to be built.
+When the Docker image is being built, in the first stage, `clone_and_apply_patches.sh` applies patches and copies the added files into a freshly checked out working copy of Nextcloud.
 Then `create_combined_patches.sh` builds the JavaScript assets and creates temporary (binary) patch files representing all changes.
 These binary patches will be applied to the production code in the second build stage.
 
 ## How to create new patches
 
-Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` from this project's root directory.
-The arguments are the Nextcloud version that is currently used for the image and a destination path for the checked-out repository.
-The checked-out repository will be cloned to a directory called nextcloud-server in /home/<username> directory.
-The existing patches should have been applied correctly, and the checked-out code shows several changes/untracked files when calling `git status`.
+### 1. Clone NC and apply existing patches
+  - `./docker/cloudfiles/source/clone_and_apply_patches.sh 28.0.9 ~/nextcloud-server`
+    - arg1: Nextcloud version that is currently used for the image
+      - you can find the current version in the [Dockerfile](Dockerfile)
+    - arg2: destination path for the repo that gets temporarily checked out.
 
-Do your modifications **without committing anything** to the nextcloud project.
-Remember to add your changes to the [bottom of this page](#documentation-of-patches--customizations).
+  - The existing patches should have been applied correctly, and the `~/nextcloud-server` repo shows several changes/untracked files when calling `git status`.
 
-Then come back to this project and call `extract_patches.sh ~/nextcloud-server` in the project root directory.
-This will create or update the files in `./source/added/` and `./source/patches/`.
+### 2. Code your patch 
+- Do your modifications **without committing anything** to the nextcloud project.
+- Remember to add your changes to the [bottom of this page](#documentation-of-patches--customizations).
 
-Run `build.sh` and commit `data/image.id` and `data/image.tar.xz`, as well as the changes in `./source/added/` and `./source/patches/`.
+### 3. Extract patches
+- come back to this project and call
+- `./docker/cloudfiles/source/extract_patches.sh ~/nextcloud-server`
+  - This will create or update the files in `./source/added/` and `./source/patches/`.
+
+### 4. Building
+**A) Building locally**
+
+You can build locally and transfer the tarball to the VM like this:
+- Run `./docker/cloudfiles/build.sh`
+- transfer the image to the dev vm
+
+If you are on another architecture than linux/x86_64, then the image ID comparison in iservchk will fail, bc docker somehow generates a different one:
+- make sure you have the newest tarball in data folder then build the image:
+- `iservchk cloudfiles`
+  - it will say that it failed on updating and importing the image (bc of id mismatch cant get repaired)
+  - it should start the container though regardless
+- `docker inspect --format='{{.Id}}' iserv/cloudfiles:latest`
+  - get the image ID that the target architecture references
+- put it into [image.id](../../data/image.id)
+- now iservchk won't complain anymore
+
+**B) Building on the vm**
+
+- ssh into your vm
+- remove running containers created from cloudfiles image
+  ```bash
+  RUNNING_CONTAINERS=$(docker ps --filter "ancestor=iserv/cloudfiles" -q)
+  if [ -n "$RUNNING_CONTAINERS" ] ; then
+    docker rm -f $RUNNING_CONTAINERS
+  fi
+  ```
+- remove image<br>
+`docker image rm iserv/cloudfiles`
+- Ensure that your automatic deployment (e.g. rsync) does not overwrite the image created in the next step.
+- run build.sh <br>
+`./docker/cloudfiles/build.sh`
+- if building the image fails, and you get a sigint then you probably need more memory [-> OpenNebula](https://cloud0.iserv.eu/), 16gb should be sufficient
+
+### 5. installing
+- `iservmake iservinstall`<br>
+  (not necessary on subsequent builds)
+- `iservchk`
+
+### 6. Comitting
+- if image was built on remote, download the new `image.id` and `image.tar.xz` first
+  ```bash
+  scp VM-name:/root/git/docker-cloudfiles/data/image.id iserv/iserv4/docker-cloudfiles/data/
+  scp VM-name:/root/git/docker-cloudfiles/data/image.tar.xz iserv/iserv4/docker-cloudfiles/data/
+  ```
+- commit build artifacts
+  - `data/image.id`
+  - `data/image.tar.xz`
+  - `./source/added/`
+  - `./source/patches/`.
 
 If patches need to be created for Nextcloud apps, corresponding changes must be made to scripts `clone_and_apply_patches.sh` , `create_combined_patches.sh` , and `extract_patches.sh`.
 
@@ -45,13 +100,14 @@ In case the patches need to be applied to an app that has not been patched yet, 
 
 ## How to upgrade
 
-Call `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` (using the new version number you want to upgrade to).
+- `./docker/cloudfiles/source/clone_and_apply_patches.sh 28.0.9 ~/nextcloud-server`
+  - call this using the new version number you want to upgrade to
+- Check if all patches have been applied successfully.
 
-Check if all patches have been applied successfully.
+### handle failed patches
 
-If a patch has failed:
 1. Move the affected patch file out of `./source/patches`.
-2. Run `clone_and_apply_patches.sh 27.1.8 ~/nextcloud-server` again.
+2. Run `clone_and_apply_patches.sh 28.0.9 ~/nextcloud-server` again.
 3. Repeat steps 1 and 2 until all remaining patches have been successfully applied.
 4. Manually apply the changes of the moved patch files to the affected files in the working copy `~/nextcloud-server`.
 5. Check if (none-)core apps need to be upgraded.
@@ -65,7 +121,8 @@ Once all patches can be applied to the new version
 
 ## Running the image
 
-This image is specifically tailored towards IServ's use-case. It can be embedded into an IServ as an iframe, gets users and authenticating them with IServ and allows other IServ modules to access the data in a secure way. This means some volumes and environment variables that are required may not be useful to everyone, like `LDAP_BASE_DN` or `/ldap_pass.txt`.
+This image is specifically tailored towards IServ's use-case. It can be embedded into an IServ as an iframe. It fetches users, authenticate them with IServ and allows other IServ modules to access its data in a secure way. 
+This means some volumes and environment variables that are required may not be useful to everyone, like `LDAP_BASE_DN` or `/ldap_pass.txt`.
 
 Also, to avoid storing the source code on the host in a volume, we're using `tmpfs` for the whole `/var/www/html` folder and handling installation/updates/restarts in our entrypoint script.
 

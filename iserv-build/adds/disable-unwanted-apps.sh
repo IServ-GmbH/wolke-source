@@ -15,7 +15,6 @@ php /var/www/html/occ app:disable support
 php /var/www/html/occ app:disable nextcloud_announcements
 php /var/www/html/occ app:disable updatenotification
 php /var/www/html/occ app:disable serverinfo
-php /var/www/html/occ app:disable federation
 php /var/www/html/occ app:disable notifications
 
 # Disables photos app for cloudsafe

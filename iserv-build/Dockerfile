@@ -38,12 +38,12 @@ RUN apt-get update \
 # Include required third-party apps in the image to avoid dependency on external network during runtime
 # https://apps.nextcloud.com/apps/user_saml
 # TODO: Have a central place to keep the app versions #76427
+# remember to keep version for files_linkeditor in sync with version number in clone_and_apply_patches.sh
 RUN mkdir /iserv-apps \
     && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.17.2/files_retention-v1.17.2.tar.gz" \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
-    # keep version for files_linkeditor in sync with version number in clone_and_apply_patches.sh
     && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.22/files_linkeditor.tar.gz" \
     && tar -xf files_linkeditor.tar.gz \
     && mv files_linkeditor /iserv-apps \

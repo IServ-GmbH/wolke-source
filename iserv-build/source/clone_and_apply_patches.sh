@@ -116,13 +116,12 @@ echo
 echo "Applying source patches..."
 FAILED=0
 SKIPPED=0
-shopt -s globstar
-for P in "$PATCHES_DIR"/**/*.patch
-do
+
+while IFS= read -r -d '' P; do
   echo
   echo -n "Applying $P"
   # We have to parse patch'es output because it returns 1 for skipped patches as well as actual errors.
-  if OUT="$(patch -d "$DESTINATION" -p0 --forward --no-backup-if-mismatch -r - -F 0 < "$P")" ; then
+  if OUT="$(patch -d "$DESTINATION" -p0 --forward --no-backup-if-mismatch -r - -F 0 < "$P")"; then
     # Success
     echo
     echo "$OUT"
@@ -147,7 +146,7 @@ do
       fi
     fi
   fi
-done
+done < <(find "$PATCHES_DIR" -type f -name "*.patch" -print0)
 
 if [ "$SKIPPED" -gt "0" ] ; then
   echo
