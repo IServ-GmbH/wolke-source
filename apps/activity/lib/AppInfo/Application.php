@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -55,6 +56,7 @@ use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Share\Events\BeforeShareDeletedEvent;
+use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\Events\ShareDeletedFromSelfEvent;
 use OCP\User\Events\PostLoginEvent;
 use OCP\User\Events\UserDeletedEvent;
@@ -183,8 +185,8 @@ class Application extends App implements IBootstrap {
 		Util::connectHook('OC_Filesystem', 'rename', FilesHooksStatic::class, 'fileMove');
 		Util::connectHook('OC_Filesystem', 'post_rename', FilesHooksStatic::class, 'fileMovePost');
 		Util::connectHook('\OCA\Files_Trashbin\Trashbin', 'post_restore', FilesHooksStatic::class, 'fileRestore');
-		Util::connectHook('OCP\Share', 'post_shared', FilesHooksStatic::class, 'share');
 
+		$context->registerEventListener(ShareCreatedEvent::class, ShareEventListener::class);
 		$context->registerEventListener(BeforeShareDeletedEvent::class, ShareEventListener::class);
 		$context->registerEventListener(ShareDeletedFromSelfEvent::class, ShareEventListener::class);
 	}

@@ -2,7 +2,6 @@ OC.L10N.register(
     "serverinfo",
     {
     "CPU info not available" : "Информацията за процесора не е налична",
-    "Load average: {cpu} (last minute)" : "Средна стойност на зареждане: {cpu} (последната минута)",
     "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}" : "RAM: Общо: {memTotalBytes}/Текущо използване: {memUsageBytes}",
     "RAM info not available" : "Информацията за RAM не е налична",
     "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}" : "SWAP: Общо: {swapTotalBytes}/Текущо използване: {swapUsageBytes}",
@@ -43,10 +42,7 @@ OC.L10N.register(
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Активни потребители",
-    "Total users:" : "Регистрирани:",
-    "24 hours:" : "24 часа:",
-    "1 hour:" : "1 час:",
-    "5 mins:" : "5 минути:",
+    "Last hour" : "Последния  час",
     "Shares" : "Споделени папки",
     "Users:" : "Потребители:",
     "Groups:" : "Групи:",
@@ -68,6 +64,11 @@ OC.L10N.register(
     "Copy" : "Копиране",
     "To use an access token, please generate one then set it using the following command:" : "За да използвате токен за достъп, моля, генерирайте такъв, след което го задайте с помощта на следната команда:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "След това предайте токена със заглавката „NC-Token “, когато правите заявка към горния URL адрес.",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Средна стойност на зареждане: {cpu} (последната минута)",
+    "DNS:" : "DNS:",
+    "Total users:" : "Регистрирани:",
+    "24 hours:" : "24 часа:",
+    "1 hour:" : "1 час:",
+    "5 mins:" : "5 минути:"
 },
 "nplurals=2; plural=(n != 1);");

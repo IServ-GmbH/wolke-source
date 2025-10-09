@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Политика за паролите",
     "Allows admins to configure a password policy" : "Позволява на администраторите да конфигурират политиката за парола",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Позволява на администратора да дефинира определени предварителни условия за парола, напр. налагат минимална дължина",
-    "Minimum password length" : "Минимална дължина на паролата",
-    "User password history" : "История на потребителската парола",
     "Number of days until user password expires" : "Брой дни до изтичане на паролата на потребителя",
+    "Minimum password length" : "Минимална дължина на паролата",
     "Forbid common passwords" : "Забранени са лесните пароли",
     "Enforce upper and lower case characters" : "Изискват се главни и малки букви",
     "Enforce numeric characters" : "Изискват се числа",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Срокът на  валидност не трябва да е отрицателно число",
     "Maximum login attempts have to be a non negative number" : "Максималният брой опити за влизане не трябва да е отрицателно число",
     "Settings saved" : "Настройките са запазени",
-    "Error while saving settings" : "Грешка при запазване на настройките"
+    "Error while saving settings" : "Грешка при запазване на настройките",
+    "User password history" : "История на потребителската парола"
 },
 "nplurals=2; plural=(n != 1);");

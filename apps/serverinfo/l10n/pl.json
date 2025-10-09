@@ -1,6 +1,5 @@
 { "translations": {
     "CPU info not available" : "Informacje o procesorze są niedostępne",
-    "Load average: {cpu} (last minute)" : "Średnie obciążenie: {cpu} (ostatnia minuta)",
     "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}" : "Pamięć RAM: Całkowita: {memTotalBytes}/Bieżące użycie: {memUsageBytes}",
     "RAM info not available" : "Informacje o pamięci RAM są niedostępne",
     "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}" : "Pamięć SWAP: Całkowita: {swapTotalBytes}/Bieżące użycie: {swapUsageBytes}",
@@ -41,10 +40,11 @@
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Aktywni użytkownicy",
-    "Total users:" : "Ilość użytkowników:",
-    "24 hours:" : "24 godziny:",
-    "1 hour:" : "1 godzina:",
-    "5 mins:" : "5 minut:",
+    "Last hour" : "Ostatnia godzina",
+    "%s%% of all users" : "%s%% wszystkich użytkowników",
+    "Last 24 Hours" : "Ostatnie 24 godziny",
+    "Last 7 Days" : "Ostatnie 7 dni",
+    "Last 30 Days" : "Ostatnie 30 dni",
     "Shares" : "Udostępnienia",
     "Users:" : "Użytkownicy:",
     "Groups:" : "Grupy:",
@@ -68,9 +68,15 @@
     "Use this end point to connect an external monitoring tool:" : "Użyj tego punktu końcowego, aby podłączyć zewnętrzne narzędzie monitorujące:",
     "Copy" : "Kopiuj",
     "Output in JSON" : "Dane wyjściowe w JSON",
+    "Skip apps section (including apps section will send an external request to the app store)" : "Pomiń sekcję aplikacji (włączenie sekcji aplikacji wyśle ​​zewnętrzne żądanie do sklepu z aplikacjami)",
     "Skip server update" : "Pomiń aktualizację serwera",
     "To use an access token, please generate one then set it using the following command:" : "Aby użyć tokena dostępu, wygeneruj go, a następnie ustaw za pomocą następującego polecenia:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Następnie przekaż token z nagłówkiem \"NC-Token\" podczas odpytywania powyższego adresu URL.",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Średnie obciążenie: {cpu} (ostatnia minuta)",
+    "DNS:" : "DNS:",
+    "Total users:" : "Ilość użytkowników:",
+    "24 hours:" : "24 godziny:",
+    "1 hour:" : "1 godzina:",
+    "5 mins:" : "5 minut:"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

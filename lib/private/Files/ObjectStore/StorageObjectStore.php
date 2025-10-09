@@ -45,8 +45,8 @@ class StorageObjectStore implements IObjectStore {
 	 * @return string the container or bucket name where objects are stored
 	 * @since 7.0.0
 	 */
-	public function getStorageId() {
-		$this->storage->getId();
+	public function getStorageId(): string {
+		return $this->storage->getId();
 	}
 
 	/**
@@ -64,7 +64,7 @@ class StorageObjectStore implements IObjectStore {
 		throw new \Exception();
 	}
 
-	public function writeObject($urn, $stream, string $mimetype = null) {
+	public function writeObject($urn, $stream, ?string $mimetype = null) {
 		$handle = $this->storage->fopen($urn, 'w');
 		if ($handle) {
 			stream_copy_to_stream($stream, $handle);

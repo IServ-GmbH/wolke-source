@@ -213,7 +213,7 @@ interface IShare {
 	 * @since 9.0.0
 	 * @throws NotFoundException
 	 */
-	public function getNodeId();
+	public function getNodeId(): int;
 
 	/**
 	 * Set the type of node (file/folder)
@@ -404,7 +404,7 @@ interface IShare {
 	 *
 	 * @param bool $noExpirationDate
 	 * @return \OCP\Share\IShare The modified object
-	 * @since 28.0.7
+	 * @since 29.0.1
 	 */
 	public function setNoExpirationDate(bool $noExpirationDate);
 
@@ -413,7 +413,7 @@ interface IShare {
 	 * Get value of overwrite falsy expiry date flag
 	 *
 	 * @return bool
-	 * @since 28.0.7
+	 * @since 29.0.1
 	 */
 	public function getNoExpirationDate();
 
@@ -492,7 +492,7 @@ interface IShare {
 	 * If this share is obtained via a shareprovider the password is
 	 * hashed.
 	 *
-	 * @return string
+	 * @return string|null
 	 * @since 9.0.0
 	 */
 	public function getPassword();

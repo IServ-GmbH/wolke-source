@@ -10,7 +10,7 @@ OC.L10N.register(
     "Back" : "ຫຼັງ",
     "Loading …" : "ກຳລັງໂຫຼດ",
     "Cancel" : "ຍົກເລີກ",
-    "Continue" : "ສືບຕໍ່",
+    "Confirm" : "ຢືນຢັນ",
     "Original" : "ຕົ້ນສະບັບ",
     "Size" : "ຂະຫນາດ"
 },

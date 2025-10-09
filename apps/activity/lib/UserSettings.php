@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -22,6 +23,7 @@
 
 namespace OCA\Activity;
 
+use OCA\Activity\Extension\Files;
 use OCP\Activity\ActivitySettings;
 use OCP\Activity\IManager;
 use OCP\IConfig;
@@ -43,7 +45,10 @@ class UserSettings {
 	 * @param IManager $manager
 	 * @param IConfig $config
 	 */
-	public function __construct(protected IManager $manager, protected IConfig $config) {
+	public function __construct(
+		protected IManager $manager,
+		protected IConfig $config,
+	) {
 	}
 
 	/**
@@ -68,7 +73,7 @@ class UserSettings {
 		}
 
 		if (is_bool($defaultSetting)) {
-			return (bool) $this->config->getUserValue(
+			return (bool)$this->config->getUserValue(
 				$user,
 				'activity',
 				'notify_' . $method . '_' . $type,
@@ -76,7 +81,7 @@ class UserSettings {
 			);
 		}
 
-		return (int) $this->config->getUserValue(
+		return (int)$this->config->getUserValue(
 			$user,
 			'activity',
 			'notify_' . $method . '_' . $type,
@@ -95,17 +100,17 @@ class UserSettings {
 	public function getAdminSetting($method, $type) {
 		$defaultSetting = $this->getDefaultSetting($method, $type);
 		if (is_bool($defaultSetting)) {
-			return (bool) $this->config->getAppValue(
+			return (bool)$this->config->getAppValue(
 				'activity',
 				'notify_' . $method . '_' . $type,
-				(string) $defaultSetting
+				(string)$defaultSetting
 			);
 		}
 
-		return (int) $this->config->getAppValue(
+		return (int)$this->config->getAppValue(
 			'activity',
 			'notify_' . $method . '_' . $type,
-			(string) $defaultSetting
+			(string)$defaultSetting
 		);
 	}
 
@@ -184,9 +189,14 @@ class UserSettings {
 		$return = array_map(function (ActivitySettings $setting) {
 			return $setting->getIdentifier();
 		}, $settings);
-		if (array_search('file_changed', $return) !== false) {
-			array_push($return, 'file_created', 'file_deleted', 'file_restored');
+
+		// TYPE_FILE_CHANGED is used to group all file changes together
+		// But we still differentiate between file_created, file_deleted and file_restored
+		// so let's add them to the list.
+		if (array_search(Files::TYPE_FILE_CHANGED, $return) !== false) {
+			array_push($return, Files::TYPE_SHARE_CREATED, Files::TYPE_SHARE_DELETED, Files::TYPE_SHARE_RESTORED);
 		}
+
 		return $return;
 	}
 
@@ -206,6 +216,11 @@ class UserSettings {
 
 		if ($method === 'email' && $this->config->getAppValue('activity', 'enable_email', 'yes') === 'no') {
 			return [];
+		}
+
+		// file_created, file_deleted and file_restored are grouped under file_changed
+		if ($type === Files::TYPE_SHARE_CREATED || $type === Files::TYPE_SHARE_DELETED || $type === Files::TYPE_SHARE_RESTORED) {
+			$type = Files::TYPE_FILE_CHANGED;
 		}
 
 		$filteredUsers = [];

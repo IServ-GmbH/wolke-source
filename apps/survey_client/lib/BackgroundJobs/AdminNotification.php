@@ -1,22 +1,8 @@
 <?php
 /**
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Survey_Client\BackgroundJobs;
@@ -50,15 +36,17 @@ class AdminNotification extends QueuedJob {
 			->setSubject('updated')
 			->setObject('dummy', '23');
 
+		$enableLink = $this->url->linkToOCSRouteAbsolute('survey_client.Endpoint.enableMonthly');
 		$enableAction = $notification->createAction();
 		$enableAction->setLabel('enable')
-			->setLink($this->url->getAbsoluteURL('ocs/v2.php/apps/survey_client/api/v1/monthly'), 'POST')
+			->setLink($enableLink, 'POST')
 			->setPrimary(true);
 		$notification->addAction($enableAction);
 
+		$disableLink = $this->url->linkToOCSRouteAbsolute('survey_client.Endpoint.disableMonthly');
 		$disableAction = $notification->createAction();
 		$disableAction->setLabel('disable')
-			->setLink($this->url->getAbsoluteURL('ocs/v2.php/apps/survey_client/api/v1/monthly'), 'DELETE')
+			->setLink($disableLink, 'DELETE')
 			->setPrimary(false);
 		$notification->addAction($disableAction);
 

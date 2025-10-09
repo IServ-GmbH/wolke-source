@@ -183,7 +183,7 @@ class ShareByCircleProvider implements IShareProvider {
 		try {
 			$knowShareWrapper = $this->shareWrapperService->searchShare($share->getSharedWith(), $nodeId);
 			throw new AlreadySharedException(
-				$this->l10n->t('This item is already shared with this circle'),
+				$this->l10n->t('This item is already shared with this team'),
 				$knowShareWrapper->getShare($this->rootFolder, $this->userManager, $this->urlGenerator)
 			);
 		} catch (ShareWrapperNotFoundException $e) {
@@ -684,12 +684,17 @@ class ShareByCircleProvider implements IShareProvider {
 			$ids[] = $node->getId();
 		}
 
+
 		if (!$currentAccess) {
 			return $this->getAccessListShort($ids);
 		}
 
 		$shareIds = $knownIds = $users = $remote = $mails = [];
 		foreach ($this->shareWrapperService->getSharesByFileIds($ids, true, true) as $share) {
+			if (!$share->hasCircle()) {
+				continue;
+			}
+
 			$shareIds[] = $share->getId();
 			$circle = $share->getCircle();
 			foreach ($circle->getInheritedMembers() as $member) {
@@ -797,7 +802,7 @@ class ShareByCircleProvider implements IShareProvider {
 	 */
 	private function updateAccessListTokens(array $list, array $shareTokens): array {
 		$result = [];
-		foreach ($list as $id => $data) {
+		foreach($list as $id => $data) {
 			$result[$id] = [
 				'node_id' => $data['node_id'],
 				'token' => $shareTokens[$data['shareId']][$data['memberId']]
@@ -825,26 +830,26 @@ class ShareByCircleProvider implements IShareProvider {
 	 * @return iterable
 	 */
 	public function getAllShares(): iterable {
-//		$qb = $this->dbConnection->getQueryBuilder();
-//
-//		$qb->select(' * ')
-//		   ->from('share')
-//		   ->where(
-//			   $qb->expr()
-//				  ->orX(
-//					  $qb->expr()
-//						 ->eq('share_type', $qb->createNamedParameter(IShare::TYPE_CIRCLE))
-//				  )
-//		   );
-//
-//		$cursor = $qb->execute();
-//		while ($data = $cursor->fetch()) {
-//			try {
-//				yield $this->createShareObject($data);
-//			} catch (IllegalIDChangeException $e) {
-//			};
-//		}
-//		$cursor->closeCursor();
+		//		$qb = $this->dbConnection->getQueryBuilder();
+		//
+		//		$qb->select(' * ')
+		//		   ->from('share')
+		//		   ->where(
+		//			   $qb->expr()
+		//				  ->orX(
+		//					  $qb->expr()
+		//						 ->eq('share_type', $qb->createNamedParameter(IShare::TYPE_CIRCLE))
+		//				  )
+		//		   );
+		//
+		//		$cursor = $qb->execute();
+		//		while ($data = $cursor->fetch()) {
+		//			try {
+		//				yield $this->createShareObject($data);
+		//			} catch (IllegalIDChangeException $e) {
+		//			};
+		//		}
+		//		$cursor->closeCursor();
 		return [];
 	}
 }

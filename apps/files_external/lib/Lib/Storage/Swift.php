@@ -167,7 +167,7 @@ class Swift extends \OC\Files\Storage\Common {
 			or (empty($params['user']) && empty($params['userid'])) or empty($params['bucket'])
 			or empty($params['region'])
 		) {
-			throw new StorageBadConfigException("API Key or password, Username, Bucket and Region have to be configured.");
+			throw new StorageBadConfigException("API Key or password, Login, Bucket and Region have to be configured.");
 		}
 
 		$user = $params['user'];
@@ -261,7 +261,7 @@ class Swift extends \OC\Files\Storage\Common {
 		}
 
 		$dh = $this->opendir($path);
-		while ($file = readdir($dh)) {
+		while (($file = readdir($dh)) !== false) {
 			if (\OC\Files\Filesystem::isIgnoredDir($file)) {
 				continue;
 			}
@@ -527,7 +527,7 @@ class Swift extends \OC\Files\Storage\Common {
 			}
 
 			$dh = $this->opendir($source);
-			while ($file = readdir($dh)) {
+			while (($file = readdir($dh)) !== false) {
 				if (\OC\Files\Filesystem::isIgnoredDir($file)) {
 					continue;
 				}

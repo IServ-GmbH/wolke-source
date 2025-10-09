@@ -48,7 +48,8 @@ class Data {
 	public function __construct(
 		protected IManager $activityManager,
 		protected IDBConnection $connection,
-		protected LoggerInterface $logger) {
+		protected LoggerInterface $logger,
+	) {
 	}
 
 	/**
@@ -237,7 +238,7 @@ class Data {
 
 		$query->setMaxResults($limit + 1);
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$hasMore = false;
 		while ($row = $result->fetch()) {
 			if ($limit === 0) {
@@ -273,7 +274,7 @@ class Data {
 			$queryBuilder->select(['affecteduser', 'timestamp'])
 				->from('activity')
 				->where($queryBuilder->expr()->eq('activity_id', $queryBuilder->createNamedParameter((int)$since)));
-			$result = $queryBuilder->execute();
+			$result = $queryBuilder->executeQuery();
 			$activity = $result->fetch();
 			$result->closeCursor();
 
@@ -303,7 +304,7 @@ class Data {
 			->where($fetchQuery->expr()->eq('affecteduser', $fetchQuery->createNamedParameter($user)))
 			->orderBy('timestamp', $sort)
 			->setMaxResults(1);
-		$result = $fetchQuery->execute();
+		$result = $fetchQuery->executeQuery();
 		$activity = $result->fetch();
 		$result->closeCursor();
 
@@ -358,12 +359,12 @@ class Data {
 	 * Delete activities that match certain conditions
 	 *
 	 * @param array $conditions Array with conditions that have to be met
-	 *                      'field' => 'value'  => `field` = 'value'
-	 *    'field' => array('value', 'operator') => `field` operator 'value'
+	 *                          'field' => 'value'  => `field` = 'value'
+	 *                          'field' => array('value', 'operator') => `field` operator 'value'
 	 */
 	public function deleteActivities($conditions): void {
 		$platform = $this->connection->getDatabasePlatform();
-		if($platform instanceof MySQLPlatform) {
+		if ($platform instanceof MySQLPlatform) {
 			$this->logger->debug('Choosing chunked activity delete for MySQL/MariaDB', ['app' => 'activity']);
 			$this->deleteActivitiesForMySQL($conditions);
 			return;
@@ -393,7 +394,7 @@ class Data {
 			->from('activity')
 			->where($query->expr()->eq('activity_id', $query->createNamedParameter($activityId)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		if ($row = $result->fetch()) {
 			$event = $this->activityManager->generateEvent();
 			$event->setApp((string)$row['app'])
@@ -428,7 +429,7 @@ class Data {
 			->orderBy('timestamp', 'ASC')
 			->setMaxResults(1);
 
-		$res = $query->execute()->fetch(\PDO::FETCH_COLUMN);
+		$res = $query->executeQuery()->fetch(\PDO::FETCH_COLUMN);
 		return (int)$res;
 	}
 
@@ -453,7 +454,7 @@ class Data {
 			$query->andWhere($query->expr()->neq('user', $nameParam));
 		}
 
-		return $query->execute()->fetch();
+		return $query->executeQuery()->fetch();
 	}
 
 	/**
@@ -482,7 +483,7 @@ class Data {
 		$query->setMaxResults(50000);
 		$result = $query->executeQuery();
 		$count = $result->rowCount();
-		if($count === 0) {
+		if ($count === 0) {
 			return;
 		}
 		$ids = array_map(static function (array $id) {
@@ -494,11 +495,11 @@ class Data {
 		$deleteQuery = $this->connection->getQueryBuilder();
 		$deleteQuery->delete('activity');
 		$deleteQuery->where($deleteQuery->expr()->in('activity_id', $deleteQuery->createParameter('ids'), IQueryBuilder::PARAM_INT_ARRAY));
-		foreach(array_chunk($ids, 1000) as $chunk) {
+		foreach (array_chunk($ids, 1000) as $chunk) {
 			$deleteQuery->setParameter('ids', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$queryResult += $deleteQuery->executeStatement();
 		}
-		if($queryResult === 50000) {
+		if ($queryResult === 50000) {
 			$this->deleteActivitiesForMySQL($conditions);
 		}
 	}

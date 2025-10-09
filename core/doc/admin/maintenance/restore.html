@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Restoring backup &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -221,11 +223,16 @@ It changes the logic of the synchronisation algorithm
 to try an recover as much data as possible.
 Files missing on the server are therefore recovered from the clients
 and in case of different content the users will be asked.</p>
+<p>This can also help in rare scenarios when the database is newer than the data directory.
+The server will restore the data from the clients and preserve the shares.
+Until then the files would be visible but not accessible.
+A <a class="reference internal" href="../configuration_server/occ_command.html#occ-files-scan-label"><span class="std std-ref">files:scan</span></a> is required afterwards to update the database.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The usage of <cite>maintenance:data-fingerprint</cite> can cause conflict dialogues
 and difficulties deleting files on the client.
-Therefore it’s only recommended to prevent dataloss if the backup was outdated.</p>
+Therefore it’s only recommended to prevent dataloss if the backup was outdated.
+This command does not require the server to be in maintenance mode.</p>
 </div>
 <p>If you are running multiple application servers you will need to make sure
 the config files are synced between them so that the updated <cite>data-fingerprint</cite>
@@ -244,7 +251,7 @@ is applied on all instances.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -266,11 +273,11 @@ is applied on all instances.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

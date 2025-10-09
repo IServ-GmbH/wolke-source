@@ -1,14 +1,14 @@
 diff --git apps/dav/appinfo/info.xml apps/dav/appinfo/info.xml
-index d2266c3..45fb773 100644
+index 71d15bc..5720bb0 100644
 --- apps/dav/appinfo/info.xml
 +++ apps/dav/appinfo/info.xml
-@@ -62,32 +62,8 @@
+@@ -65,29 +65,5 @@
  
  	<settings>
  		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
 -		<personal>OCA\DAV\Settings\AvailabilitySettings</personal>
  	</settings>
- 
+-
 -	<activity>
 -		<settings>
 -			<setting>OCA\DAV\CalDAV\Activity\Setting\Calendar</setting>
@@ -31,7 +31,4 @@ index d2266c3..45fb773 100644
 -			<provider>OCA\DAV\CardDAV\Activity\Provider\Card</provider>
 -		</providers>
 -	</activity>
--
- 	<public>
- 		<webdav>appinfo/v1/publicwebdav.php</webdav>
- 	</public>
+ </info>

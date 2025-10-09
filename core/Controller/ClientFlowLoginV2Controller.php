@@ -33,6 +33,7 @@ use OC\Core\Service\LoginFlowV2Service;
 use OCA\Core\ResponseDefinitions;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\JSONResponse;
@@ -56,6 +57,8 @@ use OCP\Security\ISecureRandom;
 class ClientFlowLoginV2Controller extends Controller {
 	public const TOKEN_NAME = 'client.flow.v2.login.token';
 	public const STATE_NAME = 'client.flow.v2.state.token';
+	// Denotes that the session was created for the login flow and should therefore be ephemeral.
+	public const EPHEMERAL_NAME = 'client.flow.v2.state.ephemeral';
 
 	public function __construct(
 		string $appName,
@@ -84,6 +87,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * 200: Login flow credentials returned
 	 * 404: Login flow not found or completed
 	 */
+	#[FrontpageRoute(verb: 'POST', url: '/login/v2/poll')]
 	public function poll(string $token): JSONResponse {
 		try {
 			$creds = $this->loginFlowV2Service->poll($token);
@@ -100,6 +104,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[UseSession]
+	#[FrontpageRoute(verb: 'GET', url: '/login/v2/flow/{token}')]
 	public function landing(string $token, string $user = '', int $direct = 0): Response {
 		if (!$this->loginFlowV2Service->startLoginFlow($token)) {
 			return $this->loginTokenForbiddenResponse();
@@ -118,6 +123,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[UseSession]
+	#[FrontpageRoute(verb: 'GET', url: '/login/v2/flow')]
 	public function showAuthPickerPage(string $user = '', int $direct = 0): StandaloneTemplateResponse {
 		try {
 			$flow = $this->getFlowByLoginToken();
@@ -153,6 +159,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[UseSession]
+	#[FrontpageRoute(verb: 'GET', url: '/login/v2/grant')]
 	public function grantPage(?string $stateToken, int $direct = 0): StandaloneTemplateResponse {
 		if ($stateToken === null) {
 			return $this->stateTokenMissingResponse();
@@ -189,6 +196,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	/**
 	 * @PublicPage
 	 */
+	#[FrontpageRoute(verb: 'POST', url: '/login/v2/apptoken')]
 	public function apptokenRedirect(?string $stateToken, string $user, string $password) {
 		if ($stateToken === null) {
 			return $this->stateTokenMissingResponse();
@@ -236,6 +244,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 * @NoAdminRequired
 	 */
 	#[UseSession]
+	#[FrontpageRoute(verb: 'POST', url: '/login/v2/grant')]
 	public function generateAppPassword(?string $stateToken): Response {
 		if ($stateToken === null) {
 			return $this->stateTokenMissingResponse();
@@ -293,6 +302,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	 *
 	 * 200: Login flow init returned
 	 */
+	#[FrontpageRoute(verb: 'POST', url: '/login/v2')]
 	public function init(): JSONResponse {
 		// Get client user agent
 		$userAgent = $this->request->getHeader('USER_AGENT');

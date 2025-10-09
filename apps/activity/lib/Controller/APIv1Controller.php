@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
@@ -27,6 +28,7 @@ use OCA\Activity\GroupHelper;
 use OCA\Activity\UserSettings;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\IDBConnection;
 use OCP\IRequest;
 
 class APIv1Controller extends OCSController {
@@ -38,12 +40,15 @@ class APIv1Controller extends OCSController {
 	 * @param UserSettings $userSettings
 	 * @param CurrentUser $currentUser
 	 */
-	public function __construct($appName,
+	public function __construct(
+		$appName,
 		IRequest $request,
 		protected Data $data,
 		protected GroupHelper $groupHelper,
 		protected UserSettings $userSettings,
-		protected CurrentUser $currentUser) {
+		protected CurrentUser $currentUser,
+		protected IDBConnection $dbConnection,
+	) {
 		parent::__construct($appName, $request);
 	}
 
@@ -85,7 +90,7 @@ class APIv1Controller extends OCSController {
 	 * @return int
 	 */
 	protected function getSinceFromOffset($offset) {
-		$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+		$query = $this->dbConnection->getQueryBuilder();
 		$query->select('activity_id')
 			->from('activity')
 			->where($query->expr()->eq('affecteduser', $query->createNamedParameter($this->currentUser->getUID())))
@@ -93,12 +98,12 @@ class APIv1Controller extends OCSController {
 			->setFirstResult($offset - 1)
 			->setMaxResults(1);
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
 		if ($row) {
-			return (int) $row['activity_id'];
+			return (int)$row['activity_id'];
 		}
 
 		return 0;

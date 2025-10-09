@@ -9,7 +9,8 @@ OC.L10N.register(
     "Save" : "Lagre",
     "Back" : "Tilbake",
     "Cancel" : "Avbryt",
-    "Continue" : "Gå vidare",
+    "Apply" : "Anvend",
+    "Warning" : "Åtvaring",
     "Value" : "Verdi",
     "Size" : "Storleik"
 },

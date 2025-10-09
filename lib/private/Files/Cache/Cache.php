@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -45,6 +46,7 @@ use OC\DB\Exceptions\DbalException;
 use OC\Files\Search\SearchComparison;
 use OC\Files\Search\SearchQuery;
 use OC\Files\Storage\Wrapper\Encryption;
+use OC\SystemConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Cache\CacheEntryInsertedEvent;
@@ -83,60 +85,51 @@ class Cache implements ICache {
 	/**
 	 * @var array partial data for the cache
 	 */
-	protected $partial = [];
+	protected array $partial = [];
+	protected string $storageId;
+	protected Storage $storageCache;
+	protected IMimeTypeLoader $mimetypeLoader;
+	protected IDBConnection $connection;
+	protected SystemConfig $systemConfig;
+	protected LoggerInterface $logger;
+	protected QuerySearchHelper $querySearchHelper;
+	protected IEventDispatcher $eventDispatcher;
+	protected IFilesMetadataManager $metadataManager;
 
-	/**
-	 * @var string
-	 */
-	protected $storageId;
-
-	private $storage;
-
-	/**
-	 * @var Storage $storageCache
-	 */
-	protected $storageCache;
-
-	/** @var IMimeTypeLoader */
-	protected $mimetypeLoader;
-
-	/**
-	 * @var IDBConnection
-	 */
-	protected $connection;
-
-	/**
-	 * @var IEventDispatcher
-	 */
-	protected $eventDispatcher;
-
-	/** @var QuerySearchHelper */
-	protected $querySearchHelper;
-
-	/**
-	 * @param IStorage $storage
-	 */
-	public function __construct(IStorage $storage) {
+	public function __construct(
+		private IStorage $storage,
+		// this constructor is used in to many pleases to easily do proper di
+		// so instead we group it all together
+		?CacheDependencies $dependencies = null,
+	) {
 		$this->storageId = $storage->getId();
-		$this->storage = $storage;
 		if (strlen($this->storageId) > 64) {
 			$this->storageId = md5($this->storageId);
 		}
-
-		$this->storageCache = new Storage($storage);
-		$this->mimetypeLoader = \OC::$server->getMimeTypeLoader();
-		$this->connection = \OC::$server->getDatabaseConnection();
-		$this->eventDispatcher = \OC::$server->get(IEventDispatcher::class);
-		$this->querySearchHelper = \OCP\Server::get(QuerySearchHelper::class);
+		if (!$dependencies) {
+			$dependencies = \OC::$server->get(CacheDependencies::class);
+		}
+		$this->storageCache = new Storage($this->storage, true, $dependencies->getConnection());
+		$this->mimetypeLoader = $dependencies->getMimeTypeLoader();
+		$this->connection = $dependencies->getConnection();
+		$this->systemConfig = $dependencies->getSystemConfig();
+		$this->logger = $dependencies->getLogger();
+		$this->querySearchHelper = $dependencies->getQuerySearchHelper();
+		$this->eventDispatcher = $dependencies->getEventDispatcher();
+		$this->metadataManager = $dependencies->getMetadataManager();
 	}
 
 	protected function getQueryBuilder() {
 		return new CacheQueryBuilder(
 			$this->connection,
-			\OC::$server->getSystemConfig(),
-			\OC::$server->get(LoggerInterface::class),
-			\OC::$server->get(IFilesMetadataManager::class),
+			$this->systemConfig,
+			$this->logger,
+			$this->metadataManager,
 		);
+	}
+
+	public function getStorageCache(): Storage {
+		return $this->storageCache;
 	}
 
 	/**
@@ -179,7 +172,7 @@ class Cache implements ICache {
 		} elseif (!$data) {
 			return $data;
 		} else {
-			$data['metadata'] = $metadataQuery?->extractMetadata($data)->asArray() ?? [];
+			$data['metadata'] = $metadataQuery->extractMetadata($data)->asArray();
 			return self::cacheEntryFromData($data, $this->mimetypeLoader);
 		}
 	}
@@ -209,6 +202,9 @@ class Cache implements ICache {
 		$data['mimepart'] = $mimetypeLoader->getMimetypeById($data['mimepart']);
 		if ($data['storage_mtime'] == 0) {
 			$data['storage_mtime'] = $data['mtime'];
+		}
+		if (isset($data['f_permissions'])) {
+			$data['scan_permissions'] = $data['f_permissions'];
 		}
 		$data['permissions'] = (int)$data['permissions'];
 		if (isset($data['creation_time'])) {
@@ -251,7 +247,7 @@ class Cache implements ICache {
 			$result->closeCursor();
 
 			return array_map(function (array $data) use ($metadataQuery) {
-				$data['metadata'] = $metadataQuery?->extractMetadata($data)->asArray() ?? [];
+				$data['metadata'] = $metadataQuery->extractMetadata($data)->asArray();
 				return self::cacheEntryFromData($data, $this->mimetypeLoader);
 			}, $files);
 		}
@@ -305,6 +301,9 @@ class Cache implements ICache {
 		$data['path'] = $file;
 		if (!isset($data['parent'])) {
 			$data['parent'] = $this->getParentId($file);
+		}
+		if ($data['parent'] === -1 && $file !== '') {
+			throw new \Exception('Parent folder not in filecache for ' . $file);
 		}
 		$data['name'] = basename($file);
 
@@ -594,8 +593,13 @@ class Cache implements ICache {
 				return $cacheEntry->getPath();
 			}, $children);
 
-			$deletedIds = array_merge($deletedIds, $childIds);
-			$deletedPaths = array_merge($deletedPaths, $childPaths);
+			foreach ($childIds as $childId) {
+				$deletedIds[] = $childId;
+			}
+
+			foreach ($childPaths as $childPath) {
+				$deletedPaths[] = $childPath;
+			}
 
 			$query = $this->getQueryBuilder();
 			$query->delete('filecache_extended')
@@ -873,7 +877,7 @@ class Cache implements ICache {
 	 * search for files by mimetype
 	 *
 	 * @param string $mimetype either a full mimetype to search ('text/plain') or only the first part of a mimetype ('image')
-	 *        where it will search for all mimetypes in the group ('image/*')
+	 *                         where it will search for all mimetypes in the group ('image/*')
 	 * @return ICacheEntry[] an array of cache entries where the mimetype matches the search
 	 */
 	public function searchByMime($mimetype) {
@@ -885,8 +889,8 @@ class Cache implements ICache {
 		return $this->searchQuery(new SearchQuery($operator, 0, 0, [], null));
 	}
 
-	public function searchQuery(ISearchQuery $searchQuery) {
-		return current($this->querySearchHelper->searchInCaches($searchQuery, [$this]));
+	public function searchQuery(ISearchQuery $query) {
+		return current($this->querySearchHelper->searchInCaches($query, [$this]));
 	}
 
 	/**
@@ -1065,28 +1069,19 @@ class Cache implements ICache {
 	 * @return string|false the path of the folder or false when no folder matched
 	 */
 	public function getIncomplete() {
-		// we select the fileid here first instead of directly selecting the path since this helps mariadb/mysql
-		// to use the correct index.
-		// The overhead of this should be minimal since the cost of selecting the path by id should be much lower
-		// than the cost of finding an item with size < 0
 		$query = $this->getQueryBuilder();
-		$query->select('fileid')
+		$query->select('path')
 			->from('filecache')
 			->whereStorageId($this->getNumericStorageId())
-			->andWhere($query->expr()->lt('size', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('size', $query->createNamedParameter(-1, IQueryBuilder::PARAM_INT)))
 			->orderBy('fileid', 'DESC')
 			->setMaxResults(1);
 
 		$result = $query->execute();
-		$id = $result->fetchOne();
+		$path = $result->fetchOne();
 		$result->closeCursor();
 
-		if ($id === false) {
-			return false;
-		}
-
-		$path = $this->getPathById($id);
-		return $path ?? false;
+		return $path === false ? false : (string)$path;
 	}
 
 	/**
@@ -1166,7 +1161,7 @@ class Cache implements ICache {
 	 */
 	public function copyFromCache(ICache $sourceCache, ICacheEntry $sourceEntry, string $targetPath): int {
 		if ($sourceEntry->getId() < 0) {
-			throw new \RuntimeException("Invalid source cache entry on copyFromCache");
+			throw new \RuntimeException('Invalid source cache entry on copyFromCache');
 		}
 		$data = $this->cacheEntryToArray($sourceEntry);
 
@@ -1177,7 +1172,7 @@ class Cache implements ICache {
 
 		$fileId = $this->put($targetPath, $data);
 		if ($fileId <= 0) {
-			throw new \RuntimeException("Failed to copy to " . $targetPath . " from cache with source data " . json_encode($data) . " ");
+			throw new \RuntimeException('Failed to copy to ' . $targetPath . ' from cache with source data ' . json_encode($data) . ' ');
 		}
 		if ($sourceEntry->getMimeType() === ICacheEntry::DIRECTORY_MIMETYPE) {
 			$folderContent = $sourceCache->getFolderContentsById($sourceEntry->getId());
@@ -1190,7 +1185,7 @@ class Cache implements ICache {
 	}
 
 	private function cacheEntryToArray(ICacheEntry $entry): array {
-		return [
+		$data = [
 			'size' => $entry->getSize(),
 			'mtime' => $entry->getMTime(),
 			'storage_mtime' => $entry->getStorageMTime(),
@@ -1203,6 +1198,10 @@ class Cache implements ICache {
 			'upload_time' => $entry->getUploadTime(),
 			'metadata_etag' => $entry->getMetadataEtag(),
 		];
+		if ($entry instanceof CacheEntry && isset($entry['scan_permissions'])) {
+			$data['permissions'] = $entry['scan_permissions'];
+		}
+		return $data;
 	}
 
 	public function getQueryFilterForStorage(): ISearchOperator {

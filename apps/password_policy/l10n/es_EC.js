@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Política de contraseñas",
     "Allows admins to configure a password policy" : "Permite a los administradores configurar una política de contraseñas.",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Permite al administrador definir ciertas condiciones previas para la contraseña, por ejemplo, imponer una longitud mínima.",
-    "Minimum password length" : "Longitud mínima de la contraseña.",
-    "User password history" : "Historial de contraseñas del usuario.",
     "Number of days until user password expires" : "Número de días hasta que la contraseña del usuario expire.",
+    "Minimum password length" : "Longitud mínima de la contraseña.",
     "Forbid common passwords" : "Restringir contraseñas comunes",
     "Enforce upper and lower case characters" : "Imponer caracteres en mayúsculas y minúsculas",
     "Enforce numeric characters" : "Imponer caracteres numéricos",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Los días de vencimiento deben ser un número no negativo.",
     "Maximum login attempts have to be a non negative number" : "El número máximo de intentos de inicio de sesión debe ser un número no negativo.",
     "Settings saved" : "Se han guardado las configuraciones ",
-    "Error while saving settings" : "Error al guardar la configuración."
+    "Error while saving settings" : "Error al guardar la configuración.",
+    "User password history" : "Historial de contraseñas del usuario."
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

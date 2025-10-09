@@ -31,6 +31,7 @@ use OC\Profile\ProfileManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -67,6 +68,7 @@ class ProfilePageController extends Controller {
 	 * @NoAdminRequired
 	 * @NoSubAdminRequired
 	 */
+	#[FrontpageRoute(verb: 'GET', url: '/u/{targetUserId}')]
 	#[BruteForceProtection(action: 'user')]
 	#[UserRateLimit(limit: 30, period: 120)]
 	#[AnonRateLimit(limit: 30, period: 120)]

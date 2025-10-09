@@ -33,6 +33,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\Util;
 
+/** @template-implements IEventListener<BeforeLoginTemplateRenderedEvent|BeforeTemplateRenderedEvent> */
 class BeforeTemplateRenderedListener implements IEventListener {
 	public function __construct(private IConfig $config) {
 	}
@@ -45,6 +46,10 @@ class BeforeTemplateRenderedListener implements IEventListener {
 		if ($event->getResponse()->getRenderAs() === TemplateResponse::RENDER_AS_USER) {
 			// Making sure to inject just after core
 			Util::addScript('core', 'unsupported-browser-redirect');
+		}
+
+		if ($event->getResponse()->getRenderAs() === TemplateResponse::RENDER_AS_PUBLIC) {
+			Util::addScript('core', 'public');
 		}
 
 		\OC_Util::addStyle('server', null, true);

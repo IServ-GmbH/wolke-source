@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Password policy",
     "Allows admins to configure a password policy" : "Allows admins to configure a password policy",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length",
-    "Minimum password length" : "Minimum password length",
-    "User password history" : "User password history",
     "Number of days until user password expires" : "Number of days until user password expires",
+    "Minimum password length" : "Minimum password length",
     "Forbid common passwords" : "Forbid common passwords",
     "Enforce upper and lower case characters" : "Enforce upper and lower case characters",
     "Enforce numeric characters" : "Enforce numeric characters",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Expiration days have to be a non negative number",
     "Maximum login attempts have to be a non negative number" : "Maximum login attempts have to be a non negative number",
     "Settings saved" : "Settings saved",
-    "Error while saving settings" : "Error while saving settings"
+    "Error while saving settings" : "Error while saving settings",
+    "User password history" : "User password history"
 },
 "nplurals=2; plural=(n!=1);");

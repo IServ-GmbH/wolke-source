@@ -58,6 +58,7 @@ class ViewOnlyPlugin extends ServerPlugin {
 		//Sabre\DAV\CorePlugin::httpGet
 		$this->server->on('method:GET', [$this, 'checkViewOnly'], 90);
 		$this->server->on('method:COPY', [$this, 'checkViewOnly'], 90);
+		$this->server->on('method:MOVE', [$this, 'checkViewOnly'], 90);
 	}
 
 	/**
@@ -109,7 +110,7 @@ class ViewOnlyPlugin extends ServerPlugin {
 			// Check if read-only and on whether permission can download is both set and disabled.
 			$canDownload = $attributes->getAttribute('permissions', 'download');
 			if ($canDownload !== null && !$canDownload) {
-				throw new Forbidden('Access to this resource has been denied because it is in view-only mode.');
+				throw new Forbidden('Access to this shared resource has been denied because its download permission is disabled.');
 			}
 		} catch (NotFound $e) {
 			// File not found

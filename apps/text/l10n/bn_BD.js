@@ -13,7 +13,10 @@ OC.L10N.register(
     "Cancel" : "বাতিল করুন",
     "URL" : "URL",
     "to" : "প্রতি",
+    "Upload" : "আপলোড",
     "Edit" : "সম্পাদনা",
+    "Done" : "শেষ হলো",
+    "Details" : "বিসতারিত",
     "Info" : "Info",
     "Warning" : "সতর্কবাণী"
 },

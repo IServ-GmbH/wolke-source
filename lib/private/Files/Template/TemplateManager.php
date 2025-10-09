@@ -159,11 +159,9 @@ class TemplateManager implements ITemplateManager {
 				throw new GenericFileException($this->l10n->t('Invalid path'));
 			}
 			$folder = $userFolder->get(dirname($filePath));
-			$targetFile = $folder->newFile(basename($filePath));
 			$template = null;
 			if ($templateType === 'user' && $templateId !== '') {
 				$template = $userFolder->get($templateId);
-				$template->copy($targetFile->getPath());
 			} else {
 				$matchingProvider = array_filter($this->getRegisteredProviders(), function (ICustomTemplateProvider $provider) use ($templateType) {
 					return $templateType === get_class($provider);
@@ -171,9 +169,9 @@ class TemplateManager implements ITemplateManager {
 				$provider = array_shift($matchingProvider);
 				if ($provider) {
 					$template = $provider->getCustomTemplate($templateId);
-					$template->copy($targetFile->getPath());
 				}
 			}
+			$targetFile = $folder->newFile(basename($filePath), ($template instanceof File ? $template->fopen('rb') : null));
 			$this->eventDispatcher->dispatchTyped(new FileCreatedFromTemplateEvent($template, $targetFile));
 			return $this->formatFile($userFolder->get($filePath));
 		} catch (\Exception $e) {
@@ -188,9 +186,12 @@ class TemplateManager implements ITemplateManager {
 	 * @throws \OCP\Files\NotPermittedException
 	 * @throws \OC\User\NoUserException
 	 */
-	private function getTemplateFolder(): Node {
+	private function getTemplateFolder(): Folder {
 		if ($this->getTemplatePath() !== '') {
-			return $this->rootFolder->getUserFolder($this->userId)->get($this->getTemplatePath());
+			$path = $this->rootFolder->getUserFolder($this->userId)->get($this->getTemplatePath());
+			if ($path instanceof Folder) {
+				return $path;
+			}
 		}
 		throw new NotFoundException();
 	}
@@ -262,7 +263,7 @@ class TemplateManager implements ITemplateManager {
 		return $this->config->getUserValue($this->userId, 'core', 'templateDirectory', '');
 	}
 
-	public function initializeTemplateDirectory(string $path = null, string $userId = null, $copyTemplates = true): string {
+	public function initializeTemplateDirectory(?string $path = null, ?string $userId = null, $copyTemplates = true): string {
 		if ($userId !== null) {
 			$this->userId = $userId;
 		}

@@ -145,7 +145,7 @@ class Migrator {
 	/**
 	 * @throws Exception
 	 */
-	protected function applySchema(Schema $targetSchema, Connection $connection = null) {
+	protected function applySchema(Schema $targetSchema, ?Connection $connection = null) {
 		if (is_null($connection)) {
 			$connection = $this->connection;
 		}
@@ -159,7 +159,7 @@ class Migrator {
 		$step = 0;
 		foreach ($sqls as $sql) {
 			$this->emit($sql, $step++, count($sqls));
-			$connection->executeQuery($sql);
+			$connection->executeStatement($sql);
 		}
 		if (!$connection->getDatabasePlatform() instanceof MySQLPlatform) {
 			$connection->commit();

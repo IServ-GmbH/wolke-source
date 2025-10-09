@@ -2,8 +2,7 @@
 # TLDR: No skipping major releases. Only upgrade major release if on the last minor release.
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-# The default version specified here will be used by the CI pipeline.
-ARG VERSION=28.0.9
+ARG VERSION
 
 FROM git.iserv.eu:443/iserv/dependency_proxy/containers/node:22-alpine AS patchstage
 ARG VERSION
@@ -26,7 +25,10 @@ FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-apa
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
 # Limit Apache MaxRequestWorkers to 25 to prevent out of memory
-COPY ./apache/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
+COPY apache/mpm_prefork.conf.template /etc/apache2/mods-enabled/mpm_prefork.conf.template
+
+# install a symlink, bc entrypoint running as www-data cannot write into mods-enabled
+RUN ln -sf /tmp/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Install git for binary patches
 RUN apt-get update \
@@ -40,7 +42,7 @@ RUN apt-get update \
 # TODO: Have a central place to keep the app versions #76427
 # remember to keep version for files_linkeditor in sync with version number in clone_and_apply_patches.sh
 RUN mkdir /iserv-apps \
-    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.17.2/files_retention-v1.17.2.tar.gz" \
+    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.18.0/files_retention-v1.18.0.tar.gz" \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
@@ -48,7 +50,7 @@ RUN mkdir /iserv-apps \
     && tar -xf files_linkeditor.tar.gz \
     && mv files_linkeditor /iserv-apps \
     && rm files_linkeditor.tar.gz \
-    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v16.0.9/groupfolders-v16.0.9.tar.gz" \
+    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v17.0.13/groupfolders-v17.0.13.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
     && rm groupfolders.tar.gz \
@@ -56,7 +58,7 @@ RUN mkdir /iserv-apps \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz \
-    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.3.13/richdocuments-v8.3.13.tar.gz" \
+    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.4.12/richdocuments-v8.4.12.tar.gz" \
     && tar -xf richdocuments.tar.gz \
     && mv richdocuments /iserv-apps \
     && rm richdocuments.tar.gz

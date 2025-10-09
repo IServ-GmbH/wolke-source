@@ -34,9 +34,10 @@
  */
 namespace OC;
 
-use OC\DB\Connection;
 use OC\DB\ConnectionAdapter;
+use OC\Repair\AddAppConfigLazyMigration;
 use OC\Repair\AddBruteForceCleanupJob;
+use OC\Repair\AddCleanupDeletedUsersBackgroundJob;
 use OC\Repair\AddCleanupUpdaterBackupsJob;
 use OC\Repair\AddMetadataGenerationJob;
 use OC\Repair\AddRemoveOldTasksBackgroundJob;
@@ -64,10 +65,10 @@ use OC\Repair\NC20\EncryptionLegacyCipher;
 use OC\Repair\NC20\EncryptionMigration;
 use OC\Repair\NC20\ShippedDashboardEnable;
 use OC\Repair\NC21\AddCheckForUserCertificatesJob;
-use OC\Repair\NC21\ValidatePhoneNumber;
 use OC\Repair\NC22\LookupServerSendCheck;
 use OC\Repair\NC24\AddTokenCleanupJob;
 use OC\Repair\NC25\AddMissingSecretJob;
+use OC\Repair\NC29\SanitizeAccountProperties;
 use OC\Repair\OldGroupMembershipShares;
 use OC\Repair\Owncloud\CleanPreviews;
 use OC\Repair\Owncloud\DropAccountTermsTable;
@@ -75,6 +76,7 @@ use OC\Repair\Owncloud\MigrateOauthTables;
 use OC\Repair\Owncloud\MoveAvatars;
 use OC\Repair\Owncloud\SaveAccountsTableData;
 use OC\Repair\Owncloud\UpdateLanguageCodes;
+use OC\Repair\RemoveBrokenProperties;
 use OC\Repair\RemoveLinkShares;
 use OC\Repair\RepairDavShares;
 use OC\Repair\RepairInvalidShares;
@@ -93,23 +95,19 @@ use Throwable;
 
 class Repair implements IOutput {
 	/** @var IRepairStep[] */
-	private array $repairSteps;
-
-	private IEventDispatcher $dispatcher;
+	private array $repairSteps = [];
 
 	private string $currentStep;
 
-	private LoggerInterface $logger;
+	public function __construct(
+		private IEventDispatcher $dispatcher,
+		private LoggerInterface $logger
+	) {
+	}
 
-	/**
-	 * Creates a new repair step runner
-	 *
-	 * @param IRepairStep[] $repairSteps array of RepairStep instances
-	 */
-	public function __construct(array $repairSteps, IEventDispatcher $dispatcher, LoggerInterface $logger) {
+	/** @param IRepairStep[] $repairSteps */
+	public function setRepairSteps(array $repairSteps): void {
 		$this->repairSteps = $repairSteps;
-		$this->dispatcher = $dispatcher;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -189,7 +187,7 @@ class Repair implements IOutput {
 				\OC::$server->getUserManager(),
 				\OC::$server->getConfig()
 			),
-			new MigrateOauthTables(\OC::$server->get(Connection::class)),
+			\OCP\Server::get(MigrateOauthTables::class),
 			new FixMountStorages(\OC::$server->getDatabaseConnection()),
 			new UpdateLanguageCodes(\OC::$server->getDatabaseConnection(), \OC::$server->getConfig()),
 			new AddLogRotateJob(\OC::$server->getJobList()),
@@ -214,7 +212,10 @@ class Repair implements IOutput {
 			\OCP\Server::get(AddMissingSecretJob::class),
 			\OCP\Server::get(AddRemoveOldTasksBackgroundJob::class),
 			\OCP\Server::get(AddMetadataGenerationJob::class),
+			\OCP\Server::get(AddAppConfigLazyMigration::class),
 			\OCP\Server::get(RepairLogoDimension::class),
+			\OCP\Server::get(AddCleanupDeletedUsersBackgroundJob::class),
+			\OCP\Server::get(SanitizeAccountProperties::class),
 		];
 	}
 
@@ -227,8 +228,8 @@ class Repair implements IOutput {
 	public static function getExpensiveRepairSteps() {
 		return [
 			new OldGroupMembershipShares(\OC::$server->getDatabaseConnection(), \OC::$server->getGroupManager()),
+			new RemoveBrokenProperties(\OC::$server->getDatabaseConnection()),
 			new RepairMimeTypes(\OC::$server->getConfig(), \OC::$server->getDatabaseConnection()),
-			\OC::$server->get(ValidatePhoneNumber::class),
 			\OC::$server->get(DeleteSchedulingObjects::class),
 		];
 	}

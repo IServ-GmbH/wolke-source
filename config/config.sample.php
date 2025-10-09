@@ -152,6 +152,14 @@ $CONFIG = [
 'dbpersistent' => '',
 
 /**
+ * Specify read only replicas to be used by Nextcloud when querying the database
+ */
+'dbreplica' => [
+	['user' => 'nextcloud', 'password' => 'password1', 'host' => 'replica1', 'dbname' => ''],
+	['user' => 'nextcloud', 'password' => 'password2', 'host' => 'replica2', 'dbname' => ''],
+],
+
+/**
  * Add request id to the database query in a comment.
  *
  * This can be enabled to assist in mapping database logs to Nextcloud logs.
@@ -367,7 +375,7 @@ $CONFIG = [
 'token_auth_activity_update' => 60,
 
 /**
- * Whether the bruteforce protection shipped with Nextcloud should be enabled or not.
+ * Whether the brute force protection shipped with Nextcloud should be enabled or not.
  *
  * Disabling this is discouraged for security reasons.
  *
@@ -376,9 +384,9 @@ $CONFIG = [
 'auth.bruteforce.protection.enabled' => true,
 
 /**
- * Whether the bruteforce protection shipped with Nextcloud should be set to testing mode.
+ * Whether the brute force protection shipped with Nextcloud should be set to testing mode.
  *
- * In testing mode bruteforce attempts are still recorded, but the requests do
+ * In testing mode brute force attempts are still recorded, but the requests do
  * not sleep/wait for the specified time. They will still abort with
  * "429 Too Many Requests" when the maximum delay is reached.
  * Enabling this is discouraged for security reasons
@@ -631,6 +639,8 @@ $CONFIG = [
  * are generated within Nextcloud using any kind of command line tools (cron or
  * occ). The value should contain the full base URL:
  * ``https://www.example.com/nextcloud``
+ * Please make sure to set the value to the URL that your users mainly use to access this Nextcloud. 
+ * Otherwise there might be problems with the URL generation via cron.
  *
  * Defaults to ``''`` (empty string)
  */
@@ -996,6 +1006,15 @@ $CONFIG = [
 'loglevel_frontend' => 2,
 
 /**
+ * Loglevel used by the dirty database query detection. Useful to identify
+ * potential database bugs in production. Set this to loglevel or higher to
+ * see dirty queries in the logs.
+ *
+ * Defaults to ``0`` (debug)
+ */
+'loglevel_dirty_database_queries' => 0,
+
+/**
  * If you maintain different instances and aggregate the logs, you may want
  * to distinguish between them. ``syslog_tag`` can be set per instance
  * with a unique id. Only available if ``log_type`` is set to ``syslog`` or
@@ -1329,6 +1348,15 @@ $CONFIG = [
 ],
 
 /**
+ * Maximum file size for metadata generation.
+ * If a file exceeds this size, metadata generation will be skipped.
+ * Note: memory equivalent to this size will be used for metadata generation.
+ *
+ * Default: 256 megabytes.
+ */
+'metadata_max_filesize' => 256,
+
+/**
  * LDAP
  *
  * Global settings used by LDAP User and Group Backend
@@ -1348,6 +1376,7 @@ $CONFIG = [
  * Sort groups in the user settings by name instead of the user count
  *
  * By enabling this the user count beside the group name is disabled as well.
+ * @deprecated since Nextcloud 29 - Use the frontend instead or set the app config value `group.sortBy` for `core` to `2`
  */
 'sort_groups_by_name' => false,
 
@@ -1960,6 +1989,8 @@ $CONFIG = [
  * Blacklist characters from being used in filenames. This is useful if you
  * have a filesystem or OS which does not support certain characters like windows.
  *
+ * The '/' and '\' characters are always forbidden.
+ *
  * Example for windows systems: ``array('?', '<', '>', ':', '*', '|', '"', chr(0), "\n", "\r")``
  * see https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
  *
@@ -1981,6 +2012,14 @@ $CONFIG = [
  * E.g. dark, dark-highcontrast, default, light, light-highcontrast, opendyslexic
  */
 'enforce_theme' => '',
+
+
+/**
+ * This setting allows to disable the PWA functionality that allows browsers to open web applications in dedicated windows.
+ *
+ * Defaults to ``true``
+ */
+'theming.standalone_window.enabled' => true,
 
 /**
  * The default cipher for encrypting files. Currently supported are:
@@ -2299,6 +2338,14 @@ $CONFIG = [
  */
 
 'login_form_autocomplete' => true,
+
+/**
+ * Timeout for the login form, after this time the login form is reset.
+ * This prevents password leaks on public devices if the user forgots to clear the form.
+ *
+ * Default is 5 minutes (300 seconds), a value of 0 means no timeout.
+ */
+'login_form_timeout' => 300,
 
 /**
  * If your user is using an outdated or unsupported browser, a warning will be shown

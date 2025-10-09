@@ -10,12 +10,13 @@ OC.L10N.register(
     "Allows admins to configure a password policy" : "Leidžia administratoriams konfigūruoti slaptažodžių politiką",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Leisti administratoriams apibrėžti tam tikras išankstines sąlygas slaptažodžiui, pvz., priverstinis mažiausias slaptažodžio ilgis",
     "Minimum password length" : "Mažiausias slaptažodžio ilgis",
-    "User password history" : "Naudotojo slaptažodžių istorija",
     "Forbid common passwords" : "Uždrausti paplitusius slaptažodžius",
     "Enforce upper and lower case characters" : "Versti naudoti didžiąsias ir mažąsias raides",
     "Enforce numeric characters" : "Versti naudoti skaitmenų simbolius",
     "Enforce special characters" : "Versti naudoti specialius simbolius",
     "Unknown error" : "Nežinoma klaida",
-    "Settings saved" : "Nustatymai įrašyti"
+    "Settings saved" : "Nustatymai įrašyti",
+    "Error while saving settings" : "Klaida įrašant nustatymus",
+    "User password history" : "Naudotojo slaptažodžių istorija"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

@@ -35,6 +35,7 @@ use OCA\Notifications\AppInfo\Application;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\Authentication\Token\IToken;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Http\Client\IClientService;
 use OCP\ICache;
@@ -45,6 +46,7 @@ use OCP\IUser;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
+use OCP\Security\ISecureRandom;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 use OCP\Util;
@@ -131,6 +133,7 @@ class Push {
 		IUserStatusManager $userStatusManager,
 		IFactory $l10nFactory,
 		protected ITimeFactory $timeFactory,
+		protected ISecureRandom $random,
 		LoggerInterface $log,
 	) {
 		$this->db = $connection;
@@ -258,6 +261,8 @@ class Push {
 
 	public function pushToDevice(int $id, INotification $notification, ?OutputInterface $output = null): void {
 		if (!$this->config->getSystemValueBool('has_internet_connection', true)) {
+			$this->printInfo('<error>Internet connectivity is disabled in configuration file - no push notifications will be sent</error>');
+
 			return;
 		}
 
@@ -280,7 +285,9 @@ class Push {
 
 		if (isset($this->userStatuses[$notification->getUser()])) {
 			$userStatus = $this->userStatuses[$notification->getUser()];
-			if ($userStatus->getStatus() === IUserStatus::DND && empty($this->allowedDNDPushList[$notification->getApp()])) {
+			if ($userStatus instanceof IUserStatus
+				&& $userStatus->getStatus() === IUserStatus::DND
+				&& empty($this->allowedDNDPushList[$notification->getApp()])) {
 				$this->printInfo('<error>User status is set to DND - no push notifications will be sent</error>');
 				return;
 			}
@@ -301,10 +308,10 @@ class Push {
 		$this->printInfo('Trying to push to ' . count($devices) . ' devices');
 		$this->printInfo('');
 
-		$language = $this->l10nFactory->getUserLanguage($user);
-		$this->printInfo('Language is set to ' . $language);
-
 		if (!$notification->isValidParsed()) {
+			$language = $this->l10nFactory->getUserLanguage($user);
+			$this->printInfo('Language is set to ' . $language);
+
 			try {
 				$this->notificationManager->setPreparingPushNotification(true);
 				$notification = $this->notificationManager->prepare($notification, $language);
@@ -482,6 +489,17 @@ class Push {
 			return;
 		}
 
+		$subscriptionAwareServer = rtrim($this->config->getAppValue(Application::APP_ID, 'subscription_aware_server', 'https://push-notifications.nextcloud.com'), '/');
+		if ($subscriptionAwareServer === 'https://push-notifications.nextcloud.com') {
+			$subscriptionKey = $this->config->getAppValue('support', 'subscription_key');
+		} else {
+			$subscriptionKey = $this->config->getAppValue(Application::APP_ID, 'push_subscription_key');
+			if ($subscriptionKey === '') {
+				$subscriptionKey = $this->createPushSubscriptionKey();
+				$this->config->setAppValue(Application::APP_ID, 'push_subscription_key', $subscriptionKey);
+			}
+		}
+
 		$client = $this->clientService->newClient();
 		foreach ($pushNotifications as $proxyServer => $notifications) {
 			try {
@@ -491,23 +509,28 @@ class Push {
 					],
 				];
 
-				if ($proxyServer === 'https://push-notifications.nextcloud.com') {
-					$subscriptionKey = $this->config->getAppValue('support', 'subscription_key');
-					if ($subscriptionKey) {
-						$requestData['headers']['X-Nextcloud-Subscription-Key'] = $subscriptionKey;
-					}
+				if ($subscriptionKey !== '' && $proxyServer === $subscriptionAwareServer) {
+					$requestData['headers']['X-Nextcloud-Subscription-Key'] = $subscriptionKey;
 				}
 
 				$response = $client->post($proxyServer . '/notifications', $requestData);
 				$status = $response->getStatusCode();
-				$body = $response->getBody();
-				$bodyData = json_decode($body, true);
+				$body = (string) $response->getBody();
+				try {
+					$bodyData = json_decode($body, true);
+				} catch (\JsonException $e) {
+					$bodyData = null;
+				}
 			} catch (ClientException $e) {
 				// Server responded with 4xx (400 Bad Request mostlikely)
 				$response = $e->getResponse();
 				$status = $response->getStatusCode();
 				$body = $response->getBody()->getContents();
-				$bodyData = json_decode($body, true);
+				try {
+					$bodyData = json_decode($body, true);
+				} catch (\JsonException $e) {
+					$bodyData = null;
+				}
 			} catch (ServerException $e) {
 				// Server responded with 5xx
 				$response = $e->getResponse();
@@ -571,27 +594,61 @@ class Push {
 
 	protected function validateToken(int $tokenId, int $maxAge): bool {
 		$age = $this->cache->get('t' . $tokenId);
-		if ($age !== null) {
-			return $age > $maxAge;
+
+		if ($age === null) {
+			try {
+				// Check if the token is still valid...
+				$token = $this->tokenProvider->getTokenById($tokenId);
+				$type = $this->callSafelyForToken($token, 'getType');
+				if ($type === IToken::WIPE_TOKEN) {
+					// Token does not exist any more, should drop the push device entry
+					$this->printInfo('Device token is marked for remote wipe');
+					$this->deletePushToken($tokenId);
+					$this->cache->set('t' . $tokenId, 0, 600);
+					return false;
+				}
+
+				$age = $token->getLastCheck();
+				$lastActivity = $this->callSafelyForToken($token, 'getLastActivity');
+				if ($lastActivity) {
+					$age = max($age, $lastActivity);
+				}
+				$this->cache->set('t' . $tokenId, $age, 600);
+			} catch (InvalidTokenException) {
+				// Token does not exist any more, should drop the push device entry
+				$this->printInfo('InvalidTokenException is thrown');
+				$this->deletePushToken($tokenId);
+				$this->cache->set('t' . $tokenId, 0, 600);
+				return false;
+			}
 		}
 
-		try {
-			// Check if the token is still valid...
-			$token = $this->tokenProvider->getTokenById($tokenId);
-			$this->cache->set('t' . $tokenId, $token->getLastCheck(), 600);
-			if ($token->getLastCheck() > $maxAge) {
-				$this->printInfo('Device token is valid');
-			} else {
-				$this->printInfo('Device token "last checked" is older than 60 days: ' . $token->getLastCheck());
-			}
-			return $token->getLastCheck() > $maxAge;
-		} catch (InvalidTokenException $e) {
-			// Token does not exist anymore, should drop the push device entry
-			$this->printInfo('InvalidTokenException is thrown');
-			$this->deletePushToken($tokenId);
-			$this->cache->set('t' . $tokenId, 0, 600);
-			return false;
+		if ($age > $maxAge) {
+			$this->printInfo('Device token is valid');
+			return true;
 		}
+
+		$this->printInfo('Device token "last checked" is older than 60 days: ' . $age);
+		return false;
+	}
+
+	/**
+	 * The functions are not part of public API so we are a bit more careful
+	 * @param IToken $token
+	 * @param 'getLastActivity'|'getType' $method
+	 * @return int|null
+	 */
+	protected function callSafelyForToken(IToken $token, string $method): ?int {
+		if (method_exists($token, $method) || method_exists($token, '__call')) {
+			try {
+				$result = $token->$method();
+				if (is_int($result)) {
+					return $result;
+				}
+			} catch (\BadFunctionCallException) {
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -780,5 +837,10 @@ class Push {
 
 	protected function createFakeUserObject(string $userId): IUser {
 		return new FakeUser($userId);
+	}
+
+	protected function createPushSubscriptionKey(): string {
+		$key = $this->random->generate(25, ISecureRandom::CHAR_ALPHANUMERIC);
+		return implode('-', str_split($key, 5));
 	}
 }

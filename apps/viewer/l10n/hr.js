@@ -8,11 +8,11 @@ OC.L10N.register(
     "Image saved" : "Slika je spremljena",
     "Unsaved changes" : "Nespremljene promjene",
     "Your browser does not support videos." : "Vaš preglednik ne podržava videozapise.",
+    "There is no plugin available to display this file type" : "Nema dostupnog dodatka za prikazivanje ove vrste datoteke",
     "Edit" : "Uredi",
     "Open sidebar" : "Otvori bočnu traku",
     "Download" : "Preuzmi",
     "Delete" : "Izbriši",
-    "There is no plugin available to display this file type" : "Nema dostupnog dodatka za prikazivanje ove vrste datoteke",
     "View" : "Pregledaj",
     "Name" : "Naziv",
     "Save" : "Spremi",
@@ -20,7 +20,9 @@ OC.L10N.register(
     "Loading …" : "Učitavanje…",
     "Reset" : "Resetiraj",
     "Cancel" : "Odustani",
-    "Continue" : "Nastavi",
+    "Apply" : "Potvrdi",
+    "Warning" : "Upozorenje",
+    "Confirm" : "Potvrdi",
     "Undo" : "Poništi",
     "Redo" : "Ponovno",
     "Zoom in" : "Uvećaj",
@@ -33,6 +35,8 @@ OC.L10N.register(
     "Position" : "Položaj",
     "Extension" : "Proširenje",
     "Name is required." : "Ime je obavezno.",
-    "Quality" : "Kvaliteta"
+    "Quality" : "Kvaliteta",
+    "Menu" : "Izbornik",
+    "Height" : "Visina"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

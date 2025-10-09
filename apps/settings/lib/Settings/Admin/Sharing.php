@@ -63,6 +63,7 @@ class Sharing implements IDelegatedSettings {
 		$excludedGroups = $this->config->getAppValue('core', 'shareapi_exclude_groups_list', '');
 		$linksExcludedGroups = $this->config->getAppValue('core', 'shareapi_allow_links_exclude_groups', '');
 		$excludedPasswordGroups = $this->config->getAppValue('core', 'shareapi_enforce_links_password_excluded_groups', '');
+		$onlyShareWithGroupMembersExcludeGroupList = $this->config->getAppValue('core', 'shareapi_only_share_with_group_members_exclude_group_list', '');
 
 		$parameters = [
 			// Built-In Sharing
@@ -80,13 +81,14 @@ class Sharing implements IDelegatedSettings {
 			'restrictUserEnumerationFullMatchEmail' => $this->getHumanBooleanConfig('core', 'shareapi_restrict_user_enumeration_full_match_email', true),
 			'restrictUserEnumerationFullMatchIgnoreSecondDN' => $this->getHumanBooleanConfig('core', 'shareapi_restrict_user_enumeration_full_match_ignore_second_dn'),
 			'enforceLinksPassword' => Util::isPublicLinkPasswordRequired(false),
-			'passwordExcludedGroups' => json_decode($excludedPasswordGroups) ?? [],
-			'passwordExcludedGroupsFeatureEnabled' => $this->config->getSystemValueBool('sharing.allow_disabled_password_enforcement_groups', false),
+			'enforceLinksPasswordExcludedGroups' => json_decode($excludedPasswordGroups) ?? [],
+			'enforceLinksPasswordExcludedGroupsEnabled' => $this->config->getSystemValueBool('sharing.allow_disabled_password_enforcement_groups', false),
 			'onlyShareWithGroupMembers' => $this->shareManager->shareWithGroupMembersOnly(),
+			'onlyShareWithGroupMembersExcludeGroupList' => json_decode($onlyShareWithGroupMembersExcludeGroupList) ?? [],
 			'defaultExpireDate' => $this->getHumanBooleanConfig('core', 'shareapi_default_expire_date'),
 			'expireAfterNDays' => $this->config->getAppValue('core', 'shareapi_expire_after_n_days', '7'),
 			'enforceExpireDate' => $this->getHumanBooleanConfig('core', 'shareapi_enforce_expire_date'),
-			'excludeGroups' => $this->getHumanBooleanConfig('core', 'shareapi_exclude_groups'),
+			'excludeGroups' => $this->config->getAppValue('core', 'shareapi_exclude_groups', 'no'),
 			'excludeGroupsList' => json_decode($excludedGroups, true) ?? [],
 			'publicShareDisclaimerText' => $this->config->getAppValue('core', 'shareapi_public_link_disclaimertext', null),
 			'enableLinkPasswordByDefault' => $this->getHumanBooleanConfig('core', 'shareapi_enable_link_password_by_default'),

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>General troubleshooting &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -73,7 +75,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#bugs">Bugs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id1">General troubleshooting</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#disable-3rdparty-non-shipped-apps">Disable 3rdparty / non-shipped apps</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#nextcloud-logfiles">Nextcloud logfiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-server-errors">Internal Server Errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nextcloud-log-files">Nextcloud log files</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#php-version-and-information">PHP version and information</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#debugging-sync-issues">Debugging sync issues</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#common-problems-error-messages">Common problems / error messages</a></li>
@@ -179,24 +182,39 @@ different issues. Always disable 3rd party apps before upgrades, and for
 troubleshooting. Please refer to the <a class="reference internal" href="../configuration_server/occ_command.html#apps-commands-label"><span class="std std-ref">Apps commands</span></a> on how
 to disable an app from command line.</p>
 </section>
-<section id="nextcloud-logfiles">
-<h3>Nextcloud logfiles<a class="headerlink" href="#nextcloud-logfiles" title="Link to this heading"></a></h3>
-<p>In a standard Nextcloud installation the log level is set to <code class="docutils literal notranslate"><span class="pre">Normal</span></code>. To find
-any issues you need to raise the log level to <code class="docutils literal notranslate"><span class="pre">All</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>
-file, or to <strong>Everything</strong> on your Nextcloud Admin page. Please see
-<a class="reference internal" href="../configuration_server/logging_configuration.html"><span class="doc">Logging</span></a> for more information on
-these log levels.</p>
+<section id="internal-server-errors">
+<h3>Internal Server Errors<a class="headerlink" href="#internal-server-errors" title="Link to this heading"></a></h3>
+<p>An Internal Server Error, sometimes called a “500 error”, indicates that the web server
+encountered an unexpected condition that prevented it from fulfilling the request.</p>
+<p>This error response is a generic “catch-all” response. To find out the source of the
+error you will need to check your Nextcloud log (located in <cite>data/nextcloud.log</cite> by
+default) and possibly your web server’s error log (depending on where the failure is
+occurring).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Whenever possible, Nextcloud will include the “Request id” in the error. This
+request ID can be searched for in your Nextcloud log file to find entries associated
+with the failing transaction.</p>
+</div>
+</section>
+<section id="nextcloud-log-files">
+<h3>Nextcloud log files<a class="headerlink" href="#nextcloud-log-files" title="Link to this heading"></a></h3>
+<p>The Nextcloud log file is located in the data directory by default - e.g.
+<code class="docutils literal notranslate"><span class="pre">data/nextcloud.log</span></code>. If the Web UI is still reachable, it is also available
+via <em>Administration settings-&gt;Logging</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When asking for help, the entire raw log entry is generally required.</p>
+</div>
+<p>For some situations you may need to adjust the log level in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>
+file. Please see <a class="reference internal" href="../configuration_server/logging_configuration.html"><span class="doc">Logging</span></a> for more
+information on these log levels.</p>
 <p>Some logging - for example JavaScript console logging - needs debugging
 enabled. Edit <code class="file docutils literal notranslate"><span class="pre">config/config.php</span></code> and change <code class="docutils literal notranslate"><span class="pre">'debug'</span> <span class="pre">=&gt;</span> <span class="pre">false,</span></code> to
 <code class="docutils literal notranslate"><span class="pre">'debug'</span> <span class="pre">=&gt;</span> <span class="pre">true,</span></code> Be sure to change it back when you are finished.</p>
 <p>For JavaScript issues you will also need to view the javascript console. All
 major browsers have developer tools for viewing the console, and you
 usually access them by pressing F12.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The logfile of Nextcloud is located in the data directory
-<code class="docutils literal notranslate"><span class="pre">nextcloud/data/nextcloud.log</span></code>.</p>
-</div>
 </section>
 <section id="php-version-and-information">
 <span id="label-phpinfo"></span><h3>PHP version and information<a class="headerlink" href="#php-version-and-information" title="Link to this heading"></a></h3>
@@ -603,7 +621,7 @@ first.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -625,11 +643,11 @@ first.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

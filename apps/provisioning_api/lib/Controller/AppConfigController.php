@@ -27,12 +27,13 @@ declare(strict_types=1);
  */
 namespace OCA\Provisioning_API\Controller;
 
+use OC\AppConfig;
 use OC\AppFramework\Middleware\Security\Exceptions\NotAdminException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Exceptions\AppConfigUnknownKeyException;
 use OCP\IAppConfig;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -42,46 +43,17 @@ use OCP\Settings\IDelegatedSettings;
 use OCP\Settings\IManager;
 
 class AppConfigController extends OCSController {
-
-	/** @var IConfig */
-	protected $config;
-
-	/** @var IAppConfig */
-	protected $appConfig;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	/** @var IL10N */
-	private $l10n;
-
-	/** @var IGroupManager */
-	private $groupManager;
-
-	/** @var IManager */
-	private $settingManager;
-
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IConfig $config
-	 * @param IAppConfig $appConfig
-	 */
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
-		IAppConfig $appConfig,
-		IUserSession $userSession,
-		IL10N $l10n,
-		IGroupManager $groupManager,
-		IManager $settingManager) {
+		/** @var AppConfig */
+		private IAppConfig $appConfig,
+		private IUserSession $userSession,
+		private IL10N $l10n,
+		private IGroupManager $groupManager,
+		private IManager $settingManager,
+	) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
-		$this->appConfig = $appConfig;
-		$this->userSession = $userSession;
-		$this->l10n = $l10n;
-		$this->groupManager = $groupManager;
-		$this->settingManager = $settingManager;
 	}
 
 	/**
@@ -113,7 +85,7 @@ class AppConfigController extends OCSController {
 			return new DataResponse(['data' => ['message' => $e->getMessage()]], Http::STATUS_FORBIDDEN);
 		}
 		return new DataResponse([
-			'data' => $this->config->getAppKeys($app),
+			'data' => $this->appConfig->getKeys($app),
 		]);
 	}
 
@@ -134,9 +106,10 @@ class AppConfigController extends OCSController {
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['data' => ['message' => $e->getMessage()]], Http::STATUS_FORBIDDEN);
 		}
-		return new DataResponse([
-			'data' => $this->config->getAppValue($app, $key, $defaultValue),
-		]);
+
+		/** @psalm-suppress InternalMethod */
+		$value = $this->appConfig->getValueMixed($app, $key, $defaultValue, null);
+		return new DataResponse(['data' => $value]);
 	}
 
 	/**
@@ -161,7 +134,7 @@ class AppConfigController extends OCSController {
 		}
 
 		if (!$this->isAllowedToChangedKey($user, $app, $key)) {
-			throw new NotAdminException($this->l10n->t('Logged in user must be an administrator or have authorization to edit this setting.'));
+			throw new NotAdminException($this->l10n->t('Logged in account must be an administrator or have authorization to edit this setting.'));
 		}
 
 		try {
@@ -171,7 +144,23 @@ class AppConfigController extends OCSController {
 			return new DataResponse(['data' => ['message' => $e->getMessage()]], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->config->setAppValue($app, $key, $value);
+		$type = null;
+		try {
+			$configDetails = $this->appConfig->getDetails($app, $key);
+			$type = $configDetails['type'];
+		} catch (AppConfigUnknownKeyException) {
+		}
+
+		/** @psalm-suppress InternalMethod */
+		match ($type) {
+			IAppConfig::VALUE_BOOL => $this->appConfig->setValueBool($app, $key, (bool)$value),
+			IAppConfig::VALUE_FLOAT => $this->appConfig->setValueFloat($app, $key, (float)$value),
+			IAppConfig::VALUE_INT => $this->appConfig->setValueInt($app, $key, (int)$value),
+			IAppConfig::VALUE_STRING => $this->appConfig->setValueString($app, $key, $value),
+			IAppConfig::VALUE_ARRAY => $this->appConfig->setValueArray($app, $key, \json_decode($value, true)),
+			default => $this->appConfig->setValueMixed($app, $key, $value),
+		};
+
 		return new DataResponse();
 	}
 
@@ -195,7 +184,7 @@ class AppConfigController extends OCSController {
 			return new DataResponse(['data' => ['message' => $e->getMessage()]], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->config->deleteAppValue($app, $key);
+		$this->appConfig->deleteKey($app, $key);
 		return new DataResponse();
 	}
 
@@ -231,7 +220,7 @@ class AppConfigController extends OCSController {
 		if ($app === 'files'
 			&& $key === 'default_quota'
 			&& $value === 'none'
-			&& $this->config->getAppValue('files', 'allow_unlimited_quota', '1') === '0') {
+			&& $this->appConfig->getValueInt('files', 'allow_unlimited_quota', 1) === 0) {
 			throw new \InvalidArgumentException('The given key can not be set, unlimited quota is forbidden on this instance');
 		}
 	}

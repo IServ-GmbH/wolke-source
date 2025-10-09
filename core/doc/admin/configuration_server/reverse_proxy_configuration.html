@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reverse proxy &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -257,8 +259,8 @@ rewrite ^/\.well-known/caldav https://$server_name/remote.php/dav/ redirect;
 <section id="caddy">
 <h3>Caddy<a class="headerlink" href="#caddy" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>subdomain.example.com {
-    redir /.well-known/carddav /remote.php/dav 301
-    redir /.well-known/caldav /remote.php/dav 301
+    redir /.well-known/carddav /remote.php/dav/ 301
+    redir /.well-known/caldav /remote.php/dav/ 301
 
     reverse_proxy {$NEXTCLOUD_HOST:localhost}
 }
@@ -306,7 +308,7 @@ create the <code class="file docutils literal notranslate"><span class="pre">con
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -328,11 +330,11 @@ create the <code class="file docutils literal notranslate"><span class="pre">con
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -2,7 +2,6 @@ OC.L10N.register(
     "serverinfo",
     {
     "CPU info not available" : "Informació del processador no disponible",
-    "Load average: {cpu} (last minute)" : "Mitjana de càrrega: {cpu} (última hora)",
     "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}" : "RAM: Total: {memTotalBytes}/Ús actual: {memUsageBytes}",
     "RAM info not available" : "La informació de la RAM no està disponible",
     "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}" : "SWAP: Total: {swapTotalBytes}/Ús actual: {swapUsageBytes}",
@@ -43,10 +42,7 @@ OC.L10N.register(
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Usuaris actius",
-    "Total users:" : "Total d'usuaris:",
-    "24 hours:" : "24 hores:",
-    "1 hour:" : "1 hora:",
-    "5 mins:" : "5 minuts:",
+    "Last hour" : "Última hora",
     "Shares" : "Elements compartits",
     "Users:" : "Usuaris:",
     "Groups:" : "Grups:",
@@ -68,6 +64,11 @@ OC.L10N.register(
     "Copy" : "Copia",
     "To use an access token, please generate one then set it using the following command:" : "Per utilitzar un testimoni d'accés, genereu-ne un i configureu-lo amb l'ordre següent:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "A continuació, passeu el testimoni amb la capçalera \"NC-Token\" quan consulteu l’adreça URL anterior.",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Mitjana de càrrega: {cpu} (última hora)",
+    "DNS:" : "DNS:",
+    "Total users:" : "Total d'usuaris:",
+    "24 hours:" : "24 hores:",
+    "1 hour:" : "1 hora:",
+    "5 mins:" : "5 minuts:"
 },
 "nplurals=2; plural=(n != 1);");

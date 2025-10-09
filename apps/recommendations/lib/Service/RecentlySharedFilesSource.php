@@ -25,19 +25,20 @@ declare(strict_types=1);
 
 namespace OCA\Recommendations\Service;
 
+use Generator;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException;
+use OCP\Files\StorageNotAvailableException;
+use OCP\IL10N;
+use OCP\IUser;
+use OCP\Share\IManager;
+use OCP\Share\IShare;
 use function array_filter;
 use function array_map;
 use function array_merge;
 use function array_slice;
 use function iterator_to_array;
-use OCP\Files\NotFoundException;
 use function usort;
-use Generator;
-use OCP\Files\IRootFolder;
-use OCP\IL10N;
-use OCP\IUser;
-use OCP\Share\IManager;
-use OCP\Share\IShare;
 
 class RecentlySharedFilesSource implements IRecommendationSource {
 	private IManager $shareManager;
@@ -45,8 +46,8 @@ class RecentlySharedFilesSource implements IRecommendationSource {
 	private IL10N $l10n;
 
 	public function __construct(IManager $shareManager,
-								IRootFolder $rootFolder,
-								IL10N $l10n) {
+		IRootFolder $rootFolder,
+		IL10N $l10n) {
 		$this->shareManager = $shareManager;
 		$this->rootFolder = $rootFolder;
 		$this->l10n = $l10n;
@@ -118,6 +119,8 @@ class RecentlySharedFilesSource implements IRecommendationSource {
 					$this->l10n->t("Recently shared")
 				);
 			} catch (NotFoundException $ex) {
+				return null;
+			} catch (StorageNotAvailableException $e) {
 				return null;
 			}
 		}, $shares));

@@ -13,8 +13,10 @@ OC.L10N.register(
     "Undo" : "Dadwneud",
     "URL" : "URL",
     "to" : "at",
+    "Upload" : "Llwytho i fyny",
     "Edit" : "Golygu",
     "Source code" : "Cod ffynhonnell",
+    "Details" : "Manylion",
     "Info" : "Info",
     "Warning" : "Rhybudd"
 },

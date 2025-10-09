@@ -9,7 +9,8 @@ OC.L10N.register(
     "Back" : "Retour",
     "Loading …" : "Asali ...",
     "Cancel" : "Sefsex",
-    "Continue" : "Continuer",
+    "Warning" : "Alɣu",
+    "Confirm" : "Serggeg",
     "Size" : "Teɣzi"
 },
 "nplurals=2; plural=(n != 1);");

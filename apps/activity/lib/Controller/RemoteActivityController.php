@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -36,13 +37,15 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class RemoteActivityController extends OCSController {
-	public function __construct($appName,
+	public function __construct(
+		$appName,
 		IRequest $request,
 		protected IDBConnection $db,
 		protected IUserManager $userManager,
 		protected IAppManager $appManager,
 		protected IRootFolder $rootFolder,
-		protected IActivityManager $activityManager) {
+		protected IActivityManager $activityManager,
+	) {
 		parent::__construct($appName, $request);
 	}
 
@@ -94,7 +97,7 @@ class RemoteActivityController extends OCSController {
 			->where($query->expr()->eq('share_token', $query->createNamedParameter($token)))
 			->andWhere($query->expr()->eq('user', $query->createNamedParameter($user->getUID())));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$share = $result->fetch();
 		$result->closeCursor();
 
@@ -179,7 +182,7 @@ class RemoteActivityController extends OCSController {
 	/**
 	 * @param null|string $path2
 	 */
-	protected function getSubject(string $type, string $path, string|null $path2) {
+	protected function getSubject(string $type, string $path, ?string $path2) {
 		switch ($type) {
 			case 'Create':
 				return 'created_by';

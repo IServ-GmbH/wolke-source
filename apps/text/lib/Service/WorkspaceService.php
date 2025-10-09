@@ -24,15 +24,16 @@ class WorkspaceService {
 
 	public function getFile(Folder $folder): ?File {
 		foreach ($this->getSupportedFilenames() as $filename) {
-			if ($folder->nodeExists($filename)) {
-				try {
+			try {
+				$exists = $folder->getStorage()->getCache()->get($folder->getInternalPath() . '/' . $filename);
+				if ($exists) {
 					$file = $folder->get($filename);
 					if ($file instanceof File) {
 						return $file;
 					}
-				} catch (NotFoundException|StorageInvalidException) {
-					return null;
 				}
+			} catch (NotFoundException|StorageInvalidException) {
+				continue;
 			}
 		}
 		return null;

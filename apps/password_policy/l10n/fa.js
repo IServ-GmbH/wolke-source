@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "خط مشی رمز عبور",
     "Allows admins to configure a password policy" : "به مدیران اجازه می دهد خط مشی رمز عبور را پیکربندی کنند",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "اجازه مدیر برای تعریف خاصی از پیش شرایط برای رمز عبور، به عنوان مثال، حداقل طول را اجرا کنید",
-    "Minimum password length" : "Minimum password length",
-    "User password history" : "User password history",
     "Number of days until user password expires" : "Number of days until user password expires",
+    "Minimum password length" : "Minimum password length",
     "Forbid common passwords" : "ممنوع کردن کلمه عبور مشترک",
     "Enforce upper and lower case characters" : "کاراکترهای بزرگ و پایین را اجرا کنید",
     "Enforce numeric characters" : "اجرای شخصیت های عددی",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Expiration days have to be a non negative number",
     "Maximum login attempts have to be a non negative number" : "Maximum login attempts have to be a non negative number",
     "Settings saved" : "تنظیمات ذخیره شد",
-    "Error while saving settings" : "Error while saving settings"
+    "Error while saving settings" : "Error while saving settings",
+    "User password history" : "User password history"
 },
 "nplurals=2; plural=(n > 1);");

@@ -8,6 +8,6 @@ OC.L10N.register(
     "Save" : "حفظ",
     "Reset" : "ری سیٹ",
     "Cancel" : "منسوخ کریں",
-    "Continue" : "جاری"
+    "Warning" : "انتباہ"
 },
 "nplurals=2; plural=(n != 1);");

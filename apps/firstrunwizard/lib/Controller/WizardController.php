@@ -28,17 +28,11 @@ use OCP\IRequest;
 
 class WizardController extends Controller {
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IConfig $config
-	 * @param string|null $userId
-	 */
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
-		private IConfig $config,
 		private ?string $userId,
+		private IConfig $config,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -48,8 +42,12 @@ class WizardController extends Controller {
 	 * @return DataResponse
 	 */
 	public function disable() {
-		\assert($this->userId !== null);
-		$this->config->setUserValue($this->userId, 'firstrunwizard', 'show', 0);
+		// get the current Nextcloud version
+		$version = \OCP\Util::getVersion();
+		// we only use major.minor.patch
+		array_splice($version, 3);
+		// Set "show" to current version to only show on update
+		$this->config->setUserValue($this->userId, 'firstrunwizard', 'show', implode('.', $version));
 		return new DataResponse();
 	}
 }

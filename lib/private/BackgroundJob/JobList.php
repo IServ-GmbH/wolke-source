@@ -43,31 +43,23 @@ use OCP\IDBConnection;
 use Psr\Log\LoggerInterface;
 use function get_class;
 use function json_encode;
-use function md5;
 use function strlen;
 
 class JobList implements IJobList {
-	protected IDBConnection $connection;
-	protected IConfig $config;
-	protected ITimeFactory $timeFactory;
-	protected LoggerInterface $logger;
-
-	public function __construct(IDBConnection $connection, IConfig $config, ITimeFactory $timeFactory, LoggerInterface $logger) {
-		$this->connection = $connection;
-		$this->config = $config;
-		$this->timeFactory = $timeFactory;
-		$this->logger = $logger;
+	public function __construct(
+		protected IDBConnection $connection,
+		protected IConfig $config,
+		protected ITimeFactory $timeFactory,
+		protected LoggerInterface $logger
+	) {
 	}
 
-	public function add($job, $argument = null, int $firstCheck = null): void {
+	public function add($job, $argument = null, ?int $firstCheck = null): void {
 		if ($firstCheck === null) {
 			$firstCheck = $this->timeFactory->getTime();
 		}
-		if ($job instanceof IJob) {
-			$class = get_class($job);
-		} else {
-			$class = $job;
-		}
+
+		$class = ($job instanceof IJob) ? get_class($job) : $job;
 
 		$argumentJson = json_encode($argument);
 		if (strlen($argumentJson) > 4000) {
@@ -80,7 +72,7 @@ class JobList implements IJobList {
 				->values([
 					'class' => $query->createNamedParameter($class),
 					'argument' => $query->createNamedParameter($argumentJson),
-					'argument_hash' => $query->createNamedParameter(md5($argumentJson)),
+					'argument_hash' => $query->createNamedParameter(hash('sha256', $argumentJson)),
 					'last_run' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
 					'last_checked' => $query->createNamedParameter($firstCheck, IQueryBuilder::PARAM_INT),
 				]);
@@ -90,7 +82,7 @@ class JobList implements IJobList {
 				->set('last_checked', $query->createNamedParameter($firstCheck, IQueryBuilder::PARAM_INT))
 				->set('last_run', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 				->where($query->expr()->eq('class', $query->createNamedParameter($class)))
-				->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(md5($argumentJson))));
+				->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(hash('sha256', $argumentJson))));
 		}
 		$query->executeStatement();
 	}
@@ -104,18 +96,14 @@ class JobList implements IJobList {
 	 * @param mixed $argument
 	 */
 	public function remove($job, $argument = null): void {
-		if ($job instanceof IJob) {
-			$class = get_class($job);
-		} else {
-			$class = $job;
-		}
+		$class = ($job instanceof IJob) ? get_class($job) : $job;
 
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('jobs')
 			->where($query->expr()->eq('class', $query->createNamedParameter($class)));
 		if (!is_null($argument)) {
 			$argumentJson = json_encode($argument);
-			$query->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(md5($argumentJson))));
+			$query->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(hash('sha256', $argumentJson))));
 		}
 
 		// Add galera safe delete chunking if using mysql
@@ -127,11 +115,11 @@ class JobList implements IJobList {
 			$query->setMaxResults($max);
 
 			do {
-				$deleted = $query->execute();
+				$deleted = $query->executeStatement();
 			} while ($deleted === $max);
 		} else {
 			// Dont use chunked delete - let the DB handle the large row count natively
-			$query->execute();
+			$query->executeStatement();
 		}
 	}
 
@@ -149,18 +137,14 @@ class JobList implements IJobList {
 	 * @param mixed $argument
 	 */
 	public function has($job, $argument): bool {
-		if ($job instanceof IJob) {
-			$class = get_class($job);
-		} else {
-			$class = $job;
-		}
+		$class = ($job instanceof IJob) ? get_class($job) : $job;
 		$argument = json_encode($argument);
 
 		$query = $this->connection->getQueryBuilder();
 		$query->select('id')
 			->from('jobs')
 			->where($query->expr()->eq('class', $query->createNamedParameter($class)))
-			->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(md5($argument))))
+			->andWhere($query->expr()->eq('argument_hash', $query->createNamedParameter(hash('sha256', $argument))))
 			->setMaxResults(1);
 
 		$result = $query->executeQuery();
@@ -172,11 +156,9 @@ class JobList implements IJobList {
 
 	public function getJobs($job, ?int $limit, int $offset): array {
 		$iterable = $this->getJobsIterator($job, $limit, $offset);
-		if (is_array($iterable)) {
-			return $iterable;
-		} else {
-			return iterator_to_array($iterable);
-		}
+		return (is_array($iterable))
+			? $iterable
+			: iterator_to_array($iterable);
 	}
 
 	/**
@@ -191,11 +173,7 @@ class JobList implements IJobList {
 			->setFirstResult($offset);
 
 		if ($job !== null) {
-			if ($job instanceof IJob) {
-				$class = get_class($job);
-			} else {
-				$class = $job;
-			}
+			$class = ($job instanceof IJob) ? get_class($job) : $job;
 			$query->where($query->expr()->eq('class', $query->createNamedParameter($class)));
 		}
 
@@ -329,6 +307,7 @@ class JobList implements IJobList {
 					$class = $row['class'];
 					$job = new $class();
 				} else {
+					$this->logger->warning('failed to create instance of background job: ' . $row['class'], ['app' => 'cron', 'exception' => $e]);
 					// Remove job from disabled app or old version of an app
 					$this->removeById($row['id']);
 					return null;
@@ -392,6 +371,7 @@ class JobList implements IJobList {
 		$query = $this->connection->getQueryBuilder();
 		$query->update('jobs')
 			->set('execution_duration', $query->createNamedParameter($timeTaken, IQueryBuilder::PARAM_INT))
+			->set('reserved_at', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($job->getId(), IQueryBuilder::PARAM_INT)));
 		$query->executeStatement();
 	}

@@ -241,6 +241,7 @@ class CircleService {
 
 	/**
 	 * @param string $circleId
+	 * @param bool $forceSync
 	 *
 	 * @return array
 	 * @throws CircleNotFoundException
@@ -255,13 +256,14 @@ class CircleService {
 	 * @throws RequestBuilderException
 	 * @throws UnknownRemoteException
 	 */
-	public function destroy(string $circleId): array {
+	public function destroy(string $circleId, bool $forceSync = false): array {
 		$this->federatedUserService->mustHaveCurrentUser();
 
 		$circle = $this->getCircle($circleId);
 
 		$event = new FederatedEvent(CircleDestroy::class);
 		$event->setCircle($circle);
+		$event->forceSync($forceSync);
 		$this->federatedEventService->newEvent($event);
 
 		return $event->getOutcome();
@@ -376,6 +378,17 @@ class CircleService {
 		$event->setCircle($circle);
 		$event->setParams(new SimpleDataStore(['name' => $name]));
 
+		$this->federatedEventService->newEvent($event);
+
+		return $event->getOutcome();
+	}
+
+	public function updateDisplayName(string $circleId, string $displayName): array {
+		$circle = $this->getCircle($circleId);
+
+		$event = new FederatedEvent(CircleEdit::class);
+		$event->setCircle($circle);
+		$event->setParams(new SimpleDataStore(['displayName' => $displayName]));
 		$this->federatedEventService->newEvent($event);
 
 		return $event->getOutcome();
@@ -732,7 +745,7 @@ class CircleService {
 		}
 
 		if ($circle->isConfig(Circle::CFG_PERSONAL)) {
-			return $this->l10n->t('Personal Circle');
+			return $this->l10n->t('Personal team');
 		}
 
 		if ($circle->hasOwner()) {

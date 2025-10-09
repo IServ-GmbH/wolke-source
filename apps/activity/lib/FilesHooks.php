@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -78,7 +79,7 @@ class FilesHooks {
 		protected IUserMountCache $userMountCache,
 		protected IConfig $config,
 		protected NotificationGenerator $notificationGenerator,
-		protected ITagManager $tagManager
+		protected ITagManager $tagManager,
 	) {
 	}
 
@@ -661,17 +662,37 @@ class FilesHooks {
 	/**
 	 * Manage sharing events
 	 *
-	 * @param array $params The hook params
+	 * @param IShare $share the share from the event
 	 */
-	public function share($params) {
-		if ($params['itemType'] === 'file' || $params['itemType'] === 'folder') {
-			if ((int)$params['shareType'] === IShare::TYPE_USER) {
-				$this->shareWithUser($params['shareWith'], (int)$params['fileSource'], $params['itemType'], $params['fileTarget']);
-			} elseif ((int)$params['shareType'] === IShare::TYPE_GROUP) {
-				$this->shareWithGroup($params['shareWith'], (int)$params['fileSource'], $params['itemType'], $params['fileTarget'], (int)$params['id']);
-			} elseif ((int)$params['shareType'] === IShare::TYPE_LINK) {
-				$this->shareByLink((int)$params['fileSource'], $params['itemType'], $params['uidOwner']);
-			}
+	public function share($share) {
+		switch ($share->getShareType()) {
+			case IShare::TYPE_USER:
+				$this->shareWithUser(
+					$share->getSharedWith(),
+					$share->getNodeId(),
+					$share->getNodeType(),
+					$share->getTarget()
+				);
+				break;
+			case IShare::TYPE_GROUP:
+				$this->shareWithGroup(
+					$share->getSharedWith(),
+					$share->getNodeId(),
+					$share->getNodeType(),
+					$share->getTarget(),
+					(int)$share->getId()
+				);
+				break;
+			case IShare::TYPE_LINK:
+				$this->shareByLink(
+					$share->getNodeId(),
+					$share->getNodeType(),
+					$share->getSharedBy()
+				);
+				break;
+			default:
+				// Currently not supported
+				break;
 		}
 	}
 
@@ -695,7 +716,7 @@ class FilesHooks {
 			$shareWith, 'shared_with_by', [[$fileSource => $fileTarget], $this->currentUser->getUserIdentifier()],
 			(int)$fileSource, $fileTarget, $itemType === 'file',
 			$this->userSettings->getUserSetting($shareWith, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($shareWith, 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($shareWith, 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($shareWith, 'notification', Files_Sharing::TYPE_SHARED)
 		);
 	}
 
@@ -752,7 +773,7 @@ class FilesHooks {
 			$linkOwner, 'shared_link_self', [[$fileSource => $path]],
 			(int)$fileSource, $path, $itemType === 'file',
 			$this->userSettings->getUserSetting($linkOwner, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($linkOwner, 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($linkOwner, 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($linkOwner, 'notification', Files_Sharing::TYPE_SHARED)
 		);
 	}
 
@@ -763,7 +784,7 @@ class FilesHooks {
 	 * @throws \OCP\Files\NotFoundException
 	 */
 	public function unShare(IShare $share) {
-		if (in_array($share->getNodeType(), ['file', 'folder'], true)) {
+		if (in_array($share->getNodeType(), ['file', 'folder'], true) && !$this->isDeletedNode($share->getShareOwner(), $share->getNodeId())) {
 			if ($share->getShareType() === IShare::TYPE_USER) {
 				$this->unshareFromUser($share);
 			} elseif ($share->getShareType() === IShare::TYPE_GROUP) {
@@ -825,7 +846,7 @@ class FilesHooks {
 			$share->getSharedWith(), $actionUser, [[$share->getNodeId() => $share->getTarget()], $this->currentUser->getUserIdentifier()],
 			$share->getNodeId(), $share->getTarget(), $share->getNodeType() === 'file',
 			$this->userSettings->getUserSetting($share->getSharedWith(), 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($share->getSharedWith(), 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($share->getSharedWith(), 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($share->getSharedWith(), 'notification', Files_Sharing::TYPE_SHARED)
 		);
 	}
 
@@ -878,7 +899,7 @@ class FilesHooks {
 		$users = $group->searchUsers('', self::USER_BATCH_SIZE, $offset);
 		$shouldFlush = $this->startActivityTransaction();
 		while (!empty($users)) {
-			$this->addNotificationsForGroupUsers($users, $actionUser, $share->getNodeId(), $share->getNodeType(), $share->getTarget(), (int) $share->getId());
+			$this->addNotificationsForGroupUsers($users, $actionUser, $share->getNodeId(), $share->getNodeType(), $share->getTarget(), (int)$share->getId());
 			$offset += self::USER_BATCH_SIZE;
 			$users = $group->searchUsers('', self::USER_BATCH_SIZE, $offset);
 		}
@@ -923,7 +944,7 @@ class FilesHooks {
 			$owner, $actionSharer, [[$share->getNodeId() => $share->getTarget()]],
 			$share->getNodeId(), $share->getTarget(), $share->getNodeType() === 'file',
 			$this->userSettings->getUserSetting($owner, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($owner, 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
 		);
 
 		if ($share->getSharedBy() !== $share->getShareOwner()) {
@@ -932,7 +953,7 @@ class FilesHooks {
 				$owner, $actionOwner, [[$share->getNodeId() => $share->getTarget()], $share->getSharedBy()],
 				$share->getNodeId(), $share->getTarget(), $share->getNodeType() === 'file',
 				$this->userSettings->getUserSetting($owner, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($owner, 'setting', 'batchtime') : false,
-				(bool) $this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
+				(bool)$this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
 			);
 		}
 	}
@@ -990,7 +1011,7 @@ class FilesHooks {
 			->from('share')
 			->where($queryBuilder->expr()->eq('parent', $queryBuilder->createParameter('parent')))
 			->setParameter('parent', (int)$shareId);
-		$query = $queryBuilder->execute();
+		$query = $queryBuilder->executeQuery();
 
 		while ($row = $query->fetch()) {
 			$affectedUsers[$row['share_with']] = $row['file_target'];
@@ -1025,7 +1046,7 @@ class FilesHooks {
 			$sharer, $subject, [[$fileSource => $path], $shareWith],
 			$fileSource, $path, ($itemType === 'file'),
 			$this->userSettings->getUserSetting($sharer, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($sharer, 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($sharer, 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($sharer, 'notification', Files_Sharing::TYPE_SHARED)
 		);
 	}
 
@@ -1051,7 +1072,7 @@ class FilesHooks {
 			$owner, $subject, [[$fileSource => $path], $this->currentUser->getUserIdentifier(), $shareWith],
 			$fileSource, $path, ($itemType === 'file'),
 			$this->userSettings->getUserSetting($owner, 'email', Files_Sharing::TYPE_SHARED) ? $this->userSettings->getUserSetting($owner, 'setting', 'batchtime') : false,
-			(bool) $this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
+			(bool)$this->userSettings->getUserSetting($owner, 'notification', Files_Sharing::TYPE_SHARED)
 		);
 	}
 
@@ -1222,7 +1243,7 @@ class FilesHooks {
 		try {
 			$ruleManager = \OC::$server->get(\OCA\GroupFolders\ACL\RuleManager::class);
 			$folderManager = \OC::$server->get(\OCA\GroupFolders\Folder\FolderManager::class);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			return []; // if we have no access to RuleManager, we cannot filter unrelated users
 		}
 
@@ -1341,5 +1362,15 @@ class FilesHooks {
 		}
 
 		return $filteredUsers;
+	}
+
+	private function isDeletedNode(string $owner, int $nodeId): bool {
+		try {
+			$userFolder = $this->rootFolder->getUserFolder($owner);
+			$node = $userFolder->getFirstNodeById($nodeId);
+			return $node === null;
+		} catch (NotFoundException $e) {
+			return true;
+		}
 	}
 }

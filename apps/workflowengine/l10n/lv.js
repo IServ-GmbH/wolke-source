@@ -13,6 +13,7 @@ OC.L10N.register(
     "The given end time is invalid" : "Norādītais beigu laiks nav derīgs.",
     "The given group does not exist" : "Norādītā grupa nepastāv.",
     "File" : "Datne",
+    "File renamed" : "Datne pārdēvēta",
     "Operation #%s does not exist" : "Operation #%s does not exist",
     "Operation %s does not exist" : "Darbība %s nepastāv",
     "Operation %s is invalid" : "Darbība %s ir nederīga",
@@ -31,9 +32,9 @@ OC.L10N.register(
     "Select groups" : "Izvēlieties grupas",
     "Groups" : "Grupas",
     "Add new flow" : "Pievienot jaunu plūsmu",
-    "Cancel" : "Atcelt",
-    "Delete" : "Dzēst",
     "Save" : "Saglabāt",
+    "Cancel" : "Atcelt",
+    "Delete" : "Izdzēst",
     "Available flows" : "Pieejamās plūsmas",
     "No flows installed" : "Nav uzstādītu plūsmu",
     "More flows" : "Vairāk plūsmu",
@@ -63,7 +64,6 @@ OC.L10N.register(
     "not between" : "nav starp",
     "Request user agent" : "Nepieciešams lietotāja aģents",
     "is member of" : "ir biedrs",
-    "is not member of" : "nav biedrs",
-    "User group membership" : "Lietotāju grupas piederība"
+    "is not member of" : "nav biedrs"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

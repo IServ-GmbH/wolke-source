@@ -163,7 +163,6 @@ class SendMailService {
 			$text = $this->l10n->t('%s shared a file with "%s".', [$author, $circleName]);
 		}
 
-		$text = $this->l10n->t('%s shared multiple files with "%s".', [$author, $circleName]);
 		$emailTemplate->addBodyText(htmlspecialchars($text), $text);
 
 		return $emailTemplate;
@@ -276,12 +275,12 @@ class SendMailService {
 			]
 		);
 		$message->setFrom([\OCP\Util::getDefaultEmailAddress($instanceName) => $senderName]);
-//		if ($initiatorEmailAddress !== null) {
-//			$message->setReplyTo([$initiatorEmailAddress => $initiatorDisplayName]);
-//			$emailTemplate->addFooter($instanceName . ' - ' . $this->defaults->getSlogan());
-//		} else {
+		//		if ($initiatorEmailAddress !== null) {
+		//			$message->setReplyTo([$initiatorEmailAddress => $initiatorDisplayName]);
+		//			$emailTemplate->addFooter($instanceName . ' - ' . $this->defaults->getSlogan());
+		//		} else {
 		$emailTemplate->addFooter();
-//		}
+		//		}
 
 		$message->setTo([$email]);
 		$message->useTemplate($emailTemplate);

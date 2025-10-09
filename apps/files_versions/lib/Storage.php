@@ -210,9 +210,9 @@ class Storage {
 		$mount = $file->getMountPoint();
 		if ($mount instanceof SharedMount) {
 			$ownerFolder = $rootFolder->getUserFolder($mount->getShare()->getShareOwner());
-			$ownerNodes = $ownerFolder->getById($file->getId());
-			if (count($ownerNodes)) {
-				$file = current($ownerNodes);
+			$ownerNode = $ownerFolder->getFirstNodeById($file->getId());
+			if ($ownerNode) {
+				$file = $ownerNode;
 				$uid = $mount->getShare()->getShareOwner();
 			}
 		}
@@ -408,7 +408,8 @@ class Storage {
 			$fileInfo->getId(), [
 				'encrypted' => $oldVersion,
 				'encryptedVersion' => $oldVersion,
-				'size' => $oldFileInfo->getSize()
+				'size' => $oldFileInfo->getData()['size'],
+				'unencrypted_size' => $oldFileInfo->getData()['unencrypted_size'],
 			]
 		);
 
@@ -416,8 +417,6 @@ class Storage {
 		if (self::copyFileContents($users_view, $fileToRestore, 'files' . $filename)) {
 			$files_view->touch($file, $revision);
 			Storage::scheduleExpire($user->getUID(), $file);
-
-			$node = $userFolder->get($file);
 
 			return true;
 		} elseif ($versionCreated) {
@@ -599,7 +598,7 @@ class Storage {
 				$versionEntity = $versionsMapper->findVersionForFileId($node->getId(), $version);
 				$versionEntities[$info->getId()] = $versionEntity;
 
-				if ($versionEntity->getLabel() !== '') {
+				if ($versionEntity->getMetadataValue('label') !== null && $versionEntity->getMetadataValue('label') !== '') {
 					return false;
 				}
 			} catch (NotFoundException $e) {
@@ -727,7 +726,15 @@ class Storage {
 		$expiration = self::getExpiration();
 
 		if ($expiration->shouldAutoExpire()) {
-			[$toDelete, $size] = self::getAutoExpireList($time, $versions);
+			// Exclude versions that are newer than the minimum age from the auto expiration logic.
+			$minAge = $expiration->getMinAgeAsTimestamp();
+			if ($minAge !== false) {
+				$versionsToAutoExpire = array_filter($versions, fn ($version) => $version['version'] < $minAge);
+			} else {
+				$versionsToAutoExpire = $versions;
+			}
+
+			[$toDelete, $size] = self::getAutoExpireList($time, $versionsToAutoExpire);
 		} else {
 			$size = 0;
 			$toDelete = [];  // versions we want to delete
@@ -934,7 +941,7 @@ class Storage {
 					$pathparts = pathinfo($path);
 					$timestamp = (int)substr($pathparts['extension'] ?? '', 1);
 					$versionEntity = $versionsMapper->findVersionForFileId($file->getId(), $timestamp);
-					if ($versionEntity->getLabel() !== '') {
+					if ($versionEntity->getMetadataValue('label') !== null && $versionEntity->getMetadataValue('label') !== '') {
 						continue;
 					}
 					$versionsMapper->delete($versionEntity);

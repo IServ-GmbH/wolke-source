@@ -31,6 +31,7 @@ use BadMethodCallException;
 use Exception;
 use OC\Authentication\Token\IProvider as TokenProvider;
 use OCP\Activity\IManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\Authentication\TwoFactorAuth\IActivatableAtLogin;
@@ -313,7 +314,7 @@ class Manager {
 	 * @param IUser $user the currently logged in user
 	 * @return boolean
 	 */
-	public function needsSecondFactor(IUser $user = null): bool {
+	public function needsSecondFactor(?IUser $user = null): bool {
 		if ($user === null) {
 			return false;
 		}
@@ -385,7 +386,12 @@ class Manager {
 		$tokensNeeding2FA = $this->config->getUserKeys($userId, 'login_token_2fa');
 
 		foreach ($tokensNeeding2FA as $tokenId) {
-			$this->tokenProvider->invalidateTokenById($userId, (int)$tokenId);
+			$this->config->deleteUserValue($userId, 'login_token_2fa', $tokenId);
+
+			try {
+				$this->tokenProvider->invalidateTokenById($userId, (int)$tokenId);
+			} catch (DoesNotExistException $e) {
+			}
 		}
 	}
 }

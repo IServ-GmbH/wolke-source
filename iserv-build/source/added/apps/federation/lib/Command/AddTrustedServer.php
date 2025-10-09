@@ -2,6 +2,7 @@
 
 namespace OCA\Federation\Command;
 
+use OCA\Federation\BruteforceResetter;
 use OCA\Federation\TrustedServers;
 use OCP\HintException;
 use Symfony\Component\Console\Command\Command;
@@ -11,13 +12,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AddTrustedServer extends Command
 {
-    private TrustedServers $trustedServers;
-
-    public function __construct(TrustedServers $trustedServers)
-    {
+    public function __construct(
+        private readonly TrustedServers $trustedServers,
+        private readonly BruteforceResetter $bruteforceResetter,
+    ) {
         parent::__construct();
-
-        $this->trustedServers = $trustedServers;
     }
 
     protected function configure()
@@ -38,7 +37,8 @@ class AddTrustedServer extends Command
 
         foreach ($serverUrls as $url) {
             try {
-                if($this->checkServer($url)) {
+                if ($this->checkServer($url)) {
+                    $this->bruteforceResetter->resetTrustedServerAttempts($url);
                     $this->trustedServers->addServer($url);
                     $output->writeln(
                         sprintf('<info>"Server %s successfully added"</info>', $url)

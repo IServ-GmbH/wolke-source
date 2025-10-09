@@ -455,7 +455,7 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 		$display = $circle->getDisplayName();
 		if ($circle->getSource() === Member::TYPE_CIRCLE) {
 			$l10n = \OCP\Server::get(IFactory::class)->get('circles');
-			$display = $l10n->t('%s (Circle owned by %s)', [$display, $circle->getOwner()->getDisplayName()]);
+			$display = $l10n->t('%s (Team owned by %s)', [$display, $circle->getOwner()->getDisplayName()]);
 		} else {
 			$display .= ' (' . Circle::$DEF_SOURCE[$circle->getSource()] . ')';
 		}
@@ -466,24 +466,6 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			$urlGenerator->imagePath(Application::APP_ID, 'circles.svg')
 		);
 		$share->setSharedWithAvatar($icon);
-
-
-//		if (array_key_exists('circle_type', $data)
-//			&& method_exists($share, 'setSharedWithDisplayName')) {
-//			$name = $data['circle_name'];
-//			if ($data['circle_alt_name'] !== '') {
-//				$name = $data['circle_alt_name'];
-//			}
-//
-//			$share->setSharedWithAvatar(CirclesService::getCircleIcon($data['circle_type']))
-//				  ->setSharedWithDisplayName(
-//					  sprintf(
-//						  ' % s(%s, %s)', $name,
-//						  $this->l10n->t(DeprecatedCircle::TypeLongString($data['circle_type'])),
-//						  $this->miscService->getDisplayName($data['circle_owner'], true)
-//					  )
-//				  );
-//		}
 	}
 
 
@@ -515,6 +497,8 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			 ->setShareOwner($this->get('shareOwner', $data))
 			 ->setToken($this->get('token', $data))
 			 ->setShareTime($shareTime);
+
+		$this->importAttributesFromDatabase($this->get('attributes', $data));
 
 		try {
 			$this->setExpirationDate(new DateTime($this->get('expiration', $data)));
@@ -580,11 +564,11 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 
 		$this->importAttributesFromDatabase($this->get('attributes', $data));
 
-//		if (($password = $this->get('personal_password', $data, '')) !== '') {
-//			$share->setPassword($this->get('personal_password', $data, ''));
-//		} else if (($password = $this->get('password', $data, '')) !== '') {
-//			$share->setPassword($this->get('password', $data, ''));
-//		}
+		//		if (($password = $this->get('personal_password', $data, '')) !== '') {
+		//			$share->setPassword($this->get('personal_password', $data, ''));
+		//		} else if (($password = $this->get('password', $data, '')) !== '') {
+		//			$share->setPassword($this->get('password', $data, ''));
+		//		}
 
 		$this->setChildId($this->getInt($prefix . 'child_id', $data))
 			 ->setChildFileTarget($this->get($prefix . 'child_file_target', $data))
@@ -628,7 +612,7 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			'shareType' => $this->getShareType(),
 			'providerId' => $this->getProviderId(),
 			'permissions' => $this->getPermissions(),
-			'attributes' => $this->getAttributes(),
+			'attributes' => ($this->getAttributes() !== null) ? json_encode($this->getAttributes()->toArray()) : null,
 			'hideDownload' => $this->getHideDownload(),
 			'itemType' => $this->getItemType(),
 			'itemSource' => $this->getItemSource(),

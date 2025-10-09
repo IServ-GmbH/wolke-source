@@ -15,7 +15,10 @@
     "URL" : "URL",
     "to" : "doğru",
     "Replace" : "Əvəz edin",
+    "Upload" : "Serverə yüklə",
     "Edit" : "Dəyişiklik et",
+    "Done" : "Edildi",
+    "Details" : "Detallar",
     "Info" : "Info",
     "Warning" : "Xəbərdarlıq"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

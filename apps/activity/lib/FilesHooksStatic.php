@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  * @copyright Copyright (c) 2017, Joas Schilling <coding@schilljs.com>
@@ -81,13 +82,5 @@ class FilesHooksStatic {
 	 */
 	public static function fileRestore($params) {
 		self::getHooks()->fileRestore($params['filePath']);
-	}
-
-	/**
-	 * Manage sharing events
-	 * @param array $params The hook params
-	 */
-	public static function share($params) {
-		self::getHooks()->share($params);
 	}
 }

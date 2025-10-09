@@ -26,14 +26,17 @@ declare(strict_types=1);
 
 namespace OCA\Notifications\Controller;
 
-use OC\Authentication\Exceptions\InvalidTokenException;
 use OC\Authentication\Token\IProvider;
-use OC\Authentication\Token\IToken;
 use OC\Security\IdentityProof\Manager;
 use OCA\Notifications\ResponseDefinitions;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\Authentication\Token\IToken;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -44,6 +47,7 @@ use OCP\IUserSession;
 /**
  * @psalm-import-type NotificationsPushDevice from ResponseDefinitions
  */
+#[OpenAPI(scope: 'push')]
 class PushController extends OCSController {
 	/** @var IDBConnection */
 	private $db;
@@ -77,8 +81,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Register device for push notifications
 	 *
 	 * @param string $pushTokenHash Hash of the push token
@@ -91,6 +93,8 @@ class PushController extends OCSController {
 	 * 400: Registering device is not possible
 	 * 401: Missing permissions to register device
 	 */
+	#[NoAdminRequired]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/push', requirements: ['apiVersion' => '(v2)'])]
 	public function registerDevice(string $pushTokenHash, string $devicePublicKey, string $proxyServer): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -161,8 +165,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Remove a device from push notifications
 	 *
 	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_ACCEPTED|Http::STATUS_UNAUTHORIZED, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
@@ -172,6 +174,8 @@ class PushController extends OCSController {
 	 * 400: Removing device is not possible
 	 * 401: Missing permissions to remove device
 	 */
+	#[NoAdminRequired]
+	#[ApiRoute(verb: 'DELETE', url: '/api/{apiVersion}/push', requirements: ['apiVersion' => '(v2)'])]
 	public function removeDevice(): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -208,7 +212,7 @@ class PushController extends OCSController {
 			->from('notifications_pushhash')
 			->where($query->expr()->eq('uid', $query->createNamedParameter($user->getUID())))
 			->andWhere($query->expr()->eq('token', $query->createNamedParameter($token->getId())));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 

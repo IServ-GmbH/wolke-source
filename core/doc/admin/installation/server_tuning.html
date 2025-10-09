@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Server tuning &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -256,7 +258,7 @@ values are reasonable (and may never need to be changed).</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
 <p>Lengthening the time between revalidation (or disabling it completely) means that manual changes to scripts, including <code class="docutils literal notranslate"><span class="pre">config.php</span></code>, will take longer before they become active (or will never do so, if
-revalidation is disabled completely). Lengthening also increases the likelihood of transient Server and application upgrade problems. It also prevents the proper toggling of maintenance mode.</p>
+revalidation is disabled completely). Lengthening also increases the likelihood of transient server and application upgrade problems. It also prevents the proper toggling of maintenance mode.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -292,10 +294,15 @@ restarted mod_php/fpm (to confirm they are not simply caused by local revalidati
 </section>
 <section id="jit">
 <h3>JIT<a class="headerlink" href="#jit" title="Link to this heading"></a></h3>
-<p>PHP 8.0 and above ship with a JIT compiler that can be enabled to benefit any CPU intensive apps you might be running. To enable a tracing JIT with all optimizations:</p>
+<p>PHP 8.0 and above ship with a JIT compiler that can be enabled on x86 platforms to benefit any CPU intensive apps you might be running. To enable a tracing JIT with all optimizations:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">opcache.jit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1255</span>
-<span class="na">opcache.jit_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">128M</span>
+<span class="na">opcache.jit_buffer_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">8M</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Single Nextcloud instances have shown to use less than 2 MiB of the configured JIT buffer size, so that 8 MiB is sufficient by a large margin. The overall OPcache usage however raises by a larger amount, so that <code class="docutils literal notranslate"><span class="pre">opcache.memory_consumption</span></code> might need to be raised in some cases. The Nextcloud admin panel will then show a related warning.
+JIT buffer usage can be monitored with <a class="reference external" href="https://github.com/amnuts/opcache-gui">opcache-gui</a> as well.</p>
 </div>
 </section>
 </section>
@@ -366,7 +373,7 @@ You can change between jpeg and webp, the default is jpeg:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -388,11 +395,11 @@ You can change between jpeg and webp, the default is jpeg:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

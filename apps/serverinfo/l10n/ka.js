@@ -2,7 +2,6 @@ OC.L10N.register(
     "serverinfo",
     {
     "CPU info not available" : "CPU info not available",
-    "Load average: {cpu} (last minute)" : "Load average: {cpu} (last minute)",
     "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}" : "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}",
     "RAM info not available" : "RAM info not available",
     "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}" : "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}",
@@ -43,10 +42,6 @@ OC.L10N.register(
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Active users",
-    "Total users:" : "Total users:",
-    "24 hours:" : "24 hours:",
-    "1 hour:" : "1 hour:",
-    "5 mins:" : "5 mins:",
     "Shares" : "Shares",
     "Users:" : "Users:",
     "Groups:" : "Groups:",
@@ -73,6 +68,11 @@ OC.L10N.register(
     "Skip server update" : "Skip server update",
     "To use an access token, please generate one then set it using the following command:" : "To use an access token, please generate one then set it using the following command:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Then pass the token with the \"NC-Token\" header when querying the above URL.",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Load average: {cpu} (last minute)",
+    "DNS:" : "DNS:",
+    "Total users:" : "Total users:",
+    "24 hours:" : "24 hours:",
+    "1 hour:" : "1 hour:",
+    "5 mins:" : "5 mins:"
 },
 "nplurals=2; plural=(n!=1);");

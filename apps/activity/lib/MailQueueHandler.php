@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, ownCloud, Inc.
  *
@@ -176,7 +177,7 @@ class MailQueueHandler {
 			}
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$affectedUsers = [];
 		while ($row = $result->fetch()) {
@@ -200,7 +201,7 @@ class MailQueueHandler {
 			->andWhere($query->expr()->eq('amq_affecteduser', $query->createNamedParameter($affectedUser)))
 			->orderBy('amq_timestamp', 'ASC')
 			->setMaxResults($maxNumItems);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$activities = [];
 		while ($row = $result->fetch()) {
@@ -215,7 +216,7 @@ class MailQueueHandler {
 				->from('activity_mq')
 				->where($query->expr()->lte('amq_timestamp', $query->createNamedParameter($maxTime)))
 				->andWhere($query->expr()->eq('amq_affecteduser', $query->createNamedParameter($affectedUser)));
-			$result = $query->execute();
+			$result = $query->executeQuery();
 			$row = $result->fetch();
 			$result->closeCursor();
 
@@ -294,12 +295,12 @@ class MailQueueHandler {
 		foreach ($mailData as $activity) {
 			$event = $this->activityManager->generateEvent();
 			try {
-				$event->setApp((string) $activity['amq_appid'])
-					->setType((string) $activity['amq_type'])
-					->setAffectedUser((string) $activity['amq_affecteduser'])
-					->setTimestamp((int) $activity['amq_timestamp'])
-					->setSubject((string) $activity['amq_subject'], (array) json_decode($activity['amq_subjectparams'], true))
-					->setObject((string) $activity['object_type'], (int) $activity['object_id']);
+				$event->setApp((string)$activity['amq_appid'])
+					->setType((string)$activity['amq_type'])
+					->setAffectedUser((string)$activity['amq_affecteduser'])
+					->setTimestamp((int)$activity['amq_timestamp'])
+					->setSubject((string)$activity['amq_subject'], (array)json_decode($activity['amq_subjectparams'], true))
+					->setObject((string)$activity['object_type'], (int)$activity['object_id']);
 			} catch (\InvalidArgumentException $e) {
 				continue;
 			}
@@ -383,9 +384,9 @@ class MailQueueHandler {
 			$placeholders[] = '{' . $placeholder . '}';
 
 			if ($parameter['type'] === 'file') {
-				$replacement = (string) $parameter['path'];
+				$replacement = (string)$parameter['path'];
 			} else {
-				$replacement = (string) $parameter['name'];
+				$replacement = (string)$parameter['name'];
 			}
 
 			if (isset($parameter['link'])) {
@@ -410,6 +411,6 @@ class MailQueueHandler {
 		$query->delete('activity_mq')
 			->where($query->expr()->lte('amq_timestamp', $query->createNamedParameter($maxTime, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->in('amq_affecteduser', $query->createNamedParameter($affectedUsers, IQueryBuilder::PARAM_STR_ARRAY), IQueryBuilder::PARAM_STR));
-		$query->execute();
+		$query->executeStatement();
 	}
 }

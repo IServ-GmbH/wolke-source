@@ -38,6 +38,7 @@ use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\User\IAvailabilityCoordinator;
+use function mb_strlen;
 
 /**
  * @psalm-import-type DAVOutOfOfficeData from ResponseDefinitions
@@ -57,7 +58,7 @@ class OutOfOfficeController extends OCSController {
 	}
 
 	/**
-	 * Get the currently configured out-of-office data of a user.
+	 * Get the currently configured out-of-office data of a user
 	 *
 	 * @param string $userId The user id to get out-of-office data for.
 	 * @return DataResponse<Http::STATUS_OK, DAVCurrentOutOfOfficeData, array{}>|DataResponse<Http::STATUS_NOT_FOUND, null, array{}>
@@ -120,10 +121,10 @@ class OutOfOfficeController extends OCSController {
 	 * @param string $lastDay Last day of the absence in format `YYYY-MM-DD`
 	 * @param string $status Short text that is set as user status during the absence
 	 * @param string $message Longer multiline message that is shown to others during the absence
-	 * @return DataResponse<Http::STATUS_OK, DAVOutOfOfficeData, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'firstDay'}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, null, array{}>
+	 * @return DataResponse<Http::STATUS_OK, DAVOutOfOfficeData, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{error: 'firstDay'|'statusLength'}, array{}>|DataResponse<Http::STATUS_UNAUTHORIZED, null, array{}>
 	 *
 	 * 200: Absence data
-	 * 400: When the first day is not before the last day
+	 * 400: When validation fails, e.g. data range error or the first day is not before the last day
 	 * 401: When the user is not logged in
 	 */
 	#[NoAdminRequired]
@@ -136,6 +137,9 @@ class OutOfOfficeController extends OCSController {
 		$user = $this->userSession?->getUser();
 		if ($user === null) {
 			return new DataResponse(null, Http::STATUS_UNAUTHORIZED);
+		}
+		if (mb_strlen($status) > 100) {
+			return new DataResponse(['error' => 'statusLength'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$parsedFirstDay = new DateTimeImmutable($firstDay);

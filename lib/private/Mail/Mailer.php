@@ -130,18 +130,6 @@ class Mailer implements IMailer {
 	 * @since 12.0.0
 	 */
 	public function createEMailTemplate(string $emailId, array $data = []): IEMailTemplate {
-		$class = $this->config->getSystemValueString('mail_template_class', '');
-
-		if ($class !== '' && class_exists($class) && is_a($class, EMailTemplate::class, true)) {
-			return new $class(
-				$this->defaults,
-				$this->urlGenerator,
-				$this->l10nFactory,
-				$emailId,
-				$data
-			);
-		}
-
 		$logoDimensions = $this->config->getAppValue('theming', 'logoDimensions', self::DEFAULT_DIMENSIONS);
 		if (str_contains($logoDimensions, 'x')) {
 			[$width, $height] = explode('x', $logoDimensions);
@@ -165,6 +153,20 @@ class Mailer implements IMailer {
 			}
 		} else {
 			$logoWidth = $logoHeight = null;
+		}
+
+		$class = $this->config->getSystemValueString('mail_template_class', '');
+
+		if ($class !== '' && class_exists($class) && is_a($class, EMailTemplate::class, true)) {
+			return new $class(
+				$this->defaults,
+				$this->urlGenerator,
+				$this->l10nFactory,
+				$logoWidth,
+				$logoHeight,
+				$emailId,
+				$data
+			);
 		}
 
 		return new EMailTemplate(
@@ -360,8 +362,10 @@ class Mailer implements IMailer {
 				break;
 			default:
 				$sendmail = \OCP\Server::get(IBinaryFinder::class)->findBinaryPath('sendmail');
-				if ($sendmail === null) {
+				if ($sendmail === false) {
+					// fallback (though not sure what good it'll do)
 					$sendmail = '/usr/sbin/sendmail';
+					$this->logger->debug('sendmail binary search failed, using fallback ' . $sendmail, ['app' => 'core']);
 				}
 				$binaryPath = $sendmail;
 				break;
@@ -372,6 +376,7 @@ class Mailer implements IMailer {
 			default => ' -bs',
 		};
 
+		$this->logger->debug('Using sendmail binary: ' . $binaryPath, ['app' => 'core']);
 		return new SendmailTransport($binaryPath . $binaryParam, null, $this->logger);
 	}
 }

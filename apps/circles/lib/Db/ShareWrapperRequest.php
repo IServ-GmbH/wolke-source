@@ -59,12 +59,9 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 	 * @throws NotFoundException
 	 */
 	public function save(IShare $share, int $parentId = 0): int {
-//		$hasher = \OC::$server->getHasher();
-//		$password = ($share->getPassword() !== null) ? $hasher->hash($share->getPassword()) : '';
-		$password = '';
-
 		$qb = $this->getShareInsertSql();
-		$qb->setValue('share_type', $qb->createNamedParameter($share->getShareType()))
+		$qb->setValue('attributes', $qb->createNamedParameter($this->formatShareAttributes($share->getAttributes())))
+			->setValue('share_type', $qb->createNamedParameter($share->getShareType()))
 			->setValue('item_type', $qb->createNamedParameter($share->getNodeType()))
 			->setValue('item_source', $qb->createNamedParameter($share->getNodeId()))
 			->setValue('file_source', $qb->createNamedParameter($share->getNodeId()))
@@ -74,7 +71,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			->setValue('uid_initiator', $qb->createNamedParameter($share->getSharedBy()))
 			->setValue('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
 			->setValue('accepted', $qb->createNamedParameter(IShare::STATUS_ACCEPTED))
-			->setValue('password', $qb->createNamedParameter($password))
+			->setValue('password', $qb->createNamedParameter(''))
 			->setValue('permissions', $qb->createNamedParameter($share->getPermissions()))
 			->setValue('token', $qb->createNamedParameter($share->getToken()))
 			->setValue('stime', $qb->createFunction('UNIX_TIMESTAMP()'));
@@ -86,7 +83,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb->execute();
 		$id = $qb->getLastInsertId();
 		try {
-			$share->setId($id);
+			$share->setId((string)$id);
 		} catch (IllegalIDChangeException $e) {
 		}
 
@@ -164,9 +161,9 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			$qb->generateAlias(CoreQueryBuilder::SHARE, CoreQueryBuilder::UPSTREAM_MEMBERSHIPS);
 		$qb->limitToInheritedMemberships(CoreQueryBuilder::SHARE, $circleId, 'share_with');
 
-//		if (!is_null($shareRecipient)) {
-//			$qb->limitToInitiator(CoreRequestBuilder::SHARE, $shareRecipient, 'share_with');
-//		}
+		//		if (!is_null($shareRecipient)) {
+		//			$qb->limitToInitiator(CoreRequestBuilder::SHARE, $shareRecipient, 'share_with');
+		//		}
 
 		// TODO: add shareInitiator and shareRecipient to filter the request
 		if (!is_null($shareRecipient) || $completeDetails) {
@@ -263,7 +260,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		if ($getData) {
 			$qb->setOptions([CoreQueryBuilder::SHARE], ['getData' => $getData]);
 			$qb->leftJoinCircle(CoreQueryBuilder::SHARE, null, 'share_with');
-//			$qb->leftJoinFileCache(CoreRequestBuilder::SHARE);
+			//			$qb->leftJoinFileCache(CoreRequestBuilder::SHARE);
 			$qb->limitNull('parent', false);
 
 			$aliasMembership = $qb->generateAlias(CoreQueryBuilder::SHARE, CoreQueryBuilder::MEMBERSHIPS);
@@ -538,7 +535,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			$compressedAttributes[] = [
 				$attribute['scope'],
 				$attribute['key'],
-				$attribute['enabled']
+				$attribute['value'] ?? $attribute['enabled']
 			];
 		}
 

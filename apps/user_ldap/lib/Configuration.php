@@ -35,9 +35,79 @@
  */
 namespace OCA\User_LDAP;
 
+use Psr\Log\LoggerInterface;
+
 /**
- * @property int ldapPagingSize holds an integer
- * @property string ldapUserAvatarRule
+ * @property string $ldapHost
+ * @property string $ldapPort
+ * @property string $ldapBackupHost
+ * @property string $ldapBackupPort
+ * @property string $ldapBackgroundHost
+ * @property string $ldapBackgroundPort
+ * @property array|'' $ldapBase
+ * @property array|'' $ldapBaseUsers
+ * @property array|'' $ldapBaseGroups
+ * @property string $ldapAgentName
+ * @property string $ldapAgentPassword
+ * @property string $ldapTLS
+ * @property string $turnOffCertCheck
+ * @property string $ldapIgnoreNamingRules
+ * @property string $ldapUserDisplayName
+ * @property string $ldapUserDisplayName2
+ * @property string $ldapUserAvatarRule
+ * @property string $ldapGidNumber
+ * @property array|'' $ldapUserFilterObjectclass
+ * @property array|'' $ldapUserFilterGroups
+ * @property string $ldapUserFilter
+ * @property string $ldapUserFilterMode
+ * @property string $ldapGroupFilter
+ * @property string $ldapGroupFilterMode
+ * @property array|'' $ldapGroupFilterObjectclass
+ * @property array|'' $ldapGroupFilterGroups
+ * @property string $ldapGroupDisplayName
+ * @property string $ldapGroupMemberAssocAttr
+ * @property string $ldapLoginFilter
+ * @property string $ldapLoginFilterMode
+ * @property string $ldapLoginFilterEmail
+ * @property string $ldapLoginFilterUsername
+ * @property array|'' $ldapLoginFilterAttributes
+ * @property string $ldapQuotaAttribute
+ * @property string $ldapQuotaDefault
+ * @property string $ldapEmailAttribute
+ * @property string $ldapCacheTTL
+ * @property string $ldapUuidUserAttribute
+ * @property string $ldapUuidGroupAttribute
+ * @property string $ldapOverrideMainServer
+ * @property string $ldapConfigurationActive
+ * @property array|'' $ldapAttributesForUserSearch
+ * @property array|'' $ldapAttributesForGroupSearch
+ * @property string $ldapExperiencedAdmin
+ * @property string $homeFolderNamingRule
+ * @property string $hasMemberOfFilterSupport
+ * @property string $useMemberOfToDetectMembership
+ * @property string $ldapExpertUsernameAttr
+ * @property string $ldapExpertUUIDUserAttr
+ * @property string $ldapExpertUUIDGroupAttr
+ * @property string $markRemnantsAsDisabled
+ * @property string $lastJpegPhotoLookup
+ * @property string $ldapNestedGroups
+ * @property string $ldapPagingSize
+ * @property string $turnOnPasswordChange
+ * @property string $ldapDynamicGroupMemberURL
+ * @property string $ldapDefaultPPolicyDN
+ * @property string $ldapExtStorageHomeAttribute
+ * @property string $ldapMatchingRuleInChainState
+ * @property string $ldapConnectionTimeout
+ * @property string $ldapAttributePhone
+ * @property string $ldapAttributeWebsite
+ * @property string $ldapAttributeAddress
+ * @property string $ldapAttributeTwitter
+ * @property string $ldapAttributeFediverse
+ * @property string $ldapAttributeOrganisation
+ * @property string $ldapAttributeRole
+ * @property string $ldapAttributeHeadline
+ * @property string $ldapAttributeBiography
+ * @property string $ldapAdminGroup
  */
 class Configuration {
 	public const AVATAR_PREFIX_DEFAULT = 'default';
@@ -175,7 +245,7 @@ class Configuration {
 	 * array
 	 * @param array &$applied optional; array where the set fields will be given to
 	 */
-	public function setConfiguration(array $config, array &$applied = null): void {
+	public function setConfiguration(array $config, ?array &$applied = null): void {
 		$cta = $this->getConfigTranslationArray();
 		foreach ($config as $inputKey => $val) {
 			if (str_contains($inputKey, '_') && array_key_exists($inputKey, $cta)) {
@@ -250,6 +320,27 @@ class Configuration {
 						break;
 					case 'ldapUserDisplayName2':
 					case 'ldapGroupDisplayName':
+					case 'ldapGidNumber':
+					case 'ldapGroupMemberAssocAttr':
+					case 'ldapQuotaAttribute':
+					case 'ldapEmailAttribute':
+					case 'ldapUuidUserAttribute':
+					case 'ldapUuidGroupAttribute':
+					case 'ldapExpertUsernameAttr':
+					case 'ldapExpertUUIDUserAttr':
+					case 'ldapExpertUUIDGroupAttr':
+					case 'ldapExtStorageHomeAttribute':
+					case 'ldapAttributePhone':
+					case 'ldapAttributeWebsite':
+					case 'ldapAttributeAddress':
+					case 'ldapAttributeTwitter':
+					case 'ldapAttributeFediverse':
+					case 'ldapAttributeOrganisation':
+					case 'ldapAttributeRole':
+					case 'ldapAttributeHeadline':
+					case 'ldapAttributeBiography':
+					case 'ldapAttributeBirthDate':
+					case 'ldapAttributeAnniversaryDate':
 						$readMethod = 'getLcValue';
 						break;
 					case 'ldapUserDisplayName':
@@ -598,7 +689,7 @@ class Configuration {
 			return [strtolower($attribute)];
 		}
 		if ($value !== self::AVATAR_PREFIX_DEFAULT) {
-			\OC::$server->getLogger()->warning('Invalid config value to ldapUserAvatarRule; falling back to default.');
+			\OCP\Server::get(LoggerInterface::class)->warning('Invalid config value to ldapUserAvatarRule; falling back to default.');
 		}
 		return $defaultAttributes;
 	}
@@ -607,6 +698,7 @@ class Configuration {
 	 * Returns TRUE if the ldapHost variable starts with 'ldapi://'
 	 */
 	public function usesLdapi(): bool {
-		return (substr($this->config['ldapHost'], 0, strlen('ldapi://')) === 'ldapi://');
+		$host = $this->config['ldapHost'];
+		return is_string($host) && (substr($host, 0, strlen('ldapi://')) === 'ldapi://');
 	}
 }

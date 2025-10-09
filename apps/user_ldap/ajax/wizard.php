@@ -31,7 +31,7 @@
 \OC_JSON::checkAppEnabled('user_ldap');
 \OC_JSON::callCheck();
 
-$l = \OC::$server->getL10N('user_ldap');
+$l = \OCP\Util::getL10N('user_ldap');
 
 if (!isset($_POST['action'])) {
 	\OC_JSON::error(['message' => $l->t('No action specified')]);
@@ -48,7 +48,7 @@ $configuration = new \OCA\User_LDAP\Configuration($prefix);
 
 $con = new \OCA\User_LDAP\Connection($ldapWrapper, $prefix, null);
 $con->setConfiguration($configuration->getConfiguration());
-$con->ldapConfigurationActive = true;
+$con->ldapConfigurationActive = (string)true;
 $con->setIgnoreValidation(true);
 
 $factory = \OC::$server->get(\OCA\User_LDAP\AccessFactory::class);
@@ -119,8 +119,7 @@ switch ($action) {
 		$setParameters = [];
 		$configuration->setConfiguration($cfg, $setParameters);
 		if (!in_array($key, $setParameters)) {
-			\OC_JSON::error(['message' => $l->t($key.
-				' Could not set configuration %s', $setParameters[0])]);
+			\OC_JSON::error(['message' => $l->t('Could not set configuration %1$s to %2$s', [$key, $setParameters[0]])]);
 			exit;
 		}
 		$configuration->saveConfiguration();

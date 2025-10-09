@@ -1,14 +1,23 @@
 diff --git apps/federation/composer/composer/autoload_static.php apps/federation/composer/composer/autoload_static.php
-index 927aca6..0c37eaf 100644
+index 927aca6..ee2d590 100644
 --- apps/federation/composer/composer/autoload_static.php
 +++ apps/federation/composer/composer/autoload_static.php
-@@ -25,6 +25,9 @@ class ComposerStaticInitFederation
+@@ -25,6 +25,10 @@ class ComposerStaticInitFederation
          'OCA\\Federation\\AppInfo\\Application' => __DIR__ . '/..' . '/../lib/AppInfo/Application.php',
          'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/GetSharedSecret.php',
          'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/RequestSharedSecret.php',
++        'OCA\\Federation\\BruteforceResetter' => __DIR__ . '/..' . '/../lib/BruteforceResetter.php',
 +        'OCA\\Federation\\Command\\AddTrustedServer' => __DIR__ . '/..' . '/../lib/Command/AddTrustedServer.php',
 +        'OCA\\Federation\\Command\\ListTrustedServer' => __DIR__ . '/..' . '/../lib/Command/ListTrustedServer.php',
 +        'OCA\\Federation\\Command\\RemoveTrustedServer' => __DIR__ . '/..' . '/../lib/Command/RemoveTrustedServer.php',
          'OCA\\Federation\\Command\\SyncFederationAddressBooks' => __DIR__ . '/..' . '/../lib/Command/SyncFederationAddressBooks.php',
          'OCA\\Federation\\Controller\\OCSAuthAPIController' => __DIR__ . '/..' . '/../lib/Controller/OCSAuthAPIController.php',
          'OCA\\Federation\\Controller\\SettingsController' => __DIR__ . '/..' . '/../lib/Controller/SettingsController.php',
+@@ -36,6 +40,7 @@ class ComposerStaticInitFederation
+         'OCA\\Federation\\Settings\\Admin' => __DIR__ . '/..' . '/../lib/Settings/Admin.php',
+         'OCA\\Federation\\SyncFederationAddressBooks' => __DIR__ . '/..' . '/../lib/SyncFederationAddressBooks.php',
+         'OCA\\Federation\\SyncJob' => __DIR__ . '/..' . '/../lib/SyncJob.php',
++        'OCA\\Federation\\TrustedBruteforceResetJob' => __DIR__ . '/..' . '/../lib/TrustedBruteforceResetJob.php',
+         'OCA\\Federation\\TrustedServers' => __DIR__ . '/..' . '/../lib/TrustedServers.php',
+     );
+ 

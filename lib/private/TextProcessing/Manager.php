@@ -40,6 +40,7 @@ use OCP\TextProcessing\Exception\TaskFailureException;
 use OCP\TextProcessing\IManager;
 use OCP\TextProcessing\IProvider;
 use OCP\TextProcessing\IProviderWithExpectedRuntime;
+use OCP\TextProcessing\IProviderWithId;
 use OCP\TextProcessing\Task;
 use OCP\TextProcessing\Task as OCPTask;
 use Psr\Log\LoggerInterface;
@@ -282,14 +283,18 @@ class Manager implements IManager {
 			$preferences = json_decode($json, true);
 			if (isset($preferences[$task->getType()])) {
 				// If a preference for this task type is set, move the preferred provider to the start
-				$provider = current(array_values(array_filter($providers, fn ($provider) => $provider::class === $preferences[$task->getType()])));
+				$provider = current(array_values(array_filter($providers, function ($provider) use ($preferences, $task) {
+					if ($provider instanceof IProviderWithId) {
+						return $provider->getId() === $preferences[$task->getType()];
+					}
+					return $provider::class === $preferences[$task->getType()];
+				})));
 				if ($provider !== false) {
 					$providers = array_filter($providers, fn ($p) => $p !== $provider);
 					array_unshift($providers, $provider);
 				}
 			}
 		}
-		$providers = array_values(array_filter($providers, fn (IProvider $provider) => $task->canUseProvider($provider)));
-		return $providers;
+		return array_values(array_filter($providers, fn (IProvider $provider) => $task->canUseProvider($provider)));
 	}
 }

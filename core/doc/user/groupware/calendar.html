@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Calendar app &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -65,6 +67,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#edit-export-or-delete-a-calendar">Edit, Export or Delete a Calendar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sharing-calendars">Sharing calendars</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#publishing-a-calendar">Publishing a calendar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calendar-widget">Calendar Widget</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#subscribe-to-a-calendar">Subscribe to a Calendar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#subscribe-to-a-holiday-calendar">Subscribe to a Holiday Calendar</a></li>
 </ul>
@@ -183,6 +186,7 @@ instance, importing is the best way to do so.</p>
 from your local device to upload.</p></li>
 <li><p>The upload can take some time and depends on how big the calendar you import
 is.</p></li>
+<li><p>A blue progress bar will appear below “Calendar Settings”.</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -219,7 +223,7 @@ have a local backup.</p>
 <p>You may share your calendar with other users or groups. Calendars may be shared with write access or read-only. When sharing a calendar with write access, users with whom the calendar is shared will be able to create new events into the calendar as well as edit and delete existing ones.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Calendar shares currently cannot be accepted or rejected. If you want to stop having a calendar that someone shared with you, you can click on the 3-dot menu next to the calendar in the calendar list and click on “Unshare from me”. Calendars shared with a group cannot be unshared by individuals.</p>
+<p>Calendar shares currently cannot be accepted or rejected. If you want to stop having a calendar that someone shared with you, you can click on the 3-dot menu next to the calendar in the calendar list and click on “Unshare from me”. To restore a share, the calendar can be reshared again, either for the whole group, resetting all unshares, or for a single user.</p>
 </div>
 </section>
 <section id="publishing-a-calendar">
@@ -236,6 +240,12 @@ In this url you need to replace the following variables:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;date&gt;</span></code> with <code class="docutils literal notranslate"><span class="pre">now</span></code> or any date with the following format <code class="docutils literal notranslate"><span class="pre">&lt;year&gt;-&lt;month&gt;-&lt;day&gt;</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">2019-12-28</span></code>).</p></li>
 </ul>
 <p>On the public page, users are able to get the subscription link for the calendar and export the whole calendar directly.</p>
+</section>
+<section id="calendar-widget">
+<h3>Calendar Widget<a class="headerlink" href="#calendar-widget" title="Link to this heading"></a></h3>
+<p>You can embed your calendars into supported apps like <code class="docutils literal notranslate"><span class="pre">Talk</span></code>, <code class="docutils literal notranslate"><span class="pre">Notes</span></code>, etc…
+by either sharing the public link to make the embed viewable (read-only) to all users
+or by using the internal link to make it private.</p>
 </section>
 <section id="subscribe-to-a-calendar">
 <h3>Subscribe to a Calendar<a class="headerlink" href="#subscribe-to-a-calendar" title="Link to this heading"></a></h3>
@@ -549,7 +559,7 @@ The system will detect the conflict and offer to pick a new time slot.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -577,11 +587,11 @@ The system will detect the conflict and offer to pick a new time slot.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/user_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

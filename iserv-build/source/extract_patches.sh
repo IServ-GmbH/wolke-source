@@ -30,7 +30,7 @@ create_patches_for_repo()
   ADDED_DIR_LOCAL="$2"
   PATCHES_DIR_LOCAL="$3"
   PREFIX="$4"
-  for F in $(git -C "$REPO_DIR_LOCAL" ls-files --modified --other)
+  for F in $(git -C "$REPO_DIR_LOCAL" ls-files --modified --other | grep -v '^apps/.*/tests');
   do
     if [ -d "$REPO_DIR_LOCAL/$F" ] ; then
       # skip directories

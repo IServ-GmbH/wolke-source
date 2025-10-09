@@ -117,15 +117,13 @@ class DeletedShareAPIController extends OCSController {
 			'path' => $share->getTarget(),
 		];
 		$userFolder = $this->rootFolder->getUserFolder($share->getSharedBy());
-		$nodes = $userFolder->getById($share->getNodeId());
-		if (empty($nodes)) {
+		$node = $userFolder->getFirstNodeById($share->getNodeId());
+		if (!$node) {
 			// fallback to guessing the path
 			$node = $userFolder->get($share->getTarget());
 			if ($node === null || $share->getTarget() === '') {
 				throw new NotFoundException();
 			}
-		} else {
-			$node = $nodes[0];
 		}
 
 		$result['path'] = $userFolder->getRelativePath($node->getPath());
@@ -193,11 +191,12 @@ class DeletedShareAPIController extends OCSController {
 	 */
 	public function index(): DataResponse {
 		$groupShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_GROUP, null, -1, 0);
+		$teamShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_CIRCLE, null, -1, 0);
 		$roomShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_ROOM, null, -1, 0);
 		$deckShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_DECK, null, -1, 0);
 		$sciencemeshShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_SCIENCEMESH, null, -1, 0);
 
-		$shares = array_merge($groupShares, $roomShares, $deckShares, $sciencemeshShares);
+		$shares = array_merge($groupShares, $teamShares, $roomShares, $deckShares, $sciencemeshShares);
 
 		$shares = array_map(function (IShare $share) {
 			return $this->formatShare($share);

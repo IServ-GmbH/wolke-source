@@ -1,8 +1,8 @@
 diff --git lib/private/Template/JSConfigHelper.php lib/private/Template/JSConfigHelper.php
-index f255da9..fde3562 100644
+index 7148e4c..4f84f61 100644
 --- lib/private/Template/JSConfigHelper.php
 +++ lib/private/Template/JSConfigHelper.php
-@@ -258,6 +258,8 @@ class JSConfigHelper {
+@@ -260,6 +260,8 @@ class JSConfigHelper {
  					'defaultRemoteExpireDateEnabled' => $defaultRemoteExpireDateEnabled,
  					'defaultRemoteExpireDate' => $defaultRemoteExpireDate,
  					'defaultRemoteExpireDateEnforced' => $defaultRemoteExpireDateEnforced,

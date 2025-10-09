@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 /**
  * Circles - Bring cloud-users closer together.
  *
@@ -29,9 +28,10 @@ declare(strict_types=1);
  *
  */
 
-
 namespace OCA\Circles\AppInfo;
 
+use OC\AppFramework\Bootstrap\Coordinator;
+use OC\AppFramework\Bootstrap\ServiceRegistration;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Service\ConfigService;
@@ -39,52 +39,20 @@ use OCA\Circles\Service\InterfaceService;
 use OCP\App\IAppManager;
 use OCP\Capabilities\ICapability;
 use OCP\IL10N;
+use OCP\Teams\ITeamResourceProvider;
+use Psr\Container\ContainerInterface;
 
-/**
- * Class Capabilities
- *
- * @package OCA\Circles\AppInfo
- */
 class Capabilities implements ICapability {
-	/** @var IL10N */
-	private $l10n;
-
-	/** @var IAppManager */
-	private $appManager;
-
-	/** @var InterfaceService */
-	private $interfaceService;
-
-	/** @var ConfigService */
-	private $configService;
-
-
-	/**
-	 * Capabilities constructor.
-	 *
-	 * @param IL10N $l10n
-	 * @param IAppManager $appManager
-	 * @param InterfaceService $interfaceService
-	 * @param ConfigService $configService
-	 */
 	public function __construct(
-		IL10N $l10n,
-		IAppManager $appManager,
-		InterfaceService $interfaceService,
-		ConfigService $configService
+		private IL10N $l10n,
+		private IAppManager $appManager,
+		private InterfaceService $interfaceService,
+		private ConfigService $configService,
+		private Coordinator $coordinator,
+		private ContainerInterface $container,
 	) {
-		$this->l10n = $l10n;
-		$this->appManager = $appManager;
-		$this->interfaceService = $interfaceService;
-		$this->configService = $configService;
 	}
 
-
-	/**
-	 * @param bool $complete
-	 *
-	 * @return array
-	 */
 	public function getCapabilities(bool $complete = false): array {
 		return [
 			Application::APP_ID => [
@@ -92,11 +60,11 @@ class Capabilities implements ICapability {
 				'status' => $this->getCapabilitiesStatus($complete),
 				'settings' => $this->configService->getSettings(),
 				'circle' => $this->getCapabilitiesCircle(),
-				'member' => $this->getCapabilitiesMember()
+				'member' => $this->getCapabilitiesMember(),
+				'teamResourceProviders' => $this->getCapabilitiesTeamResourceProviders(),
 			],
 		];
 	}
-
 
 	/**
 	 * @param bool $complete
@@ -118,7 +86,6 @@ class Capabilities implements ICapability {
 		return $status;
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -129,7 +96,6 @@ class Capabilities implements ICapability {
 		];
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -139,7 +105,6 @@ class Capabilities implements ICapability {
 			'type' => Member::$TYPE
 		];
 	}
-
 
 	/**
 	 * @return array
@@ -153,15 +118,15 @@ class Capabilities implements ICapability {
 				Circle::CFG_VISIBLE => $this->l10n->t('Visible'),
 				Circle::CFG_OPEN => $this->l10n->t('Open'),
 				Circle::CFG_INVITE => $this->l10n->t('Invite'),
-				Circle::CFG_REQUEST => $this->l10n->t('Join Request'),
+				Circle::CFG_REQUEST => $this->l10n->t('Join request'),
 				Circle::CFG_FRIEND => $this->l10n->t('Friends'),
-				Circle::CFG_PROTECTED => $this->l10n->t('Password Protected'),
+				Circle::CFG_PROTECTED => $this->l10n->t('Password protected'),
 				Circle::CFG_NO_OWNER => $this->l10n->t('No Owner'),
 				Circle::CFG_HIDDEN => $this->l10n->t('Hidden'),
 				Circle::CFG_BACKEND => $this->l10n->t('Backend'),
 				Circle::CFG_LOCAL => $this->l10n->t('Local'),
 				Circle::CFG_ROOT => $this->l10n->t('Root'),
-				Circle::CFG_CIRCLE_INVITE => $this->l10n->t('Circle Invite'),
+				Circle::CFG_CIRCLE_INVITE => $this->l10n->t('Team invite'),
 				Circle::CFG_FEDERATED => $this->l10n->t('Federated'),
 				Circle::CFG_MOUNTPOINT => $this->l10n->t('Mount point')
 			],
@@ -170,7 +135,7 @@ class Capabilities implements ICapability {
 					'core' => [
 						Member::TYPE_USER => $this->l10n->t('Nextcloud Account'),
 						Member::TYPE_GROUP => $this->l10n->t('Nextcloud Group'),
-						Member::TYPE_MAIL => $this->l10n->t('Email Address'),
+						Member::TYPE_MAIL => $this->l10n->t('Email address'),
 						Member::TYPE_CONTACT => $this->l10n->t('Contact'),
 						Member::TYPE_CIRCLE => $this->l10n->t('Circle'),
 						Member::TYPE_APP => $this->l10n->t('Nextcloud App')
@@ -183,7 +148,6 @@ class Capabilities implements ICapability {
 		];
 	}
 
-
 	/**
 	 * @return array
 	 */
@@ -193,7 +157,6 @@ class Capabilities implements ICapability {
 			'systemFlags' => Circle::$DEF_CFG_SYSTEM_FILTER
 		];
 	}
-
 
 	/**
 	 * @return array
@@ -207,5 +170,24 @@ class Capabilities implements ICapability {
 				Member::LEVEL_OWNER => $this->l10n->t('Owner')
 			]
 		];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function getCapabilitiesTeamResourceProviders() {
+		$providers = $this->coordinator->getRegistrationContext()?->getTeamResourceProviders();
+		if ($providers === null) {
+			return [];
+		}
+		$providerIds = array_map(
+			function (ServiceRegistration $registration) {
+				/** @var ITeamResourceProvider $provider */
+				$provider = $this->container->get($registration->getService());
+				return $provider->getId();
+			},
+			$providers,
+		);
+		return $providerIds;
 	}
 }

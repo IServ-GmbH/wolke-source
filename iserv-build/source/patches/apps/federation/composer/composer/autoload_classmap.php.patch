@@ -1,14 +1,22 @@
 diff --git apps/federation/composer/composer/autoload_classmap.php apps/federation/composer/composer/autoload_classmap.php
-index 1be343a..e63ace6 100644
+index 1be343a..d8a858f 100644
 --- apps/federation/composer/composer/autoload_classmap.php
 +++ apps/federation/composer/composer/autoload_classmap.php
-@@ -11,6 +11,9 @@ return array(
+@@ -10,6 +10,10 @@ return array(
+     'OCA\\Federation\\AppInfo\\Application' => $baseDir . '/../lib/AppInfo/Application.php',
      'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => $baseDir . '/../lib/BackgroundJob/GetSharedSecret.php',
      'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => $baseDir . '/../lib/BackgroundJob/RequestSharedSecret.php',
++    'OCA\\Federation\\BruteforceResetter' => $baseDir . '/../lib/BruteforceResetter.php',
++    'OCA\\Federation\\Command\\AddTrustedServer' => $baseDir . '/../lib/Command/AddTrustedServer.php',
++    'OCA\\Federation\\Command\\ListTrustedServer' => $baseDir . '/../lib/Command/ListTrustedServer.php',
++    'OCA\\Federation\\Command\\RemoveTrustedServer' => $baseDir . '/../lib/Command/RemoveTrustedServer.php',
      'OCA\\Federation\\Command\\SyncFederationAddressBooks' => $baseDir . '/../lib/Command/SyncFederationAddressBooks.php',
-+	'OCA\\Federation\\Command\\AddTrustedServer' => $baseDir . '/../lib/Command/AddTrustedServer.php',
-+	'OCA\\Federation\\Command\\ListTrustedServer' => $baseDir . '/../lib/Command/ListTrustedServer.php',
-+	'OCA\\Federation\\Command\\RemoveTrustedServer' => $baseDir . '/../lib/Command/RemoveTrustedServer.php',
      'OCA\\Federation\\Controller\\OCSAuthAPIController' => $baseDir . '/../lib/Controller/OCSAuthAPIController.php',
      'OCA\\Federation\\Controller\\SettingsController' => $baseDir . '/../lib/Controller/SettingsController.php',
-     'OCA\\Federation\\DAV\\FedAuth' => $baseDir . '/../lib/DAV/FedAuth.php',
+@@ -21,5 +25,6 @@ return array(
+     'OCA\\Federation\\Settings\\Admin' => $baseDir . '/../lib/Settings/Admin.php',
+     'OCA\\Federation\\SyncFederationAddressBooks' => $baseDir . '/../lib/SyncFederationAddressBooks.php',
+     'OCA\\Federation\\SyncJob' => $baseDir . '/../lib/SyncJob.php',
++    'OCA\\Federation\\TrustedBruteforceResetJob' => $baseDir . '/../lib/TrustedBruteforceResetJob.php',
+     'OCA\\Federation\\TrustedServers' => $baseDir . '/../lib/TrustedServers.php',
+ );

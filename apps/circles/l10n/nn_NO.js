@@ -6,6 +6,7 @@ OC.L10N.register(
     "Password protected" : "Passordverna",
     "Local" : "Lokal",
     "Federated" : "Federated",
+    "Contact" : "Kontakt",
     "Circle" : "Sirkel",
     "Moderator" : "Moderator",
     "Admin" : "Administrer",
@@ -15,7 +16,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Ingen oppføringar funne i denne mappa",
     "Name" : "Namn",
     "Size" : "Storleik",
-    "Modified" : "Endra",
-    "Circles" : "Sirklar"
+    "Modified" : "Endra"
 },
 "nplurals=2; plural=(n != 1);");

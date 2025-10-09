@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hardening and security guidance &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -372,18 +374,83 @@ security headers are shipped.</p>
 </section>
 <section id="connections-to-remote-servers">
 <h2>Connections to remote servers<a class="headerlink" href="#connections-to-remote-servers" title="Link to this heading"></a></h2>
-<p>Some Nextcloud functionalites require connecting to remote servers. Depending on
-your server setup, these are the possible connections:</p>
+<p>Some functionalites require the Nextcloud server to be able to connect remote systems via https/443.
+This pragraph also includes the data which is being transmitted to the Nextcloud GmbH.
+Depending on your server setup, these are the possible connections:</p>
 <ul class="simple">
-<li><p>www.nextcloud.com, www.startpage.com, www.eff.org, www.edri.org for checking the internet connection</p></li>
-<li><p>cloud.nextcloud.com (https) for validating the enterprise subscription</p></li>
-<li><p>updates.nextcloud.com (https) for Nextcloud server updates</p></li>
-<li><p>push-notifications.nextcloud.com (https) for sending push notifications to mobile clients</p></li>
-<li><p>pushfeed.nextcloud.com (https) for the Nextcloud announcements app</p></li>
-<li><p>lookup.nextcloud.com (https) for updating and lookups to the federated sharing addressbook</p></li>
-<li><p>surveyserver.nextcloud.com (https) if the admin has agreed to share anonymized data</p></li>
-<li><p>apps.nextcloud.com (https) for available apps and their updates</p></li>
-<li><p>github.com (https) for downloading Nextcloud standard apps</p></li>
+<li><dl class="simple">
+<dt>nextcloud.com, startpage.com, eff.org, edri.org</dt><dd><ul>
+<li><p><a class="reference external" href="https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/config_sample_php_parameters.html#has-internet-connection">optional (config)</a></p></li>
+<li><p>for checking the internet connection</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>cloud.nextcloud.com</dt><dd><ul>
+<li><p>used for enterprise license monitoring</p></li>
+<li><p>submitted data: subscription key, user count</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>updates.nextcloud.com</dt><dd><ul>
+<li><p>to check for available Nextcloud server updates</p></li>
+<li><p>submitted data: server version, subscription key, install time, instance id, instance size</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>apps.nextcloud.com</dt><dd><ul>
+<li><p>to check for available apps and their updates</p></li>
+<li><p>submitted data: subscription key</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>github.com, objects.githubusercontent.com</dt><dd><ul>
+<li><p>to download Nextcloud standard apps</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>push-notifications.nextcloud.com</dt><dd><ul>
+<li><p>sending push notifications to mobile clients</p></li>
+<li><p>submitted data: unique device identifier, public key, push token</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>pushfeed.nextcloud.com</dt><dd><ul>
+<li><p>optional</p></li>
+<li><p>checking for updates to be shown in the Nextcloud Announcements app</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>lookup.nextcloud.com</dt><dd><ul>
+<li><p>optional</p></li>
+<li><p>for updating and lookups to the federated sharing addressbook</p></li>
+<li><p>submitted data: <em>pending</em></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>surveyserver.nextcloud.com</dt><dd><ul>
+<li><p>optional</p></li>
+<li><p>if the admin has agreed to share anonymized server data</p></li>
+<li><p>submitted data: instance id, server versions (incl. php &amp; db), installed apps</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><p>Any remote Nextcloud server that is connected with federated sharing</p></li>
 </ul>
 </section>
@@ -453,7 +520,7 @@ running:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -475,11 +542,11 @@ running:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

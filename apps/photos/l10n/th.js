@@ -32,8 +32,8 @@ OC.L10N.register(
     "An error occurred" : "เกิดข้อผิดพลาด",
     "Favorite" : "รายการโปรด",
     "Open the full size \"{name}\" image" : "เปิดรูปภาพขนาดเต็ม \"{name}\"",
-    "Go back" : "กลับไป",
     "Back to {folder}" : "กลับไปยัง {folder}",
+    "Go back" : "กลับไป",
     "Share this folder" : "แชร์โฟลเดอร์นี้",
     "Enable squared photos view" : "เปิดมุมมองรูปภาพสี่เหลี่ยม",
     "Home" : "หน้าหลัก",
@@ -44,8 +44,8 @@ OC.L10N.register(
     "No photos in here" : "ไม่มีรูปภาพที่นี่",
     "No tags yet" : "ยังไม่มีแท็ก",
     "Photos with tags will show up here" : "รูปภาพที่ติดแท็กจะแสดงที่นี่",
-    "Add" : "เพิ่ม",
     "Tagged photos" : "รูปภาพที่ติดแท็ก",
-    "Details" : "รายละเอียด"
+    "Details" : "รายละเอียด",
+    "Add" : "เพิ่ม"
 },
 "nplurals=1; plural=0;");

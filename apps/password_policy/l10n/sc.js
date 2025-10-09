@@ -1,7 +1,7 @@
 OC.L10N.register(
     "password_policy",
     {
-    "Password is expired, please use forgot password method to reset" : "Sa crae est iscadida, imprea su mètodu de crae iscaressida pro torrare a impostare",
+    "Password is expired, please use forgot password method to reset" : "Sa crae est iscadida, imprea su mètodu de s'ismèntigu de sa crae pro dda torrare a cunfigurare",
     "Password must not have been used recently before." : "Sa crae non depet èssere istada impreada pagu ora in antis",
     "Password is among the 1,000,000 most common ones. Please make it unique." : "Sa crae est in una lista de 1,000,000 de craes prus comunes. Faghe chi siat ùnica.",
     "Password is present in compromised password list. Please choose a different password." : "Sa crae est presente in una lista de craes cumprometidas. Sebera·nde un'àtera.",
@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Normativa de is craes",
     "Allows admins to configure a password policy" : "Permitit a s'amministratzione de cunfigurare una normativa de is craes",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Permiti a s'amministratzione de definire unas pre-cunditziones pro sa crae, comente pònnere una longària mìnima",
-    "Minimum password length" : "Longària mìnima de crae",
-    "User password history" : "Cronologia de is craes de s'utente",
     "Number of days until user password expires" : "Nùmeru de dies in antis de s'iscadèntzia de sa crae",
+    "Minimum password length" : "Longària mìnima de crae",
     "Forbid common passwords" : "Proibi is craes comunes",
     "Enforce upper and lower case characters" : "Pone caràteres a piticu e a mannu",
     "Enforce numeric characters" : "Pone caràtere numèricos",
@@ -26,6 +25,7 @@ OC.L10N.register(
     "History size has to be a non negative number" : "Sa mannària de sa cronologia deper èssere unu nùmeru positivu",
     "Expiration days have to be a non negative number" : "Is dies de iscadèntzia depent èssere unu nùmeru positivu",
     "Maximum login attempts have to be a non negative number" : "Is tentativos de intrada màssimos depent èssere unu nùmeru positivu",
-    "Settings saved" : "Cunfiguratzione sarvada"
+    "Settings saved" : "Cunfiguratzione sarvada",
+    "User password history" : "Cronologia de is craes de s'utente"
 },
 "nplurals=2; plural=(n != 1);");

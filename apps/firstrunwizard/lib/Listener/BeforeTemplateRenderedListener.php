@@ -27,8 +27,10 @@ declare(strict_types=1);
 namespace OCA\FirstRunWizard\Listener;
 
 use OCA\FirstRunWizard\AppInfo\Application;
+use OCA\FirstRunWizard\Constants;
 use OCA\FirstRunWizard\Notification\AppHint;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\BackgroundJob\IJobList;
 use OCP\Defaults;
@@ -39,37 +41,19 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<BeforeTemplateRenderedEvent>
+ */
 class BeforeTemplateRenderedListener implements IEventListener {
-	/**
-	 * @var IUserSession
-	 */
-	private $userSession;
-	/**
-	 * @var IConfig
-	 */
-	private $config;
-	/**
-	 * @var AppHint
-	 */
-	private $appHint;
-	/**
-	 * @var IJobList
-	 */
-	private $jobList;
-
-	/** @var IInitialState */
-	protected $initialState;
-
-	/** @var Defaults */
-	protected $theming;
 
 	public function __construct(
-		IConfig $config,
-		IUserSession $userSession,
-		IJobList $jobList,
-		AppHint $appHint,
-		IInitialState $initialState,
-		Defaults $theming,
+		private IConfig $config,
+		private IAppConfig $appConfig,
+		private IUserSession $userSession,
+		private IJobList $jobList,
+		private AppHint $appHint,
+		private IInitialState $initialState,
+		private Defaults $theming,
 	) {
 		$this->userSession = $userSession;
 		$this->config = $config;
@@ -89,17 +73,30 @@ class BeforeTemplateRenderedListener implements IEventListener {
 			return;
 		}
 
-		if ($this->config->getUserValue($user->getUID(), Application::APP_ID, 'show', '1') !== '0') {
-			Util::addScript(Application::APP_ID, 'activate');
+		if ($this->appConfig->getAppValueBool('wizard_enabled', true)) {
+			$lastSeenVersion = $this->config->getUserValue($user->getUID(), Application::APP_ID, 'show', '0.0.0');
 
-			$this->jobList->add('OCA\FirstRunWizard\Notification\BackgroundJob', ['uid' => $this->userSession->getUser()->getUID()]);
+			// If current is newer then last seen we activate the wizard
+			if (version_compare(Constants::CHANGELOG_VERSION, $lastSeenVersion, '>')) {
+				Util::addScript(Application::APP_ID, Application::APP_ID . '-activate');
+			}
+
+			// If the user was already seen before (compatibility with older wizard versions where the value was 1)
+			// then we only show the changelog
+			if (version_compare($lastSeenVersion, '1', '>')) {
+				$this->initialState->provideInitialState('changelogOnly', true);
+			} else {
+				// Otherwise if the user really uses Nextcloud for the very first time we create notifications for them
+				$this->jobList->add('OCA\FirstRunWizard\Notification\BackgroundJob', ['uid' => $this->userSession->getUser()->getUID()]);
+			}
+
+			if ($this->config->getSystemValueBool('appstoreenabled', true)) {
+				$this->appHint->sendAppHintNotifications();
+			}
 		}
 
-		if ($this->config->getSystemValueBool('appstoreenabled', true)) {
-			$this->appHint->sendAppHintNotifications();
-		}
-
-		Util::addScript(Application::APP_ID, 'about');
+		Util::addStyle(Application::APP_ID, Application::APP_ID . '-style');
+		Util::addScript(Application::APP_ID, Application::APP_ID . '-about');
 
 		$this->initialState->provideInitialState(
 			'desktop',

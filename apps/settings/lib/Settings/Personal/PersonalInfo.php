@@ -172,6 +172,7 @@ class PersonalInfo implements ISettings {
 		$accountParameters = [
 			'avatarChangeSupported' => $user->canChangeAvatar(),
 			'displayNameChangeSupported' => $user->canChangeDisplayName(),
+			'emailChangeSupported' => $user->canChangeEmail(),
 			'federationEnabled' => $federationEnabled,
 			'lookupServerUploadEnabled' => $lookupServerUploadEnabled,
 		];
@@ -324,8 +325,8 @@ class PersonalInfo implements ISettings {
 		}
 
 		$uid = $user->getUID();
-		$userLocaleString = $this->config->getUserValue($uid, 'core', 'locale', $this->l10nFactory->findLocale());
 		$userLang = $this->config->getUserValue($uid, 'core', 'lang', $this->l10nFactory->findLanguage());
+		$userLocaleString = $this->config->getUserValue($uid, 'core', 'locale', $this->l10nFactory->findLocale($userLang));
 		$localeCodes = $this->l10nFactory->findAvailableLocales();
 		$userLocale = array_filter($localeCodes, fn ($value) => $userLocaleString === $value['code']);
 

@@ -36,6 +36,7 @@ use OCA\Files_External\NotFoundException;
 use OCA\Files_External\Service\StoragesService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Files\StorageNotAvailableException;
 use OCP\IConfig;
@@ -291,7 +292,7 @@ abstract class StoragesController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function show($id, $testOnly = true) {
+	public function show(int $id, $testOnly = true) {
 		try {
 			$storage = $this->service->getStorage($id);
 
@@ -307,7 +308,7 @@ abstract class StoragesController extends Controller {
 
 		$data = $storage->jsonSerialize(true);
 		$isAdmin = $this->groupManager->isAdmin($this->userSession->getUser()->getUID());
-		$data['can_edit'] = $storage->getType() === StorageConfig::MOUNT_TYPE_PERSONAl || $isAdmin;
+		$data['can_edit'] = $storage->getType() === StorageConfig::MOUNT_TYPE_PERSONAL || $isAdmin;
 
 		return new DataResponse(
 			$data,
@@ -322,7 +323,8 @@ abstract class StoragesController extends Controller {
 	 *
 	 * @return DataResponse
 	 */
-	public function destroy($id) {
+	#[PasswordConfirmationRequired(strict: true)]
+	public function destroy(int $id) {
 		try {
 			$this->service->removeStorage($id);
 		} catch (NotFoundException $e) {

@@ -13,7 +13,7 @@ use OC\Security\RateLimiting\Exception\RateLimitExceededException;
 use OC\Security\RateLimiting\Limiter;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\Connector\Sabre\Exception\TooManyRequests;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 use Sabre\DAV;
@@ -29,7 +29,7 @@ class CardDavRateLimitingPlugin extends ServerPlugin {
 		private IUserManager $userManager,
 		private CardDavBackend $cardDavBackend,
 		private LoggerInterface $logger,
-		private IConfig $config,
+		private IAppConfig $config,
 		?string $userId) {
 		$this->limiter = $limiter;
 		$this->userManager = $userManager;
@@ -60,15 +60,15 @@ class CardDavRateLimitingPlugin extends ServerPlugin {
 			try {
 				$this->limiter->registerUserRequest(
 					'carddav-create-address-book',
-					(int) $this->config->getAppValue('dav', 'rateLimitAddressBookCreation', '10'),
-					(int) $this->config->getAppValue('dav', 'rateLimitPeriodAddressBookCreation', '3600'),
+					$this->config->getValueInt('dav', 'rateLimitAddressBookCreation', 10),
+					$this->config->getValueInt('dav', 'rateLimitPeriodAddressBookCreation', 3600),
 					$user
 				);
 			} catch (RateLimitExceededException $e) {
 				throw new TooManyRequests('Too many addressbooks created', 0, $e);
 			}
 
-			$addressBookLimit = (int) $this->config->getAppValue('dav', 'maximumAdressbooks', '10');
+			$addressBookLimit = $this->config->getValueInt('dav', 'maximumAdressbooks', 10);
 			if ($addressBookLimit === -1) {
 				return;
 			}

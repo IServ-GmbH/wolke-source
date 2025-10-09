@@ -28,6 +28,7 @@
  */
 namespace OCA\Federation\Controller;
 
+use OCA\Federation\BackgroundJob\GetSharedSecret;
 use OCA\Federation\DbHandler;
 use OCA\Federation\TrustedServers;
 use OCP\AppFramework\Http;
@@ -150,14 +151,23 @@ class OCSAuthAPIController extends OCSController {
 			throw new OCSForbiddenException();
 		}
 
-		$this->jobList->add(
-			'OCA\Federation\BackgroundJob\GetSharedSecret',
-			[
-				'url' => $url,
-				'token' => $token,
-				'created' => $this->timeFactory->getTime()
-			]
-		);
+		$jobExists = false;
+		foreach ($this->jobList->getJobsIterator(GetSharedSecret::class, null, 0) as $job) {
+			if ($job->getArgument()['url'] === $url && $job->getArgument()['token'] === $token) {
+				$jobExists = true;
+				break;
+			}
+		}
+		if (!$jobExists) {
+			$this->jobList->add(
+				'OCA\Federation\BackgroundJob\GetSharedSecret',
+				[
+					'url' => $url,
+					'token' => $token,
+					'created' => $this->timeFactory->getTime()
+				]
+			);
+		}
 
 		return new DataResponse();
 	}
@@ -184,7 +194,8 @@ class OCSAuthAPIController extends OCSController {
 		}
 
 		if ($this->isValidToken($url, $token) === false) {
-			$this->throttler->registerAttempt('federationSharedSecret', $this->request->getRemoteAddress());
+			usleep(1000); // Make brute forcing tokens harder, but do not block servers altogether
+			// $this->throttler->registerAttempt('federationSharedSecret', $this->request->getRemoteAddress());
 			$expectedToken = $this->dbHandler->getToken($url);
 			$this->logger->error(
 				'remote server (' . $url . ') didn\'t send a valid token (got "' . $token . '" but expected "'. $expectedToken . '") while getting shared secret',

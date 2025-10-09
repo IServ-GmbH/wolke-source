@@ -35,14 +35,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>
  *
  */
+
 use OC\Authentication\Token\IProvider;
 use OC\User\LoginException;
+use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\Authentication\Exceptions\WipeTokenException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IGroupManager;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Server;
+use OCP\Session\Exceptions\SessionNotAvailableException;
 use OCP\User\Events\BeforeUserLoggedInEvent;
 use OCP\User\Events\UserLoggedInEvent;
 use Psr\Log\LoggerInterface;
@@ -88,7 +92,7 @@ class OC_User {
 			\OC::$server->getUserManager()->registerBackend($backend);
 		} else {
 			// You'll never know what happens
-			if (null === $backend or !is_string($backend)) {
+			if ($backend === null or !is_string($backend)) {
 				$backend = 'database';
 			}
 
@@ -182,7 +186,7 @@ class OC_User {
 				$dispatcher = \OC::$server->get(IEventDispatcher::class);
 
 				if ($userSession->getUser() && !$userSession->getUser()->isEnabled()) {
-					$message = \OC::$server->getL10N('lib')->t('User disabled');
+					$message = \OC::$server->getL10N('lib')->t('Account disabled');
 					throw new LoginException($message);
 				}
 				$userSession->setLoginName($uid);
@@ -200,12 +204,17 @@ class OC_User {
 
 				if (empty($password)) {
 					$tokenProvider = \OC::$server->get(IProvider::class);
-					$token = $tokenProvider->getToken($userSession->getSession()->getId());
-					$token->setScope([
-						'password-unconfirmable' => true,
-						'filesystem' => true,
-					]);
-					$tokenProvider->updateToken($token);
+					try {
+						$token = $tokenProvider->getToken($userSession->getSession()->getId());
+						$token->setScope([
+							'password-unconfirmable' => true,
+							'filesystem' => true,
+						]);
+						$tokenProvider->updateToken($token);
+					} catch (InvalidTokenException|WipeTokenException|SessionNotAvailableException) {
+						// swallow the exceptions as we do not deal with them here
+						// simply skip updating the token when is it missing
+					}
 				}
 
 				// setup the filesystem

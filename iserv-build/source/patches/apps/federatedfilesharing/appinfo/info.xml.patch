@@ -1,5 +1,5 @@
 diff --git apps/federatedfilesharing/appinfo/info.xml apps/federatedfilesharing/appinfo/info.xml
-index 33c7581..f17a7aa 100644
+index e6cc2b2..4b2d38f 100644
 --- apps/federatedfilesharing/appinfo/info.xml
 +++ apps/federatedfilesharing/appinfo/info.xml
 @@ -20,7 +20,5 @@

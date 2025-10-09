@@ -61,7 +61,7 @@ class PublicSessionController extends PublicShareController implements ISessionA
 		return $this->share;
 	}
 
-	protected function getPasswordHash(): string {
+	protected function getPasswordHash(): ?string {
 		return $this->getShare()->getPassword();
 	}
 
@@ -111,7 +111,7 @@ class PublicSessionController extends PublicShareController implements ISessionA
 	#[PublicPage]
 	#[RequireDocumentBaseVersionEtag]
 	#[RequireDocumentSession]
-	public function save(string $token, int $version = 0, string $autosaveContent = null, string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
+	public function save(string $token, int $version = 0, ?string $autosaveContent = null, ?string $documentState = null, bool $force = false, bool $manualSave = false): DataResponse {
 		return $this->apiService->save($this->getSession(), $this->getDocument(), $version, $autosaveContent, $documentState, $force, $manualSave, $token);
 	}
 

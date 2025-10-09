@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advanced Talk features &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -73,6 +75,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#call-recording">Call recording</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#manage-a-recording">Manage a recording</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#recording-consent">Recording consent</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#federated-conversation">Federated conversation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#send-and-accept-invites">Send and accept invites</a></li>
 </ul>
 </li>
 </ul>
@@ -164,6 +170,10 @@
 <h2>Breakout rooms<a class="headerlink" href="#breakout-rooms" title="Link to this heading"></a></h2>
 <p>Breakout rooms allow you to divide a Nextcloud Talk call into smaller groups for more focused discussions. The moderator
 of the call can create multiple breakout rooms and assign participants to each room.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Breakout rooms are currently not available in conversations that are joinable by guests (public conversations).</p>
+</div>
 <section id="configure-breakout-rooms">
 <h3>Configure breakout rooms<a class="headerlink" href="#configure-breakout-rooms" title="Link to this heading"></a></h3>
 <p>To create breakout rooms, you need to be a moderator in a group conversation. Click on the top-bar menu and click on
@@ -233,6 +243,23 @@ This section informs participants that the call may be recorded. To give explici
 <img alt="../_images/give-recording-consent-checked.png" src="../_images/give-recording-consent-checked.png" />
 </section>
 </section>
+<section id="federated-conversation">
+<h2>Federated conversation<a class="headerlink" href="#federated-conversation" title="Link to this heading"></a></h2>
+<p>With Federation feature, users can create conversations across different federated Talk instances and use Talk features as if they were on a same server.</p>
+<p><strong>Important</strong> Under current development. Basic chat features are available, more to come in the future!</p>
+<p>Feature is required to be set up by the system administration.</p>
+<section id="send-and-accept-invites">
+<h3>Send and accept invites<a class="headerlink" href="#send-and-accept-invites" title="Link to this heading"></a></h3>
+<p>The moderator of the conversation can send an invite to participant on a different server:</p>
+<img alt="../_images/federation-invite-send.png" src="../_images/federation-invite-send.png" />
+<p>When receiving a notification, user will see a counter of pending invites above the conversations list.</p>
+<a class="reference internal image-reference" href="../_images/federation-invite-pending.png"><img alt="../_images/federation-invite-pending.png" src="../_images/federation-invite-pending.png" style="width: 450px;" /></a>
+<p>Upon clicking it, more information will be provided about inviting party, and user can either accept or decline the invitation.</p>
+<a class="reference internal image-reference" href="../_images/federation-invite-dialog.png"><img alt="../_images/federation-invite-dialog.png" src="../_images/federation-invite-dialog.png" style="width: 450px;" /></a>
+<p>By accepting the invite, conversation will appear in the list as any other one.</p>
+<a class="reference internal image-reference" href="../_images/federation-conversations-list.png"><img alt="../_images/federation-conversations-list.png" src="../_images/federation-conversations-list.png" style="width: 450px;" /></a>
+</section>
+</section>
 </section>
 
 
@@ -246,7 +273,7 @@ This section informs participants that the call may be recorded. To give explici
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -274,11 +301,11 @@ This section informs participants that the call may be recorded. To give explici
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/user_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/user_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
         

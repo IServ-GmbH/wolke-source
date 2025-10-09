@@ -35,7 +35,6 @@ use OC\Tagging\TagMapper;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
-use OCP\ILogger;
 use OCP\ITags;
 use OCP\Share_Backend;
 use Psr\Log\LoggerInterface;
@@ -235,7 +234,7 @@ class Tags implements ITags {
 		}
 
 		if ($tagId === false) {
-			$l10n = \OC::$server->getL10N('core');
+			$l10n = \OCP\Util::getL10N('core');
 			throw new \Exception(
 				$l10n->t('Could not find category "%s"', [$tag])
 			);
@@ -272,8 +271,7 @@ class Tags implements ITags {
 	 * @param string $user The user whose tags are to be checked.
 	 */
 	public function userHasTag(string $name, string $user): bool {
-		$key = $this->array_searchi($name, $this->getTagsForUser($user));
-		return ($key !== false) ? $this->tags[$key]->getId() : false;
+		return $this->array_searchi($name, $this->getTagsForUser($user)) !== false;
 	}
 
 	/**
@@ -486,11 +484,13 @@ class Tags implements ITags {
 		try {
 			return $this->getIdsForTag(ITags::TAG_FAVORITE);
 		} catch (\Exception $e) {
-			\OC::$server->getLogger()->logException($e, [
-				'message' => __METHOD__,
-				'level' => ILogger::ERROR,
-				'app' => 'core',
-			]);
+			\OCP\Server::get(LoggerInterface::class)->error(
+				$e->getMessage(),
+				[
+					'app' => 'core',
+					'exception' => $e,
+				]
+			);
 			return [];
 		}
 	}
@@ -549,7 +549,7 @@ class Tags implements ITags {
 		try {
 			$qb->executeStatement();
 		} catch (\Exception $e) {
-			\OC::$server->getLogger()->error($e->getMessage(), [
+			\OCP\Server::get(LoggerInterface::class)->error($e->getMessage(), [
 				'app' => 'core',
 				'exception' => $e,
 			]);

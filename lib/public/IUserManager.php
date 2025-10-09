@@ -142,7 +142,7 @@ interface IUserManager {
 	/**
 	 * @return IUser[]
 	 * @since 28.0.0
-	 * @since 28.0.7 $search parameter added
+	 * @since 29.0.2 $search parameter added
 	 */
 	public function getDisabledUsers(?int $limit = null, int $offset = 0, string $search = ''): array;
 
@@ -232,4 +232,15 @@ interface IUserManager {
 	 * @since 26.0.0
 	 */
 	public function validateUserId(string $uid, bool $checkDataDirectory = false): void;
+
+	/**
+	 * Gets the list of users.
+	 * An iterator is returned allowing the caller to stop the iteration at any time.
+	 * The offset argument allows the caller to continue the iteration at a specific offset.
+	 *
+	 * @param int $offset from which offset to fetch
+	 * @return \Iterator<IUser> list of IUser object
+	 * @since 29.0.15
+	 */
+	public function getSeenUsers(int $offset = 0): \Iterator;
 }

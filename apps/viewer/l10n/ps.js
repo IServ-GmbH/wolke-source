@@ -7,7 +7,6 @@ OC.L10N.register(
     "Name" : "نوم",
     "Save" : "ساتل",
     "Cancel" : "پرېښول",
-    "Continue" : "وړاندې تګ",
     "Size" : "کچه"
 },
 "nplurals=2; plural=(n != 1);");

@@ -70,9 +70,8 @@ abstract class Entity {
 		$instance = new static();
 
 		foreach ($row as $key => $value) {
-			$prop = ucfirst($instance->columnToProperty($key));
-			$setter = 'set' . $prop;
-			$instance->$setter($value);
+			$prop = $instance->columnToProperty($key);
+			$instance->setter($prop, [$value]);
 		}
 
 		$instance->resetUpdatedFields();
@@ -105,7 +104,7 @@ abstract class Entity {
 	protected function setter(string $name, array $args): void {
 		// setters should only work for existing attributes
 		if (property_exists($this, $name)) {
-			if ($this->$name === $args[0]) {
+			if ($args[0] === $this->$name) {
 				return;
 			}
 			$this->markFieldUpdated($name);

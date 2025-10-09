@@ -46,10 +46,12 @@ use OCP\Files\Events\FileScannedEvent;
 use OCP\Files\Events\FolderScannedEvent;
 use OCP\Files\Events\NodeAddedToCache;
 use OCP\Files\Events\NodeRemovedFromCache;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\StorageNotAvailableException;
 use OCP\IDBConnection;
+use OCP\Lock\ILockingProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -100,14 +102,14 @@ class Scanner extends PublicEmitter {
 		$this->dispatcher = $dispatcher;
 		$this->logger = $logger;
 		// when DB locking is used, no DB transactions will be used
-		$this->useTransaction = !(\OC::$server->getLockingProvider() instanceof DBLockingProvider);
+		$this->useTransaction = !(\OC::$server->get(ILockingProvider::class) instanceof DBLockingProvider);
 	}
 
 	/**
 	 * get all storages for $dir
 	 *
 	 * @param string $dir
-	 * @return \OC\Files\Mount\MountPoint[]
+	 * @return array<string, IMountPoint>
 	 */
 	protected function getMounts($dir) {
 		//TODO: move to the node based fileapi once that's done
@@ -118,8 +120,9 @@ class Scanner extends PublicEmitter {
 		$mounts = $mountManager->findIn($dir);
 		$mounts[] = $mountManager->find($dir);
 		$mounts = array_reverse($mounts); //start with the mount of $dir
+		$mountPoints = array_map(fn ($mount) => $mount->getMountPoint(), $mounts);
 
-		return $mounts;
+		return array_combine($mountPoints, $mounts);
 	}
 
 	/**
@@ -167,6 +170,7 @@ class Scanner extends PublicEmitter {
 					continue;
 				}
 
+				/** @var \OC\Files\Cache\Scanner $scanner */
 				$scanner = $storage->getScanner();
 				$this->attachListener($mount);
 
@@ -197,7 +201,7 @@ class Scanner extends PublicEmitter {
 	 * @throws ForbiddenException
 	 * @throws NotFoundException
 	 */
-	public function scan($dir = '', $recursive = \OC\Files\Cache\Scanner::SCAN_RECURSIVE, callable $mountFilter = null) {
+	public function scan($dir = '', $recursive = \OC\Files\Cache\Scanner::SCAN_RECURSIVE, ?callable $mountFilter = null) {
 		if (!Filesystem::isValidPath($dir)) {
 			throw new \InvalidArgumentException('Invalid path to scan');
 		}
@@ -230,6 +234,9 @@ class Scanner extends PublicEmitter {
 							$owner = $owner['name'] ?? $ownerUid;
 							$permissions = decoct(fileperms($fullPath));
 							throw new ForbiddenException("User folder $fullPath is not writable, folders is owned by $owner and has mode $permissions");
+						} elseif (isset($mounts[$mount->getMountPoint() . $path . '/'])) {
+							// /<user>/files is overwritten by a mountpoint, so this check is irrelevant
+							break;
 						} else {
 							// if the root exists in neither the cache nor the storage the user isn't setup yet
 							break 2;
@@ -243,6 +250,7 @@ class Scanner extends PublicEmitter {
 				continue;
 			}
 			$relativePath = $mount->getInternalPath($dir);
+			/** @var \OC\Files\Cache\Scanner $scanner */
 			$scanner = $storage->getScanner();
 			$scanner->setUseTransactions(false);
 			$this->attachListener($mount);

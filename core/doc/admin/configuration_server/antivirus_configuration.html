@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antivirus scanner &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -66,6 +68,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#installing-clamav">Installing ClamAV</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-the-antivirus-app-for-files">Enabling the antivirus app for files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-clamav-on-nextcloud">Configuring ClamAV on Nextcloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#confirm-everything-is-working">Confirm everything is working</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#manage-the-background-scanner">Manage the background scanner</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get-info-about-files-in-the-scan-queue">Get info about files in the scan queue</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manually-trigger-the-background-scan">Manually trigger the background scan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manually-scan-a-single-file">Manually scan a single file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mark-a-file-as-scanned-or-unscanned">Mark a file as scanned or unscanned</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#configuring-icap-on-nextcloud">Configuring ICAP on Nextcloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disabling-background-scan-task">Disabling background scan task</a></li>
 </ul>
@@ -289,6 +299,45 @@ interactive ClamAV scanning command. Nextcloud should find it automatically.</p>
 <p>When you are satisfied with how ClamAV is operating, you might want to go
 back and change all of your logging to less verbose levels.</p>
 </section>
+<section id="confirm-everything-is-working">
+<h2>Confirm everything is working<a class="headerlink" href="#confirm-everything-is-working" title="Link to this heading"></a></h2>
+<p>Every antivirus provider implements a test virus string, that way tests are quite easy. You find the files here:
+<a class="reference external" href="https://www.eicar.org/download-anti-malware-testfile/">https://www.eicar.org/download-anti-malware-testfile/</a></p>
+<dl class="simple">
+<dt>Uploading the file will trigger an error:</dt><dd><p>“Virus Win.Test.EICAR_HDB-1 is detected in the file. Upload cannot be completed.”</p>
+</dd>
+</dl>
+</section>
+<section id="manage-the-background-scanner">
+<h2>Manage the background scanner<a class="headerlink" href="#manage-the-background-scanner" title="Link to this heading"></a></h2>
+<p>The background scanner does not require any manual intervention.
+However at times you might want to inspect it or perform tasks on it.</p>
+<section id="get-info-about-files-in-the-scan-queue">
+<h3>Get info about files in the scan queue<a class="headerlink" href="#get-info-about-files-in-the-scan-queue" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">status</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="manually-trigger-the-background-scan">
+<h3>Manually trigger the background scan<a class="headerlink" href="#manually-trigger-the-background-scan" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">background</span><span class="o">-</span><span class="n">scan</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">m</span> <span class="n">MAX</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="manually-scan-a-single-file">
+<h3>Manually scan a single file<a class="headerlink" href="#manually-scan-a-single-file" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">scan</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="mark-a-file-as-scanned-or-unscanned">
+<h3>Mark a file as scanned or unscanned<a class="headerlink" href="#mark-a-file-as-scanned-or-unscanned" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">mark</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">scanned</span><span class="o">|</span><span class="n">unscanned</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Files marked as scanned will not be scanned for the next four weeks.</p>
+</section>
+</section>
 <section id="configuring-icap-on-nextcloud">
 <h2>Configuring ICAP on Nextcloud<a class="headerlink" href="#configuring-icap-on-nextcloud" title="Link to this heading"></a></h2>
 <p>Nextcloud offers the integration of antivirus protection based on the ICAP protocol.
@@ -300,10 +349,10 @@ Additional documentation is work in progress.</p>
 </section>
 <section id="disabling-background-scan-task">
 <h2>Disabling background scan task<a class="headerlink" href="#disabling-background-scan-task" title="Link to this heading"></a></h2>
-<p>You can disable background scan with occ to only scan files during upload.</p>
-<blockquote>
-<div><p>occ config:app:set files_antivirus av_background_scan –value=”off”</p>
-</div></blockquote>
+<p>You can disable background scan with occ to only scan files during upload:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">files_antivirus</span> <span class="n">av_background_scan</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;off&quot;</span>
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -318,7 +367,7 @@ Additional documentation is work in progress.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -340,11 +389,11 @@ Additional documentation is work in progress.</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

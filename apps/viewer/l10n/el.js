@@ -8,11 +8,11 @@ OC.L10N.register(
     "Image saved" : "Η εικόνα αποθηκεύτηκε",
     "Unsaved changes" : "Μη αποθηκευμένες αλλαγές",
     "Your browser does not support videos." : "Ο περιηγητής σας δεν υποστηρίζει βίντεο.",
+    "There is no plugin available to display this file type" : "Δεν υπάρχει διαθέσιμο πρόσθετο για την προβολή αυτού του τύπου αρχείου",
     "Edit" : "Επεξεργασία",
     "Open sidebar" : "Άνοιγμα πλευρικής στήλης",
     "Download" : "Λήψη",
     "Delete" : "Διαγραφή",
-    "There is no plugin available to display this file type" : "Δεν υπάρχει διαθέσιμο πρόσθετο για την προβολή αυτού του τύπου αρχείου",
     "View" : "Προβολή",
     "Name" : "Όνομα",
     "Save" : "Αποθήκευση",
@@ -21,7 +21,9 @@ OC.L10N.register(
     "Loading …" : "Φόρτωση …",
     "Reset" : "Επαναφορά",
     "Cancel" : "Ακύρωση",
-    "Continue" : "Συνεχίστε",
+    "Apply" : "Εφαρμογή",
+    "Warning" : "Προειδοποίηση",
+    "Confirm" : "Επιβεβαίωση",
     "Undo" : "Ακύρωση ενέργειας",
     "Redo" : "Ξανακάντε",
     "Zoom in" : "Εστίαση",
@@ -59,6 +61,8 @@ OC.L10N.register(
     "Extension" : "Επέκταση",
     "Name is required." : "Απαιτείται όνομα.",
     "Quality" : "Ποιότητα",
-    "Fit size" : "Προσαρμογή στο μέγεθος"
+    "Fit size" : "Προσαρμογή στο μέγεθος",
+    "Menu" : "Μενού",
+    "Height" : "Ύψος"
 },
 "nplurals=2; plural=(n != 1);");

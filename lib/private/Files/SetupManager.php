@@ -39,7 +39,7 @@ use OC\Share20\ShareDisableChecker;
 use OC_App;
 use OC_Hook;
 use OC_Util;
-use OCA\Files_External\Config\ConfigAdapter;
+use OCA\Files_External\Config\ExternalMountPoint;
 use OCA\Files_Sharing\External\Mount;
 use OCA\Files_Sharing\ISharedMountPoint;
 use OCA\Files_Sharing\SharedMount;
@@ -80,6 +80,7 @@ class SetupManager {
 	private bool $listeningForProviders;
 	private array $fullSetupRequired = [];
 	private bool $setupBuiltinWrappersDone = false;
+	private bool $forceFullSetup = false;
 
 	public function __construct(
 		private IEventLogger $eventLogger,
@@ -97,6 +98,7 @@ class SetupManager {
 	) {
 		$this->cache = $cacheFactory->createDistributed('setupmanager::');
 		$this->listeningForProviders = false;
+		$this->forceFullSetup = $this->config->getSystemValueBool('debug.force-full-fs-setup');
 
 		$this->setupListeners();
 	}
@@ -147,7 +149,7 @@ class SetupManager {
 
 		// install storage availability wrapper, before most other wrappers
 		Filesystem::addStorageWrapper('oc_availability', function ($mountPoint, IStorage $storage, IMountPoint $mount) {
-			$externalMount = $mount instanceof ConfigAdapter || $mount instanceof Mount;
+			$externalMount = $mount instanceof ExternalMountPoint || $mount instanceof Mount;
 			if ($externalMount && !$storage->isLocal()) {
 				return new Availability(['storage' => $storage]);
 			}
@@ -471,6 +473,10 @@ class SetupManager {
 	}
 
 	private function fullSetupRequired(IUser $user): bool {
+		if ($this->forceFullSetup) {
+			return true;
+		}
+
 		// we perform a "cached" setup only after having done the full setup recently
 		// this is also used to trigger a full setup after handling events that are likely
 		// to change the available mounts

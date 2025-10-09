@@ -17,7 +17,10 @@ OC.L10N.register(
     "Admin" : "Administrador",
     "Owner" : "Dueño",
     "%s shared »%s« with you." : "%s ha compartido »%s« con usted.",
+    "Password to access »%1$s« shared to you by %2$s" : "Contraseña para acceder a »%1$s« compartido con usted por %2$s",
     "Password to access »%s«" : "Contraseña para acceder  »%s«",
+    "It is protected with the following password:" : "Está protegido con la siguiente contraseña:",
+    "%1$s via %2$s" : "%1$s vía %2$s",
     "Click the button below to open it." : "Haga click en el botón de abajo para abrirlo.",
     "Open »%s«" : "Abrir »%s«",
     "Files" : "Archivo",
@@ -31,14 +34,6 @@ OC.L10N.register(
     "No entries found in this folder" : "No se encontraron elementos en esta carpeta",
     "Name" : "Nombre",
     "Size" : "Tamaño",
-    "Modified" : "Modificado",
-    "Circles" : "Círculos",
-    "You cannot join this circle" : "Usted no puede unirse a este cículo",
-    "This member is the owner of the circle" : "Este miembro es el dueño del círculo",
-    "Personal Circle" : "Círculo Personal",
-    "You need a specify a type of circle" : "Usted necesita especificar un tipo de círculo",
-    "A circle with that name exists" : "Un círculo con ese nombre ya existe",
-    "This member is not the owner of the circle" : "Este miembro no es el dueño del círculo",
-    "You cannot edit level in a personal circle" : "No puede editar el nivel en un círculo personal"
+    "Modified" : "Modificado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the occ command &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -105,7 +107,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#trashbin">Trashbin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#user-commands">User commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-commands">User commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#user-info">user:info</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#group-commands">Group commands</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#versions">Versions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#command-line-installation">Command line installation</a></li>
@@ -113,6 +118,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#two-factor-authentication">Two-factor authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disable-users">Disable users</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#system-tags">System Tags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#antivirus">Antivirus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setupchecks">Setupchecks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
 </li>
@@ -216,6 +223,8 @@ on your Nextcloud files and directories.</p>
 <li><p><a class="reference internal" href="#two-factor-auth-label"><span class="std std-ref">Two-factor authentication</span></a></p></li>
 <li><p><a class="reference internal" href="#disable-user-label"><span class="std std-ref">Disable users</span></a></p></li>
 <li><p><a class="reference internal" href="#system-tags-commands-label"><span class="std std-ref">System Tags</span></a></p></li>
+<li><p><a class="reference internal" href="#antivirus-commands-label"><span class="std std-ref">Antivirus</span></a></p></li>
+<li><p><a class="reference internal" href="#setupchecks-commands-label"><span class="std std-ref">Setupchecks</span></a></p></li>
 <li><p><a class="reference internal" href="#debugging">Debugging</a></p></li>
 </ul>
 </section>
@@ -377,11 +386,11 @@ shell’s profile (eg. <code class="docutils literal notranslate"><span class="p
 <p>We discourage the use of maintenance mode unless the command explicitly prompts you to do so or unless the commands’ documentation explicitly states that maintenance mode should be used.</p>
 <p>A command may use events to communicate with other apps. An app can only react to an event when loaded. Example: The command user:delete deletes a user account. UserDeletedEvent is emitted. Calendar app implements an event listener to delete user data <a class="footnote-reference brackets" href="#id5" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. In maintenance mode, the Calendar app is not loaded, and hence the user data not deleted.</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id4" role="note">
+<aside class="footnote brackets" id="id4" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
 <p>Exception: <a class="reference external" href="https://github.com/nextcloud/server/blob/75f17b60945e15effc3eea41393eef2b13937226/lib/base.php#L780">The settings app is loaded</a></p>
 </aside>
-<aside class="footnote brackets" id="id5" role="note">
+<aside class="footnote brackets" id="id5" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://github.com/nextcloud/calendar/blob/87e8586971a8676dc15a90f0cd969274678b7009/lib/Listener/UserDeletedListener.php">Calendar app event listener for UserDeletedEvent</a></p>
 </aside>
@@ -408,9 +417,17 @@ shell’s profile (eg. <code class="docutils literal notranslate"><span class="p
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">install</span> <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">disabled</span> <span class="n">twofactor_totp</span>
 </pre></div>
 </div>
+<p>Install regardless of the Nextcloud version requirement:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">install</span> <span class="o">--</span><span class="n">force</span> <span class="n">twofactor_totp</span>
+</pre></div>
+</div>
 <p>List all of your installed apps, and show whether they are
 enabled or disabled:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="nb">list</span>
+</pre></div>
+</div>
+<p>List non-shipped installed apps only:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="nb">list</span> <span class="o">--</span><span class="n">shipped</span> <span class="n">false</span>
 </pre></div>
 </div>
 <p>Enable an app, for example the External Storage Support app:</p>
@@ -418,9 +435,30 @@ enabled or disabled:</p>
 <span class="n">files_external</span> <span class="n">enabled</span>
 </pre></div>
 </div>
+<p>Enable an app regardless of the Nextcloud version requirement:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">enable</span> <span class="o">--</span><span class="n">force</span> <span class="n">files_external</span>
+<span class="n">files_external</span> <span class="n">enabled</span>
+</pre></div>
+</div>
+<p>Enable an app for specific groups of users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">enable</span> <span class="o">--</span><span class="n">groups</span> <span class="n">admin</span> <span class="o">--</span><span class="n">groups</span> <span class="n">sales</span> <span class="n">files_external</span>
+<span class="n">files_external</span> <span class="n">enabled</span> <span class="k">for</span> <span class="n">groups</span><span class="p">:</span> <span class="n">admin</span><span class="p">,</span> <span class="n">sales</span>
+</pre></div>
+</div>
 <p>Disable an app:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">disable</span> <span class="n">files_external</span>
 <span class="n">files_external</span> <span class="n">disabled</span>
+</pre></div>
+</div>
+<p>Disable and remove an app:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">remove</span> <span class="n">files_external</span>
+<span class="n">files_external</span> <span class="n">disabled</span>
+<span class="n">files_external</span> <span class="mf">1.21.0</span> <span class="n">removed</span>
+</pre></div>
+</div>
+<p>Remove an app, but keep the app data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">remove</span> <span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="n">data</span> <span class="n">files_external</span>
+<span class="n">files_external</span> <span class="mf">1.21.0</span> <span class="n">removed</span>
 </pre></div>
 </div>
 <p>You can get the full filepath to an app:</p>
@@ -477,6 +515,20 @@ the <strong>Cron</strong> section on your Nextcloud Admin page:</p>
  <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="n">get</span>      <span class="n">Get</span> <span class="n">a</span> <span class="n">system</span> <span class="n">config</span> <span class="n">value</span>
  <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="nb">set</span>      <span class="n">Set</span> <span class="n">a</span> <span class="n">system</span> <span class="n">config</span> <span class="n">value</span>
 </pre></div>
+</div>
+<p>While setting a configuration value, multiple options are available:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--value=VALUE</span></code> change the configuration value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type=TYPE</span></code> change the type of the value. Use carefully; can break your instance</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--lazy|--no-lazy</span></code> set value as <cite>lazy</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sensitive|--no-sensitive</span></code> set value as <cite>sensitive</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--update-only</span></code> only updates if a value is already stored</p></li>
+</ul>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/config/appconfig.html#concept-overview">Appconfig Concepts</a> to learn more about <cite>typed value</cite>, <cite>lazy</cite> and <cite>sensitive</cite> flag.</p>
 </div>
 <p>You can list all configuration values with one command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="nb">list</span>
@@ -993,28 +1045,32 @@ See <a class="reference external" href="https://docs.nextcloud.com/server/latest
 </section>
 <section id="files-external">
 <span id="files-external-label"></span><h2>Files external<a class="headerlink" href="#files-external" title="Link to this heading"></a></h2>
+<p>These commands are used for managing Nextcloud’s <em>External Storage</em> feature. In
+addition to replicating the configuration capabilities in the Web UI, additional
+capabilities include exporting / importing configurations, scanning <em>External
+Storage</em> mounts that require login credentials, and configuring update notifications
+(if supported by the storage type).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>These commands are only available when the “External storage support” app
 (<code class="docutils literal notranslate"><span class="pre">files_external</span></code>) is enabled.</p>
 </div>
-<p>Commands for managing external storage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files_external</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">applicable</span>  <span class="n">Manage</span> <span class="n">applicable</span> <span class="n">users</span> <span class="ow">and</span> <span class="n">groups</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">backends</span>    <span class="n">Show</span> <span class="n">available</span> <span class="n">authentication</span> <span class="ow">and</span> <span class="n">storage</span> <span class="n">backends</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">config</span>      <span class="n">Manage</span> <span class="n">backend</span> <span class="n">configuration</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">create</span>      <span class="n">Create</span> <span class="n">a</span> <span class="n">new</span> <span class="n">mount</span> <span class="n">configuration</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">delete</span>      <span class="n">Delete</span> <span class="n">an</span> <span class="n">external</span> <span class="n">mount</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">export</span>      <span class="n">Export</span> <span class="n">mount</span> <span class="n">configurations</span>
- <span class="n">files_external</span><span class="p">:</span><span class="kn">import</span>      <span class="nn">Import</span> <span class="n">mount</span> <span class="n">configurations</span>
- <span class="n">files_external</span><span class="p">:</span><span class="nb">list</span>        <span class="n">List</span> <span class="n">configured</span> <span class="n">mounts</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">option</span>      <span class="n">Manage</span> <span class="n">mount</span> <span class="n">options</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">verify</span>      <span class="n">Verify</span> <span class="n">mount</span> <span class="n">configuration</span>
- <span class="n">files_external</span><span class="p">:</span><span class="n">notify</span>      <span class="n">Listen</span> <span class="k">for</span> <span class="n">active</span> <span class="n">update</span> <span class="n">notifications</span> <span class="k">for</span> <span class="n">a</span> <span class="n">configured</span> <span class="n">external</span> <span class="n">mount</span>
+<p>Available commands for the “files_external” namespace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files_external</span><span class="p">:</span><span class="n">applicable</span>  <span class="n">Manage</span> <span class="n">applicable</span> <span class="n">users</span> <span class="ow">and</span> <span class="n">groups</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">backends</span>    <span class="n">Show</span> <span class="n">available</span> <span class="n">authentication</span> <span class="ow">and</span> <span class="n">storage</span> <span class="n">backends</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">config</span>      <span class="n">Manage</span> <span class="n">backend</span> <span class="n">configuration</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">create</span>      <span class="n">Create</span> <span class="n">a</span> <span class="n">new</span> <span class="n">mount</span> <span class="n">configuration</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">delete</span>      <span class="n">Delete</span> <span class="n">an</span> <span class="n">external</span> <span class="n">mount</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">export</span>      <span class="n">Export</span> <span class="n">mount</span> <span class="n">configurations</span>
+<span class="n">files_external</span><span class="p">:</span><span class="kn">import</span>      <span class="nn">Import</span> <span class="n">mount</span> <span class="n">configurations</span>
+<span class="n">files_external</span><span class="p">:</span><span class="nb">list</span>        <span class="n">List</span> <span class="n">configured</span> <span class="n">admin</span> <span class="ow">or</span> <span class="n">personal</span> <span class="n">mounts</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">notify</span>      <span class="n">Listen</span> <span class="k">for</span> <span class="n">active</span> <span class="n">update</span> <span class="n">notifications</span> <span class="k">for</span> <span class="n">a</span> <span class="n">configured</span> <span class="n">external</span> <span class="n">mount</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">option</span>      <span class="n">Manage</span> <span class="n">mount</span> <span class="n">options</span> <span class="k">for</span> <span class="n">a</span> <span class="n">mount</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">scan</span>        <span class="n">Scan</span> <span class="n">an</span> <span class="n">external</span> <span class="n">storage</span> <span class="k">for</span> <span class="n">changed</span> <span class="n">files</span>
+<span class="n">files_external</span><span class="p">:</span><span class="n">verify</span>      <span class="n">Verify</span> <span class="n">mount</span> <span class="n">configuration</span>
 </pre></div>
 </div>
-<p>These commands replicate the functionality in the Nextcloud Web GUI, plus two new
-features:  <code class="docutils literal notranslate"><span class="pre">files_external:export</span></code> and <code class="docutils literal notranslate"><span class="pre">files_external:import</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">files_external:scan</span></code> provides the ability to provide a username and/or password for cases where login credentials are used.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">files_external:export</span></code> to export all admin mounts to stdout, and
 <code class="docutils literal notranslate"><span class="pre">files_external:export</span> <span class="pre">[user_id]</span></code> to export the mounts of the specified
 Nextcloud user.</p>
@@ -1317,14 +1373,17 @@ unavailable to users.</p></td>
 </section>
 <section id="trashbin">
 <span id="trashbin-label"></span><h2>Trashbin<a class="headerlink" href="#trashbin" title="Link to this heading"></a></h2>
+<p>These commands allow for manually managing various aspects of the trash bin (deleted files):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trashbin</span>
- <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Permanently</span> <span class="n">remove</span> <span class="n">deleted</span> <span class="n">files</span>
- <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>  <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">users</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">scope</span><span class="p">[</span><span class="o">=</span><span class="n">SCOPE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">since</span><span class="p">[</span><span class="o">=</span><span class="n">SINCE</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">until</span><span class="p">[</span><span class="o">=</span><span class="n">UNTIL</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="p">]</span> <span class="p">[</span><span class="o">&lt;</span><span class="n">user_id</span><span class="o">&gt;...</span><span class="p">]</span>  <span class="n">Restore</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">according</span> <span class="n">to</span> <span class="n">the</span> <span class="n">given</span> <span class="n">filters</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">cleanup</span>      <span class="n">Permanently</span> <span class="n">remove</span> <span class="n">deleted</span> <span class="n">files</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">expire</span>       <span class="n">Expires</span> <span class="n">the</span> <span class="n">users</span> <span class="n">trashbin</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">size</span>         <span class="n">Configure</span> <span class="n">the</span> <span class="n">target</span> <span class="n">trashbin</span> <span class="n">size</span>
+ <span class="n">trashbin</span><span class="p">:</span><span class="n">restore</span>      <span class="n">Restore</span> <span class="nb">all</span> <span class="n">deleted</span> <span class="n">files</span> <span class="n">according</span> <span class="n">to</span> <span class="n">the</span> <span class="n">given</span> <span class="n">filters</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This command is only available when the “Deleted files” app
+<p>These commands are only available when the “Deleted files” app
 (<code class="docutils literal notranslate"><span class="pre">files_trashbin</span></code>) is enabled.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">trashbin:cleanup</span>&#160; <span class="pre">[--all-users]</span> <span class="pre">[--]</span> <span class="pre">[&lt;user_id&gt;...]</span></code> command removes the deleted files of the specified
@@ -1377,25 +1436,32 @@ the restore process and why some files might be skipped.</p>
 </section>
 <section id="user-commands">
 <span id="user-commands-label"></span><h2>User commands<a class="headerlink" href="#user-commands" title="Link to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">user</span></code> commands create and remove users, reset passwords, display a simple
+<p>The <code class="docutils literal notranslate"><span class="pre">user</span></code> commands create and remove users, reset passwords, manage authentication tokens / sessions, display a simple
 report showing how many users you have, and when a user was last logged in:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span>
  <span class="n">user</span><span class="p">:</span><span class="n">add</span>                            <span class="n">adds</span> <span class="n">a</span> <span class="n">user</span>
- <span class="n">user</span><span class="p">:</span><span class="n">add</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">password</span>               <span class="n">adds</span> <span class="n">a</span> <span class="n">app</span> <span class="n">password</span> <span class="n">named</span> <span class="s2">&quot;cli&quot;</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">add</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">password</span>               <span class="n">adds</span> <span class="n">a</span> <span class="n">app</span> <span class="n">password</span> <span class="n">named</span> <span class="s2">&quot;cli&quot;</span> <span class="p">(</span><span class="n">deprecated</span><span class="p">:</span> <span class="n">alias</span> <span class="k">for</span> <span class="n">user</span><span class="p">:</span><span class="n">auth</span><span class="o">-</span><span class="n">tokens</span><span class="p">:</span><span class="n">add</span><span class="p">)</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">auth</span><span class="o">-</span><span class="n">tokens</span><span class="p">:</span><span class="n">add</span>                <span class="n">Add</span> <span class="n">app</span> <span class="n">password</span> <span class="k">for</span> <span class="n">the</span> <span class="n">named</span> <span class="n">account</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">auth</span><span class="o">-</span><span class="n">tokens</span><span class="p">:</span><span class="n">delete</span>             <span class="n">Deletes</span> <span class="n">an</span> <span class="n">authentication</span> <span class="n">token</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">auth</span><span class="o">-</span><span class="n">tokens</span><span class="p">:</span><span class="nb">list</span>               <span class="n">List</span> <span class="n">authentication</span> <span class="n">tokens</span> <span class="n">of</span> <span class="n">an</span> <span class="n">user</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">clear</span><span class="o">-</span><span class="n">avatar</span><span class="o">-</span><span class="n">cache</span>             <span class="n">clear</span> <span class="n">avatar</span> <span class="n">cache</span>
  <span class="n">user</span><span class="p">:</span><span class="n">delete</span>                         <span class="n">deletes</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">user</span>
  <span class="n">user</span><span class="p">:</span><span class="n">disable</span>                        <span class="n">disables</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">user</span>
  <span class="n">user</span><span class="p">:</span><span class="n">enable</span>                         <span class="n">enables</span> <span class="n">the</span> <span class="n">specified</span> <span class="n">user</span>
  <span class="n">user</span><span class="p">:</span><span class="n">info</span>                           <span class="n">shows</span> <span class="n">information</span> <span class="n">about</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">user</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">keys</span><span class="p">:</span><span class="n">verify</span>                    <span class="n">Verify</span> <span class="k">if</span> <span class="n">the</span> <span class="n">stored</span> <span class="n">public</span> <span class="n">key</span> <span class="n">matches</span> <span class="n">the</span> <span class="n">stored</span> <span class="n">private</span> <span class="n">key</span>
  <span class="n">user</span><span class="p">:</span><span class="n">lastseen</span>                       <span class="n">shows</span> <span class="n">when</span> <span class="n">the</span> <span class="n">user</span> <span class="n">was</span> <span class="n">logged</span> <span class="ow">in</span> <span class="n">last</span> <span class="n">time</span>
  <span class="n">user</span><span class="p">:</span><span class="nb">list</span>                           <span class="n">shows</span> <span class="nb">list</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">registered</span> <span class="n">users</span>
  <span class="n">user</span><span class="p">:</span><span class="n">report</span>                         <span class="n">shows</span> <span class="n">how</span> <span class="n">many</span> <span class="n">users</span> <span class="n">have</span> <span class="n">access</span>
  <span class="n">user</span><span class="p">:</span><span class="n">resetpassword</span>                  <span class="n">Resets</span> <span class="n">the</span> <span class="n">password</span> <span class="n">of</span> <span class="n">the</span> <span class="n">named</span> <span class="n">user</span>
  <span class="n">user</span><span class="p">:</span><span class="n">setting</span>                        <span class="n">Read</span> <span class="ow">and</span> <span class="n">modify</span> <span class="n">user</span> <span class="n">settings</span>
+ <span class="n">user</span><span class="p">:</span><span class="n">keys</span><span class="p">:</span><span class="n">verify</span>                    <span class="n">Verify</span> <span class="n">that</span> <span class="n">the</span> <span class="n">stored</span> <span class="n">public</span> <span class="n">key</span> <span class="n">matches</span>
+                                     <span class="n">the</span> <span class="n">stored</span> <span class="n">private</span> <span class="n">key</span>
 </pre></div>
 </div>
 <p>You can create a new user with their display name, login name, and any group
 memberships with the <code class="docutils literal notranslate"><span class="pre">user:add</span></code> command. The syntax is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span><span class="p">:</span><span class="n">add</span> <span class="p">[</span><span class="o">--</span><span class="n">password</span><span class="o">-</span><span class="n">from</span><span class="o">-</span><span class="n">env</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">display</span><span class="o">-</span><span class="n">name</span><span class="p">[</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">g</span><span class="o">|--</span><span class="n">group</span><span class="p">[</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">]]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span><span class="p">:</span><span class="n">add</span> <span class="p">[</span><span class="o">--</span><span class="n">password</span><span class="o">-</span><span class="n">from</span><span class="o">-</span><span class="n">env</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">generate</span><span class="o">-</span><span class="n">password</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">display</span><span class="o">-</span><span class="n">name</span><span class="p">[</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">g</span><span class="o">|--</span><span class="n">group</span><span class="p">[</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">]]</span> <span class="p">[</span><span class="o">--</span><span class="n">email</span> <span class="n">EMAIL</span><span class="p">]</span>
 <span class="n">uid</span>
 </pre></div>
 </div>
@@ -1445,13 +1511,41 @@ Jones:</p>
   <span class="n">Successfully</span> <span class="n">reset</span> <span class="n">password</span> <span class="k">for</span> <span class="n">layla</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">generate-password</span></code> allows you to set a securely generated password for the user.
+This is never shown in the output and can be used to create users with temporary
+passwords. This can be used in conjunction with the <code class="docutils literal notranslate"><span class="pre">email</span></code> option to create
+users with a temporary password and send a welcome email to the user’s email
+address without user interaction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">add</span> <span class="n">layla</span> <span class="o">--</span><span class="n">generate</span><span class="o">-</span><span class="n">password</span> <span class="o">--</span><span class="n">email</span> <span class="n">layla</span><span class="nd">@example</span><span class="o">.</span><span class="n">tld</span>
+  <span class="n">The</span> <span class="n">account</span> <span class="s2">&quot;layla&quot;</span> <span class="n">was</span> <span class="n">created</span> <span class="n">successfully</span>
+  <span class="n">Welcome</span> <span class="n">email</span> <span class="n">sent</span> <span class="n">to</span> <span class="n">layla</span><span class="nd">@example</span><span class="o">.</span><span class="n">tld</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">email</span></code> option allows you to set the user’s email address when creating
+the user. A welcome email will be sent to the user’s email address if
+<code class="docutils literal notranslate"><span class="pre">newUser.sendEmail</span></code> is set to <code class="docutils literal notranslate"><span class="pre">yes</span></code> in <code class="docutils literal notranslate"><span class="pre">core</span></code>’s app config or not set at all:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">add</span> <span class="n">layla</span> <span class="o">--</span><span class="n">email</span> <span class="n">layla</span><span class="nd">@example</span><span class="o">.</span><span class="n">tld</span>
+  <span class="n">Enter</span> <span class="n">password</span><span class="p">:</span>
+  <span class="n">Confirm</span> <span class="n">password</span><span class="p">:</span>
+  <span class="n">The</span> <span class="n">account</span> <span class="s2">&quot;layla&quot;</span> <span class="n">was</span> <span class="n">created</span> <span class="n">successfully</span>
+  <span class="n">Welcome</span> <span class="n">email</span> <span class="n">sent</span> <span class="n">to</span> <span class="n">layla</span><span class="nd">@example</span><span class="o">.</span><span class="n">tld</span>
+</pre></div>
+</div>
 <p>You can delete users:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">delete</span> <span class="n">fred</span>
 </pre></div>
 </div>
-<p>View a user’s most recent login:</p>
+<p>View a specific user’s most recent login:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">lastseen</span> <span class="n">layla</span>
-  <span class="n">layla</span><span class="s1">&#39;s last login: 09.01.2020 18:46</span>
+  <span class="n">layla</span><span class="s1">&#39;s last login: 2024-03-20 17:18</span>
+</pre></div>
+</div>
+<p>View a list of all users’ most recent login:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">lastseen</span> <span class="o">--</span><span class="nb">all</span>
+  <span class="n">albert</span><span class="s1">&#39;s last login: 2024-03-18 10:30</span>
+  <span class="n">bob</span> <span class="n">has</span> <span class="n">never</span> <span class="n">logged</span> <span class="ow">in</span><span class="o">.</span>
+  <span class="n">layla</span><span class="s1">&#39;s last login: 2024-03-20 17:18</span>
+  <span class="n">stephanie</span><span class="s1">&#39;s last login: 2024-01-11 13:26</span>
 </pre></div>
 </div>
 <p>Read user settings:</p>
@@ -1495,9 +1589,42 @@ authentication servers such as LDAP:</p>
 <span class="o">|</span> <span class="n">total</span> <span class="n">users</span>      <span class="o">|</span> <span class="mi">98</span> <span class="o">|</span>
 <span class="o">|</span>                  <span class="o">|</span>    <span class="o">|</span>
 <span class="o">|</span> <span class="n">user</span> <span class="n">directories</span> <span class="o">|</span> <span class="mi">2</span>  <span class="o">|</span>
+<span class="o">|</span> <span class="n">active</span> <span class="n">users</span>     <span class="o">|</span> <span class="mi">15</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">disabled</span> <span class="n">users</span>   <span class="o">|</span> <span class="mi">0</span>  <span class="o">|</span>
 <span class="o">+------------------+----+</span>
 </pre></div>
 </div>
+<p><cite>active users</cite> shows the number of users which logged in at least once.
+<cite>disabled users</cite> shows the number of users which are disabled.</p>
+<p>There might be a discrepancy between the total number of users compared to the number of active users and the number of disabled users.
+Users that have never logged in before are not counted as active or disabled users.
+Some user backends also do not allow a count for the number of users.</p>
+<section id="user-info">
+<h3>user:info<a class="headerlink" href="#user-info" title="Link to this heading"></a></h3>
+<p>With the <code class="docutils literal notranslate"><span class="pre">user:info</span></code> command, you can access an account information such as: user id, display name, quota, groups, storage usage… and many more</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span><span class="p">:</span><span class="n">info</span> <span class="n">admin</span>
+  <span class="o">-</span> <span class="n">user_id</span><span class="p">:</span> <span class="n">admin</span>
+  <span class="o">-</span> <span class="n">display_name</span><span class="p">:</span> <span class="n">admin</span>
+  <span class="o">-</span> <span class="n">email</span><span class="p">:</span> <span class="n">admin</span><span class="nd">@domain</span><span class="o">.</span><span class="n">com</span>
+  <span class="o">-</span> <span class="n">cloud_id</span><span class="p">:</span> <span class="n">admin</span><span class="nd">@cloud</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">com</span>
+  <span class="o">-</span> <span class="n">enabled</span><span class="p">:</span> <span class="n">true</span>
+  <span class="o">-</span> <span class="n">groups</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">admin</span>
+    <span class="o">-</span> <span class="n">users</span>
+  <span class="o">-</span> <span class="n">quota</span><span class="p">:</span> <span class="n">none</span>
+  <span class="o">-</span> <span class="n">storage</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">free</span><span class="p">:</span> <span class="mi">162409623552</span>
+    <span class="o">-</span> <span class="n">used</span><span class="p">:</span> <span class="mi">1110</span>
+    <span class="o">-</span> <span class="n">total</span><span class="p">:</span> <span class="mi">162409624662</span>
+    <span class="o">-</span> <span class="n">relative</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="o">-</span> <span class="n">quota</span><span class="p">:</span> <span class="o">-</span><span class="mi">3</span>
+  <span class="o">-</span> <span class="n">first_seen</span><span class="p">:</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">14</span><span class="n">T08</span><span class="p">:</span><span class="mi">44</span><span class="p">:</span><span class="mi">46</span><span class="o">+</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+  <span class="o">-</span> <span class="n">last_seen</span><span class="p">:</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">03</span><span class="o">-</span><span class="mi">25</span><span class="n">T20</span><span class="p">:</span><span class="mi">21</span><span class="p">:</span><span class="mi">13</span><span class="o">+</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+  <span class="o">-</span> <span class="n">user_directory</span><span class="p">:</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">admin</span>
+  <span class="o">-</span> <span class="n">backend</span><span class="p">:</span> <span class="n">Database</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="group-commands">
 <span id="group-commands-label"></span><h2>Group commands<a class="headerlink" href="#group-commands" title="Link to this heading"></a></h2>
@@ -1818,6 +1945,42 @@ check for that user via the occ command:</p>
 <div class="line">² User can assign the tag to a file</div>
 </div>
 </section>
+<section id="antivirus">
+<span id="antivirus-commands-label"></span><h2>Antivirus<a class="headerlink" href="#antivirus" title="Link to this heading"></a></h2>
+<p>Get info about files in the scan queue:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">status</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Manually trigger the background scan:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">background</span><span class="o">-</span><span class="n">scan</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">m</span> <span class="n">MAX</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Manually scan a single file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">scan</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Mark a file as scanned or unscanned:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files_antivirus</span><span class="p">:</span><span class="n">mark</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">scanned</span><span class="o">|</span><span class="n">unscanned</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="setupchecks">
+<span id="setupchecks-commands-label"></span><h2>Setupchecks<a class="headerlink" href="#setupchecks" title="Link to this heading"></a></h2>
+<p>Run the setupchecks via occ:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">setupchecks</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>dav:
+  ✓ DAV system address book: No outstanding DAV system address book sync.
+network:
+  ✓ WebDAV endpoint: Your web server is properly set up to allow file synchronization over WebDAV.
+  ✓ Data directory protected
+  ✓ Internet connectivity
+  ...
+</pre></div>
+</div>
+</section>
 <section id="debugging">
 <span id="occ-debugging"></span><h2>Debugging<a class="headerlink" href="#debugging" title="Link to this heading"></a></h2>
 <p>In certain situations it’s necessary to generate debugging information, e.g. before submitting a bug report. You can run <code class="docutils literal notranslate"><span class="pre">occ</span></code> with debug logging:</p>
@@ -1838,7 +2001,7 @@ check for that user via the occ command:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -1860,11 +2023,11 @@ check for that user via the occ command:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

@@ -17,8 +17,8 @@ OC.L10N.register(
     "An error occurred" : "Una error s’es producha",
     "Favorite" : "Favorit",
     "Open the full size \"{name}\" image" : "Dobrir l’imatge {name} en talha originala",
-    "Go back" : "Revenir en arrière",
     "Back to {folder}" : "Tornar a {folder}",
+    "Go back" : "Revenir en arrière",
     "Share this folder" : "Partejar aqueste dossièr",
     "Enable squared photos view" : "Activar la vista amb fòtos carrat",
     "View" : "Vista",
@@ -28,8 +28,8 @@ OC.L10N.register(
     "No photos in here" : "Cap de fòto aquí",
     "No tags yet" : "Cap d’etiqueta pel moment",
     "Photos with tags will show up here" : "Las fòtos amb etiquetas apreissaràn aquí",
-    "Add" : "Apondre",
     "Tagged photos" : "Fòtos etiquetadas",
-    "Details" : "Detalhs"
+    "Details" : "Detalhs",
+    "Add" : "Apondre"
 },
 "nplurals=2; plural=(n > 1);");

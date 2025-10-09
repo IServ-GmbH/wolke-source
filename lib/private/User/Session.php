@@ -44,6 +44,7 @@ use OC\Authentication\Exceptions\PasswordLoginForbiddenException;
 use OC\Authentication\Token\IProvider;
 use OC\Authentication\Token\IToken;
 use OC\Authentication\Token\PublicKeyToken;
+use OC\Authentication\TwoFactorAuth\Manager as TwoFactorAuthManager;
 use OC\Hooks\Emitter;
 use OC\Hooks\PublicEmitter;
 use OC_User;
@@ -133,7 +134,7 @@ class Session implements IUserSession, Emitter {
 	 * @param string $method optional
 	 * @param callable $callback optional
 	 */
-	public function removeListener($scope = null, $method = null, callable $callback = null) {
+	public function removeListener($scope = null, $method = null, ?callable $callback = null) {
 		$this->manager->removeListener($scope, $method, $callback);
 	}
 
@@ -348,7 +349,7 @@ class Session implements IUserSession, Emitter {
 		if (!$user->isEnabled()) {
 			// disabled users can not log in
 			// injecting l10n does not work - there is a circular dependency between session and \OCP\L10N\IFactory
-			$message = \OC::$server->getL10N('lib')->t('User disabled');
+			$message = \OCP\Util::getL10N('lib')->t('Account disabled');
 			throw new LoginException($message);
 		}
 
@@ -387,7 +388,7 @@ class Session implements IUserSession, Emitter {
 			return true;
 		}
 
-		$message = \OC::$server->getL10N('lib')->t('Login canceled by app');
+		$message = \OCP\Util::getL10N('lib')->t('Login canceled by app');
 		throw new LoginException($message);
 	}
 
@@ -505,7 +506,7 @@ class Session implements IUserSession, Emitter {
 			$user = $users[0];
 		}
 		// DI not possible due to cyclic dependencies :'-/
-		return OC::$server->getTwoFactorAuthManager()->isTwoFactorAuthenticated($user);
+		return OC::$server->get(TwoFactorAuthManager::class)->isTwoFactorAuthenticated($user);
 	}
 
 	/**
@@ -809,7 +810,7 @@ class Session implements IUserSession, Emitter {
 	 * Check if login names match
 	 */
 	private function validateTokenLoginName(?string $loginName, IToken $token): bool {
-		if ($token->getLoginName() !== $loginName) {
+		if (mb_strtolower($token->getLoginName()) !== mb_strtolower($loginName ?? '')) {
 			// TODO: this makes it impossible to use different login names on browser and client
 			// e.g. login by e-mail 'user@example.com' on browser for generating the token will not
 			//      allow to use the client token with the login name 'user'.
@@ -863,9 +864,8 @@ class Session implements IUserSession, Emitter {
 			return true;
 		}
 
-		// Remember me tokens are not app_passwords
-		if ($dbToken->getRemember() === IToken::DO_NOT_REMEMBER) {
-			// Set the session variable so we know this is an app password
+		// Set the session variable so we know this is an app password
+		if ($dbToken instanceof PublicKeyToken && $dbToken->getType() === IToken::PERMANENT_TOKEN) {
 			$this->session->set('app_password', $token);
 		}
 

@@ -16,8 +16,10 @@ OC.L10N.register(
     "Link" : "Հղում",
     "Cancel" : "չեղարկել",
     "URL" : "URL",
+    "Upload" : "Բեռնել",
     "Edit" : "մշակել",
     "Source code" : "ծրագրի կոդը",
+    "Details" : "Մանրամասներ",
     "Info" : "Info",
     "Warning" : "Զգուշացում"
 },

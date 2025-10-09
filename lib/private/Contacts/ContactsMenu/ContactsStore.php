@@ -177,6 +177,9 @@ class ContactsStore implements IContactsStore {
 	 *  3. if the `shareapi_only_share_with_group_members` config option is
 	 * enabled it will filter all users which doesn't have a common group
 	 * with the current user.
+	 * If enabled, the 'shareapi_only_share_with_group_members_exclude_group_list'
+	 * config option may specify some groups excluded from the principle of
+	 * belonging to the same group.
 	 *
 	 * @param Entry[] $entries
 	 * @return Entry[] the filtered contacts
@@ -190,7 +193,7 @@ class ContactsStore implements IContactsStore {
 		$restrictEnumerationGroup = $this->config->getAppValue('core', 'shareapi_restrict_user_enumeration_to_group', 'no') === 'yes';
 		$restrictEnumerationPhone = $this->config->getAppValue('core', 'shareapi_restrict_user_enumeration_to_phone', 'no') === 'yes';
 		$allowEnumerationFullMatch = $this->config->getAppValue('core', 'shareapi_restrict_user_enumeration_full_match', 'yes') === 'yes';
-		$excludedGroups = $this->config->getAppValue('core', 'shareapi_exclude_groups', 'no') === 'yes';
+		$excludeGroups = $this->config->getAppValue('core', 'shareapi_exclude_groups', 'no');
 
 		// whether to filter out local users
 		$skipLocal = false;
@@ -199,15 +202,30 @@ class ContactsStore implements IContactsStore {
 
 		$selfGroups = $this->groupManager->getUserGroupIds($self);
 
-		if ($excludedGroups) {
+		if ($excludeGroups && $excludeGroups !== 'no') {
 			$excludedGroups = $this->config->getAppValue('core', 'shareapi_exclude_groups_list', '');
 			$decodedExcludeGroups = json_decode($excludedGroups, true);
 			$excludeGroupsList = $decodedExcludeGroups ?? [];
 
-			if (count(array_intersect($excludeGroupsList, $selfGroups)) !== 0) {
-				// a group of the current user is excluded -> filter all local users
+			if ($excludeGroups != 'allow') {
+				if (count(array_intersect($excludeGroupsList, $selfGroups)) !== 0) {
+					// a group of the current user is excluded -> filter all local users
+					$skipLocal = true;
+				}
+			} else {
 				$skipLocal = true;
+				if (count(array_intersect($excludeGroupsList, $selfGroups)) !== 0) {
+					// a group of the current user is allowed -> do not filter all local users
+					$skipLocal = false;
+				}
 			}
+		}
+
+		// ownGroupsOnly : some groups may be excluded
+		if ($ownGroupsOnly) {
+			$excludeGroupsFromOwnGroups = $this->config->getAppValue('core', 'shareapi_only_share_with_group_members_exclude_group_list', '');
+			$excludeGroupsFromOwnGroupsList = json_decode($excludeGroupsFromOwnGroups, true) ?? [];
+			$selfGroups = array_diff($selfGroups, $excludeGroupsFromOwnGroupsList);
 		}
 
 		$selfUID = $self->getUID();

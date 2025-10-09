@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace OCA\DAV\CardDAV\Validation;
 
 use OCA\DAV\AppInfo\Application;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
@@ -19,7 +19,7 @@ use Sabre\HTTP\ResponseInterface;
 class CardDavValidatePlugin extends ServerPlugin {
 
 	public function __construct(
-		private IConfig $config
+		private IAppConfig $config
 	) {
 	}
 
@@ -29,7 +29,7 @@ class CardDavValidatePlugin extends ServerPlugin {
 
 	public function beforePut(RequestInterface $request, ResponseInterface $response): bool {
 		// evaluate if card size exceeds defined limit
-		$cardSizeLimit = (int) $this->config->getAppValue(Application::APP_ID, 'card_size_limit', '5242880');
+		$cardSizeLimit = $this->config->getValueInt(Application::APP_ID, 'card_size_limit', 5242880);
 		if ((int) $request->getRawServerValue('CONTENT_LENGTH') > $cardSizeLimit) {
 			throw new Forbidden("VCard object exceeds $cardSizeLimit bytes");
 		}

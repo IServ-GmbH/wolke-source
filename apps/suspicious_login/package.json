@@ -1,6 +1,6 @@
 {
   "name": "suspicious_login",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Detect and warn about suspicious IPs logging into Nextcloud",
   "private": true,
   "dependencies": {
@@ -26,7 +26,7 @@
   },
   "engines": {
     "node": "^20.0.0",
-    "npm": "^9.0.0"
+    "npm": "^10.0.0"
   },
   "scripts": {
     "build": "webpack --progress --config src/webpack.prod.js",

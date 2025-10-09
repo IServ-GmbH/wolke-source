@@ -29,6 +29,7 @@
 use OC\KnownUser\KnownUserService;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\CalendarRoot;
+use OCA\DAV\CalDAV\DefaultCalendarValidator;
 use OCA\DAV\CalDAV\Security\RateLimitingPlugin;
 use OCA\DAV\CalDAV\Validation\CalDavValidatePlugin;
 use OCA\DAV\Connector\LegacyDAVACL;
@@ -71,11 +72,11 @@ $calDavBackend = new CalDavBackend(
 	$db,
 	$principalBackend,
 	$userManager,
-	\OC::$server->getGroupManager(),
 	$random,
 	$logger,
 	$dispatcher,
 	$config,
+	OC::$server->get(\OCA\DAV\CalDAV\Sharing\Backend::class),
 	true
 );
 
@@ -112,7 +113,7 @@ if ($debugging) {
 
 $server->addPlugin(new \Sabre\DAV\Sync\Plugin());
 $server->addPlugin(new \Sabre\CalDAV\ICSExportPlugin());
-$server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OC::$server->getConfig(), \OC::$server->get(LoggerInterface::class)));
+$server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OC::$server->getConfig(), \OC::$server->get(LoggerInterface::class), \OC::$server->get(DefaultCalendarValidator::class)));
 
 if ($sendInvitations) {
 	$server->addPlugin(\OC::$server->query(\OCA\DAV\CalDAV\Schedule\IMipPlugin::class));

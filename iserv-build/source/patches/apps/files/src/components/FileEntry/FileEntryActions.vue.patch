@@ -1,19 +1,19 @@
 diff --git apps/files/src/components/FileEntry/FileEntryActions.vue apps/files/src/components/FileEntry/FileEntryActions.vue
-index c6ee7b9..6f32bf6 100644
+index 79375d6..635be52 100644
 --- apps/files/src/components/FileEntry/FileEntryActions.vue
 +++ apps/files/src/components/FileEntry/FileEntryActions.vue
-@@ -42,7 +42,7 @@
- 			:open.sync="openedMenu"
- 			@close="openedSubmenu = null">
+@@ -43,7 +43,7 @@
+ 			@close="onMenuClose"
+ 			@closed="onMenuClosed">
  			<!-- Default actions list-->
--			<NcActionButton v-for="action in enabledMenuActions"
-+			<NcActionButton v-for="action in menuActions"
+-			<NcActionButton v-for="action, index in enabledMenuActions"
++			<NcActionButton v-for="action, index in menuActions"
  				:key="action.id"
  				:ref="`action-${action.id}`"
- 				:class="{
-@@ -265,6 +265,18 @@ export default defineComponent({
- 		mountType() {
- 			return this.source.attributes['mount-type']
+ 				class="files-list__row-action"
+@@ -255,6 +255,18 @@ export default defineComponent({
+ 		getBoundariesElement() {
+ 			return document.querySelector('.app-content > .files-list')
  		},
 +
 +		// Configuration option to disable download buttons
@@ -29,4 +29,4 @@ index c6ee7b9..6f32bf6 100644
 +		},
  	},
  
- 	methods: {
+ 	watch: {

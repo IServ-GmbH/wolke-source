@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/components/SharingInput.vue apps/files_sharing/src/components/SharingInput.vue
-index 519c6bf..4d3d621 100644
+index e7dca2f..ddbd0cd 100644
 --- apps/files_sharing/src/components/SharingInput.vue
 +++ apps/files_sharing/src/components/SharingInput.vue
 @@ -40,6 +40,14 @@
@@ -32,7 +32,7 @@ index 519c6bf..4d3d621 100644
  	},
  
  	mixins: [ShareTypes, ShareRequests, ShareDetails],
-@@ -102,6 +113,7 @@ export default {
+@@ -108,6 +119,7 @@ export default {
  			ShareSearch: OCA.Sharing.ShareSearch.state,
  			suggestions: [],
  			value: null,
@@ -40,7 +40,7 @@ index 519c6bf..4d3d621 100644
  		}
  	},
  
-@@ -148,6 +160,11 @@ export default {
+@@ -154,6 +166,11 @@ export default {
  			}
  			return t('files_sharing', 'No elements found.')
  		},
@@ -52,7 +52,7 @@ index 519c6bf..4d3d621 100644
  	},
  
  	mounted() {
-@@ -188,8 +205,6 @@ export default {
+@@ -194,8 +211,6 @@ export default {
  			const shareType = [
  				this.SHARE_TYPES.SHARE_TYPE_USER,
  				this.SHARE_TYPES.SHARE_TYPE_GROUP,
@@ -61,7 +61,7 @@ index 519c6bf..4d3d621 100644
  				this.SHARE_TYPES.SHARE_TYPE_CIRCLE,
  				this.SHARE_TYPES.SHARE_TYPE_ROOM,
  				this.SHARE_TYPES.SHARE_TYPE_GUEST,
-@@ -197,6 +212,11 @@ export default {
+@@ -203,6 +218,11 @@ export default {
  				this.SHARE_TYPES.SHARE_TYPE_SCIENCEMESH,
  			]
  
@@ -73,7 +73,7 @@ index 519c6bf..4d3d621 100644
  			if (getCapabilities().files_sharing.public.enabled === true) {
  				shareType.push(this.SHARE_TYPES.SHARE_TYPE_EMAIL)
  			}
-@@ -462,6 +482,11 @@ export default {
+@@ -468,6 +488,11 @@ export default {
  				...this.shareTypeToIcon(result.value.shareType),
  			}
  		},

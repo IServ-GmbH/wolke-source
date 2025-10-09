@@ -2,22 +2,9 @@
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
 
-style('core', ['styles', 'header']);
+style('core', ['styles', 'header', 'exception']);
 
-function print_exception(Throwable $e, \OCP\IL10N $l): void {
-	print_unescaped('<pre>');
-	p($e->getTraceAsString());
-	print_unescaped('</pre>');
-
-	if ($e->getPrevious() !== null) {
-		print_unescaped('<br />');
-		print_unescaped('<h4>');
-		p($l->t('Previous'));
-		print_unescaped('</h4>');
-
-		print_exception($e->getPrevious(), $l);
-	}
-}
+require_once __DIR__ . '/print_exception.php';
 
 ?>
 <div class="guest-box wide">

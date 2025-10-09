@@ -46,7 +46,9 @@ use OC\Streamer;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Events\BeforeDirectFileDownloadEvent;
 use OCP\Files\Events\BeforeZipCreatedEvent;
+use OCP\Files\IRootFolder;
 use OCP\Lock\ILockingProvider;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class for file server access
@@ -86,7 +88,7 @@ class OC_Files {
 				header('Accept-Ranges: bytes', true);
 				if (count($rangeArray) > 1) {
 					$type = 'multipart/byteranges; boundary='.self::getBoundary();
-				// no Content-Length header here
+					// no Content-Length header here
 				} else {
 					header(sprintf('Content-Range: bytes %d-%d/%d', $rangeArray[0]['from'], $rangeArray[0]['to'], $fileSize), true);
 					OC_Response::setContentLengthHeader($rangeArray[0]['to'] - $rangeArray[0]['from'] + 1);
@@ -187,7 +189,7 @@ class OC_Files {
 				foreach ($files as $file) {
 					$file = $dir . '/' . $file;
 					if (\OC\Files\Filesystem::is_file($file)) {
-						$userFolder = \OC::$server->getRootFolder()->get(\OC\Files\Filesystem::getRoot());
+						$userFolder = \OC::$server->get(IRootFolder::class)->get(\OC\Files\Filesystem::getRoot());
 						$file = $userFolder->get($file);
 						if ($file instanceof \OC\Files\Node\File) {
 							try {
@@ -232,15 +234,19 @@ class OC_Files {
 		} catch (\OCP\Files\ConnectionLostException $ex) {
 			self::unlockAllTheFiles($dir, $files, $getType, $view, $filename);
 			OC::$server->getLogger()->logException($ex, ['level' => \OCP\ILogger::DEBUG]);
-			\OC_Template::printErrorPage('Connection lost', $ex->getMessage(), 200);
+			/* We do not print anything here, the connection is already closed */
+			die();
 		} catch (\Exception $ex) {
 			self::unlockAllTheFiles($dir, $files, $getType, $view, $filename);
-			OC::$server->getLogger()->logException($ex);
-			$l = \OC::$server->getL10N('lib');
-			$hint = method_exists($ex, 'getHint') ? $ex->getHint() : '';
-			if ($event && $event->getErrorMessage() !== null) {
+			$logger = \OCP\Server::get(LoggerInterface::class);
+			$logger->error($ex->getMessage(), ['exception' => $ex]);
+			$l = \OCP\Server::get(\OCP\L10N\IFactory::class)->get('lib');
+
+			$hint = ($ex instanceof \OCP\HintException) ? $ex->getHint() : '';
+			if (isset($event) && $event->getErrorMessage() !== null) {
 				$hint .= ' ' . $event->getErrorMessage();
 			}
+
 			\OC_Template::printErrorPage($l->t('Cannot download file'), $hint, 200);
 		}
 	}
@@ -307,7 +313,7 @@ class OC_Files {
 		$file = null;
 
 		try {
-			$userFolder = \OC::$server->getRootFolder()->get(\OC\Files\Filesystem::getRoot());
+			$userFolder = \OC::$server->get(IRootFolder::class)->get(\OC\Files\Filesystem::getRoot());
 			$file = $userFolder->get($filename);
 			if (!$file instanceof \OC\Files\Node\File || !$file->isReadable()) {
 				http_response_code(403);

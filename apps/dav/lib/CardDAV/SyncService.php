@@ -32,14 +32,14 @@ namespace OCA\DAV\CardDAV;
 
 use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Http;
+use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Sabre\DAV\Client;
 use Sabre\DAV\Xml\Response\MultiStatus;
 use Sabre\DAV\Xml\Service;
-use Sabre\HTTP\ClientHttpException;
 use Sabre\VObject\Reader;
 use function is_null;
 
@@ -54,18 +54,21 @@ class SyncService {
 	private ?array $localSystemAddressBook = null;
 	private Converter $converter;
 	protected string $certPath;
+	private IClientService $clientService;
 
 	public function __construct(CardDavBackend $backend,
 		IUserManager $userManager,
 		IDBConnection $dbConnection,
 		LoggerInterface $logger,
-		Converter $converter) {
+		Converter $converter,
+		IClientService $clientService) {
 		$this->backend = $backend;
 		$this->userManager = $userManager;
 		$this->logger = $logger;
 		$this->converter = $converter;
 		$this->certPath = '';
 		$this->dbConnection = $dbConnection;
+		$this->clientService = $clientService;
 	}
 
 	/**
@@ -79,7 +82,7 @@ class SyncService {
 		// 2. query changes
 		try {
 			$response = $this->requestSyncReport($url, $userName, $addressBookUrl, $sharedSecret, $syncToken);
-		} catch (ClientHttpException $ex) {
+		} catch (ClientExceptionInterface $ex) {
 			if ($ex->getCode() === Http::STATUS_UNAUTHORIZED) {
 				// remote server revoked access to the address book, remove it
 				$this->backend->deleteAddressBook($addressBookId);
@@ -99,9 +102,9 @@ class SyncService {
 				$this->atomic(function () use ($addressBookId, $cardUri, $vCard) {
 					$existingCard = $this->backend->getCard($addressBookId, $cardUri);
 					if ($existingCard === false) {
-						$this->backend->createCard($addressBookId, $cardUri, $vCard['body']);
+						$this->backend->createCard($addressBookId, $cardUri, $vCard);
 					} else {
-						$this->backend->updateCard($addressBookId, $cardUri, $vCard['body']);
+						$this->backend->updateCard($addressBookId, $cardUri, $vCard);
 					}
 				}, $this->dbConnection);
 			} else {
@@ -127,64 +130,90 @@ class SyncService {
 		}, $this->dbConnection);
 	}
 
-	/**
-	 * Check if there is a valid certPath we should use
-	 */
-	protected function getCertPath(): string {
-
-		// we already have a valid certPath
-		if ($this->certPath !== '') {
-			return $this->certPath;
-		}
-
-		$certManager = \OC::$server->getCertificateManager();
-		$certPath = $certManager->getAbsoluteBundlePath();
-		if (file_exists($certPath)) {
-			$this->certPath = $certPath;
-		}
-
-		return $this->certPath;
-	}
-
-	protected function getClient(string $url, string $userName, string $sharedSecret): Client {
-		$settings = [
-			'baseUri' => $url . '/',
-			'userName' => $userName,
-			'password' => $sharedSecret,
-		];
-		$client = new Client($settings);
-		$certPath = $this->getCertPath();
-		$client->setThrowExceptions(true);
-
-		if ($certPath !== '' && !str_starts_with($url, 'http://')) {
-			$client->addCurlSetting(CURLOPT_CAINFO, $this->certPath);
-		}
-
-		return $client;
-	}
-
-	protected function requestSyncReport(string $url, string $userName, string $addressBookUrl, string $sharedSecret, ?string $syncToken): array {
-		$client = $this->getClient($url, $userName, $sharedSecret);
-
-		$body = $this->buildSyncCollectionRequestBody($syncToken);
-
-		$response = $client->request('REPORT', $addressBookUrl, $body, [
-			'Content-Type' => 'application/xml'
+	public function ensureLocalSystemAddressBookExists(): ?array {
+		return $this->ensureSystemAddressBookExists('principals/system/system', 'system', [
+			'{' . Plugin::NS_CARDDAV . '}addressbook-description' => 'System addressbook which holds all users of this instance'
 		]);
-
-		return $this->parseMultiStatus($response['body']);
 	}
 
-	protected function download(string $url, string $userName, string $sharedSecret, string $resourcePath): array {
-		$client = $this->getClient($url, $userName, $sharedSecret);
-		return $client->request('GET', $resourcePath);
+	private function prepareUri(string $host, string $path): string {
+		/*
+		 * The trailing slash is important for merging the uris together.
+		 *
+		 * $host is stored in oc_trusted_servers.url and usually without a trailing slash.
+		 *
+		 * Example for a report request
+		 *
+		 * $host = 'https://server.internal/cloud'
+		 * $path = 'remote.php/dav/addressbooks/system/system/system'
+		 *
+		 * Without the trailing slash, the webroot is missing:
+		 * https://server.internal/remote.php/dav/addressbooks/system/system/system
+		 *
+		 * Example for a download request
+		 *
+		 * $host = 'https://server.internal/cloud'
+		 * $path = '/cloud/remote.php/dav/addressbooks/system/system/system/Database:alice.vcf'
+		 *
+		 * The response from the remote usually contains the webroot already and must be normalized to:
+		 * https://server.internal/cloud/remote.php/dav/addressbooks/system/system/system/Database:alice.vcf
+		 */
+		$host = rtrim($host, '/') . '/';
+
+		$uri = \GuzzleHttp\Psr7\UriResolver::resolve(
+			\GuzzleHttp\Psr7\Utils::uriFor($host),
+			\GuzzleHttp\Psr7\Utils::uriFor($path)
+		);
+
+		return (string)$uri;
+	}
+
+	/**
+	 * @throws ClientExceptionInterface
+	 */
+	protected function requestSyncReport(string $url, string $userName, string $addressBookUrl, string $sharedSecret, ?string $syncToken): array {
+		$client = $this->clientService->newClient();
+		$uri = $this->prepareUri($url, $addressBookUrl);
+
+		$options = [
+			'auth' => [$userName, $sharedSecret],
+			'body' => $this->buildSyncCollectionRequestBody($syncToken),
+			'headers' => ['Content-Type' => 'application/xml']
+		];
+
+		$response = $client->request(
+			'REPORT',
+			$uri,
+			$options
+		);
+
+		$body = $response->getBody();
+		assert(is_string($body));
+
+		return $this->parseMultiStatus($body);
+	}
+
+	protected function download(string $url, string $userName, string $sharedSecret, string $resourcePath): string {
+		$client = $this->clientService->newClient();
+		$uri = $this->prepareUri($url, $resourcePath);
+
+		$options = [
+			'auth' => [$userName, $sharedSecret],
+		];
+
+		$response = $client->get(
+			$uri,
+			$options
+		);
+
+		return (string)$response->getBody();
 	}
 
 	private function buildSyncCollectionRequestBody(?string $syncToken): string {
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		$dom->formatOutput = true;
 		$root = $dom->createElementNS('DAV:', 'd:sync-collection');
-		$sync = $dom->createElement('d:sync-token', $syncToken);
+		$sync = $dom->createElement('d:sync-token', $syncToken ?? '');
 		$prop = $dom->createElement('d:prop');
 		$cont = $dom->createElement('d:getcontenttype');
 		$etag = $dom->createElement('d:getetag');
@@ -262,16 +291,16 @@ class SyncService {
 	 */
 	public function getLocalSystemAddressBook() {
 		if (is_null($this->localSystemAddressBook)) {
-			$systemPrincipal = "principals/system/system";
-			$this->localSystemAddressBook = $this->ensureSystemAddressBookExists($systemPrincipal, 'system', [
-				'{' . Plugin::NS_CARDDAV . '}addressbook-description' => 'System addressbook which holds all users of this instance'
-			]);
+			$this->localSystemAddressBook = $this->ensureLocalSystemAddressBookExists();
 		}
 
 		return $this->localSystemAddressBook;
 	}
 
-	public function syncInstance(\Closure $progressCallback = null) {
+	/**
+	 * @return void
+	 */
+	public function syncInstance(?\Closure $progressCallback = null) {
 		$systemAddressBook = $this->getLocalSystemAddressBook();
 		$this->userManager->callForAllUsers(function ($user) use ($systemAddressBook, $progressCallback) {
 			$this->updateUser($user);

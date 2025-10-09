@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-FileCopyrightText: 2015 ownCloud, Inc.
+  - SPDX-License-Identifier: AGPL-3.0-only
+-->
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>survey_client</id>
@@ -10,7 +15,7 @@
 		it again at any time.
 	</description>
 
-	<version>1.16.0</version>
+	<version>1.17.0</version>
 	<licence>agpl</licence>
 	<author>Björn Schiessle</author>
 	<author>Joas Schilling</author>
@@ -24,7 +29,7 @@
 	<bugs>https://github.com/nextcloud/survey_client/issues</bugs>
 
 	<dependencies>
-		<nextcloud min-version="28" max-version="28" />
+		<nextcloud min-version="29" max-version="29" />
 	</dependencies>
 
 	<repair-steps>

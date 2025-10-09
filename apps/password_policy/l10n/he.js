@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "מדיניות ססמה",
     "Allows admins to configure a password policy" : "מאפשר למנהלים להגדיר מדיניות ססמה",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "לאפשר להנהלה להגדיר תנאי קדם מסוימים לססמה, למשל: לאסוף אורך מזערי",
-    "Minimum password length" : "אורך הססמה המזערי",
-    "User password history" : "היסטוריית הססמאות של המשתמש",
     "Number of days until user password expires" : "מספר הימים עד לתפוגת הססמה",
+    "Minimum password length" : "אורך הססמה המזערי",
     "Forbid common passwords" : "איסור על מילים נפוצות",
     "Enforce upper and lower case characters" : "אכיפת אותיות קטנות וגדולות",
     "Enforce numeric characters" : "אכיפת ספרות",
@@ -26,6 +25,7 @@ OC.L10N.register(
     "History size has to be a non negative number" : "גודל ההיסטוריה חייב להיות מספר לא שלילי",
     "Expiration days have to be a non negative number" : "ימי תפוגת התוקף חייבים להיות מספר לא שלילי",
     "Maximum login attempts have to be a non negative number" : "כמות ניסיונות הכניסה המרבית חייבת להיות מספר לא שלילי",
-    "Settings saved" : "הגדרות נשמרו"
+    "Settings saved" : "הגדרות נשמרו",
+    "User password history" : "היסטוריית הססמאות של המשתמש"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

@@ -27,8 +27,10 @@ namespace OCA\LogReader\Controller;
 
 use OCA\LogReader\Constants;
 use OCA\LogReader\Service\SettingsService;
+use OCA\LogReader\Settings\Admin;
 use OCP\AppFramework\ApiController;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IConfig;
 use OCP\IRequest;
@@ -49,9 +51,8 @@ class SettingsController extends ApiController {
 
 	/**
 	 * Get the current app config
-	 *
-	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function getAppConfig(): JSONResponse {
 		return new JSONResponse($this->settingsService->getAppSettings());
 	}
@@ -62,8 +63,8 @@ class SettingsController extends ApiController {
 	 * @param string $settingsKey AppConfig Key to store
 	 * @param mixed $settingsValues Corresponding AppConfig Value
 	 *
-	 * @AuthorizedAdminSetting(settings=OCA\LogReader\Settings\Admin)
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function updateAppConfig(string $settingsKey, $settingsValue): JSONResponse {
 		$this->logger->debug('Updating AppConfig: {settingsKey} => {settingsValue}', [
 			'settingsKey' => $settingsKey,
@@ -92,8 +93,18 @@ class SettingsController extends ApiController {
 			}
 		}
 
-		// Set on DB
-		$this->config->setAppValue($this->appName, $settingsKey, json_encode($settingsValue));
+		if ($settingsKey === Constants::CONFIG_KEY_LOGLEVEL) {
+			// Validate loglevel value
+			if (!is_int($settingsValue) || $settingsValue < 0 || $settingsValue > 4) {
+				$this->logger->debug('Cannot set {settingsValue} as loglevel', ['settingsValue' => $settingsValue ]);
+				return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			}
+			// Set backend loglevel directly via system value
+			$this->config->setSystemValue('loglevel', $settingsValue);
+		} else {
+			// Set on DB
+			$this->config->setAppValue($this->appName, $settingsKey, json_encode($settingsValue));
+		}
 
 		return new JSONResponse();
 	}

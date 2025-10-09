@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/src/view/Office.vue apps/richdocuments/src/view/Office.vue
-index 1b82ddb28..571286e16 100644
+index f63a9db1f..b0e5db9cc 100644
 --- apps/richdocuments/src/view/Office.vue
 +++ apps/richdocuments/src/view/Office.vue
 @@ -42,7 +42,7 @@
@@ -11,7 +11,7 @@ index 1b82ddb28..571286e16 100644
  					</p>
  					<p v-if="showAdminWebsocketFailure">
  						{{ t('richdocuments', 'Socket connection closed unexpectedly. The reverse proxy might be misconfigured, please contact the administrator.') }}
-@@ -204,7 +204,7 @@ export default {
+@@ -219,7 +219,7 @@ export default {
  			return this.loading >= LOADING_STATE.FRAME_READY || this.debug
  		},
  		iframeTitle() {
@@ -20,7 +20,7 @@ index 1b82ddb28..571286e16 100644
  		},
  		showLoadingIndicator() {
  			return this.loading < LOADING_STATE.FRAME_READY
-@@ -212,7 +212,7 @@ export default {
+@@ -227,7 +227,7 @@ export default {
  		errorMessage() {
  			switch (parseInt(this.error)) {
  			case LOADING_ERROR.COLLABORA_UNCONFIGURED:
@@ -29,7 +29,7 @@ index 1b82ddb28..571286e16 100644
  			case LOADING_ERROR.PROXY_FAILED:
  				return t('richdocuments', 'Starting the built-in CODE server failed')
  			default:
-@@ -327,7 +327,7 @@ export default {
+@@ -349,7 +349,7 @@ export default {
  			this.loadingTimeout = setTimeout(() => {
  				console.error('Document loading failed due to timeout: Please check for failing network requests')
  				this.loading = LOADING_STATE.FAILED

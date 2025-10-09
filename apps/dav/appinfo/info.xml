@@ -5,7 +5,7 @@
 	<name>WebDAV</name>
 	<summary>WebDAV endpoint</summary>
 	<description>WebDAV endpoint</description>
-	<version>1.29.2</version>
+	<version>1.30.1</version>
 	<licence>agpl</licence>
 	<author>owncloud.org</author>
 	<namespace>DAV</namespace>
@@ -15,7 +15,7 @@
 	<category>integration</category>
 	<bugs>https://github.com/nextcloud/server/issues</bugs>
 	<dependencies>
-		<nextcloud min-version="28" max-version="28"/>
+		<nextcloud min-version="29" max-version="29"/>
 	</dependencies>
 
 	<background-jobs>
@@ -44,6 +44,9 @@
 		<live-migration>
 			<step>OCA\DAV\Migration\ChunkCleanup</step>
 		</live-migration>
+		<install>
+			<step>OCA\DAV\Migration\CreateSystemAddressBookStep</step>
+		</install>
 	</repair-steps>
 
 	<commands>
@@ -63,8 +66,4 @@
 	<settings>
 		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
 	</settings>
-
-	<public>
-		<webdav>appinfo/v1/publicwebdav.php</webdav>
-	</public>
 </info>

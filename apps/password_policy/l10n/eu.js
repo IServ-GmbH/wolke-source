@@ -12,11 +12,11 @@ OC.L10N.register(
     "Password policy" : "Pasahitz politika",
     "Allows admins to configure a password policy" : "Baimendu administratzaileei pasahitzen politika bat konfiguratzea",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Baimendu administratzaileari pasahitzen inguruko baldintzak ezartzea, adib: luzera minimo bat izatera derrigortu.",
-    "Minimum password length" : "Pasahitzaren gutxieneko luzera",
-    "User password history" : "Erabiltzailearen pasahitz historia",
-    "Number of days until user password expires" : "Erabiltzailearen pasahitza iraungi arteko egun kopurua",
     "Number of login attempts before the user account will be disabled until manual action is taken. (0 for no limit)" : "Erabiltzaile kontua blokeatu aurretik eskuz konpondu arte saioa hasteko saiakera kopurua. (0 mugarik ez ezartzeko) ",
     "Please note, this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Kontuan hartu aukera hau erasotako kontuak babesteko dela. Desgaitutako kontuak administrazioarengatik gaitu behar dira eskuz. Kontuen pasahitzak asmatzen saiatzen diren erasotzaileak indarrezko erasoen kontrako babesarengatik haien IP helbidea blokeatuko dute, ezarpen honetatik independente.",
+    "Number of days until user password expires" : "Erabiltzailearen pasahitza iraungi arteko egun kopurua",
+    "Warning: enabling password expiration is nowadays considered a security risk by several security agencies." : "Abisua: gaur egun, pasahitzak iraungitzea arriskutsua da segurtasun agentzientzat.",
+    "Minimum password length" : "Pasahitzaren gutxieneko luzera",
     "Forbid common passwords" : "Pasahitz ohikoenak debekatu",
     "Enforce upper and lower case characters" : "Behartu hizki xehe eta larriak erabiltzera",
     "Enforce numeric characters" : "Behartu karaktere numerikoak erabiltzera",
@@ -30,6 +30,7 @@ OC.L10N.register(
     "Maximum login attempts have to be a non negative number" : "Saioa hasteko saiakera mugak zenbaki ez negatiboa izan behar du",
     "Settings saved" : "Ezarpenak gordeta",
     "Error while saving settings" : "Errorea ezarpenak gordetzean",
+    "User password history" : "Erabiltzailearen pasahitz historia",
     "Please note, that this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Kontuan hartu aukera hau erasotako kontuak babesteko dela. Desgaitutako kontuak administrazioarengatik gaitu behar dira eskuz. Kontuen pasahitzak asmatzen saiatzen diren erasotzaileak indarrezko erasoen kontrako babesarengatik haien IP helbidea blokeatuko dute, ezarpen honetatik independente."
 },
 "nplurals=2; plural=(n != 1);");

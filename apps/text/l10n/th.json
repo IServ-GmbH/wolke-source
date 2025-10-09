@@ -18,17 +18,19 @@
     "Keyboard shortcuts" : "แป้นพิมพ์ลัด",
     "Link" : "ลิงก์",
     "Undo" : "เลิกทำ",
+    "Cannot copy, please copy the link manually" : "ไม่สามารถคัดลอก กรุณาคัดลอกลิงก์เอง",
     "Save changes" : "บันทึกการเปลี่ยนแปลง",
     "Cancel" : "ยกเลิก",
     "URL" : "URL",
-    "Cannot copy, please copy the link manually" : "ไม่สามารถคัดลอก กรุณาคัดลอกลิงก์เอง",
     "to" : "ถึง",
     "Replace" : "แทนที่",
+    "Upload" : "อัปโหลด",
     "Edit" : "แก้ไข",
     "Source code" : "โค้ดต้นฉบับ",
+    "Details" : "รายละเอียด",
+    "Formatting" : "การจัดรูปแบบ",
     "Info" : "ข้อมูล",
     "Success" : "สำเร็จ",
-    "Warning" : "คำเตือน",
-    "Formatting" : "การจัดรูปแบบ"
+    "Warning" : "คำเตือน"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

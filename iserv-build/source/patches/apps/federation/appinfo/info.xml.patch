@@ -1,8 +1,22 @@
 diff --git apps/federation/appinfo/info.xml apps/federation/appinfo/info.xml
-index b9fd70c..0a21abf 100644
+index 49e8537..6a23637 100644
 --- apps/federation/appinfo/info.xml
 +++ apps/federation/appinfo/info.xml
-@@ -26,6 +26,9 @@
+@@ -5,7 +5,7 @@
+ 	<name>Federation</name>
+ 	<summary>Federation allows you to connect with other trusted servers to exchange the account directory.</summary>
+ 	<description>Federation allows you to connect with other trusted servers to exchange the account directory. For example this will be used to auto-complete external accounts for federated sharing.</description>
+-	<version>1.19.0</version>
++	<version>1.19.1</version>
+ 	<licence>agpl</licence>
+ 	<author>Bjoern Schiessle</author>
+ 	<namespace>Federation</namespace>
+@@ -22,10 +22,14 @@
+ 
+ 	<background-jobs>
+ 		<job>OCA\Federation\SyncJob</job>
++		<job>OCA\Federation\TrustedBruteforceResetJob</job>
+ 	</background-jobs>
  
  	<commands>
  		<command>OCA\Federation\Command\SyncFederationAddressBooks</command>

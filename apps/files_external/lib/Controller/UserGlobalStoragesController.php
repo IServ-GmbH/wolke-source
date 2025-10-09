@@ -35,6 +35,8 @@ use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\NotFoundException;
 use OCA\Files_External\Service\UserGlobalStoragesService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -138,7 +140,7 @@ class UserGlobalStoragesController extends StoragesController {
 
 		$data = $storage->jsonSerialize(true);
 		$isAdmin = $this->groupManager->isAdmin($this->userSession->getUser()->getUID());
-		$data['can_edit'] = $storage->getType() === StorageConfig::MOUNT_TYPE_PERSONAl || $isAdmin;
+		$data['can_edit'] = $storage->getType() === StorageConfig::MOUNT_TYPE_PERSONAL || $isAdmin;
 
 		return new DataResponse(
 			$data,
@@ -155,9 +157,9 @@ class UserGlobalStoragesController extends StoragesController {
 	 * @param bool $testOnly whether to storage should only test the connection or do more things
 	 *
 	 * @return DataResponse
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
+	#[PasswordConfirmationRequired(strict: true)]
 	public function update(
 		$id,
 		$backendOptions,
@@ -172,7 +174,7 @@ class UserGlobalStoragesController extends StoragesController {
 			} else {
 				return new DataResponse(
 					[
-						'message' => $this->l10n->t('Storage with ID "%d" is not user editable', [$id])
+						'message' => $this->l10n->t('Storage with ID "%d" is not editable by non-admins', [$id])
 					],
 					Http::STATUS_FORBIDDEN
 				);

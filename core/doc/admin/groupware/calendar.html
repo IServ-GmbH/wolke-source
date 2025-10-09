@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calendar / CalDAV &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -263,18 +265,18 @@ If you need to allow this, change the following parameter to:</p>
 <h2>Rate limits<a class="headerlink" href="#rate-limits" title="Link to this heading"></a></h2>
 <p>Nextcloud rate limits the creation of calendars and subscriptions if too many items are created within a short time frame. The default is 10 calendars or subscriptions per hour. This can be customized as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set limit to 15 items per 30 minutes</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
 </pre></div>
 </div>
 <p>Additionally, the maximum number of calendars and subscriptions a user may create is limited to 30 items. This can be customized too:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create 50 calendars/subscriptions</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
 </pre></div>
 </div>
 <p>or:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create calendars/subscriptions without restriction</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
 </pre></div>
 </div>
 </section>
@@ -291,7 +293,7 @@ If you need to allow this, change the following parameter to:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -313,11 +315,11 @@ If you need to allow this, change the following parameter to:</p>
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

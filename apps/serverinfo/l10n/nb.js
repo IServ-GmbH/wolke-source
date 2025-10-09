@@ -2,7 +2,6 @@ OC.L10N.register(
     "serverinfo",
     {
     "CPU info not available" : "Info om prosessor er ikke tilgjengelig",
-    "Load average: {cpu} (last minute)" : "Gjennomsnittslast: {cpu} (last minute)",
     "RAM: Total: {memTotalBytes}/Current usage: {memUsageBytes}" : "Minne: Totalt: {memTotalBytes}/Nåværende bruk: {memUsageBytes}",
     "RAM info not available" : "Info om minne er ikke tilgjengelig",
     "SWAP: Total: {swapTotalBytes}/Current usage: {swapUsageBytes}" : "SWAP: Totalt: {swapTotalBytes}/Nåværende bruk: {swapUsageBytes}",
@@ -43,10 +42,7 @@ OC.L10N.register(
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Aktive brukere",
-    "Total users:" : "Totalt antall brukere:",
-    "24 hours:" : "24 timer:",
-    "1 hour:" : "1 time:",
-    "5 mins:" : "5 minutter:",
+    "Last hour" : "Siste time",
     "Shares" : "Delinger",
     "Users:" : "Brukere:",
     "Groups:" : "Grupper:",
@@ -74,6 +70,11 @@ OC.L10N.register(
     "Skip server update" : "Hopp over serveroppdatering",
     "To use an access token, please generate one then set it using the following command:" : "For å bruke et tilgangstoken, vennligst generer et og sett det ved hjelp av følgende kommando:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Send deretter tokenet med \"NC-Token\"-overskriften under spørring av URL-adressen ovenfor.",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Gjennomsnittslast: {cpu} (last minute)",
+    "DNS:" : "DNS:",
+    "Total users:" : "Totalt antall brukere:",
+    "24 hours:" : "24 timer:",
+    "1 hour:" : "1 time:",
+    "5 mins:" : "5 minutter:"
 },
 "nplurals=2; plural=(n != 1);");

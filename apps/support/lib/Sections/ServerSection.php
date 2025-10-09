@@ -30,9 +30,12 @@ use OCA\Files_External\Lib\StorageConfig;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCA\Support\IDetail;
 use OCA\Support\Section;
+use OCA\Support\Service\SubscriptionService;
+use OCA\Support\Subscription\SubscriptionAdapter;
 use OCA\User_LDAP\Configuration;
 use OCA\User_LDAP\Helper;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -50,6 +53,8 @@ class ServerSection extends Section {
 	private IClientService $clientService;
 	private IUserManager $userManager;
 	private LoggerInterface $logger;
+	private SubscriptionAdapter $adapter;
+	private ITimeFactory $timeFactory;
 
 	public function __construct(
 		IConfig $config,
@@ -60,6 +65,8 @@ class ServerSection extends Section {
 		IUserManager $userManager,
 		LoggerInterface $logger,
 		SystemConfig $systemConfig,
+		SubscriptionAdapter $adapter,
+		ITimeFactory $timeFactory,
 	) {
 		parent::__construct('server-detail', 'Server configuration detail');
 		$this->config = $config;
@@ -70,6 +77,8 @@ class ServerSection extends Section {
 		$this->clientService = $clientService;
 		$this->userManager = $userManager;
 		$this->logger = $logger;
+		$this->adapter = $adapter;
+		$this->timeFactory = $timeFactory;
 	}
 
 	public function getDetails(): array {
@@ -94,6 +103,7 @@ class ServerSection extends Section {
 
 		$this->createDetail('Encryption', $this->getEncryptionInfo());
 		$this->createDetail('User-backends', $this->getUserBackendInfo());
+		$this->createDetail('Subscription', $this->getSubscriptionInfo());
 
 		if ($this->isLDAPEnabled()) {
 			$this->createDetail('LDAP configuration', $this->getLDAPInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
@@ -525,5 +535,48 @@ class ServerSection extends Section {
 		}
 
 		return $output->fetch();
+	}
+
+	private function getSubscriptionInfo(): string {
+		$output = PHP_EOL;
+
+		if ($this->adapter->hasValidSubscription()) {
+			$output .= ' * Instance has valid subscription key set' . PHP_EOL;
+		} else {
+			$output .= ' * No valid subscription key set' . PHP_EOL;
+		}
+
+		$lastError = (int)$this->config->getAppValue('support', 'last_error', 0);
+
+		if ($lastError > 0) {
+			switch ($lastError) {
+				case SubscriptionService::ERROR_FAILED_RETRY:
+					$output .= ' * The subscription info could not properly fetched and will be retried' . PHP_EOL;
+					break;
+				case SubscriptionService::ERROR_FAILED_INVALID:
+					$output .= ' * The subscription key was invalid' . PHP_EOL;
+					break;
+				case SubscriptionService::ERROR_NO_INTERNET_CONNECTION:
+					$output .= ' * The subscription key could not be verified, because this server has no internet connection' . PHP_EOL;
+					break;
+				case SubscriptionService::ERROR_INVALID_SUBSCRIPTION_KEY:
+					$output .= ' * The subscription key had an invalid format' . PHP_EOL;
+					break;
+				default:
+					$output .= ' * An error occurred while fetching the subscription information' . PHP_EOL;
+					break;
+			}
+		}
+
+		if ($this->adapter->isHardUserLimitReached()) {
+			$output .= ' * Reached user limit of subscription' . PHP_EOL;
+		}
+
+		$rateLimitReached = (int)$this->config->getAppValue('notifications', 'rate_limit_reached', '0');
+		if ($rateLimitReached >= ($this->timeFactory->now()->getTimestamp() - 7 * 24 * 3600)) {
+			$output .= ' * Fair-use push notification limit reached' . PHP_EOL;
+		}
+
+		return $output;
 	}
 }

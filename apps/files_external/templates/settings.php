@@ -1,8 +1,8 @@
 <?php
-use \OCA\Files_External\Lib\Auth\AuthMechanism;
-use \OCA\Files_External\Lib\Backend\Backend;
-use \OCA\Files_External\Lib\DefinitionParameter;
-use \OCA\Files_External\Service\BackendService;
+use OCA\Files_External\Lib\Auth\AuthMechanism;
+use OCA\Files_External\Lib\Backend\Backend;
+use OCA\Files_External\Lib\DefinitionParameter;
+use OCA\Files_External\Service\BackendService;
 
 /** @var array $_ */
 
@@ -16,10 +16,8 @@ $l->t("Never");
 $l->t("Once every direct access");
 $l->t('Read only');
 
-script('files_external', [
-	'settings',
-	'templates'
-]);
+\OCP\Util::addScript('files_external', 'settings');
+\OCP\Util::addScript('files_external', 'templates');
 style('files_external', 'settings');
 
 // load custom JS
@@ -108,7 +106,7 @@ function writeParameterInput($parameter, $options, $classes = []) {
 <form data-can-create="<?php echo $canCreateMounts?'true':'false' ?>" data-can-create-local="<?php echo $canCreateNewLocalStorage?'true':'false' ?>" id="files_external" class="section" data-encryption-enabled="<?php echo $_['encryptionEnabled']?'true': 'false'; ?>">
 	<h2 class="inlineblock" data-anchor-name="external-storage"><?php p($l->t('External storage')); ?></h2>
 	<a target="_blank" rel="noreferrer" class="icon-info" title="<?php p($l->t('Open documentation'));?>" href="<?php p(link_to_docs('admin-external-storage')); ?>"></a>
-	<p class="settings-hint"><?php p($l->t('External storage enables you to mount external storage services and devices as secondary Nextcloud storage devices. You may also allow users to mount their own external storage services.')); ?></p>
+	<p class="settings-hint"><?php p($l->t('External storage enables you to mount external storage services and devices as secondary Nextcloud storage devices. You may also allow people to mount their own external storage services.')); ?></p>
 	<?php if (isset($_['dependencies']) and ($_['dependencies'] !== '') and $canCreateMounts) {
 		print_unescaped(''.$_['dependencies'].'');
 	} ?>
@@ -140,7 +138,7 @@ function writeParameterInput($parameter, $options, $classes = []) {
 			<?php endif; ?>
 			>
 				<td class="status">
-					<span data-placement="right" title="<?php p($l->t('Click to recheck the configuration')); ?>"></span>
+					<span data-placement="right" title="<?php p($l->t('Click to recheck the configuration')); ?>" style="display: none;"></span>
 				</td>
 				<td class="mountPoint"><input type="text" name="mountPoint" value=""
 					placeholder="<?php p($l->t('Folder name')); ?>">
@@ -171,7 +169,7 @@ uasort($sortedBackends, function ($a, $b) {
 				<td class="configuration"></td>
 				<?php if ($_['visibilityType'] === BackendService::VISIBILITY_ADMIN): ?>
 					<td class="applicable" align="right">
-						<label><input type="checkbox" class="applicableToAllUsers" checked="" /><?php p($l->t('All users')); ?></label>
+						<label><input type="checkbox" class="applicableToAllUsers" checked="" /><?php p($l->t('All people')); ?></label>
 						<div class="applicableUsersContainer">
 							<input type="hidden" class="applicableUsers" style="width:20em;" value="" />
 						</div>
@@ -193,7 +191,7 @@ uasort($sortedBackends, function ($a, $b) {
 			value="1" <?php if ($_['allowUserMounting']) {
 				print_unescaped(' checked="checked"');
 			} ?> />
-		<label for="allowUserMounting"><?php p($l->t('Allow users to mount external storage')); ?></label> <span id="userMountingMsg" class="msg"></span>
+		<label for="allowUserMounting"><?php p($l->t('Allow people to mount external storage')); ?></label> <span id="userMountingMsg" class="msg"></span>
 
 		<p id="userMountingBackends"<?php if (!$_['allowUserMounting']): ?> class="hidden"<?php endif; ?>>
 			<?php
@@ -228,7 +226,7 @@ uasort($sortedBackends, function ($a, $b) {
 		<input type="text" name="username"
 			   autocomplete="false"
 			   value="<?php p($_['globalCredentials']['user']); ?>"
-			   placeholder="<?php p($l->t('Username')) ?>"/>
+			   placeholder="<?php p($l->t('Login')) ?>"/>
 		<input type="password" name="password"
 			   autocomplete="false"
 			   value="<?php p($_['globalCredentials']['password']); ?>"

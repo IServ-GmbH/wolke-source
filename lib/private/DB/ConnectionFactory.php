@@ -32,7 +32,6 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Event\Listeners\OracleSessionInit;
-use Doctrine\DBAL\Event\Listeners\SQLSessionInit;
 use OC\SystemConfig;
 
 /**
@@ -76,16 +75,10 @@ class ConnectionFactory {
 		],
 	];
 
-	/** @var SystemConfig */
-	private $config;
 
-	/**
-	 * ConnectionFactory constructor.
-	 *
-	 * @param SystemConfig $systemConfig
-	 */
-	public function __construct(SystemConfig $systemConfig) {
-		$this->config = $systemConfig;
+	public function __construct(
+		private SystemConfig $config
+	) {
 		if ($this->config->getValue('mysql.utf8mb4', false)) {
 			$this->defaultConnectionParams['mysql']['charset'] = 'utf8mb4';
 		}
@@ -123,53 +116,49 @@ class ConnectionFactory {
 	 * @param array $additionalConnectionParams Additional connection parameters
 	 * @return \OC\DB\Connection
 	 */
-	public function getConnection($type, $additionalConnectionParams) {
+	public function getConnection(string $type, array $additionalConnectionParams): Connection {
 		$normalizedType = $this->normalizeType($type);
 		$eventManager = new EventManager();
 		$eventManager->addEventSubscriber(new SetTransactionIsolationLevel());
+		$connectionParams = $this->createConnectionParams('', $additionalConnectionParams, $type);
 		switch ($normalizedType) {
-			case 'mysql':
-				$eventManager->addEventSubscriber(
-					new SQLSessionInit("SET SESSION AUTOCOMMIT=1"));
+			case 'pgsql':
+				// pg_connect used by Doctrine DBAL does not support URI notation (enclosed in brackets)
+				$matches = [];
+				if (preg_match('/^\[([^\]]+)\]$/', $connectionParams['host'], $matches)) {
+					// Host variable carries a port or socket.
+					$connectionParams['host'] = $matches[1];
+				}
 				break;
 
 			case 'oci':
 				$eventManager->addEventSubscriber(new OracleSessionInit);
 				// the driverOptions are unused in dbal and need to be mapped to the parameters
-				if (isset($additionalConnectionParams['driverOptions'])) {
-					$additionalConnectionParams = array_merge($additionalConnectionParams, $additionalConnectionParams['driverOptions']);
+				if (isset($connectionParams['driverOptions'])) {
+					$connectionParams = array_merge($connectionParams, $connectionParams['driverOptions']);
 				}
-				$host = $additionalConnectionParams['host'];
-				$port = $additionalConnectionParams['port'] ?? null;
-				$dbName = $additionalConnectionParams['dbname'];
+				$host = $connectionParams['host'];
+				$port = $connectionParams['port'] ?? null;
+				$dbName = $connectionParams['dbname'];
 
 				// we set the connect string as dbname and unset the host to coerce doctrine into using it as connect string
 				if ($host === '') {
-					$additionalConnectionParams['dbname'] = $dbName; // use dbname as easy connect name
+					$connectionParams['dbname'] = $dbName; // use dbname as easy connect name
 				} else {
-					$additionalConnectionParams['dbname'] = '//' . $host . (!empty($port) ? ":{$port}" : "") . '/' . $dbName;
+					$connectionParams['dbname'] = '//' . $host . (!empty($port) ? ":{$port}" : "") . '/' . $dbName;
 				}
-				unset($additionalConnectionParams['host']);
-				break;
-
-			case 'pgsql':
-				// pg_connect used by Doctrine DBAL does not support URI notation (enclosed in brackets)
-				$matches = [];
-				if (preg_match('/^\[([^\]]+)\]$/', $additionalConnectionParams['host'], $matches)) {
-					// Host variable carries a port or socket.
-					$additionalConnectionParams['host'] = $matches[1];
-				}
+				unset($connectionParams['host']);
 				break;
 
 			case 'sqlite3':
-				$journalMode = $additionalConnectionParams['sqlite.journal_mode'];
-				$additionalConnectionParams['platform'] = new OCSqlitePlatform();
+				$journalMode = $connectionParams['sqlite.journal_mode'];
+				$connectionParams['platform'] = new OCSqlitePlatform();
 				$eventManager->addEventSubscriber(new SQLiteSessionInit(true, $journalMode));
 				break;
 		}
 		/** @var Connection $connection */
 		$connection = DriverManager::getConnection(
-			array_merge($this->getDefaultConnectionParams($type), $additionalConnectionParams),
+			$connectionParams,
 			new Configuration(),
 			$eventManager
 		);
@@ -198,17 +187,15 @@ class ConnectionFactory {
 
 	/**
 	 * Create the connection parameters for the config
-	 *
-	 * @param string $configPrefix
-	 * @return array
 	 */
-	public function createConnectionParams(string $configPrefix = '') {
-		$type = $this->config->getValue('dbtype', 'sqlite');
+	public function createConnectionParams(string $configPrefix = '', array $additionalConnectionParams = [], ?string $type = null) {
+		// use provided type or if null use type from config
+		$type = $type ?? $this->config->getValue('dbtype', 'sqlite');
 
-		$connectionParams = [
+		$connectionParams = array_merge($this->getDefaultConnectionParams($type), [
 			'user' => $this->config->getValue($configPrefix . 'dbuser', $this->config->getValue('dbuser', '')),
 			'password' => $this->config->getValue($configPrefix . 'dbpassword', $this->config->getValue('dbpassword', '')),
-		];
+		]);
 		$name = $this->config->getValue($configPrefix . 'dbname', $this->config->getValue('dbname', self::DEFAULT_DBNAME));
 
 		if ($this->normalizeType($type) === 'sqlite3') {
@@ -235,7 +222,7 @@ class ConnectionFactory {
 			'tablePrefix' => $connectionParams['tablePrefix']
 		];
 
-		if ($this->config->getValue('mysql.utf8mb4', false)) {
+		if ($type === 'mysql' && $this->config->getValue('mysql.utf8mb4', false)) {
 			$connectionParams['defaultTableOptions'] = [
 				'collate' => 'utf8mb4_bin',
 				'charset' => 'utf8mb4',
@@ -246,8 +233,13 @@ class ConnectionFactory {
 		if ($this->config->getValue('dbpersistent', false)) {
 			$connectionParams['persistent'] = true;
 		}
+		$connectionParams = array_merge($connectionParams, $additionalConnectionParams);
 
-		return $connectionParams;
+		$replica = $this->config->getValue($configPrefix . 'dbreplica', $this->config->getValue('dbreplica', [])) ?: [$connectionParams];
+		return array_merge($connectionParams, [
+			'primary' => $connectionParams,
+			'replica' => $replica,
+		]);
 	}
 
 	/**

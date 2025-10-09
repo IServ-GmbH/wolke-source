@@ -15,8 +15,8 @@ OC.L10N.register(
     "An error occurred" : "Se presentó un error",
     "Favorite" : "Hacer favorito",
     "Open the full size \"{name}\" image" : "Abrir la imagen \"{name}\" en tamaño completo",
-    "Go back" : "Regresar",
     "Back to {folder}" : "Volver a {folder}",
+    "Go back" : "Regresar",
     "Share this folder" : "Compartir esta carpeta",
     "Dates" : "Fechas",
     "Home" : "Inicio",
@@ -24,8 +24,8 @@ OC.L10N.register(
     "No photos in here" : "No hay fotos aquí",
     "No tags yet" : "Aún no hay etiquetas",
     "Photos with tags will show up here" : "Fotos con etiquetas serán mostradas aquí",
-    "Add" : "Agregar",
     "Tagged photos" : "Fotos etiquetadas",
-    "Details" : "Detalles"
+    "Details" : "Detalles",
+    "Add" : "Agregar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

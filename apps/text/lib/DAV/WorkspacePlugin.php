@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Text\DAV;
 
+use Exception;
 use OC\Files\Node\File;
 use OC\Files\Node\Folder;
 use OCA\DAV\Connector\Sabre\Directory;
@@ -34,9 +35,9 @@ use OCA\Text\Service\WorkspaceService;
 use OCP\Files\GenericFileException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
-use OCP\Files\StorageNotAvailableException;
 use OCP\IConfig;
 use OCP\Lock\LockedException;
+use Psr\Log\LoggerInterface;
 use Sabre\DAV\INode;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\Server;
@@ -55,16 +56,20 @@ class WorkspacePlugin extends ServerPlugin {
 	/**  @var IRootFolder */
 	private $rootFolder;
 
+	/** @var LoggerInterface */
+	private $logger;
+
 	/** @var IConfig */
 	private $config;
 
 	/** @var string|null */
 	private $userId;
 
-	public function __construct(WorkspaceService $workspaceService, IRootFolder $rootFolder, IConfig $config, $userId) {
+	public function __construct(WorkspaceService $workspaceService, IRootFolder $rootFolder, IConfig $config, LoggerInterface $logger, $userId) {
 		$this->workspaceService = $workspaceService;
 		$this->rootFolder = $rootFolder;
 		$this->config = $config;
+		$this->logger = $logger;
 		$this->userId = $userId;
 	}
 
@@ -111,7 +116,7 @@ class WorkspacePlugin extends ServerPlugin {
 			/** @var File $file */
 			try {
 				$file = $this->workspaceService->getFile($nodes[0]);
-			} catch (StorageNotAvailableException $e) {
+			} catch (\Exception $e) {
 				// If a storage is not available we can for the propfind response assume that there is no rich workspace present
 			}
 		}
@@ -123,6 +128,10 @@ class WorkspacePlugin extends ServerPlugin {
 					return $file->getContent();
 				}
 			} catch (GenericFileException|NotPermittedException|LockedException) {
+			} catch (Exception $e) {
+				$this->logger->error($e->getMessage(), [
+					'exception' => $e,
+				]);
 			}
 
 			return '';

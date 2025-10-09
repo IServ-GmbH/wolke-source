@@ -47,8 +47,6 @@ class Provider implements IProvider {
 
 	/** @var IL10N */
 	protected $l;
-	/** @var IL10N */
-	protected $activityLang;
 
 	/** @var IURLGenerator */
 	protected $url;
@@ -102,13 +100,12 @@ class Provider implements IProvider {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
+	public function parse($language, IEvent $event, ?IEvent $previousEvent = null) {
 		if ($event->getApp() !== 'files') {
 			throw new \InvalidArgumentException();
 		}
 
 		$this->l = $this->languageFactory->get('files', $language);
-		$this->activityLang = $this->languageFactory->get('activity', $language);
 
 		if ($this->activityManager->isFormattingFilteredObject()) {
 			try {
@@ -136,7 +133,7 @@ class Provider implements IProvider {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parseShortVersion(IEvent $event, IEvent $previousEvent = null) {
+	public function parseShortVersion(IEvent $event, ?IEvent $previousEvent = null) {
 		$parsedParameters = $this->getParameters($event);
 
 		if ($event->getSubject() === 'created_by') {
@@ -163,7 +160,7 @@ class Provider implements IProvider {
 
 		if (!isset($parsedParameters['user'])) {
 			// External user via public link share
-			$subject = str_replace('{user}', $this->activityLang->t('"remote user"'), $subject);
+			$subject = str_replace('{user}', $this->l->t('"remote account"'), $subject);
 		}
 
 		$this->setSubjects($event, $subject, $parsedParameters);
@@ -178,7 +175,7 @@ class Provider implements IProvider {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parseLongVersion(IEvent $event, IEvent $previousEvent = null) {
+	public function parseLongVersion(IEvent $event, ?IEvent $previousEvent = null) {
 		$this->fileIsEncrypted = false;
 		$parsedParameters = $this->getParameters($event);
 
@@ -281,7 +278,7 @@ class Provider implements IProvider {
 
 		if (!isset($parsedParameters['user'])) {
 			// External user via public link share
-			$subject = str_replace('{user}', $this->activityLang->t('"remote user"'), $subject);
+			$subject = str_replace('{user}', $this->l->t('"remote account"'), $subject);
 		}
 
 		$this->setSubjects($event, $subject, $parsedParameters);
@@ -368,7 +365,7 @@ class Provider implements IProvider {
 	 * @return array
 	 * @throws \InvalidArgumentException
 	 */
-	protected function getFile($parameter, IEvent $event = null) {
+	protected function getFile($parameter, ?IEvent $event = null) {
 		if (is_array($parameter)) {
 			$path = reset($parameter);
 			$id = (string) key($parameter);
@@ -433,8 +430,8 @@ class Provider implements IProvider {
 		}
 
 		$userFolder = $this->rootFolder->getUserFolder($this->activityManager->getCurrentUserId());
-		$files = $userFolder->getById($fileId);
-		if (empty($files)) {
+		$file = $userFolder->getFirstNodeById($fileId);
+		if (!$file) {
 			try {
 				// Deleted, try with parent
 				$file = $this->findExistingParent($userFolder, dirname($path));
@@ -449,8 +446,6 @@ class Provider implements IProvider {
 			$this->fileEncrypted[$fileId] = $file;
 			return $file;
 		}
-
-		$file = array_shift($files);
 
 		if ($file instanceof Folder && $file->isEncrypted()) {
 			// If the folder is encrypted, it is the Container,

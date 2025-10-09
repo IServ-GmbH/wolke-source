@@ -362,7 +362,8 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 				'notnull' => true,
 			]);
 			$table->setPrimaryKey(['id']);
-			$table->addIndex(['userid'], 'property_index');
+			// Dropped in Version29000Date20240131122720 because property_index is redundant with properties_path_index
+			// $table->addIndex(['userid'], 'property_index');
 			$table->addIndex(['userid', 'propertypath'], 'properties_path_index');
 			$table->addIndex(['propertypath'], 'properties_pathonly_index');
 		} else {
@@ -755,6 +756,8 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['objecttype', 'objectid', 'systemtagid'], 'som_pk');
 			//			$table->addUniqueIndex(['objecttype', 'objectid', 'systemtagid'], 'mapping');
 			$table->addIndex(['systemtagid', 'objecttype'], 'systag_by_tagid');
+			// systag_by_objectid was added later and might be missing in older deployments
+			$table->addIndex(['objectid'], 'systag_by_objectid');
 		}
 
 		if (!$schema->hasTable('systemtag_group')) {

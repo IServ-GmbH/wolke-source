@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Politica pentru parole",
     "Allows admins to configure a password policy" : "Permite administratorului să configureze politica pentru parole",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Permite administratorului să definească anumite condiții pentru parole, de ex. lungimea minimă",
-    "Minimum password length" : "Lungimea minimă a parolei",
-    "User password history" : "Istoric parole",
     "Number of days until user password expires" : "Numărul de zile după care parola expiră",
+    "Minimum password length" : "Lungimea minimă a parolei",
     "Forbid common passwords" : "Refuză parole comune",
     "Enforce upper and lower case characters" : "Impune litere mari și mici",
     "Enforce numeric characters" : "Impune caractere numerice",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "Numărul zilelor până la expirare trebuie să fie pozitiv",
     "Maximum login attempts have to be a non negative number" : "Numărul de încercări de autentificare trebuie să fie un număr pozitiv",
     "Settings saved" : "Setările au fost salvate",
-    "Error while saving settings" : "Eroare la salvarea setărilor"
+    "Error while saving settings" : "Eroare la salvarea setărilor",
+    "User password history" : "Istoric parole"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

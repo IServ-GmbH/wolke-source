@@ -269,6 +269,7 @@ class ProviderParser {
 		return [
 			'type' => 'email',
 			'id' => $member->getUserId(),
+			'link' => '',
 			'name' => $member->getDisplayName(),
 			'_parsed' => $member->getDisplayName()
 		];
@@ -285,7 +286,7 @@ class ProviderParser {
 			'id' => $circle->getSingleId(),
 			'name' => $circle->getName(),
 			'_parsed' => $circle->getName(),
-			'link' => $circle->getUrl()
+			'link' => $this->url->getAbsoluteURL($circle->getUrl()),
 		];
 	}
 

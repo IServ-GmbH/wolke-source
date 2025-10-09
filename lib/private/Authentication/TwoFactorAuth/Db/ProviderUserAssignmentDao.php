@@ -57,7 +57,7 @@ class ProviderUserAssignmentDao {
 		$result = $query->execute();
 		$providers = [];
 		foreach ($result->fetchAll() as $row) {
-			$providers[(string)$row['provider_id']] = 1 === (int)$row['enabled'];
+			$providers[(string)$row['provider_id']] = (int)$row['enabled'] === 1;
 		}
 		$result->closeCursor();
 
@@ -112,9 +112,9 @@ class ProviderUserAssignmentDao {
 
 		return array_map(function (array $row) {
 			return [
-				'provider_id' => $row['provider_id'],
-				'uid' => $row['uid'],
-				'enabled' => 1 === (int) $row['enabled'],
+				'provider_id' => (string) $row['provider_id'],
+				'uid' => (string) $row['uid'],
+				'enabled' => (int) $row['enabled'] === 1,
 			];
 		}, $rows);
 	}

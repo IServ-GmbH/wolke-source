@@ -1,5 +1,5 @@
 diff --git apps/files/src/components/FilesListTableHeaderActions.vue apps/files/src/components/FilesListTableHeaderActions.vue
-index c10b567..155bb5c 100644
+index 8d064a2..9c88186 100644
 --- apps/files/src/components/FilesListTableHeaderActions.vue
 +++ apps/files/src/components/FilesListTableHeaderActions.vue
 @@ -27,7 +27,7 @@
@@ -10,8 +10,8 @@ index c10b567..155bb5c 100644
 +			<NcActionButton v-for="action in actions"
  				:key="action.id"
  				:class="'files-list__row-actions-batch-' + action.id"
- 				@click="onActionClick(action)">
-@@ -146,6 +146,18 @@ export default defineComponent({
+ 				:data-cy-files-list-selection-action="action.id"
+@@ -147,6 +147,18 @@ export default defineComponent({
  			}
  			return 3
  		},

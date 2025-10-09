@@ -32,10 +32,13 @@ use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
+/** @template-implements IEventListener<LoadAdditionalScriptsEvent> */
 class LoadAdditionalScriptsListener implements IEventListener {
 	public function __construct(
 		private IAppManager $appManager,
+		private LoggerInterface $logger,
 	) {
 	}
 

@@ -28,12 +28,16 @@ use ArrayAccess;
  * meta data for a file or folder
  *
  * @since 9.0.0
+ * @template-extends ArrayAccess<string,mixed>
  *
  * This interface extends \ArrayAccess since v21.0.0, previous versions only
  * implemented it in the private implementation. Hence php would allow using the
  * object as array, while strictly speaking it didn't support this.
  */
 interface ICacheEntry extends ArrayAccess {
+	/**
+	 * @since 9.0.0
+	 */
 	public const DIRECTORY_MIMETYPE = 'httpd/unix-directory';
 
 	/**

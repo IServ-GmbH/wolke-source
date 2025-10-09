@@ -40,6 +40,7 @@ use OC\IntegrityCheck\Iterator\ExcludeFileByNameFilterIterator;
 use OC\IntegrityCheck\Iterator\ExcludeFoldersByPathFilterIterator;
 use OCP\App\IAppManager;
 use OCP\Files\IMimeTypeDetector;
+use OCP\IAppConfig;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
@@ -58,44 +59,20 @@ use phpseclib\File\X509;
  */
 class Checker {
 	public const CACHE_KEY = 'oc.integritycheck.checker';
-	/** @var EnvironmentHelper */
-	private $environmentHelper;
-	/** @var AppLocator */
-	private $appLocator;
-	/** @var FileAccessHelper */
-	private $fileAccessHelper;
-	/** @var IConfig|null */
-	private $config;
-	/** @var ICache */
-	private $cache;
-	/** @var IAppManager|null */
-	private $appManager;
-	/** @var IMimeTypeDetector */
-	private $mimeTypeDetector;
 
-	/**
-	 * @param EnvironmentHelper $environmentHelper
-	 * @param FileAccessHelper $fileAccessHelper
-	 * @param AppLocator $appLocator
-	 * @param IConfig|null $config
-	 * @param ICacheFactory $cacheFactory
-	 * @param IAppManager|null $appManager
-	 * @param IMimeTypeDetector $mimeTypeDetector
-	 */
-	public function __construct(EnvironmentHelper $environmentHelper,
-		FileAccessHelper $fileAccessHelper,
-		AppLocator $appLocator,
-		?IConfig $config,
+	private ICache $cache;
+
+	public function __construct(
+		private EnvironmentHelper $environmentHelper,
+		private FileAccessHelper $fileAccessHelper,
+		private AppLocator $appLocator,
+		private ?IConfig $config,
+		private ?IAppConfig $appConfig,
 		ICacheFactory $cacheFactory,
-		?IAppManager $appManager,
-		IMimeTypeDetector $mimeTypeDetector) {
-		$this->environmentHelper = $environmentHelper;
-		$this->fileAccessHelper = $fileAccessHelper;
-		$this->appLocator = $appLocator;
-		$this->config = $config;
+		private ?IAppManager $appManager,
+		private IMimeTypeDetector $mimeTypeDetector,
+	) {
 		$this->cache = $cacheFactory->createDistributed(self::CACHE_KEY);
-		$this->appManager = $appManager;
-		$this->mimeTypeDetector = $mimeTypeDetector;
 	}
 
 	/**
@@ -114,15 +91,7 @@ class Checker {
 		 * applicable for very specific scenarios and we should not advertise it
 		 * too prominent. So please do not add it to config.sample.php.
 		 */
-		$isIntegrityCheckDisabled = false;
-		if ($this->config !== null) {
-			$isIntegrityCheckDisabled = $this->config->getSystemValueBool('integrity.check.disabled', false);
-		}
-		if ($isIntegrityCheckDisabled) {
-			return false;
-		}
-
-		return true;
+		return !($this->config?->getSystemValueBool('integrity.check.disabled', false) ?? false);
 	}
 
 	/**
@@ -387,8 +356,8 @@ class Checker {
 
 		// Compare the list of files which are not identical
 		$currentInstanceHashes = $this->generateHashes($this->getFolderIterator($basePath), $basePath);
-		$differencesA = array_diff($expectedHashes, $currentInstanceHashes);
-		$differencesB = array_diff($currentInstanceHashes, $expectedHashes);
+		$differencesA = array_diff_assoc($expectedHashes, $currentInstanceHashes);
+		$differencesB = array_diff_assoc($currentInstanceHashes, $expectedHashes);
 		$differences = array_unique(array_merge($differencesA, $differencesB));
 		$differenceArray = [];
 		foreach ($differences as $filename => $hash) {
@@ -443,11 +412,11 @@ class Checker {
 			return json_decode($cachedResults, true);
 		}
 
-		$appValue = $this->config?->getAppValue('core', self::CACHE_KEY);
-		if (!empty($appValue)) {
-			return json_decode($appValue, true);
+		if ($this->appConfig?->hasKey('core', self::CACHE_KEY, lazy: true)) {
+			return $this->appConfig->getValueArray('core', self::CACHE_KEY, lazy: true);
 		}
-		// No results
+
+		// No results available
 		return null;
 	}
 
@@ -463,9 +432,7 @@ class Checker {
 		if (!empty($result)) {
 			$resultArray[$scope] = $result;
 		}
-		if ($this->config !== null) {
-			$this->config->setAppValue('core', self::CACHE_KEY, json_encode($resultArray));
-		}
+		$this->appConfig?->setValueArray('core', self::CACHE_KEY, $resultArray, lazy: true);
 		$this->cache->set(self::CACHE_KEY, json_encode($resultArray));
 	}
 
@@ -474,7 +441,7 @@ class Checker {
 	 * Clean previous results for a proper rescanning. Otherwise
 	 */
 	private function cleanResults() {
-		$this->config->deleteAppValue('core', self::CACHE_KEY);
+		$this->appConfig->deleteKey('core', self::CACHE_KEY);
 		$this->cache->remove(self::CACHE_KEY);
 	}
 

@@ -37,6 +37,9 @@
                             },
                             "bulkupload": {
                                 "type": "string"
+                            },
+                            "absence-supported": {
+                                "type": "boolean"
                             }
                         }
                     }
@@ -177,6 +180,7 @@
                         "name": "expirationTime",
                         "in": "query",
                         "description": "Duration until the link expires",
+                        "required": true,
                         "schema": {
                             "type": "integer",
                             "format": "int64"
@@ -235,9 +239,27 @@
                     "404": {
                         "description": "File not found",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -245,9 +267,27 @@
                     "400": {
                         "description": "Getting direct link is not possible",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -255,9 +295,27 @@
                     "403": {
                         "description": "Missing permissions to get direct link",
                         "content": {
-                            "text/plain": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -268,7 +326,7 @@
         "/ocs/v2.php/apps/dav/api/v1/outOfOffice/{userId}/now": {
             "get": {
                 "operationId": "out_of_office-get-current-out-of-office-data",
-                "summary": "Get the currently configured out-of-office data of a user.",
+                "summary": "Get the currently configured out-of-office data of a user",
                 "tags": [
                     "out_of_office"
                 ],
@@ -566,7 +624,7 @@
                         }
                     },
                     "400": {
-                        "description": "When the first day is not before the last day",
+                        "description": "When validation fails, e.g. data range error or the first day is not before the last day",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -594,7 +652,8 @@
                                                         "error": {
                                                             "type": "string",
                                                             "enum": [
-                                                                "firstDay"
+                                                                "firstDay",
+                                                                "statusLength"
                                                             ]
                                                         }
                                                     }

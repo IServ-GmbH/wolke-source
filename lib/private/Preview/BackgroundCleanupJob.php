@@ -54,7 +54,8 @@ class BackgroundCleanupJob extends TimedJob {
 		bool $isCLI) {
 		parent::__construct($timeFactory);
 		// Run at most once an hour
-		$this->setInterval(3600);
+		$this->setInterval(60 * 60);
+		$this->setTimeSensitivity(self::TIME_INSENSITIVE);
 
 		$this->connection = $connection;
 		$this->previewFolder = $previewFolder;
@@ -88,11 +89,13 @@ class BackgroundCleanupJob extends TimedJob {
 				$qb->expr()->castColumn('a.name', IQueryBuilder::PARAM_INT), 'b.fileid'
 			))
 			->where(
-				$qb->expr()->isNull('b.fileid')
-			)->andWhere(
-				$qb->expr()->eq('a.parent', $qb->createNamedParameter($this->previewFolder->getId()))
-			)->andWhere(
-				$qb->expr()->like('a.name', $qb->createNamedParameter('__%'))
+				$qb->expr()->andX(
+					$qb->expr()->isNull('b.fileid'),
+					$qb->expr()->eq('a.storage', $qb->createNamedParameter($this->previewFolder->getStorageId())),
+					$qb->expr()->eq('a.parent', $qb->createNamedParameter($this->previewFolder->getId())),
+					$qb->expr()->like('a.name', $qb->createNamedParameter('__%')),
+					$qb->expr()->eq('a.mimetype', $qb->createNamedParameter($this->mimeTypeLoader->getId('httpd/unix-directory')))
+				)
 			);
 
 		if (!$this->isCLI) {

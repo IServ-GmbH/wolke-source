@@ -2,7 +2,6 @@ OC.L10N.register(
     "serverinfo",
     {
     "CPU info not available" : "La información de la CPU nun ta disponible",
-    "Load average: {cpu} (last minute)" : "Carga media: {cpu} (l'últimu minutu)",
     "RAM info not available" : "La información de la RAM nun ta disponible",
     "SWAP info not available" : "La información del espaciu d'intercambéu nun ta disponible",
     "Copied!" : "¡Copióse!",
@@ -14,6 +13,7 @@ OC.L10N.register(
     "Operating System:" : "Sistema operativu",
     "CPU:" : "CPU:",
     "Memory:" : "Memoria:",
+    "Server time:" : "Hora del sirvidor:",
     "Temperature" : "Temperatura",
     "Load" : "Carga",
     "Memory" : "Memoria",
@@ -35,8 +35,6 @@ OC.L10N.register(
     "IPv4:" : "IPv4:",
     "IPv6:" : "IPv6:",
     "Active users" : "Usuarios activos",
-    "24 hours:" : "24 hores:",
-    "1 hour:" : "1 hora",
     "Shares" : "Comparticiones",
     "Users:" : "Usuarios:",
     "Groups:" : "Grupos:",
@@ -50,6 +48,9 @@ OC.L10N.register(
     "Type:" : "Tipu:",
     "External monitoring tool" : "Ferramienta de supervisión esterna",
     "Copy" : "Copiar",
-    "DNS:" : "DNS:"
+    "Load average: {cpu} (last minute)" : "Carga media: {cpu} (l'últimu minutu)",
+    "DNS:" : "DNS:",
+    "24 hours:" : "24 hores:",
+    "1 hour:" : "1 hora"
 },
 "nplurals=2; plural=(n != 1);");

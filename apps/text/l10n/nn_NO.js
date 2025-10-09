@@ -14,7 +14,9 @@ OC.L10N.register(
     "Select language" : "Vel språk",
     "to" : "til",
     "Replace" : "Erstatt",
+    "Upload" : "Last opp",
     "Edit" : "Endra",
+    "Details" : "Detaljar",
     "Info" : "Info",
     "Warning" : "Åtvaring"
 },

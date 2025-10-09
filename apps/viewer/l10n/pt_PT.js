@@ -19,16 +19,21 @@ OC.L10N.register(
     "Loading …" : "A carregar...",
     "Reset" : "Reiniciar",
     "Cancel" : "Cancelar",
-    "Continue" : "Continuar",
+    "Apply" : "Aplicar",
+    "Warning" : "Aviso",
+    "Confirm" : "Confirmar",
     "Undo" : "Desfazer",
     "Redo" : "Repetir",
     "Original" : "Original",
     "Custom" : "Personalizado",
     "Value" : "Valor",
     "Image" : "Imagem",
+    "Line" : "Linha",
     "Text" : "Texto",
     "Size" : "Altura",
     "Name is required." : "Nome é obrigatório.",
-    "Quality" : "Qualidade"
+    "Quality" : "Qualidade",
+    "Menu" : "Menu",
+    "Height" : "Altura"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

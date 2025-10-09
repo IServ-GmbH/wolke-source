@@ -9,7 +9,9 @@ OC.L10N.register(
     "Link" : "ລິງ",
     "Cancel" : "ຍົກເລີກ",
     "Replace" : "ປ່ຽນແທນ",
+    "Upload" : "ອັບໂຫຼດ",
     "Edit" : "ແກ້ໄຂ",
+    "Details" : "ລາຍລະອຽດ",
     "Info" : "ຂໍ້ມຸນ",
     "Success" : "ຄວາມສໍາເລັດ",
     "Warning" : "ແຈ້ງເຕືອນ"

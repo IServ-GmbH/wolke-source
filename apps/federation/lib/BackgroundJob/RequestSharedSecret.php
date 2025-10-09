@@ -34,6 +34,7 @@ namespace OCA\Federation\BackgroundJob;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
+use OCA\Federation\DbHandler;
 use OCA\Federation\TrustedServers;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -70,6 +71,7 @@ class RequestSharedSecret extends Job {
 		private IDiscoveryService $ocsDiscoveryService,
 		private LoggerInterface $logger,
 		ITimeFactory $timeFactory,
+		private DbHandler $dbHandler,
 	) {
 		parent::__construct($timeFactory);
 		$this->httpClient = $httpClientService->newClient();
@@ -116,6 +118,7 @@ class RequestSharedSecret extends Job {
 		// kill job after 30 days of trying
 		$deadline = $currentTime - $this->maxLifespan;
 		if ($created < $deadline) {
+			$this->logger->warning("The job to request the shared secret job is too old and gets stopped now without retention. Setting server status of '{$target}' to failure.");
 			$this->retainJob = false;
 			$this->trustedServers->setServerStatus($target, TrustedServers::STATUS_FAILURE);
 			return;
@@ -175,15 +178,18 @@ class RequestSharedSecret extends Job {
 		$token = $argument['token'];
 		$attempt = $this->getAttempt($argument) + 1;
 
-		$this->jobList->add(
-			RequestSharedSecret::class,
-			[
-				'url' => $url,
-				'token' => $token,
-				'created' => $created,
-				'attempt' => $attempt
-			]
-		);
+		$dbToken =$this->dbHandler->getToken($url);
+		if (hash_equals($dbToken, $token)) {
+			$this->jobList->add(
+				RequestSharedSecret::class,
+				[
+					'url' => $url,
+					'token' => $token,
+					'created' => $created,
+					'attempt' => $attempt
+				]
+			);
+		}
 	}
 
 	protected function getAttempt(array $argument): int {

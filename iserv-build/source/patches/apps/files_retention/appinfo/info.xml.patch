@@ -1,9 +1,9 @@
 diff --git apps/files_retention/appinfo/info.xml apps/files_retention/appinfo/info.xml
-index ec9fcd3..7c4b3f1 100644
+index c63837c..f6361db 100644
 --- apps/files_retention/appinfo/info.xml
 +++ apps/files_retention/appinfo/info.xml
 @@ -27,6 +27,11 @@ Optionally the users can be informed the day before.</description>
- 		<nextcloud min-version="28" max-version="28" />
+ 		<nextcloud min-version="29" max-version="29" />
  	</dependencies>
  
 +	<commands>

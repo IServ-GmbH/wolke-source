@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 namespace OCA\Circles\FederatedItems;
 
-use OCA\Circles\Tools\Traits\TDeserialize;
 use OCA\Circles\Db\CircleRequest;
 use OCA\Circles\Db\MemberRequest;
 use OCA\Circles\Exceptions\CircleNameTooShortException;
@@ -41,6 +40,7 @@ use OCA\Circles\Model\Federated\FederatedEvent;
 use OCA\Circles\Model\Helpers\MemberHelper;
 use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\EventService;
+use OCA\Circles\Tools\Traits\TDeserialize;
 
 /**
  * Class CircleEdit
@@ -108,6 +108,11 @@ class CircleEdit implements IFederatedItem {
 			$event->getData()->s('name', $new->getName());
 		}
 
+		if ($data->hasKey('displayName')) {
+			$new->setDisplayName($data->g('displayName'));
+			$event->getData()->s('displayName', $new->getDisplayName());
+		}
+
 		if ($data->hasKey('description')) {
 			$new->setDescription($data->g('description'));
 			$event->getData()->s('description', $new->getDescription());
@@ -132,6 +137,10 @@ class CircleEdit implements IFederatedItem {
 		// use it as a thrustable base
 		if ($data->hasKey('name')) {
 			$circle->setName($data->g('name'));
+		}
+
+		if ($data->hasKey('displayName')) {
+			$circle->setDisplayName($data->g('displayName'));
 		}
 
 		$this->circleService->confirmName($circle);

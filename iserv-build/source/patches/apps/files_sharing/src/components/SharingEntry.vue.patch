@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/components/SharingEntry.vue apps/files_sharing/src/components/SharingEntry.vue
-index 6417ef0..ec59111 100644
+index 7bd8a13..3bc7f74 100644
 --- apps/files_sharing/src/components/SharingEntry.vue
 +++ apps/files_sharing/src/components/SharingEntry.vue
 @@ -41,9 +41,6 @@
@@ -10,5 +10,5 @@ index 6417ef0..ec59111 100644
 -				:file-info="fileInfo"
 -				@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  		</div>
- 		<NcButton class="sharing-entry__action"
- 			data-cy-files-sharing-share-actions
+ 		<NcButton v-if="share.canEdit"
+ 			class="sharing-entry__action"

@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/src/components/SharingEntryLink.vue apps/files_sharing/src/components/SharingEntryLink.vue
-index 8c6235a..2735761 100644
+index ab15142..2f70413 100644
 --- apps/files_sharing/src/components/SharingEntryLink.vue
 +++ apps/files_sharing/src/components/SharingEntryLink.vue
-@@ -27,17 +27,13 @@
+@@ -28,17 +28,13 @@
  			class="sharing-entry__avatar" />
  
  		<div class="sharing-entry__summary">

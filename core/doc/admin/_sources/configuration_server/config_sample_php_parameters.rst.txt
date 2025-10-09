@@ -117,10 +117,6 @@ you use SQLite.
 
 Default to ``data/`` in the Nextcloud directory.
 
-.. warning:: This parameter should not be changed after finishing the initial
-	installation of Nextcloud. Doing so might lead to side effects and affect 
-	several features.
-
 version
 ^^^^^^^
 
@@ -159,9 +155,10 @@ dbhost
 	'dbhost' => '',
 
 Your host server name, for example ``localhost``, ``hostname``,
-``hostname.example.com``, or the IP address. To specify a port use
-``hostname:####``; to specify a Unix socket use
-``/path/to/directory/containing/socket`` e.g. ``/run/postgresql/``.
+``hostname.example.com``, or the IP address.
+
+To specify a port use ``hostname:####``, for IPv6 addresses use the URI notation ``[ip]:port``.
+To specify a Unix socket use ``/path/to/directory/containing/socket``, e.g. ``/run/postgresql/``.
 
 dbname
 ^^^^^^
@@ -221,6 +218,19 @@ Enable persistent connexions to the database.
 
 This setting uses the "persistent" option from doctrine dbal, which in turn
 uses the PDO::ATTR_PERSISTENT option from the pdo driver.
+
+dbreplica
+^^^^^^^^^
+
+
+::
+
+	'dbreplica' => [
+		['user' => 'nextcloud', 'password' => 'password1', 'host' => 'replica1', 'dbname' => ''],
+		['user' => 'nextcloud', 'password' => 'password2', 'host' => 'replica2', 'dbname' => ''],
+	],
+
+Specify read only replicas to be used by Nextcloud when querying the database
 
 installed
 ^^^^^^^^^
@@ -383,6 +393,21 @@ different languages, this value can be set to ``true`` instead of a locale
 code.
 
 Defaults to ``false``
+
+default_timezone
+^^^^^^^^^^^^^^^^
+
+
+::
+
+	'default_timezone' => 'Europe/Berlin',
+
+This sets the default timezone on your Nextcloud server, using IANA
+identifiers like ``Europe/Berlin`` or ``Pacific/Auckland``. The default
+timezone parameter is only used when the timezone of the user can't be
+determined.
+
+Defaults to ``UTC``
 
 knowledgebaseenabled
 ^^^^^^^^^^^^^^^^^^^^
@@ -582,7 +607,7 @@ auth.bruteforce.protection.enabled
 
 	'auth.bruteforce.protection.enabled' => true,
 
-Whether the bruteforce protection shipped with Nextcloud should be enabled or not.
+Whether the brute force protection shipped with Nextcloud should be enabled or not.
 
 Disabling this is discouraged for security reasons.
 
@@ -596,9 +621,9 @@ auth.bruteforce.protection.testing
 
 	'auth.bruteforce.protection.testing' => false,
 
-Whether the bruteforce protection shipped with Nextcloud should be set to testing mode.
+Whether the brute force protection shipped with Nextcloud should be set to testing mode.
 
-In testing mode bruteforce attempts are still recorded, but the requests do
+In testing mode brute force attempts are still recorded, but the requests do
 not sleep/wait for the specified time. They will still abort with
 "429 Too Many Requests" when the maximum delay is reached.
 Enabling this is discouraged for security reasons
@@ -1476,6 +1501,20 @@ for ``loglevel`` can be used. If not set it defaults to the value
 configured for ``loglevel`` or Warning if that is not set either.
 
 Defaults to ``2``
+
+loglevel_dirty_database_queries
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+::
+
+	'loglevel_dirty_database_queries' => 0,
+
+Loglevel used by the dirty database query detection. Useful to identify
+potential database bugs in production. Set this to loglevel or higher to
+see dirty queries in the logs.
+
+Defaults to ``0`` (debug)
 
 syslog_tag
 ^^^^^^^^^^
@@ -2783,7 +2822,8 @@ Override where Nextcloud stores update files while updating. Useful in situation
 where the default `datadirectory` is on network disk like NFS, or is otherwise
 restricted. Defaults to the value of `datadirectory` if unset.
 
-The Web server user must have write access to this directory.
+If set, the value MUST be located _outside_ of the installation directory of Nextcloud and
+writable by the Web server user.
 
 blacklisted_files
 ^^^^^^^^^^^^^^^^^
@@ -2810,6 +2850,8 @@ forbidden_chars
 
 Blacklist characters from being used in filenames. This is useful if you
 have a filesystem or OS which does not support certain characters like windows.
+
+The '/' and '\' characters are always forbidden.
 
 Example for windows systems: ``array('?', '<', '>', ':', '*', '|', '"', chr(0), "\n", "\r")``
 see https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
@@ -3319,6 +3361,20 @@ Some companies require it to be disabled to comply with their security policy.
 
 Simply set this property to "false", if you want to turn this feature off.
 
+login_form_timeout
+^^^^^^^^^^^^^^^^^^
+
+
+::
+
+	'login_form_timeout' => 300,
+
+Timeout for the login form, after this time the login form is reset.
+
+This prevents password leaks on public devices if the user forgots to clear the form.
+
+Default is 5 minutes (300 seconds), a value of 0 means no timeout.
+
 no_unsupported_browser_warning
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3416,22 +3472,6 @@ Enable profile globally
 
 Defaults to ``true``
 
-enable_file_metadata
-^^^^^^^^^^^^^^^^^^^^
-
-
-::
-
-	'enable_file_metadata' => true,
-
-Enable file metadata collection
-
-This is helpful for the mobile clients and will enable few optimizations in
-the future for the preview generation.
-
-Note that when enabled, this data will be stored in the database and might increase
-the database storage.
-
 account_manager.default_property_scope
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3503,6 +3543,18 @@ unified_search.enabled
 Enable use of old unified search
 
 Defaults to ``false``
+
+enable_non-accessible_features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+::
+
+	'enable_non-accessible_features' => true,
+
+Enable features that are do respect accessibility standards yet.
+
+Defaults to ``true``
 
 .. ALL_OTHER_SECTIONS_END
 .. Generated content above. Don't change this.

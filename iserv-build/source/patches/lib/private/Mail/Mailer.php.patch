@@ -1,8 +1,8 @@
 diff --git lib/private/Mail/Mailer.php lib/private/Mail/Mailer.php
-index 77ba12c..79eeed3 100644
+index 4cd523b..728d138 100644
 --- lib/private/Mail/Mailer.php
 +++ lib/private/Mail/Mailer.php
-@@ -189,6 +189,7 @@ class Mailer implements IMailer {
+@@ -191,6 +191,7 @@ class Mailer implements IMailer {
  	 * @return string[] $failedRecipients
  	 */
  	public function send(IMessage $message): array {

@@ -34,11 +34,11 @@ declare(strict_types=1);
 
 namespace OCA\Circles\Service;
 
-use OCA\Circles\Tools\Traits\TNCLogger;
 use OCA\Circles\AppInfo\Application;
 use OCA\Circles\Db\MemberRequest;
 use OCA\Circles\Exceptions\RequestBuilderException;
 use OCA\Circles\Model\Member;
+use OCA\Circles\Tools\Traits\TNCLogger;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -104,13 +104,13 @@ class NotificationService {
 		);
 
 		$declineAction = $notification->createAction();
-		$declineUrl = $this->linkToOCS('circles.Local.circleLeave', ['circleId' => $member->getCircleId()]);
+		$declineUrl = $this->urlGenerator->linkToOCSRouteAbsolute('circles.Local.circleLeave', ['circleId' => $member->getCircleId()]);
 		$declineAction->setLabel('refuse')
 					  ->setLink($declineUrl, 'PUT');
 		$notification->addAction($declineAction);
 
 		$acceptAction = $notification->createAction();
-		$acceptUrl = $this->linkToOCS('circles.Local.circleJoin', ['circleId' => $member->getCircleId()]);
+		$acceptUrl = $this->urlGenerator->linkToOCSRouteAbsolute('circles.Local.circleJoin', ['circleId' => $member->getCircleId()]);
 		$acceptAction->setLabel('accept')
 					 ->setLink($acceptUrl, 'PUT');
 		$notification->addAction($acceptAction);
@@ -125,9 +125,9 @@ class NotificationService {
 	 * @throws RequestBuilderException
 	 */
 	public function notificationRequested(Member $member): void {
-//		if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal()) {
-//			return;
-//		}
+		//		if ($member->getUserType() !== Member::TYPE_USER || !$member->isLocal()) {
+		//			return;
+		//		}
 
 		$this->deleteNotification('member', $member->getId());
 
@@ -149,7 +149,7 @@ class NotificationService {
 			);
 
 			$declineAction = $notification->createAction();
-			$declineUrl = $this->linkToOCS(
+			$declineUrl = $this->urlGenerator->linkToOCSRouteAbsolute(
 				'circles.Local.memberRemove',
 				[
 					'circleId' => $member->getCircleId(),
@@ -161,7 +161,7 @@ class NotificationService {
 			$notification->addAction($declineAction);
 
 			$acceptAction = $notification->createAction();
-			$acceptUrl = $this->linkToOCS(
+			$acceptUrl = $this->urlGenerator->linkToOCSRouteAbsolute(
 				'circles.Local.memberConfirm',
 				[
 					'circleId' => $member->getCircleId(),
@@ -182,15 +182,15 @@ class NotificationService {
 	 * @param string $objectId
 	 */
 	public function deleteNotification(string $object, string $objectId) {
-//		if ($objectId === '') {
-//			return;
-//		}
-//
-//		$notification = $this->notificationManager->createNotification();
-//		$notification->setApp('circles')
-//					 ->setObject($object, $objectId);
-//
-//		$this->notificationManager->markProcessed($notification);
+		//		if ($objectId === '') {
+		//			return;
+		//		}
+		//
+		//		$notification = $this->notificationManager->createNotification();
+		//		$notification->setApp('circles')
+		//					 ->setObject($object, $objectId);
+		//
+		//		$this->notificationManager->markProcessed($notification);
 	}
 
 
@@ -214,19 +214,6 @@ class NotificationService {
 					 ->setSubject($subject);
 
 		return $notification;
-	}
-
-
-	/**
-	 * @param string $route
-	 * @param array $params
-	 *
-	 * @return string
-	 */
-	private function linkToOCS(string $route, array $params = []): string {
-		$absolute = $this->urlGenerator->linkToOCSRouteAbsolute($route, $params);
-
-		return parse_url($absolute, PHP_URL_PATH);
 	}
 
 	public function markInvitationAsProcessed(Member $member): void {

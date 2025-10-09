@@ -29,18 +29,14 @@ namespace OC\Session;
 
 use OCP\ISession;
 
+/**
+ * @template-implements \ArrayAccess<string,mixed>
+ */
 abstract class Session implements \ArrayAccess, ISession {
 	/**
 	 * @var bool
 	 */
 	protected $sessionClosed = false;
-
-	/**
-	 * $name serves as a namespace for the session keys
-	 *
-	 * @param string $name
-	 */
-	abstract public function __construct(string $name);
 
 	/**
 	 * @param mixed $offset

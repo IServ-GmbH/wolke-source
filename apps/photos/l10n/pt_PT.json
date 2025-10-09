@@ -1,14 +1,20 @@
 { "translations": {
     "Public link" : "Hiperligação Pública",
     "Photos" : "Fotos",
+    "On This Day" : "Neste dia",
     "Your memories under your control" : "As suas memórias estão sob o seu controlo",
     "Videos" : "Vídeos",
     "Albums" : "Álbuns",
     "Collaborative albums" : "Álbuns colaborativos",
+    "People" : "Pessoas",
     "Folders" : "Pastas",
     "Favorites" : "Favoritos",
+    "On this day" : "Neste dia",
     "Shared with you" : "Partilhado consigo",
     "Tags" : "Etiquetas",
+    "Places" : "Locais",
+    "Map" : "Mapa",
+    "Photos settings" : "Definições do Fotos",
     "Back" : "Anterior",
     "Save" : "Guardar",
     "Shared by" : "Partilhado por",
@@ -18,8 +24,8 @@
     "An error occurred" : "Ocorreu um erro",
     "Favorite" : "Favorito",
     "Open the full size \"{name}\" image" : "Abrir a foto \"{name}\" no tamanho original",
-    "Go back" : "Voltar",
     "Back to {folder}" : "Ir para {folder}",
+    "Go back" : "Voltar",
     "Share this folder" : "Partilhar esta pasta",
     "Enable squared photos view" : "Ativar vista de fotos quadradas",
     "Home" : "Início",
@@ -28,9 +34,10 @@
     "No photos in here" : "Aqui não existem fotos ",
     "No tags yet" : "Ainda sem marcações",
     "Photos with tags will show up here" : "Fotos com marcações serão mostradas aqui",
-    "Add" : "Adicionar",
+    "Add to album" : "Adicionar a álbum",
+    "All your media" : "Toda a sua média",
     "Tagged photos" : "Fotos marcadas",
     "Details" : "Detalhes",
-    "Failed to delete {fileName}." : "Falha ao remover {fileName}."
+    "Add" : "Adicionar"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

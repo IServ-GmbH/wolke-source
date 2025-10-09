@@ -31,12 +31,12 @@ declare(strict_types=1);
 
 namespace OCA\Circles\Model\Federated;
 
-use OCA\Circles\Tools\Exceptions\InvalidItemException;
-use OCA\Circles\Tools\Model\SimpleDataStore;
-use OCA\Circles\Tools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
+use OCA\Circles\Tools\Exceptions\InvalidItemException;
+use OCA\Circles\Tools\Model\SimpleDataStore;
+use OCA\Circles\Tools\Traits\TArrayTools;
 
 /**
  * Class FederatedEvent
@@ -113,6 +113,8 @@ class FederatedEvent implements JsonSerializable {
 
 	/** @var int */
 	private $bypass = 0;
+
+	private bool $forceSync = false;
 
 
 	/**
@@ -570,6 +572,15 @@ class FederatedEvent implements JsonSerializable {
 	 */
 	public function canBypass(int $flag): bool {
 		return (($this->bypass & $flag) !== 0);
+	}
+
+	public function forceSync(bool $forceSync): self {
+		$this->forceSync = $forceSync;
+		return $this;
+	}
+
+	public function isForceSync(): bool {
+		return $this->forceSync;
 	}
 
 

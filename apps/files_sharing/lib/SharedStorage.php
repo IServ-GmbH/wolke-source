@@ -32,6 +32,8 @@
  */
 namespace OCA\Files_Sharing;
 
+use OC\Files\Cache\CacheDependencies;
+use OC\Files\Cache\CacheEntry;
 use OC\Files\Cache\FailedCache;
 use OC\Files\Cache\NullWatcher;
 use OC\Files\Cache\Watcher;
@@ -41,19 +43,17 @@ use OC\Files\Storage\FailedStorage;
 use OC\Files\Storage\Home;
 use OC\Files\Storage\Wrapper\PermissionsMask;
 use OC\Files\Storage\Wrapper\Wrapper;
-use OC\User\DisplayNameCache;
 use OC\User\NoUserException;
-use OCA\Files_External\Config\ExternalMountPoint;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Folder;
 use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
-use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IDisableEncryptionStorage;
 use OCP\Files\Storage\IStorage;
 use OCP\Lock\ILockingProvider;
+use OCP\Server;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
@@ -97,17 +97,17 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 	private string $sourcePath = '';
 
+	private static int $initDepth = 0;
+
 	/**
 	 * @psalm-suppress NonInvariantDocblockPropertyType
 	 * @var ?\OC\Files\Storage\Storage $storage
 	 */
 	protected $storage;
 
-	private static int $initDepth = 0;
-
 	public function __construct($arguments) {
 		$this->ownerView = $arguments['ownerView'];
-		$this->logger = \OC::$server->get(LoggerInterface::class);
+		$this->logger = Server::get(LoggerInterface::class);
 
 		$this->superShare = $arguments['superShare'];
 		$this->groupedShares = $arguments['groupedShares'];
@@ -167,7 +167,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 			}
 
 			/** @var IRootFolder $rootFolder */
-			$rootFolder = \OC::$server->get(IRootFolder::class);
+			$rootFolder = Server::get(IRootFolder::class);
 			$this->ownerUserFolder = $rootFolder->getUserFolder($this->superShare->getShareOwner());
 			$sourceId = $this->superShare->getNodeId();
 			$ownerNodes = $this->ownerUserFolder->getById($sourceId);
@@ -456,7 +456,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 		$this->cache = new \OCA\Files_Sharing\Cache(
 			$storage,
 			$sourceRoot,
-			\OC::$server->get(DisplayNameCache::class),
+			Server::get(CacheDependencies::class),
 			$this->getShare()
 		);
 		return $this->cache;
@@ -474,21 +474,25 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	}
 
 	public function getWatcher($path = '', $storage = null): Watcher {
-		$mountManager = \OC::$server->getMountManager();
+		if ($this->watcher) {
+			return $this->watcher;
+		}
 
 		// Get node information
 		$node = $this->getShare()->getNodeCacheEntry();
-		if ($node) {
-			$mount = $mountManager->findByNumericId($node->getStorageId());
-			// If the share is originating from an external storage
-			if (count($mount) > 0 && $mount[0] instanceof ExternalMountPoint) {
-				// Propagate original storage scan
-				return parent::getWatcher($path, $storage);
+		if ($node instanceof CacheEntry) {
+			$storageId = $node->getData()['storage_string_id'] ?? null;
+			// for shares from the home storage we can rely on the home storage to keep itself up to date
+			// for other storages we need use the proper watcher
+			if ($storageId !== null && !(str_starts_with($storageId, 'home::') || str_starts_with($storageId, 'object::user'))) {
+				$this->watcher = parent::getWatcher($path, $storage);
+				return $this->watcher;
 			}
 		}
 
 		// cache updating is handled by the share source
-		return new NullWatcher();
+		$this->watcher = new NullWatcher();
+		return $this->watcher;
 	}
 
 	/**

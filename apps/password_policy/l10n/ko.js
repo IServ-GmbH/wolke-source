@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "암호 정책",
     "Allows admins to configure a password policy" : "관리자가 암호 정책을 변경할 수 있도록 허용",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "관리자가 최소 암호 길이 등 암호 정책을 설정할 수 있도록 허용",
-    "Minimum password length" : "최소 암호 길이",
-    "User password history" : "사용자 암호 기록",
     "Number of days until user password expires" : "암호 만기일 수",
+    "Minimum password length" : "최소 암호 길이",
     "Forbid common passwords" : "일반적인 암호 금지",
     "Enforce upper and lower case characters" : "대문자와 소문자 사용",
     "Enforce numeric characters" : "숫자 사용",
@@ -26,6 +25,7 @@ OC.L10N.register(
     "Expiration days have to be a non negative number" : "만료일은 음수가 될 수 없습니다",
     "Maximum login attempts have to be a non negative number" : "최대 로그인 시도 수는 음수가 될 수 없습니다",
     "Settings saved" : "설정 저장됨",
-    "Error while saving settings" : "설정 저장 중 오류 발생"
+    "Error while saving settings" : "설정 저장 중 오류 발생",
+    "User password history" : "사용자 암호 기록"
 },
 "nplurals=1; plural=0;");

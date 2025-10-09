@@ -172,7 +172,7 @@
 
 	/* Right header standard */
 	.header-right {
-		> .header-menu:not(.user-menu) {
+		> .header-menu:not(.user-menu):not(.unified-search-menu) {
 			// For general
 			> .header-menu__trigger {
 				filter: var(--background-image-invert-if-bright);
@@ -181,11 +181,6 @@
 			// For assistant button
 			> .trigger {
 				filter: var(--background-image-invert-if-bright);
-			}
-
-			// For unified search button
-			.unified-search__trigger {
-				filter: var(--background-image-invert-if-bright) !important;
 			}
 		}
 		> div,
@@ -243,6 +238,10 @@
 }
 
 .header-title {
+	// Ensure the header title is always readable
+	color: #ffffff;
+	filter: var(--background-image-invert-if-bright);
+
 	overflow: hidden;
 	text-overflow: ellipsis;
 }

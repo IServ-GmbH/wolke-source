@@ -43,21 +43,12 @@ use Psr\Log\LoggerInterface;
 
 abstract class Fetcher {
 	public const INVALIDATE_AFTER_SECONDS = 3600;
+	public const INVALIDATE_AFTER_SECONDS_UNSTABLE = 900;
 	public const RETRY_AFTER_FAILURE_SECONDS = 300;
 	public const APP_STORE_URL = 'https://apps.nextcloud.com/api/v1';
 
 	/** @var IAppData */
 	protected $appData;
-	/** @var IClientService */
-	protected $clientService;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IConfig */
-	protected $config;
-	/** @var LoggerInterface */
-	protected $logger;
-	/** @var IRegistry */
-	protected $registry;
 
 	/** @var string */
 	protected $fileName;
@@ -68,18 +59,15 @@ abstract class Fetcher {
 	/** @var ?string */
 	protected $channel = null;
 
-	public function __construct(Factory $appDataFactory,
-		IClientService $clientService,
-		ITimeFactory $timeFactory,
-		IConfig $config,
-		LoggerInterface $logger,
-		IRegistry $registry) {
+	public function __construct(
+		Factory $appDataFactory,
+		protected IClientService $clientService,
+		protected ITimeFactory $timeFactory,
+		protected IConfig $config,
+		protected LoggerInterface $logger,
+		protected IRegistry $registry,
+	) {
 		$this->appData = $appDataFactory->get('appstore');
-		$this->clientService = $clientService;
-		$this->timeFactory = $timeFactory;
-		$this->config = $config;
-		$this->logger = $logger;
-		$this->registry = $registry;
 	}
 
 	/**
@@ -146,7 +134,7 @@ abstract class Fetcher {
 	}
 
 	/**
-	 * Returns the array with the categories on the appstore server
+	 * Returns the array with the entries on the appstore server
 	 *
 	 * @param bool [$allowUnstable] Allow unstable releases
 	 * @return array
@@ -157,6 +145,7 @@ abstract class Fetcher {
 		$isDefaultAppStore = $this->config->getSystemValueString('appstoreurl', self::APP_STORE_URL) === self::APP_STORE_URL;
 
 		if (!$appstoreenabled || (!$internetavailable && $isDefaultAppStore)) {
+			$this->logger->info('AppStore is disabled or this instance has no Internet connection to access the default app store', ['app' => 'appstoreFetcher']);
 			return [];
 		}
 
@@ -170,12 +159,17 @@ abstract class Fetcher {
 			$file = $rootFolder->getFile($this->fileName);
 			$jsonBlob = json_decode($file->getContent(), true);
 
-			// Always get latests apps info if $allowUnstable
-			if (!$allowUnstable && is_array($jsonBlob)) {
+			if (is_array($jsonBlob)) {
 				// No caching when the version has been updated
 				if (isset($jsonBlob['ncversion']) && $jsonBlob['ncversion'] === $this->getVersion()) {
 					// If the timestamp is older than 3600 seconds request the files new
-					if ((int)$jsonBlob['timestamp'] > ($this->timeFactory->getTime() - self::INVALIDATE_AFTER_SECONDS)) {
+					$invalidateAfterSeconds = self::INVALIDATE_AFTER_SECONDS;
+
+					if ($allowUnstable) {
+						$invalidateAfterSeconds = self::INVALIDATE_AFTER_SECONDS_UNSTABLE;
+					}
+
+					if ((int)$jsonBlob['timestamp'] > ($this->timeFactory->getTime() - $invalidateAfterSeconds)) {
 						return $jsonBlob['data'];
 					}
 
@@ -194,13 +188,8 @@ abstract class Fetcher {
 		try {
 			$responseJson = $this->fetch($ETag, $content, $allowUnstable);
 
-			if (empty($responseJson)) {
+			if (empty($responseJson) || empty($responseJson['data'])) {
 				return [];
-			}
-
-			// Don't store the apps request file
-			if ($allowUnstable) {
-				return $responseJson['data'];
 			}
 
 			$file->putContent(json_encode($responseJson));

@@ -19,9 +19,11 @@ return array(
     'OCA\\FilesReminders\\Exception\\UserNotFoundException' => $baseDir . '/../lib/Exception/UserNotFoundException.php',
     'OCA\\FilesReminders\\Listener\\LoadAdditionalScriptsListener' => $baseDir . '/../lib/Listener/LoadAdditionalScriptsListener.php',
     'OCA\\FilesReminders\\Listener\\NodeDeletedListener' => $baseDir . '/../lib/Listener/NodeDeletedListener.php',
+    'OCA\\FilesReminders\\Listener\\SabrePluginAddListener' => $baseDir . '/../lib/Listener/SabrePluginAddListener.php',
     'OCA\\FilesReminders\\Listener\\UserDeletedListener' => $baseDir . '/../lib/Listener/UserDeletedListener.php',
     'OCA\\FilesReminders\\Migration\\Version10000Date20230725162149' => $baseDir . '/../lib/Migration/Version10000Date20230725162149.php',
     'OCA\\FilesReminders\\Model\\RichReminder' => $baseDir . '/../lib/Model/RichReminder.php',
     'OCA\\FilesReminders\\Notification\\Notifier' => $baseDir . '/../lib/Notification/Notifier.php',
     'OCA\\FilesReminders\\Service\\ReminderService' => $baseDir . '/../lib/Service/ReminderService.php',
+    'OCA\\FilesReminders\\SetupChecks\\NeedNotificationsApp' => $baseDir . '/../lib/SetupChecks/NeedNotificationsApp.php',
 );

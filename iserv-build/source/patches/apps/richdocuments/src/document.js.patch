@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/src/document.js apps/richdocuments/src/document.js
-index dbd1456c5..529ed944a 100644
+index 6aa7682bb..9387cf6e6 100644
 --- apps/richdocuments/src/document.js
 +++ apps/richdocuments/src/document.js
-@@ -165,7 +165,7 @@ const documentsMain = {
+@@ -167,7 +167,7 @@ const documentsMain = {
  				+ '</form>'
  
  			// iframe that contains the Collabora Online Viewer
@@ -11,7 +11,7 @@ index dbd1456c5..529ed944a 100644
  
  			$('#revViewer').append(form)
  			$('#revViewer').append(frame)
-@@ -225,7 +225,7 @@ const documentsMain = {
+@@ -227,7 +227,7 @@ const documentsMain = {
  				+ '</form>'
  
  			// iframe that contains the Collabora Online

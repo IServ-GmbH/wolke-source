@@ -35,6 +35,7 @@ declare(strict_types=1);
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author MartB <mart.b@outlook.de>
  * @author Michael Gapczynski <GapczynskiM@gmail.com>
+ * @author MichaIng <micha@dietpi.com>
  * @author Morris Jobke <hey@morrisjobke.de>
  * @author Owen Winkler <a_github@midnightcircus.com>
  * @author Phil Davis <phil.davis@inf.org>
@@ -67,8 +68,12 @@ declare(strict_types=1);
  */
 
 use OC\Encryption\HookManager;
+use OC\Share20\GroupDeletedListener;
 use OC\Share20\Hooks;
+use OC\Share20\UserDeletedListener;
+use OC\Share20\UserRemovedListener;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -78,6 +83,7 @@ use OCP\Security\Bruteforce\IThrottler;
 use OCP\Server;
 use OCP\Share;
 use OCP\User\Events\UserChangedEvent;
+use OCP\User\Events\UserDeletedEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use function OCP\Log\logger;
@@ -103,7 +109,7 @@ class OC {
 	 */
 	private static string $SUBURI = '';
 	/**
-	 * the Nextcloud root path for http requests (e.g. nextcloud/)
+	 * the Nextcloud root path for http requests (e.g. /nextcloud)
 	 */
 	public static string $WEBROOT = '';
 	/**
@@ -388,10 +394,15 @@ class OC {
 		$ocVersion = \OCP\Util::getVersion();
 		$ocVersion = implode('.', $ocVersion);
 		$incompatibleApps = $appManager->getIncompatibleApps($ocVersion);
+		$incompatibleOverwrites = $systemConfig->getValue('app_install_overwrite', []);
 		$incompatibleShippedApps = [];
+		$incompatibleDisabledApps = [];
 		foreach ($incompatibleApps as $appInfo) {
 			if ($appManager->isShipped($appInfo['id'])) {
 				$incompatibleShippedApps[] = $appInfo['name'] . ' (' . $appInfo['id'] . ')';
+			}
+			if (!in_array($appInfo['id'], $incompatibleOverwrites)) {
+				$incompatibleDisabledApps[] = $appInfo;
 			}
 		}
 
@@ -402,7 +413,7 @@ class OC {
 		}
 
 		$tmpl->assign('appsToUpgrade', $appManager->getAppsNeedingUpgrade($ocVersion));
-		$tmpl->assign('incompatibleAppsList', $incompatibleApps);
+		$tmpl->assign('incompatibleAppsList', $incompatibleDisabledApps);
 		try {
 			$defaults = new \OC_Defaults();
 			$tmpl->assign('productName', $defaults->getName());
@@ -442,8 +453,16 @@ class OC {
 		$sessionName = OC_Util::getInstanceId();
 
 		try {
+			$logger = null;
+			if (Server::get(\OC\SystemConfig::class)->getValue('installed', false)) {
+				$logger = logger('core');
+			}
+
 			// set the session name to the instance id - which is unique
-			$session = new \OC\Session\Internal($sessionName);
+			$session = new \OC\Session\Internal(
+				$sessionName,
+				$logger,
+			);
 
 			$cryptoWrapper = Server::get(\OC\Session\CryptoWrapper::class);
 			$session = $cryptoWrapper->wrapSession($session);
@@ -490,6 +509,27 @@ class OC {
 	 * Try to set some values to the required Nextcloud default
 	 */
 	public static function setRequiredIniValues(): void {
+		// Don't display errors and log them
+		@ini_set('display_errors', '0');
+		@ini_set('log_errors', '1');
+
+		// Try to configure php to enable big file uploads.
+		// This doesn't work always depending on the webserver and php configuration.
+		// Let's try to overwrite some defaults if they are smaller than 1 hour
+
+		if (intval(@ini_get('max_execution_time') ?: 0) < 3600) {
+			@ini_set('max_execution_time', strval(3600));
+		}
+
+		if (intval(@ini_get('max_input_time') ?: 0) < 3600) {
+			@ini_set('max_input_time', strval(3600));
+		}
+
+		// Try to set the maximum execution time to the largest time limit we have
+		if (strpos(@ini_get('disable_functions'), 'set_time_limit') === false) {
+			@set_time_limit(max(intval(@ini_get('max_execution_time')), intval(@ini_get('max_input_time'))));
+		}
+
 		@ini_set('default_charset', 'UTF-8');
 		@ini_set('gd.jpeg_ignore_warning', '1');
 	}
@@ -563,7 +603,9 @@ class OC {
 			$processingScript = $processingScript[count($processingScript) - 1];
 
 			// index.php routes are handled in the middleware
-			if ($processingScript === 'index.php') {
+			// and cron.php does not need any authentication at all
+			if ($processingScript === 'index.php'
+				|| $processingScript === 'cron.php') {
 				return;
 			}
 
@@ -586,10 +628,20 @@ class OC {
 	}
 
 	public static function init(): void {
+		// First handle PHP configuration and copy auth headers to the expected
+		// $_SERVER variable before doing anything Server object related
+		self::setRequiredIniValues();
+		self::handleAuthHeaders();
+
 		// prevent any XML processing from loading external entities
 		libxml_set_external_entity_loader(static function () {
 			return null;
 		});
+
+		// Set default timezone before the Server object is booted
+		if (!date_default_timezone_set('UTC')) {
+			throw new \RuntimeException('Could not set timezone to UTC');
+		}
 
 		// calculate the root directories
 		OC::$SERVERROOT = str_replace("\\", '/', substr(__DIR__, 0, -4));
@@ -643,34 +695,6 @@ class OC {
 			error_reporting(E_ALL);
 		}
 
-		// Don't display errors and log them
-		@ini_set('display_errors', '0');
-		@ini_set('log_errors', '1');
-
-		if (!date_default_timezone_set('UTC')) {
-			throw new \RuntimeException('Could not set timezone to UTC');
-		}
-
-
-		//try to configure php to enable big file uploads.
-		//this doesn´t work always depending on the webserver and php configuration.
-		//Let´s try to overwrite some defaults if they are smaller than 1 hour
-
-		if (intval(@ini_get('max_execution_time') ?: 0) < 3600) {
-			@ini_set('max_execution_time', strval(3600));
-		}
-
-		if (intval(@ini_get('max_input_time') ?: 0) < 3600) {
-			@ini_set('max_input_time', strval(3600));
-		}
-
-		//try to set the maximum execution time to the largest time limit we have
-		if (strpos(@ini_get('disable_functions'), 'set_time_limit') === false) {
-			@set_time_limit(max(intval(@ini_get('max_execution_time')), intval(@ini_get('max_input_time'))));
-		}
-
-		self::setRequiredIniValues();
-		self::handleAuthHeaders();
 		$systemConfig = Server::get(\OC\SystemConfig::class);
 		self::registerAutoloaderCache($systemConfig);
 
@@ -952,12 +976,11 @@ class OC {
 	 */
 	public static function registerShareHooks(\OC\SystemConfig $systemConfig): void {
 		if ($systemConfig->getValue('installed')) {
-			OC_Hook::connect('OC_User', 'post_deleteUser', Hooks::class, 'post_deleteUser');
-			OC_Hook::connect('OC_User', 'post_deleteGroup', Hooks::class, 'post_deleteGroup');
 
-			/** @var IEventDispatcher $dispatcher */
 			$dispatcher = Server::get(IEventDispatcher::class);
-			$dispatcher->addServiceListener(UserRemovedEvent::class, \OC\Share20\UserRemovedListener::class);
+			$dispatcher->addServiceListener(UserRemovedEvent::class, UserRemovedListener::class);
+			$dispatcher->addServiceListener(GroupDeletedEvent::class, GroupDeletedListener::class);
+			$dispatcher->addServiceListener(UserDeletedEvent::class, UserDeletedListener::class);
 		}
 	}
 
@@ -988,17 +1011,7 @@ class OC {
 		// Check if Nextcloud is installed or in maintenance (update) mode
 		if (!$systemConfig->getValue('installed', false)) {
 			\OC::$server->getSession()->clear();
-			$logger = Server::get(\Psr\Log\LoggerInterface::class);
-			$setupHelper = new OC\Setup(
-				$systemConfig,
-				Server::get(\bantu\IniGetWrapper\IniGetWrapper::class),
-				Server::get(\OCP\L10N\IFactory::class)->get('lib'),
-				Server::get(\OCP\Defaults::class),
-				$logger,
-				Server::get(\OCP\Security\ISecureRandom::class),
-				Server::get(\OC\Installer::class)
-			);
-			$controller = new OC\Core\Controller\SetupController($setupHelper, $logger);
+			$controller = Server::get(\OC\Core\Controller\SetupController::class);
 			$controller->run($_POST);
 			exit();
 		}
@@ -1020,21 +1033,6 @@ class OC {
 					exit();
 				}
 			}
-		}
-
-		// emergency app disabling
-		if ($requestPath === '/disableapp'
-			&& $request->getMethod() === 'POST'
-		) {
-			\OC_JSON::callCheck();
-			\OC_JSON::checkAdminUser();
-			$appIds = (array)$request->getParam('appid');
-			foreach ($appIds as $appId) {
-				$appId = \OC_App::cleanAppId($appId);
-				Server::get(\OCP\App\IAppManager::class)->disableApp($appId);
-			}
-			\OC_JSON::success();
-			exit();
 		}
 
 		// Always load authentication apps

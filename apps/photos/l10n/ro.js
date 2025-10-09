@@ -9,9 +9,11 @@ OC.L10N.register(
     "Favorites" : "Favorite",
     "Shared with you" : "Partajat cu tine",
     "Tags" : "Etichete",
+    "Places" : "Locuri",
     "Back" : "Înapoi",
     "Save" : "Salvează",
     "Shared by" : "Partajat de",
+    "No recommendations. Start typing." : "Nu am găsit recomandări. Începeți să scrieți.",
     "Group" : "Grup",
     "Copy public link" : "Copiză link-ul public",
     "An error occurred" : "A apărut o eraore",
@@ -20,8 +22,7 @@ OC.L10N.register(
     "View" : "Vizualizare",
     "Unselect all" : "Deselectează tot",
     "Remove from favorites" : "Șterge din favorite",
-    "Add" : "Adaugă",
     "Details" : "Detalii",
-    "Invalid location selected" : "Locație invalidă"
+    "Add" : "Adaugă"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

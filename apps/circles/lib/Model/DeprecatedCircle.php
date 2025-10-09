@@ -26,10 +26,10 @@
 
 namespace OCA\Circles\Model;
 
-use OCA\Circles\Tools\Traits\TArrayTools;
 use JsonSerializable;
 use OCA\Circles\Exceptions\CircleTypeNotValidException;
 use OCA\Circles\Exceptions\FederatedCircleNotAllowedException;
+use OCA\Circles\Tools\Traits\TArrayTools;
 
 class DeprecatedCircle extends BaseCircle implements JsonSerializable {
 	use TArrayTools;
@@ -81,7 +81,7 @@ class DeprecatedCircle extends BaseCircle implements JsonSerializable {
 	}
 
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): array {
 		$json = [
 			'id' => $this->getId(),
 			'name' => $this->getName(true),
@@ -252,7 +252,7 @@ class DeprecatedCircle extends BaseCircle implements JsonSerializable {
 	public function hasToBeFederated() {
 		if ($this->getSetting('allow_links') !== 'true') {
 			throw new FederatedCircleNotAllowedException(
-				$this->l10n->t('The circle is not federated')
+				$this->l10n->t('The team is not federated')
 			);
 		}
 	}

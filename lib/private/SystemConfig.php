@@ -91,6 +91,7 @@ class SystemConfig {
 				// S3
 				'key' => true,
 				'secret' => true,
+				'sse_c_key' => true,
 				// Swift v2
 				'username' => true,
 				'password' => true,
@@ -125,13 +126,12 @@ class SystemConfig {
 		'onlyoffice' => [
 			'jwt_secret' => true,
 		],
+		'PASS' => true,
 	];
 
-	/** @var Config */
-	private $config;
-
-	public function __construct(Config $config) {
-		$this->config = $config;
+	public function __construct(
+		private Config $config,
+	) {
 	}
 
 	/**

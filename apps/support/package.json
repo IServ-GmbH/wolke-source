@@ -17,5 +17,6 @@
     "@nextcloud/cypress": "^1.0.0-beta.6",
     "cypress": "^13.4.0",
     "eslint-plugin-cypress": "^2.15.1"
-  }
+  },
+  "version": "1.12.0"
 }

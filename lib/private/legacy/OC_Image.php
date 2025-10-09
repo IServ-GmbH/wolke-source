@@ -85,7 +85,7 @@ class OC_Image implements \OCP\IImage {
 	 * @param \OCP\IConfig $config
 	 * @throws \InvalidArgumentException in case the $imageRef parameter is not null
 	 */
-	public function __construct($imageRef = null, \OCP\ILogger $logger = null, \OCP\IConfig $config = null) {
+	public function __construct($imageRef = null, ?\OCP\ILogger $logger = null, ?\OCP\IConfig $config = null) {
 		$this->logger = $logger;
 		if ($logger === null) {
 			$this->logger = \OC::$server->getLogger();
@@ -211,7 +211,7 @@ class OC_Image implements \OCP\IImage {
 	 * @param string $mimeType
 	 * @return bool
 	 */
-	public function show(string $mimeType = null): bool {
+	public function show(?string $mimeType = null): bool {
 		if ($mimeType === null) {
 			$mimeType = $this->mimeType();
 		}
@@ -447,6 +447,18 @@ class OC_Image implements \OCP\IImage {
 		return min(100, max(10, (int) $quality));
 	}
 
+	private function isValidExifData(array $exif): bool {
+		if (!isset($exif['Orientation'])) {
+			return false;
+		}
+
+		if (!is_numeric($exif['Orientation'])) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * (I'm open for suggestions on better method name ;)
 	 * Get the orientation based on EXIF data.
@@ -475,14 +487,11 @@ class OC_Image implements \OCP\IImage {
 			return -1;
 		}
 		$exif = @exif_read_data($this->filePath, 'IFD0');
-		if (!$exif) {
-			return -1;
-		}
-		if (!isset($exif['Orientation'])) {
+		if (!$exif || !$this->isValidExifData($exif)) {
 			return -1;
 		}
 		$this->exif = $exif;
-		return $exif['Orientation'];
+		return (int)$exif['Orientation'];
 	}
 
 	public function readExif($data): void {
@@ -496,10 +505,7 @@ class OC_Image implements \OCP\IImage {
 		}
 
 		$exif = @exif_read_data('data://image/jpeg;base64,' . base64_encode($data));
-		if (!$exif) {
-			return;
-		}
-		if (!isset($exif['Orientation'])) {
+		if (!$exif || !$this->isValidExifData($exif)) {
 			return;
 		}
 		$this->exif = $exif;
@@ -626,7 +632,7 @@ class OC_Image implements \OCP\IImage {
 	private function checkImageSize($path) {
 		$size = @getimagesize($path);
 		if (!$size) {
-			return true;
+			return false;
 		}
 
 		$width = $size[0];
@@ -647,7 +653,7 @@ class OC_Image implements \OCP\IImage {
 	private function checkImageDataSize($data) {
 		$size = @getimagesizefromstring($data);
 		if (!$size) {
-			return true;
+			return false;
 		}
 
 		$width = $size[0];
@@ -694,7 +700,7 @@ class OC_Image implements \OCP\IImage {
 					if (!$this->checkImageSize($imagePath)) {
 						return false;
 					}
-					if (getimagesize($imagePath) !== false) {
+					if (@getimagesize($imagePath) !== false) {
 						$this->resource = @imagecreatefromjpeg($imagePath);
 					} else {
 						$this->logger->debug('OC_Image->loadFromFile, JPG image not valid: ' . $imagePath, ['app' => 'core']);

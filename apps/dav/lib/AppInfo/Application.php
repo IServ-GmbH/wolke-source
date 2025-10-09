@@ -72,6 +72,7 @@ use OCA\DAV\Events\SubscriptionCreatedEvent;
 use OCA\DAV\Events\SubscriptionDeletedEvent;
 use OCA\DAV\HookManager;
 use OCA\DAV\Listener\ActivityUpdaterListener;
+use OCA\DAV\Listener\AddMissingIndicesListener;
 use OCA\DAV\Listener\AddressbookListener;
 use OCA\DAV\Listener\BirthdayListener;
 use OCA\DAV\Listener\CalendarContactInteractionListener;
@@ -89,6 +90,7 @@ use OCA\DAV\Search\ContactsSearchProvider;
 use OCA\DAV\Search\EventsSearchProvider;
 use OCA\DAV\Search\TasksSearchProvider;
 use OCA\DAV\SetupChecks\NeedsSystemAddressBookSync;
+use OCA\DAV\SetupChecks\WebdavEndpoint;
 use OCA\DAV\UserMigration\CalendarMigrator;
 use OCA\DAV\UserMigration\ContactsMigrator;
 use OCP\Accounts\UserUpdatedEvent;
@@ -101,6 +103,8 @@ use OCP\Calendar\IManager as ICalendarManager;
 use OCP\Config\BeforePreferenceDeletedEvent;
 use OCP\Config\BeforePreferenceSetEvent;
 use OCP\Contacts\IManager as IContactsManager;
+use OCP\DB\Events\AddMissingIndicesEvent;
+use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Events\TrustedServerRemovedEvent;
 use OCP\Files\AppData\IAppDataFactory;
@@ -110,7 +114,6 @@ use OCP\User\Events\OutOfOfficeClearedEvent;
 use OCP\User\Events\OutOfOfficeScheduledEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Throwable;
 use function is_null;
 
@@ -151,6 +154,8 @@ class Application extends App implements IBootstrap {
 		/**
 		 * Register event listeners
 		 */
+		$context->registerEventListener(AddMissingIndicesEvent::class, AddMissingIndicesListener::class);
+
 		$context->registerEventListener(CalendarCreatedEvent::class, ActivityUpdaterListener::class);
 		$context->registerEventListener(CalendarDeletedEvent::class, ActivityUpdaterListener::class);
 		$context->registerEventListener(CalendarDeletedEvent::class, CalendarObjectReminderUpdaterListener::class);
@@ -213,6 +218,7 @@ class Application extends App implements IBootstrap {
 		$context->registerUserMigrator(ContactsMigrator::class);
 
 		$context->registerSetupCheck(NeedsSystemAddressBookSync::class);
+		$context->registerSetupCheck(WebdavEndpoint::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -256,6 +262,7 @@ class Application extends App implements IBootstrap {
 
 			// Here we should recalculate if reminders should be sent to new or old sharees
 		});
+
 	}
 
 	public function registerContactsManager(IContactsManager $cm, IAppContainer $container): void {
@@ -278,12 +285,11 @@ class Application extends App implements IBootstrap {
 		$cm->setupContactsProvider($contactsManager, $userID, $urlGenerator);
 	}
 
-	private function setupSystemContactsProvider(IContactsManager $contactsManager,
-		IAppContainer $container): void {
+	private function setupSystemContactsProvider(IContactsManager $contactsManager, IAppContainer $container): void {
 		/** @var ContactsManager $cm */
 		$cm = $container->query(ContactsManager::class);
 		$urlGenerator = $container->getServer()->getURLGenerator();
-		$cm->setupSystemContactsProvider($contactsManager, $urlGenerator);
+		$cm->setupSystemContactsProvider($contactsManager, null, $urlGenerator);
 	}
 
 	public function registerCalendarManager(ICalendarManager $calendarManager,

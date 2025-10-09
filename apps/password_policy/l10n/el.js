@@ -12,9 +12,8 @@ OC.L10N.register(
     "Password policy" : "Πολιτική συνθηματικού",
     "Allows admins to configure a password policy" : "Επιτρέπει στους διαχειριστές να ορίσουν την πολιτική συνθηματικών",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Επιτρέψτε στο διαχειριστή να ορίσει ορισμένες προϋποθέσεις για το συνθηματικό, π.χ. επιβολή ελάχιστου μήκους",
-    "Minimum password length" : "Ελάχιστο μήκος συνθηματικού",
-    "User password history" : "Ιστορικό συνθηματικών χρήστη",
     "Number of days until user password expires" : "Αριθμός ημερών έως τη λήξη του συνθηματικού χρήστη",
+    "Minimum password length" : "Ελάχιστο μήκος συνθηματικού",
     "Forbid common passwords" : "Απαγόρευση κοινών συνθηματικών",
     "Enforce upper and lower case characters" : "Υποχρεωτική χρήση κεφαλαίων και πεζών χαρακτήρων",
     "Enforce numeric characters" : "Υποχρεωτική χρήση αριθμητικών χαρακτήρων",
@@ -26,6 +25,7 @@ OC.L10N.register(
     "History size has to be a non negative number" : "Το μέγεθος ιστορικού πρέπει να είναι μη αρνητικός αριθμός",
     "Expiration days have to be a non negative number" : "Οι ημέρες λήξης πρέπει να είναι μη αρνητικοί αριθμοί",
     "Maximum login attempts have to be a non negative number" : "Οι μέγιστες προσπάθειες σύνδεσης πρέπει να είναι μη αρνητικός αριθμός",
-    "Settings saved" : "Οι ρυθμίσεις αποθηκεύτηκαν"
+    "Settings saved" : "Οι ρυθμίσεις αποθηκεύτηκαν",
+    "User password history" : "Ιστορικό συνθηματικών χρήστη"
 },
 "nplurals=2; plural=(n != 1);");

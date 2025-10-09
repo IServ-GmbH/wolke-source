@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright (c) 2016, Roeland Jago Douma <roeland@famdouma.nl>
  * @copyright Copyright (c) 2016, Joas Schilling <coding@schilljs.com>
@@ -33,11 +34,14 @@ use DateTimeZone;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\Calendar;
 use OCA\DAV\CalDAV\CalendarHome;
+use OCA\DAV\CalDAV\DefaultCalendarValidator;
+use OCA\DAV\CalDAV\TipBroker;
 use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 use Sabre\CalDAV\ICalendar;
 use Sabre\CalDAV\ICalendarObject;
 use Sabre\CalDAV\Schedule\ISchedulingObject;
+use Sabre\DAV\Exception as DavException;
 use Sabre\DAV\INode;
 use Sabre\DAV\IProperties;
 use Sabre\DAV\PropFind;
@@ -57,7 +61,7 @@ use Sabre\VObject\ITip\SameOrganizerForAllComponentsException;
 use Sabre\VObject\Parameter;
 use Sabre\VObject\Property;
 use Sabre\VObject\Reader;
-use function \Sabre\Uri\split;
+use function Sabre\Uri\split;
 
 class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 
@@ -75,13 +79,15 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 	public const CALENDAR_USER_TYPE = '{' . self::NS_CALDAV . '}calendar-user-type';
 	public const SCHEDULE_DEFAULT_CALENDAR_URL = '{' . Plugin::NS_CALDAV . '}schedule-default-calendar-URL';
 	private LoggerInterface $logger;
+	private DefaultCalendarValidator $defaultCalendarValidator;
 
 	/**
 	 * @param IConfig $config
 	 */
-	public function __construct(IConfig $config, LoggerInterface $logger) {
+	public function __construct(IConfig $config, LoggerInterface $logger, DefaultCalendarValidator $defaultCalendarValidator) {
 		$this->config = $config;
 		$this->logger = $logger;
+		$this->defaultCalendarValidator = $defaultCalendarValidator;
 	}
 
 	/**
@@ -95,6 +101,20 @@ class Plugin extends \Sabre\CalDAV\Schedule\Plugin {
 		$server->on('propFind', [$this, 'propFindDefaultCalendarUrl'], 90);
 		$server->on('afterWriteContent', [$this, 'dispatchSchedulingResponses']);
 		$server->on('afterCreateFile', [$this, 'dispatchSchedulingResponses']);
+
+		// We allow mutating the default calendar URL through the CustomPropertiesBackend
+		// (oc_properties table)
+		$server->protectedProperties = array_filter(
+			$server->protectedProperties,
+			static fn (string $property) => $property !== self::SCHEDULE_DEFAULT_CALENDAR_URL,
+		);
+	}
+
+	/**
+	 * Returns an instance of the iTip\Broker.
+	 */
+	protected function createITipBroker(): TipBroker {
+		return new TipBroker();
 	}
 
 	/**
@@ -377,11 +397,20 @@ EOF;
 						 * - isn't a calendar subscription
 						 * - user can write to it (no virtual/3rd-party calendars)
 						 * - calendar isn't a share
+						 * - calendar supports VEVENTs
 						 */
 						foreach ($calendarHome->getChildren() as $node) {
-							if ($node instanceof Calendar && !$node->isSubscription() && $node->canWrite() && !$node->isShared() && !$node->isDeleted()) {
-								$userCalendars[] = $node;
+							if (!($node instanceof Calendar)) {
+								continue;
 							}
+
+							try {
+								$this->defaultCalendarValidator->validateScheduleDefaultCalendar($node);
+							} catch (DavException $e) {
+								continue;
+							}
+
+							$userCalendars[] = $node;
 						}
 
 						if (count($userCalendars) > 0) {
@@ -455,7 +484,7 @@ EOF;
 	 * @param Property|null $attendee
 	 * @return bool
 	 */
-	private function getAttendeeRSVP(Property $attendee = null):bool {
+	private function getAttendeeRSVP(?Property $attendee = null):bool {
 		if ($attendee !== null) {
 			$rsvp = $attendee->offsetGet('RSVP');
 			if (($rsvp instanceof Parameter) && (strcasecmp($rsvp->getValue(), 'TRUE') === 0)) {

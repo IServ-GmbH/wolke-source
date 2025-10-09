@@ -311,6 +311,28 @@ class RepairMimeTypes implements IRepairStep {
 	/**
 	 * @throws Exception
 	 */
+	private function introduceAacAudioType(): IResult|int|null {
+		$updatedMimetypes = [
+			'aac' => 'audio/aac',
+		];
+
+		return $this->updateMimetypes($updatedMimetypes);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	private function introduceReStructuredTextFormatType(): IResult|int|null {
+		$updatedMimetypes = [
+			'rst' => 'text/x-rst',
+		];
+
+		return $this->updateMimetypes($updatedMimetypes);
+	}
+
+	/**
+	 * @throws Exception
+	 */
 	public function migrationsAvailable(): bool {
 		$this->dryRun = true;
 		$this->run(new NullOutput());
@@ -390,11 +412,19 @@ class RepairMimeTypes implements IRepairStep {
 			$out->info('Fixed Enhanced Metafile Format mime types');
 		}
 
-		if (version_compare($mimeTypeVersion, '28.0.0.8', '<') && $this->introduceEmlAndMsgFormatType()) {
+		if (version_compare($mimeTypeVersion, '29.0.0.2', '<') && $this->introduceEmlAndMsgFormatType()) {
 			$out->info('Fixed eml and msg mime type');
 		}
 
-		if (version_compare($mimeTypeVersion, '30.0.0.0', '<') && $this->introduceExcalidrawType()) {
+		if (version_compare($mimeTypeVersion, '29.0.0.6', '<') && $this->introduceAacAudioType()) {
+			$out->info('Fixed aac mime type');
+		}
+
+		if (version_compare($mimeTypeVersion, '29.0.0.10', '<') && $this->introduceReStructuredTextFormatType()) {
+			$out->info('Fixed ReStructured Text mime type');
+		}
+
+		if (version_compare($mimeTypeVersion, '29.0.5.0', '<') && $this->introduceExcalidrawType()) {
 			$out->info('Fixed Excalidraw mime type');
 		}
 

@@ -44,6 +44,8 @@ occ command Directory
 * :ref:`two_factor_auth_label`
 * :ref:`disable_user_label`
 * :ref:`system_tags_commands_label`
+* :ref:`antivirus_commands_label`
+* :ref:`setupchecks_commands_label`
 * `Debugging`_
 
 .. _http_user_label:
@@ -238,20 +240,49 @@ Install but don't enable::
 
  sudo -u www-data php occ app:install --keep-disabled twofactor_totp
 
+Install regardless of the Nextcloud version requirement::
+
+ sudo -u www-data php occ app:install --force twofactor_totp
+
 List all of your installed apps, and show whether they are
 enabled or disabled::
 
  sudo -u www-data php occ app:list
+
+List non-shipped installed apps only::
+
+ sudo -u www-data php occ app:list --shipped false
 
 Enable an app, for example the External Storage Support app::
 
  sudo -u www-data php occ app:enable files_external
  files_external enabled
 
+Enable an app regardless of the Nextcloud version requirement::
+
+ sudo -u www-data php occ app:enable --force files_external
+ files_external enabled
+
+Enable an app for specific groups of users::
+
+ sudo -u www-data php occ app:enable --groups admin --groups sales files_external
+ files_external enabled for groups: admin, sales
+
 Disable an app::
 
  sudo -u www-data php occ app:disable files_external
  files_external disabled
+
+Disable and remove an app::
+
+ sudo -u www-data php occ app:remove files_external
+ files_external disabled
+ files_external 1.21.0 removed
+
+Remove an app, but keep the app data::
+
+ sudo -u www-data php occ app:remove --keep-data files_external
+ files_external 1.21.0 removed
 
 You can get the full filepath to an app::
 
@@ -312,6 +343,21 @@ The ``config`` commands are used to configure the Nextcloud server::
   config:system:delete   Delete a system config value
   config:system:get      Get a system config value
   config:system:set      Set a system config value
+
+
+While setting a configuration value, multiple options are available:
+
+     - ``--value=VALUE`` change the configuration value
+     - ``--type=TYPE`` change the type of the value. Use carefully; can break your instance
+     - ``--lazy|--no-lazy`` set value as `lazy`
+     - ``--sensitive|--no-sensitive`` set value as `sensitive`
+     - ``--update-only`` only updates if a value is already stored
+
+.. note::
+	See `Appconfig Concepts`_ to learn more about `typed value`, `lazy` and `sensitive` flag.
+
+.. _Appconfig Concepts: https://docs.nextcloud.com/server/latest/developer_manual/digging_deeper/config/appconfig.html#concept-overview
+
 
 You can list all configuration values with one command::
 
@@ -839,7 +885,7 @@ before removing a user::
 The transferred files will appear inside a new sub-directory in the destination user's home.
 
 .. note::
-  Unless server side encryption is enabled, **the command will init the <destination-user> file system** in Nextcloud versions **22.2.6, 23.0.3 and since 24**. When it is unable to create the user's folder in the data directory it will show the following error: ``unable to rename, destination directory is not writable``. Before 22.2.6 the command ``occ files:transfer-ownership`` would only work after the user has logged in for the first time. 
+  Unless server side encryption is enabled, **the command will init the <destination-user> file system** in Nextcloud versions **22.2.6, 23.0.3 and since 24**. When it is unable to create the user's folder in the data directory it will show the following error: ``unable to rename, destination directory is not writable``. Before 22.2.6 the command ``occ files:transfer-ownership`` would only work after the user has logged in for the first time.
 
 If the destination user has no files at all (empty home), it is possible to also transfer all the source user's files by passing ``--move``::
 
@@ -883,13 +929,18 @@ Commands for handling shares::
 Files external
 --------------
 
+These commands are used for managing Nextcloud's *External Storage* feature. In 
+addition to replicating the configuration capabilities in the Web UI, additional 
+capabilities include exporting / importing configurations, scanning *External 
+Storage* mounts that require login credentials, and configuring update notifications 
+(if supported by the storage type).
+
 .. note::
   These commands are only available when the "External storage support" app
   (``files_external``) is enabled.
 
-Commands for managing external storage::
+Available commands for the "files_external" namespace::
 
- files_external
   files_external:applicable  Manage applicable users and groups for a mount
   files_external:backends    Show available authentication and storage backends
   files_external:config      Manage backend configuration for a mount
@@ -897,13 +948,13 @@ Commands for managing external storage::
   files_external:delete      Delete an external mount
   files_external:export      Export mount configurations
   files_external:import      Import mount configurations
-  files_external:list        List configured mounts
-  files_external:option      Manage mount options for a mount
-  files_external:verify      Verify mount configuration
+  files_external:list        List configured admin or personal mounts
   files_external:notify      Listen for active update notifications for a configured external mount
+  files_external:option      Manage mount options for a mount
+  files_external:scan        Scan an external storage for changed files
+  files_external:verify      Verify mount configuration
 
-These commands replicate the functionality in the Nextcloud Web GUI, plus two new
-features:  ``files_external:export`` and ``files_external:import``.
+``files_external:scan`` provides the ability to provide a username and/or password for cases where login credentials are used.
 
 Use ``files_external:export`` to export all admin mounts to stdout, and
 ``files_external:export [user_id]`` to export the mounts of the specified
@@ -1122,7 +1173,7 @@ command after modifying ``config/mimetypemapping.json``. If you change a
 mimetype, run ``maintenance:mimetype:update-db --repair-filecache`` to apply the
 change to existing files.
 
-Run the ``maintenance:theme:update`` command if the icons of your custom theme are not 
+Run the ``maintenance:theme:update`` command if the icons of your custom theme are not
 updated correctly. This updates the mimetypelist.js and cleares the image cache.
 
 .. _security_commands_label:
@@ -1130,8 +1181,8 @@ updated correctly. This updates the mimetypelist.js and cleares the image cache.
 Security
 --------
 
-Use these commands to manage server-wide security related parameters. Currently this 
-includes :doc:`bruteforce_configuration` and SSL certificates (the latter are useful when 
+Use these commands to manage server-wide security related parameters. Currently this
+includes :doc:`bruteforce_configuration` and SSL certificates (the latter are useful when
 creating federation connections with other Nextcloud servers that use self-signed certificates::
 
  security
@@ -1227,14 +1278,16 @@ units.
 Trashbin
 --------
 
-::
+These commands allow for manually managing various aspects of the trash bin (deleted files)::
 
  trashbin
-  trashbin:cleanup  [--all-users] [--] [<user_id>...]  Permanently remove deleted files
-  trashbin:restore  [--all-users] [--scope[=SCOPE]] [--since[=SINCE]] [--until[=UNTIL]] [--dry-run] [--] [<user_id>...]  Restore deleted files according to the given filters
+  trashbin:cleanup      Permanently remove deleted files
+  trashbin:expire       Expires the users trashbin
+  trashbin:size         Configure the target trashbin size
+  trashbin:restore      Restore all deleted files according to the given filters
 
 .. note::
-  This command is only available when the "Deleted files" app
+  These commands are only available when the "Deleted files" app
   (``files_trashbin``) is enabled.
 
 The ``trashbin:cleanup  [--all-users] [--] [<user_id>...]`` command removes the deleted files of the specified
@@ -1283,9 +1336,9 @@ freda. Additionally the files have to be deleted between ``01.08.2023 11:55:22``
   sudo -u www-data php occ trashbin:restore --scope all --since "01.08.2023 11:55:22" --until "02.08.2023 01:33" freda
 
 The ``--dry-run`` option can be used to simulate the restore without actually restoring the files.
- 
+
 .. note::
-  You can use the verbose options (``-v`` or ``-vv``) to get more information about 
+  You can use the verbose options (``-v`` or ``-vv``) to get more information about
   the restore process and why some files might be skipped.
 
 .. _user_commands_label:
@@ -1293,27 +1346,34 @@ The ``--dry-run`` option can be used to simulate the restore without actually re
 User commands
 -------------
 
-The ``user`` commands create and remove users, reset passwords, display a simple
+The ``user`` commands create and remove users, reset passwords, manage authentication tokens / sessions, display a simple
 report showing how many users you have, and when a user was last logged in::
 
  user
   user:add                            adds a user
-  user:add-app-password               adds a app password named "cli"
+  user:add-app-password               adds a app password named "cli" (deprecated: alias for user:auth-tokens:add)
+  user:auth-tokens:add                Add app password for the named account
+  user:auth-tokens:delete             Deletes an authentication token
+  user:auth-tokens:list               List authentication tokens of an user
+  user:clear-avatar-cache             clear avatar cache
   user:delete                         deletes the specified user
   user:disable                        disables the specified user
   user:enable                         enables the specified user
   user:info                           shows information about the specific user
+  user:keys:verify                    Verify if the stored public key matches the stored private key
   user:lastseen                       shows when the user was logged in last time
   user:list                           shows list of all registered users
   user:report                         shows how many users have access
   user:resetpassword                  Resets the password of the named user
   user:setting                        Read and modify user settings
+  user:keys:verify                    Verify that the stored public key matches
+                                      the stored private key
 
 
 You can create a new user with their display name, login name, and any group
 memberships with the ``user:add`` command. The syntax is::
 
- user:add [--password-from-env] [--display-name[="..."]] [-g|--group[="..."]]
+ user:add [--password-from-env] [--generate-password] [--display-name[="..."]] [-g|--group[="..."]] [--email EMAIL]
  uid
 
 The ``display-name`` corresponds to the **Full Name** on the Users page in your
@@ -1364,14 +1424,44 @@ You may also use ``password-from-env`` to reset passwords::
    layla'
    Successfully reset password for layla
 
+``generate-password`` allows you to set a securely generated password for the user.
+This is never shown in the output and can be used to create users with temporary
+passwords. This can be used in conjunction with the ``email`` option to create
+users with a temporary password and send a welcome email to the user's email
+address without user interaction::
+
+ sudo -u www-data php occ user:add layla --generate-password --email layla@example.tld
+   The account "layla" was created successfully
+   Welcome email sent to layla@example.tld
+
+The ``email`` option allows you to set the user's email address when creating
+the user. A welcome email will be sent to the user's email address if
+``newUser.sendEmail`` is set to ``yes`` in ``core``'s app config or not set at all::
+
+ sudo -u www-data php occ user:add layla --email layla@example.tld
+   Enter password:
+   Confirm password:
+   The account "layla" was created successfully
+   Welcome email sent to layla@example.tld
+
 You can delete users::
 
  sudo -u www-data php occ user:delete fred
 
-View a user's most recent login::
+View a specific user's most recent login::
 
  sudo -u www-data php occ user:lastseen layla
-   layla's last login: 09.01.2020 18:46
+   layla's last login: 2024-03-20 17:18
+
+View a list of all users' most recent login::
+
+ sudo -u www-data php occ user:lastseen --all
+   albert's last login: 2024-03-18 10:30
+   bob has never logged in.
+   layla's last login: 2024-03-20 17:18
+   stephanie's last login: 2024-01-11 13:26
+   
+   
 
 Read user settings::
 
@@ -1415,7 +1505,44 @@ authentication servers such as LDAP::
  | total users      | 98 |
  |                  |    |
  | user directories | 2  |
+ | active users     | 15 |
+ | disabled users   | 0  |
  +------------------+----+
+
+`active users` shows the number of users which logged in at least once.
+`disabled users` shows the number of users which are disabled.
+
+There might be a discrepancy between the total number of users compared to the number of active users and the number of disabled users.
+Users that have never logged in before are not counted as active or disabled users.
+Some user backends also do not allow a count for the number of users.
+
+user:info
+^^^^^^^^^
+
+With the ``user:info`` command, you can access an account information such as: user id, display name, quota, groups, storage usage... and many more
+
+.. code-block::
+
+  user:info admin
+    - user_id: admin
+    - display_name: admin
+    - email: admin@domain.com
+    - cloud_id: admin@cloud.domain.com
+    - enabled: true
+    - groups:
+      - admin
+      - users
+    - quota: none
+    - storage:
+      - free: 162409623552
+      - used: 1110
+      - total: 162409624662
+      - relative: 0
+      - quota: -3
+    - first_seen: 2025-03-14T08:44:46+00:00
+    - last_seen: 2025-03-25T20:21:13+00:00
+    - user_directory: /var/www/nextcloud/data/admin
+    - backend: Database
 
 .. _group_commands_label:
 
@@ -1431,7 +1558,6 @@ groups, display a list of all users in a group::
   group:adduser                       add a user to a group
   group:removeuser                    remove a user from a group
   group:list                          list configured groups
-
 
 You can create a new group with the ``group:add`` command. The syntax is::
 
@@ -1738,6 +1864,46 @@ invisible  No       No
 
 | ¹ User can see the tag
 | ² User can assign the tag to a file
+
+.. _antivirus_commands_label:
+
+Antivirus
+---------
+
+Get info about files in the scan queue::
+
+  sudo -u www php occ files_antivirus:status [-v]
+
+Manually trigger the background scan::
+
+  sudo -u www php occ files_antivirus:background-scan [-v] [-m MAX]
+
+Manually scan a single file::
+
+  sudo -u www php occ files_antivirus:scan <path>
+
+Mark a file as scanned or unscanned::
+
+  sudo -u www php occ files_antivirus:mark <path> <scanned|unscanned>
+
+.. _setupchecks_commands_label:
+
+Setupchecks
+-----------
+
+Run the setupchecks via occ::
+
+  sudo -u www php occ setupchecks
+
+Example output::
+
+  dav:
+    ✓ DAV system address book: No outstanding DAV system address book sync.
+  network:
+    ✓ WebDAV endpoint: Your web server is properly set up to allow file synchronization over WebDAV.
+    ✓ Data directory protected
+    ✓ Internet connectivity
+    ...
 
 .. _occ_debugging:
 

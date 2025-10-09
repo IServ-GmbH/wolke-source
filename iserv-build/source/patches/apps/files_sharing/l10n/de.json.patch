@@ -1,14 +1,16 @@
 diff --git apps/files_sharing/l10n/de.json apps/files_sharing/l10n/de.json
-index de71113..82b5acf 100644
+index 3adc7dc..ae198be 100644
 --- apps/files_sharing/l10n/de.json
 +++ apps/files_sharing/l10n/de.json
-@@ -386,6 +386,7 @@
-     "the item was removed" : "Das Element wurde entfernt",
-     "the link expired" : "Der Link ist abgelaufen",
-     "sharing is disabled" : "Teilen ist deaktiviert",
--    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wende dich bitte an die Person, die dir diesen Link geschickt hat."
-+    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wende dich bitte an die Person, die dir diesen Link geschickt hat.",
-+	"Only local users": "Nur lokale Benutzer"
+@@ -1,4 +1,5 @@
+ { "translations": {
++	"Only local users": "Nur lokale Benutzer",
+     "File shares" : "Dateifreigaben",
+     "Downloaded via public link" : "Über den öffentlichen Link heruntergeladen",
+     "Downloaded by {email}" : "Heruntergeladen von {email}",
+@@ -423,4 +424,4 @@
+     "_1 email address added_::_{count} email addresses added_" : ["1 E-Mail-Adresse hinzugefügt","{count} E-Mail-Adressen hinzugefügt"],
+     "Enter your name" : "Gib deinen Namen ein"
  },"pluralForm" :"nplurals=2; plural=(n != 1);"
 -}
 \ No newline at end of file

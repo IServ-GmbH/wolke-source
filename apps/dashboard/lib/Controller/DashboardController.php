@@ -30,17 +30,15 @@ declare(strict_types=1);
  */
 namespace OCA\Dashboard\Controller;
 
-use OCA\Files\Event\LoadSidebar;
-use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Dashboard\IIconWidget;
 use OCP\Dashboard\IManager;
 use OCP\Dashboard\IWidget;
-use OCP\Dashboard\RegisterWidgetEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -49,37 +47,17 @@ use OCP\IRequest;
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class DashboardController extends Controller {
 
-	/** @var IInitialState */
-	private $initialState;
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-	/** @var IManager */
-	private $dashboardManager;
-	/** @var IConfig */
-	private $config;
-	/** @var IL10N */
-	private $l10n;
-	/** @var string */
-	private $userId;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IInitialState $initialState,
-		IEventDispatcher $eventDispatcher,
-		IManager $dashboardManager,
-		IConfig $config,
-		IL10N $l10n,
-		$userId
+		private IInitialState $initialState,
+		private IEventDispatcher $eventDispatcher,
+		private IManager $dashboardManager,
+		private IConfig $config,
+		private IL10N $l10n,
+		private ?string $userId
 	) {
 		parent::__construct($appName, $request);
-
-		$this->initialState = $initialState;
-		$this->eventDispatcher = $eventDispatcher;
-		$this->dashboardManager = $dashboardManager;
-		$this->config = $config;
-		$this->l10n = $l10n;
-		$this->userId = $userId;
 	}
 
 	/**
@@ -91,13 +69,6 @@ class DashboardController extends Controller {
 		\OCP\Util::addStyle('dashboard', 'dashboard');
 		\OCP\Util::addScript('dashboard', 'main', 'theming');
 
-		$this->eventDispatcher->dispatchTyped(new LoadSidebar());
-		if (class_exists(LoadViewer::class)) {
-			$this->eventDispatcher->dispatchTyped(new LoadViewer());
-		}
-
-		$this->eventDispatcher->dispatchTyped(new RegisterWidgetEvent($this->dashboardManager));
-
 		$systemDefault = $this->config->getAppValue('dashboard', 'layout', 'recommendations,spreed,mail,calendar');
 		$userLayout = explode(',', $this->config->getUserValue($this->userId, 'dashboard', 'layout', $systemDefault));
 		$widgets = array_map(function (IWidget $widget) {
@@ -105,6 +76,7 @@ class DashboardController extends Controller {
 				'id' => $widget->getId(),
 				'title' => $widget->getTitle(),
 				'iconClass' => $widget->getIconClass(),
+				'iconUrl' => $widget instanceof IIconWidget ? $widget->getIconUrl() : '',
 				'url' => $widget->getUrl()
 			];
 		}, $this->dashboardManager->getWidgets());

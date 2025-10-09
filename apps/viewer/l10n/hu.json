@@ -11,14 +11,14 @@
     "Play the live photo" : "Az élő fénykép lejátszása",
     "LIVE" : "ÉLŐ",
     "Your browser does not support videos." : "A böngészője nem támogatja a videókat.",
+    "This file no longer exists" : "Ez a fájl már nem létezik",
+    "There is no plugin available to display this file type" : "Nincs elérhető bővítmény a fájltípus megjelenítéséhez",
     "Edit" : "Szerkesztés",
     "Exit full screen" : "Kilépés a teljes képernyőből",
     "Full screen" : "Teljes képernyő",
     "Open sidebar" : "Oldalsáv megnyitása",
     "Download" : "Letöltés",
     "Delete" : "Törlés",
-    "This file no longer exists" : "Ez a fájl már nem létezik",
-    "There is no plugin available to display this file type" : "Nincs elérhető bővítmény a fájltípus megjelenítéséhez",
     "View" : "Megtekintés",
     "Name" : "Név",
     "Save" : "Mentés",
@@ -29,7 +29,10 @@
     "All changes will be lost." : "Az összes változtatás elvész.",
     "Are you sure you want to continue?" : "Biztos, hogy folytatja?",
     "Cancel" : "Mégse",
-    "Continue" : "Folytatás",
+    "Apply" : "Alkalmaz",
+    "Warning" : "Figyelmeztetés",
+    "Confirm" : "Megerősítés",
+    "Discard changes" : "Változtatások elvetése",
     "Undo" : "Visszavonás",
     "Redo" : "Újra",
     "Show original image" : "Eredeti kép megjelenítése",
@@ -108,6 +111,8 @@
     "Saved image size (width x height)" : "Mentett kép mérete (szélesség×magasság)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Vegye figyelembe, hogy a kijelölt levágási terület kisebb mint az alkalmazott átméretezés, amely minőségcsökkenést okozhat",
     "Actual size (100%)" : "Tényleges méret (100%)",
-    "Fit size" : "Illeszkedő méret"
+    "Fit size" : "Illeszkedő méret",
+    "Menu" : "Menü",
+    "Height" : "Magasság"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

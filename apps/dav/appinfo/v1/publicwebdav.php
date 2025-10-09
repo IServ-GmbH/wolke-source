@@ -43,7 +43,7 @@ OC_Util::obEnd();
 \OC::$server->getSession()->close();
 
 // Backends
-$authBackend = new OCA\DAV\Connector\PublicAuth(
+$authBackend = new OCA\DAV\Connector\LegacyPublicAuth(
 	\OC::$server->getRequest(),
 	\OC::$server->getShareManager(),
 	\OC::$server->getSession(),

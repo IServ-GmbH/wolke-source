@@ -10,7 +10,9 @@ OC.L10N.register(
     "Save changes" : "Ännerunge späicheren",
     "URL" : "URL",
     "to" : "bis",
+    "Upload" : "Eroplueden",
     "Edit" : "Änneren",
+    "Details" : "Detailer",
     "Info" : "Info",
     "Warning" : "Warnung"
 },

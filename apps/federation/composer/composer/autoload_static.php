@@ -25,6 +25,7 @@ class ComposerStaticInitFederation
         'OCA\\Federation\\AppInfo\\Application' => __DIR__ . '/..' . '/../lib/AppInfo/Application.php',
         'OCA\\Federation\\BackgroundJob\\GetSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/GetSharedSecret.php',
         'OCA\\Federation\\BackgroundJob\\RequestSharedSecret' => __DIR__ . '/..' . '/../lib/BackgroundJob/RequestSharedSecret.php',
+        'OCA\\Federation\\BruteforceResetter' => __DIR__ . '/..' . '/../lib/BruteforceResetter.php',
         'OCA\\Federation\\Command\\AddTrustedServer' => __DIR__ . '/..' . '/../lib/Command/AddTrustedServer.php',
         'OCA\\Federation\\Command\\ListTrustedServer' => __DIR__ . '/..' . '/../lib/Command/ListTrustedServer.php',
         'OCA\\Federation\\Command\\RemoveTrustedServer' => __DIR__ . '/..' . '/../lib/Command/RemoveTrustedServer.php',
@@ -39,6 +40,7 @@ class ComposerStaticInitFederation
         'OCA\\Federation\\Settings\\Admin' => __DIR__ . '/..' . '/../lib/Settings/Admin.php',
         'OCA\\Federation\\SyncFederationAddressBooks' => __DIR__ . '/..' . '/../lib/SyncFederationAddressBooks.php',
         'OCA\\Federation\\SyncJob' => __DIR__ . '/..' . '/../lib/SyncJob.php',
+        'OCA\\Federation\\TrustedBruteforceResetJob' => __DIR__ . '/..' . '/../lib/TrustedBruteforceResetJob.php',
         'OCA\\Federation\\TrustedServers' => __DIR__ . '/..' . '/../lib/TrustedServers.php',
     );
 

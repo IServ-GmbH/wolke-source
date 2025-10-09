@@ -1,0 +1,29 @@
+diff --git apps/federation/lib/TrustedServers.php apps/federation/lib/TrustedServers.php
+index b110be2..b07a75e 100644
+--- apps/federation/lib/TrustedServers.php
++++ apps/federation/lib/TrustedServers.php
+@@ -27,6 +27,7 @@
+  */
+ namespace OCA\Federation;
+ 
++use OCA\Federation\BackgroundJob\GetSharedSecret;
+ use OCA\Federation\BackgroundJob\RequestSharedSecret;
+ use OCP\AppFramework\Http;
+ use OCP\AppFramework\Utility\ITimeFactory;
+@@ -127,6 +128,16 @@ class TrustedServers {
+ 		$this->dbHandler->removeServer($id);
+ 		$this->dispatcher->dispatchTyped(new TrustedServerRemovedEvent($server['url_hash']));
+ 
++		foreach ($this->jobList->getJobsIterator(RequestSharedSecret::class, null, 0) as $job) {
++			if ($job->getArgument()['url'] === $server['url']) {
++				$this->jobList->remove($job);
++			}
++		}
++		foreach ($this->jobList->getJobsIterator(GetSharedSecret::class, null, 0) as $job) {
++			if ($job->getArgument()['url'] === $server['url']) {
++				$this->jobList->remove($job);
++			}
++		}
+ 	}
+ 
+ 	/**

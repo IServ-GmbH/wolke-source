@@ -69,11 +69,10 @@ class Notifier implements INotifier {
 				$params = $notification->getSubjectParameters();
 				$fileId = $params['fileId'];
 
-				$nodes = $this->root->getUserFolder($notification->getUser())->getById($fileId);
-				if (empty($nodes)) {
+				$node = $this->root->getUserFolder($notification->getUser())->getFirstNodeById($fileId);
+				if (!$node) {
 					throw new InvalidArgumentException();
 				}
-				$node = reset($nodes);
 
 				$path = rtrim($node->getPath(), '/');
 				if (strpos($path, '/' . $notification->getUser() . '/files/') === 0) {
@@ -95,7 +94,7 @@ class Notifier implements INotifier {
 						[
 							'name' => [
 								'type' => 'highlight',
-								'id' => $node->getId(),
+								'id' => (string)$node->getId(),
 								'name' => $node->getName(),
 							],
 						],

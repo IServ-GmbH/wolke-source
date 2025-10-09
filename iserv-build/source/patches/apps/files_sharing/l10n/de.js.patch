@@ -1,13 +1,12 @@
 diff --git apps/files_sharing/l10n/de.js apps/files_sharing/l10n/de.js
-index 53bbcea..ac0e064 100644
+index 0c9bb4d..6d915d4 100644
 --- apps/files_sharing/l10n/de.js
 +++ apps/files_sharing/l10n/de.js
-@@ -388,6 +388,7 @@ OC.L10N.register(
-     "the item was removed" : "Das Element wurde entfernt",
-     "the link expired" : "Der Link ist abgelaufen",
-     "sharing is disabled" : "Teilen ist deaktiviert",
--    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wende dich bitte an die Person, die dir diesen Link geschickt hat."
-+    "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wende dich bitte an die Person, die dir diesen Link geschickt hat.",
-+	"Only local users": "Nur lokale Benutzer"
- },
- "nplurals=2; plural=(n != 1);");
+@@ -1,6 +1,7 @@
+ OC.L10N.register(
+     "files_sharing",
+     {
++	"Only local users": "Nur lokale Benutzer",
+     "File shares" : "Dateifreigaben",
+     "Downloaded via public link" : "Über den öffentlichen Link heruntergeladen",
+     "Downloaded by {email}" : "Heruntergeladen von {email}",

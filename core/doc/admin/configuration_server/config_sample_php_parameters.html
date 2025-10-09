@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration Parameters &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/general.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/dark_mode_css/dark.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
     <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -75,6 +77,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#dbpassword">dbpassword</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dbtableprefix">dbtableprefix</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dbpersistent">dbpersistent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dbreplica">dbreplica</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#installed">installed</a></li>
 </ul>
 </li>
@@ -85,6 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#default-locale">default_locale</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#default-phone-region">default_phone_region</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#force-locale">force_locale</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#default-timezone">default_timezone</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#knowledgebaseenabled">knowledgebaseenabled</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#knowledgebase-embedded">knowledgebase.embedded</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#allow-user-to-change-display-name">allow_user_to_change_display_name</a></li>
@@ -172,6 +176,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#logfilemode">logfilemode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#loglevel">loglevel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#loglevel-frontend">loglevel_frontend</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#loglevel-dirty-database-queries">loglevel_dirty_database_queries</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syslog-tag">syslog_tag</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syslog-tag-audit">syslog_tag_audit</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#log-condition">log.condition</a></li>
@@ -313,6 +318,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#csrf-optout">csrf.optout</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simplesignuplink-shown">simpleSignUpLink.shown</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#login-form-autocomplete">login_form_autocomplete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#login-form-timeout">login_form_timeout</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#no-unsupported-browser-warning">no_unsupported_browser_warning</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#files-no-background-scan">files_no_background_scan</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#query-log-file">query_log_file</a></li>
@@ -320,12 +326,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#diagnostics-logging">diagnostics.logging</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#diagnostics-logging-threshold">diagnostics.logging.threshold</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#profile-enabled">profile.enabled</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#enable-file-metadata">enable_file_metadata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-manager-default-property-scope">account_manager.default_property_scope</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#projects-enabled">projects.enabled</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#bulkupload-enabled">bulkupload.enabled</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#reference-opengraph">reference_opengraph</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#unified-search-enabled">unified_search.enabled</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-non-accessible-features">enable_non-accessible_features</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#app-config-options">App config options</a><ul>
@@ -484,12 +490,6 @@ Using TLS certificates where commonName=&lt;IP address&gt; is deprecated</p></li
 <p>Where user files are stored. The SQLite database is also stored here, when
 you use SQLite.</p>
 <p>Default to <code class="docutils literal notranslate"><span class="pre">data/</span></code> in the Nextcloud directory.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This parameter should not be changed after finishing the initial
-installation of Nextcloud. Doing so might lead to side effects and affect
-several features.</p>
-</div>
 </section>
 <section id="version">
 <h3>version<a class="headerlink" href="#version" title="Link to this heading"></a></h3>
@@ -522,9 +522,9 @@ during installation and update, so you shouldn’t need to change it.</p>
 </pre></div>
 </div>
 <p>Your host server name, for example <code class="docutils literal notranslate"><span class="pre">localhost</span></code>, <code class="docutils literal notranslate"><span class="pre">hostname</span></code>,
-<code class="docutils literal notranslate"><span class="pre">hostname.example.com</span></code>, or the IP address. To specify a port use
-<code class="docutils literal notranslate"><span class="pre">hostname:####</span></code>; to specify a Unix socket use
-<code class="docutils literal notranslate"><span class="pre">/path/to/directory/containing/socket</span></code> e.g. <code class="docutils literal notranslate"><span class="pre">/run/postgresql/</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">hostname.example.com</span></code>, or the IP address.</p>
+<p>To specify a port use <code class="docutils literal notranslate"><span class="pre">hostname:####</span></code>, for IPv6 addresses use the URI notation <code class="docutils literal notranslate"><span class="pre">[ip]:port</span></code>.
+To specify a Unix socket use <code class="docutils literal notranslate"><span class="pre">/path/to/directory/containing/socket</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">/run/postgresql/</span></code>.</p>
 </section>
 <section id="dbname">
 <h3>dbname<a class="headerlink" href="#dbname" title="Link to this heading"></a></h3>
@@ -567,6 +567,16 @@ you shouldn’t need to change it.</p>
 <p>Enable persistent connexions to the database.</p>
 <p>This setting uses the “persistent” option from doctrine dbal, which in turn
 uses the PDO::ATTR_PERSISTENT option from the pdo driver.</p>
+</section>
+<section id="dbreplica">
+<h3>dbreplica<a class="headerlink" href="#dbreplica" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;dbreplica&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password1&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;replica1&#39;</span><span class="p">,</span> <span class="s1">&#39;dbname&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;nextcloud&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;password2&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;replica2&#39;</span><span class="p">,</span> <span class="s1">&#39;dbname&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>Specify read only replicas to be used by Nextcloud when querying the database</p>
 </section>
 <section id="installed">
 <h3>installed<a class="headerlink" href="#installed" title="Link to this heading"></a></h3>
@@ -693,6 +703,17 @@ settings. If users shall be unable to change their locale, but users have
 different languages, this value can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> instead of a locale
 code.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+</section>
+<section id="default-timezone">
+<h3>default_timezone<a class="headerlink" href="#default-timezone" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;default_timezone&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Europe/Berlin&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>This sets the default timezone on your Nextcloud server, using IANA
+identifiers like <code class="docutils literal notranslate"><span class="pre">Europe/Berlin</span></code> or <code class="docutils literal notranslate"><span class="pre">Pacific/Auckland</span></code>. The default
+timezone parameter is only used when the timezone of the user can’t be
+determined.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">UTC</span></code></p>
 </section>
 <section id="knowledgebaseenabled">
 <h3>knowledgebaseenabled<a class="headerlink" href="#knowledgebaseenabled" title="Link to this heading"></a></h3>
@@ -833,7 +854,7 @@ max value: 300</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.bruteforce.protection.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Whether the bruteforce protection shipped with Nextcloud should be enabled or not.</p>
+<p>Whether the brute force protection shipped with Nextcloud should be enabled or not.</p>
 <p>Disabling this is discouraged for security reasons.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
@@ -842,8 +863,8 @@ max value: 300</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.bruteforce.protection.testing&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Whether the bruteforce protection shipped with Nextcloud should be set to testing mode.</p>
-<p>In testing mode bruteforce attempts are still recorded, but the requests do
+<p>Whether the brute force protection shipped with Nextcloud should be set to testing mode.</p>
+<p>In testing mode brute force attempts are still recorded, but the requests do
 not sleep/wait for the specified time. They will still abort with
 “429 Too Many Requests” when the maximum delay is reached.
 Enabling this is discouraged for security reasons
@@ -1524,6 +1545,16 @@ Warning, 3 = Error, and 4 = Fatal. The default value is Warning.</p>
 for <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> can be used. If not set it defaults to the value
 configured for <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> or Warning if that is not set either.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">2</span></code></p>
+</section>
+<section id="loglevel-dirty-database-queries">
+<h3>loglevel_dirty_database_queries<a class="headerlink" href="#loglevel-dirty-database-queries" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;loglevel_dirty_database_queries&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Loglevel used by the dirty database query detection. Useful to identify
+potential database bugs in production. Set this to loglevel or higher to
+see dirty queries in the logs.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code> (debug)</p>
 </section>
 <section id="syslog-tag">
 <h3>syslog_tag<a class="headerlink" href="#syslog-tag" title="Link to this heading"></a></h3>
@@ -2547,7 +2578,8 @@ On top of that you might be required to grant additional permissions in AppArmor
 <p>Override where Nextcloud stores update files while updating. Useful in situations
 where the default <cite>datadirectory</cite> is on network disk like NFS, or is otherwise
 restricted. Defaults to the value of <cite>datadirectory</cite> if unset.</p>
-<p>The Web server user must have write access to this directory.</p>
+<p>If set, the value MUST be located _outside_ of the installation directory of Nextcloud and
+writable by the Web server user.</p>
 </section>
 <section id="blacklisted-files">
 <h3>blacklisted_files<a class="headerlink" href="#blacklisted-files" title="Link to this heading"></a></h3>
@@ -2566,6 +2598,7 @@ with this name. <code class="docutils literal notranslate"><span class="pre">.ht
 </div>
 <p>Blacklist characters from being used in filenames. This is useful if you
 have a filesystem or OS which does not support certain characters like windows.</p>
+<p>The ‘/’ and ‘' characters are always forbidden.</p>
 <p>Example for windows systems: <code class="docutils literal notranslate"><span class="pre">array('?',</span> <span class="pre">'&lt;',</span> <span class="pre">'&gt;',</span> <span class="pre">':',</span> <span class="pre">'*',</span> <span class="pre">'|',</span> <span class="pre">'&quot;',</span> <span class="pre">chr(0),</span> <span class="pre">&quot;\n&quot;,</span> <span class="pre">&quot;\r&quot;)</span></code>
 see <a class="reference external" href="https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits">https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits</a></p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">array()</span></code></p>
@@ -2927,6 +2960,15 @@ learn about the “simple sign up” - see <a class="reference external" href="h
 Some companies require it to be disabled to comply with their security policy.</p>
 <p>Simply set this property to “false”, if you want to turn this feature off.</p>
 </section>
+<section id="login-form-timeout">
+<h3>login_form_timeout<a class="headerlink" href="#login-form-timeout" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;login_form_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Timeout for the login form, after this time the login form is reset.</p>
+<p>This prevents password leaks on public devices if the user forgots to clear the form.</p>
+<p>Default is 5 minutes (300 seconds), a value of 0 means no timeout.</p>
+</section>
 <section id="no-unsupported-browser-warning">
 <h3>no_unsupported_browser_warning<a class="headerlink" href="#no-unsupported-browser-warning" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;no_unsupported_browser_warning&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
@@ -2994,17 +3036,6 @@ production systems to only log under some conditions</p>
 <p>Enable profile globally</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
-<section id="enable-file-metadata">
-<h3>enable_file_metadata<a class="headerlink" href="#enable-file-metadata" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enable_file_metadata&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
-</pre></div>
-</div>
-<p>Enable file metadata collection</p>
-<p>This is helpful for the mobile clients and will enable few optimizations in
-the future for the preview generation.</p>
-<p>Note that when enabled, this data will be stored in the database and might increase
-the database storage.</p>
-</section>
 <section id="account-manager-default-property-scope">
 <h3>account_manager.default_property_scope<a class="headerlink" href="#account-manager-default-property-scope" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;account_manager.default_property_scope&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
@@ -3055,6 +3086,14 @@ superseded by Related resources as of Nextcloud 25</p>
 <p>Enable use of old unified search</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
+<section id="enable-non-accessible-features">
+<h3>enable_non-accessible_features<a class="headerlink" href="#enable-non-accessible-features" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enable_non-accessible_features&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable features that are do respect accessibility standards yet.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+</section>
 </section>
 <section id="app-config-options">
 <h2>App config options<a class="headerlink" href="#app-config-options" title="Link to this heading"></a></h2>
@@ -3100,7 +3139,7 @@ normal maintenance change. To disable this specific email the appconfig option
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
   </div>
 
    
@@ -3122,11 +3161,11 @@ normal maintenance change. To disable this specific email the appconfig option
       <dl>
         <dt>Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/25/admin_manual">25</a></dd>
-        
           <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        
+          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
         
           <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
         

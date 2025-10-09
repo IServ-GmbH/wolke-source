@@ -56,29 +56,29 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	use TArrayTools;
 
 
-	public const SINGLE = 'cs';
-	public const CIRCLE = 'cc';
-	public const MEMBER = 'mm';
-	public const OWNER = 'wn';
-	public const FEDERATED_EVENT = 'ev';
-	public const REMOTE = 'rm';
-	public const BASED_ON = 'on';
-	public const INITIATOR = 'in';
-	public const DIRECT_INITIATOR = 'di';
-	public const MEMBERSHIPS = 'ms';
-	public const CONFIG = 'cf';
-	public const UPSTREAM_MEMBERSHIPS = 'up';
-	public const INHERITANCE_FROM = 'ih';
-	public const INHERITED_BY = 'by';
-	public const INVITED_BY = 'nv';
-	public const MOUNT = 'mo';
-	public const MOUNTPOINT = 'mp';
-	public const SHARE = 'sh';
-	public const FILE_CACHE = 'fc';
-	public const STORAGES = 'st';
-	public const TOKEN = 'tk';
-	public const OPTIONS = 'pt';
-	public const HELPER = 'hp';
+	public const SINGLE = 'a';
+	public const CIRCLE = 'b';
+	public const MEMBER = 'c';
+	public const OWNER = 'd';
+	public const FEDERATED_EVENT = 'e';
+	public const REMOTE = 'f';
+	public const BASED_ON = 'g';
+	public const INITIATOR = 'h';
+	public const DIRECT_INITIATOR = 'i';
+	public const MEMBERSHIPS = 'j';
+	public const CONFIG = 'k';
+	public const UPSTREAM_MEMBERSHIPS = 'l';
+	public const INHERITANCE_FROM = 'm';
+	public const INHERITED_BY = 'n';
+	public const INVITED_BY = 'o';
+	public const MOUNT = 'p';
+	public const MOUNTPOINT = 'q';
+	public const SHARE = 'r';
+	public const FILE_CACHE = 's';
+	public const STORAGES = 't';
+	public const TOKEN = 'u';
+	public const OPTIONS = 'v';
+	public const HELPER = 'w';
 
 
 	public static $SQL_PATH = [
@@ -974,9 +974,9 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			$expr->eq($aliasMembership . '.circle_id', $alias . '.' . $field)
 		);
 
-//		if (!$this->getBool('getData', $options, false)) {
-//			return;
-//		}
+		//		if (!$this->getBool('getData', $options, false)) {
+		//			return;
+		//		}
 
 		if ($aliasInheritedBy === '') {
 			$aliasInheritedBy = $this->generateAlias($alias, self::INHERITED_BY);
@@ -1327,12 +1327,12 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			 ->leftJoin(
 			 	$alias, CoreRequestBuilder::TABLE_MEMBER, $aliasInitiator,
 			 	$expr->andX(
-			 		$expr->eq($aliasInitiator . '.circle_id', $helperAlias . '.' . $field),
-			 		$this->exprLimitInt('level', Member::LEVEL_OWNER, $aliasInitiator)
+			 		$expr->eq($aliasInitiator . '.circle_id', $alias . '.unique_id'),
+			 		$expr->eq($aliasInitiator . '.' . $field, $helperAlias . '.inheritance_first'),
 			 	)
 			 );
-//
-//		$this->leftJoinBasedOn($aliasInitiator);
+		//
+		//		$this->leftJoinBasedOn($aliasInitiator);
 	}
 
 	/**
@@ -1548,7 +1548,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			[]
 		);
 
-//		$this->selectAlias($aliasShareParent . '.permissions', 'parent_perms');
+		//		$this->selectAlias($aliasShareParent . '.permissions', 'parent_perms');
 	}
 
 
@@ -1584,7 +1584,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	 *
 	 * @throws RequestBuilderException
 	 */
-	public function leftJoinMountpoint(string $aliasMount, string $aliasMountMemberships = '') {
+	public function leftJoinMountpoint(string $aliasMount, IFederatedUser $federatedUser, string $aliasMountMemberships = '') {
 		$expr = $this->expr();
 
 		$aliasMountpoint = $this->generateAlias($aliasMount, self::MOUNTPOINT);
@@ -1596,7 +1596,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 			$aliasMountMemberships, CoreRequestBuilder::TABLE_MOUNTPOINT, $aliasMountpoint,
 			$expr->andX(
 				$expr->eq($aliasMountpoint . '.mount_id', $aliasMount . '.mount_id'),
-				$expr->eq($aliasMountpoint . '.single_id', $aliasMountMemberships . '.single_id')
+				$expr->eq($aliasMountpoint . '.single_id', $this->createNamedParameter($federatedUser->getSingleId()))
 			)
 		);
 

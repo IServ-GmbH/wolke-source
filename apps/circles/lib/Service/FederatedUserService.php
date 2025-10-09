@@ -94,7 +94,7 @@ class FederatedUserService {
 
 
 	public const CACHE_SINGLE_CIRCLE = 'circles/singleCircle';
-	public const CACHE_SINGLE_CIRCLE_TTL = 900;
+	public const CACHE_SINGLE_CIRCLE_TTL = 604800; // one week
 
 	public const CONFLICT_001 = 1;
 	public const CONFLICT_002 = 2;
@@ -778,6 +778,10 @@ class FederatedUserService {
 	 * @return FederatedUser
 	 */
 	public function generateFederatedUser(string $federatedId, int $type = 0): FederatedUser {
+		if ($federatedId === '') {
+			throw new MemberNotFoundException('empty user id');
+		}
+
 		if ($type === Member::TYPE_MAIL) {
 			$federatedId = strtolower($federatedId);
 		}
@@ -994,7 +998,9 @@ class FederatedUserService {
 
 		$circle = $this->getSingleCircle($federatedUser, $generate);
 		$federatedUser->setSingleId($circle->getSingleId());
-		$federatedUser->setDisplayName($circle->getDisplayName());
+		if ($federatedUser->getUserType() !== Member::TYPE_USER || $federatedUser->getDisplayName() === '') {
+			$federatedUser->setDisplayName($circle->getDisplayName());
+		}
 		$federatedUser->setBasedOn($circle);
 	}
 
