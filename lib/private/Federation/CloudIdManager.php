@@ -98,7 +98,7 @@ class CloudIdManager implements ICloudIdManager {
 	 * @return ICloudId
 	 * @throws \InvalidArgumentException
 	 */
-	public function resolveCloudId(string $cloudId): ICloudId {
+	public function resolveCloudId(string $cloudId, ?string $displayName = null): ICloudId {
 		// TODO magic here to get the url and user instead of just splitting on @
 
 		if (!$this->isValidCloudId($cloudId)) {
@@ -130,7 +130,7 @@ class CloudIdManager implements ICloudIdManager {
 
 			if (!empty($user) && !empty($remote)) {
 				$remote = $this->ensureDefaultProtocol($remote);
-				return new CloudId($id, $user, $remote, $this->getDisplayNameFromContact($id));
+				return new CloudId($id, $user, $remote, $displayName ?? $this->getDisplayNameFromContact($id));
 			}
 		}
 		throw new \InvalidArgumentException('Invalid cloud id');

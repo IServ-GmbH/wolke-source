@@ -81,7 +81,7 @@ class RemotePlugin implements ISearchPlugin {
 						$cloudIdType = $cloudIdData['type'];
 					}
 					try {
-						[$remoteUser, $serverUrl] = $this->splitUserRemote($cloudId);
+						[$remoteUser, $serverUrl] = $this->splitUserRemote($cloudId, $contact['FN'] ?? null);
 					} catch (\InvalidArgumentException $e) {
 						continue;
 					}
@@ -175,9 +175,9 @@ class RemotePlugin implements ISearchPlugin {
 	 * @return array [user, remoteURL]
 	 * @throws \InvalidArgumentException
 	 */
-	public function splitUserRemote(string $address): array {
+	public function splitUserRemote(string $address, ?string $displayName = null): array {
 		try {
-			$cloudId = $this->cloudIdManager->resolveCloudId($address);
+			$cloudId = $this->cloudIdManager->resolveCloudId($address, $displayName);
 			return [$cloudId->getUser(), $this->cloudIdManager->removeProtocolFromUrl($cloudId->getRemote(), true)];
 		} catch (\InvalidArgumentException $e) {
 			throw new \InvalidArgumentException('Invalid Federated Cloud ID', 0, $e);
