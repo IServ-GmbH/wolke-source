@@ -1,5 +1,5 @@
 diff --git apps/files_versions/src/components/Version.vue apps/files_versions/src/components/Version.vue
-index 7c4a2e7..929b178 100644
+index 7c4a2e7..7e86ef1 100644
 --- apps/files_versions/src/components/Version.vue
 +++ apps/files_versions/src/components/Version.vue
 @@ -264,6 +264,11 @@ export default defineComponent({
@@ -14,3 +14,16 @@ index 7c4a2e7..929b178 100644
  			if ((this.fileInfo.permissions & Permission.READ) === 0) {
  				return false
  			}
+@@ -301,7 +306,11 @@ export default defineComponent({
+ 
+ 		click() {
+ 			if (!this.canView) {
+-				window.location.href = this.downloadURL
++				if (this.isDownloadable) {
++					window.location.href = this.downloadURL
++				} else {
++					OC.Notification.showTemporary(t('files_versions', 'This version cannot be viewed.'));
++				}
+ 				return
+ 			}
+ 			this.$emit('click', { version: this.version })
