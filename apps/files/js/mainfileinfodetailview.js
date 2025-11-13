@@ -1,11 +1,7 @@
-/*
- * Copyright (c) 2015
- *
- * This file is licensed under the Affero General Public License version 3
- * or later.
- *
- * See the COPYING-README file.
- *
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2015-2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 (function() {
@@ -163,7 +159,8 @@
 					timestamp: this.model.get('mtime'),
 					date: OC.Util.relativeModifiedDate(this.model.get('mtime')),
 					hasFavoriteAction: hasFavoriteAction,
-					starAltText: isFavorite ? t('files', 'Favorited') : t('files', 'Favorite'),
+					// TRANSLATORS "Favour" is a verb
+					starAltText: isFavorite ? t('files', 'Favored') : t('files', 'Favor'),
 					starClass: isFavorite ? 'icon-starred' : 'icon-star',
 					permalink: this._makePermalink(this.model.get('id')),
 					permalinkTitle: t('files', 'Copy direct link (only works for people who have access to this file/folder)')

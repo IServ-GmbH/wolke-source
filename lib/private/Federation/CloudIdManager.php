@@ -3,30 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017, Robin Appelman <robin@icewind.nl>
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Guillaume Virlet <github@virlet.org>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\Federation;
 
@@ -50,6 +28,7 @@ class CloudIdManager implements ICloudIdManager {
 	/** @var IUserManager */
 	private $userManager;
 	private ICache $memCache;
+	private ICache $displayNameCache;
 	/** @var array[] */
 	private array $cache = [];
 
@@ -64,6 +43,7 @@ class CloudIdManager implements ICloudIdManager {
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;
 		$this->memCache = $cacheFactory->createDistributed('cloud_id_');
+		$this->displayNameCache = $cacheFactory->createDistributed('cloudid_name_');
 		$eventDispatcher->addListener(UserChangedEvent::class, [$this, 'handleUserEvent']);
 		$eventDispatcher->addListener(CardUpdatedEvent::class, [$this, 'handleCardEvent']);
 	}
@@ -81,7 +61,7 @@ class CloudIdManager implements ICloudIdManager {
 		if ($event instanceof CardUpdatedEvent) {
 			$data = $event->getCardData()['carddata'];
 			foreach (explode("\r\n", $data) as $line) {
-				if (str_starts_with($line, "CLOUD;")) {
+				if (str_starts_with($line, 'CLOUD;')) {
 					$parts = explode(':', $line, 2);
 					if (isset($parts[1])) {
 						$key = $parts[1];
@@ -126,17 +106,28 @@ class CloudIdManager implements ICloudIdManager {
 			$user = substr($id, 0, $lastValidAtPos);
 			$remote = substr($id, $lastValidAtPos + 1);
 
-			$this->userManager->validateUserId($user);
+			// We accept slightly more chars when working with federationId than with a local userId.
+			// We remove those eventual chars from the UserId before using
+			// the IUserManager API to confirm its format.
+			$this->userManager->validateUserId(str_replace('=', '-', $user));
 
 			if (!empty($user) && !empty($remote)) {
 				$remote = $this->ensureDefaultProtocol($remote);
-				return new CloudId($id, $user, $remote, $displayName ?? $this->getDisplayNameFromContact($id));
+				return new CloudId($id, $user, $remote, $displayName);
 			}
 		}
 		throw new \InvalidArgumentException('Invalid cloud id');
 	}
 
-	protected function getDisplayNameFromContact(string $cloudId): ?string {
+	public function getDisplayNameFromContact(string $cloudId): ?string {
+		$cachedName = $this->displayNameCache->get($cloudId);
+		if ($cachedName !== null) {
+			if ($cachedName === $cloudId) {
+				return null;
+			}
+			return $cachedName;
+		}
+
 		$addressBookEntries = $this->contactsManager->search($cloudId, ['CLOUD'], [
 			'limit' => 1,
 			'enumeration' => false,
@@ -150,14 +141,17 @@ class CloudIdManager implements ICloudIdManager {
 						// Warning, if user decides to make his full name local only,
 						// no FN is found on federated servers
 						if (isset($entry['FN'])) {
+							$this->displayNameCache->set($cloudId, $entry['FN'], 15 * 60);
 							return $entry['FN'];
 						} else {
-							return $cloudID;
+							$this->displayNameCache->set($cloudId, $cloudId, 15 * 60);
+							return null;
 						}
 					}
 				}
 			}
 		}
+		$this->displayNameCache->set($cloudId, $cloudId, 15 * 60);
 		return null;
 	}
 
@@ -190,7 +184,7 @@ class CloudIdManager implements ICloudIdManager {
 			$localUser = $this->userManager->get($user);
 			$displayName = $localUser ? $localUser->getDisplayName() : '';
 		} else {
-			$displayName = $this->getDisplayNameFromContact($user . '@' . $host);
+			$displayName = null;
 		}
 
 		// For the visible cloudID we only strip away https

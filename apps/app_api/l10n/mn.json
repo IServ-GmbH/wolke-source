@@ -1,0 +1,26 @@
+{ "translations": {
+    "Cancel" : "Цуцлах",
+    "Delete" : "Устгах",
+    "Edit" : "Өөрчлөх",
+    "Name" : "Нэр",
+    "Host" : "хост",
+    "Enabled" : "Идэвхижүүлэх",
+    "Add" : "Нэмэх",
+    "Disabled" : "идэвхигүй",
+    "Confirm" : "Батлах",
+    "Save" : "Хадгалах",
+    "Update to {version}" : "{version} хувилбар руу шинэчлэх",
+    "Visit website" : "Цахим хуудсаар зочлох",
+    "User documentation" : "Хэрэглэгчийн баримт бичиг",
+    "Admin documentation" : "Админы баримт бичиг",
+    "Featured" : "Алдартай",
+    "Icon" : "Тэмдэгт ",
+    "Version" : "төрөл",
+    "Level" : "түвшин",
+    "Actions" : "Үйл ажиллагаа",
+    "Type" : "Төрөл",
+    "Your apps" : "Таны аппликэйшнүүд",
+    "Details" : "Дэлгэрэнгүй",
+    "Disabled apps" : "Идэвхижээгүй аппликэйшнүүд"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

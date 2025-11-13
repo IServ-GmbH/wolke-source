@@ -3,35 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author GretaD <gretadoci@gmail.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Vincent Petry <vincent@nextcloud.com>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Settings\Controller;
@@ -45,13 +19,19 @@ use OC\Security\IdentityProof\Manager;
 use OC\User\Manager as UserManager;
 use OCA\Settings\BackgroundJobs\VerifyUserData;
 use OCA\Settings\Events\BeforeTemplateRenderedEvent;
+use OCA\Settings\Settings\Admin\Users;
 use OCA\User_LDAP\User_Proxy;
 use OCP\Accounts\IAccount;
 use OCP\Accounts\IAccountManager;
 use OCP\Accounts\PropertyDoesNotExistException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
+use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -59,9 +39,12 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\BackgroundJob\IJobList;
 use OCP\Encryption\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Group\ISubAdmin;
 use OCP\IConfig;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\INavigationManager;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -98,31 +81,30 @@ class UsersController extends Controller {
 
 
 	/**
-	 * @NoCSRFRequired
-	 * @NoAdminRequired
-	 *
 	 * Display users list template
 	 *
 	 * @return TemplateResponse
 	 */
-	public function usersListByGroup(): TemplateResponse {
-		return $this->usersList();
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function usersListByGroup(INavigationManager $navigationManager, ISubAdmin $subAdmin): TemplateResponse {
+		return $this->usersList($navigationManager, $subAdmin);
 	}
 
 	/**
-	 * @NoCSRFRequired
-	 * @NoAdminRequired
-	 *
 	 * Display users list template
 	 *
 	 * @return TemplateResponse
 	 */
-	public function usersList(): TemplateResponse {
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	public function usersList(INavigationManager $navigationManager, ISubAdmin $subAdmin): TemplateResponse {
 		$user = $this->userSession->getUser();
 		$uid = $user->getUID();
 		$isAdmin = $this->groupManager->isAdmin($uid);
+		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($uid);
 
-		\OC::$server->getNavigationManager()->setActiveEntry('core_users');
+		$navigationManager->setActiveEntry('core_users');
 
 		/* SORT OPTION: SORT_USERCOUNT or SORT_GROUPNAME */
 		$sortGroupsBy = \OC\Group\MetaData::SORT_USERCOUNT;
@@ -146,15 +128,23 @@ class UsersController extends Controller {
 		$groupsInfo = new \OC\Group\MetaData(
 			$uid,
 			$isAdmin,
+			$isDelegatedAdmin,
 			$this->groupManager,
 			$this->userSession
 		);
 
-		$groupsInfo->setSorting($sortGroupsBy);
-		[$adminGroup, $groups] = $groupsInfo->get();
+		$adminGroup = $this->groupManager->get('admin');
+		$adminGroupData = [
+			'id' => $adminGroup->getGID(),
+			'name' => $adminGroup->getDisplayName(),
+			'usercount' => $sortGroupsBy === \OC\Group\MetaData::SORT_USERCOUNT ? $adminGroup->count() : 0,
+			'disabled' => $adminGroup->countDisabled(),
+			'canAdd' => $adminGroup->canAddUser(),
+			'canRemove' => $adminGroup->canRemoveUser(),
+		];
 
 		if (!$isLDAPUsed && $this->appManager->isEnabledForUser('user_ldap')) {
-			$isLDAPUsed = (bool)array_reduce($this->userManager->getBackends(), function ($ldapFound, $backend) {
+			$isLDAPUsed = (bool) array_reduce($this->userManager->getBackends(), function ($ldapFound, $backend) {
 				return $ldapFound || $backend instanceof User_Proxy;
 			});
 		}
@@ -163,10 +153,10 @@ class UsersController extends Controller {
 		$userCount = 0;
 
 		if (!$isLDAPUsed) {
-			if ($isAdmin) {
+			if ($isAdmin || $isDelegatedAdmin) {
 				$disabledUsers = $this->userManager->countDisabledUsers();
 				$userCount = array_reduce($this->userManager->countUsers(), function ($v, $w) {
-					return $v + (int)$w;
+					return $v + (int) $w;
 				}, 0);
 			} else {
 				// User is subadmin !
@@ -178,11 +168,25 @@ class UsersController extends Controller {
 			}
 		}
 
+		$recentUsersGroup = [
+			'id' => '__nc_internal_recent',
+			'name' => $this->l10n->t('Recently active'),
+			'usercount' => $this->userManager->countSeenUsers(),
+		];
+
 		$disabledUsersGroup = [
 			'id' => 'disabled',
-			'name' => 'Disabled accounts',
+			'name' => $this->l10n->t('Disabled accounts'),
 			'usercount' => $disabledUsers
 		];
+
+		if (!$isAdmin && !$isDelegatedAdmin) {
+			$subAdminGroups = array_map(
+				fn (IGroup $group) => ['id' => $group->getGID(), 'name' => $group->getDisplayName()],
+				$subAdmin->getSubAdminsGroups($user),
+			);
+			$subAdminGroups = array_values($subAdminGroups);
+		}
 
 		/* QUOTAS PRESETS */
 		$quotaPreset = $this->parseQuotaPreset($this->config->getAppValue('files', 'quota_preset', '1 GB, 5 GB, 10 GB'));
@@ -206,12 +210,14 @@ class UsersController extends Controller {
 		/* FINAL DATA */
 		$serverData = [];
 		// groups
-		$serverData['groups'] = array_merge_recursive($adminGroup, [$disabledUsersGroup], $groups);
+		$serverData['systemGroups'] = [$adminGroupData, $recentUsersGroup, $disabledUsersGroup];
+		$serverData['subAdminGroups'] = $subAdminGroups ?? [];
 		// Various data
 		$serverData['isAdmin'] = $isAdmin;
+		$serverData['isDelegatedAdmin'] = $isDelegatedAdmin;
 		$serverData['sortGroups'] = $forceSortGroupByName
 			? \OC\Group\MetaData::SORT_GROUPNAME
-			: (int)$this->config->getAppValue('core', 'group.sortBy', (string)\OC\Group\MetaData::SORT_USERCOUNT);
+			: (int) $this->config->getAppValue('core', 'group.sortBy', (string) \OC\Group\MetaData::SORT_USERCOUNT);
 		$serverData['forceSortGroupByName'] = $forceSortGroupByName;
 		$serverData['quotaPreset'] = $quotaPreset;
 		$serverData['allowUnlimitedQuota'] = $allowUnlimitedQuota;
@@ -240,6 +246,7 @@ class UsersController extends Controller {
 	 *
 	 * @return JSONResponse
 	 */
+	#[AuthorizedAdminSetting(settings:Users::class)]
 	public function setPreference(string $key, string $value): JSONResponse {
 		$allowed = ['newUser.sendEmail', 'group.sortBy'];
 		if (!in_array($key, $allowed, true)) {
@@ -295,10 +302,7 @@ class UsersController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
 	 * @NoSubAdminRequired
-	 * @PasswordConfirmationRequired
-	 * @UserRateThrottle(limit=50, period=600)
 	 *
 	 * @param string|null $avatarScope
 	 * @param string|null $displayname
@@ -315,9 +319,14 @@ class UsersController extends Controller {
 	 * @param string|null $twitterScope
 	 * @param string|null $fediverse
 	 * @param string|null $fediverseScope
+	 * @param string|null $birthdate
+	 * @param string|null $birthdateScope
 	 *
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
+	#[PasswordConfirmationRequired]
+	#[UserRateLimit(limit: 5, period: 60)]
 	public function setUserSettings(?string $avatarScope = null,
 		?string $displayname = null,
 		?string $displaynameScope = null,
@@ -332,7 +341,9 @@ class UsersController extends Controller {
 		?string $twitter = null,
 		?string $twitterScope = null,
 		?string $fediverse = null,
-		?string $fediverseScope = null
+		?string $fediverseScope = null,
+		?string $birthdate = null,
+		?string $birthdateScope = null,
 	) {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -372,6 +383,7 @@ class UsersController extends Controller {
 			IAccountManager::PROPERTY_PHONE => ['value' => $phone, 'scope' => $phoneScope],
 			IAccountManager::PROPERTY_TWITTER => ['value' => $twitter, 'scope' => $twitterScope],
 			IAccountManager::PROPERTY_FEDIVERSE => ['value' => $fediverse, 'scope' => $fediverseScope],
+			IAccountManager::PROPERTY_BIRTHDATE => ['value' => $birthdate, 'scope' => $birthdateScope],
 		];
 		$allowUserToChangeDisplayName = $this->config->getSystemValueBool('allow_user_to_change_display_name', true);
 		foreach ($updatable as $property => $data) {
@@ -413,12 +425,14 @@ class UsersController extends Controller {
 						'twitterScope' => $userAccount->getProperty(IAccountManager::PROPERTY_TWITTER)->getScope(),
 						'fediverse' => $userAccount->getProperty(IAccountManager::PROPERTY_FEDIVERSE)->getValue(),
 						'fediverseScope' => $userAccount->getProperty(IAccountManager::PROPERTY_FEDIVERSE)->getScope(),
+						'birthdate' => $userAccount->getProperty(IAccountManager::PROPERTY_BIRTHDATE)->getValue(),
+						'birthdateScope' => $userAccount->getProperty(IAccountManager::PROPERTY_BIRTHDATE)->getScope(),
 						'message' => $this->l10n->t('Settings saved'),
 					],
 				],
 				Http::STATUS_OK
 			);
-		} catch (ForbiddenException | InvalidArgumentException | PropertyDoesNotExistException $e) {
+		} catch (ForbiddenException|InvalidArgumentException|PropertyDoesNotExistException $e) {
 			return new DataResponse([
 				'status' => 'error',
 				'data' => [
@@ -445,7 +459,7 @@ class UsersController extends Controller {
 		}
 
 		$oldEmailAddress = $userAccount->getUser()->getSystemEMailAddress();
-		$oldEmailAddress = strtolower((string)$oldEmailAddress);
+		$oldEmailAddress = strtolower((string) $oldEmailAddress);
 		if ($oldEmailAddress !== strtolower($userAccount->getProperty(IAccountManager::PROPERTY_EMAIL)->getValue())) {
 			// this is the only permission a backend provides and is also used
 			// for the permission of setting a email address
@@ -471,14 +485,14 @@ class UsersController extends Controller {
 	/**
 	 * Set the mail address of a user
 	 *
-	 * @NoAdminRequired
 	 * @NoSubAdminRequired
-	 * @PasswordConfirmationRequired
 	 *
 	 * @param string $account
 	 * @param bool $onlyVerificationCode only return verification code without updating the data
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
+	#[PasswordConfirmationRequired]
 	public function getVerificationCode(string $account, bool $onlyVerificationCode): DataResponse {
 		$user = $this->userSession->getUser();
 

@@ -1,0 +1,314 @@
+SPDX-License-Identifier: MIT
+SPDX-License-Identifier: ISC
+SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-License-Identifier: BSD-2-Clause
+SPDX-License-Identifier: AGPL-3.0-or-later
+SPDX-FileCopyrightText: xiaokai <kexiaokai@gmail.com>
+SPDX-FileCopyrightText: rhysd <lin90162@yahoo.co.jp>
+SPDX-FileCopyrightText: inline-style-parser developers
+SPDX-FileCopyrightText: escape-html developers
+SPDX-FileCopyrightText: debounce developers
+SPDX-FileCopyrightText: Tobias Koppers @sokra
+SPDX-FileCopyrightText: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
+SPDX-FileCopyrightText: T. Jameson Little <t.jameson.little@gmail.com>
+SPDX-FileCopyrightText: Stefan Thomas <justmoon@members.fsf.org> (http://www.justmoon.net)
+SPDX-FileCopyrightText: Sindre Sorhus
+SPDX-FileCopyrightText: Roman Shtylman <shtylman@gmail.com>
+SPDX-FileCopyrightText: Rob Cresswell <robcresswell@pm.me>
+SPDX-FileCopyrightText: Paul Vorbach <paul@vorba.ch> (http://paul.vorba.ch)
+SPDX-FileCopyrightText: Paul Vorbach <paul@vorb.de> (http://vorb.de)
+SPDX-FileCopyrightText: Max <max@nextcloud.com>
+SPDX-FileCopyrightText: Matt Zabriskie
+SPDX-FileCopyrightText: Mark <mark@remarkablemark.org>
+SPDX-FileCopyrightText: Mapbox
+SPDX-FileCopyrightText: John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
+SPDX-FileCopyrightText: Jeff Sagal <sagalbot@gmail.com>
+SPDX-FileCopyrightText: James Halliday
+SPDX-FileCopyrightText: GitHub Inc.
+SPDX-FileCopyrightText: Feross Aboukhadijeh
+SPDX-FileCopyrightText: Evan You
+SPDX-FileCopyrightText: Eugene Sharygin <eush77@gmail.com>
+SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
+SPDX-FileCopyrightText: Christoph Wurst
+SPDX-FileCopyrightText: Borys Serebrov
+SPDX-FileCopyrightText: Arnout Kazemier
+SPDX-FileCopyrightText: Antoni Andre <antoniandre.web@gmail.com>
+SPDX-FileCopyrightText: Andrea Giammarchi
+SPDX-FileCopyrightText: Alkemics
+
+
+This file is generated from multiple sources. Included packages:
+- unist-util-is
+	- version: 3.0.0
+	- license: MIT
+- unist-util-visit-parents
+	- version: 2.1.2
+	- license: MIT
+- unist-util-visit
+	- version: 1.4.1
+	- license: MIT
+- @mapbox/hast-util-table-cell-style
+	- version: 0.2.1
+	- license: BSD-2-Clause
+- axios
+	- version: 1.10.0
+	- license: MIT
+- @nextcloud/browser-storage
+	- version: 0.4.0
+	- license: GPL-3.0-or-later
+- @nextcloud/vue-select
+	- version: 3.25.1
+	- license: MIT
+- @nextcloud/vue
+	- version: 8.28.0
+	- license: AGPL-3.0-or-later
+- @ungap/structured-clone
+	- version: 1.2.0
+	- license: ISC
+- bail
+	- version: 2.0.2
+	- license: MIT
+- base64-js
+	- version: 1.5.1
+	- license: MIT
+- buffer
+	- version: 6.0.3
+	- license: MIT
+- cancelable-promise
+	- version: 4.3.1
+	- license: MIT
+- charenc
+	- version: 0.0.2
+	- license: BSD-3-Clause
+- comma-separated-tokens
+	- version: 2.0.3
+	- license: MIT
+- crypt
+	- version: 0.0.2
+	- license: BSD-3-Clause
+- css-loader
+	- version: 7.1.2
+	- license: MIT
+- debounce
+	- version: 2.2.0
+	- license: MIT
+- decode-named-character-reference
+	- version: 1.2.0
+	- license: MIT
+- devlop
+	- version: 1.1.0
+	- license: MIT
+- emoji-mart-vue-fast
+	- version: 15.0.4
+	- license: BSD-3-Clause
+- escape-html
+	- version: 1.0.3
+	- license: MIT
+- eventemitter3
+	- version: 5.0.1
+	- license: MIT
+- extend
+	- version: 3.0.2
+	- license: MIT
+- hast-to-hyperscript
+	- version: 10.0.3
+	- license: MIT
+- hast-util-is-element
+	- version: 3.0.0
+	- license: MIT
+- hast-util-whitespace
+	- version: 2.0.1
+	- license: MIT
+- ieee754
+	- version: 1.2.1
+	- license: BSD-3-Clause
+- inline-style-parser
+	- version: 0.1.1
+	- license: MIT
+- is-absolute-url
+	- version: 4.0.1
+	- license: MIT
+- is-buffer
+	- version: 1.1.6
+	- license: MIT
+- md5
+	- version: 2.3.0
+	- license: BSD-3-Clause
+- mdast-squeeze-paragraphs
+	- version: 6.0.0
+	- license: MIT
+- escape-string-regexp
+	- version: 5.0.0
+	- license: MIT
+- mdast-util-find-and-replace
+	- version: 3.0.1
+	- license: MIT
+- mdast-util-from-markdown
+	- version: 2.0.2
+	- license: MIT
+- mdast-util-newline-to-break
+	- version: 2.0.0
+	- license: MIT
+- mdast-util-to-hast
+	- version: 13.1.0
+	- license: MIT
+- mdast-util-to-string
+	- version: 4.0.0
+	- license: MIT
+- micromark-core-commonmark
+	- version: 2.0.3
+	- license: MIT
+- micromark-factory-destination
+	- version: 2.0.1
+	- license: MIT
+- micromark-factory-label
+	- version: 2.0.1
+	- license: MIT
+- micromark-factory-space
+	- version: 2.0.1
+	- license: MIT
+- micromark-factory-title
+	- version: 2.0.1
+	- license: MIT
+- micromark-factory-whitespace
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-character
+	- version: 2.1.0
+	- license: MIT
+- micromark-util-chunked
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-classify-character
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-combine-extensions
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-decode-numeric-character-reference
+	- version: 2.0.2
+	- license: MIT
+- micromark-util-decode-string
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-encode
+	- version: 2.0.0
+	- license: MIT
+- micromark-util-html-tag-name
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-normalize-identifier
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-resolve-all
+	- version: 2.0.1
+	- license: MIT
+- micromark-util-sanitize-uri
+	- version: 2.0.0
+	- license: MIT
+- micromark-util-subtokenize
+	- version: 2.1.0
+	- license: MIT
+- micromark
+	- version: 4.0.2
+	- license: MIT
+- path-browserify
+	- version: 1.0.1
+	- license: MIT
+- process
+	- version: 0.11.10
+	- license: MIT
+- property-information
+	- version: 6.4.1
+	- license: MIT
+- rehype-external-links
+	- version: 3.0.0
+	- license: MIT
+- rehype-react
+	- version: 7.2.0
+	- license: MIT
+- remark-breaks
+	- version: 4.0.0
+	- license: MIT
+- remark-parse
+	- version: 11.0.0
+	- license: MIT
+- remark-rehype
+	- version: 11.1.0
+	- license: MIT
+- remark-unlink-protocols
+	- version: 1.0.0
+	- license: MIT
+- semver
+	- version: 7.6.3
+	- license: ISC
+- space-separated-tokens
+	- version: 2.0.2
+	- license: MIT
+- splitpanes
+	- version: 2.4.1
+	- license: MIT
+- striptags
+	- version: 3.2.0
+	- license: MIT
+- style-loader
+	- version: 4.0.0
+	- license: MIT
+- style-to-object
+	- version: 0.4.4
+	- license: MIT
+- trim-lines
+	- version: 3.0.1
+	- license: MIT
+- trough
+	- version: 2.2.0
+	- license: MIT
+- is-plain-obj
+	- version: 4.1.0
+	- license: MIT
+- unified
+	- version: 11.0.4
+	- license: MIT
+- unist-builder
+	- version: 4.0.0
+	- license: MIT
+- unist-util-is
+	- version: 6.0.0
+	- license: MIT
+- unist-util-position
+	- version: 5.0.0
+	- license: MIT
+- unist-util-stringify-position
+	- version: 4.0.0
+	- license: MIT
+- unist-util-visit-parents
+	- version: 6.0.1
+	- license: MIT
+- unist-util-visit
+	- version: 5.0.0
+	- license: MIT
+- vfile-message
+	- version: 4.0.2
+	- license: MIT
+- vfile
+	- version: 6.0.1
+	- license: MIT
+- vue-color
+	- version: 2.8.1
+	- license: MIT
+- vue-material-design-icons
+	- version: 5.3.0
+	- license: MIT
+- vue
+	- version: 2.7.16
+	- license: MIT
+- web-namespaces
+	- version: 2.0.1
+	- license: MIT
+- webpack
+	- version: 5.95.0
+	- license: MIT
+- recommendations
+	- version: 3.0.0
+	- license: AGPL-3.0-or-later

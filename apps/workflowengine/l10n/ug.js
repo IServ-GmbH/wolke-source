@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "سۈزگۈچنى تاللاڭ",
     "Select a comparator" : "سېلىشتۇرغۇچىنى تاللاڭ",
     "Remove filter" : "سۈزگۈچنى ئۆچۈرۈڭ",
+    "Audio" : "Audio",
     "Folder" : "قىسقۇچ",
     "Images" : "سۈرەتلەر",
     "Office documents" : "ئىشخانا ھۆججەتلىرى",
     "PDF documents" : "PDF ھۆججەتلىرى",
+    "Video" : "Video",
     "Custom MIME type" : "ئىختىيارى MIME تىپى",
     "Custom mimetype" : "Custom mimetype",
     "Select a file type" : "ھۆججەت تىپىنى تاللاڭ",
@@ -69,7 +71,6 @@ OC.L10N.register(
     "Select a user agent" : "ئىشلەتكۈچى ۋاكالەتچىسىنى تاللاڭ",
     "Select groups" : "گۇرۇپپىلارنى تاللاڭ",
     "Groups" : "گۇرۇپپا",
-    "Type to search for group …" : "گۇرۇپپا ئىزدەش ئۈچۈن كىرگۈزۈڭ…",
     "Select a trigger" : "قوزغاتقۇچنى تاللاڭ",
     "At least one event must be selected" : "كەم دېگەندە بىر پائالىيەتنى تاللاش كېرەك",
     "Add new flow" : "يېڭى ئېقىن قوشۇڭ",
@@ -118,6 +119,7 @@ OC.L10N.register(
     "Request user agent" : "ئىشلەتكۈچى ۋاكالەتچىسىنى تەلەپ قىلىڭ",
     "Group membership" : "گۇرۇپپا ئەزالىقى",
     "is member of" : "نىڭ ئەزاسى",
-    "is not member of" : "ئەزا ئەمەس"
+    "is not member of" : "ئەزا ئەمەس",
+    "Type to search for group …" : "گۇرۇپپا ئىزدەش ئۈچۈن كىرگۈزۈڭ…"
 },
 "nplurals=2; plural=(n != 1);");

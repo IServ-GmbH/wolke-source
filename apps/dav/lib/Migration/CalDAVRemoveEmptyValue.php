@@ -1,30 +1,11 @@
 <?php
+
 /**
- * @copyright 2017 Joas Schilling <coding@schilljs.com>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\Migration;
 
-use Doctrine\DBAL\Platforms\OraclePlatform;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -61,7 +42,7 @@ class CalDAVRemoveEmptyValue implements IRepairStep {
 
 		$output->startProgress(count($objects));
 		foreach ($objects as $row) {
-			$calObject = $this->calDavBackend->getCalendarObject((int)$row['calendarid'], $row['uri']);
+			$calObject = $this->calDavBackend->getCalendarObject((int) $row['calendarid'], $row['uri']);
 			$data = preg_replace('/' . $pattern . '/', ':', $calObject['calendardata']);
 
 			if ($data !== $calObject['calendardata']) {
@@ -72,14 +53,14 @@ class CalDAVRemoveEmptyValue implements IRepairStep {
 				} catch (InvalidDataException $e) {
 					$this->logger->info('Calendar object for calendar {cal} with uri {uri} still invalid', [
 						'app' => 'dav',
-						'cal' => (int)$row['calendarid'],
+						'cal' => (int) $row['calendarid'],
 						'uri' => $row['uri'],
 					]);
 					$warnings++;
 					continue;
 				}
 
-				$this->calDavBackend->updateCalendarObject((int)$row['calendarid'], $row['uri'], $data);
+				$this->calDavBackend->updateCalendarObject((int) $row['calendarid'], $row['uri'], $data);
 				$count++;
 			}
 		}
@@ -94,7 +75,7 @@ class CalDAVRemoveEmptyValue implements IRepairStep {
 	}
 
 	protected function getInvalidObjects($pattern) {
-		if ($this->db->getDatabasePlatform() instanceof OraclePlatform) {
+		if ($this->db->getDatabaseProvider() === IDBConnection::PLATFORM_ORACLE) {
 			$rows = [];
 			$chunkSize = 500;
 			$query = $this->db->getQueryBuilder();

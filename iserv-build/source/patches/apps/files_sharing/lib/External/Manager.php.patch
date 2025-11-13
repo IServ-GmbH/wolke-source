@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/lib/External/Manager.php apps/files_sharing/lib/External/Manager.php
-index f18d834..aa73b62 100644
+index ddc30d2..1079d9a 100644
 --- apps/files_sharing/lib/External/Manager.php
 +++ apps/files_sharing/lib/External/Manager.php
-@@ -38,6 +38,7 @@ use Doctrine\DBAL\Driver\Exception;
+@@ -12,6 +12,7 @@ use Doctrine\DBAL\Driver\Exception;
  use OC\Files\Filesystem;
  use OCA\FederatedFileSharing\Events\FederatedShareAddedEvent;
  use OCA\Files_Sharing\Helper;
@@ -10,7 +10,7 @@ index f18d834..aa73b62 100644
  use OCP\DB\QueryBuilder\IQueryBuilder;
  use OCP\EventDispatcher\IEventDispatcher;
  use OCP\Federation\ICloudFederationFactory;
-@@ -98,6 +99,9 @@ class Manager {
+@@ -72,6 +73,9 @@ class Manager {
  	/** @var LoggerInterface */
  	private $logger;
  
@@ -20,7 +20,7 @@ index f18d834..aa73b62 100644
  	public function __construct(
  		IDBConnection                   $connection,
  		\OC\Files\Mount\Manager         $mountManager,
-@@ -111,7 +115,8 @@ class Manager {
+@@ -85,7 +89,8 @@ class Manager {
  		IUserManager                    $userManager,
  		IUserSession                    $userSession,
  		IEventDispatcher                $eventDispatcher,
@@ -30,7 +30,7 @@ index f18d834..aa73b62 100644
  	) {
  		$user = $userSession->getUser();
  		$this->connection = $connection;
-@@ -127,6 +132,7 @@ class Manager {
+@@ -101,6 +106,7 @@ class Manager {
  		$this->userManager = $userManager;
  		$this->eventDispatcher = $eventDispatcher;
  		$this->logger = $logger;
@@ -38,7 +38,7 @@ index f18d834..aa73b62 100644
  	}
  
  	/**
-@@ -759,7 +765,7 @@ class Manager {
+@@ -733,7 +739,7 @@ class Manager {
  	 * @return array list of open server-to-server shares
  	 */
  	public function getOpenShares() {
@@ -47,14 +47,7 @@ index f18d834..aa73b62 100644
  	}
  
  	/**
-@@ -822,10 +828,31 @@ class Manager {
- 					return (bool)$share['accepted'] === $accepted;
- 				});
- 			}
-+
- 			return array_values($shares);
- 		} catch (\Doctrine\DBAL\Exception $e) {
- 			$this->logger->emergency('Error when retrieving shares', ['exception' => $e]);
+@@ -802,4 +808,24 @@ class Manager {
  			return [];
  		}
  	}

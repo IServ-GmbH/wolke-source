@@ -23,9 +23,9 @@ class ImportLegacyOcClient extends Command {
 	private const ARGUMENT_CLIENT_SECRET = 'client-secret';
 
 	public function __construct(
-		private IConfig $config,
-		private ICrypto $crypto,
-		private ClientMapper $clientMapper,
+		private readonly IConfig $config,
+		private readonly ICrypto $crypto,
+		private readonly ClientMapper $clientMapper,
 	) {
 		parent::__construct();
 	}

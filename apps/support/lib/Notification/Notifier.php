@@ -32,18 +32,15 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 class Notifier implements INotifier {
-	protected IURLGenerator $url;
-	protected IConfig $config;
-	protected IManager $notificationManager;
-	protected IFactory $l10nFactory;
-
-	public function __construct(IURLGenerator $url, IConfig $config, IManager $notificationManager, IFactory $l10nFactory) {
-		$this->url = $url;
-		$this->notificationManager = $notificationManager;
-		$this->config = $config;
-		$this->l10nFactory = $l10nFactory;
+	public function __construct(
+		protected readonly IURLGenerator $url,
+		protected readonly IConfig $config,
+		protected readonly IManager $notificationManager,
+		protected readonly IFactory $l10nFactory,
+	) {
 	}
 
 	public function getID(): string {
@@ -58,12 +55,12 @@ class Notifier implements INotifier {
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
-	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
+	 * @throws UnknownNotificationException When the notification was not prepared by a notifier
 	 * @since 9.0.0
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'support') {
-			throw new \InvalidArgumentException('Unknown app id');
+			throw new UnknownNotificationException();
 		}
 
 		$l = $this->l10nFactory->get('support', $languageCode);
@@ -89,7 +86,7 @@ class Notifier implements INotifier {
 
 			default:
 				// Unknown subject => Unknown notification => throw
-				throw new \InvalidArgumentException();
+				throw new UnknownNotificationException();
 		}
 	}
 }

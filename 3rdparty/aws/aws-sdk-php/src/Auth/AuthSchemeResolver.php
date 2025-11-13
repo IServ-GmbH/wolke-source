@@ -23,7 +23,7 @@ class AuthSchemeResolver implements AuthSchemeResolverInterface
         'aws.auth#sigv4' => 'v4',
         'aws.auth#sigv4a' => 'v4a',
         'smithy.api#httpBearerAuth' => 'bearer',
-        'smithy.api#noAuth' => 'anonymous'
+        'smithy.auth#noAuth' => 'anonymous'
     ];
 
     /**

@@ -109,6 +109,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -203,13 +205,13 @@ than others.</p>
 <section id="activating">
 <h3>Activating<a class="headerlink" href="#activating" title="Link to this heading"></a></h3>
 <p>Brute force protection is enabled by default on Nextcloud. Its behavior can be adjusted through the
-<code class="docutils literal notranslate"><span class="pre">bruteforcesettings</span></code> app (shipped with Server, but disabled by default), several <code class="docutils literal notranslate"><span class="pre">occ</span></code> commands, and several
+<code class="docutils literal notranslate"><span class="pre">bruteforcesettings</span></code> app (shipped with Server and enabled by default), several <code class="docutils literal notranslate"><span class="pre">occ</span></code> commands, and several
 <code class="docutils literal notranslate"><span class="pre">config.php</span></code> parameters. Its effectiveness is highly dependent on having a properly configured environment,
 particularly when integrating a reverse proxy with Nextcloud (and associated parameters such as <code class="docutils literal notranslate"><span class="pre">trusted_proxies</span></code>).</p>
 </section>
 <section id="the-brute-force-settings-app">
 <h3>The brute force settings app<a class="headerlink" href="#the-brute-force-settings-app" title="Link to this heading"></a></h3>
-<p>This app (once enabled) makes it possible (via the Web UI) to view the status of a
+<p>This app, which shipped and enabled by default, makes it possible (via the Web UI) to view the status of a
 connection and modify certain parameters of the brute force protection built into Nextcloud Server.</p>
 <p>The user interface added by this app is found under <em>Administration settings -&gt; Security</em> under the <em>Brute-force
 IP whitelist</em> heading.</p>
@@ -317,40 +319,49 @@ It’s best to exclude as few IP addresses as you can, or even none at all.</p>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

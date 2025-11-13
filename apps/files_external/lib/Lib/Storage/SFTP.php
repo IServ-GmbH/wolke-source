@@ -1,38 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author hkjolhede <hkjolhede@gmail.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lennart Rosam <lennart.rosam@medien-systempartner.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Ross Nicoll <jrn@jrn.me.uk>
- * @author SA <stephen@mthosting.net>
- * @author Senorsen <senorsen.zhang@gmail.com>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_External\Lib\Storage;
 
@@ -269,7 +240,7 @@ class SFTP extends Common {
 				$lines = file($keyPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 				if ($lines) {
 					foreach ($lines as $line) {
-						$hostKeyArray = explode("::", $line, 2);
+						$hostKeyArray = explode('::', $line, 2);
 						if (count($hostKeyArray) === 2) {
 							$hosts[] = $hostKeyArray[0];
 							$keys[] = $hostKeyArray[1];
@@ -471,8 +442,8 @@ class SFTP extends Common {
 		try {
 			$stat = $this->getConnection()->stat($this->absPath($path));
 
-			$mtime = isset($stat['mtime']) ? (int)$stat['mtime'] : -1;
-			$size = isset($stat['size']) ? (int)$stat['size'] : 0;
+			$mtime = isset($stat['mtime']) ? (int) $stat['mtime'] : -1;
+			$size = isset($stat['size']) ? (int) $stat['size'] : 0;
 
 			return [
 				'mtime' => $mtime,
@@ -512,16 +483,19 @@ class SFTP extends Common {
 				$size = $writtenSize;
 			});
 			if (!$stream) {
-				throw new \Exception("Failed to wrap stream");
+				throw new \Exception('Failed to wrap stream');
 			}
 		}
 		/** @psalm-suppress InternalMethod */
 		$result = $this->getConnection()->put($this->absPath($path), $stream);
 		fclose($stream);
 		if ($result) {
+			if ($size === null) {
+				throw new \Exception('Failed to get written size from sftp storage wrapper');
+			}
 			return $size;
 		} else {
-			throw new \Exception("Failed to write steam to sftp storage");
+			throw new \Exception('Failed to write steam to sftp storage');
 		}
 	}
 

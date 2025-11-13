@@ -37,20 +37,23 @@ if ($_['showSubscriptionDetails']) {
 				if ($_['validSubscription']) {
 					if ($_['overLimit']) {
 						?>
-					<span class="badge overlimit icon-details">
+					<span class="badge overlimit">
+						<img src="<?php p(\OCP\Template::image_path('core', 'actions/details.svg')); ?>">
 						<?php p($l->t('Over subscription limit')); ?>
 					</span>
 					<?php
 					} else {
 						?>
-					<span class="badge supported icon-checkmark">
+					<span class="badge supported">
+						<img src="<?php p(\OCP\Template::image_path('core', 'actions/checkmark.svg')); ?>">
 						<?php p($l->t('Valid subscription')); ?>
 					</span>
 					<?php
 					}
 				} else {
 					?>
-					<span class="badge unsupported icon-close">
+					<span class="badge unsupported">
+						<img src="<?php p(\OCP\Template::image_path('core', 'actions/close.svg')); ?>">
 						<?php p($l->t('Expired subscription')); ?>
 					</span>
 					<?php

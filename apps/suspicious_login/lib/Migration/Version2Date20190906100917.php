@@ -1,14 +1,17 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 namespace OCA\SuspiciousLogin\Migration;
 
 use Closure;
 use OCA\SuspiciousLogin\Service\Ipv4Strategy;
 use OCP\DB\ISchemaWrapper;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version2Date20190906100917 extends SimpleMigrationStep {
 

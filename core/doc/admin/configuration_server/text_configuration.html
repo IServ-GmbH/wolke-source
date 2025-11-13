@@ -81,6 +81,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#disable-rich-workspaces-globally">Disable rich workspaces globally</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#default-file-extension">Default file extension</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disable-rich-text-editing">Disable rich text editing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-encodings">File encodings</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
@@ -94,6 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -149,6 +152,13 @@
 </pre></div>
 </div>
 </section>
+<section id="file-encodings">
+<h2>File encodings<a class="headerlink" href="#file-encodings" title="Link to this heading"></a></h2>
+<p>Text can automatically detect encodings of files and will convert them to UTF-8 when saving. Due to the variety of encodings, not all of them can be detected, however you can configure a list of encodings and in which priority they should be detected using the php <code class="docutils literal notranslate"><span class="pre">mbstring.detect_order</span></code> setting in your php.ini:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mbstring</span><span class="o">.</span><span class="n">detect_order</span> <span class="o">=</span> <span class="n">ASCII</span><span class="p">,</span><span class="n">JIS</span><span class="p">,</span><span class="n">UTF</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="n">SJIS</span><span class="p">,</span><span class="n">EUC</span><span class="o">-</span><span class="n">JP</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -174,40 +184,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

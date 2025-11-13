@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2023 Ferdinand Thiessen <opensource@fthiessen.de>
- *
- * @author Ferdinand Thiessen <opensource@fthiessen.de>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\DAV\CalDAV\AppCalendar;
@@ -114,7 +97,7 @@ class CalendarObject implements ICalendarObject, IACL {
 			$components = $this->vobject->getBaseComponents();
 			foreach ($components as $key => $component) {
 				$components[$key]->STATUS = 'CANCELLED';
-				$components[$key]->SEQUENCE = isset($component->SEQUENCE) ? ((int)$component->SEQUENCE->getValue()) + 1 : 1;
+				$components[$key]->SEQUENCE = isset($component->SEQUENCE) ? ((int) $component->SEQUENCE->getValue()) + 1 : 1;
 				if ($component->name === 'VEVENT') {
 					$components[$key]->METHOD = 'CANCEL';
 				}
@@ -133,9 +116,9 @@ class CalendarObject implements ICalendarObject, IACL {
 			throw new NotFound('Invalid node');
 		}
 		if (isset($base->{'X-FILENAME'})) {
-			return (string)$base->{'X-FILENAME'};
+			return (string) $base->{'X-FILENAME'};
 		}
-		return (string)$base->UID . '.ics';
+		return (string) $base->UID . '.ics';
 	}
 
 	public function setName($name): void {

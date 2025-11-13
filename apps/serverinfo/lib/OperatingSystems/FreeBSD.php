@@ -1,26 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @author Matthew Wener <matthew@wener.org>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <https://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 namespace OCA\ServerInfo\OperatingSystems;
 
 use OCA\ServerInfo\Resources\Disk;
@@ -91,6 +75,18 @@ class FreeBSD implements IOperatingSystem {
 		return $data;
 	}
 
+	public function getCpuCount(): int {
+		$numCpu = -1;
+
+		try {
+			$numCpu = intval($this->executeCommand('/sbin/sysctl -n hw.ncpu'));
+		} catch (RuntimeException) {
+			return $numCpu;
+		}
+
+		return $numCpu;
+	}
+
 	public function getTime(): string {
 		try {
 			return $this->executeCommand('date');
@@ -114,24 +110,21 @@ class FreeBSD implements IOperatingSystem {
 	}
 
 	public function getNetworkInfo(): array {
-		$result = [];
-		$result['hostname'] = \gethostname();
+		$result = [
+			'gateway' => '',
+			'hostname' => \gethostname(),
+		];
 
 		try {
-			$dns = $this->executeCommand('cat /etc/resolv.conf 2>/dev/null');
-			preg_match_all("/(?<=^nameserver ).\S*/m", $dns, $matches);
-			$alldns = implode(' ', $matches[0]);
-			$result['dns'] = $alldns;
 			$netstat = $this->executeCommand('netstat -rn');
 			preg_match_all("/(?<=^default)\s*[0-9a-fA-f\.:]+/m", $netstat, $gw);
 			if (count($gw[0]) > 0) {
 				$result['gateway'] = implode(", ", array_map("trim", $gw[0]));
-			} else {
-				$result['gateway'] = '';
 			}
-		} catch (RuntimeException $e) {
-			return $result;
+		} catch (RuntimeException) {
+			// okay
 		}
+
 		return $result;
 	}
 
@@ -266,4 +259,5 @@ class FreeBSD implements IOperatingSystem {
 		}
 		return $data;
 	}
+
 }

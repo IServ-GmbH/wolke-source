@@ -3,27 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Ferdinand Thiessen <opensource@fthiessen.de>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\UpdateNotification\Controller;
 
@@ -172,14 +153,23 @@ class APIController extends OCSController {
 	 * @param string $appId App to search changelog entry for
 	 * @param string|null $version The version to search the changelog entry for (defaults to the latest installed)
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{appName: string, content: string, version: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{appName: string, content: string, version: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{}, array{}>
 	 *
 	 * 200: Changelog entry returned
+	 * 400: The `version` parameter is not a valid version format
 	 * 404: No changelog found
 	 */
 	public function getAppChangelogEntry(string $appId, ?string $version = null): DataResponse {
 		$version = $version ?? $this->appManager->getAppVersion($appId);
-		$changes = $this->manager->getChangelog($appId, $version);
+		// handle pre-release versions
+		$matches = [];
+		$result = preg_match('/^(\d+\.\d+(\.\d+)?)/', $version, $matches);
+		if ($result === false || $result === 0) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+		$shortVersion = $matches[0];
+
+		$changes = $this->manager->getChangelog($appId, $shortVersion);
 
 		if ($changes === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

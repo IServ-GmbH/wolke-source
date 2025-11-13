@@ -22,8 +22,9 @@ class AddColumn extends ColumnMigrationAttribute {
 	 * @since 30.0.0
 	 */
 	public function definition(): string {
+		$type = is_null($this->getType()) ? '' : ' (' . $this->getType()->value . ')';
 		return empty($this->getName()) ?
-			'Addition of a new column to table \'' . $this->getTable() . '\''
-			: 'Addition of column \'' . $this->getName() . '\' to table \'' . $this->getTable() . '\'';
+			'Addition of a new column' . $type . ' to table \'' . $this->getTable() . '\''
+			: 'Addition of column \'' . $this->getName() . '\'' . $type . ' to table \'' . $this->getTable() . '\'';
 	}
 }

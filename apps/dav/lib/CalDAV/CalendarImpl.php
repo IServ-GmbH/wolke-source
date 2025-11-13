@@ -3,34 +3,15 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2017, Georg Ehrke <oc.list@georgehrke.com>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Anna Larch <anna.larch@gmx.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\CalDAV;
 
 use OCA\DAV\CalDAV\Auth\CustomPrincipalPlugin;
 use OCA\DAV\CalDAV\InvitationResponse\InvitationResponseServer;
 use OCP\Calendar\Exceptions\CalendarException;
+use OCP\Calendar\ICalendarIsEnabled;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IHandleImipMessage;
 use OCP\Constants;
@@ -44,7 +25,7 @@ use Sabre\VObject\Property;
 use Sabre\VObject\Reader;
 use function Sabre\Uri\split as uriSplit;
 
-class CalendarImpl implements ICreateFromString, IHandleImipMessage {
+class CalendarImpl implements ICreateFromString, IHandleImipMessage, ICalendarIsEnabled {
 	private CalDavBackend $backend;
 	private Calendar $calendar;
 	/** @var array<string, mixed> */
@@ -104,7 +85,7 @@ class CalendarImpl implements ICreateFromString, IHandleImipMessage {
 		/** @var VCalendar $vobj */
 		$vobj = Reader::read($timezoneProp);
 		$components = $vobj->getComponents();
-		if(empty($components)) {
+		if (empty($components)) {
 			return null;
 		}
 		/** @var VTimeZone $vtimezone */
@@ -116,7 +97,7 @@ class CalendarImpl implements ICreateFromString, IHandleImipMessage {
 	 * @param string $pattern which should match within the $searchProperties
 	 * @param array $searchProperties defines the properties within the query pattern should match
 	 * @param array $options - optional parameters:
-	 * 	['timerange' => ['start' => new DateTime(...), 'end' => new DateTime(...)]]
+	 *                       ['timerange' => ['start' => new DateTime(...), 'end' => new DateTime(...)]]
 	 * @param int|null $limit - limit number of search results
 	 * @param int|null $offset - offset for paging of search results
 	 * @return array an array of events/journals/todos which are arrays of key-value-pairs
@@ -150,6 +131,13 @@ class CalendarImpl implements ICreateFromString, IHandleImipMessage {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @since 30.0.12
+	 */
+	public function isEnabled(): bool {
+		return $this->calendarInfo['{http://owncloud.org/ns}calendar-enabled'] ?? true;
 	}
 
 	/**
@@ -253,7 +241,7 @@ class CalendarImpl implements ICreateFromString, IHandleImipMessage {
 		}
 		$iTipMessage->uid = isset($vEvent->{'UID'}) ? $vEvent->{'UID'}->getValue() : '';
 		$iTipMessage->component = 'VEVENT';
-		$iTipMessage->sequence = isset($vEvent->{'SEQUENCE'}) ? (int)$vEvent->{'SEQUENCE'}->getValue() : 0;
+		$iTipMessage->sequence = isset($vEvent->{'SEQUENCE'}) ? (int) $vEvent->{'SEQUENCE'}->getValue() : 0;
 		$iTipMessage->message = $vObject;
 		$server->server->emit('schedule', [$iTipMessage]);
 	}

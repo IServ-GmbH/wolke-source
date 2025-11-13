@@ -59,7 +59,6 @@ OC.L10N.register(
     "Nextcloud Group" : "Grupu de Nextcloud",
     "Email address" : "Indiritzu de posta eletrònica",
     "Contact" : "Cuntatu",
-    "Circle" : "Giru",
     "Nextcloud App" : "Aplicatzione de Nextcloud",
     "Member" : "Membru",
     "Moderator" : "Chie moderat",
@@ -103,16 +102,15 @@ OC.L10N.register(
     "You have no permission to create a new team" : "Non tenes permissu pro creare un'iscuadra noa",
     "%s shared a file with \"%s\"." : "%s at cumpartzidu un'archìviu cun \"%s\".",
     "%s shared a file with you." : "%s at cumpartzidu un'archìviu cun tegus.",
+    "Open %s" : "Aberi %s",
     "Bring cloud-users closer together." : "Acosta impare a is utentes de sa nue.",
+    "Loading…" : "Carrighende…",
     "No files in here" : "Perunu archìviu",
     "No entries found in this folder" : "Perunu elementu agatadu in custa cartella",
     "Name" : "Nùmene",
     "Size" : "Mannària",
     "Modified" : "Modificadu",
     "Shared to Circles" : "Cumpartzidu cun is giros\\",
-    "You are now a member of the Circle \"%2$s\"" : "Immoe ses cumponente de \"%2$s\"",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "%1$s t'at invitadu a su giru \"%2$s\"",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s at imbiadu una rechesta pro èssere cumponente de su giru \"%2$s\"",
-    "Leave the circle" : "Lassa su giru"
+    "Circle" : "Giru"
 },
 "nplurals=2; plural=(n != 1);");

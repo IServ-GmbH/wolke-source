@@ -1,34 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Bernhard Ostertag <bernieo.code@gmx.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Łukasz Buśko <busko.lukasz@pm.me>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sander Ruitenbeek <sander@grids.be>
- * @author Simon Spannagel <simonspa@kth.se>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Core\Command\Db;
 
@@ -263,7 +238,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 			$output->writeln('<info>Clearing schema in new database</info>');
 		}
 		foreach ($toTables as $table) {
-			$db->getSchemaManager()->dropTable($table);
+			$db->createSchemaManager()->dropTable($table);
 		}
 	}
 
@@ -276,7 +251,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 			}
 			return preg_match($filterExpression, $asset) !== false;
 		});
-		return $db->getSchemaManager()->listTableNames();
+		return $db->createSchemaManager()->listTableNames();
 	}
 
 	/**
@@ -292,7 +267,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 			return;
 		}
 
-		$chunkSize = (int)$input->getOption('chunk-size');
+		$chunkSize = (int) $input->getOption('chunk-size');
 
 		$query = $fromDB->getQueryBuilder();
 		$query->automaticTablePrefix(false);

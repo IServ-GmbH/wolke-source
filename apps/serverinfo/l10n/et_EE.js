@@ -21,7 +21,7 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Näitab kasulikku infot serveri kohta, näiteks protsessori koormus, mälukasutus, kettaruum, kasutajate arv jne.",
     "Operating System:" : "Operatsioonisüsteem:",
     "CPU:" : "Protsessor:",
-    "Unknown Processor" : "Tundmatu protsessor",
+    "threads" : "lõimesid",
     "Memory:" : "Vahemälu:",
     "Server time:" : "Serveri aeg:",
     "Uptime:" : "Aktiivaeg:",
@@ -92,11 +92,6 @@ OC.L10N.register(
     "Skip server update" : "Jäta serveri uuendus vahele",
     "To use an access token, please generate one then set it using the following command:" : "Ligipääsutunnuse kasutamiseks genereeri see ja seadista alljärgneva käsu abil:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Seejärel saada tunnus ülaloleva URL-i pärimisel \"NC-Token\" päisega.",
-    "Load average: {cpu} (last minute)" : "Keskmine koormus: {cpu} (last minute)",
-    "DNS:" : "Nimeserver:",
-    "Total users:" : "Kasutajaid kokku:",
-    "24 hours:" : "24 tundi:",
-    "1 hour:" : "1 tund:",
-    "5 mins:" : "5 minutit:"
+    "Unknown Processor" : "Tundmatu protsessor"
 },
 "nplurals=2; plural=(n != 1);");

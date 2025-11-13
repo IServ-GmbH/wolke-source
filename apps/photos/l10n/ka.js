@@ -12,7 +12,6 @@ OC.L10N.register(
     "Save" : "Save",
     "Shared by" : "Shared by",
     "No recommendations. Start typing." : "No recommendations. Start typing.",
-    "Group" : "Group",
     "Copy public link" : "Copy public link",
     "An error occurred" : "An error occurred",
     "Favorite" : "Favorite",
@@ -21,7 +20,9 @@ OC.L10N.register(
     "View" : "View",
     "Unselect all" : "Unselect all",
     "Remove from favorites" : "Remove from favorites",
+    "Last week" : "Last week",
     "Details" : "Details",
+    "Group" : "Group",
     "Add" : "Add"
 },
 "nplurals=2; plural=(n!=1);");

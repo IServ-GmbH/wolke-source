@@ -64,18 +64,23 @@
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-chat">Creating a chat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#view-all-open-conversations">View all open conversations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filter-your-conversations">Filter your conversations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-conversations">Archive conversations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sharing-files-in-a-chat">Sharing files in a chat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#inserting-emoji">Inserting emoji</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#smart-picker">Smart Picker</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#editing-messages">Editing messages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#using-markdown">Using Markdown</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#polls-in-chat">Polls in chat</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setting-reminder-on-messages">Setting reminder on messages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#replying-to-messages-and-more">Replying to messages and more</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#silent-messages">Silent messages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#managing-a-conversation">Managing a conversation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ban-participants">Ban participants</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#messages-expiration">Messages expiration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#starting-a-call">Starting a call</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#starting-a-screen-share">Starting a screen share</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changing-view-in-a-call">Changing view in a call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-call-participants-list">Download call participants list</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="advanced_features.html">Advanced Talk features</a></li>
@@ -117,60 +122,77 @@
   <section id="basics-of-nextcloud-talk">
 <h1>Basics of Nextcloud Talk<a class="headerlink" href="#basics-of-nextcloud-talk" title="Link to this heading"></a></h1>
 <p>Nextcloud Talk lets you chat and have video calls on your own server.</p>
-<p>Chats and calls take place in conversations. You can create any number of conversations. There are two kinds of conversations:</p>
-<ol class="arabic simple">
-<li><p><strong>One-on-one conversations.</strong> This is where you have a private chat or call with another Talk user. You can’t add other people to this conversation or share it with a link. You start a direct one-on-one chat by looking for another user in the search bar and then clicking their name.</p></li>
+<p>Chats and calls take place in conversations. You can create any number of conversations. There are several kinds of conversations:</p>
+<p>1. <strong>One-on-one conversations.</strong> This is where you have a private chat or call with another Talk user. You can’t add other people to this conversation or share it with a link. You start a direct one-on-one chat by looking for another user in the search bar and then clicking their name.
+If a user becomes unavailable for long period and set an out-of-office status, you will find additional information in this conversation, such as provided description, absence date, or their replacement person.</p>
+<ol class="arabic simple" start="2">
 <li><p><strong>Group conversations.</strong> Besides the person who created the conversation, a group conversation can have any number of people in it. A group conversation can be shared publicly with a link, so external guest users can join a call. It can also be listed, so other people on your Nextcloud server can join the conversation.</p></li>
+<li><p><strong>Note to self.</strong> This is a special conversation with yourself. You can use it to write message notes, create to-do lists or forward content to save.</p></li>
 </ol>
 <section id="creating-a-chat">
 <h2>Creating a chat<a class="headerlink" href="#creating-a-chat" title="Link to this heading"></a></h2>
 <p>You can create a direct, one-on-one chat by searching for the name of a user, a group or a team and clicking it. For a single user, a conversation is immediately created and you can start your chat. For a group or circle you get to pick a name and settings before you create the conversation and add the participants.</p>
 <a class="reference internal image-reference" href="../_images/chat-with-one-user.png"><img alt="../_images/chat-with-one-user.png" src="../_images/chat-with-one-user.png" style="width: 400px;" /></a>
 <p>If you want to create a custom group conversation, click the button next to the search field and filters button and then on <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">conversation</span></code>.</p>
-<a class="reference internal image-reference" href="../_images/create-new-conversation.png"><img alt="../_images/create-new-conversation.png" src="../_images/create-new-conversation.png" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="../_images/create-new-conversation.png"><img alt="../_images/create-new-conversation.png" src="../_images/create-new-conversation.png" style="width: 400px;" /></a>
 <p>You can then pick a name for the conversation, put a description, and set up an avatar for it (with uploaded photo or emoji), and select if the conversation should be open to external users and if other users on the server can see and join the conversation.</p>
 <a class="reference internal image-reference" href="../_images/creating-open-conversation.png"><img alt="../_images/creating-open-conversation.png" src="../_images/creating-open-conversation.png" style="width: 500px;" /></a>
 <p>In the second step, you get to add participants and finalize the creation of the conversation.</p>
 <a class="reference internal image-reference" href="../_images/add-participants.png"><img alt="../_images/add-participants.png" src="../_images/add-participants.png" style="width: 500px;" /></a>
 <p>After confirmation you will be redirected to the new conversation and can start communicating right away.</p>
-<img alt="../_images/new-room.png" src="../_images/new-room.png" />
+<a class="reference internal image-reference" href="../_images/new-room.png"><img alt="../_images/new-room.png" src="../_images/new-room.png" style="width: 700px;" /></a>
 </section>
 <section id="view-all-open-conversations">
 <h2>View all open conversations<a class="headerlink" href="#view-all-open-conversations" title="Link to this heading"></a></h2>
 <p>You can view all the conversations that you can join by clicking the button next to the search field and filters button and then on <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">open</span> <span class="pre">conversations.</span></code></p>
-<a class="reference internal image-reference" href="../_images/join-open-conversations.png"><img alt="../_images/join-open-conversations.png" src="../_images/join-open-conversations.png" style="width: 500px;" /></a>
+<a class="reference internal image-reference" href="../_images/join-open-conversations.png"><img alt="../_images/join-open-conversations.png" src="../_images/join-open-conversations.png" style="width: 400px;" /></a>
 </section>
 <section id="filter-your-conversations">
 <h2>Filter your conversations<a class="headerlink" href="#filter-your-conversations" title="Link to this heading"></a></h2>
 <p>You can filter your conversations using the filter button located next to the search field. There are two options for filtering:
 1. Filter unread mentions: This option allows you to view group conversations with unread mentions or unread one-on-one conversations.
 2. Filter unread messages: This option allows you to view all unread messages in all joined conversations.</p>
-<a class="reference internal image-reference" href="../_images/filters-menu.png"><img alt="../_images/filters-menu.png" src="../_images/filters-menu.png" style="width: 250px;" /></a>
+<a class="reference internal image-reference" href="../_images/filters-menu.png"><img alt="../_images/filters-menu.png" src="../_images/filters-menu.png" style="width: 400px;" /></a>
 <p>You can then clear the filter from the filters menu.</p>
-<a class="reference internal image-reference" href="../_images/clear-filter.png"><img alt="../_images/clear-filter.png" src="../_images/clear-filter.png" style="width: 250px;" /></a>
+<a class="reference internal image-reference" href="../_images/clear-filter.png"><img alt="../_images/clear-filter.png" src="../_images/clear-filter.png" style="width: 400px;" /></a>
+</section>
+<section id="archive-conversations">
+<h2>Archive conversations<a class="headerlink" href="#archive-conversations" title="Link to this heading"></a></h2>
+<p>You can archive conversations that you no longer need to see in your main conversation list. When a conversation is archived, it will be moved to the <code class="docutils literal notranslate"><span class="pre">Archived</span> <span class="pre">conversations</span></code> section.
+An archived conversation will not appear in your main conversation list, but it will still align with notification level set in its settings.</p>
+<a class="reference internal image-reference" href="../_images/archived-conversations-list.png"><img alt="../_images/archived-conversations-list.png" src="../_images/archived-conversations-list.png" style="width: 400px;" /></a>
+<p>The list is accessible from the button at the bottom of the navigation bar.</p>
+<a class="reference internal image-reference" href="../_images/archived-conversations-button.png"><img alt="../_images/archived-conversations-button.png" src="../_images/archived-conversations-button.png" style="width: 400px;" /></a>
 </section>
 <section id="sharing-files-in-a-chat">
 <h2>Sharing files in a chat<a class="headerlink" href="#sharing-files-in-a-chat" title="Link to this heading"></a></h2>
 <p>You can share files in a chat in 3 ways.</p>
 <p>First, you can simply drag’n’drop them on the chat.</p>
-<img alt="../_images/drag-and-drop.png" src="../_images/drag-and-drop.png" />
+<a class="reference internal image-reference" href="../_images/drag-and-drop.png"><img alt="../_images/drag-and-drop.png" src="../_images/drag-and-drop.png" style="width: 600px;" /></a>
 <p>Second, you can select a file from your Nextcloud Files or a file manager by choosing the little paperclip and selecting where you’d like to pick the file from.</p>
 <a class="reference internal image-reference" href="../_images/share-files-in-chat.png"><img alt="../_images/share-files-in-chat.png" src="../_images/share-files-in-chat.png" style="width: 500px;" /></a>
-<a class="reference internal image-reference" href="../_images/share-files-in-chat-selection.png"><img alt="../_images/share-files-in-chat-selection.png" src="../_images/share-files-in-chat-selection.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/share-files-in-chat-selection.png"><img alt="../_images/share-files-in-chat-selection.png" src="../_images/share-files-in-chat-selection.png" style="width: 600px;" /></a>
 <p>You can add more files until you are done and decide to share the files. You can also add a text caption to your shared files, providing a brief description or context.</p>
 <a class="reference internal image-reference" href="../_images/talk-upload-files.png"><img alt="../_images/talk-upload-files.png" src="../_images/talk-upload-files.png" style="width: 500px;" /></a>
 <p>All users will be able to click the files to view, edit or download them, irrespective of them having a user account. Users with an account will have the file automatically shared with them while external guest users will get them shared as a public link.</p>
-<img alt="../_images/editing-document-in-chat-room.png" src="../_images/editing-document-in-chat-room.png" />
+<a class="reference internal image-reference" href="../_images/editing-document-in-chat-room.png"><img alt="../_images/editing-document-in-chat-room.png" src="../_images/editing-document-in-chat-room.png" style="width: 600px;" /></a>
 </section>
 <section id="inserting-emoji">
 <h2>Inserting emoji<a class="headerlink" href="#inserting-emoji" title="Link to this heading"></a></h2>
 <p>You can add emoji using the picker on the left of the text input field.</p>
-<a class="reference internal image-reference" href="../_images/emoji-picker.png"><img alt="../_images/emoji-picker.png" src="../_images/emoji-picker.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/emoji-picker.png"><img alt="../_images/emoji-picker.png" src="../_images/emoji-picker.png" style="width: 400px;" /></a>
+</section>
+<section id="smart-picker">
+<h2>Smart Picker<a class="headerlink" href="#smart-picker" title="Link to this heading"></a></h2>
+<p>Smart picker shortcut makes it easier to insert links, files, or other content into your conversations.
+Just choose the type of content you want to insert (files, Talk conversations, Deck cards, GIFs, etc.)
+You can also type <cite>/</cite> in the chat input to open the selector.</p>
+<a class="reference internal image-reference" href="../_images/smart-picker.png"><img alt="../_images/smart-picker.png" src="../_images/smart-picker.png" style="width: 400px;" /></a>
 </section>
 <section id="editing-messages">
 <h2>Editing messages<a class="headerlink" href="#editing-messages" title="Link to this heading"></a></h2>
 <p>You can edit messages and captions to file shares up to 6 hours after sending.</p>
-<a class="reference internal image-reference" href="../_images/message-editing.png"><img alt="../_images/message-editing.png" src="../_images/message-editing.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/message-editing.png"><img alt="../_images/message-editing.png" src="../_images/message-editing.png" style="width: 600px;" /></a>
 </section>
 <section id="using-markdown">
 <h2>Using Markdown<a class="headerlink" href="#using-markdown" title="Link to this heading"></a></h2>
@@ -227,70 +249,112 @@ Data A | Data B
 </pre></div>
 </div>
 </section>
+<section id="polls-in-chat">
+<h2>Polls in chat<a class="headerlink" href="#polls-in-chat" title="Link to this heading"></a></h2>
+<p>You can create a poll in groups chats from the new message additional actions.</p>
+<a class="reference internal image-reference" href="../_images/create-new-poll.png"><img alt="../_images/create-new-poll.png" src="../_images/create-new-poll.png" style="width: 400px;" /></a>
+<p>A poll has two settings:</p>
+<ul class="simple">
+<li><p><strong>Anonymous polls</strong>: Participants cannot see who voted for which option.</p></li>
+<li><p><strong>Allow multiple choices</strong>: Participants can select more than one option.</p></li>
+</ul>
+<p>You can also import polls for auto-fill and export polls as JSON files to save it locally.</p>
+<a class="reference internal image-reference" href="../_images/import-poll.png"><img alt="../_images/import-poll.png" src="../_images/import-poll.png" style="width: 400px;" /></a>
+<p>Closing poll is possible from the poll dialog.</p>
+<a class="reference internal image-reference" href="../_images/close-poll.png"><img alt="../_images/close-poll.png" src="../_images/close-poll.png" style="width: 400px;" /></a>
+<p>As a moderator, you can create the poll directly or you can save it as a draft to edit it later.</p>
+<a class="reference internal image-reference" href="../_images/save-poll-draft.png"><img alt="../_images/save-poll-draft.png" src="../_images/save-poll-draft.png" style="width: 400px;" /></a>
+<p>You can find poll drafts in <code class="docutils literal notranslate"><span class="pre">Shared</span> <span class="pre">items</span></code> tab or next to the poll title input field.</p>
+<a class="reference internal image-reference" href="../_images/poll-drafts-list.png"><img alt="../_images/poll-drafts-list.png" src="../_images/poll-drafts-list.png" style="width: 400px;" /></a>
+</section>
 <section id="setting-reminder-on-messages">
 <h2>Setting reminder on messages<a class="headerlink" href="#setting-reminder-on-messages" title="Link to this heading"></a></h2>
 <p>You can set reminders on specific messages. If there’s an important message you want to be notified about later, simply hover over it and click on the reminder icon.</p>
-<a class="reference internal image-reference" href="../_images/set-message-reminder.png"><img alt="../_images/set-message-reminder.png" src="../_images/set-message-reminder.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/set-message-reminder.png"><img alt="../_images/set-message-reminder.png" src="../_images/set-message-reminder.png" style="width: 400px;" /></a>
 <p>In the submenu, you can select an appropriate time to receive a notification later.</p>
-<a class="reference internal image-reference" href="../_images/configure-message-reminder.png"><img alt="../_images/configure-message-reminder.png" src="../_images/configure-message-reminder.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/configure-message-reminder.png"><img alt="../_images/configure-message-reminder.png" src="../_images/configure-message-reminder.png" style="width: 400px;" /></a>
 </section>
 <section id="replying-to-messages-and-more">
 <h2>Replying to messages and more<a class="headerlink" href="#replying-to-messages-and-more" title="Link to this heading"></a></h2>
 <p>You can reply to a message using the arrow that appears when you hover a message.</p>
-<a class="reference internal image-reference" href="../_images/reply.png"><img alt="../_images/reply.png" src="../_images/reply.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/reply.png"><img alt="../_images/reply.png" src="../_images/reply.png" style="width: 600px;" /></a>
 <p>In the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu you can also choose to reply privately. This will open a one-on-one chat.</p>
-<a class="reference internal image-reference" href="../_images/chat-message-menu.png"><img alt="../_images/chat-message-menu.png" src="../_images/chat-message-menu.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/chat-message-menu.png"><img alt="../_images/chat-message-menu.png" src="../_images/chat-message-menu.png" style="width: 600px;" /></a>
 <p>Here you can also create a direct link to the message or mark it unread so you will scroll back there next time you enter the chat. When it is a file, you can view the file in Files.</p>
 </section>
 <section id="silent-messages">
 <h2>Silent messages<a class="headerlink" href="#silent-messages" title="Link to this heading"></a></h2>
 <p>If you don’t want to disturb anyone in the middle of the night, there is a silent mode for chatting.
 While it is enabled, other participants will not receive notifications from your messages.</p>
-<a class="reference internal image-reference" href="../_images/message-silent.png"><img alt="../_images/message-silent.png" src="../_images/message-silent.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/message-silent.png"><img alt="../_images/message-silent.png" src="../_images/message-silent.png" style="width: 600px;" /></a>
 </section>
 <section id="managing-a-conversation">
 <h2>Managing a conversation<a class="headerlink" href="#managing-a-conversation" title="Link to this heading"></a></h2>
 <p>You are always moderator in your new conversation. In the participant list you can promote other participants to moderators using the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu to the right of their user name, assign them custom permissions or remove them from the conversation.</p>
 <p>Changing permissions of a user that joined a public conversation will also permanently add them to the conversation.</p>
-<img alt="../_images/participant-menu.png" src="../_images/participant-menu.png" />
+<a class="reference internal image-reference" href="../_images/participant-menu.png"><img alt="../_images/participant-menu.png" src="../_images/participant-menu.png" style="width: 400px;" /></a>
 <p>Moderators can configure the conversation. Select <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> from the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu of the conversation on the top to access the settings.</p>
-<a class="reference internal image-reference" href="../_images/open-settings.png"><img alt="../_images/open-settings.png" src="../_images/open-settings.png" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="../_images/open-settings.png"><img alt="../_images/open-settings.png" src="../_images/open-settings.png" style="width: 400px;" /></a>
 <p>Here you can configure the description, guest access, if the conversation is visible to others on the server and more.</p>
-<a class="reference internal image-reference" href="../_images/conversation-settings-dialog.png"><img alt="../_images/conversation-settings-dialog.png" src="../_images/conversation-settings-dialog.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../_images/conversation-settings-dialog.png"><img alt="../_images/conversation-settings-dialog.png" src="../_images/conversation-settings-dialog.png" style="width: 600px;" /></a>
+</section>
+<section id="ban-participants">
+<h2>Ban participants<a class="headerlink" href="#ban-participants" title="Link to this heading"></a></h2>
+<p>To help keep discussions safe and under control, moderators can ban participants from conversations.
+It could be internal users or guests (in this case their IP-addresse will additionally be banned).</p>
+<p>In the participants list, select the user or guest you, and click <code class="docutils literal notranslate"><span class="pre">Remove</span> <span class="pre">participant</span></code>.</p>
+<a class="reference internal image-reference" href="../_images/ban-participant.png"><img alt="../_images/ban-participant.png" src="../_images/ban-participant.png" style="width: 300px;" /></a>
+<p>There, toggle checkbox <code class="docutils literal notranslate"><span class="pre">Also</span> <span class="pre">ban</span> <span class="pre">from</span> <span class="pre">this</span> <span class="pre">conversation</span></code> and provide a reason for the ban. The banned user will be removed and prevented from rejoining.</p>
+<a class="reference internal image-reference" href="../_images/ban-participant-dialog.png"><img alt="../_images/ban-participant-dialog.png" src="../_images/ban-participant-dialog.png" style="width: 400px;" /></a>
+<p>You can later find the list of banned users in the <code class="docutils literal notranslate"><span class="pre">Moderation</span></code> section of conversation settings.
+Here, you can see the reason for the ban and revert it if needed.</p>
+<a class="reference internal image-reference" href="../_images/ban-participant-list.png"><img alt="../_images/ban-participant-list.png" src="../_images/ban-participant-list.png" style="width: 400px;" /></a>
 </section>
 <section id="messages-expiration">
 <h2>Messages expiration<a class="headerlink" href="#messages-expiration" title="Link to this heading"></a></h2>
 <p>A moderator can configure message expiration under the <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> within the <code class="docutils literal notranslate"><span class="pre">Moderation</span></code> section. Once a message reaches its expiration time, it is automatically removed from the conversation.
 The available expiration durations are 1 hour, 8 hours, 1 day, 1 week, 4 weeks, or never (which is the default setting).</p>
-<img alt="../_images/messages-expiration.png" src="../_images/messages-expiration.png" />
+<a class="reference internal image-reference" href="../_images/messages-expiration.png"><img alt="../_images/messages-expiration.png" src="../_images/messages-expiration.png" style="width: 500px;" /></a>
 </section>
 <section id="starting-a-call">
 <h2>Starting a call<a class="headerlink" href="#starting-a-call" title="Link to this heading"></a></h2>
 <p>When you’re in a conversation, you can start a call any time with the <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">call</span></code> button. Other participants will get notified and can join the call.</p>
-<a class="reference internal image-reference" href="../_images/device-settings-before-call.png"><img alt="../_images/device-settings-before-call.png" src="../_images/device-settings-before-call.png" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="../_images/device-settings-before-call.png"><img alt="../_images/device-settings-before-call.png" src="../_images/device-settings-before-call.png" style="width: 400px;" /></a>
 <p>If somebody else has started a call already, the button will change in a green <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">call</span></code> button.</p>
-<img alt="../_images/join-call.png" src="../_images/join-call.png" />
+<a class="reference internal image-reference" href="../_images/join-call.png"><img alt="../_images/join-call.png" src="../_images/join-call.png" style="width: 600px;" /></a>
 <p>During a call, you can mute your microphone and disable your video with the buttons on the right side of the top bar, or using the shortcuts <code class="docutils literal notranslate"><span class="pre">M</span></code> to mute audio and <code class="docutils literal notranslate"><span class="pre">V</span></code> to disable video. You can also use the space bar to toggle mute. When you are muted, pressing space will unmute you so you can speak until you let go of the space bar. If you are unmuted, pressing space will mute you until you let go.</p>
 <p>You can hide your video (useful during a screen share) with the little arrow just above the video stream. Bring it back with the little arrow again.</p>
 <p>You can access your settings and choose a different webcam, microphone and other settings in the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu in the top bar.</p>
 <a class="reference internal image-reference" href="../_images/media-settings.png"><img alt="../_images/media-settings.png" src="../_images/media-settings.png" style="width: 300px;" /></a>
 <p>From media settings dialog, you can also change the background of your video.</p>
-<a class="reference internal image-reference" href="../_images/background-settings-in-call.png"><img alt="../_images/background-settings-in-call.png" src="../_images/background-settings-in-call.png" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="../_images/background-settings-in-call.png"><img alt="../_images/background-settings-in-call.png" src="../_images/background-settings-in-call.png" style="width: 400px;" /></a>
 <p>You can change other settings in the <code class="docutils literal notranslate"><span class="pre">Talk</span> <span class="pre">settings</span></code> dialog.</p>
-<img alt="../_images/talk-settings.png" src="../_images/talk-settings.png" />
+<a class="reference internal image-reference" href="../_images/talk-settings.png"><img alt="../_images/talk-settings.png" src="../_images/talk-settings.png" style="width: 600px;" /></a>
 </section>
 <section id="starting-a-screen-share">
 <h2>Starting a screen share<a class="headerlink" href="#starting-a-screen-share" title="Link to this heading"></a></h2>
 <p>You can click the monitor icon on your video stream to share your screen. Depending on your browser, you will get the option to share a monitor, an application window or a single browser tab.
 If video from your camera is also available, other participants will see it in a small presenter view next to the screen share.</p>
-<img alt="../_images/share-screen-with-camera.png" src="../_images/share-screen-with-camera.png" />
+<a class="reference internal image-reference" href="../_images/share-screen-with-camera.png"><img alt="../_images/share-screen-with-camera.png" src="../_images/share-screen-with-camera.png" style="width: 700px;" /></a>
 </section>
 <section id="changing-view-in-a-call">
 <h2>Changing view in a call<a class="headerlink" href="#changing-view-in-a-call" title="Link to this heading"></a></h2>
 <p>You can switch the view in a call with the little four-block icon in the top-right between promoted-view and grid view. The grid view will show everyone equally big and if the people do not fit on the screen, buttons will appear on the left and right that let you navigate.</p>
-<img alt="../_images/talk-grid-view.png" src="../_images/talk-grid-view.png" />
+<a class="reference internal image-reference" href="../_images/talk-grid-view.png"><img alt="../_images/talk-grid-view.png" src="../_images/talk-grid-view.png" style="width: 700px;" /></a>
 <p>The promoted view shows the speaker large and others in a row below. If the people do not fit on the screen, buttons will appear on the left and right that let you navigate.</p>
-<img alt="../_images/talk-promoted-view.png" src="../_images/talk-promoted-view.png" />
+<a class="reference internal image-reference" href="../_images/talk-promoted-view.png"><img alt="../_images/talk-promoted-view.png" src="../_images/talk-promoted-view.png" style="width: 700px;" /></a>
+</section>
+<section id="download-call-participants-list">
+<h2>Download call participants list<a class="headerlink" href="#download-call-participants-list" title="Link to this heading"></a></h2>
+<p>You can download the list of participants in a call from the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu in the top bar. This will download a CSV file with the names and email addresses of all participants in the call.</p>
+<a class="reference internal image-reference" href="../_images/download-participants-list.png"><img alt="../_images/download-participants-list.png" src="../_images/download-participants-list.png" style="width: 400px;" /></a>
+<p>The table in the CSV file contains the following columns:</p>
+<ul class="simple">
+<li><p><strong>Name</strong>: The name of the participant.</p></li>
+<li><p><strong>Email</strong>: The email address of the participant.</p></li>
+<li><p><strong>Type</strong>: Indicates whether the participant is a registered user or a guest.</p></li>
+<li><p><strong>Identifier</strong>: Unique identifier for the participant.</p></li>
+</ul>
 </section>
 </section>
 
@@ -317,31 +381,63 @@ If video from your camera is also available, other participants will see it in a
   </div>
   
 
+  <!-- Here go the languages -->
+  
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      🌐
+      
+      
+      English
+      
+      <span class="fa fa-caret-down"></span>
+
+       ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Languages</dt>
-          <!--Here goes the Langs-->
+        <dt>🌐 Languages</dt>
+          
       </dl>
     </div>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/latest/user_manual"
+               
+               style="color: var(--dark-link-color);"
+               
+            >
+              latest
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/stable/user_manual"
+               
+            >
+              stable
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/user_manual">28</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/29/user_manual"
+               
+            >
+              29
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/latest/user_manual">latest</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/28/user_manual"
+               
+            >
+              28
+            </a>
+          </dd>
         
       </dl>
       <dl>

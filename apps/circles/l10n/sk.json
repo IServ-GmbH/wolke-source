@@ -74,7 +74,7 @@
     "Nextcloud Group" : "Skupina Nextcloud",
     "Email address" : "E-mailová adresa",
     "Contact" : "Kontakt",
-    "Circle" : "Kruh",
+    "Team" : "Tím",
     "Nextcloud App" : "Aplikácia Nextcloud",
     "Member" : "Člen",
     "Moderator" : "Moderátor",
@@ -132,6 +132,7 @@
     "You have no permission to create a new team" : "Nemáte oprávnenia pre vytváranie nového tímu",
     "%s shared a file with \"%s\"." : "%s zozdieľal súbor s \"%s\".",
     "%s shared a file with you." : "%s vám nazdieľal súbor.",
+    "Open %s" : "Otvoriť %s",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s s vami zdieľa nejaký obsah. Už ste mali dostať e-mail so samostatným odkazom na prístup k nemu.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s s vami zdieľa nejaký obsah. Už ste mali dostať e-mail s odkazom na prístup k ním.",
     "Password to access content shared with you by %1$s" : "Heslo pre prístup k obsahu, ktorý s vami zdieľa %1$s",
@@ -139,6 +140,9 @@
     "This item is already shared with this team" : "Táto položka je už zdieľaná s týmto tímom",
     "Bring cloud-users closer together." : "Zblížte používateľov cloudu.",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "Tímy umožňujú vašim užívateľom vytvárať ich vlastné skupiny užívateľov/kolegov/priateľov.\nTieto skupiny užívateľov môžu byť potom používané akoukoľvek inou aplikáciou pre potreby zdieľania.",
+    "Try again" : "Skúste znovu",
+    "No teams found" : "Žiadne tímy sa nenašli",
+    "Loading…" : "Nahrávam...",
     "No files in here" : "Nie sú tu žiadne súbory",
     "No entries found in this folder" : "V tomto priečinku sa nič nenašlo",
     "Name" : "Názov",
@@ -146,14 +150,9 @@
     "Modified" : "Upravené",
     "Teams' files" : "Súbory tímov",
     "Select team to filter by" : "Vybrať tím pre filtrovanie",
-    "No teams found" : "Žiadne tímy sa nenašli",
     "Please select teams to filter by" : "Prosím, vyberte tímy pre filtrovanie",
     "No files found for the selected teams" : "Pre vybrané tímy neboli nájdené žiadne súbory",
-    "{author} added team {member} has been added as member to {circle}" : "{author} pridal tím {member} ako člena k {circle}",
     "Shared to Circles" : "Zdieľané v kruhoch",
-    "You are now a member of the Circle \"%2$s\"" : "Teraz ste členom kruhu \"%2$s\"",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "Do kruhu \"%2$s\" vás pozval(a) %1$s",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "Požiadavku, stať sa členom kruhu \"%2$s\", zaslal(a) %1$s",
-    "Leave the circle" : "Opustiť kruh"
+    "Circle" : "Kruh"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

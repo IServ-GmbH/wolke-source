@@ -34,7 +34,6 @@ OC.L10N.register(
     "Root" : "Rrënjë",
     "Federated" : "Federated",
     "Contact" : "Kontakt",
-    "Circle" : "Rreth",
     "Member" : "Anëtar",
     "Moderator" : "Moderator",
     "Admin" : "Administratori",
@@ -52,10 +51,14 @@ OC.L10N.register(
     "You have been blocked from this circle" : "Ju jeni bllokuar nga ky rreth",
     "Accept" : "Prano",
     "%s" : "%s",
+    "Open %s" : "Hap %s",
+    "Try again" : "Provo përsëri",
+    "Loading…" : "Duke u ngarkuar…",
     "No files in here" : "Jo dosje këtu",
     "No entries found in this folder" : "Në këtë dosje nuk gjëndet asnjë hyrje",
     "Name" : "Emër",
     "Size" : "Madhësi",
-    "Modified" : "Modifikuar "
+    "Modified" : "Modifikuar ",
+    "Circle" : "Rreth"
 },
 "nplurals=2; plural=(n != 1);");

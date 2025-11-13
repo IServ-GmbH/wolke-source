@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AI as a Service" href="ai_as_a_service.html" />
-    <link rel="prev" title="App: Context Chat" href="app_context_chat.html" /> 
+    <link rel="prev" title="App: Summary Bot (Talk chat summarize bot)" href="app_summary_bot.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -69,11 +69,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Artificial Intelligence</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html">Nextcloud Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html">App: Local Machine translation (translate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">AppAPI and External Apps</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#faq">FAQ</a></li>
@@ -82,6 +83,8 @@
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -154,7 +157,7 @@ the External App ecosystem was introduced, which allows installing apps that are
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="app_context_chat.html" class="btn btn-neutral float-left" title="App: Context Chat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app_summary_bot.html" class="btn btn-neutral float-left" title="App: Summary Bot (Talk chat summarize bot)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="ai_as_a_service.html" class="btn btn-neutral float-right" title="AI as a Service" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -173,40 +176,49 @@ the External App ecosystem was introduced, which allows installing apps that are
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

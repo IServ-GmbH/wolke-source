@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/lib/Controller/WopiController.php apps/richdocuments/lib/Controller/WopiController.php
-index 0e7574001..27c0ffa32 100644
+index 9e2924a00..80b94f236 100644
 --- apps/richdocuments/lib/Controller/WopiController.php
 +++ apps/richdocuments/lib/Controller/WopiController.php
-@@ -158,6 +158,8 @@ class WopiController extends Controller {
+@@ -138,6 +138,8 @@ class WopiController extends Controller {
  		} catch (NoLockProviderException|PreConditionNotMetException) {
  		}
  
@@ -11,7 +11,7 @@ index 0e7574001..27c0ffa32 100644
  		$response = [
  			'BaseFileName' => $file->getName(),
  			'Size' => $file->getSize(),
-@@ -177,11 +179,11 @@ class WopiController extends Controller {
+@@ -158,11 +160,11 @@ class WopiController extends Controller {
  			'EnableShare' => $file->isShareable() && !$isVersion && !$isPublic,
  			'HideUserList' => '',
  			'EnableOwnerTermination' => $wopi->getCanwrite() && !$isPublic,

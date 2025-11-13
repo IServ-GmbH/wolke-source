@@ -1,46 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Alexander Bergolth <leo@strike.wu.ac.at>
- * @author Alex Weirig <alex.weirig@technolink.lu>
- * @author alexweirig <alex.weirig@technolink.lu>
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Andreas Pflug <dev@admin4.org>
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Clement Wong <git@clement.hk>
- * @author Frédéric Fortier <frederic.fortier@oronospolytechnique.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Nicolas Grekas <nicolas.grekas@gmail.com>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Roland Tapken <roland@bitarbeiter.net>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Tobias Perschon <tobias@perschon.at>
- * @author Victor Dubiniuk <dubiniuk@owncloud.com>
- * @author Vinicius Cubas Brand <vinicius@eita.org.br>
- * @author Xuanwo <xuanwo@yunify.com>
- * @author Carl Schwan <carl@carlschwan.eu>
- * @author Côme Chilliet <come.chilliet@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP;
 
@@ -97,7 +60,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		$this->cachedNestedGroups = new CappedMemoryCache();
 		$this->groupPluginManager = $groupPluginManager;
 		$this->logger = Server::get(LoggerInterface::class);
-		$this->ldapGroupMemberAssocAttr = strtolower((string)$gAssoc);
+		$this->ldapGroupMemberAssocAttr = strtolower((string) $gAssoc);
 		$this->config = $config;
 		$this->ncUserManager = $ncUserManager;
 	}
@@ -117,7 +80,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		$cacheKey = 'inGroup' . $uid . ':' . $gid;
 		$inGroup = $this->access->connection->getFromCache($cacheKey);
 		if (!is_null($inGroup)) {
-			return (bool)$inGroup;
+			return (bool) $inGroup;
 		}
 
 		$userDN = $this->access->username2dn($uid);
@@ -217,7 +180,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 	 * @throws ServerNotAvailableException
 	 */
 	public function getDynamicGroupMembers(string $dnGroup): array {
-		$dynamicGroupMemberURL = strtolower((string)$this->access->connection->ldapDynamicGroupMemberURL);
+		$dynamicGroupMemberURL = strtolower((string) $this->access->connection->ldapDynamicGroupMemberURL);
 
 		if (empty($dynamicGroupMemberURL)) {
 			return [];
@@ -307,7 +270,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		$allMembers = [];
 		$members = $this->access->readAttribute($dnGroup, $this->access->connection->ldapGroupMemberAssocAttr);
 		if (is_array($members)) {
-			if ((int)$this->access->connection->ldapNestedGroups === 1) {
+			if ((int) $this->access->connection->ldapNestedGroups === 1) {
 				while ($recordDn = array_shift($members)) {
 					$nestedMembers = $this->_groupMembers($recordDn, $seen, $recursive);
 					if (!empty($nestedMembers)) {
@@ -365,7 +328,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		$allGroups = [];
 		$groups = $this->access->readAttribute($dn, 'memberOf');
 		if (is_array($groups)) {
-			if ((int)$this->access->connection->ldapNestedGroups === 1) {
+			if ((int) $this->access->connection->ldapNestedGroups === 1) {
 				while ($recordDn = array_shift($groups)) {
 					$nestedParents = $this->_getGroupDNsFromMemberOf($recordDn, $seen);
 					$groups = array_merge($groups, $nestedParents);
@@ -645,7 +608,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		try {
 			$filter = $this->prepareFilterForUsersInPrimaryGroup($groupDN, $search);
 			$users = $this->access->countUsers($filter, ['dn'], $limit, $offset);
-			return (int)$users;
+			return (int) $users;
 		} catch (ServerNotAvailableException $e) {
 			throw $e;
 		} catch (Exception $e) {
@@ -771,8 +734,8 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		// if possible, read out membership via memberOf. It's far faster than
 		// performing a search, which still is a fallback later.
 		// memberof doesn't support memberuid, so skip it here.
-		if ((int)$this->access->connection->hasMemberOfFilterSupport === 1
-			&& (int)$this->access->connection->useMemberOfToDetectMembership === 1
+		if ((int) $this->access->connection->hasMemberOfFilterSupport === 1
+			&& (int) $this->access->connection->useMemberOfToDetectMembership === 1
 			&& $this->ldapGroupMemberAssocAttr !== 'memberuid'
 			&& $this->ldapGroupMemberAssocAttr !== 'zimbramailforwardingaddress') {
 			$groupDNs = $this->_getGroupDNsFromMemberOf($userDN);
@@ -868,7 +831,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 			$filter .= '@*';
 		}
 
-		$nesting = (int)$this->access->connection->ldapNestedGroups;
+		$nesting = (int) $this->access->connection->ldapNestedGroups;
 		if ($nesting === 0) {
 			$filter = $this->access->combineFilterWithAnd([$filter, $this->access->connection->ldapGroupFilter]);
 		}
@@ -1177,7 +1140,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		if (!$ignoreCache) {
 			$groupExists = $this->access->connection->getFromCache($cacheKey);
 			if (!is_null($groupExists)) {
-				return (bool)$groupExists;
+				return (bool) $groupExists;
 			}
 		}
 
@@ -1240,7 +1203,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 	 * compared with GroupInterface::CREATE_GROUP etc.
 	 */
 	public function implementsActions($actions): bool {
-		return (bool)((GroupInterface::COUNT_USERS |
+		return (bool) ((GroupInterface::COUNT_USERS |
 				GroupInterface::DELETE_GROUP |
 				GroupInterface::IS_ADMIN |
 				$this->groupPluginManager->getImplementedActions()) & $actions);
@@ -1295,7 +1258,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 			if ($ret = $this->groupPluginManager->deleteGroup($gid)) {
 				// Delete group in nextcloud internal db
 				$this->access->getGroupMapper()->unmap($gid);
-				$this->access->connection->writeToCache("groupExists" . $gid, false);
+				$this->access->connection->writeToCache('groupExists' . $gid, false);
 			}
 			return $ret;
 		}
@@ -1309,7 +1272,7 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 		if (!$this->groupExists($gid)) {
 			// The group does not exist in the LDAP, remove the mapping
 			$this->access->getGroupMapper()->unmap($gid);
-			$this->access->connection->writeToCache("groupExists" . $gid, false);
+			$this->access->connection->writeToCache('groupExists' . $gid, false);
 			return true;
 		}
 
@@ -1374,10 +1337,10 @@ class Group_LDAP extends ABackend implements GroupInterface, IGroupLDAP, IGetDis
 	 * of the current access.
 	 *
 	 * @param string $gid
-	 * @return resource|\LDAP\Connection The LDAP connection
+	 * @return \LDAP\Connection The LDAP connection
 	 * @throws ServerNotAvailableException
 	 */
-	public function getNewLDAPConnection($gid) {
+	public function getNewLDAPConnection($gid): \LDAP\Connection {
 		$connection = clone $this->access->getConnection();
 		return $connection->getConnectionResource();
 	}

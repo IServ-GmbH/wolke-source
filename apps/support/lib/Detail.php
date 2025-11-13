@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Julius Härtl <jus@bitgrid.net>
  *
@@ -24,16 +26,12 @@
 namespace OCA\Support;
 
 class Detail implements IDetail {
-	private string $section;
-	private string $title;
-	private string $information;
-	private int $type;
-
-	public function __construct(string $section, string $title, string $information, int $type) {
-		$this->section = $section;
-		$this->title = $title;
-		$this->information = $information;
-		$this->type = $type;
+	public function __construct(
+		private readonly string $section,
+		private readonly string $title,
+		private readonly string $information,
+		private readonly int $type,
+	) {
 	}
 
 	public function getTitle(): string {

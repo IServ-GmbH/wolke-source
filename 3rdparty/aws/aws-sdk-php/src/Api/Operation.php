@@ -11,7 +11,6 @@ class Operation extends AbstractModel
     private $errors;
     private $staticContextParams = [];
     private $contextParams;
-    private $operationContextParams = [];
 
     public function __construct(array $definition, ShapeMap $shapeMap)
     {
@@ -27,10 +26,6 @@ class Operation extends AbstractModel
 
         if (isset($definition['staticContextParams'])) {
             $this->staticContextParams = $definition['staticContextParams'];
-        }
-
-        if (isset($definition['operationContextParams'])) {
-            $this->operationContextParams = $definition['operationContextParams'];
         }
 
         parent::__construct($definition, $shapeMap);
@@ -127,17 +122,6 @@ class Operation extends AbstractModel
     public function getContextParams()
     {
         return $this->contextParams;
-    }
-
-    /**
-     * Gets definition of modeled dynamic values used
-     * for endpoint resolution
-     *
-     * @return array
-     */
-    public function getOperationContextParams(): array
-    {
-        return $this->operationContextParams;
     }
 
     private function setContextParams()

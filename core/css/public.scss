@@ -1,3 +1,7 @@
+/*!
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 #body-public {
 	--footer-height: calc(2lh + 2 * var(--default-grid-baseline)); // Set the initial value, will be updated programmatically to match the actual height
 

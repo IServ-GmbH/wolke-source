@@ -1,6 +1,8 @@
-/* Copyright (c) 2011, Jan-Christoph Borchardt, http://jancborchardt.net
- This file is licensed under the Affero General Public License version 3 or later.
- See the COPYING-README file. */
+/*!
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2011 Jan-Christoph Borchardt, http://jancborchardt.net
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 @use 'variables';
 @use 'sass:math';
 @import 'functions';
@@ -130,26 +132,32 @@ select {
 }
 
 .link-button {
-	display: inline-block;
-	margin: 16px;
-	padding: 14px 20px;
+	display: inline-flex;
+	margin: calc(2 * var(--default-grid-baseline));
+	padding: calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
 	background-color: var(--color-primary-element);
 	color: var(--color-primary-element-text);
-	border-radius: var(--border-radius-pill);
+	border-radius: var(--border-radius-element);
 	border: 1px solid var(--color-primary-element);
 	box-shadow: 0 2px 9px var(--color-box-shadow);
+	align-items: center;
+	gap: calc(var(--default-grid-baseline) * 2);
+
+	&:hover,
+	&:focus {
+		background-color: var(--color-primary-element-hover);
+	}
 
 	&:active,
-	&:hover,
-	&:focus,
 	&:focus-visible {
 		box-shadow: 0 0 0 4px var(--color-main-background) !important;
 		outline: 2px solid var(--color-main-text) !important;
 	}
 
-	&.icon-file {
-		padding-left: 48px;
-		background-position: 24px;
+	.icon-file-text {
+		filter: var(--primary-invert-if-dark);
+		width: 20px;
+		height: 20px;
 	}
 }
 
@@ -234,9 +242,9 @@ select {
 .federation-menu {
 	position: relative;
 	cursor: pointer;
-	width: 44px;
-	height: 44px;
-	padding: 10px;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
+	padding: calc(2 * var(--default-grid-baseline));
 	margin: 0;
 	background: none;
 	border: none;
@@ -244,7 +252,7 @@ select {
 	&:hover,
 	&:focus {
 		background-color: var(--color-background-hover);
-		border-radius: var(--border-radius-pill);
+		border-radius: var(--border-radius-element);
 
 		.icon-federation-menu {
 			opacity: 0.8;
@@ -266,7 +274,7 @@ select {
 	}
 
 	.federationScopeMenu {
-		top: 44px;
+		top: var(--default-clickable-area);
 
 		&.popovermenu {
 			.menuitem {
@@ -421,7 +429,6 @@ table.nostyle {
 	.two-factor-provider-settings-icon {
 		width: 16px;
 		height: 16px;
-		vertical-align: sub;
 		filter: var(--background-invert-if-dark);
 	}
 }
@@ -818,7 +825,9 @@ doesnotexist:-o-prefocus, .strengthify-wrapper {
 	margin-bottom: calc(var(--default-grid-baseline) * 8);
 
 	> h2 {
-		margin-bottom: 0px;
+		margin: 0;
+		font-size: 20px;
+		font-weight: bold;
 	}
 
 	> a {

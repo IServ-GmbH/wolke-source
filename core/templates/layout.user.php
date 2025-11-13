@@ -1,5 +1,11 @@
 <?php
 /**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2011-2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/**
  * @var \OC_Defaults $theme
  * @var array $_
  */
@@ -23,7 +29,10 @@ p(!empty($_['application']) ? $_['application'].' - ' : '');
 p($theme->getTitle());
 ?>
 		</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="csp-nonce" nonce="<?php p($_['cspNonce']); /* Do not pass into "content" to prevent exfiltration */ ?>">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0<?php if (isset($_['viewport_maximum_scale'])) {
+			p(', maximum-scale=' . $_['viewport_maximum_scale']);
+		} ?>">
 
 		<?php if ($theme->getiTunesAppId() !== '') { ?>
 		<meta name="apple-itunes-app" content="app-id=<?php p($theme->getiTunesAppId()); ?>">
@@ -45,11 +54,8 @@ p($theme->getTitle());
 	<body id="<?php p($_['bodyid']);?>" <?php foreach ($_['enabledThemes'] as $themeId) {
 		p("data-theme-$themeId ");
 	}?> data-themes=<?php p(join(',', $_['enabledThemes'])) ?>>
-	<?php include 'layout.noscript.warning.php'; ?>
-
-		<?php foreach ($_['initialStates'] as $app => $initialState) { ?>
-			<input type="hidden" id="initial-state-<?php p($app); ?>" value="<?php p(base64_encode($initialState)); ?>">
-		<?php }?>
+		<?php include 'layout.noscript.warning.php'; ?>
+		<?php include 'layout.initial-state.php'; ?>
 
 		<div id="skip-actions">
 			<?php if ($_['id-app-content'] !== null) { ?><a href="<?php p($_['id-app-content']); ?>" class="button primary skip-navigation skip-content"><?php p($l->t('Skip to main content')); ?></a><?php } ?>

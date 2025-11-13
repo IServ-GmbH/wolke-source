@@ -51,7 +51,6 @@ OC.L10N.register(
     "Root" : "Raíz",
     "Federated" : "Federado",
     "Contact" : "Contacto",
-    "Circle" : "Círculo",
     "Member" : "Miembro",
     "Moderator" : "Moderador",
     "Admin" : "Administrador",
@@ -71,11 +70,13 @@ OC.L10N.register(
     "You have been blocked from this circle" : "Has sido bloqueado de este círculo",
     "Accept" : "Aceptar",
     "%s" : "%s",
+    "Try again" : "Reintentar",
     "No files in here" : "No hay archivos aquí",
     "No entries found in this folder" : "No se encontraron elementos en esta carpeta",
     "Name" : "Nombre",
     "Size" : "Tamaño",
     "Modified" : "Modificado",
-    "Shared to Circles" : "Compartido a Círculos"
+    "Shared to Circles" : "Compartido a Círculos",
+    "Circle" : "Círculo"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

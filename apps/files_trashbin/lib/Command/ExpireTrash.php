@@ -1,32 +1,13 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud GmbH.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud GmbH.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Trashbin\Command;
 
 use OCA\Files_Trashbin\Expiration;
-use OCA\Files_Trashbin\Helper;
 use OCA\Files_Trashbin\Trashbin;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -74,9 +55,10 @@ class ExpireTrash extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$minAge = $this->expiration->getMinAgeAsTimestamp();
 		$maxAge = $this->expiration->getMaxAgeAsTimestamp();
-		if (!$maxAge) {
-			$output->writeln("Auto expiration is configured - keeps files and folders in the trash bin for 30 days and automatically deletes anytime after that if space is needed (note: files may not be deleted if space is not needed)");
+		if ($minAge === false && $maxAge === false) {
+			$output->writeln('Auto expiration is configured - keeps files and folders in the trash bin for 30 days and automatically deletes anytime after that if space is needed (note: files may not be deleted if space is not needed)');
 			return 1;
 		}
 
@@ -113,8 +95,7 @@ class ExpireTrash extends Command {
 			if (!$this->setupFS($uid)) {
 				return;
 			}
-			$dirContent = Helper::getTrashFiles('/', $uid, 'mtime');
-			Trashbin::deleteExpiredFiles($dirContent, $uid);
+			Trashbin::expire($uid);
 		} catch (\Throwable $e) {
 			$this->logger->error('Error while expiring trashbin for user ' . $user->getUID(), ['exception' => $e]);
 		}

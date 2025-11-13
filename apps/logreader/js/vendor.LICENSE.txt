@@ -1,11 +1,11 @@
 Included dependencies:
 
 @floating-ui/core
-version: 0.3.1
+version: 1.3.1
 license: MIT
 
 @floating-ui/dom
-version: 0.1.10
+version: 1.4.5
 license: MIT
 
 @nextcloud/auth
@@ -13,8 +13,8 @@ version: 2.4.0
 license: GPL-3.0-or-later
 
 @nextcloud/axios
-version: 2.5.1
-license: GPL-3.0-or-later
+version: 2.5.0
+license: GPL-3.0
 
 @nextcloud/browser-storage
 version: 0.4.0
@@ -37,23 +37,23 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 2.2.0
+version: 3.4.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
-version: 2.7.0
+version: 3.0.2
 license: GPL-3.0-or-later
 
 @nextcloud/router
-version: 2.2.0
+version: 3.0.1
 license: GPL-3.0-or-later
 
 @nextcloud/timezones
-version: 0.1.1
+version: 0.2.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.24.0
+version: 8.29.2
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
@@ -61,7 +61,7 @@ version: 3.25.1
 license: MIT
 
 @vue/devtools-api
-version: 6.5.0
+version: 6.6.3
 license: MIT
 
 @vue/reactivity
@@ -96,10 +96,6 @@ charenc
 version: 0.0.2
 license: BSD-3-Clause
 
-core-js
-version: 3.37.0
-license: MIT
-
 crypt
 version: 0.0.2
 license: BSD-3-Clause
@@ -113,7 +109,7 @@ version: 2.2.0
 license: MIT
 
 dompurify
-version: 3.2.4
+version: 3.2.6
 license: (MPL-2.0 OR Apache-2.0)
 
 escape-html
@@ -153,7 +149,7 @@ version: 1.0.1
 license: MIT
 
 pinia
-version: 2.1.7
+version: 2.2.1
 license: MIT
 
 semver
@@ -173,15 +169,19 @@ version: 1.12.0
 license: MIT
 
 vite-plugin-node-polyfills
-version: 0.23.0
+version: 0.24.0
 license: MIT
 
 vue
 version: 2.7.16
 license: MIT
 
+vue-color
+version: 2.8.1
+license: MIT
+
 vue-demi
-version: 0.14.5
+version: 0.14.10
 license: MIT
 
 vue-material-design-icons

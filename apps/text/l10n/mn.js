@@ -4,6 +4,8 @@ OC.L10N.register(
     "File not found" : "Файл олдсонгүй",
     "Translate" : "Орчуулга",
     "Guest" : "Зочин",
+    "you" : "та",
+    "edit" : "Засварлах",
     "Saved" : "Хадгалах",
     "Link" : "Холбоос",
     "Undo" : "буцах",
@@ -15,6 +17,7 @@ OC.L10N.register(
     "Edit" : "засварлах",
     "Source code" : "эх үүсвэр талын код",
     "Details" : "Дэлгэрэнгүй",
+    "Choose" : "Сонгох",
     "Info" : "Info",
     "Warning" : "Warning"
 },

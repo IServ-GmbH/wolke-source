@@ -30,7 +30,7 @@ OC.L10N.register(
     "Enforce numeric characters" : "Kräv en siffra i lösenordet",
     "Enforce special characters" : "Kräv specialtecken i lösenordet",
     "Check password against the list of breached passwords from haveibeenpwned.com" : "Kontrollera lösenordet mot listan med läckta lösenord från haveibeenpwned.com",
-    "This check creates a hash of the password and sends the first 5 characters of this hash to the haveibeenpwned.com API to retrieve a list of all hashes that start with those. Then it checks on the Nextcloud instance if the password hash is in the result set." : "Denna kontroll skapar en hash av lösenordet och skickar de 5 första tecknen i denna hash till haveibeenpwned.com för att hämta en lista över alla hashar som börjar med dessa. Sedan kontrollerar den på Nextcloud-instansen om lösenordshashen finns med i listan.",
+    "This check creates a hash of the password and sends the first 5 characters of this hash to the haveibeenpwned.com API to retrieve a list of all hashes that start with those. Then it checks on the Nextcloud instance if the password hash is in the result set." : "Denna kontroll skapar en hash av lösenordet och skickar de 5 första tecknen i denna hash till haveibeenpwned.com för att hämta en lista över alla hashar som börjar likadant. Sedan kontrollerar den på Nextcloud-instansen om lösenordshashen finns med i listan.",
     "Account password policies" : "Lösenordspolicyer för konto",
     "Share password policies" : "Lösenordspolicyer för delning",
     "Unknown error" : "Okänt fel",
@@ -40,7 +40,6 @@ OC.L10N.register(
     "Maximum login attempts have to be a non negative number" : "Maximalt antal inloggningsförsök måste vara ett icke-negativt tal",
     "Settings saved" : "Inställningar sparade",
     "Error while saving settings" : "Fel vid sparande av inställningar",
-    "User password history" : "Lösenordshistorik",
-    "Please note, that this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Observera att detta alternativet är avsett att skydda attackerade konton. Inaktiverade konton måste återaktiveras manuellt av administratören. Angripare som försöker gissa lösenord för konton kommer att få sin IP-adress blockerad av bruteforce-skyddet oberoende av denna inställning."
+    "User password history" : "Lösenordshistorik"
 },
 "nplurals=2; plural=(n != 1);");

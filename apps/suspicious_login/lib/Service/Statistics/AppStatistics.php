@@ -1,46 +1,14 @@
 <?php
 /**
- * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 declare(strict_types=1);
 
 /**
- * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Service\Statistics;
@@ -48,6 +16,7 @@ namespace OCA\SuspiciousLogin\Service\Statistics;
 use JsonSerializable;
 use OCA\SuspiciousLogin\Db\Model;
 use OCA\SuspiciousLogin\Service\TrainingDataConfig;
+use ReturnTypeWillChange;
 
 class AppStatistics implements JsonSerializable {
 
@@ -64,9 +33,9 @@ class AppStatistics implements JsonSerializable {
 	private $trainingDataStatistics;
 
 	public function __construct(bool $active,
-								array $recentModels,
-								TrainingDataConfig $trainingDataConfig,
-								TrainingDataStatistics $trainingDataStatistics) {
+		array $recentModels,
+		TrainingDataConfig $trainingDataConfig,
+		TrainingDataStatistics $trainingDataStatistics) {
 		$this->active = $active;
 		$this->recentModels = $recentModels;
 		$this->trainingDataConfig = $trainingDataConfig;
@@ -101,7 +70,8 @@ class AppStatistics implements JsonSerializable {
 		return $this->trainingDataStatistics;
 	}
 
-	public function jsonSerialize() {
+	#[ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'active' => $this->isActive(),
 			'recentModels' => $this->getRecentModels(),

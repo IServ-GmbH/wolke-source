@@ -2,16 +2,21 @@
 # Fail Fast
 set -e
 
+# see: https://docs.nextcloud.com/server/stable/admin_manual/configuration_server/theming.html#configure-theming-through-cli
+
 php /var/www/html/occ theming:config url https://$ISERV_DOMAIN
 #use a color instead of a background image
 php /var/www/html/occ theming:config background backgroundColor
 
+# reset primary color to match new color types (NC29 onwards)
+php /var/www/html/occ theming:config --reset primary_color
+
 if [ -n "${BG_COLOR}" ]; then
   #default iserv-turquoise color for cloudsafe
-  php /var/www/html/occ theming:config color "${BG_COLOR}"
+  php /var/www/html/occ theming:config primary_color "${BG_COLOR}"
 else
-  #default color iserv-steelblue for cloudfiles
-  php /var/www/html/occ theming:config color "#7296C8"
+  #default iserv-steelblue for cloudfiles
+  php /var/www/html/occ theming:config primary_color "#7296C8"
 fi
 
 #set default logo, header, favicon for cloudsafe or cloudfiles

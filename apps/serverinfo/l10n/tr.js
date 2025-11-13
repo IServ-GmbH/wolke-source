@@ -21,7 +21,7 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "İşlemci yükü, bellek ve disk kullanımı, kullanıcı sayısı gibi sunucu hakkında çeşitli bilgiler sağlar. ",
     "Operating System:" : "İşletim sistemi:",
     "CPU:" : "İşlemci",
-    "Unknown Processor" : "İşlemci bilinmiyor",
+    "threads" : "işlem",
     "Memory:" : "Bellek:",
     "Server time:" : "Sunucu zamanı:",
     "Uptime:" : "Çalışma süresi:",
@@ -92,11 +92,6 @@ OC.L10N.register(
     "Skip server update" : "Sunucu güncellemesini atla",
     "To use an access token, please generate one then set it using the following command:" : "Erişim kodunu kullanmak için yeni bir kod oluşturup şu komutu yürüterek ayarlayın:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Ardından yukarıdaki adresi sorgularken kodu \"NC-Token\" üst bilgisi ile gönderin.",
-    "Load average: {cpu} (last minute)" : "Ortalama yük: {cpu} (son bir dakika)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Kullanıcı sayısı:",
-    "24 hours:" : "24 saat:",
-    "1 hour:" : "1 saat:",
-    "5 mins:" : "5 dakika:"
+    "Unknown Processor" : "İşlemci bilinmiyor"
 },
 "nplurals=2; plural=(n > 1);");

@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -478,8 +458,8 @@ class CirclesRemote extends Base {
 		$output = $output->section();
 		$table = new Table($output);
 		$table->setHeaders(['Instance', 'Type', 'iface', 'UID', 'Authed', 'Aliases']);
-		$table->render();
 
+		$rows = [];
 		foreach ($instances as $instance) {
 			try {
 				$current = $this->remoteStreamService->retrieveRemoteInstance($instance->getInstance());
@@ -492,17 +472,18 @@ class CirclesRemote extends Base {
 				$currentUid = '<error>' . $e->getMessage() . '</error>';
 			}
 
-			$table->appendRow(
-				[
-					$instance->getInstance(),
-					$instance->getType(),
-					InterfaceService::$LIST_IFACE[$instance->getInterface()],
-					$instance->getUid(),
-					$currentUid,
-					json_encode($instance->getAliases())
-				]
-			);
+			$rows[] = [
+				$instance->getInstance(),
+				$instance->getType(),
+				InterfaceService::$LIST_IFACE[$instance->getInterface()],
+				$instance->getUid(),
+				$currentUid,
+				json_encode($instance->getAliases())
+			];
 		}
+
+		$table->setRows($rows);
+		$table->render();
 	}
 
 

@@ -13,6 +13,7 @@ OC.L10N.register(
     "Text" : "ข้อความ",
     "Translate" : "แปลภาษา",
     "Reload" : "โหลดใหม่",
+    "you" : "คุณ",
     "guest" : "ผู้เยี่ยมชม",
     "Offline" : "ออฟไลน์",
     "Saving …" : "กำลังบันทึก …",
@@ -31,6 +32,8 @@ OC.L10N.register(
     "Source code" : "โค้ดต้นฉบับ",
     "Details" : "รายละเอียด",
     "Formatting" : "การจัดรูปแบบ",
+    "Choose" : "เลือก",
+    "Choose {file}" : "เลือก {file}",
     "Info" : "ข้อมูล",
     "Success" : "สำเร็จ",
     "Warning" : "คำเตือน"

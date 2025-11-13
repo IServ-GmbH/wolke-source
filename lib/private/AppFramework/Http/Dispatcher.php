@@ -1,34 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\AppFramework\Http;
 
@@ -79,9 +55,9 @@ class Dispatcher {
 	/**
 	 * @param Http $protocol the http protocol with contains all status headers
 	 * @param MiddlewareDispatcher $middlewareDispatcher the dispatcher which
-	 * runs the middleware
+	 *                                                   runs the middleware
 	 * @param ControllerMethodReflector $reflector the reflector that is used to inject
-	 * the arguments for the controller
+	 *                                             the arguments for the controller
 	 * @param IRequest $request the incoming request
 	 * @param IConfig $config
 	 * @param ConnectionAdapter $connection
@@ -113,10 +89,10 @@ class Dispatcher {
 	 * Handles a request and calls the dispatcher on the controller
 	 * @param Controller $controller the controller which will be called
 	 * @param string $methodName the method name which will be called on
-	 * the controller
+	 *                           the controller
 	 * @return array $array[0] contains a string with the http main header,
-	 * $array[1] contains headers in the form: $key => value, $array[2] contains
-	 * the response output
+	 *               $array[1] contains headers in the form: $key => value, $array[2] contains
+	 *               the response output
 	 * @throws \Exception
 	 */
 	public function dispatch(Controller $controller, string $methodName): array {

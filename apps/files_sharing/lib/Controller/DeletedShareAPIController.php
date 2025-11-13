@@ -3,37 +3,15 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016 Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Files_Sharing\Controller;
 
 use OCA\Files_Sharing\ResponseDefinitions;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
@@ -181,14 +159,13 @@ class DeletedShareAPIController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Get a list of all deleted shares
 	 *
 	 * @return DataResponse<Http::STATUS_OK, Files_SharingDeletedShare[], array{}>
 	 *
 	 * 200: Deleted shares returned
 	 */
+	#[NoAdminRequired]
 	public function index(): DataResponse {
 		$groupShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_GROUP, null, -1, 0);
 		$teamShares = $this->shareManager->getDeletedSharedWith($this->userId, IShare::TYPE_CIRCLE, null, -1, 0);
@@ -206,8 +183,6 @@ class DeletedShareAPIController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Undelete a deleted share
 	 *
 	 * @param string $id ID of the share
@@ -217,6 +192,7 @@ class DeletedShareAPIController extends OCSController {
 	 *
 	 * 200: Share undeleted successfully
 	 */
+	#[NoAdminRequired]
 	public function undelete(string $id): DataResponse {
 		try {
 			$share = $this->shareManager->getShareById($id, $this->userId);

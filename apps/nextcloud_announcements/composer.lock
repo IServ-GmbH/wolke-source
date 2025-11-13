@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33331663b456d45695098901f355f63e",
+    "content-hash": "dc205159e1beddf7221b751d43f37049",
     "packages": [],
     "packages-dev": [
         {
@@ -179,16 +179,16 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable29",
+            "version": "dev-stable30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "228b3217ed5e94f544b630487cfde2ccc5d39409"
+                "reference": "ad42d6e9be649bab2d5433adb7f9adba43c69730"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/228b3217ed5e94f544b630487cfde2ccc5d39409",
-                "reference": "228b3217ed5e94f544b630487cfde2ccc5d39409",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/ad42d6e9be649bab2d5433adb7f9adba43c69730",
+                "reference": "ad42d6e9be649bab2d5433adb7f9adba43c69730",
                 "shasum": ""
             },
             "require": {
@@ -196,12 +196,12 @@
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
-                "psr/log": "^1.1.4"
+                "psr/log": "^2.0.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable29": "29.0.0-dev"
+                    "dev-stable30": "30.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -217,9 +217,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable29"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable30"
             },
-            "time": "2025-03-22T00:45:18+00:00"
+            "time": "2025-10-10T00:47:20+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -770,16 +770,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.18",
+            "version": "9.6.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04"
+                "reference": "a1a54a473501ef4cdeaae4e06891674114d79db8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04",
-                "reference": "32c2c2d6580b1d8ab3c10b1e9e4dc263cc69bb04",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a1a54a473501ef4cdeaae4e06891674114d79db8",
+                "reference": "a1a54a473501ef4cdeaae4e06891674114d79db8",
                 "shasum": ""
             },
             "require": {
@@ -853,7 +853,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.18"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.19"
             },
             "funding": [
                 {
@@ -869,20 +869,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-21T12:07:32+00:00"
+            "time": "2024-04-05T04:35:58+00:00"
         },
         {
             "name": "psalm/phar",
-            "version": "5.23.1",
+            "version": "5.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "07bb50acefdaf7b663087186f86d47542a9b1622"
+                "reference": "d42708449bd2d99ec6509924332fd94263974b20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/07bb50acefdaf7b663087186f86d47542a9b1622",
-                "reference": "07bb50acefdaf7b663087186f86d47542a9b1622",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/d42708449bd2d99ec6509924332fd94263974b20",
+                "reference": "d42708449bd2d99ec6509924332fd94263974b20",
                 "shasum": ""
             },
             "require": {
@@ -902,9 +902,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.23.1"
+                "source": "https://github.com/psalm/phar/tree/5.25.0"
             },
-            "time": "2024-03-11T20:43:33+00:00"
+            "time": "2024-06-19T20:02:02+00:00"
         },
         {
             "name": "psr/clock",
@@ -1059,30 +1059,30 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.4",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11"
+                "reference": "ef29f6d262798707a9edd554e2b82517ef3a9376"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/d49695b909c3b7628b6289db5479a1c204601f11",
-                "reference": "d49695b909c3b7628b6289db5479a1c204601f11",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/ef29f6d262798707a9edd554e2b82517ef3a9376",
+                "reference": "ef29f6d262798707a9edd554e2b82517ef3a9376",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
+                    "Psr\\Log\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1103,9 +1103,9 @@
                 "psr-3"
             ],
             "support": {
-                "source": "https://github.com/php-fig/log/tree/1.1.4"
+                "source": "https://github.com/php-fig/log/tree/2.0.0"
             },
-            "time": "2021-05-03T11:20:27+00:00"
+            "time": "2021-07-14T16:41:46+00:00"
         },
         {
             "name": "sebastian/cli-parser",

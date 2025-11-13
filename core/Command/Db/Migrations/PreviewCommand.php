@@ -26,8 +26,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PreviewCommand extends Command {
 	private bool $initiated = false;
 	public function __construct(
-		private MetadataManager $metadataManager,
-		private ReleaseMetadata $releaseMetadata,
+		private readonly MetadataManager $metadataManager,
+		private readonly ReleaseMetadata $releaseMetadata,
 	) {
 		parent::__construct();
 	}
@@ -94,13 +94,13 @@ class PreviewCommand extends Command {
 		)->addRow(new TableSeparator());
 
 		/** @var MigrationAttribute[] $attributes */
-		foreach($data as $migration => $attributes) {
+		foreach ($data as $migration => $attributes) {
 			$attributesStr = [];
 			if (empty($attributes)) {
 				$attributesStr[] = '<comment>(metadata not set)</comment>';
 			}
-			foreach($attributes as $attribute) {
-				$definition = '<info>' . $attribute->definition() . "</info>";
+			foreach ($attributes as $attribute) {
+				$definition = '<info>' . $attribute->definition() . '</info>';
 				$definition .= empty($attribute->getDescription()) ? '' : "\n  " . $attribute->getDescription();
 				$definition .= empty($attribute->getNotes()) ? '' : "\n  <comment>" . implode("</comment>\n  <comment>", $attribute->getNotes()) . '</comment>';
 				$attributesStr[] = $definition;

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Julius Härtl <jus@bitgrid.net>
  *
@@ -24,14 +26,14 @@
 namespace OCA\Support;
 
 class Section implements ISection {
-	private string $identifier;
-	private string $title;
 	/** @var IDetail[]  */
 	private array $details = [];
 
-	public function __construct(string $identifier, string $title, int $order = 0) {
-		$this->identifier = $identifier;
-		$this->title = $title;
+	public function __construct(
+		private readonly string $identifier,
+		private readonly string $title,
+		int $order = 0,
+	) {
 	}
 
 	public function getIdentifier(): string {

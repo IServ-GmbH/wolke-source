@@ -10,8 +10,10 @@ OC.L10N.register(
     "A long time ago" : "مدت ها پیش",
     "Unknown" : "ناشناخته",
     "All files" : "تمامی فایل‌ها",
+    "You" : "You",
     "List of files that have been deleted." : "List of files that have been deleted.",
     "No deleted files" : "هیچ فایل حذف شده وجود ندارد",
-    "Files and folders you have deleted will show up here" : "Files and folders you have deleted will show up here"
+    "Files and folders you have deleted will show up here" : "Files and folders you have deleted will show up here",
+    "Deletion cancelled" : "Deletion cancelled"
 },
 "nplurals=2; plural=(n > 1);");

@@ -1,35 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Maxence Lange <maxence@nextcloud.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Samuel <faust64@gmail.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Share20;
 
@@ -46,8 +20,13 @@ use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Files\IRootFolder;
+use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IServerContainer;
+use OCP\L10N\IFactory;
+use OCP\Mail\IMailer;
 use OCP\Security\IHasher;
+use OCP\Security\ISecureRandom;
 use OCP\Share\IManager;
 use OCP\Share\IProviderFactory;
 use OCP\Share\IShare;
@@ -66,9 +45,9 @@ class ProviderFactory implements IProviderFactory {
 	private $defaultProvider = null;
 	/** @var FederatedShareProvider */
 	private $federatedProvider = null;
-	/** @var  ShareByMailProvider */
+	/** @var ShareByMailProvider */
 	private $shareByMailProvider;
-	/** @var  \OCA\Circles\ShareByCircleProvider */
+	/** @var \OCA\Circles\ShareByCircleProvider */
 	private $shareByCircleProvider = null;
 	/** @var bool */
 	private $circlesAreNotAvailable = false;
@@ -104,12 +83,14 @@ class ProviderFactory implements IProviderFactory {
 				$this->serverContainer->getUserManager(),
 				$this->serverContainer->getGroupManager(),
 				$this->serverContainer->get(IRootFolder::class),
-				$this->serverContainer->getMailer(),
+				$this->serverContainer->get(IMailer::class),
 				$this->serverContainer->query(Defaults::class),
-				$this->serverContainer->getL10NFactory(),
+				$this->serverContainer->get(IFactory::class),
 				$this->serverContainer->getURLGenerator(),
 				$this->serverContainer->query(ITimeFactory::class),
+				$this->serverContainer->get(LoggerInterface::class),
 				$this->serverContainer->get(IManager::class),
+				$this->serverContainer->get(IConfig::class),
 			);
 		}
 
@@ -142,7 +123,7 @@ class ProviderFactory implements IProviderFactory {
 			);
 			$notifications = new Notifications(
 				$addressHandler,
-				$this->serverContainer->getHTTPClientService(),
+				$this->serverContainer->get(IClientService::class),
 				$this->serverContainer->query(\OCP\OCS\IDiscoveryService::class),
 				$this->serverContainer->getJobList(),
 				\OC::$server->getCloudFederationProviderManager(),
@@ -151,7 +132,7 @@ class ProviderFactory implements IProviderFactory {
 				$this->serverContainer->get(LoggerInterface::class),
 			);
 			$tokenHandler = new TokenHandler(
-				$this->serverContainer->getSecureRandom()
+				$this->serverContainer->get(ISecureRandom::class)
 			);
 
 			$this->federatedProvider = new FederatedShareProvider(
@@ -193,12 +174,12 @@ class ProviderFactory implements IProviderFactory {
 			$this->shareByMailProvider = new ShareByMailProvider(
 				$this->serverContainer->getConfig(),
 				$this->serverContainer->getDatabaseConnection(),
-				$this->serverContainer->getSecureRandom(),
+				$this->serverContainer->get(ISecureRandom::class),
 				$this->serverContainer->getUserManager(),
 				$this->serverContainer->get(IRootFolder::class),
 				$this->serverContainer->getL10N('sharebymail'),
 				$this->serverContainer->get(LoggerInterface::class),
-				$this->serverContainer->getMailer(),
+				$this->serverContainer->get(IMailer::class),
 				$this->serverContainer->getURLGenerator(),
 				$this->serverContainer->getActivityManager(),
 				$settingsManager,
@@ -225,8 +206,8 @@ class ProviderFactory implements IProviderFactory {
 			return null;
 		}
 
-		if (!$this->serverContainer->getAppManager()->isEnabledForUser('circles') ||
-			!class_exists('\OCA\Circles\ShareByCircleProvider')
+		if (!$this->serverContainer->getAppManager()->isEnabledForUser('circles')
+			|| !class_exists('\OCA\Circles\ShareByCircleProvider')
 		) {
 			$this->circlesAreNotAvailable = true;
 			return null;
@@ -235,7 +216,7 @@ class ProviderFactory implements IProviderFactory {
 		if ($this->shareByCircleProvider === null) {
 			$this->shareByCircleProvider = new \OCA\Circles\ShareByCircleProvider(
 				$this->serverContainer->getDatabaseConnection(),
-				$this->serverContainer->getSecureRandom(),
+				$this->serverContainer->get(ISecureRandom::class),
 				$this->serverContainer->getUserManager(),
 				$this->serverContainer->get(IRootFolder::class),
 				$this->serverContainer->getL10N('circles'),
@@ -330,9 +311,9 @@ class ProviderFactory implements IProviderFactory {
 	public function getProviderForType($shareType) {
 		$provider = null;
 
-		if ($shareType === IShare::TYPE_USER ||
-			$shareType === IShare::TYPE_GROUP ||
-			$shareType === IShare::TYPE_LINK
+		if ($shareType === IShare::TYPE_USER
+			|| $shareType === IShare::TYPE_GROUP
+			|| $shareType === IShare::TYPE_LINK
 		) {
 			$provider = $this->defaultShareProvider();
 		} elseif ($shareType === IShare::TYPE_REMOTE || $shareType === IShare::TYPE_REMOTE_GROUP) {

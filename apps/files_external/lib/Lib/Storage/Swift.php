@@ -3,42 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Benjamin Liles <benliles@arch.tamu.edu>
- * @author Christian Berendt <berendt@b1-systems.de>
- * @author Christopher Bartz <bartz@dkrz.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Felix Moeller <mail@felixmoeller.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Martin Mattel <martin.mattel@diemattels.at>
- * @author Michael Zamot <michael@zamot.io>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Philipp Kapfer <philipp.kapfer@gmx.at>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Tim Dettrick <t.dettrick@uq.edu.au>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_External\Lib\Storage;
 
@@ -121,7 +88,7 @@ class Swift extends \OC\Files\Storage\Common {
 	 *
 	 * @param string $path
 	 * @return StorageObject|bool object
-	 * or false if the object did not exist
+	 *                            or false if the object did not exist
 	 * @throws \OCP\Files\StorageAuthException
 	 * @throws \OCP\Files\StorageNotAvailableException
 	 */
@@ -167,7 +134,7 @@ class Swift extends \OC\Files\Storage\Common {
 			or (empty($params['user']) && empty($params['userid'])) or empty($params['bucket'])
 			or empty($params['region'])
 		) {
-			throw new StorageBadConfigException("API Key or password, Login, Bucket and Region have to be configured.");
+			throw new StorageBadConfigException('API Key or password, Login, Bucket and Region have to be configured.');
 		}
 
 		$user = $params['user'];
@@ -176,7 +143,7 @@ class Swift extends \OC\Files\Storage\Common {
 		$bucketUrl = new Uri($params['bucket']);
 		if ($bucketUrl->getHost()) {
 			$params['bucket'] = basename($bucketUrl->getPath());
-			$params['endpoint_url'] = (string)$bucketUrl->withPath(dirname($bucketUrl->getPath()));
+			$params['endpoint_url'] = (string) $bucketUrl->withPath(dirname($bucketUrl->getPath()));
 		}
 
 		if (empty($params['url'])) {
@@ -357,7 +324,7 @@ class Swift extends \OC\Files\Storage\Common {
 		}
 
 		$stat = [];
-		$stat['size'] = (int)$object->contentLength;
+		$stat['size'] = (int) $object->contentLength;
 		$stat['mtime'] = $mtime;
 		$stat['atime'] = time();
 		return $stat;
@@ -458,7 +425,7 @@ class Swift extends \OC\Files\Storage\Common {
 		if (is_null($mtime)) {
 			$mtime = time();
 		}
-		$metadata = ['timestamp' => (string)$mtime];
+		$metadata = ['timestamp' => (string) $mtime];
 		if ($this->file_exists($path)) {
 			if ($this->is_dir($path) && $path !== '.') {
 				$path .= '/';

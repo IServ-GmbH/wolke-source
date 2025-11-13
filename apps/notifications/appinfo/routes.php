@@ -3,25 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 return [
@@ -33,6 +17,7 @@ return [
 		['name' => 'Endpoint#deleteAllNotifications', 'url' => '/api/{apiVersion}/notifications', 'verb' => 'DELETE', 'requirements' => ['apiVersion' => '(v1|v2)']],
 
 		['name' => 'API#generateNotification', 'url' => '/api/{apiVersion}/admin_notifications/{userId}', 'verb' => 'POST', 'requirements' => ['apiVersion' => '(v1|v2)']],
+		['name' => 'API#generateNotificationV3', 'url' => '/api/{apiVersion3}/admin_notifications/{userId}', 'verb' => 'POST', 'requirements' => ['apiVersion3' => '(v3)']],
 
 		['name' => 'Settings#personal', 'url' => '/api/{apiVersion}/settings', 'verb' => 'POST', 'requirements' => ['apiVersion' => '(v2)']],
 		['name' => 'Settings#admin', 'url' => '/api/{apiVersion}/settings/admin', 'verb' => 'POST', 'requirements' => ['apiVersion' => '(v2)']],

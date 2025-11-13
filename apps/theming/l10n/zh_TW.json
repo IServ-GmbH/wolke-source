@@ -65,7 +65,7 @@
     "Disable user theming" : "停用使用者佈景主題",
     "Although you can select and customize your instance, users can change their background and colors. If you want to enforce your customization, you can toggle this on." : "雖然您可以選取並自訂您的站台，但使用者仍可以變更他們自己的背景與顏色。若您想要強制執行您的自訂，您可以將其開啟。",
     "Theming makes it possible to easily customize the look and feel of your instance and supported clients. This will be visible for all users." : "佈景主題讓您可以輕鬆自訂站台與支援客戶端的外觀與感覺。這對所有使用者都可以看見。",
-    "Instead of a background image you can also configure a plain background color. If you use a background image changing this color will influence the color of the app menu icons." : "除了背景影像以外，您也可以設定純色的背景顏色。若您使用背景影像，變更此顏色將會影像應用程式選單圖示的顏色。",
+    "Instead of a background image you can also configure a plain background color. If you use a background image changing this color will influence the color of the app menu icons." : "除了背景影像以外，您也可以設定純色的背景顏色。若您使用背景影像，變更此顏色將會影響應用程式選單圖示的顏色。",
     "Background color" : "背景顏色",
     "Upload new logo" : "上傳新的 Logo 標誌",
     "Logo" : "標誌",
@@ -117,12 +117,7 @@
     "Reset to default" : "重設為預設值",
     "Upload" : "上傳",
     "Remove background image" : "移除背景圖片",
-    "Color" : "顏色",
     "Universal access is very important to us. We follow web standards and check to make everything usable also without mouse, and assistive software such as screenreaders. We aim to be compliant with the {guidelines}Web Content Accessibility Guidelines{linkend} 2.1 on AA level, with the high contrast theme even on AAA level." : "我們非常重視無障礙存取。我們遵循網頁標準，並透過檢查來確保所有內容皆可在沒有滑鼠，或是在輔助軟體，例如螢幕閱讀器的情況下使用。我們目標是能達到《{guidelines}網頁內容無障礙指引{linkend}》2.1 版的 AA 等級，加上高對比度主題後，甚至還能達到 AAA 等級。",
-    ". Unable to apply the setting." : "無法套用設定。",
-    "Background" : "背景",
-    "Set a custom background" : "設定自訂背景",
-    "Change color" : "變更顏色",
-    "No background" : "無背景"
+    ". Unable to apply the setting." : "無法套用設定。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

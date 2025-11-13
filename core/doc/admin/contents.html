@@ -66,6 +66,8 @@
 <li class="toctree-l1"><a class="reference internal" href="office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
@@ -130,7 +132,6 @@
 <li class="toctree-l2"><a class="reference internal" href="installation/source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation/apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/harden_server.html">Hardening and security guidance</a></li>
@@ -138,6 +139,7 @@
 <li class="toctree-l2"><a class="reference internal" href="installation/example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation/example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation/uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_server/index.html">Nextcloud configuration</a><ul>
@@ -176,6 +178,7 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/reset_admin_password.html">Resetting a lost admin password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/reset_user_password.html">Resetting a user password</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/user_password_policy.html">User password policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration_user/authentication.html">Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/two_factor-auth.html">Two-factor authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/user_auth_ldap.html">User authentication with LDAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_user/user_auth_ldap_cleanup.html">LDAP user cleanup</a></li>
@@ -213,6 +216,7 @@
 <li class="toctree-l2"><a class="reference internal" href="groupware/contacts.html">Contacts / CardDAV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="groupware/mail.html">Mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="groupware/out_of_office.html">Out-of-office feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="groupware/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="office/index.html">Office</a><ul>
@@ -230,13 +234,28 @@
 <li class="toctree-l1"><a class="reference internal" href="ai/index.html">Artificial Intelligence</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ai/overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_assistant.html">Nextcloud Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ai/app_translate.html">App: Local Machine translation (translate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai/app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai/app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_api_and_external_apps.html">AppAPI and External Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/ai_as_a_service.html">AI as a Service</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="webhook_listeners/index.html">Webhook Listeners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#listening-to-events">Listening to events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#nextcloud-webhook-events">Nextcloud Webhook Events</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="windmill_workflows/index.html">Windmill Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#selecting-the-right-workspace">Selecting the right Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#building-a-workflow">Building a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#nextcloud-scripts">Nextcloud Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#faq">FAQ</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_database/index.html">Database configuration</a><ul>
@@ -301,40 +320,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

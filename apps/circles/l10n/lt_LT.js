@@ -53,7 +53,7 @@ OC.L10N.register(
     "Federated" : "Federacinis",
     "Email address" : "El. pašto adresas",
     "Contact" : "Adresatas",
-    "Circle" : "Ratas",
+    "Team" : "Komanda",
     "Member" : "Narys",
     "Moderator" : "Moderatorius",
     "Admin" : "Administratorius",
@@ -80,15 +80,15 @@ OC.L10N.register(
     "Accept" : "Priimti",
     "Refuse" : "Atsisakyti",
     "%s" : "%s",
+    "Open %s" : "Atverti %s",
+    "Try again" : "Bandyti dar kartą",
+    "Loading…" : "Įkeliama…",
     "No files in here" : "Čia failų nėra",
     "No entries found in this folder" : "Šiame aplanke nerasta jokių įrašų",
     "Name" : "Vardas",
     "Size" : "Dydis",
     "Modified" : "Pakeistas",
     "Shared to Circles" : "Bendrinama su  bendrystės ratu",
-    "You are now a member of the Circle \"%2$s\"" : "Jūs jau esate bendrinimo rato \"%2$s\" narys.",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "%1$s pakvietė jus  prisijungti prie \"%2$s\" bendrinimo rato.",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$sišsiuntė prašymą prisijungti prie \"%2$s\" bendrinimo rato.",
-    "Leave the circle" : "Išeiti iš rato"
+    "Circle" : "Ratas"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

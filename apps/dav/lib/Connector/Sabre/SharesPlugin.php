@@ -1,41 +1,23 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Tobias Kaminsky <tobias@kaminsky.me>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\Connector\Sabre;
 
 use OC\Share20\Exception\BackendError;
+use OCA\DAV\Connector\Sabre\Exception\Forbidden;
 use OCA\DAV\Connector\Sabre\Node as DavNode;
 use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\Files\Storage\ISharedStorage;
 use OCP\IUserSession;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
+use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\Server;
 use Sabre\DAV\Tree;
@@ -88,7 +70,9 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 		$server->protectedProperties[] = self::SHAREES_PROPERTYNAME;
 
 		$this->server = $server;
-		$this->server->on('propFind', [$this, 'handleGetProperties']);
+		$this->server->on('propFind', $this->handleGetProperties(...));
+		$this->server->on('beforeCopy', $this->validateMoveOrCopy(...));
+		$this->server->on('beforeMove', $this->validateMoveOrCopy(...));
 	}
 
 	/**
@@ -224,5 +208,50 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 
 			return new ShareeList($shares);
 		});
+	}
+
+	/**
+	 * Ensure that when copying or moving a node it is not transferred from one share to another,
+	 * if the user is neither the owner nor has re-share permissions.
+	 * For share creation we already ensure this in the share manager.
+	 */
+	public function validateMoveOrCopy(string $source, string $target): bool {
+		try {
+			$targetNode = $this->tree->getNodeForPath($target);
+		} catch (NotFound) {
+			[$targetPath,] = \Sabre\Uri\split($target);
+			$targetNode = $this->tree->getNodeForPath($targetPath);
+		}
+
+		$sourceNode = $this->tree->getNodeForPath($source);
+		if ((!$sourceNode instanceof DavNode) || (!$targetNode instanceof DavNode)) {
+			return true;
+		}
+
+		$sourceNode = $sourceNode->getNode();
+		if ($sourceNode->isShareable()) {
+			return true;
+		}
+
+		$targetShares = $this->getShare($targetNode->getNode());
+		if (empty($targetShares)) {
+			// Target is not a share so no re-sharing inprogress
+			return true;
+		}
+
+		$sourceStorage = $sourceNode->getStorage();
+		if ($sourceStorage->instanceOfStorage(ISharedStorage::class)) {
+			// source is also a share - check if it is the same share
+
+			/** @var ISharedStorage $sourceStorage */
+			$sourceShare = $sourceStorage->getShare();
+			foreach ($targetShares as $targetShare) {
+				if ($targetShare->getId() === $sourceShare->getId()) {
+					return true;
+				}
+			}
+		}
+
+		throw new Forbidden('You cannot move a non-shareable node into a share');
 	}
 }

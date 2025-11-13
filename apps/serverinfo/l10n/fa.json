@@ -14,7 +14,6 @@
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "اطلاعات سرور مفیدی مانند بار CPU ، استفاده از رم ، استفاده دیسک ، تعداد کاربران و غیره را ارائه می دهد.",
     "Operating System:" : "Operating System:",
     "CPU:" : "CPU:",
-    "Unknown Processor" : "Unknown Processor",
     "Memory:" : "Memory:",
     "Server time:" : "Server time:",
     "Uptime:" : "Uptime:",
@@ -64,11 +63,6 @@
     "Copy" : "کپی کردن",
     "To use an access token, please generate one then set it using the following command:" : "To use an access token, please generate one then set it using the following command:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Then pass the token with the \"NC-Token\" header when querying the above URL.",
-    "Load average: {cpu} (last minute)" : "Load average: {cpu} (last minute)",
-    "DNS:" : "DNS:",
-    "Total users:" : "تعداد کل کاربران:",
-    "24 hours:" : "24 hours:",
-    "1 hour:" : "1 hour:",
-    "5 mins:" : "5 mins:"
+    "Unknown Processor" : "Unknown Processor"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

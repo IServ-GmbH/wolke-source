@@ -2,31 +2,13 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2022 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Anupam Kumar <kyteinsky@gmail.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCP\Collaboration\Reference;
 
 use Fusonic\OpenGraph\Consumer;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\LimitStream;
 use GuzzleHttp\Psr7\Utils;
 use OC\Security\RateLimiting\Exception\RateLimitExceededException;
@@ -43,7 +25,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @since 29.0.0
  */
-class LinkReferenceProvider implements IReferenceProvider {
+class LinkReferenceProvider implements IReferenceProvider, IPublicReferenceProvider {
 
 	/**
 	 * for image size and webpage header
@@ -87,7 +69,7 @@ class LinkReferenceProvider implements IReferenceProvider {
 			return false;
 		}
 
-		return (bool)preg_match(IURLGenerator::URL_REGEX, $referenceText);
+		return (bool) preg_match(IURLGenerator::URL_REGEX, $referenceText);
 	}
 
 	/**
@@ -102,6 +84,14 @@ class LinkReferenceProvider implements IReferenceProvider {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @inheritDoc
+	 * @since 30.0.0
+	 */
+	public function resolveReferencePublic(string $referenceText, string $sharingToken): ?IReference {
+		return $this->resolveReference($referenceText);
 	}
 
 	/**
@@ -131,7 +121,7 @@ class LinkReferenceProvider implements IReferenceProvider {
 		}
 
 		$linkContentLength = $headResponse->getHeader('Content-Length');
-		if (is_numeric($linkContentLength) && (int)$linkContentLength > self::MAX_CONTENT_LENGTH) {
+		if (is_numeric($linkContentLength) && (int) $linkContentLength > self::MAX_CONTENT_LENGTH) {
 			$this->logger->debug('[Head] Skip resolving links pointing to content length > 5 MiB');
 			return;
 		}
@@ -205,10 +195,8 @@ class LinkReferenceProvider implements IReferenceProvider {
 					$folder->newFile(md5($reference->getId()), $bodyStream->getContents());
 					$reference->setImageUrl($this->urlGenerator->linkToRouteAbsolute('core.Reference.preview', ['referenceId' => md5($reference->getId())]));
 				}
-			} catch (GuzzleException $e) {
-				$this->logger->info('Failed to fetch and store the open graph image for ' . $reference->getId(), ['exception' => $e]);
-			} catch (\Throwable $e) {
-				$this->logger->error('Failed to fetch and store the open graph image for ' . $reference->getId(), ['exception' => $e]);
+			} catch (\Exception $e) {
+				$this->logger->debug('Failed to fetch and store the open graph image for ' . $reference->getId(), ['exception' => $e]);
 			}
 		}
 	}
@@ -226,6 +214,14 @@ class LinkReferenceProvider implements IReferenceProvider {
 	 * @since 29.0.0
 	 */
 	public function getCacheKey(string $referenceId): ?string {
+		return null;
+	}
+
+	/**
+	 * @inheritDoc
+	 * @since 30.0.0
+	 */
+	public function getCacheKeyPublic(string $referenceId, string $sharingToken): ?string {
 		return null;
 	}
 }

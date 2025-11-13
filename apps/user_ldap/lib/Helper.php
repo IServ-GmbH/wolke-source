@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author root <root@localhost.localdomain>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP;
 
@@ -51,7 +29,7 @@ class Helper {
 	 * returns prefixes for each saved LDAP/AD server configuration.
 	 *
 	 * @param bool $activeConfigurations optional, whether only active configuration shall be
-	 * retrieved, defaults to false
+	 *                                   retrieved, defaults to false
 	 * @return array with a list of the available prefixes
 	 *
 	 * Configuration prefixes are used to set up configurations for n LDAP or
@@ -123,8 +101,8 @@ class Helper {
 
 		sort($serverConnections);
 		$lastKey = array_pop($serverConnections);
-		$lastNumber = (int)str_replace('s', '', $lastKey);
-		return 's' . str_pad((string)($lastNumber + 1), 2, '0', STR_PAD_LEFT);
+		$lastNumber = (int) str_replace('s', '', $lastKey);
+		return 's' . str_pad((string) ($lastNumber + 1), 2, '0', STR_PAD_LEFT);
 	}
 
 	private function getServersConfig(string $value): array {
@@ -155,7 +133,7 @@ class Helper {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('appconfig')
 			->where($query->expr()->eq('appid', $query->createNamedParameter('user_ldap')))
-			->andWhere($query->expr()->like('configkey', $query->createNamedParameter((string)$prefix . '%')))
+			->andWhere($query->expr()->like('configkey', $query->createNamedParameter((string) $prefix . '%')))
 			->andWhere($query->expr()->notIn('configkey', $query->createNamedParameter([
 				'enabled',
 				'installed_version',

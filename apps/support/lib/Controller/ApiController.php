@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
@@ -23,13 +25,15 @@
 
 namespace OCA\Support\Controller;
 
-use OC\AppFramework\Http;
 use OCA\Support\DetailManager;
-use OCA\Support\Sections\ServerSection;
 use OCA\Support\Service\SubscriptionService;
+use OCA\Support\Settings\Admin;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Constants;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
@@ -42,60 +46,42 @@ use OCP\IUserSession;
 use OCP\Security\Events\GenerateSecurePasswordEvent;
 use OCP\Security\ISecureRandom;
 use OCP\Share\IManager;
+use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 class ApiController extends Controller {
-	private IURLGenerator $urlGenerator;
-	private SubscriptionService $subscriptionService;
-	private ServerSection $serverSection;
-	private LoggerInterface $logger;
-	private IL10N $l10n;
-	private IManager $shareManager;
 	private Folder $userFolder;
-	private ISecureRandom $random;
-	private string $userId;
-	private IEventDispatcher $eventDispatcher;
 
 	public function __construct(
-		$appName,
+		string $appName,
 		IRequest $request,
-		IURLGenerator $urlGenerator,
-		SubscriptionService $subscriptionService,
-		IRootFolder $rootFolder,
-		IUserSession $userSession,
-		LoggerInterface $logger,
-		IL10N $l10n,
-		IManager $shareManager,
-		IEventDispatcher $eventDispatcher,
-		ISecureRandom $random
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly SubscriptionService $subscriptionService,
+		protected readonly DetailManager $detailManager,
+		protected readonly IUserSession $userSession,
+		protected readonly LoggerInterface $logger,
+		protected readonly IL10N $l10n,
+		protected readonly IManager $shareManager,
+		protected readonly IEventDispatcher $eventDispatcher,
+		protected readonly ISecureRandom $random,
+		protected readonly ITimeFactory $timeFactory,
+		protected readonly ?string $userId,
+		readonly IRootFolder $rootFolder,
 	) {
 		parent::__construct($appName, $request);
-
-		$this->urlGenerator = $urlGenerator;
-		$this->subscriptionService = $subscriptionService;
-		$this->logger = $logger;
-		$this->l10n = $l10n;
-		$this->shareManager = $shareManager;
-		$this->random = $random;
-		$this->userId = $userSession->getUser()->getUID();
-		$this->eventDispatcher = $eventDispatcher;
 
 		$this->userFolder = $rootFolder->getUserFolder($this->userId);
 	}
 
-	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Support\Settings\Admin)
-	 */
-	public function setSubscriptionKey(string $subscriptionKey) {
+	#[AuthorizedAdminSetting(settings: Admin::class)]
+	public function setSubscriptionKey(string $subscriptionKey): RedirectResponse {
 		$this->subscriptionService->setSubscriptionKey(trim($subscriptionKey));
 
 		return new RedirectResponse($this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('settings.AdminSettings.index', ['section' => 'support'])));
 	}
 
-	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Support\Settings\Admin)
-	 */
-	public function generateSystemReport() {
+	#[AuthorizedAdminSetting(settings: Admin::class)]
+	public function generateSystemReport(): DataResponse {
 		try {
 			$directory = $this->userFolder->get('System information');
 		} catch (NotFoundException $e) {
@@ -113,14 +99,13 @@ class ApiController extends Controller {
 		}
 
 
-		$date = (new \DateTime())->format('Y-m-d');
+		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
 		$filename = $date . '.md';
 		$filename = $directory->getNonExistingName($filename);
 
 		try {
 			$file = $directory->newFile($filename);
-			$detailManager = \OC::$server->get(DetailManager::class);
-			$details = $detailManager->getRenderedDetails();
+			$details = $this->detailManager->getRenderedDetails();
 			$file->putContent($details);
 		} catch (\Exception $e) {
 			$this->logger->warning('Could not create file "' . $filename . '" to store generated report.', [
@@ -139,15 +124,15 @@ class ApiController extends Controller {
 			$share = $this->shareManager->newShare();
 			$share->setNode($file);
 			$share->setPermissions(Constants::PERMISSION_READ);
-			$share->setShareType(\OC\Share\Constants::SHARE_TYPE_LINK);
+			$share->setShareType(IShare::TYPE_LINK);
 			$share->setSharedBy($this->userId);
 			$share->setPassword($password);
 
 			if ($this->shareManager->shareApiLinkDefaultExpireDateEnforced()) {
-				$expiry = new \DateTime();
+				$expiry = $this->timeFactory->getDateTime();
 				$expiry->add(new \DateInterval('P' . $this->shareManager->shareApiLinkDefaultExpireDays() . 'D'));
 			} else {
-				$expiry = new \DateTime();
+				$expiry = $this->timeFactory->getDateTime();
 				$expiry->add(new \DateInterval('P2W'));
 			}
 

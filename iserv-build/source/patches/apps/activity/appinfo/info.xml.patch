@@ -1,8 +1,8 @@
 diff --git apps/activity/appinfo/info.xml apps/activity/appinfo/info.xml
-index 889962b..5ed3c34 100755
+index 55ff01c..f962fcc 100755
 --- apps/activity/appinfo/info.xml
 +++ apps/activity/appinfo/info.xml
-@@ -37,9 +37,7 @@
+@@ -41,9 +41,7 @@
  	</dependencies>
  
  	<background-jobs>
@@ -12,7 +12,7 @@ index 889962b..5ed3c34 100755
  		<job>OCA\Activity\BackgroundJob\RemoveFormerActivitySettings</job>
  	</background-jobs>
  
-@@ -50,8 +48,6 @@
+@@ -54,8 +52,6 @@
  	<settings>
  		<admin>OCA\Activity\Settings\Admin</admin>
  		<admin-section>OCA\Activity\Settings\AdminSection</admin-section>

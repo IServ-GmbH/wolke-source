@@ -2,27 +2,13 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2020 Robin Appelman <robin@icewind.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Activity;
 
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager as ActivityManager;
 use OCP\IL10N;
@@ -30,6 +16,7 @@ use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IManager as NotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use Psr\Log\LoggerInterface;
 
 class NotificationGenerator implements INotifier {
 
@@ -39,6 +26,7 @@ class NotificationGenerator implements INotifier {
 		protected NotificationManager $notificationManager,
 		protected UserSettings $userSettings,
 		protected IL10N $l10n,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -91,7 +79,11 @@ class NotificationGenerator implements INotifier {
 		foreach ($this->activityManager->getProviders() as $provider) {
 			try {
 				$event = $provider->parse($language, $event);
+			} catch (UnknownActivityException) {
 			} catch (\InvalidArgumentException $e) {
+				// todo 33.0.0 Log as warning
+				// todo 39.0.0 Log as error
+				$this->logger->debug(get_class($provider) . '::parse() threw \InvalidArgumentException which is deprecated. Throw \OCP\Activity\Exceptions\UnknownActivityException when the event is not known to your provider and otherwise handle all \InvalidArgumentException yourself.');
 			}
 		}
 		$this->activityManager->setFormattingObject('', 0);

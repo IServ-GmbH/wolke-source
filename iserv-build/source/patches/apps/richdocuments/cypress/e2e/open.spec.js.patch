@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/cypress/e2e/open.spec.js apps/richdocuments/cypress/e2e/open.spec.js
-index 5226d2bb3..3db2742a5 100644
+index ad7bf8823..1e4726ecb 100644
 --- apps/richdocuments/cypress/e2e/open.spec.js
 +++ apps/richdocuments/cypress/e2e/open.spec.js
-@@ -137,7 +137,7 @@ describe('Open PDF with richdocuments', () => {
+@@ -122,7 +122,7 @@ describe('Open PDF with richdocuments', () => {
  		cy.get('@pdf').find('.action-items').as('actions')
  
  		cy.get('@actions').find('.action-item__menutoggle').click()

@@ -1,19 +1,24 @@
 <?php
+
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2012-2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Backend\Backend;
-use OCA\Files_External\Lib\DefinitionParameter;
 use OCA\Files_External\Service\BackendService;
 
 /** @var array $_ */
 
 $canCreateMounts = $_['visibilityType'] === BackendService::VISIBILITY_ADMIN || $_['allowUserMounting'];
 
-$l->t("Enable encryption");
-$l->t("Enable previews");
-$l->t("Enable sharing");
-$l->t("Check for changes");
-$l->t("Never");
-$l->t("Once every direct access");
+$l->t('Enable encryption');
+$l->t('Enable previews');
+$l->t('Enable sharing');
+$l->t('Check for changes');
+$l->t('Never');
+$l->t('Once every direct access');
 $l->t('Read only');
 
 \OCP\Util::addScript('files_external', 'settings');
@@ -36,63 +41,6 @@ foreach ($_['authMechanisms'] as $authMechanism) {
 	}
 }
 
-function writeParameterInput($parameter, $options, $classes = []) {
-	$value = '';
-	if (isset($options[$parameter->getName()])) {
-		$value = $options[$parameter->getName()];
-	}
-	$placeholder = $parameter->getText();
-	$is_optional = $parameter->isFlagSet(DefinitionParameter::FLAG_OPTIONAL);
-
-	switch ($parameter->getType()) {
-		case DefinitionParameter::VALUE_PASSWORD: ?>
-			<?php if ($is_optional) {
-				$classes[] = 'optional';
-			} ?>
-			<input type="password"
-				<?php if (!empty($classes)): ?> class="<?php p(implode(' ', $classes)); ?>"<?php endif; ?>
-				data-parameter="<?php p($parameter->getName()); ?>"
-				value="<?php p($value); ?>"
-				placeholder="<?php p($placeholder); ?>"
-			/>
-			<?php
-				break;
-		case DefinitionParameter::VALUE_BOOLEAN: ?>
-			<?php $checkboxId = uniqid("checkbox_"); ?>
-			<div>
-			<label>
-			<input type="checkbox"
-				id="<?php p($checkboxId); ?>"
-				<?php if (!empty($classes)): ?> class="checkbox <?php p(implode(' ', $classes)); ?>"<?php endif; ?>
-				data-parameter="<?php p($parameter->getName()); ?>"
-				<?php if ($value === true): ?> checked="checked"<?php endif; ?>
-			/>
-			<?php p($placeholder); ?>
-			</label>
-			</div>
-			<?php
-			break;
-		case DefinitionParameter::VALUE_HIDDEN: ?>
-			<input type="hidden"
-				<?php if (!empty($classes)): ?> class="<?php p(implode(' ', $classes)); ?>"<?php endif; ?>
-				data-parameter="<?php p($parameter->getName()); ?>"
-				value="<?php p($value); ?>"
-			/>
-			<?php
-			break;
-		default: ?>
-			<?php if ($is_optional) {
-				$classes[] = 'optional';
-			} ?>
-			<input type="text"
-				<?php if (!empty($classes)): ?> class="<?php p(implode(' ', $classes)); ?>"<?php endif; ?>
-				data-parameter="<?php p($parameter->getName()); ?>"
-				value="<?php p($value); ?>"
-				placeholder="<?php p($placeholder); ?>"
-			/>
-			<?php
-	}
-}
 ?>
 
 <div class="emptyfilelist emptycontent hidden">
@@ -158,7 +106,7 @@ uasort($sortedBackends, function ($a, $b) {
 });
 ?>
 						<?php foreach ($sortedBackends as $backend): ?>
-							<?php if ($backend->getDeprecateTo() || (!$canCreateNewLocalStorage && $backend->getIdentifier() == "local")) {
+							<?php if ($backend->getDeprecateTo() || (!$canCreateNewLocalStorage && $backend->getIdentifier() == 'local')) {
 								continue;
 							} // ignore deprecated backends?>
 							<option value="<?php p($backend->getIdentifier()); ?>"><?php p($backend->getText()); ?></option>
@@ -219,7 +167,7 @@ uasort($sortedBackends, function ($a, $b) {
 	<form autocomplete="false" action="#"
 		  id="global_credentials" method="post"
 		  class="<?php if (isset($_['visibilityType']) && $_['visibilityType'] === BackendService::VISIBILITY_PERSONAL) {
-		  	print_unescaped("global_credentials__personal");
+		  	print_unescaped('global_credentials__personal');
 		  } ?>">
 		<h2><?php p($l->t('Global credentials')); ?></h2>
 		<p class="settings-hint"><?php p($l->t('Global credentials can be used to authenticate with multiple external storages that have the same credentials.')); ?></p>

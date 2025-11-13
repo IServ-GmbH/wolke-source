@@ -1,40 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2017, Sandro Lutz <sandro.lutz@temparus.ch>
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Felix Rupp <github@felixrupp.com>
- * @author Greta Doci <gretadoci@gmail.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lionel Elie Mamane <lionel@mamane.lu>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sandro Lutz <sandro.lutz@temparus.ch>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\User;
 
@@ -47,6 +16,7 @@ use OC\Authentication\Token\PublicKeyToken;
 use OC\Authentication\TwoFactorAuth\Manager as TwoFactorAuthManager;
 use OC\Hooks\Emitter;
 use OC\Hooks\PublicEmitter;
+use OC\Security\CSRF\CsrfTokenManager;
 use OC_User;
 use OC_Util;
 use OCA\DAV\Connector\Sabre\Auth;
@@ -350,7 +320,7 @@ class Session implements IUserSession, Emitter {
 			// disabled users can not log in
 			// injecting l10n does not work - there is a circular dependency between session and \OCP\L10N\IFactory
 			$message = \OCP\Util::getL10N('lib')->t('Account disabled');
-			throw new LoginException($message);
+			throw new DisabledUserException($message);
 		}
 
 		if ($regenerateSessionId) {
@@ -534,7 +504,7 @@ class Session implements IUserSession, Emitter {
 		if ($refreshCsrfToken) {
 			// TODO: mock/inject/use non-static
 			// Refresh the token
-			\OC::$server->getCsrfTokenManager()->refreshToken();
+			\OC::$server->get(CsrfTokenManager::class)->refreshToken();
 		}
 
 		if ($firstTimeLogin) {
@@ -902,7 +872,7 @@ class Session implements IUserSession, Emitter {
 		// replace successfully used token with a new one
 		$this->config->deleteUserValue($uid, 'login_token', $currentToken);
 		$newToken = $this->random->generate(32);
-		$this->config->setUserValue($uid, 'login_token', $newToken, (string)$this->timeFactory->getTime());
+		$this->config->setUserValue($uid, 'login_token', $newToken, (string) $this->timeFactory->getTime());
 		$this->logger->debug('Remember-me token replaced', [
 			'app' => 'core',
 			'user' => $uid,
@@ -954,7 +924,7 @@ class Session implements IUserSession, Emitter {
 	 */
 	public function createRememberMeToken(IUser $user) {
 		$token = $this->random->generate(32);
-		$this->config->setUserValue($user->getUID(), 'login_token', $token, (string)$this->timeFactory->getTime());
+		$this->config->setUserValue($user->getUID(), 'login_token', $token, (string) $this->timeFactory->getTime());
 		$this->setMagicInCookie($user->getUID(), $token);
 	}
 

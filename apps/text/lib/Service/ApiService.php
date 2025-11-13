@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Text\Service;
@@ -29,6 +12,7 @@ namespace OCA\Text\Service;
 use Exception;
 use InvalidArgumentException;
 use OCA\Files_Sharing\SharedStorage;
+use OCA\NotifyPush\Queue\IQueue;
 use OCA\Text\AppInfo\Application;
 use OCA\Text\Db\Document;
 use OCA\Text\Db\Session;
@@ -49,31 +33,22 @@ use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 class ApiService {
-	private IRequest $request;
-	private SessionService $sessionService;
-	private DocumentService $documentService;
-	private LoggerInterface $logger;
-	private EncodingService $encodingService;
-	private IL10N $l10n;
-
-	public function __construct(IRequest $request,
-		SessionService $sessionService,
-		DocumentService $documentService,
-		EncodingService $encodingService,
-		LoggerInterface $logger,
-		IL10N $l10n
+	public function __construct(
+		private IRequest $request,
+		private ConfigService $configService,
+		private SessionService $sessionService,
+		private DocumentService $documentService,
+		private EncodingService $encodingService,
+		private LoggerInterface $logger,
+		private IL10N $l10n,
+		private ?string $userId,
+		private ?IQueue $queue,
 	) {
-		$this->request = $request;
-		$this->sessionService = $sessionService;
-		$this->documentService = $documentService;
-		$this->logger = $logger;
-		$this->encodingService = $encodingService;
-		$this->l10n = $l10n;
 	}
 
 	public function create(?int $fileId = null, ?string $filePath = null, ?string $baseVersionEtag = null, ?string $token = null, ?string $guestName = null): DataResponse {
 		try {
-			if ($token) {
+			if ($token !== null) {
 				$file = $this->documentService->getFileByShareToken($token, $this->request->getParam('filePath'));
 
 				/*
@@ -87,9 +62,9 @@ class ApiService {
 				} catch (NotPermittedException $e) {
 					return new DataResponse(['error' => $this->l10n->t('This file cannot be displayed as download is disabled by the share')], Http::STATUS_NOT_FOUND);
 				}
-			} elseif ($fileId) {
+			} elseif ($fileId !== null) {
 				try {
-					$file = $this->documentService->getFileById($fileId);
+					$file = $this->documentService->getFileById($fileId, $this->userId);
 				} catch (NotFoundException|NotPermittedException $e) {
 					$this->logger->error('No permission to access this file', [ 'exception' => $e ]);
 					return new DataResponse([
@@ -117,7 +92,7 @@ class ApiService {
 			$this->sessionService->removeInactiveSessionsWithoutSteps($file->getId());
 			$document = $this->documentService->getDocument($file->getId());
 			$freshSession = $document === null;
-			if ($baseVersionEtag && $baseVersionEtag !== $document?->getBaseVersionEtag()) {
+			if ($baseVersionEtag !== null && $baseVersionEtag !== $document?->getBaseVersionEtag()) {
 				return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
 			}
 
@@ -166,6 +141,8 @@ class ApiService {
 			$lockInfo = null;
 		}
 
+		$hasOwner = $file->getOwner() !== null;
+
 		if (!$readOnly) {
 			$isLocked = $this->documentService->lock($file->getId());
 			if (!$isLocked) {
@@ -180,6 +157,7 @@ class ApiService {
 			'content' => $content,
 			'documentState' => $documentState,
 			'lock' => $lockInfo,
+			'hasOwner' => $hasOwner,
 		]);
 	}
 
@@ -208,6 +186,7 @@ class ApiService {
 		}
 		try {
 			$result = $this->documentService->addStep($document, $session, $steps, $version, $token);
+			$this->addToPushQueue($document, [$awareness, ...array_values($steps)]);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_UNPROCESSABLE_ENTITY);
 		} catch (DoesNotExistException|NotPermittedException) {
@@ -215,6 +194,27 @@ class ApiService {
 			return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
 		}
 		return new DataResponse($result);
+	}
+
+	private function addToPushQueue(Document $document, array $steps): void {
+		if ($this->queue === null || !$this->configService->isNotifyPushSyncEnabled()) {
+			return;
+		}
+
+		$sessions = $this->sessionService->getActiveSessions($document->getId());
+		$userIds = array_values(array_filter(array_unique(
+			array_map(fn ($session): ?string => $session['userId'], $sessions)
+		)));
+		foreach ($userIds as $userId) {
+			$this->queue->push('notify_custom', [
+				'user' => $userId,
+				'message' => 'text_steps',
+				'body' => [
+					'documentId' => $document->getId(),
+					'steps' => array_values(array_filter($steps)),
+				],
+			]);
+		}
 	}
 
 	public function sync(Session $session, Document $document, int $version = 0, ?string $shareToken = null): DataResponse {

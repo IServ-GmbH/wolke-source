@@ -21,6 +21,7 @@ RUN /source/create_combined_patches.sh /nextcloud-server /
 # TODO: Here we could execute the tests. #73704
 
 FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-apache
+ARG VERSION
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
@@ -42,23 +43,23 @@ RUN apt-get update \
 # TODO: Have a central place to keep the app versions #76427
 # remember to keep version for files_linkeditor in sync with version number in clone_and_apply_patches.sh
 RUN mkdir /iserv-apps \
-    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.18.0/files_retention-v1.18.0.tar.gz" \
+    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.19.1/files_retention-v1.19.1.tar.gz" \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
-    && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.22/files_linkeditor.tar.gz" \
+    && curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.23/files_linkeditor.tar.gz" \
     && tar -xf files_linkeditor.tar.gz \
     && mv files_linkeditor /iserv-apps \
     && rm files_linkeditor.tar.gz \
-    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v17.0.13/groupfolders-v17.0.13.tar.gz" \
+    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v18.1.8/groupfolders-v18.1.8.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
     && rm groupfolders.tar.gz \
-    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v6.6.0/user_saml-v6.6.0.tar.gz" \
+    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v7.0.0/user_saml-v7.0.0.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz \
-    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.4.12/richdocuments-v8.4.12.tar.gz" \
+    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.5.12/richdocuments-v8.5.12.tar.gz" \
     && tar -xf richdocuments.tar.gz \
     && mv richdocuments /iserv-apps \
     && rm richdocuments.tar.gz
@@ -72,14 +73,14 @@ COPY ./adds /
 
 # Apply combined patches (will include added files)
 COPY --from=patchstage /*.patch /
-RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch
-RUN cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch
-RUN cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch
-RUN cd /iserv-apps/richdocuments && git apply --verbose --allow-empty /apps_richdocuments.patch
-RUN cd /iserv-apps/user_saml && git apply --verbose --allow-empty /apps_user_saml.patch
-RUN cd /usr/src/nextcloud/apps/viewer && git apply --verbose --allow-empty /apps_viewer.patch
-RUN cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch
-RUN rm /*.patch
+RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch \
+    && cd /usr/src/nextcloud/apps/activity && git apply --verbose --allow-empty /apps_activity.patch \
+    && cd /iserv-apps/files_retention && git apply --verbose --allow-empty /apps_files_retention.patch \
+    && cd /iserv-apps/richdocuments && git apply --verbose --allow-empty /apps_richdocuments.patch \
+    && cd /iserv-apps/user_saml && git apply --verbose --allow-empty /apps_user_saml.patch \
+    && cd /usr/src/nextcloud/apps/viewer && git apply --verbose --allow-empty /apps_viewer.patch \
+    && cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch \
+    && rm /*.patch
 
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart
 # This makes config updates easier

@@ -21,7 +21,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Предоставляет полезную информацию о сервере, такую как загрузка процессора, использование ОЗУ, диска, количество пользователей и т.д.",
     "Operating System:" : "Операционная система:",
     "CPU:" : "CPU:",
-    "Unknown Processor" : "Неизвестный процессор",
     "Memory:" : "Память:",
     "Server time:" : "Серверное время:",
     "Uptime:" : "Время работы:",
@@ -79,11 +78,6 @@ OC.L10N.register(
     "Skip server update" : "Пропустить обновление сервера",
     "To use an access token, please generate one then set it using the following command:" : "Чтобы использовать токен доступа, пожалуйста, сгенерируйте его, а затем установите с помощью следующей команды:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Затем передайте токен с заголовком «NC-Token» при запросе указанного выше URL.",
-    "Load average: {cpu} (last minute)" : "Загрузка процессора: {cpu} (средняя за минуту)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Всего пользователей:",
-    "24 hours:" : "24 часа:",
-    "1 hour:" : "1 час:",
-    "5 mins:" : "5 минут:"
+    "Unknown Processor" : "Неизвестный процессор"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

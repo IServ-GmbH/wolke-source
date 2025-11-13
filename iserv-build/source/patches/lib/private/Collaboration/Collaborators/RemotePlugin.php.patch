@@ -1,8 +1,8 @@
 diff --git lib/private/Collaboration/Collaborators/RemotePlugin.php lib/private/Collaboration/Collaborators/RemotePlugin.php
-index 75ad5e8..88dafea 100644
+index 037c6f6..79e2df8 100644
 --- lib/private/Collaboration/Collaborators/RemotePlugin.php
 +++ lib/private/Collaboration/Collaborators/RemotePlugin.php
-@@ -81,7 +81,7 @@ class RemotePlugin implements ISearchPlugin {
+@@ -61,7 +61,7 @@ class RemotePlugin implements ISearchPlugin {
  						$cloudIdType = $cloudIdData['type'];
  					}
  					try {
@@ -11,7 +11,7 @@ index 75ad5e8..88dafea 100644
  					} catch (\InvalidArgumentException $e) {
  						continue;
  					}
-@@ -175,9 +175,9 @@ class RemotePlugin implements ISearchPlugin {
+@@ -155,9 +155,9 @@ class RemotePlugin implements ISearchPlugin {
  	 * @return array [user, remoteURL]
  	 * @throws \InvalidArgumentException
  	 */

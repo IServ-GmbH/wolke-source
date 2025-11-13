@@ -24,12 +24,15 @@ use Symfony\Component\Mailer\Exception\TransportException;
  */
 abstract class AbstractStream
 {
+    /** @var resource|null */
     protected $stream;
+    /** @var resource|null */
     protected $in;
+    /** @var resource|null */
     protected $out;
     protected $err;
 
-    private $debug = '';
+    private string $debug = '';
 
     public function write(string $bytes, bool $debug = true): void
     {
@@ -77,11 +80,10 @@ abstract class AbstractStream
 
         $line = @fgets($this->out);
         if ('' === $line || false === $line) {
-            $metas = stream_get_meta_data($this->out);
-            if ($metas['timed_out']) {
+            if (stream_get_meta_data($this->out)['timed_out']) {
                 throw new TransportException(sprintf('Connection to "%s" timed out.', $this->getReadConnectionDescription()));
             }
-            if ($metas['eof']) {
+            if (feof($this->out)) { // don't use "eof" metadata, it's not accurate on Windows
                 throw new TransportException(sprintf('Connection to "%s" has been closed unexpectedly.', $this->getReadConnectionDescription()));
             }
             if (false === $line) {

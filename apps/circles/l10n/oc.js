@@ -14,6 +14,8 @@ OC.L10N.register(
     "Owner" : "Owner",
     "Open »%s«" : "Dobrir « %s »",
     "Accept" : "Acceptar",
+    "Open %s" : "Dobrir %s",
+    "Loading…" : "Telecargament…",
     "No files in here" : "Cap de fichièr aicí",
     "Name" : "Nom",
     "Size" : "Talha",

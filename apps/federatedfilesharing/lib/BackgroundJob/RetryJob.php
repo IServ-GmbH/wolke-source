@@ -1,28 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\FederatedFileSharing\BackgroundJob;
 
@@ -74,7 +55,7 @@ class RetryJob extends Job {
 		$token = $argument['token'];
 		$action = $argument['action'];
 		$data = json_decode($argument['data'], true);
-		$try = (int)$argument['try'] + 1;
+		$try = (int) $argument['try'] + 1;
 
 		$result = $this->notifications->sendUpdateToRemote($remote, $remoteId, $token, $action, $data, $try);
 
@@ -94,7 +75,7 @@ class RetryJob extends Job {
 				'token' => $argument['token'],
 				'data' => $argument['data'],
 				'action' => $argument['action'],
-				'try' => (int)$argument['try'] + 1,
+				'try' => (int) $argument['try'] + 1,
 				'lastRun' => $this->time->getTime()
 			]
 		);
@@ -104,7 +85,7 @@ class RetryJob extends Job {
 	 * Test if it is time for the next run
 	 */
 	protected function shouldRun(array $argument): bool {
-		$lastRun = (int)$argument['lastRun'];
+		$lastRun = (int) $argument['lastRun'];
 		return (($this->time->getTime() - $lastRun) > $this->interval);
 	}
 }

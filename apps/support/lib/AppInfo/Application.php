@@ -35,7 +35,6 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\IConfig;
-use OCP\Notification\IManager;
 use OCP\Settings\IManager as ISettingsManager;
 use OCP\Support\Subscription\Exception\AlreadyRegisteredException;
 use OCP\Support\Subscription\IRegistry;
@@ -50,6 +49,7 @@ class Application extends App implements IBootstrap {
 
 	public function register(IRegistrationContext $context): void {
 		$context->registerCapability(Capabilities::class);
+		$context->registerNotifierService(Notifier::class);
 	}
 
 	public function boot(IBootContext $context): void {
@@ -70,11 +70,5 @@ class Application extends App implements IBootstrap {
 				'exception' => $e,
 			]);
 		}
-
-		$context->injectFn(\Closure::fromCallable([$this, 'registerNotifier']));
-	}
-
-	public function registerNotifier(IManager $notificationsManager) {
-		$notificationsManager->registerNotifierService(Notifier::class);
 	}
 }

@@ -29,7 +29,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Nextcloud configuration" href="../configuration_server/index.html" />
+    <link rel="next" title="Uninstallation" href="uninstallation.html" />
     <link rel="prev" title="Example installation on CentOS 8" href="example_centos.html" /> 
 </head>
 
@@ -64,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
@@ -82,6 +81,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#note">NOTE</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -93,6 +93,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -317,7 +319,7 @@ $ exit
 </section>
 <section id="nextcloud-final-steps">
 <h2>Nextcloud final steps<a class="headerlink" href="#nextcloud-final-steps" title="Link to this heading"></a></h2>
-<p>Now that we have all in place, you should go to your browser with your URL (I am asuming you have an SSL already installed):</p>
+<p>Now that we have all in place, you should go to your browser with your URL (I am assuming you have an SSL already installed):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">domain</span><span class="o">.</span><span class="n">tld</span>
 </pre></div>
 </div>
@@ -347,7 +349,7 @@ $ exit
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="example_centos.html" class="btn btn-neutral float-left" title="Example installation on CentOS 8" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../configuration_server/index.html" class="btn btn-neutral float-right" title="Nextcloud configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="uninstallation.html" class="btn btn-neutral float-right" title="Uninstallation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -365,40 +367,49 @@ $ exit
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

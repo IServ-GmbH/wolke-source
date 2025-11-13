@@ -13,6 +13,7 @@ OC.L10N.register(
     "Translate" : "Prevedi",
     "Reload" : "Ponovo učitaj",
     "Guest" : "Gost",
+    "edit" : "izmeni",
     "guest" : "gost",
     "Offline" : "Van mreže",
     "Bold" : "Podebljano",
@@ -26,6 +27,7 @@ OC.L10N.register(
     "Source code" : "Izvorni kôd",
     "Done" : "Gotovo",
     "Details" : "Detalji",
+    "Choose" : "Odaberi",
     "Info" : "Info",
     "Warning" : "Upozorenje"
 },

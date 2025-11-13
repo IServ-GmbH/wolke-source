@@ -1,77 +1,17 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Adam Williamson <awilliam@redhat.com>
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Côme Chilliet <come.chilliet@nextcloud.com>
- * @author Damjan Georgievski <gdamjan@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author davidgumberg <davidnoizgumberg@gmail.com>
- * @author Eric Masseran <rico.masseran@gmail.com>
- * @author Florin Peter <github@florin-peter.de>
- * @author Greta Doci <gretadoci@gmail.com>
- * @author J0WI <J0WI@users.noreply.github.com>
- * @author Jakob Sack <mail@jakobsack.de>
- * @author jaltek <jaltek@mailbox.org>
- * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
- * @author Joachim Sokolowski <github@sokolowski.org>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Jose Quinteiro <github@quinteiro.org>
- * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Ko- <k.stoffelen@cs.ru.nl>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author MartB <mart.b@outlook.de>
- * @author Michael Gapczynski <GapczynskiM@gmail.com>
- * @author MichaIng <micha@dietpi.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Owen Winkler <a_github@midnightcircus.com>
- * @author Phil Davis <phil.davis@inf.org>
- * @author Ramiro Aparicio <rapariciog@gmail.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sebastian Wessalowski <sebastian@wessalowski.org>
- * @author Stefan Weil <sw@weilnetz.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Tobia De Koninck <tobia@ledfan.be>
- * @author Vincent Petry <vincent@nextcloud.com>
- * @author Volkan Gezer <volkangezer@gmail.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2013-2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 use OC\Encryption\HookManager;
 use OC\Share20\GroupDeletedListener;
 use OC\Share20\Hooks;
 use OC\Share20\UserDeletedListener;
 use OC\Share20\UserRemovedListener;
+use OC\User\DisabledUserException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserRemovedEvent;
@@ -140,7 +80,7 @@ class OC {
 
 	/**
 	 * @throws \RuntimeException when the 3rdparty directory is missing or
-	 * the app path list is empty or contains an invalid path
+	 *                           the app path list is empty or contains an invalid path
 	 */
 	public static function initPaths(): void {
 		if (defined('PHPUNIT_CONFIG_DIR')) {
@@ -154,7 +94,7 @@ class OC {
 		}
 		self::$config = new \OC\Config(self::$configDir);
 
-		OC::$SUBURI = str_replace("\\", "/", substr(realpath($_SERVER["SCRIPT_FILENAME"] ?? ''), strlen(OC::$SERVERROOT)));
+		OC::$SUBURI = str_replace('\\', '/', substr(realpath($_SERVER['SCRIPT_FILENAME'] ?? ''), strlen(OC::$SERVERROOT)));
 		/**
 		 * FIXME: The following lines are required because we can't yet instantiate
 		 *        Server::get(\OCP\IRequest::class) since \OC::$server does not yet exist.
@@ -306,6 +246,7 @@ class OC {
 			// render error page
 			$template = new OC_Template('', 'update.user', 'guest');
 			\OCP\Util::addScript('core', 'maintenance');
+			\OCP\Util::addScript('core', 'common');
 			\OCP\Util::addStyle('core', 'guest');
 			$template->printPage();
 			die();
@@ -478,7 +419,6 @@ class OC {
 
 		//try to set the session lifetime
 		$sessionLifeTime = self::getSessionLifeTime();
-		@ini_set('gc_maxlifetime', (string)$sessionLifeTime);
 
 		// session timeout
 		if ($session->exists('LAST_ACTIVITY') && (time() - $session->get('LAST_ACTIVITY') > $sessionLifeTime)) {
@@ -644,7 +584,7 @@ class OC {
 		}
 
 		// calculate the root directories
-		OC::$SERVERROOT = str_replace("\\", '/', substr(__DIR__, 0, -4));
+		OC::$SERVERROOT = str_replace('\\', '/', substr(__DIR__, 0, -4));
 
 		// register autoloader
 		$loaderStart = microtime(true);
@@ -663,6 +603,7 @@ class OC {
 		// Add default composer PSR-4 autoloader, ensure apcu to be disabled
 		self::$composerAutoloader = require_once OC::$SERVERROOT . '/lib/composer/autoload.php';
 		self::$composerAutoloader->setApcuPrefix(null);
+
 
 		try {
 			self::initPaths();
@@ -685,6 +626,10 @@ class OC {
 		// setup the basic server
 		self::$server = new \OC\Server(\OC::$WEBROOT, self::$config);
 		self::$server->boot();
+
+		if (self::$CLI && in_array('--'.\OCP\Console\ReservedOptions::DEBUG_LOG, $_SERVER['argv'])) {
+			\OC\Core\Listener\BeforeMessageLoggedEventListener::setup();
+		}
 
 		$eventLogger = Server::get(\OCP\Diagnostics\IEventLogger::class);
 		$eventLogger->log('autoloader', 'Autoloader', $loaderStart, $loaderEnd);
@@ -757,8 +702,8 @@ class OC {
 					echo $error['error'] . "\n";
 					echo $error['hint'] . "\n\n";
 					$staticErrors[] = [
-						'error' => (string)$error['error'],
-						'hint' => (string)$error['hint'],
+						'error' => (string) $error['error'],
+						'hint' => (string) $error['hint'],
 					];
 				}
 
@@ -774,7 +719,7 @@ class OC {
 		}
 
 		// User and Groups
-		if (!$systemConfig->getValue("installed", false)) {
+		if (!$systemConfig->getValue('installed', false)) {
 			self::$server->getSession()->set('user_id', '');
 		}
 
@@ -807,7 +752,7 @@ class OC {
 		self::registerAppRestrictionsHooks();
 
 		// Make sure that the application class is not loaded before the database is setup
-		if ($systemConfig->getValue("installed", false)) {
+		if ($systemConfig->getValue('installed', false)) {
 			OC_App::loadApp('settings');
 			/* Build core application to make sure that listeners are registered */
 			Server::get(\OC\Core\Application::class);
@@ -1053,7 +998,27 @@ class OC {
 				// OAuth needs to support basic auth too, so the login is not valid
 				// inside Nextcloud and the Login exception would ruin it.
 				if ($request->getRawPathInfo() !== '/apps/oauth2/api/v1/token') {
-					self::handleLogin($request);
+					try {
+						self::handleLogin($request);
+					} catch (DisabledUserException $e) {
+						// Disabled users would not be seen as logged in and
+						// trying to log them in would fail, so the login
+						// exception is ignored for the themed stylesheets and
+						// images.
+						if ($request->getRawPathInfo() !== '/apps/theming/theme/default.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/theme/light.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/theme/dark.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/theme/light-highcontrast.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/theme/dark-highcontrast.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/theme/opendyslexic.css'
+							&& $request->getRawPathInfo() !== '/apps/theming/image/background'
+							&& $request->getRawPathInfo() !== '/apps/theming/image/logo'
+							&& $request->getRawPathInfo() !== '/apps/theming/image/logoheader'
+							&& !str_starts_with($request->getRawPathInfo(), '/apps/theming/favicon')
+							&& !str_starts_with($request->getRawPathInfo(), '/apps/theming/icon')) {
+							throw $e;
+						}
+					}
 				}
 			}
 		}

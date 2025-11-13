@@ -1,54 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright Copyright (c) 2016, Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Arne Hamann <kontakt+github@arne.email>
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Bernhard Reiter <ockham@raz.or.at>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christopher Schäpers <kondou@ts.unde.re>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Damjan Georgievski <gdamjan@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Haertl <jus@bitgrid.net>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lionel Elie Mamane <lionel@mamane.lu>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @author Michael Weimann <mail@michael-weimann.eu>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Piotr Mrówczyński <mrow4a@yahoo.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author root <root@localhost.localdomain>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Tobia De Koninck <tobia@ledfan.be>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
@@ -99,6 +54,7 @@ use OC\Files\Mount\RootMountProvider;
 use OC\Files\Node\HookConnector;
 use OC\Files\Node\LazyRoot;
 use OC\Files\Node\Root;
+use OC\Files\ObjectStore\PrimaryObjectStoreConfig;
 use OC\Files\SetupManager;
 use OC\Files\Storage\StorageFactory;
 use OC\Files\Template\TemplateManager;
@@ -146,6 +102,7 @@ use OC\Security\CSP\ContentSecurityPolicyNonceManager;
 use OC\Security\CSRF\CsrfTokenManager;
 use OC\Security\CSRF\TokenStorage\SessionStorage;
 use OC\Security\Hasher;
+use OC\Security\Ip\RemoteAddress;
 use OC\Security\RateLimiting\Limiter;
 use OC\Security\SecureRandom;
 use OC\Security\TrustedDomainHelper;
@@ -172,6 +129,7 @@ use OCA\Files_External\Service\GlobalStoragesService;
 use OCA\Files_External\Service\UserGlobalStoragesService;
 use OCA\Files_External\Service\UserStoragesService;
 use OCA\Theming\ImageManager;
+use OCA\Theming\Service\BackgroundService;
 use OCA\Theming\ThemingDefaults;
 use OCA\Theming\Util;
 use OCP\Accounts\IAccountManager;
@@ -229,7 +187,6 @@ use OCP\IPhoneNumberUtil;
 use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IRequestId;
-use OCP\ISearch;
 use OCP\IServerContainer;
 use OCP\ISession;
 use OCP\ITagManager;
@@ -258,6 +215,7 @@ use OCP\Security\IContentSecurityPolicyManager;
 use OCP\Security\ICredentialsManager;
 use OCP\Security\ICrypto;
 use OCP\Security\IHasher;
+use OCP\Security\Ip\IRemoteAddress;
 use OCP\Security\ISecureRandom;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Security\RateLimiting\ILimiter;
@@ -509,7 +467,8 @@ class Server extends ServerContainer implements IServerContainer {
 				$this->get(IUserManager::class),
 				$this->get(IEventDispatcher::class),
 				$this->get(LoggerInterface::class),
-				$this->get(ICacheFactory::class)
+				$this->get(ICacheFactory::class),
+				$this->get(IRemoteAddress::class),
 			);
 			return $groupManager;
 		});
@@ -657,7 +616,8 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->getRequest(),
 				$c->get(IUserSession::class),
 				$c->get(ICacheFactory::class),
-				\OC::$SERVERROOT
+				\OC::$SERVERROOT,
+				$c->get(IAppManager::class),
 			);
 		});
 		/** @deprecated 19.0.0 */
@@ -680,44 +640,51 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerService(Factory::class, function (Server $c) {
 			$profiler = $c->get(IProfiler::class);
-			$arrayCacheFactory = new \OC\Memcache\Factory('', $c->get(LoggerInterface::class),
+			$arrayCacheFactory = new \OC\Memcache\Factory(fn () => '', $c->get(LoggerInterface::class),
 				$profiler,
 				ArrayCache::class,
 				ArrayCache::class,
 				ArrayCache::class
 			);
-			/** @var \OCP\IConfig $config */
-			$config = $c->get(\OCP\IConfig::class);
+			/** @var SystemConfig $config */
+			$config = $c->get(SystemConfig::class);
 
-			if ($config->getSystemValueBool('installed', false) && !(defined('PHPUNIT_RUN') && PHPUNIT_RUN)) {
-				if (!$config->getSystemValueBool('log_query')) {
-					try {
-						$v = \OC_App::getAppVersions();
-					} catch (\Doctrine\DBAL\Exception $e) {
-						// Database service probably unavailable
-						// Probably related to https://github.com/nextcloud/server/issues/37424
-						return $arrayCacheFactory;
+			if ($config->getValue('installed', false) && !(defined('PHPUNIT_RUN') && PHPUNIT_RUN)) {
+				$logQuery = $config->getValue('log_query');
+				$prefixClosure = function () use ($logQuery) {
+					if (!$logQuery) {
+						try {
+							$v = \OC_App::getAppVersions();
+						} catch (\Doctrine\DBAL\Exception $e) {
+							// Database service probably unavailable
+							// Probably related to https://github.com/nextcloud/server/issues/37424
+							return null;
+						}
+					} else {
+						// If the log_query is enabled, we can not get the app versions
+						// as that does a query, which will be logged and the logging
+						// depends on redis and here we are back again in the same function.
+						$v = [
+							'log_query' => 'enabled',
+						];
 					}
-				} else {
-					// If the log_query is enabled, we can not get the app versions
-					// as that does a query, which will be logged and the logging
-					// depends on redis and here we are back again in the same function.
-					$v = [
-						'log_query' => 'enabled',
-					];
-				}
-				$v['core'] = implode(',', \OC_Util::getVersion());
-				$version = implode(',', $v);
-				$instanceId = \OC_Util::getInstanceId();
-				$path = \OC::$SERVERROOT;
-				$prefix = md5($instanceId . '-' . $version . '-' . $path);
-				return new \OC\Memcache\Factory($prefix,
+					$v['core'] = implode(',', \OC_Util::getVersion());
+					$version = implode(',', $v);
+					$instanceId = \OC_Util::getInstanceId();
+					$path = \OC::$SERVERROOT;
+					return md5($instanceId . '-' . $version . '-' . $path);
+				};
+				return new \OC\Memcache\Factory($prefixClosure,
 					$c->get(LoggerInterface::class),
 					$profiler,
-					$config->getSystemValue('memcache.local', null),
-					$config->getSystemValue('memcache.distributed', null),
-					$config->getSystemValue('memcache.locking', null),
-					$config->getSystemValueString('redis_log_file')
+					/** @psalm-taint-escape callable */
+					$config->getValue('memcache.local', null),
+					/** @psalm-taint-escape callable */
+					$config->getValue('memcache.distributed', null),
+					/** @psalm-taint-escape callable */
+					$config->getValue('memcache.locking', null),
+					/** @psalm-taint-escape callable */
+					$config->getValue('redis_log_file')
 				);
 			}
 			return $arrayCacheFactory;
@@ -807,10 +774,6 @@ class Server extends ServerContainer implements IServerContainer {
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('Router', IRouter::class);
 
-		$this->registerAlias(ISearch::class, Search::class);
-		/** @deprecated 19.0.0 */
-		$this->registerDeprecatedAlias('Search', ISearch::class);
-
 		$this->registerService(\OC\Security\RateLimiting\Backend\IBackend::class, function ($c) {
 			$config = $c->get(\OCP\IConfig::class);
 			if (ltrim($config->getSystemValueString('memcache.distributed', ''), '\\') === \OC\Memcache\Redis::class) {
@@ -851,7 +814,7 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(IDBConnection::class, ConnectionAdapter::class);
 		$this->registerService(Connection::class, function (Server $c) {
 			$systemConfig = $c->get(SystemConfig::class);
-			$factory = new \OC\DB\ConnectionFactory($systemConfig);
+			$factory = new \OC\DB\ConnectionFactory($systemConfig, $c->get(ICacheFactory::class));
 			$type = $systemConfig->getValue('dbtype', 'sqlite');
 			if (!$factory->isValidType($type)) {
 				throw new \OC\DatabaseException('Invalid database type');
@@ -896,12 +859,10 @@ class Server extends ServerContainer implements IServerContainer {
 			return new \OC\App\AppManager(
 				$c->get(IUserSession::class),
 				$c->get(\OCP\IConfig::class),
-				$c->get(\OC\AppConfig::class),
 				$c->get(IGroupManager::class),
 				$c->get(ICacheFactory::class),
 				$c->get(IEventDispatcher::class),
 				$c->get(LoggerInterface::class),
-				$c->get(IURLGenerator::class),
 			);
 		});
 		/** @deprecated 19.0.0 */
@@ -942,10 +903,11 @@ class Server extends ServerContainer implements IServerContainer {
 
 			$config = $c->get(\OCP\IConfig::class);
 			$logger = $c->get(LoggerInterface::class);
+			$objectStoreConfig = $c->get(PrimaryObjectStoreConfig::class);
 			$manager->registerProvider(new CacheMountProvider($config));
 			$manager->registerHomeProvider(new LocalHomeMountProvider());
-			$manager->registerHomeProvider(new ObjectHomeMountProvider($config));
-			$manager->registerRootProvider(new RootMountProvider($config, $c->get(LoggerInterface::class)));
+			$manager->registerHomeProvider(new ObjectHomeMountProvider($objectStoreConfig));
+			$manager->registerRootProvider(new RootMountProvider($objectStoreConfig, $config));
 			$manager->registerRootProvider(new ObjectStorePreviewCacheMountProvider($logger, $config));
 
 			return $manager;
@@ -1070,6 +1032,9 @@ class Server extends ServerContainer implements IServerContainer {
 		/** @deprecated 19.0.0 */
 		$this->registerDeprecatedAlias('Mailer', IMailer::class);
 
+		/** @since 30.0.0 */
+		$this->registerAlias(\OCP\Mail\Provider\IManager::class, \OC\Mail\Provider\Manager::class);
+
 		/** @deprecated 21.0.0 */
 		$this->registerDeprecatedAlias('LDAPProvider', ILDAPProvider::class);
 
@@ -1189,16 +1154,25 @@ class Server extends ServerContainer implements IServerContainer {
 			}
 
 			if ($classExists && $c->get(\OCP\IConfig::class)->getSystemValueBool('installed', false) && $c->get(IAppManager::class)->isInstalled('theming') && $c->get(TrustedDomainHelper::class)->isTrustedDomain($c->getRequest()->getInsecureServerHost())) {
+				$backgroundService = new BackgroundService(
+					$c->get(IRootFolder::class),
+					$c->getAppDataDir('theming'),
+					$c->get(IAppConfig::class),
+					$c->get(\OCP\IConfig::class),
+					$c->get(ISession::class)->get('user_id'),
+				);
 				$imageManager = new ImageManager(
 					$c->get(\OCP\IConfig::class),
 					$c->getAppDataDir('theming'),
 					$c->get(IURLGenerator::class),
-					$this->get(ICacheFactory::class),
-					$this->get(LoggerInterface::class),
-					$this->get(ITempManager::class)
+					$c->get(ICacheFactory::class),
+					$c->get(LoggerInterface::class),
+					$c->get(ITempManager::class),
+					$backgroundService,
 				);
 				return new ThemingDefaults(
 					$c->get(\OCP\IConfig::class),
+					$c->get(\OCP\IAppConfig::class),
 					$c->getL10N('theming'),
 					$c->get(IUserSession::class),
 					$c->get(IURLGenerator::class),
@@ -1206,7 +1180,8 @@ class Server extends ServerContainer implements IServerContainer {
 					new Util($c->get(\OCP\IConfig::class), $this->get(IAppManager::class), $c->getAppDataDir('theming'), $imageManager),
 					$imageManager,
 					$c->get(IAppManager::class),
-					$c->get(INavigationManager::class)
+					$c->get(INavigationManager::class),
+					$backgroundService,
 				);
 			}
 			return new \OC_Defaults();
@@ -1410,6 +1385,8 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(\OCP\Files\AppData\IAppDataFactory::class, \OC\Files\AppData\Factory::class);
 
+		$this->registerAlias(\OCP\Files\IFilenameValidator::class, \OC\Files\FilenameValidator::class);
+
 		$this->registerAlias(IBinaryFinder::class, BinaryFinder::class);
 
 		$this->registerAlias(\OCP\Share\IPublicShareTemplateFactory::class, \OC\Share20\PublicShareTemplateFactory::class);
@@ -1437,6 +1414,12 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(IAvailabilityCoordinator::class, AvailabilityCoordinator::class);
 
 		$this->registerAlias(IDeclarativeManager::class, DeclarativeManager::class);
+
+		$this->registerAlias(\OCP\TaskProcessing\IManager::class, \OC\TaskProcessing\Manager::class);
+
+		$this->registerAlias(IRemoteAddress::class, RemoteAddress::class);
+
+		$this->registerAlias(\OCP\Security\Ip\IFactory::class, \OC\Security\Ip\Factory::class);
 
 		$this->connectDispatcher();
 	}
@@ -1832,16 +1815,6 @@ class Server extends ServerContainer implements IServerContainer {
 	 */
 	public function getRouter() {
 		return $this->get(IRouter::class);
-	}
-
-	/**
-	 * Returns a search instance
-	 *
-	 * @return ISearch
-	 * @deprecated 20.0.0
-	 */
-	public function getSearch() {
-		return $this->get(ISearch::class);
 	}
 
 	/**

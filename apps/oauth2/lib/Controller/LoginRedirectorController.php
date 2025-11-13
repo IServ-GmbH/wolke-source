@@ -3,28 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\OAuth2\Controller;
 
@@ -32,6 +12,9 @@ use OCA\OAuth2\Db\ClientMapper;
 use OCA\OAuth2\Exceptions\ClientNotFoundException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
@@ -49,7 +32,8 @@ class LoginRedirectorController extends Controller {
 	private $session;
 	/** @var IL10N */
 	private $l;
-	private IConfig $config;
+	/** @var IConfig */
+	private $config;
 
 	/**
 	 * @param string $appName
@@ -76,10 +60,6 @@ class LoginRedirectorController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 * @UseSession
-	 *
 	 * Authorize the user
 	 *
 	 * @param string $client_id Client ID
@@ -91,6 +71,9 @@ class LoginRedirectorController extends Controller {
 	 * 200: Client not found
 	 * 303: Redirect to login URL
 	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[UseSession]
 	public function authorize($client_id,
 		$state,
 		$response_type,

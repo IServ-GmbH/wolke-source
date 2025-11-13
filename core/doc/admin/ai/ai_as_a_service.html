@@ -29,7 +29,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Database configuration" href="../configuration_database/index.html" />
+    <link rel="next" title="Webhook Listeners" href="../webhook_listeners/index.html" />
     <link rel="prev" title="AppAPI and External Apps" href="app_api_and_external_apps.html" /> 
 </head>
 
@@ -69,18 +69,23 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Artificial Intelligence</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html">Nextcloud Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html">App: Local Machine translation (translate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_api_and_external_apps.html">AppAPI and External Apps</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">AI as a Service</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openai-integration">OpenAI integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#improve-performance">Improve performance</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -125,6 +130,18 @@
 </ul>
 <p>You can then add your API token and rate limits in the administration settings and set the providers live in the “Artificial intelligence” section of the admins settings.</p>
 </section>
+<section id="openai-integration">
+<h2>OpenAI integration<a class="headerlink" href="#openai-integration" title="Link to this heading"></a></h2>
+<p>With this application, you can also connect to a self-hosted LocalAI or Ollama instance or to any service that implements an API similar enough to the OpenAI API,
+for example <a class="reference external" href="https://docs.ionos.com/cloud/ai/ai-model-hub">IONOS AI Model Hub</a>,
+<a class="reference external" href="https://www.plusserver.com/en/ai-platform/">Plusserver</a>, <a class="reference external" href="https://console.groq.com">Groqcloud</a>, <a class="reference external" href="https://mistral.ai">MistralAI</a> or <a class="reference external" href="https://together.ai">Together AI</a>.</p>
+<p>Do note however, that we test the Assistant tasks that this app implements only with OpenAI models and only against the OpenAI API, we thus cannot guarantee other models and APIs will work.
+Some APIs claiming to be compatible with OpenAI might not be fully compatible so we cannot guarantee that they will work with this app.</p>
+</section>
+<section id="improve-performance">
+<h2>Improve performance<a class="headerlink" href="#improve-performance" title="Link to this heading"></a></h2>
+<p>Prompts from integration_openai and integration_replicate can have a delay of 5 minutes. This can be optimized and more information can be found in <a class="reference internal" href="overview.html#ai-overview-improve-ai-task-pickup-speed"><span class="std std-ref">the relevant section in AI Overview</span></a>.</p>
+</section>
 </section>
 
 
@@ -132,7 +149,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="app_api_and_external_apps.html" class="btn btn-neutral float-left" title="AppAPI and External Apps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../configuration_database/index.html" class="btn btn-neutral float-right" title="Database configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../webhook_listeners/index.html" class="btn btn-neutral float-right" title="Webhook Listeners" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -150,40 +167,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

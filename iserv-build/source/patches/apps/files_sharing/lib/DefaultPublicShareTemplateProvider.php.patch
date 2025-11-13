@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-index 8af1c80..f731fcb 100644
+index d45ba16..c964d1a 100644
 --- apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
 +++ apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-@@ -100,13 +100,9 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
+@@ -69,15 +69,11 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
  
  		$owner = $this->userManager->get($share->getShareOwner());
  		if ($owner instanceof IUser) {
@@ -12,10 +12,14 @@ index 8af1c80..f731fcb 100644
 -			if ($ownerName->getScope() === IAccountManager::SCOPE_PUBLISHED) {
 -				$shareTmpl['owner'] = $owner->getUID();
 -				$shareTmpl['shareOwner'] = $owner->getDisplayName();
+-				$this->initialState->provideInitialState('owner', $shareTmpl['owner']);
+-				$this->initialState->provideInitialState('ownerDisplayName', $shareTmpl['shareOwner']);
 -			}
 +			// IServ: always show the share's owner
 +			$shareTmpl['owner'] = $owner->getUID();
 +			$shareTmpl['shareOwner'] = $owner->getDisplayName();
++			$this->initialState->provideInitialState('owner', $shareTmpl['owner']);
++			$this->initialState->provideInitialState('ownerDisplayName', $shareTmpl['shareOwner']);
  		}
  
- 		$shareTmpl['filename'] = $shareNode->getName();
+ 		// Provide initial state

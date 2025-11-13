@@ -1,40 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author J0WI <J0WI@users.noreply.github.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Maxence Lange <maxence@nextcloud.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Sharing\Controller;
 
@@ -42,6 +12,7 @@ use Generator;
 use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Files_Sharing\ResponseDefinitions;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCSController;
@@ -117,8 +88,6 @@ class ShareesAPIController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Search for sharees
 	 *
 	 * @param string $search Text to search for
@@ -132,6 +101,7 @@ class ShareesAPIController extends OCSController {
 	 *
 	 * 200: Sharees search result returned
 	 */
+	#[NoAdminRequired]
 	public function search(string $search = '', ?string $itemType = null, int $page = 1, int $perPage = 200, $shareType = null, bool $lookup = false): DataResponse {
 
 		// only search for string larger than a given threshold
@@ -284,7 +254,7 @@ class ShareesAPIController extends OCSController {
 			$sharees = $this->getAllShareesByType($user, $shareType);
 			$shareTypeResults = [];
 			foreach ($sharees as [$sharee, $displayname]) {
-				if (!isset($this->searchResultTypeMap[$shareType])) {
+				if (!isset($this->searchResultTypeMap[$shareType]) || trim($sharee) === '') {
 					continue;
 				}
 
@@ -323,8 +293,6 @@ class ShareesAPIController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Find recommended sharees
 	 *
 	 * @param string $itemType Limit to specific item types
@@ -333,6 +301,7 @@ class ShareesAPIController extends OCSController {
 	 *
 	 * 200: Recommended sharees returned
 	 */
+	#[NoAdminRequired]
 	public function findRecommended(string $itemType, $shareType = null): DataResponse {
 		$shareTypes = [
 			IShare::TYPE_USER,

@@ -3,28 +3,8 @@
 declare(strict_types=1);
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2023
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Circles\Activity;
@@ -110,7 +90,7 @@ class ProviderSubjectCircleMember extends ProviderParser {
 		$this->parseMemberCircleEvent(
 			$event, $circle, $member,
 			$this->l10n->t('You added team {member} as member to {circle}'),
-			$this->l10n->t('{author} added team {member} has been added as member to {circle}')
+			$this->l10n->t('{author} added team {member} as member to {circle}')
 		);
 
 		throw new FakeException();
@@ -160,7 +140,7 @@ class ProviderSubjectCircleMember extends ProviderParser {
 		$this->parseCircleMemberEvent(
 			$event, $circle, $member,
 			$this->l10n->t('You removed {member} from {circle}'),
-			$this->l10n->t('{author} made {member} leave {circle}')
+			$this->l10n->t('{author} removed {member} from {circle}')
 		);
 
 		throw new FakeException();

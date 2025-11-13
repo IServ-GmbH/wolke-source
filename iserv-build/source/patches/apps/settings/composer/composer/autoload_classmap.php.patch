@@ -1,5 +1,5 @@
 diff --git apps/settings/composer/composer/autoload_classmap.php apps/settings/composer/composer/autoload_classmap.php
-index 2d22781..ae2e787 100644
+index 51bf33b..8d53145 100644
 --- apps/settings/composer/composer/autoload_classmap.php
 +++ apps/settings/composer/composer/autoload_classmap.php
 @@ -19,7 +19,8 @@ return array(

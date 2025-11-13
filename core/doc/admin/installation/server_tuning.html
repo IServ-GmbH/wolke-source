@@ -64,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
@@ -96,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -107,6 +107,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -172,7 +174,7 @@ server performance.</p>
 <h2>Debug Mode<a class="headerlink" href="#debug-mode" title="Link to this heading"></a></h2>
 <p>Verify that <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">false</span></code> in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">false</span></code> in new
 installations (or when not specified). While similar to the DEBUG logging level, this option
-also disables various optimizations (to faciliate easier debugging) and generates additional
+also disables various optimizations (to facilitate easier debugging) and generates additional
 debug output both at the browser level and server-side. It should not be enabled in production
 environments outside of isolated troubleshooting situations.</p>
 </section>
@@ -316,7 +318,7 @@ external microservice: <a class="reference external" href="https://github.com/h2
 See <a class="reference external" href="https://github.com/nextcloud/server/issues/34262">https://github.com/nextcloud/server/issues/34262</a></p>
 </div>
 <p>We strongly recommend running our custom docker image that is more up to date than the official image.
-You can find the image at <cite>docker.io/nextcloud/aio-imaginary:latest</cite>.</p>
+You can find the image at <cite>https://ghcr.io/nextcloud-releases/aio-imaginary</cite>.</p>
 <p>To do so, you will need to deploy the service and make sure that it is
 not accessible from outside of your servers. Then you can configure
 Nextcloud to use Imaginary by editing your <cite>config.php</cite>:</p>
@@ -385,40 +387,49 @@ You can change between jpeg and webp, the default is jpeg:</p>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

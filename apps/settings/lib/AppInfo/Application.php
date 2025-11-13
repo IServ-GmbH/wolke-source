@@ -1,36 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author zulan <git@zulan.net>
- * @author Stephan Orbaugh <stephan.orbaugh@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Settings\AppInfo;
 
@@ -41,6 +15,7 @@ use OC\Server;
 use OCA\Settings\Hooks;
 use OCA\Settings\Listener\AppPasswordCreatedActivityListener;
 use OCA\Settings\Listener\GroupRemovedListener;
+use OCA\Settings\Listener\MailProviderListener;
 use OCA\Settings\Listener\UserAddedToGroupActivityListener;
 use OCA\Settings\Listener\UserRemovedFromGroupActivityListener;
 use OCA\Settings\Mailer\NewUserMailHelper;
@@ -48,6 +23,8 @@ use OCA\Settings\Middleware\SubadminMiddleware;
 use OCA\Settings\Search\AppSearch;
 use OCA\Settings\Search\SectionSearch;
 use OCA\Settings\Search\UserSearch;
+use OCA\Settings\Settings\Admin\MailProvider;
+use OCA\Settings\SetupChecks\AllowedAdminRanges;
 use OCA\Settings\SetupChecks\AppDirsWithDifferentOwner;
 use OCA\Settings\SetupChecks\BruteForceThrottler;
 use OCA\Settings\SetupChecks\CheckUserCertificates;
@@ -91,6 +68,7 @@ use OCA\Settings\SetupChecks\SchedulingTableSize;
 use OCA\Settings\SetupChecks\SecurityHeaders;
 use OCA\Settings\SetupChecks\SupportedDatabase;
 use OCA\Settings\SetupChecks\SystemIs64bit;
+use OCA\Settings\SetupChecks\TaskProcessingPickupSpeed;
 use OCA\Settings\SetupChecks\TempSpaceAvailable;
 use OCA\Settings\SetupChecks\TransactionIsolation;
 use OCA\Settings\SetupChecks\WellKnownUrls;
@@ -108,6 +86,8 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IServerContainer;
+use OCP\Settings\Events\DeclarativeSettingsGetValueEvent;
+use OCP\Settings\Events\DeclarativeSettingsSetValueEvent;
 use OCP\Settings\IManager;
 use OCP\Util;
 
@@ -135,9 +115,16 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(UserRemovedEvent::class, UserRemovedFromGroupActivityListener::class);
 		$context->registerEventListener(GroupDeletedEvent::class, GroupRemovedListener::class);
 
+		// Register Mail Provider listeners
+		$context->registerEventListener(DeclarativeSettingsGetValueEvent::class, MailProviderListener::class);
+		$context->registerEventListener(DeclarativeSettingsSetValueEvent::class, MailProviderListener::class);
+
 		// Register well-known handlers
 		$context->registerWellKnownHandler(SecurityTxtHandler::class);
 		$context->registerWellKnownHandler(ChangePasswordHandler::class);
+
+		// Register Settings Form(s)
+		$context->registerDeclarativeSettings(MailProvider::class);
 
 		/**
 		 * Core class wrappers
@@ -180,6 +167,7 @@ class Application extends App implements IBootstrap {
 				Util::getDefaultEmailAddress('no-reply')
 			);
 		});
+		$context->registerSetupCheck(AllowedAdminRanges::class);
 		$context->registerSetupCheck(AppDirsWithDifferentOwner::class);
 		$context->registerSetupCheck(BruteForceThrottler::class);
 		$context->registerSetupCheck(CheckUserCertificates::class);
@@ -223,6 +211,7 @@ class Application extends App implements IBootstrap {
 		$context->registerSetupCheck(SchedulingTableSize::class);
 		$context->registerSetupCheck(SupportedDatabase::class);
 		$context->registerSetupCheck(SystemIs64bit::class);
+		$context->registerSetupCheck(TaskProcessingPickupSpeed::class);
 		$context->registerSetupCheck(TempSpaceAvailable::class);
 		$context->registerSetupCheck(TransactionIsolation::class);
 		$context->registerSetupCheck(PushService::class);

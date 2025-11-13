@@ -1,31 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\SystemTag;
 
@@ -124,7 +103,7 @@ class SystemTagManager implements ISystemTagManager {
 			->from(self::TAG_TABLE);
 
 		if (!\is_null($visibilityFilter)) {
-			$query->andWhere($query->expr()->eq('visibility', $query->createNamedParameter((int)$visibilityFilter)));
+			$query->andWhere($query->expr()->eq('visibility', $query->createNamedParameter((int) $visibilityFilter)));
 		}
 
 		if (!empty($nameSearchPattern)) {
@@ -178,6 +157,7 @@ class SystemTagManager implements ISystemTagManager {
 	 * {@inheritdoc}
 	 */
 	public function createTag(string $tagName, bool $userVisible, bool $userAssignable): ISystemTag {
+		$tagName = trim($tagName);
 		// Length of name column is 64
 		$truncatedTagName = substr($tagName, 0, 64);
 		$query = $this->connection->getQueryBuilder();
@@ -201,7 +181,7 @@ class SystemTagManager implements ISystemTagManager {
 		$tagId = $query->getLastInsertId();
 
 		$tag = new SystemTag(
-			(string)$tagId,
+			(string) $tagId,
 			$truncatedTagName,
 			$userVisible,
 			$userAssignable
@@ -233,6 +213,7 @@ class SystemTagManager implements ISystemTagManager {
 
 		$beforeUpdate = array_shift($tags);
 		// Length of name column is 64
+		$newName = trim($newName);
 		$truncatedNewName = substr($newName, 0, 64);
 		$afterUpdate = new SystemTag(
 			$tagId,
@@ -367,7 +348,7 @@ class SystemTagManager implements ISystemTagManager {
 	}
 
 	private function createSystemTagFromRow($row): SystemTag {
-		return new SystemTag((string)$row['id'], $row['name'], (bool)$row['visibility'], (bool)$row['editable']);
+		return new SystemTag((string) $row['id'], $row['name'], (bool) $row['visibility'], (bool) $row['editable']);
 	}
 
 	/**

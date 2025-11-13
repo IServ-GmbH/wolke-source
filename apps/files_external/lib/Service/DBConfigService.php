@@ -1,29 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_External\Service;
 
@@ -138,7 +118,7 @@ class DBConfigService {
 		$stmt->closeCursor();
 
 		foreach ($result as $row) {
-			if ((int)$row['count'] > 1) {
+			if ((int) $row['count'] > 1) {
 				$this->removeApplicable($row['mount_id'], $applicableType, $applicableId);
 			} else {
 				$this->removeMount($row['mount_id']);
@@ -423,8 +403,8 @@ class DBConfigService {
 		$options = $this->getOptionsForMounts($mountIds);
 
 		return array_map(function ($mount, $applicable, $config, $options) {
-			$mount['type'] = (int)$mount['type'];
-			$mount['priority'] = (int)$mount['priority'];
+			$mount['type'] = (int) $mount['type'];
+			$mount['priority'] = (int) $mount['priority'];
 			$mount['applicable'] = $applicable;
 			$mount['config'] = $config;
 			$mount['options'] = $options;
@@ -463,7 +443,7 @@ class DBConfigService {
 		}
 		foreach ($rows as $row) {
 			if (isset($row['type'])) {
-				$row['type'] = (int)$row['type'];
+				$row['type'] = (int) $row['type'];
 			}
 			$result[$row['mount_id']][] = $row;
 		}

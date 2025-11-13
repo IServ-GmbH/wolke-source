@@ -58,7 +58,7 @@
     "Nextcloud Group" : "Nhóm Nextcloud",
     "Email address" : "Địa chỉ thư điện tử",
     "Contact" : "Liên hệ",
-    "Circle" : "Vòng kết nối",
+    "Team" : "Đội",
     "Nextcloud App" : "Ứng dụng Nextcloud",
     "Member" : "Thành viên",
     "Moderator" : "Kiểm duyệt",
@@ -104,20 +104,20 @@
     "%s owned by %s" : "%s được sở hữu bởi %s",
     "%s shared a file with \"%s\"." : "%s đã chia sẻ một tệp tin với \"%s\".",
     "%s shared a file with you." : "%s đã chia sẻ một tệp tin với bạn.",
+    "Open %s" : "Mở trong %s",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s đã chia sẻ một vài nội dung với bạn.\nBạn sẽ nhận được một email riêng có liên kết để truy cập chúng.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s đã chia sẻ một vài nội dung với bạn. Bạn sẽ nhận được một email riêng có liên kết để truy cập chúng.",
     "Password to access content shared with you by %1$s" : "Mật khẩu để truy cập nội dung được chia sẻ với bạn bởi %1$s",
     "Password to access content" : "Mật khẩu để truy cập nội dung",
     "Bring cloud-users closer together." : "Mang các người dùng-điện toán đám mây đến gần nhau hơn",
+    "Try again" : "Thử lại",
+    "Loading…" : "Đang tải…",
     "No files in here" : "Không có tệp ở đây",
     "No entries found in this folder" : "Chưa có mục nào trong thư mục",
     "Name" : "Tên",
     "Size" : "Kích cỡ",
     "Modified" : "Thay đổi",
     "Shared to Circles" : "Đã được chia sẻ đến những Vòng kết nối",
-    "You are now a member of the Circle \"%2$s\"" : "Bây giờ bạn là thành viên của Vòng kết nối \"%2$s\"",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "Bạn vừa mới được mời bởi %1$s vào Vòng kết nối \"%2$s\"",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s đã gửi một yêu cầu để là một thành viên của Vòng kết nối \"%2$s\"",
-    "Leave the circle" : "Rời bỏ vòng kết nối"
+    "Circle" : "Vòng kết nối"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

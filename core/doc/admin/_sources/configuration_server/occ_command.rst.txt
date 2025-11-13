@@ -180,7 +180,7 @@ Enabling autocompletion
 -----------------------
 
 .. note:: Command autocompletion currently only works if the user you use to execute the occ commands has a profile.
-  ``www-data`` in most cases is ``nologon`` and therefor **cannot** use this feature.
+  ``www-data`` in most cases is ``nologon`` and therefore **cannot** use this feature.
 
 Autocompletion is available for bash (and bash based consoles).
 To enable it, you have to run **one** of the following commands::
@@ -515,6 +515,7 @@ A set of commands to create and manage addressbooks and calendars::
  dav
   dav:create-addressbook                 Create a dav addressbook
   dav:create-calendar                    Create a dav calendar
+  dav:create-subscription                Create a dav calendar subscription
   dav:delete-calendar                    Delete a dav calendar
   dav:fix-missing-caldav-changes         Insert missing calendarchanges rows for existing events
   dav:list-calendars                     List all calendars of a user
@@ -535,6 +536,20 @@ This example creates a new calendar for molly::
  sudo -u www-data php occ dav:create-calendar molly mollycal
 
 Molly will immediately see these in the Calendar and Contacts apps.
+
+The syntax for ``dav:create-subscription`` is 
+``dav:create-subscription [user] [name] [url] [optional color]``. This example creates the subscription subscription for the lunar
+calendar ``Lunar Calendar`` for the user molly::
+
+ sudo -u www-data php occ dav:create-subscription molly "Lunar Calendar" webcal://cantonbecker.com/astronomy-calendar/astrocal.ics
+
+Molly will immediately see this new subscription calendar in the Calendar app.
+
+Optionally, a color for the new subscription calendar can be passed as a HEX color code::
+  
+ sudo -u www-data php occ dav:create-subscription molly "Lunar Calendar" calendar webcal://cantonbecker.com/astronomy-calendar/astrocal.ics "#ff5733"
+
+If not set, the theming default color will be used.
 
 ``dav:delete-calendar [--birthday] [-f|--force] <uid> [<name>]`` deletes the
 calendar named ``name`` (or the birthday calendar if ``--birthday`` is
@@ -744,18 +759,23 @@ to synchronize federated servers::
 File operations
 ---------------
 
-``occ`` has three commands for managing files in Nextcloud::
+Available ``occ`` commands for the ``files`` namespace::
 
- files
-  files:cleanup              Cleanup filecache
-  files:repair-tree          Try and repair malformed filesystem tree structures
-  files:scan                 Rescan filesystem
-  files:scan-app-data        Rescan the AppData folder
-  files:transfer-ownership   All files' and folders' ownerships are moved to another
-                             user. Outgoing shares are moved as well.
-                             Incoming shares are not moved by default because the
-                             sharing user holds the ownership of the respective files.
-                             There is however an option to enable moving incoming shares.
+  files:cleanup                    cleanup filecache
+  files:copy                       Copy a file or folder
+  files:delete                     Delete a file or folder
+  files:get                        Get the contents of a file
+  files:move                       Move a file or folder
+  files:object:delete              Delete an object from the object store
+  files:object:get                 Get the contents of an object
+  files:object:put                 Write a file to the object store
+  files:put                        Write contents of a file
+  files:recommendations:recommend  
+  files:reminders                  List file reminders
+  files:repair-tree                Try and repair malformed filesystem tree structures
+  files:scan                       rescan filesystem
+  files:scan-app-data              rescan the AppData folder
+  files:transfer-ownership         All files and folders are moved to another user - outgoing shares and incoming user file shares (optionally) are moved as well.
 
 .. _occ_files_scan_label:
 
@@ -896,6 +916,8 @@ In this case no sub-directory is created and all files will appear directly in t
 It is also possible to transfer only one directory along with its contents. This can be useful to restructure your organization or quotas. The ``--path`` argument is given as the path to the directory as seen from the source user::
 
  sudo -u www-data php occ files:transfer-ownership --path="path_to_dir" <source-user> <destination-user>
+                             
+Incoming shares are not moved by default because the sharing user holds the ownership of the respective files. There is however an option to enable moving incoming shares.
 
 In case the incoming shares must be transferred as well, use the argument ``--transfer-incoming-shares`` with ``0`` or ``1`` as parameters ::
 
@@ -1174,7 +1196,7 @@ mimetype, run ``maintenance:mimetype:update-db --repair-filecache`` to apply the
 change to existing files.
 
 Run the ``maintenance:theme:update`` command if the icons of your custom theme are not
-updated correctly. This updates the mimetypelist.js and cleares the image cache.
+updated correctly. This updates the mimetypelist.js and clears the image cache.
 
 .. _security_commands_label:
 
@@ -1808,7 +1830,7 @@ check for that user via the occ command::
 
 .. note:: This is not supported by all providers.
 
-To re-enable two-factor auth again use the following commmand::
+To re-enable two-factor auth again use the following command::
 
  sudo -u www-data php occ twofactorauth:enable <uid> <provider_id>
 

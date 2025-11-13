@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -52,6 +32,7 @@ use OCA\Circles\Tools\Traits\TNCLogger;
 use OCA\Circles\Tools\Traits\TStringTools;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IUserManager;
 
 /** @template-implements IEventListener<FileShareCreatedEvent|Event> */
 class ShareCreatedSendMail implements IEventListener {
@@ -76,6 +57,8 @@ class ShareCreatedSendMail implements IEventListener {
 
 	/** @var ContactService */
 	private $contactService;
+	/** @var IUserManager */
+	private $userManager;
 
 	public function __construct(
 		ShareWrapperService $shareWrapperService,
@@ -83,7 +66,8 @@ class ShareCreatedSendMail implements IEventListener {
 		RemoteStreamService $remoteStreamService,
 		SendMailService $sendMailService,
 		ContactService $contactService,
-		ConfigService $configService
+		ConfigService $configService,
+		IUserManager $userManager,
 	) {
 		$this->shareWrapperService = $shareWrapperService;
 		$this->shareTokenService = $shareTokenService;
@@ -91,6 +75,7 @@ class ShareCreatedSendMail implements IEventListener {
 		$this->sendMailService = $sendMailService;
 		$this->contactService = $contactService;
 		$this->configService = $configService;
+		$this->userManager = $userManager;
 
 		$this->setup('app', Application::APP_ID);
 	}
@@ -147,6 +132,8 @@ class ShareCreatedSendMail implements IEventListener {
 			if (!is_null($share)) {
 				if ($share->hasInitiator()) {
 					$author = $share->getInitiator()->getDisplayName();
+				} elseif ($user = $this->userManager->get($share->getSharedBy())) {
+					$author = $user->getDisplayName();
 				} else {
 					$author = 'someone';
 				}

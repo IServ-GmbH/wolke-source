@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Marc Hefter <marchefter@march42.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Roger Szabo <roger.szabo@web.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP\User;
 
@@ -142,7 +120,7 @@ class Manager {
 	 * email, displayname, or others.
 	 *
 	 * @param bool $minimal - optional, set to true to skip attributes with big
-	 * payload
+	 *                      payload
 	 * @return string[]
 	 */
 	public function getAttributes($minimal = false) {
@@ -163,9 +141,10 @@ class Manager {
 			$this->access->getConnection()->ldapAttributeRole,
 			$this->access->getConnection()->ldapAttributeHeadline,
 			$this->access->getConnection()->ldapAttributeBiography,
+			$this->access->getConnection()->ldapAttributeBirthDate,
 		];
 
-		$homeRule = (string)$this->access->getConnection()->homeFolderNamingRule;
+		$homeRule = (string) $this->access->getConnection()->homeFolderNamingRule;
 		if (str_starts_with($homeRule, 'attr:')) {
 			$attributes[] = substr($homeRule, strlen('attr:'));
 		}
@@ -181,7 +160,7 @@ class Manager {
 
 		$attributes = array_reduce($attributes,
 			function ($list, $attribute) {
-				$attribute = strtolower(trim((string)$attribute));
+				$attribute = strtolower(trim((string) $attribute));
 				if (!empty($attribute) && !in_array($attribute, $list)) {
 					$list[] = $attribute;
 				}
@@ -202,7 +181,7 @@ class Manager {
 	public function isDeletedUser($id) {
 		$isDeleted = $this->ocConfig->getUserValue(
 			$id, 'user_ldap', 'isDeleted', 0);
-		return (int)$isDeleted === 1;
+		return (int) $isDeleted === 1;
 	}
 
 	/**

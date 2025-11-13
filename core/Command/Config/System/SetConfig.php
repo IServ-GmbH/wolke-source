@@ -1,26 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Core\Command\Config\System;
 
@@ -34,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SetConfig extends Base {
 	public function __construct(
 		SystemConfig $systemConfig,
+		private CastHelper $castHelper,
 	) {
 		parent::__construct($systemConfig);
 	}
@@ -74,7 +58,7 @@ class SetConfig extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$configNames = $input->getArgument('name');
 		$configName = $configNames[0];
-		$configValue = $this->castValue($input->getOption('value'), $input->getOption('type'));
+		$configValue = $this->castHelper->castValue($input->getOption('value'), $input->getOption('type'));
 		$updateOnly = $input->getOption('update-only');
 
 		if (count($configNames) > 1) {
@@ -121,8 +105,8 @@ class SetConfig extends Base {
 					throw new \InvalidArgumentException('Non-numeric value specified');
 				}
 				return [
-					'value' => (double) $value,
-					'readable-value' => 'double ' . (double) $value,
+					'value' => (float) $value,
+					'readable-value' => 'double ' . (float) $value,
 				];
 
 			case 'boolean':
@@ -157,6 +141,13 @@ class SetConfig extends Base {
 				return [
 					'value' => $value,
 					'readable-value' => ($value === '') ? 'empty string' : 'string ' . $value,
+				];
+
+			case 'json':
+				$value = json_decode($value, true);
+				return [
+					'value' => $value,
+					'readable-value' => 'json ' . json_encode($value),
 				];
 
 			default:
@@ -200,7 +191,7 @@ class SetConfig extends Base {
 	 */
 	public function completeOptionValues($optionName, CompletionContext $context) {
 		if ($optionName === 'type') {
-			return ['string', 'integer', 'double', 'boolean'];
+			return ['string', 'integer', 'double', 'boolean', 'json', 'null'];
 		}
 		return parent::completeOptionValues($optionName, $context);
 	}

@@ -60,7 +60,7 @@
     "Nextcloud Group" : "Nextcloud 그룹",
     "Email address" : "이메일 주소",
     "Contact" : "연락처",
-    "Circle" : "서클",
+    "Team" : "팀",
     "Nextcloud App" : "Nextcloud 앱",
     "Member" : "회원",
     "Moderator" : "중재자",
@@ -95,19 +95,19 @@
     "%s owned by %s" : "%s이(가) 소유한 %s",
     "%s shared a file with \"%s\"." : "%s님이 \"%s\"에게 파일을 공유했습니다.",
     "%s shared a file with you." : "%s님이 파일을 공유했습니다.",
+    "Open %s" : "%s 열기",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s님이 공유한 것이 있습니다. \n함께 발송한 별도의 이메일에서 링크를 눌러 이 공유에 접근하십시오.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s님이 공유한 것이 있습니다.\n함께 발송한 별도의 이메일에서 링크를 눌로 이 공유에 접근하십시오.",
     "Password to access content shared with you by %1$s" : "%1$s님의 공유에 접근하기 위한 암호",
     "Bring cloud-users closer together." : "클라우드 사용자를 더 가깝게 연결합니다.",
+    "Try again" : "다시 시도",
+    "Loading…" : "불러오는 중…",
     "No files in here" : "여기에 파일 없음",
     "No entries found in this folder" : "이 폴더에서 항목을 찾을 수 없음",
     "Name" : "이름",
     "Size" : "크기",
     "Modified" : "수정한 날짜",
     "Shared to Circles" : "서클에 공유됨",
-    "You are now a member of the Circle \"%2$s\"" : "당신은 이제 서클 \"%2$s\"의 회원입니다.",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "%1$s님이 당신을 서클 \"%2$s\"에 초대했습니다.",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s님이 당신에게 서클 \"%2$s\"의 회원이 될 것을 요청했습니다.",
-    "Leave the circle" : "서클 떠나기"
+    "Circle" : "서클"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

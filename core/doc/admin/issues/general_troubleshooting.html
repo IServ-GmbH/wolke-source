@@ -67,6 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -310,7 +312,7 @@ Linux distros or operating systems they can differ.</p>
 </div>
 <ul class="simple">
 <li><p>The logfile of Apache2 is located in <code class="docutils literal notranslate"><span class="pre">/var/log/apache2/error.log</span></code>.</p></li>
-<li><p>The logfile of PHP can be configured in your <code class="docutils literal notranslate"><span class="pre">/etc/php/8.0/apache2/php.ini</span></code>.
+<li><p>The logfile of PHP can be configured in your <code class="docutils literal notranslate"><span class="pre">/etc/php/8.3/apache2/php.ini</span></code>.
 You need to set the directive <code class="docutils literal notranslate"><span class="pre">log_errors</span></code> to <code class="docutils literal notranslate"><span class="pre">On</span></code> and choose the path
 to store the logfile in the <code class="docutils literal notranslate"><span class="pre">error_log</span></code> directive. After those changes you
 need to restart your Web server.</p></li>
@@ -337,7 +339,7 @@ these modules:</p>
 <li><p>mod_security</p></li>
 <li><p>mod_reqtimeout</p></li>
 <li><p>mod_deflate</p></li>
-<li><p>libapache2-mod-php*filter (use libapache2-mod-php8.0 instead)</p></li>
+<li><p>libapache2-mod-php*filter (use libapache2-mod-php8.3 instead)</p></li>
 <li><p>mod_spdy together with libapache2-mod-php5 / mod_php (use fcgi or php-fpm
 instead)</p></li>
 <li><p>mod_dav</p></li>
@@ -477,6 +479,10 @@ file names. When uploading through Nextcloud, file names will always be normaliz
 </section>
 <section id="troubleshooting-contacts-calendar">
 <h2>Troubleshooting contacts &amp; calendar<a class="headerlink" href="#troubleshooting-contacts-calendar" title="Link to this heading"></a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Please also refer to the troubleshooting article in the groupware section: <a class="reference internal" href="../groupware/troubleshooting.html#troubleshooting-groupware"><span class="std std-ref">Troubleshooting</span></a>.</p>
+</div>
 <section id="unable-to-update-contacts-or-events">
 <h3>Unable to update contacts or events<a class="headerlink" href="#unable-to-update-contacts-or-events" title="Link to this heading"></a></h3>
 <p>If you get an error like:</p>
@@ -633,40 +639,49 @@ first.</p>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

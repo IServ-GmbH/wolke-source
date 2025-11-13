@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "Vybrat filtr",
     "Select a comparator" : "Vyberte porovnání",
     "Remove filter" : "Odebrat filtr",
+    "Audio" : "Zvuk",
     "Folder" : "Složka",
     "Images" : "Obrázky",
     "Office documents" : "Kancelářské dokumenty",
     "PDF documents" : "PDF dokumenty",
+    "Video" : "Video",
     "Custom MIME type" : "Uživatelsky určený MIME typ",
     "Custom mimetype" : "Uživatelsky určený mimetyp",
     "Select a file type" : "Vybrat typ souboru",
@@ -69,7 +71,6 @@ OC.L10N.register(
     "Select a user agent" : "Vyberte user agent",
     "Select groups" : "Vybrat skupiny",
     "Groups" : "Skupiny",
-    "Type to search for group …" : "Skupinu vyhledáte psaním…",
     "Select a trigger" : "Vybrat spouštěč",
     "At least one event must be selected" : "Je třeba vybrat alespoň jednu událost",
     "Add new flow" : "Přidat nový tok",
@@ -118,6 +119,7 @@ OC.L10N.register(
     "Request user agent" : "User agent požadavku",
     "Group membership" : "Členství ve skupinách",
     "is member of" : "je členem",
-    "is not member of" : "není členem"
+    "is not member of" : "není členem",
+    "Type to search for group …" : "Skupinu vyhledáte psaním…"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

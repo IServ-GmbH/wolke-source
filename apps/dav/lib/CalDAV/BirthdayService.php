@@ -3,33 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright Copyright (c) 2019, Georg Ehrke
- *
- * @author Achim Königs <garfonso@tratschtante.de>
- * @author Christian Weiske <cweiske@cweiske.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Sven Strickroth <email@cs-ware.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Valdnet <47037905+Valdnet@users.noreply.github.com>
- * @author Cédric Neukom <github@webguy.ch>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\CalDAV;
 
@@ -193,7 +169,7 @@ class BirthdayService {
 			return null;
 		}
 		$birthday = $doc->{$dateField};
-		if (!(string)$birthday) {
+		if (!(string) $birthday) {
 			return null;
 		}
 		// Skip if the BDAY property is not of the right type.
@@ -212,18 +188,18 @@ class BirthdayService {
 			$omitYear = (isset($parameters['X-APPLE-OMIT-YEAR'])
 					&& $parameters['X-APPLE-OMIT-YEAR'] === $dateParts['year']);
 			// 'X-APPLE-OMIT-YEAR' is not always present, at least iOS 12.4 uses the hard coded date of 1604 (the start of the gregorian calendar) when the year is unknown
-			if ($omitYear || (int)$dateParts['year'] === 1604) {
+			if ($omitYear || (int) $dateParts['year'] === 1604) {
 				$dateParts['year'] = null;
 			}
 		}
 
 		$originalYear = null;
 		if ($dateParts['year'] !== null) {
-			$originalYear = (int)$dateParts['year'];
+			$originalYear = (int) $dateParts['year'];
 		}
 
-		$leapDay = ((int)$dateParts['month'] === 2
-				&& (int)$dateParts['date'] === 29);
+		$leapDay = ((int) $dateParts['month'] === 2
+				&& (int) $dateParts['date'] === 29);
 		if ($dateParts['year'] === null || $originalYear < 1970) {
 			$birthday = ($leapDay ? '1972-' : '1970-')
 				. $dateParts['month'] . '-' . $dateParts['date'];

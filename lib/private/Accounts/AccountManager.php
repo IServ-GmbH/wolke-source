@@ -1,36 +1,9 @@
 <?php
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright Copyright (c) 2016, Björn Schießle
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <nextcloud@tcit.fr>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OC\Accounts;
@@ -104,6 +77,7 @@ class AccountManager implements IAccountManager {
 		self::PROPERTY_ROLE => self::SCOPE_LOCAL,
 		self::PROPERTY_HEADLINE => self::SCOPE_LOCAL,
 		self::PROPERTY_BIOGRAPHY => self::SCOPE_LOCAL,
+		self::PROPERTY_BIRTHDATE => self::SCOPE_LOCAL,
 	];
 
 	public function __construct(
@@ -622,6 +596,12 @@ class AccountManager implements IAccountManager {
 			],
 
 			[
+				'name' => self::PROPERTY_BIRTHDATE,
+				'value' => '',
+				'scope' => $scopes[self::PROPERTY_BIRTHDATE],
+			],
+
+			[
 				'name' => self::PROPERTY_PROFILE_ENABLED,
 				'value' => $this->isProfileEnabledByDefault($this->config) ? '1' : '0',
 			],
@@ -749,7 +729,7 @@ class AccountManager implements IAccountManager {
 
 				try {
 					// try the public account lookup API of mastodon
-					$response = $client->get("https://{$instance}/api/v1/accounts/lookup?acct={$username}@{$instance}");
+					$response = $client->get("https://{$instance}/.well-known/webfinger?resource=acct:{$username}@{$instance}");
 					// should be a json response with account information
 					$data = $response->getBody();
 					if (is_resource($data)) {
@@ -758,8 +738,25 @@ class AccountManager implements IAccountManager {
 					$decoded = json_decode($data, true);
 					// ensure the username is the same the user passed
 					// in this case we can assume this is a valid fediverse server and account
-					if (!is_array($decoded) || ($decoded['username'] ?? '') !== $username) {
+					if (!is_array($decoded) || ($decoded['subject'] ?? '') !== "acct:{$username}@{$instance}") {
 						throw new InvalidArgumentException();
+					}
+					// check for activitypub link
+					if (is_array($decoded['links']) && isset($decoded['links'])) {
+						$found = false;
+						foreach ($decoded['links'] as $link) {
+							// have application/activity+json or application/ld+json
+							if (isset($link['type']) && (
+								$link['type'] === 'application/activity+json' ||
+								$link['type'] === 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'
+							)) {
+								$found = true;
+								break;
+							}
+						}
+						if (!$found) {
+							throw new InvalidArgumentException();
+						}
 					}
 				} catch (InvalidArgumentException) {
 					throw new InvalidArgumentException(self::PROPERTY_FEDIVERSE);

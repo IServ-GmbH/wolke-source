@@ -1,34 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author J0WI <J0WI@users.noreply.github.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Michael Gapczynski <GapczynskiM@gmail.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author scambra <sergio@entrecables.com>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Sharing;
 
@@ -44,6 +19,7 @@ use OC\Files\Storage\Home;
 use OC\Files\Storage\Wrapper\PermissionsMask;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OC\User\NoUserException;
+use OCA\Files_Sharing\ISharedStorage as LegacyISharedStorage;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Folder;
@@ -51,6 +27,7 @@ use OCP\Files\IHomeStorage;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IDisableEncryptionStorage;
+use OCP\Files\Storage\ISharedStorage;
 use OCP\Files\Storage\IStorage;
 use OCP\Lock\ILockingProvider;
 use OCP\Server;
@@ -60,7 +37,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Convert target path to source path and pass the function call to the correct storage provider
  */
-class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedStorage, IDisableEncryptionStorage {
+class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements LegacyISharedStorage, ISharedStorage, IDisableEncryptionStorage {
 	/** @var \OCP\Share\IShare */
 	private $superShare;
 
@@ -84,7 +61,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 	private LoggerInterface $logger;
 
-	/** @var  IStorage */
+	/** @var IStorage */
 	private $nonMaskedStorage;
 
 	private array $mountOptions = [];
@@ -163,7 +140,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 
 		try {
 			if (self::$initDepth > 10) {
-				throw new \Exception("Maximum share depth reached");
+				throw new \Exception('Maximum share depth reached');
 			}
 
 			/** @var IRootFolder $rootFolder */
@@ -287,7 +264,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	}
 
 	public function isCreatable($path): bool {
-		return (bool)($this->getPermissions($path) & \OCP\Constants::PERMISSION_CREATE);
+		return (bool) ($this->getPermissions($path) & \OCP\Constants::PERMISSION_CREATE);
 	}
 
 	public function isReadable($path): bool {
@@ -304,18 +281,18 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 	}
 
 	public function isUpdatable($path): bool {
-		return (bool)($this->getPermissions($path) & \OCP\Constants::PERMISSION_UPDATE);
+		return (bool) ($this->getPermissions($path) & \OCP\Constants::PERMISSION_UPDATE);
 	}
 
 	public function isDeletable($path): bool {
-		return (bool)($this->getPermissions($path) & \OCP\Constants::PERMISSION_DELETE);
+		return (bool) ($this->getPermissions($path) & \OCP\Constants::PERMISSION_DELETE);
 	}
 
 	public function isSharable($path): bool {
 		if (\OCP\Util::isSharingDisabledForUser() || !\OC\Share\Share::isResharingAllowed()) {
 			return false;
 		}
-		return (bool)($this->getPermissions($path) & \OCP\Constants::PERMISSION_SHARE);
+		return (bool) ($this->getPermissions($path) & \OCP\Constants::PERMISSION_SHARE);
 	}
 
 	public function fopen($path, $mode) {
@@ -485,7 +462,11 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 			// for shares from the home storage we can rely on the home storage to keep itself up to date
 			// for other storages we need use the proper watcher
 			if ($storageId !== null && !(str_starts_with($storageId, 'home::') || str_starts_with($storageId, 'object::user'))) {
+				$cache = $this->getCache();
 				$this->watcher = parent::getWatcher($path, $storage);
+				if ($cache instanceof Cache && $this->watcher instanceof Watcher) {
+					$this->watcher->onUpdate([$cache, 'markRootChanged']);
+				}
 				return $this->watcher;
 			}
 		}
@@ -581,7 +562,7 @@ class SharedStorage extends \OC\Files\Storage\Wrapper\Jail implements ISharedSto
 		 * @psalm-suppress DocblockTypeContradiction
 		 */
 		if (!$this->storage) {
-			$message = "no storage set after init for share " . $this->getShareId();
+			$message = 'no storage set after init for share ' . $this->getShareId();
 			$this->logger->error($message);
 			$this->storage = new FailedStorage(['exception' => new \Exception($message)]);
 		}

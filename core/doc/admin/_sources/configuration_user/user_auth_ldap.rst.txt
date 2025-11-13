@@ -549,6 +549,14 @@ Biography Field:
   Multi line value with unix LF line ending.
   Windows CRLF and Macintosh CR line endings will be replaced with unix LF line ending.
 
+Birthdate Field:
+  The LDAP attribute holding the user's date of birth.
+  Allowed formats:
+
+  * `LDAP GeneralizedTime <https://ldapwiki.com/wiki/Wiki.jsp?page=GeneralizedTime>`_
+  * ``YYYY-MM-DD``
+  * ``YYYYMMDD``
+
 Expert settings
 ---------------
 
@@ -701,7 +709,7 @@ Example usage::
 
 It is also possible to set the admin group mapping using
 ``occ ldap:set-config $configId ldapAdminGroup $groupId``, but as the Nextcloud
-group ID might not be known (yet) it is recommended (especially for automatized
+group ID might not be known (yet) it is recommended (especially for automated
 setups) to use the `promote-group` command, that would also pull in the group
 and determine the group ID.
 

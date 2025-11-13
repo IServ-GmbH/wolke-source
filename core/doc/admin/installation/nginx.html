@@ -64,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">NGINX configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#nextcloud-in-the-webroot-of-nginx">Nextcloud in the webroot of NGINX</a></li>
@@ -84,6 +83,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -95,6 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -243,7 +245,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
 <span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
 <span class="w">	</span><span class="kn">application/wasm</span><span class="w"> </span><span class="s">wasm</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -318,13 +320,13 @@ webroot of your nginx installation. In this example it is
 <span class="w">        </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">php-handler</span><span class="p">;</span>
 
 <span class="w">        </span><span class="kn">fastcgi_intercept_errors</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
-<span class="w">        </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">on</span><span class="p">;</span><span class="w">                   </span><span class="c1"># Required as PHP-FPM does not support chunked transfer encoding and requires a valid ContentLength header.</span>
 
 <span class="w">        </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1"># Serve static files</span>
-<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">        </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
@@ -416,7 +418,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">    </span><span class="c1"># only for Nextcloud like below:</span>
 <span class="w">    </span><span class="kn">include</span><span class="w"> </span><span class="s">mime.types</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">types</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">js</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">text/javascript</span><span class="w"> </span><span class="s">mjs</span><span class="p">;</span>
 <span class="w">	</span><span class="kn">application/wasm</span><span class="w"> </span><span class="s">wasm</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -529,13 +531,13 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">            </span><span class="kn">fastcgi_pass</span><span class="w"> </span><span class="s">php-handler</span><span class="p">;</span>
 
 <span class="w">            </span><span class="kn">fastcgi_intercept_errors</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
-<span class="w">            </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<span class="w">            </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">on</span><span class="p">;</span><span class="w">                   </span><span class="c1"># Required as PHP-FPM does not support chunked transfer encoding and requires a valid ContentLength header.</span>
 
 <span class="w">            </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1"># Serve static files</span>
-<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|png|jpg|ico|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">            </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
@@ -667,40 +669,49 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

@@ -1,33 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Clark Tomlinson <fallen013@gmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Encryption;
 
@@ -66,7 +42,7 @@ class KeyManager {
 		$this->recoveryKeyId = $this->config->getAppValue('encryption',
 			'recoveryKeyId');
 		if (empty($this->recoveryKeyId)) {
-			$this->recoveryKeyId = 'recoveryKey_' . substr(md5((string)time()), 0, 8);
+			$this->recoveryKeyId = 'recoveryKey_' . substr(md5((string) time()), 0, 8);
 			$this->config->setAppValue('encryption',
 				'recoveryKeyId',
 				$this->recoveryKeyId);
@@ -75,14 +51,14 @@ class KeyManager {
 		$this->publicShareKeyId = $this->config->getAppValue('encryption',
 			'publicShareKeyId');
 		if (empty($this->publicShareKeyId)) {
-			$this->publicShareKeyId = 'pubShare_' . substr(md5((string)time()), 0, 8);
+			$this->publicShareKeyId = 'pubShare_' . substr(md5((string) time()), 0, 8);
 			$this->config->setAppValue('encryption', 'publicShareKeyId', $this->publicShareKeyId);
 		}
 
 		$this->masterKeyId = $this->config->getAppValue('encryption',
 			'masterKeyId');
 		if (empty($this->masterKeyId)) {
-			$this->masterKeyId = 'master_' . substr(md5((string)time()), 0, 8);
+			$this->masterKeyId = 'master_' . substr(md5((string) time()), 0, 8);
 			$this->config->setAppValue('encryption', 'masterKeyId', $this->masterKeyId);
 		}
 

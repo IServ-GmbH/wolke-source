@@ -2,25 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright 2024 Maxence Lange <maxence@artificial-owl.com>
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OC\Blurhash\Listener;
@@ -36,6 +19,7 @@ use OCP\Files\NotPermittedException;
 use OCP\FilesMetadata\AMetadataEvent;
 use OCP\FilesMetadata\Event\MetadataBackgroundEvent;
 use OCP\FilesMetadata\Event\MetadataLiveEvent;
+use OCP\IPreview;
 use OCP\Lock\LockedException;
 
 /**
@@ -44,10 +28,13 @@ use OCP\Lock\LockedException;
  * @template-implements IEventListener<AMetadataEvent>
  */
 class GenerateBlurhashMetadata implements IEventListener {
-	private const RESIZE_BOXSIZE = 30;
-
 	private const COMPONENTS_X = 4;
 	private const COMPONENTS_Y = 3;
+
+	public function __construct(
+		private IPreview $preview,
+	) {
+	}
 
 	/**
 	 * @throws NotPermittedException
@@ -81,42 +68,20 @@ class GenerateBlurhashMetadata implements IEventListener {
 			return;
 		}
 
-		$image = $this->resizedImageFromFile($file);
+		// Preview are disabled, so we skip generating the blurhash.
+		if (!$this->preview->isAvailable($file)) {
+			return;
+		}
+
+		$preview = $this->preview->getPreview($file, 64, 64, cacheResult: false);
+		$image = @imagecreatefromstring($preview->getContent());
+
 		if (!$image) {
 			return;
 		}
 
 		$metadata->setString('blurhash', $this->generateBlurHash($image))
-				 ->setEtag('blurhash', $currentEtag);
-	}
-
-	/**
-	 * @param File $file
-	 *
-	 * @return GdImage|false
-	 * @throws GenericFileException
-	 * @throws NotPermittedException
-	 * @throws LockedException
-	 */
-	private function resizedImageFromFile(File $file): GdImage|false {
-		$image = @imagecreatefromstring($file->getContent());
-		if ($image === false) {
-			return false;
-		}
-
-		$currX = imagesx($image);
-		$currY = imagesy($image);
-
-		if ($currX > $currY) {
-			$newX = self::RESIZE_BOXSIZE;
-			$newY = intval($currY * $newX / $currX);
-		} else {
-			$newY = self::RESIZE_BOXSIZE;
-			$newX = intval($currX * $newY / $currY);
-		}
-
-		$newImage = @imagescale($image, $newX, $newY);
-		return ($newImage !== false) ? $newImage : $image;
+			->setEtag('blurhash', $currentEtag);
 	}
 
 	/**

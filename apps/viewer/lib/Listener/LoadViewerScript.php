@@ -43,7 +43,7 @@ class LoadViewerScript implements IEventListener {
 
 	public function __construct(
 		IInitialState $initialStateService,
-		IPreview $previewManager,
+		IPreview $previewManager
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->previewManager = $previewManager;
@@ -56,7 +56,7 @@ class LoadViewerScript implements IEventListener {
 
 		Util::addStyle(Application::APP_ID, 'viewer-init');
 		Util::addStyle(Application::APP_ID, 'viewer-main');
-		Util::addInitScript(Application::APP_ID, 'viewer-init', 'files');
+		Util::addInitScript(Application::APP_ID, 'viewer-init');
 		Util::addScript(Application::APP_ID, 'viewer-main', 'files');
 		$this->initialStateService->provideInitialState('enabled_preview_providers', array_keys($this->previewManager->getProviders()));
 	}

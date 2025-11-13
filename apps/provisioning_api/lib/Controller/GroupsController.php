@@ -1,46 +1,27 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Tom Needham <tom@owncloud.com>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Provisioning_API\Controller;
 
 use OCA\Provisioning_API\ResponseDefinitions;
+use OCA\Settings\Settings\Admin\Sharing;
+use OCA\Settings\Settings\Admin\Users;
 use OCP\Accounts\IAccountManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
+use OCP\Group\ISubAdmin;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -67,6 +48,7 @@ class GroupsController extends AUserData {
 		IGroupManager $groupManager,
 		IUserSession $userSession,
 		IAccountManager $accountManager,
+		ISubAdmin $subAdminManager,
 		IFactory $l10nFactory,
 		LoggerInterface $logger) {
 		parent::__construct($appName,
@@ -76,6 +58,7 @@ class GroupsController extends AUserData {
 			$groupManager,
 			$userSession,
 			$accountManager,
+			$subAdminManager,
 			$l10nFactory
 		);
 
@@ -83,8 +66,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Get a list of groups
 	 *
 	 * @param string $search Text to search for
@@ -94,6 +75,7 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Groups returned
 	 */
+	#[NoAdminRequired]
 	public function getGroups(string $search = '', ?int $limit = null, int $offset = 0): DataResponse {
 		$groups = $this->groupManager->search($search, $limit, $offset);
 		$groups = array_map(function ($group) {
@@ -105,9 +87,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @AuthorizedAdminSetting(settings=OCA\Settings\Settings\Admin\Sharing)
-	 *
 	 * Get a list of groups details
 	 *
 	 * @param string $search Text to search for
@@ -117,6 +96,9 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Groups details returned
 	 */
+	#[NoAdminRequired]
+	#[AuthorizedAdminSetting(settings: Sharing::class)]
+	#[AuthorizedAdminSetting(settings: Users::class)]
 	public function getGroupsDetails(string $search = '', ?int $limit = null, int $offset = 0): DataResponse {
 		$groups = $this->groupManager->search($search, $limit, $offset);
 		$groups = array_map(function ($group) {
@@ -135,8 +117,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Get a list of users in the specified group
 	 *
 	 * @param string $groupId ID of the group
@@ -147,13 +127,12 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Group users returned
 	 */
+	#[NoAdminRequired]
 	public function getGroup(string $groupId): DataResponse {
 		return $this->getGroupUsers($groupId);
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Get a list of users in the specified group
 	 *
 	 * @param string $groupId ID of the group
@@ -164,6 +143,7 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: User IDs returned
 	 */
+	#[NoAdminRequired]
 	public function getGroupUsers(string $groupId): DataResponse {
 		$groupId = urldecode($groupId);
 
@@ -179,8 +159,9 @@ class GroupsController extends AUserData {
 		}
 
 		// Check subadmin has access to this group
-		if ($this->groupManager->isAdmin($user->getUID())
-		   || $isSubadminOfGroup) {
+		$isAdmin = $this->groupManager->isAdmin($user->getUID());
+		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($user->getUID());
+		if ($isAdmin || $isDelegatedAdmin || $isSubadminOfGroup) {
 			$users = $this->groupManager->get($groupId)->getUsers();
 			$users = array_map(function ($user) {
 				/** @var IUser $user */
@@ -195,8 +176,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Get a list of users details in the specified group
 	 *
 	 * @param string $groupId ID of the group
@@ -209,6 +188,7 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Group users details returned
 	 */
+	#[NoAdminRequired]
 	public function getGroupUsersDetails(string $groupId, string $search = '', ?int $limit = null, int $offset = 0): DataResponse {
 		$groupId = urldecode($groupId);
 		$currentUser = $this->userSession->getUser();
@@ -222,7 +202,9 @@ class GroupsController extends AUserData {
 		}
 
 		// Check subadmin has access to this group
-		if ($this->groupManager->isAdmin($currentUser->getUID()) || $isSubadminOfGroup) {
+		$isAdmin = $this->groupManager->isAdmin($currentUser->getUID());
+		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($currentUser->getUID());
+		if ($isAdmin || $isDelegatedAdmin || $isSubadminOfGroup) {
 			$users = $group->searchUsers($search, $limit, $offset);
 
 			// Extract required number
@@ -230,7 +212,7 @@ class GroupsController extends AUserData {
 			foreach ($users as $user) {
 				try {
 					/** @var IUser $user */
-					$userId = (string)$user->getUID();
+					$userId = (string) $user->getUID();
 					$userData = $this->getUserData($userId);
 					// Do not insert empty entry
 					if ($userData !== null) {
@@ -251,8 +233,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Create a new group
 	 *
 	 * @param string $groupid ID of the group
@@ -262,6 +242,8 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Group created successfully
 	 */
+	#[AuthorizedAdminSetting(settings:Users::class)]
+	#[PasswordConfirmationRequired]
 	public function addGroup(string $groupid, string $displayname = ''): DataResponse {
 		// Validate name
 		if (empty($groupid)) {
@@ -283,8 +265,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Update a group
 	 *
 	 * @param string $groupId ID of the group
@@ -295,6 +275,8 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Group updated successfully
 	 */
+	#[AuthorizedAdminSetting(settings:Users::class)]
+	#[PasswordConfirmationRequired]
 	public function updateGroup(string $groupId, string $key, string $value): DataResponse {
 		$groupId = urldecode($groupId);
 
@@ -314,8 +296,6 @@ class GroupsController extends AUserData {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Delete a group
 	 *
 	 * @param string $groupId ID of the group
@@ -324,6 +304,8 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Group deleted successfully
 	 */
+	#[AuthorizedAdminSetting(settings:Users::class)]
+	#[PasswordConfirmationRequired]
 	public function deleteGroup(string $groupId): DataResponse {
 		$groupId = urldecode($groupId);
 
@@ -347,6 +329,7 @@ class GroupsController extends AUserData {
 	 *
 	 * 200: Sub admins returned
 	 */
+	#[AuthorizedAdminSetting(settings:Users::class)]
 	public function getSubAdminsOfGroup(string $groupId): DataResponse {
 		// Check group exists
 		$targetGroup = $this->groupManager->get($groupId);

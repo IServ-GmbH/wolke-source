@@ -1,28 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Valdnet <47037905+Valdnet@users.noreply.github.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Files_External\Lib\Backend;
@@ -30,19 +11,20 @@ namespace OCA\Files_External\Lib\Backend;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\KerberosApacheAuth;
 use Icewind\SMB\KerberosAuth;
+use Icewind\SMB\Native\NativeServer;
+use Icewind\SMB\Wrapped\Server;
 use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Auth\Password\Password;
 use OCA\Files_External\Lib\Auth\SMB\KerberosApacheAuth as KerberosApacheAuthMechanism;
 use OCA\Files_External\Lib\DefinitionParameter;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
-use OCA\Files_External\Lib\LegacyDependencyCheckPolyfill;
+use OCA\Files_External\Lib\MissingDependency;
+use OCA\Files_External\Lib\Storage\SystemBridge;
 use OCA\Files_External\Lib\StorageConfig;
 use OCP\IL10N;
 use OCP\IUser;
 
 class SMB extends Backend {
-	use LegacyDependencyCheckPolyfill;
-
 	public function __construct(IL10N $l, Password $legacyAuth) {
 		$this
 			->setIdentifier('smb')
@@ -69,8 +51,9 @@ class SMB extends Backend {
 					->setFlag(DefinitionParameter::FLAG_OPTIONAL)
 					->setTooltip($l->t("Check the ACL's of each file or folder inside a directory to filter out items where the account has no read permissions, comes with a performance penalty")),
 				(new DefinitionParameter('timeout', $l->t('Timeout')))
-					->setType(DefinitionParameter::VALUE_HIDDEN)
-					->setFlag(DefinitionParameter::FLAG_OPTIONAL),
+					->setType(DefinitionParameter::VALUE_TEXT)
+					->setFlag(DefinitionParameter::FLAG_OPTIONAL)
+					->setFlag(DefinitionParameter::FLAG_HIDDEN),
 			])
 			->addAuthScheme(AuthMechanism::SCHEME_PASSWORD)
 			->addAuthScheme(AuthMechanism::SCHEME_SMB)
@@ -140,5 +123,21 @@ class SMB extends Backend {
 		}
 
 		$storage->setBackendOption('auth', $smbAuth);
+	}
+
+	public function checkDependencies() {
+		$system = \OCP\Server::get(SystemBridge::class);
+		if (NativeServer::available($system)) {
+			return [];
+		} elseif (Server::available($system)) {
+			$missing = new MissingDependency('php-smbclient');
+			$missing->setOptional(true);
+			$missing->setMessage('The php-smbclient library provides improved compatibility and performance for SMB storages.');
+			return [$missing];
+		} else {
+			$missing = new MissingDependency('php-smbclient');
+			$missing->setMessage('Either the php-smbclient library (preferred) or the smbclient binary is required for SMB storages.');
+			return [$missing, new MissingDependency('smbclient')];
+		}
 	}
 }

@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Files\Cache;
 
@@ -75,14 +53,14 @@ class Storage {
 		$this->storageId = self::adjustStorageId($this->storageId);
 
 		if ($row = self::getStorageById($this->storageId)) {
-			$this->numericId = (int)$row['numeric_id'];
+			$this->numericId = (int) $row['numeric_id'];
 		} else {
 			$available = $isAvailable ? 1 : 0;
 			if ($connection->insertIfNotExist('*PREFIX*storages', ['id' => $this->storageId, 'available' => $available])) {
 				$this->numericId = $connection->lastInsertId('*PREFIX*storages');
 			} else {
 				if ($row = self::getStorageById($this->storageId)) {
-					$this->numericId = (int)$row['numeric_id'];
+					$this->numericId = (int) $row['numeric_id'];
 				} else {
 					throw new \RuntimeException('Storage could neither be inserted nor be selected from the database: ' . $this->storageId);
 				}
@@ -102,7 +80,7 @@ class Storage {
 	 * Adjusts the storage id to use md5 if too long
 	 * @param string $storageId storage id
 	 * @return string unchanged $storageId if its length is less than 64 characters,
-	 * else returns the md5 of $storageId
+	 *                else returns the md5 of $storageId
 	 */
 	public static function adjustStorageId($storageId) {
 		if (strlen($storageId) > 64) {
@@ -141,7 +119,7 @@ class Storage {
 		$storageId = self::adjustStorageId($storageId);
 
 		if ($row = self::getStorageById($storageId)) {
-			return (int)$row['numeric_id'];
+			return (int) $row['numeric_id'];
 		} else {
 			return null;
 		}
@@ -153,7 +131,7 @@ class Storage {
 	public function getAvailability() {
 		if ($row = self::getStorageById($this->storageId)) {
 			return [
-				'available' => (int)$row['available'] === 1,
+				'available' => (int) $row['available'] === 1,
 				'last_checked' => $row['last_checked']
 			];
 		} else {
@@ -235,6 +213,7 @@ class Storage {
 			$query = $db->getQueryBuilder();
 			$query->delete('filecache')
 				->where($query->expr()->in('storage', $query->createNamedParameter($storageIds, IQueryBuilder::PARAM_INT_ARRAY)));
+			$query->runAcrossAllShards();
 			$query->executeStatement();
 
 			$query = $db->getQueryBuilder();

@@ -1,23 +1,9 @@
 <?php
+
 /**
- * @author Sujith Haridasan <sharidasan@owncloud.com>
- * @author Ilja Neumann <ineumann@owncloud.com>
- *
- * @copyright Copyright (c) 2019, ownCloud GmbH
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2021-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2019 ownCloud GmbH
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Encryption\Command;
@@ -26,6 +12,7 @@ use OC\Files\Storage\Wrapper\Encryption;
 use OC\Files\View;
 use OC\ServerNotAvailableException;
 use OCA\Encryption\Util;
+use OCP\Encryption\Exceptions\InvalidHeaderException;
 use OCP\Files\IRootFolder;
 use OCP\HintException;
 use OCP\IConfig;
@@ -97,7 +84,7 @@ class FixEncryptedVersion extends Command {
 
 		if ($user) {
 			if ($all) {
-				$output->writeln("Specifying a user id and --all are mutually exclusive");
+				$output->writeln('Specifying a user id and --all are mutually exclusive');
 				return 1;
 			}
 
@@ -110,20 +97,20 @@ class FixEncryptedVersion extends Command {
 		} elseif ($all) {
 			$result = 0;
 			$this->userManager->callForSeenUsers(function (IUser $user) use ($pathOption, $output, &$result) {
-				$output->writeln("Processing files for " . $user->getUID());
+				$output->writeln('Processing files for ' . $user->getUID());
 				$result = $this->runForUser($user->getUID(), $pathOption, $output);
 				return $result === 0;
 			});
 			return $result;
 		} else {
-			$output->writeln("Either a user id or --all needs to be provided");
+			$output->writeln('Either a user id or --all needs to be provided');
 			return 1;
 		}
 	}
 
 	private function runForUser(string $user, string $pathOption, OutputInterface $output): int {
 		$pathToWalk = "/$user/files";
-		if ($pathOption !== "") {
+		if ($pathOption !== '') {
 			$pathToWalk = "$pathToWalk/$pathOption";
 		}
 		return $this->walkPathOfUser($user, $pathToWalk, $output);
@@ -210,7 +197,7 @@ class FixEncryptedVersion extends Command {
 			\fclose($handle);
 
 			return true;
-		} catch (ServerNotAvailableException $e) {
+		} catch (ServerNotAvailableException|InvalidHeaderException $e) {
 			// not a "bad signature" error and likely "legacy cipher" exception
 			// this could mean that the file is maybe not encrypted but the encrypted version is set
 			if (!$this->supportLegacy && $ignoreCorrectEncVersionCall === true) {
@@ -219,7 +206,7 @@ class FixEncryptedVersion extends Command {
 			}
 			return false;
 		} catch (HintException $e) {
-			$this->logger->warning("Issue: " . $e->getMessage());
+			$this->logger->warning('Issue: ' . $e->getMessage());
 			// If allowOnce is set to false, this becomes recursive.
 			if ($ignoreCorrectEncVersionCall === true) {
 				// Lets rectify the file by correcting encrypted version
@@ -268,7 +255,7 @@ class FixEncryptedVersion extends Command {
 				// try with zero first
 				$cacheInfo = ['encryptedVersion' => 0, 'encrypted' => 0];
 				$cache->put($fileCache->getPath(), $cacheInfo);
-				$output->writeln("<info>Set the encrypted version to 0 (unencrypted)</info>");
+				$output->writeln('<info>Set the encrypted version to 0 (unencrypted)</info>');
 				if ($this->verifyFileContent($path, $output, false) === true) {
 					$output->writeln("<info>Fixed the file: \"$path\" with version 0 (unencrypted)</info>");
 					return true;
@@ -282,7 +269,7 @@ class FixEncryptedVersion extends Command {
 				$cache->put($fileCache->getPath(), $cacheInfo);
 				$output->writeln("<info>Decrement the encrypted version to $encryptedVersion</info>");
 				if ($this->verifyFileContent($path, $output, false) === true) {
-					$output->writeln("<info>Fixed the file: \"$path\" with version " . $encryptedVersion . "</info>");
+					$output->writeln("<info>Fixed the file: \"$path\" with version " . $encryptedVersion . '</info>');
 					return true;
 				}
 				$encryptedVersion--;
@@ -305,7 +292,7 @@ class FixEncryptedVersion extends Command {
 				$cache->put($fileCache->getPath(), $cacheInfo);
 				$output->writeln("<info>Increment the encrypted version to $newEncryptedVersion</info>");
 				if ($this->verifyFileContent($path, $output, false) === true) {
-					$output->writeln("<info>Fixed the file: \"$path\" with version " . $newEncryptedVersion . "</info>");
+					$output->writeln("<info>Fixed the file: \"$path\" with version " . $newEncryptedVersion . '</info>');
 					return true;
 				}
 				$increment++;

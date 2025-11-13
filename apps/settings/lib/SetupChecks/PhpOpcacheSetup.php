@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023 Côme Chilliet <come.chilliet@nextcloud.com>
- *
- * @author Côme Chilliet <come.chilliet@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Settings\SetupChecks;
 
@@ -63,7 +46,7 @@ class PhpOpcacheSetup implements ISetupCheck {
 
 		// Check whether Nextcloud is allowed to use the OPcache API
 		$isPermitted = true;
-		$permittedPath = (string)$this->iniGetWrapper->getString('opcache.restrict_api');
+		$permittedPath = (string) $this->iniGetWrapper->getString('opcache.restrict_api');
 		if ($permittedPath !== '' && !str_starts_with(\OC::$SERVERROOT, rtrim($permittedPath, '/'))) {
 			$isPermitted = false;
 		}
@@ -74,7 +57,7 @@ class PhpOpcacheSetup implements ISetupCheck {
 		} elseif ($this->iniGetWrapper->getBool('opcache.file_cache_only')) {
 			$recommendations[] = $this->l10n->t('The shared memory based OPcache is disabled. For better performance, it is recommended to apply "opcache.file_cache_only=0" to your PHP configuration and use the file cache as second level cache only.');
 		} else {
-			// Check whether opcache_get_status has been explicitly disabled an in case skip usage based checks
+			// Check whether opcache_get_status has been explicitly disabled and in case skip usage based checks
 			$disabledFunctions = $this->iniGetWrapper->getString('disable_functions');
 			if (isset($disabledFunctions) && str_contains($disabledFunctions, 'opcache_get_status')) {
 				return [$level, $recommendations];
@@ -87,21 +70,19 @@ class PhpOpcacheSetup implements ISetupCheck {
 				$level = 'error';
 			}
 
-			// Recommend to raise value, if more than 90% of max value is reached
-			if (
-				empty($status['opcache_statistics']['max_cached_keys']) ||
-				($status['opcache_statistics']['num_cached_keys'] / $status['opcache_statistics']['max_cached_keys'] > 0.9)
-			) {
-				$recommendations[] = $this->l10n->t('The maximum number of OPcache keys is nearly exceeded. To assure that all scripts can be kept in the cache, it is recommended to apply "opcache.max_accelerated_files" to your PHP configuration with a value higher than "%s".', [($this->iniGetWrapper->getNumeric('opcache.max_accelerated_files') ?: 'currently')]);
+			// Check whether OPcache is full, which can be either the overall OPcache size or limit of cached keys reached.
+			// If the limit of cached keys has been reached, num_cached_keys equals max_cached_keys. The recommendation contains this value instead of opcache.max_accelerated_files, since the effective limit is a next higher prime number: https://www.php.net/manual/en/opcache.configuration.php#ini.opcache.max-accelerated-files
+			// Else, the remaining $status['memory_usage']['free_memory'] was too low to store another script. Aside of used_memory, this can be also due to wasted_memory, remaining cache keys from scripts changed on disk.
+			// Wasted memory is cleared only via opcache_reset(), or if $status['memory_usage']['current_wasted_percentage'] reached opcache.max_wasted_percentage, which triggers an engine restart and hence OPcache reset. Due to this complexity, we check for $status['cache_full'] only.
+			if ($status['cache_full'] === true) {
+				if ($status['opcache_statistics']['num_cached_keys'] === $status['opcache_statistics']['max_cached_keys']) {
+					$recommendations[] = $this->l10n->t('The maximum number of OPcache keys is nearly exceeded. To assure that all scripts can be kept in the cache, it is recommended to apply "opcache.max_accelerated_files" to your PHP configuration with a value higher than "%s".', [($status['opcache_statistics']['max_cached_keys'] ?: 'currently')]);
+				} else {
+					$recommendations[] = $this->l10n->t('The OPcache buffer is nearly full. To assure that all scripts can be hold in cache, it is recommended to apply "opcache.memory_consumption" to your PHP configuration with a value higher than "%s".', [($this->iniGetWrapper->getNumeric('opcache.memory_consumption') ?: 'currently')]);
+				}
 			}
 
-			if (
-				empty($status['memory_usage']['free_memory']) ||
-				($status['memory_usage']['used_memory'] / $status['memory_usage']['free_memory'] > 9)
-			) {
-				$recommendations[] = $this->l10n->t('The OPcache buffer is nearly full. To assure that all scripts can be hold in cache, it is recommended to apply "opcache.memory_consumption" to your PHP configuration with a value higher than "%s".', [($this->iniGetWrapper->getNumeric('opcache.memory_consumption') ?: 'currently')]);
-			}
-
+			// Interned strings buffer: recommend to raise size if more than 90% is used
 			$interned_strings_buffer = $this->iniGetWrapper->getNumeric('opcache.interned_strings_buffer') ?? 0;
 			$memory_consumption = $this->iniGetWrapper->getNumeric('opcache.memory_consumption') ?? 0;
 			if (

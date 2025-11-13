@@ -3,8 +3,6 @@
 # Clone upstream repositories, copy added files and apply patches
 set -e
 
-USER_SAML_BRANCH="stable-6"
-
 print_help()
 {
   echo "Usage: $0 [OPTION]... VERSION DESTINATION"
@@ -99,14 +97,14 @@ else
   BRANCH="stable${MAJOR_VERSION}"
   fetch_latest_version_for_apps "nextcloud" "files_retention" "$BRANCH"
   fetch_latest_version_for_apps "nextcloud" "richdocuments" "$BRANCH"
-  fetch_latest_version_for_apps "nextcloud" "user_saml" "$USER_SAML_BRANCH"
+  fetch_specific_tag_for_apps "nextcloud" "user_saml" "v7.0.0"
 
   echo "Cloning version $VERSION of upstream app repos..."
   git clone --branch "$UPSTREAM_VERSION_TAG" --depth 1 -c advice.detachedHead=false "https://github.com/nextcloud/viewer.git" "$DESTINATION/apps/viewer"
 
   # files_linkeditor does not use usual branch naming - keep in sync with version number in Dockerfile
   # TODO: Have a central place to keep the app versions #76427
-  fetch_specific_tag_for_apps "te-online" "files_linkeditor" "v1.1.22"
+  fetch_specific_tag_for_apps "te-online" "files_linkeditor" "v1.1.23"
 fi
 
 echo "Copying added files into repo directories..."

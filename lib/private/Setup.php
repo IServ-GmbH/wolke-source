@@ -3,51 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Administrator "Administrator@WINDOWS-2012"
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Brice Maron <brice@bmaron.net>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Dan Callahan <dan.callahan@gmail.com>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author François Kubler <francois@kubler.org>
- * @author Frank Isemann <frank@isemann.name>
- * @author Jakob Sack <mail@jakobsack.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author KB7777 <k.burkowski@gmail.com>
- * @author Kevin Lanni <therealklanni@gmail.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author MichaIng <28480705+MichaIng@users.noreply.github.com>
- * @author MichaIng <micha@dietpi.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sean Comeau <sean@ftlnetworks.ca>
- * @author Serge Martin <edb@sigluy.net>
- * @author Simounet <contact@simounet.net>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Valdnet <47037905+Valdnet@users.noreply.github.com>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
@@ -56,6 +14,7 @@ use Exception;
 use InvalidArgumentException;
 use OC\Authentication\Token\PublicKeyTokenProvider;
 use OC\Authentication\Token\TokenCleanupJob;
+use OC\Core\BackgroundJobs\GenerateMetadataJob;
 use OC\Log\Rotate;
 use OC\Preview\BackgroundCleanupJob;
 use OC\TextProcessing\RemoveOldTasksBackgroundJob;
@@ -190,7 +149,7 @@ class Setup {
 	 * a few system checks.
 	 *
 	 * @return array of system info, including an "errors" value
-	 * in case of errors/warnings
+	 *               in case of errors/warnings
 	 */
 	public function getSystemInfo(bool $allowAllDatabases = false): array {
 		$databases = $this->getSupportedDatabases($allowAllDatabases);
@@ -273,7 +232,7 @@ class Setup {
 			$error[] = $l->t('Set an admin password.');
 		}
 		if (empty($options['directory'])) {
-			$options['directory'] = \OC::$SERVERROOT . "/data";
+			$options['directory'] = \OC::$SERVERROOT . '/data';
 		}
 
 		if (!isset(self::$dbSetupClasses[$dbType])) {
@@ -291,7 +250,7 @@ class Setup {
 
 		// validate the data directory
 		if ((!is_dir($dataDir) && !mkdir($dataDir)) || !is_writable($dataDir)) {
-			$error[] = $l->t("Cannot create or write into the data directory %s", [$dataDir]);
+			$error[] = $l->t('Cannot create or write into the data directory %s', [$dataDir]);
 		}
 
 		if (!empty($error)) {
@@ -383,7 +342,7 @@ class Setup {
 		}
 
 		$config = Server::get(IConfig::class);
-		$config->setAppValue('core', 'installedat', (string)microtime(true));
+		$config->setAppValue('core', 'installedat', (string) microtime(true));
 		$appConfig = Server::get(IAppConfig::class);
 		$appConfig->setValueInt('core', 'lastupdatedat', time());
 
@@ -403,9 +362,12 @@ class Setup {
 		Installer::installShippedApps(false, $output);
 
 		// create empty file in data dir, so we can later find
-		// out that this is indeed an ownCloud data directory
+		// out that this is indeed a Nextcloud data directory
 		$this->outputDebug($output, 'Setup data directory');
-		file_put_contents($config->getSystemValueString('datadirectory', \OC::$SERVERROOT . '/data') . '/.ocdata', '');
+		file_put_contents(
+			$config->getSystemValueString('datadirectory', \OC::$SERVERROOT . '/data') . '/.ncdata',
+			"# Nextcloud data directory\n# Do not change this file",
+		);
 
 		// Update .htaccess files
 		self::updateHtaccess();
@@ -432,7 +394,7 @@ class Setup {
 		$userSession->login($username, $password);
 		$user = $userSession->getUser();
 		if (!$user) {
-			$error[] = "No account found in session.";
+			$error[] = 'No account found in session.';
 			return $error;
 		}
 		$userSession->createSessionToken($request, $user->getUID(), $username, $password);
@@ -455,6 +417,7 @@ class Setup {
 		$jobList->add(BackgroundCleanupJob::class);
 		$jobList->add(RemoveOldTasksBackgroundJob::class);
 		$jobList->add(CleanupDeletedUsers::class);
+		$jobList->add(GenerateMetadataJob::class);
 	}
 
 	/**
@@ -525,7 +488,7 @@ class Setup {
 			$content .= "\n  Options -MultiViews";
 			$content .= "\n  RewriteRule ^core/js/oc.js$ index.php [PT,E=PATH_INFO:$1]";
 			$content .= "\n  RewriteRule ^core/preview.png$ index.php [PT,E=PATH_INFO:$1]";
-			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !\\.(css|js|mjs|svg|gif|png|html|otf|ttf|woff2?|ico|jpg|jpeg|map|webm|mp4|mp3|ogg|wav|flac|wasm|tflite)$";
+			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !\\.(css|js|mjs|svg|gif|ico|jpg|jpeg|png|webp|html|otf|ttf|woff2?|map|webm|mp4|mp3|ogg|wav|flac|wasm|tflite)$";
 			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/core/ajax/update\\.php";
 			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/core/img/(favicon\\.ico|manifest\\.json)$";
 			$content .= "\n  RewriteCond %{REQUEST_FILENAME} !/(cron|public|remote|status)\\.php";
@@ -549,12 +512,12 @@ class Setup {
 		if (function_exists('disk_free_space')) {
 			$df = disk_free_space(\OC::$SERVERROOT);
 			$size = strlen($content) + 10240;
-			if ($df !== false && $df < (float)$size) {
-				throw new \Exception(\OC::$SERVERROOT . " does not have enough space for writing the htaccess file! Not writing it back!");
+			if ($df !== false && $df < (float) $size) {
+				throw new \Exception(\OC::$SERVERROOT . ' does not have enough space for writing the htaccess file! Not writing it back!');
 			}
 		}
 		//suppress errors in case we don't have permissions for it
-		return (bool)@file_put_contents($setupHelper->pathToHtaccess(), $htaccessContent . $content . "\n");
+		return (bool) @file_put_contents($setupHelper->pathToHtaccess(), $htaccessContent . $content . "\n");
 	}
 
 	public static function protectDataDirectory(): void {
@@ -583,7 +546,7 @@ class Setup {
 		$content .= "# Section for Apache 2.2 to 2.6\n";
 		$content .= "<IfModule mod_autoindex.c>\n";
 		$content .= "  IndexIgnore *\n";
-		$content .= "</IfModule>";
+		$content .= '</IfModule>';
 
 		$baseDir = Server::get(IConfig::class)->getSystemValueString('datadirectory', \OC::$SERVERROOT . '/data');
 		file_put_contents($baseDir . '/.htaccess', $content);
@@ -596,8 +559,8 @@ class Setup {
 		/** @var mixed $vendor */
 		/** @var mixed $OC_Channel */
 		return [
-			'vendor' => (string)$vendor,
-			'channel' => (string)$OC_Channel,
+			'vendor' => (string) $vendor,
+			'channel' => (string) $OC_Channel,
 		];
 	}
 

@@ -67,6 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
@@ -294,7 +296,7 @@ config file or append <code class="docutils literal notranslate"><span class="pr
 a new update available. Go to the admin settings page and scroll to the
 section “Version”. This section has a button to open the updater. This
 section as well as the update notification is only available if the update
-notication app is enabled in the apps management.</p></li>
+notification app is enabled in the apps management.</p></li>
 </ol>
 <img alt="../_images/updater-1-update-available.png" src="../_images/updater-1-update-available.png" />
 <ol class="arabic simple" start="2">
@@ -336,7 +338,7 @@ should be kept active.</p></li>
 The updater then doesn’t ask any interactive questions. It is assumed that if
 an update is available it should be installed and the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> command
 is executed as well. After finishing the maintenance mode will be turned off
-except an error occured during the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> or the replacement of the
+except an error occurred during the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">upgrade</span></code> or the replacement of the
 code.</p>
 <p>To execute this, run the command with the <code class="docutils literal notranslate"><span class="pre">--no-interaction</span></code> option. (i.e.
 <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">/var/www/nextcloud/updater/updater.phar</span> <span class="pre">--no-interaction</span></code>)</p>
@@ -391,40 +393,49 @@ upgrade phase.</p></li>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

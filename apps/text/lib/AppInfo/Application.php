@@ -2,25 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Text\AppInfo;
@@ -28,6 +11,7 @@ namespace OCA\Text\AppInfo;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Text\Event\LoadEditor;
+use OCA\Text\Exception\DocumentHasUnsavedChangesException;
 use OCA\Text\Listeners\AddMissingIndicesListener;
 use OCA\Text\Listeners\BeforeAssistantNotificationListener;
 use OCA\Text\Listeners\BeforeNodeDeletedListener;
@@ -39,12 +23,12 @@ use OCA\Text\Listeners\LoadEditorListener;
 use OCA\Text\Listeners\LoadViewerListener;
 use OCA\Text\Listeners\NodeCopiedListener;
 use OCA\Text\Listeners\RegisterDirectEditorEventListener;
+use OCA\Text\Listeners\RegisterTemplateCreatorListener;
 use OCA\Text\Middleware\SessionMiddleware;
 use OCA\Text\Notification\Notifier;
-use OCA\Text\Service\ConfigService;
+use OCA\Text\Service\DocumentService;
 use OCA\TpAssistant\Event\BeforeAssistantNotificationEvent;
 use OCA\Viewer\Event\LoadViewer;
-use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -55,9 +39,11 @@ use OCP\Files\Events\Node\BeforeNodeDeletedEvent;
 use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\Files\Events\Node\BeforeNodeWrittenEvent;
 use OCP\Files\Events\Node\NodeCopiedEvent;
-use OCP\Files\Template\ITemplateManager;
-use OCP\Files\Template\TemplateFileCreator;
-use OCP\IL10N;
+use OCP\Files\File;
+use OCP\Files\NotFoundException;
+use OCP\Files\Template\RegisterTemplateCreatorEvent;
+use OCP\Server;
+use OCP\Util;
 
 class Application extends App implements IBootstrap {
 	public const APP_NAME = 'text';
@@ -79,23 +65,32 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeNodeDeletedEvent::class, BeforeNodeDeletedListener::class);
 		$context->registerEventListener(AddMissingIndicesEvent::class, AddMissingIndicesListener::class);
 		$context->registerEventListener(BeforeAssistantNotificationEvent::class, BeforeAssistantNotificationListener::class);
+		$context->registerEventListener(RegisterTemplateCreatorEvent::class, RegisterTemplateCreatorListener::class);
 
 		$context->registerNotifierService(Notifier::class);
 		$context->registerMiddleware(SessionMiddleware::class);
+
+		/** @psalm-suppress DeprecatedMethod */
+		Util::connectHook('\OCP\Versions', 'rollback', $this, 'resetSessionsAfterRestoreFile');
 	}
 
 	public function boot(IBootContext $context): void {
-		$context->injectFn(function (ITemplateManager $templateManager, IL10N $l, ConfigService $configService, IAppManager $appManager) {
-			$templateManager->registerTemplateFileCreator(function () use ($l, $configService, $appManager) {
-				$markdownFile = new TemplateFileCreator(Application::APP_NAME, $l->t('New text file'), '.' . $configService->getDefaultFileExtension());
-				$markdownFile->addMimetype('text/markdown');
-				$markdownFile->addMimetype('text/plain');
-				$markdownFile->setIconSvgInline(file_get_contents($appManager->getAppPath('text') . '/img/article.svg'));
-				$markdownFile->setRatio(1);
-				$markdownFile->setOrder(10);
-				$markdownFile->setActionLabel($l->t('Create new text file'));
-				return $markdownFile;
-			});
-		});
+	}
+
+	public function resetSessionsAfterRestoreFile(array $params): void {
+		$node = $params['node'];
+		if (!$node instanceof File) {
+			return;
+		}
+
+		$documentService = Server::get(DocumentService::class);
+		// Reset document session to avoid manual conflict resolution if there's no unsaved steps
+		try {
+			$documentService->resetDocument($node->getId());
+		} catch (DocumentHasUnsavedChangesException|NotFoundException $e) {
+			// Do not throw during event handling in this is expected to happen
+			// DocumentHasUnsavedChangesException: A document editing session is likely ongoing, someone can resolve the conflict
+			// NotFoundException: The event was called oin a file that was just created so a NonExistingFile object is used that has no id yet
+		}
 	}
 }

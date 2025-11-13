@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -213,8 +193,8 @@ class SharesFiles extends Base {
 		}
 
 		$table->setHeaders($headers);
-		$table->render();
 
+		$rows = [];
 		foreach ($shareWrappers as $share) {
 			if (!$filterRecipient) {
 				$recipient = $share->getInitiator();
@@ -240,18 +220,21 @@ class SharesFiles extends Base {
 			];
 
 			if (!$filterRecipient) {
+				$def = ($recipient->hasBasedOn()) ? Circle::$DEF_SOURCE[$recipient->getBasedOn()->getSource()] : 'undef';
 				$row = array_merge(
 					$row, [
-						$sharedTo . ' (' . $recipient->getSingleId() . ', '
-						. Circle::$DEF_SOURCE[$recipient->getBasedOn()->getSource()] . ')',
+						$sharedTo . ' (' . $recipient->getSingleId() . ', ' . $def . ')',
 						(($share->getChildId() > 0) ? $share->getChildFileTarget(
 						) : $share->getFileTarget()),
 					]
 				);
 			}
 
-			$table->appendRow($row);
+			$rows[] = $row;
 		}
+
+		$table->setRows($rows);
+		$table->render();
 	}
 
 

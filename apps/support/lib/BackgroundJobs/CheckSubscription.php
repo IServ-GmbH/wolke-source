@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
@@ -27,16 +29,14 @@ use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
 
 class CheckSubscription extends TimedJob {
-	private IConfig $config;
-	private SubscriptionService $subscriptionService;
-
-	public function __construct(IConfig $config, SubscriptionService $subscriptionService, ITimeFactory $factory) {
+	public function __construct(
+		ITimeFactory $factory,
+		private readonly IConfig $config,
+		private readonly SubscriptionService $subscriptionService,
+	) {
 		parent::__construct($factory);
 		// Run every 5 minutes
 		$this->setInterval(60 * 5);
-
-		$this->config = $config;
-		$this->subscriptionService = $subscriptionService;
 	}
 
 	public function run($argument) {

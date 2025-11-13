@@ -68,9 +68,9 @@
 <li class="toctree-l2"><a class="reference internal" href="automated_tagging.html">Automated tagging of files</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Retention of files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-age">File age</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#common-misconfigurations">Common misconfigurations</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#public-collaborative-tag">Public collaborative tag</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#file-age">File age</a></li>
 </ul>
 </li>
 </ul>
@@ -81,6 +81,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -130,6 +132,15 @@ navigate to Administration settings and then to Flow.</p>
 <p>You can also use the “Notify owner a day before a file is automatically deleted” option to
 make sure the file owner will get a notification before a file will be deleted.</p>
 </section>
+<section id="file-age">
+<h2>File age<a class="headerlink" href="#file-age" title="Link to this heading"></a></h2>
+<p>There are 2 options available that can be used to decide when to delete a file:</p>
+<ul class="simple">
+<li><p><strong>Creation:</strong> Time the file was created on the Nextcloud Server or uploaded to it.</p></li>
+<li><p><strong>Last modification:</strong> Time when the file was last modified. Uploading also counts as a modification,
+so files that have not been modified since a long time before uploading are not deleted shortly after the upload.</p></li>
+</ul>
+</section>
 <section id="common-misconfigurations">
 <h2>Common misconfigurations<a class="headerlink" href="#common-misconfigurations" title="Link to this heading"></a></h2>
 <section id="public-collaborative-tag">
@@ -137,14 +148,6 @@ make sure the file owner will get a notification before a file will be deleted.<
 <p>Similar to <a class="reference internal" href="access_control.html"><span class="doc">Files access control</span></a> retention should use <code class="docutils literal notranslate"><span class="pre">restricted</span></code> or <code class="docutils literal notranslate"><span class="pre">invisible</span></code>
 tags. Otherwise any user can remove the tag and the file is not removed after the given
 period. Use <a class="reference internal" href="automated_tagging.html"><span class="doc">Automated tagging of files</span></a> to assign such tags to newly uploaded files.</p>
-</section>
-<section id="file-age">
-<h3>File age<a class="headerlink" href="#file-age" title="Link to this heading"></a></h3>
-<p>Currently retention is based on the creation date of the file. The sync client sends
-the <strong>original</strong> creation date to the server, while uploading through the web interface
-will create a new file with a <strong>new</strong> creation date.
-We hope to be able to add a <code class="docutils literal notranslate"><span class="pre">upload</span> <span class="pre">date</span></code> to the filesystem soon, which would make more
-sense. Until then this potentially unexpected behavior has to be taken into account.</p>
 </section>
 </section>
 </section>
@@ -172,40 +175,49 @@ sense. Until then this potentially unexpected behavior has to be taken into acco
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

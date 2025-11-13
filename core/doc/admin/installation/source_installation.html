@@ -72,7 +72,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#installation-wizard">Installation wizard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setting-up-background-jobs">Setting up background jobs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#selinux-configuration-tips">SELinux configuration tips</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#php-fpm-configuration-notes">php-fpm configuration notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#php-fpm-configuration">PHP-FPM configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#process-manager">Process manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-environment-variables">System environment variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#maximum-upload-size">Maximum upload size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#htaccess">.htaccess</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#other-web-servers">Other Web servers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installing-on-windows-virtual-machine">Installing on Windows (virtual machine)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installing-via-snap-packages">Installing via Snap packages</a></li>
@@ -83,7 +90,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
@@ -91,6 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -102,6 +109,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -352,21 +361,44 @@ description and the benefits.</p>
 <p>See <a class="reference internal" href="selinux_configuration.html"><span class="doc">SELinux configuration</span></a> for a suggested configuration for
 SELinux-enabled distributions such as Fedora and CentOS.</p>
 </section>
-<section id="php-fpm-configuration-notes">
-<span id="php-fpm-tips-label"></span><h2>php-fpm configuration notes<a class="headerlink" href="#php-fpm-configuration-notes" title="Link to this heading"></a></h2>
-<p><strong>System environment variables</strong></p>
+<section id="php-fpm-configuration">
+<span id="php-fpm-tips-label"></span><h2>PHP-FPM configuration<a class="headerlink" href="#php-fpm-configuration" title="Link to this heading"></a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://www.php.net/manual/en/install.fpm.php">PHP-FPM</a> is a FastCGI based
+implementation of PHP containing features useful for busy web sites and large web
+applications. Using it with Nextcloud is an advanced topic and requires getting
+familiar with how PHP-FPM functions. In most cases the defaults are not ideal for
+use with Nextcloud. Here we’ll highlight a few of the most important areas that
+should be adjusted.</p>
+</section>
+<section id="process-manager">
+<h3>Process manager<a class="headerlink" href="#process-manager" title="Link to this heading"></a></h3>
+<p>The default value for <code class="docutils literal notranslate"><span class="pre">pm.max_children</span></code> in many PHP-FPM installations is
+lower than appropriate. Having a low value may cause client connectivity
+problems, unexplained errors, and performance problems. It is a common cause
+of <em>Gateway Timeouts</em>. Having too high of a value in relation to available
+resources (such as memory), however, will also lead to problems. The default
+value is often <code class="docutils literal notranslate"><span class="pre">5</span></code>. This greatly limits simultaneously connections to your
+Nextcloud instance and, unless you are severely resource constraints, will
+underutilize your hardware. Check the <a class="reference internal" href="server_tuning.html"><span class="doc">Server tuning</span></a>
+chapter for some guidance and resources for coming up with appropriate values,
+as well as other related parameters.</p>
+</section>
+<section id="system-environment-variables">
+<h3>System environment variables<a class="headerlink" href="#system-environment-variables" title="Link to this heading"></a></h3>
 <p>When you are using <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code>, system environment variables like
 PATH, TMP or others are not automatically populated in the same way as
 when using <code class="docutils literal notranslate"><span class="pre">php-cli</span></code>. A PHP call like <code class="docutils literal notranslate"><span class="pre">getenv('PATH');</span></code> can therefore
 return an empty result. So you may need to manually configure environment
-variables in the appropropriate <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code> ini/config file.</p>
+variables in the appropriate <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code> ini/config file.</p>
 <p>Here are some example root paths for these ini/config files:</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>Debian/Ubuntu/Mint</p></td>
 <td><p>CentOS/Red Hat/Fedora</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/php/8.0/fpm/</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/php/8.3/fpm/</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">/etc/php-fpm.d/</span></code></p></td>
 </tr>
 </tbody>
@@ -392,7 +424,7 @@ confirm your paths, for example:</p>
 <p>If any of your system environment variables are not present in the file then
 you must add them.</p>
 <p>Alternatively it is possible to use the environment variables of your system by modifying:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.0</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">pool</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">www</span><span class="o">.</span><span class="n">conf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">php</span><span class="o">/</span><span class="mf">8.3</span><span class="o">/</span><span class="n">fpm</span><span class="o">/</span><span class="n">pool</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">www</span><span class="o">.</span><span class="n">conf</span>
 </pre></div>
 </div>
 <p>and uncommenting the line:</p>
@@ -406,15 +438,20 @@ check your documentation for the correct locations.</p>
 <p>Please keep in mind that it is possible to create different settings for
 <code class="docutils literal notranslate"><span class="pre">php-cli</span></code> and <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code>, and for different domains and Web sites.
 The best way to check your settings is with <a class="reference internal" href="../issues/general_troubleshooting.html#label-phpinfo"><span class="std std-ref">PHP version and information</span></a>.</p>
-<p><strong>Maximum upload size</strong></p>
+</section>
+<section id="maximum-upload-size">
+<h3>Maximum upload size<a class="headerlink" href="#maximum-upload-size" title="Link to this heading"></a></h3>
 <p>If you want to increase the maximum upload size, you will also have to modify
 your <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code> configuration and increase the <code class="docutils literal notranslate"><span class="pre">upload_max_filesize</span></code> and
 <code class="docutils literal notranslate"><span class="pre">post_max_size</span></code> values. You will need to restart <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code> and your HTTP
 server in order for these changes to be applied.</p>
-<p><strong>.htaccess notes for Apache</strong></p>
+</section>
+<section id="htaccess">
+<h3>.htaccess<a class="headerlink" href="#htaccess" title="Link to this heading"></a></h3>
 <p>Nextcloud comes with its own <code class="docutils literal notranslate"><span class="pre">nextcloud/.htaccess</span></code> file. Because <code class="docutils literal notranslate"><span class="pre">php-fpm</span></code>
 can’t read PHP settings in <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> these settings and permissions must
 be set in the <code class="docutils literal notranslate"><span class="pre">nextcloud/.user.ini</span></code> file.</p>
+</section>
 </section>
 <section id="other-web-servers">
 <span id="other-http-servers-label"></span><h2>Other Web servers<a class="headerlink" href="#other-web-servers" title="Link to this heading"></a></h2>
@@ -552,40 +589,49 @@ spread the deployment of new major releases out over time.</p>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

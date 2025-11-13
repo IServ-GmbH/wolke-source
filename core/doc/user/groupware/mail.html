@@ -64,6 +64,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Using the Mail app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#managing-your-mail-account">Managing your mail account</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#switch-layout">Switch layout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-display-operation-mode">Message Display / Operation Mode</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#add-a-new-mail-account">Add a new mail account</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#change-sort-order">Change sort order</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scheduled-messages">Scheduled messages</a></li>
@@ -71,12 +72,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#all-inboxes">All inboxes</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-settings">Account settings</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#move-messages-to-junk-folder">Move messages to Junk folder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#search-in-mailbox">Search in mailbox</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advance-search-in-mailbox">Advance search in mailbox</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enable-mail-body-search">Enable mail body search</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#account-delegation">Account delegation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#automatic-trash-deletion">Automatic trash deletion</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#compose-messages">Compose messages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compose-messages">Compose messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#recipient-info-on-composer">Recipient info on composer</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#minimize-the-composer-modal">Minimize the composer modal</a></li>
 </ul>
 </li>
@@ -93,18 +97,30 @@
 <li class="toctree-l4"><a class="reference internal" href="#edit-tags">Edit tags</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#change-color-for-tags">Change color for tags</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#delete-tags">Delete tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ai-summary">AI summary</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#message-actions">Message actions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#unsubscribe-from-a-mailing-list">Unsubscribe from a mailing list</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#snooze">Snooze</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#smart-replies">Smart replies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mail-translation">Mail translation</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#thread-summary">Thread summary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#filtering-and-autoresponder">Filtering and autoresponder</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#autoresponders">Autoresponders</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filter">Filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-filter-from-a-message">Create a filter from a message</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#follow-up-reminders">Follow-up reminders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security">Security</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#phishing-detection">Phishing detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-addresses">Internal addresses</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard-integration">Dashboard integration</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="absence.html">Setting out-of-office messages</a></li>
@@ -175,6 +191,22 @@ Please ask your Administrator for it.</p>
 </ol>
 <figure class="align-default">
 <img alt="../_images/mail_layout.png" src="../_images/mail_layout.png" />
+</figure>
+</section>
+<section id="message-display-operation-mode">
+<h3>Message Display / Operation Mode<a class="headerlink" href="#message-display-operation-mode" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 5.2.</span></p>
+</div>
+<p>Mail has the ability to switch between two different message view and operation modes: <em>Threaded</em> and <em>Singleton</em>.</p>
+<p>In <em>Threaded</em> mode, messages are grouped by conversation. In the mailbox message list, related messages are stacked so only the most recent message is shown, and all relates messages are shown in message display panel after the stacked message is selected. This is useful for following discussions and understanding the context of replies. In this mode, message operation like move and delete apply to the entire thread, meaning that when you move or delete a thread, all messages within that thread are affected.</p>
+<p>In <em>Singleton</em> mode, messages are displayed individually, in both the mailbox message list and message display panel and operation like move and delete apply to only the selected message. This mode is useful when you want to manage messages separately without affecting the entire conversation.</p>
+<ol class="arabic simple">
+<li><p>Visit mail settings</p></li>
+<li><p>Choose between <em>Threaded</em>, <em>Singleton</em></p></li>
+</ol>
+<figure class="align-default">
+<img alt="../_images/mail_display-mode.png" src="../_images/mail_display-mode.png" />
 </figure>
 </section>
 <section id="add-a-new-mail-account">
@@ -261,6 +293,20 @@ Messages will automatically be marked as important based on which messages you i
 </li>
 </ol>
 </section>
+<section id="search-in-mailbox">
+<h3>Search in mailbox<a class="headerlink" href="#search-in-mailbox" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 2.1.</span></p>
+</div>
+<p>At the top of the envelope list in any mail layout, there is a search field shortcut for searching email subjects. Starting from <code class="docutils literal notranslate"><span class="pre">version</span> <span class="pre">3.7</span></code>, this shortcut allows you to search by subject, recipient (to), or sender (from) by default.</p>
+</section>
+<section id="advance-search-in-mailbox">
+<h3>Advance search in mailbox<a class="headerlink" href="#advance-search-in-mailbox" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.</span></p>
+</div>
+<p>You can access our advanced search feature through a modal located at the end of the search shortcut.</p>
+</section>
 <section id="enable-mail-body-search">
 <h3>Enable mail body search<a class="headerlink" href="#enable-mail-body-search" title="Link to this heading"></a></h3>
 <blockquote>
@@ -279,7 +325,7 @@ Messages will automatically be marked as important based on which messages you i
 <p class="admonition-title">Warning</p>
 <p>If you want to also enable it for unified mailboxes you have to do so in Mail settings</p>
 </div>
-<p>By enabling it the main search box will now search in both subjects and mail bodies, and a sperate <em>Body</em> option
+<p>By enabling it the main search box will now search in both subjects and mail bodies, and a separate <em>Body</em> option
 will appear in advanced search.</p>
 </section>
 <section id="account-delegation">
@@ -322,6 +368,16 @@ will appear in advanced search.</p>
 <li><p>Click new message on the top left of your screen</p></li>
 <li><p>Start writing your message</p></li>
 </ol>
+</section>
+<section id="recipient-info-on-composer">
+<h2>Recipient info on composer<a class="headerlink" href="#recipient-info-on-composer" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.2.</span></p>
+</div>
+<p>When you add your first recipient or contact in the “To” field, a right pane will appear displaying the saved profile details of that contact.
+Adding a second contact will collapse the list, allowing you to select and expand any contact you added to view their details.
+If you prefer to focus solely on writing in the composer, you can hide the right pane by clicking the expand icon in the top-right corner.
+To show the right pane again, simply click the minimize icon in the same location.</p>
 <section id="minimize-the-composer-modal">
 <h3>Minimize the composer modal<a class="headerlink" href="#minimize-the-composer-modal" title="Link to this heading"></a></h3>
 <blockquote>
@@ -347,7 +403,7 @@ will appear in advanced search.</p>
 <section id="outbox">
 <h2>Outbox<a class="headerlink" href="#outbox" title="Link to this heading"></a></h2>
 <p>When a message has been composed and the “Send” button was clicked, the message is added to the outbox which can be found in the bottom left corner of the left sidebar.</p>
-<p>You can also set the date and time for the send operation to a point in the future (see <a class="reference internal" href="#mail-scheduled-messages"><span class="std std-ref">Scheduled messages</span></a>)- the message will be kept in the outbox until your choosen date and time arrives, then it will be sent automatically.</p>
+<p>You can also set the date and time for the send operation to a point in the future (see <a class="reference internal" href="#mail-scheduled-messages"><span class="std std-ref">Scheduled messages</span></a>)- the message will be kept in the outbox until your chosen date and time arrives, then it will be sent automatically.</p>
 <p>The outbox is only visible when there is a message waiting to be handled by the outbox.</p>
 <p>You can re- open the composer for a message in the outbox any time before the “send”- operation is triggered.</p>
 <div class="admonition note">
@@ -455,6 +511,17 @@ will appear in advanced search.</p>
 <p>Please note that default tags such as Work, To do, Personal, and Later cannot be deleted, they can only be renamed.</p>
 </div>
 </section>
+<section id="ai-summary">
+<h3>AI summary<a class="headerlink" href="#ai-summary" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.2.</span></p>
+</div>
+<p>When looking through your mailbox you will see a short AI generated summary of your emails as a preview.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the feature has to be enabled by the administrator</p>
+</div>
+</section>
 </section>
 <section id="message-actions">
 <h2>Message actions<a class="headerlink" href="#message-actions" title="Link to this heading"></a></h2>
@@ -492,6 +559,28 @@ will appear in advanced search.</p>
 <p>Supported languages depend on the used large language model</p>
 </div>
 </section>
+<section id="mail-translation">
+<h3>Mail translation<a class="headerlink" href="#mail-translation" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.2.</span></p>
+</div>
+<p>You are able to translate messages to your configured languages similarly to Talk.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that translation features have to be enabled on the server</p>
+</div>
+</section>
+</section>
+<section id="thread-summary">
+<h2>Thread summary<a class="headerlink" href="#thread-summary" title="Link to this heading"></a></h2>
+<p>The mail app supports summarizing message threads that contain 3 or more messages.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the feature has to be enabled by the administrator</p>
+</div>
 </section>
 <section id="filtering-and-autoresponder">
 <h2>Filtering and autoresponder<a class="headerlink" href="#filtering-and-autoresponder" title="Link to this heading"></a></h2>
@@ -503,6 +592,128 @@ will appear in advanced search.</p>
 </div>
 <p>The autoresponder is off by default. It can be set manually, or follow the system settings. Following system settings means that the long absence message entered on the <a class="reference internal" href="absence.html#groupware-absence"><span class="std std-ref">Absence settings section</span></a> is applied automatically.</p>
 </section>
+<section id="filter">
+<h3>Filter<a class="headerlink" href="#filter" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.1.</span></p>
+</div>
+<p>Mail 4.1 includes a simple editor to configure filter rules.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Importing existing filters is not supported. However, all existing filters will remain active and unchanged.  We recommend backing up your current script through the Sieve script editor as a precaution.</p>
+</div>
+<section id="how-to-add-a-new-filter">
+<h4>How to Add a New Filter<a class="headerlink" href="#how-to-add-a-new-filter" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p>Open your account settings.</p></li>
+<li><p>Verify that Sieve is enabled for your account (see Sieve server settings).</p></li>
+<li><p>Click on Filters.</p></li>
+<li><p>Select New Filter to create a new rule.</p></li>
+</ol>
+</section>
+<section id="how-to-delete-a-filter">
+<h4>How to Delete a Filter<a class="headerlink" href="#how-to-delete-a-filter" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p>Open your account settings.</p></li>
+<li><p>Ensure that Sieve is enabled for your account (see Sieve server settings).</p></li>
+<li><p>Click on Filters.</p></li>
+<li><p>Hover over the filter you wish to delete, then click the trash icon.</p></li>
+</ol>
+</section>
+<section id="conditions">
+<h4>Conditions<a class="headerlink" href="#conditions" title="Link to this heading"></a></h4>
+<p>Conditions are applied to incoming emails on your mail server, targeting fields such as Subject, Sender, and Recipient. You can use the following operators to define conditions for these fields:</p>
+<ul class="simple">
+<li><p><strong>is exactly</strong>: An exact match. The field must be identical to the provided value.</p></li>
+<li><p><strong>contains</strong>: A substring match. The field matches if the provided value is contained within it. For example, “report” would match “port”.</p></li>
+<li><p><strong>matches</strong>: A pattern match using wildcards. The “*” symbol represents any number of characters (including none), while “?” represents exactly one character. For example, “<em>report</em>” would match “Business report 2024”.</p></li>
+</ul>
+</section>
+<section id="actions">
+<h4>Actions<a class="headerlink" href="#actions" title="Link to this heading"></a></h4>
+<p>Actions are triggered when the specified tests are true. The following actions are available:</p>
+<ul class="simple">
+<li><p><strong>fileinto</strong>: Moves the message into a specified folder.</p></li>
+<li><p><strong>addflag</strong>: Adds a flag to the message.</p></li>
+<li><p><strong>stop</strong>: Halts the execution of the filter script. No further filters with will be processed after this action.</p></li>
+</ul>
+</section>
+</section>
+<section id="create-a-filter-from-a-message">
+<h3>Create a filter from a message<a class="headerlink" href="#create-a-filter-from-a-message" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 5.2.</span></p>
+</div>
+<p>To create a filter from a given message, open the message and then open the menu by clicking on the three dots. Next, click on “More actions” followed by “Create mail filter.”</p>
+<p>In the dialog, please select the conditions to match incoming messages and continue by clicking on “Create mail filter.”</p>
+<figure class="align-default">
+<img alt="../_images/mail_create_filter_from_message.png" src="../_images/mail_create_filter_from_message.png" />
+</figure>
+</section>
+</section>
+<section id="follow-up-reminders">
+<h2>Follow-up reminders<a class="headerlink" href="#follow-up-reminders" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.0.</span></p>
+</div>
+<p>The Mail app will automatically remind you when an outgoing email did not receive a response.
+Each sent email will be analyzed by an AI to check whether a reply is expected.
+After four days all relevant emails will be shown in your priority inbox.</p>
+<p>When clicking on such an email a button will be shown to quickly follow up with all recipients.
+It is also possible to disable follow-up reminders for a sent email.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the feature has to be enabled by the administrator.</p>
+</div>
+</section>
+<section id="security">
+<h2>Security<a class="headerlink" href="#security" title="Link to this heading"></a></h2>
+<section id="phishing-detection">
+<h3>Phishing detection<a class="headerlink" href="#phishing-detection" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.0.</span></p>
+</div>
+<p>The Mail app will check for potential phishing attempts and will display a warning to the user.</p>
+<p>The checks are the following:</p>
+<ul class="simple">
+<li><p>The sender address saved in the addressbook is not the same as the one in the mail account</p></li>
+<li><p>The sender is using a custom email address that doesn’t match the from address</p></li>
+<li><p>The sent date is set in the future</p></li>
+<li><p>Links in the message body are not pointing to the displayed text</p></li>
+<li><p>The reply-to address is not the same as the sender address</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that the warning does not mean that the message is a phishing attempt. It only means that the Mail app detected a potential phishing attempt.</p>
+</div>
+</section>
+<section id="internal-addresses">
+<h3>Internal addresses<a class="headerlink" href="#internal-addresses" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.0.</span></p>
+</div>
+<p>The Mail app allows adding internal addresses and domains, and will warn the user if the address is not in the list, when sending and upon receiving a message.</p>
+<p>To add an internal address:</p>
+<ol class="arabic simple">
+<li><p>Open the mail settings</p></li>
+<li><p>Navigate to Privacy and security section</p></li>
+<li><p>Enable the internal addresses by ckicjin on the checkbox</p></li>
+<li><p>Click the Add internal address button</p></li>
+<li><p>Enter the address or domain and click Add</p></li>
+</ol>
+</section>
+</section>
+<section id="dashboard-integration">
+<h2>Dashboard integration<a class="headerlink" href="#dashboard-integration" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.8.</span></p>
+</div>
+<p>The mail app offers two widgets designed for integration with Nextcloud’s dashboard:</p>
+<ul class="simple">
+<li><p>Unread mails: This widget displays unread emails.</p></li>
+<li><p>Important mails: This widget shows emails that have been flagged as important.</p></li>
+</ul>
+<p>These widgets utilize the emails from the email accounts that are set up for your account.</p>
 </section>
 </section>
 
@@ -529,31 +740,63 @@ will appear in advanced search.</p>
   </div>
   
 
+  <!-- Here go the languages -->
+  
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      🌐
+      
+      
+      English
+      
+      <span class="fa fa-caret-down"></span>
+
+       ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Languages</dt>
-          <!--Here goes the Langs-->
+        <dt>🌐 Languages</dt>
+          
       </dl>
     </div>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/user_manual">26</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/latest/user_manual"
+               
+               style="color: var(--dark-link-color);"
+               
+            >
+              latest
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/user_manual">27</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/stable/user_manual"
+               
+            >
+              stable
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/user_manual">28</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/29/user_manual"
+               
+            >
+              29
+            </a>
+          </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/user_manual">stable</a></dd>
-        
-          <dd><a href="https://docs.nextcloud.com/server/latest/user_manual">latest</a></dd>
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/28/user_manual"
+               
+            >
+              28
+            </a>
+          </dd>
         
       </dl>
       <dl>

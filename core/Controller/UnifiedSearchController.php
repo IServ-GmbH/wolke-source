@@ -3,38 +3,20 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2020 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\Core\Controller;
 
 use InvalidArgumentException;
+use OC\Core\ResponseDefinitions;
 use OC\Search\SearchComposer;
 use OC\Search\SearchQuery;
 use OC\Search\UnsupportedFilter;
-use OCA\Core\ResponseDefinitions;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -60,9 +42,6 @@ class UnifiedSearchController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
 	 * Get the providers for unified search
 	 *
 	 * @param string $from the url the user is currently at
@@ -70,6 +49,8 @@ class UnifiedSearchController extends OCSController {
 	 *
 	 * 200: Providers returned
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	#[ApiRoute(verb: 'GET', url: '/providers', root: '/search')]
 	public function getProviders(string $from = ''): DataResponse {
 		[$route, $parameters] = $this->getRouteInformation($from);
@@ -81,9 +62,6 @@ class UnifiedSearchController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
 	 * Launch a search for a specific search provider.
 	 *
 	 * Additional filters are available for each provider.
@@ -101,6 +79,8 @@ class UnifiedSearchController extends OCSController {
 	 * 200: Search entries returned
 	 * 400: Searching is not possible
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	#[ApiRoute(verb: 'GET', url: '/providers/{providerId}/search', root: '/search')]
 	public function search(
 		string $providerId,

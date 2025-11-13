@@ -72,7 +72,7 @@
     "Nextcloud Group" : "Grupu de Nextcloud",
     "Email address" : "Direición de corréu electrónicu",
     "Contact" : "Contautu",
-    "Circle" : "Círculu",
+    "Team" : "Equipu",
     "Nextcloud App" : "Aplicación Nextcloud",
     "Member" : "Miembru",
     "Moderator" : "Llendador",
@@ -126,6 +126,7 @@
     "You have no permission to create a new team" : "Nun tienes permisu pa crear un equipu",
     "%s shared a file with \"%s\"." : "%s compartió un ficheru con «%s».",
     "%s shared a file with you." : "%s compartió un ficheru contigo.",
+    "Open %s" : "Abrir «%s»",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s compartió conteníu contigo.\nHubiesti recibir un corréu electrónicu con un enllaz p'acceder a elli.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s compartió conteníu contigo. Hubiesti recibir un corréu electrónicu con un enllaz p'acceder a elli.",
     "Password to access content shared with you by %1$s" : "La contraseña p'acceder al conteníu que %1$s compartió contigo",
@@ -133,6 +134,9 @@
     "This item is already shared with this team" : "Esti elementu yá ta compartíu con esti equipu",
     "Bring cloud-users closer together." : "Axunta los usuarios de la nube.",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "Los equipos permiten a les persones crear los sos grupos de xente.\nCualesquier otra aplicación pue usar estos grupos de persones pa compartir.",
+    "Try again" : "Retentar",
+    "No teams found" : "Nun s'atopó nengún equipu",
+    "Loading…" : "Cargando…",
     "No files in here" : "Nun hai ficheros",
     "No entries found in this folder" : "Nun s'atopó nenguna entrada nesta carpeta",
     "Name" : "Nome",
@@ -140,14 +144,9 @@
     "Modified" : "Modificóse",
     "Teams' files" : "Ficheros d'Equipos",
     "Select team to filter by" : "Seleiciona los equipos polos que quies peñerar",
-    "No teams found" : "Nun s'atopó nengún equipu",
     "Please select teams to filter by" : "Seleiciona los equipos polos que quies peñerar",
     "No files found for the selected teams" : "Nun s'atopó nengún ficheru pa los equipos seleicionaos",
-    "{author} added team {member} has been added as member to {circle}" : "{author} amestó l'equipu «{member}» como miembru de «{circle}»",
     "Shared to Circles" : "Compartióse en Círculos",
-    "You are now a member of the Circle \"%2$s\"" : "Agora yes miembru del círculu «%2$s»",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "%1$s convidóte al círculu «%2$s»",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s unvió una solicitú pa ser miembru del círculu «%2$s»",
-    "Leave the circle" : "Colar del círculu"
+    "Circle" : "Círculu"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

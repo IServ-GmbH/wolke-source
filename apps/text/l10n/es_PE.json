@@ -8,6 +8,7 @@
     "Text" : "Texto",
     "Translate" : "Traducir",
     "Guest" : "Invitado",
+    "you" : "tú",
     "Offline" : "Sin conexión",
     "Saved" : "Guardado",
     "Unsaved changes" : "Cambios no guardados",
@@ -16,6 +17,7 @@
     "Action" : "Acción",
     "Undo" : "Deshacer",
     "Save changes" : "Guardar cambios",
+    "Cancel" : "Cancel",
     "Formatting help" : "Ayuda de formato",
     "Select language" : "Seleccionar idioma",
     "to" : "para",
@@ -24,6 +26,7 @@
     "Edit" : "Editar",
     "Source code" : "Código fuente",
     "Details" : "Detalles",
+    "Choose" : "Seleccionar",
     "Info" : "Info",
     "Success" : "Éxito",
     "Warning" : "Advertencia"

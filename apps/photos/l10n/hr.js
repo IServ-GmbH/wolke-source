@@ -18,9 +18,7 @@ OC.L10N.register(
     "An error occurred" : "Došlo je do pogreške",
     "Favorite" : "Favorit",
     "Open the full size \"{name}\" image" : "Otvori sliku „{name}” u punoj veličini",
-    "Back to {folder}" : "Natrag na {folder}",
     "Go back" : "Natrag",
-    "Share this folder" : "Dijeli ovu mapu",
     "Enable squared photos view" : "Omogući kvadratni prikaz fotografija",
     "Add folder" : "Dodaj mapu",
     "Home" : "Doma",
@@ -32,7 +30,10 @@ OC.L10N.register(
     "Photos with tags will show up here" : "Ovdje će se prikazivati fotografije s oznakama",
     "Delete selection" : "Izbriši odabir",
     "Tagged photos" : "Označene fotografije",
+    "Last week" : "Prošli tjedan",
     "Details" : "Pojedinosti",
+    "Back to {folder}" : "Natrag na {folder}",
+    "Share this folder" : "Dijeli ovu mapu",
     "Add" : "Dodaj"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

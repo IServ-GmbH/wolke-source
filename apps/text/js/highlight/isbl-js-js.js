@@ -1,2 +1,0 @@
-(self.webpackChunk_nextcloud_text=self.webpackChunk_nextcloud_text||[]).push([["highlight/isbl-js-js"],{70940:(e,i,s)=>{!function e(){e.warned||(e.warned=!0,console.log('Deprecation (warning): Using file extension in specifier is deprecated, use "highlight.js/lib/languages/isbl" instead of "highlight.js/lib/languages/isbl.js"'))}(),e.exports=s(35665)}}]);
-//# sourceMappingURL=isbl-js-js.js.map?v=2057ac5d516963e499b7

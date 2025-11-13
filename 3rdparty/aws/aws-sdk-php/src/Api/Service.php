@@ -284,7 +284,7 @@ class Service extends AbstractModel
                 $this->definition['operations'][$name],
                 $this->shapeMap
             );
-        } elseif ($this->modifiedModel) {
+        } else if ($this->modifiedModel) {
             $this->operations[$name] = new Operation(
                 $this->definition['operations'][$name],
                 $this->shapeMap
@@ -517,7 +517,6 @@ class Service extends AbstractModel
     public function setDefinition($definition)
     {
         $this->definition = $definition;
-        $this->shapeMap = new ShapeMap($definition['shapes']);
         $this->modifiedModel = true;
     }
 

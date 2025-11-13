@@ -1,29 +1,13 @@
 <?php
 /**
- * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Text\DirectEditing;
 
 use OCP\DirectEditing\ACreateEmpty;
+use OCP\IAppConfig;
 use OCP\IL10N;
 
 class TextDocumentCreator extends ACreateEmpty {
@@ -34,8 +18,14 @@ class TextDocumentCreator extends ACreateEmpty {
 	 */
 	private $l10n;
 
-	public function __construct(IL10N $l10n) {
+	/**
+	 * @var IAppConfig
+	 */
+	private $appConfig;
+
+	public function __construct(IL10N $l10n, IAppConfig $appConfig) {
 		$this->l10n = $l10n;
+		$this->appConfig = $appConfig;
 	}
 
 	public function getId(): string {
@@ -47,10 +37,16 @@ class TextDocumentCreator extends ACreateEmpty {
 	}
 
 	public function getExtension(): string {
-		return 'md';
+		return $this->appConfig->getValueString('text', 'default_file_extension', 'md');
 	}
 
 	public function getMimetype(): string {
-		return 'text/markdown';
+		switch ($this->getExtension()) {
+			case 'txt':
+				return 'text/plain';
+			case 'md':
+			default:
+				return 'text/markdown';
+		}
 	}
 }

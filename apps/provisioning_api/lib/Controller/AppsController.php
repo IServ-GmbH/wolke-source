@@ -1,31 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Tom Needham <tom@owncloud.com>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Provisioning_API\Controller;
 
@@ -33,6 +12,7 @@ use OC_App;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
@@ -105,8 +85,6 @@ class AppsController extends OCSController {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Enable an app
 	 *
 	 * @param string $app ID of the app
@@ -115,6 +93,7 @@ class AppsController extends OCSController {
 	 *
 	 * 200: App enabled successfully
 	 */
+	#[PasswordConfirmationRequired]
 	public function enable(string $app): DataResponse {
 		try {
 			$this->appManager->enableApp($app);
@@ -125,8 +104,6 @@ class AppsController extends OCSController {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Disable an app
 	 *
 	 * @param string $app ID of the app
@@ -134,6 +111,7 @@ class AppsController extends OCSController {
 	 *
 	 * 200: App disabled successfully
 	 */
+	#[PasswordConfirmationRequired]
 	public function disable(string $app): DataResponse {
 		$this->appManager->disableApp($app);
 		return new DataResponse();

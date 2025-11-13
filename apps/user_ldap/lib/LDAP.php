@@ -1,35 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Alexander Bergolth <leo@strike.wu.ac.at>
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author J0WI <J0WI@users.noreply.github.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Peter Kubica <peter@kubica.ch>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Roger Szabo <roger.szabo@web.de>
- * @author Carl Schwan <carl@carlschwan.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP;
 
@@ -37,13 +11,16 @@ use OC\ServerNotAvailableException;
 use OCA\User_LDAP\DataCollector\LdapDataCollector;
 use OCA\User_LDAP\Exceptions\ConstraintViolationException;
 use OCP\IConfig;
+use OCP\ILogger;
 use OCP\Profiler\IProfiler;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class LDAP implements ILDAPWrapper {
 	protected string $logFile = '';
 	protected array $curArgs = [];
 	protected LoggerInterface $logger;
+	protected IConfig $config;
 
 	private ?LdapDataCollector $dataCollector = null;
 
@@ -57,7 +34,8 @@ class LDAP implements ILDAPWrapper {
 			$profiler->add($this->dataCollector);
 		}
 
-		$this->logger = \OCP\Server::get(LoggerInterface::class);
+		$this->logger = Server::get(LoggerInterface::class);
+		$this->config = Server::get(IConfig::class);
 	}
 
 	/**
@@ -204,6 +182,7 @@ class LDAP implements ILDAPWrapper {
 			$serverControls = [];
 		}
 
+		/** @psalm-suppress UndefinedVariable $oldHandler is defined when the closure is called but psalm fails to get that */
 		$oldHandler = set_error_handler(function ($no, $message, $file, $line) use (&$oldHandler) {
 			if (str_contains($message, 'Partial search results returned: Sizelimit exceeded')) {
 				return true;
@@ -316,9 +295,24 @@ class LDAP implements ILDAPWrapper {
 		return null;
 	}
 
+	/**
+	 * Turn resources into string, and removes potentially problematic cookie string to avoid breaking logfiles
+	 */
+	private function sanitizeFunctionParameters(array $args): array {
+		return array_map(function ($item) {
+			if ($this->isResource($item)) {
+				return '(resource)';
+			}
+			if (isset($item[0]['value']['cookie']) && $item[0]['value']['cookie'] !== '') {
+				$item[0]['value']['cookie'] = '*opaque cookie*';
+			}
+			return $item;
+		}, $args);
+	}
+
 	private function preFunctionCall(string $functionName, array $args): void {
 		$this->curArgs = $args;
-		if(strcasecmp($functionName, 'ldap_bind') === 0 || strcasecmp($functionName, 'ldap_exop_passwd') === 0) {
+		if (strcasecmp($functionName, 'ldap_bind') === 0 || strcasecmp($functionName, 'ldap_exop_passwd') === 0) {
 			// The arguments are not key value pairs
 			// \OCA\User_LDAP\LDAP::bind passes 3 arguments, the 3rd being the pw
 			// Remove it via direct array access for now, although a better solution could be found mebbe?
@@ -326,32 +320,24 @@ class LDAP implements ILDAPWrapper {
 			$args[2] = IConfig::SENSITIVE_VALUE;
 		}
 
-		$this->logger->debug('Calling LDAP function {func} with parameters {args}', [
-			'app' => 'user_ldap',
-			'func' => $functionName,
-			'args' => json_encode($args),
-		]);
+		if ($this->config->getSystemValue('loglevel') === ILogger::DEBUG) {
+			/* Only running this if debug loglevel is on, to avoid processing parameters on production */
+			$this->logger->debug('Calling LDAP function {func} with parameters {args}', [
+				'app' => 'user_ldap',
+				'func' => $functionName,
+				'args' => $this->sanitizeFunctionParameters($args),
+			]);
+		}
 
 		if ($this->dataCollector !== null) {
-			$args = array_map(function ($item) {
-				if ($this->isResource($item)) {
-					return '(resource)';
-				}
-				if (isset($item[0]['value']['cookie']) && $item[0]['value']['cookie'] !== "") {
-					$item[0]['value']['cookie'] = "*opaque cookie*";
-				}
-				return $item;
-			}, $this->curArgs);
-
 			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-			$this->dataCollector->startLdapRequest($functionName, $args, $backtrace);
+			$this->dataCollector->startLdapRequest($functionName, $this->sanitizeFunctionParameters($args), $backtrace);
 		}
 
 		if ($this->logFile !== '' && is_writable(dirname($this->logFile)) && (!file_exists($this->logFile) || is_writable($this->logFile))) {
-			$args = array_map(fn ($item) => (!$this->isResource($item) ? $item : '(resource)'), $this->curArgs);
 			file_put_contents(
 				$this->logFile,
-				$functionName . '::' . json_encode($args) . "\n",
+				$functionName . '::' . json_encode($this->sanitizeFunctionParameters($args)) . "\n",
 				FILE_APPEND
 			);
 		}
@@ -360,7 +346,7 @@ class LDAP implements ILDAPWrapper {
 	/**
 	 * Analyzes the returned LDAP error and acts accordingly if not 0
 	 *
-	 * @param resource|\LDAP\Connection $resource the LDAP Connection resource
+	 * @param \LDAP\Connection $resource the LDAP Connection resource
 	 * @throws ConstraintViolationException
 	 * @throws ServerNotAvailableException
 	 * @throws \Exception

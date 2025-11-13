@@ -67,6 +67,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
@@ -140,7 +142,7 @@ However some environments require the manual approach. Both approaches are cover
 <p class="admonition-title">Important</p>
 <p>Before upgrading, especially between major versions (e.g. v27.y.z -&gt; v28.y.z) please review
 <a class="reference internal" href="../release_notes/index.html#critical-changes"><span class="std std-ref">critical changes</span></a> first. These are highlights of changes that may be required
-in your environment to accomodate changes in Nextcloud Server. These notes are periodically revised as
+in your environment to accommodate changes in Nextcloud Server. These notes are periodically revised as
 needed so it is also a good idea to revisit them periodically, such as when proceeding with maintenance
 upgrades.</p>
 </div>
@@ -160,7 +162,7 @@ releases.</p>
 <h2>Approaching Upgrades<a class="headerlink" href="#approaching-upgrades" title="Link to this heading"></a></h2>
 <dl class="simple">
 <dt>Nextcloud must be upgraded step by step:</dt><dd><ul class="simple">
-<li><p>Before you can upgrade to the next major release, Nextcloud upgrades to the latest point release.</p></li>
+<li><p>Before you can upgrade to the next major release, you need to upgrade to the latest point release of your current major version.</p></li>
 <li><p>Then run the upgrade again to upgrade to the next major release’s latest point release.</p></li>
 <li><p><strong>You cannot skip major releases.</strong> Please re-run the upgrade until you have reached the highest available (or applicable) release.</p></li>
 <li><p>Example: 18.0.5 -&gt; 18.0.11 -&gt; 19.0.5 -&gt; 20.0.2</p></li>
@@ -223,7 +225,7 @@ upgrades, or for performing troubleshooting or maintenance. Please see
 <a class="reference internal" href="../configuration_server/occ_command.html"><span class="doc">Using the occ command</span></a> to learn how to put your server into
 the maintenance mode (<code class="docutils literal notranslate"><span class="pre">maintenance:mode</span></code>) or execute repair commands
 (<code class="docutils literal notranslate"><span class="pre">maintenance:repair</span></code>) with the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command.</p>
-<p>The <a class="reference internal" href="update.html"><span class="doc">build-in Updater</span></a> does this for you before replacing the
+<p>The <a class="reference internal" href="update.html"><span class="doc">built-in Updater</span></a> does this for you before replacing the
 existing Nextcloud code with the code of the new Nextcloud version.</p>
 <p><code class="docutils literal notranslate"><span class="pre">maintenance:mode</span></code> locks the sessions of logged-in users and prevents new
 logins. This is the mode to use for upgrades. You must run <code class="docutils literal notranslate"><span class="pre">occ</span></code> as the HTTP
@@ -287,40 +289,49 @@ $ sudo -u www-data php occ db:add-missing-primary-keys
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

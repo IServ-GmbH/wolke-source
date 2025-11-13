@@ -1,8 +1,8 @@
 diff --git apps/settings/lib/Settings/Personal/Security/Authtokens.php apps/settings/lib/Settings/Personal/Security/Authtokens.php
-index e4901e0..8842005 100644
+index 90f6e23..3461525 100644
 --- apps/settings/lib/Settings/Personal/Security/Authtokens.php
 +++ apps/settings/lib/Settings/Personal/Security/Authtokens.php
-@@ -31,6 +31,7 @@ use OC\Authentication\Token\IToken;
+@@ -14,6 +14,7 @@ use OC\Authentication\Token\IToken;
  use OCP\AppFramework\Http\TemplateResponse;
  use OCP\AppFramework\Services\IInitialState;
  use OCP\Authentication\Exceptions\InvalidTokenException;
@@ -10,7 +10,7 @@ index e4901e0..8842005 100644
  use OCP\ISession;
  use OCP\IUserSession;
  use OCP\Session\Exceptions\SessionNotAvailableException;
-@@ -42,6 +43,9 @@ class Authtokens implements ISettings {
+@@ -25,6 +26,9 @@ class Authtokens implements ISettings {
  	/** @var IAuthTokenProvider */
  	private $tokenProvider;
  
@@ -20,7 +20,7 @@ index e4901e0..8842005 100644
  	/** @var ISession */
  	private $session;
  
-@@ -55,11 +59,13 @@ class Authtokens implements ISettings {
+@@ -38,11 +42,13 @@ class Authtokens implements ISettings {
  	private $userSession;
  
  	public function __construct(IAuthTokenProvider $tokenProvider,
@@ -34,7 +34,7 @@ index e4901e0..8842005 100644
  		$this->session = $session;
  		$this->initialState = $initialState;
  		$this->uid = $UserId;
-@@ -74,7 +80,7 @@ class Authtokens implements ISettings {
+@@ -57,7 +63,7 @@ class Authtokens implements ISettings {
  
  		$this->initialState->provideInitialState(
  			'can_create_app_token',

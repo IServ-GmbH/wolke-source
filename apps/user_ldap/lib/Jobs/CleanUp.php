@@ -1,27 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP\Jobs;
 
@@ -72,8 +54,8 @@ class CleanUp extends TimedJob {
 	) {
 		parent::__construct($timeFactory);
 		$minutes = \OC::$server->getConfig()->getSystemValue(
-			'ldapUserCleanupInterval', (string)$this->defaultIntervalMin);
-		$this->setInterval((int)$minutes * 60);
+			'ldapUserCleanupInterval', (string) $this->defaultIntervalMin);
+		$this->setInterval((int) $minutes * 60);
 		$this->userBackend = $userBackend;
 		$this->dui = $dui;
 	}
@@ -163,8 +145,8 @@ class CleanUp extends TimedJob {
 	 * checks whether clean up is enabled by configuration
 	 */
 	private function isCleanUpEnabled(): bool {
-		return (bool)$this->ocConfig->getSystemValue(
-			'ldapUserCleanupInterval', (string)$this->defaultIntervalMin);
+		return (bool) $this->ocConfig->getSystemValue(
+			'ldapUserCleanupInterval', (string) $this->defaultIntervalMin);
 	}
 
 	/**
@@ -195,7 +177,7 @@ class CleanUp extends TimedJob {
 	 * gets the offset to fetch users from the mappings table
 	 */
 	private function getOffset(): int {
-		return (int)$this->ocConfig->getAppValue('user_ldap', 'cleanUpJobOffset', '0');
+		return (int) $this->ocConfig->getAppValue('user_ldap', 'cleanUpJobOffset', '0');
 	}
 
 	/**
@@ -205,7 +187,7 @@ class CleanUp extends TimedJob {
 	public function setOffset(bool $reset = false): void {
 		$newOffset = $reset ? 0 :
 			$this->getOffset() + $this->getChunkSize();
-		$this->ocConfig->setAppValue('user_ldap', 'cleanUpJobOffset', (string)$newOffset);
+		$this->ocConfig->setAppValue('user_ldap', 'cleanUpJobOffset', (string) $newOffset);
 	}
 
 	/**
@@ -213,7 +195,7 @@ class CleanUp extends TimedJob {
 	 */
 	public function getChunkSize(): int {
 		if ($this->limit === null) {
-			$this->limit = (int)$this->ocConfig->getAppValue('user_ldap', 'cleanUpJobChunkSize', '50');
+			$this->limit = (int) $this->ocConfig->getAppValue('user_ldap', 'cleanUpJobChunkSize', '50');
 		}
 		return $this->limit;
 	}

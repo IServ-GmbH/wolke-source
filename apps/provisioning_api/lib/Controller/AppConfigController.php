@@ -3,33 +3,16 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
- *
- * @author Joas Schilling <coding@schilljs.com>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Provisioning_API\Controller;
 
 use OC\AppConfig;
 use OC\AppFramework\Middleware\Security\Exceptions\NotAdminException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Exceptions\AppConfigUnknownKeyException;
@@ -113,9 +96,7 @@ class AppConfigController extends OCSController {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
 	 * @NoSubAdminRequired
-	 * @NoAdminRequired
 	 *
 	 * Update the config value of an app
 	 *
@@ -127,10 +108,12 @@ class AppConfigController extends OCSController {
 	 * 200: Value updated successfully
 	 * 403: App or key is not allowed
 	 */
+	#[PasswordConfirmationRequired]
+	#[NoAdminRequired]
 	public function setValue(string $app, string $key, string $value): DataResponse {
 		$user = $this->userSession->getUser();
 		if ($user === null) {
-			throw new \Exception("User is not logged in."); // Should not happen, since method is guarded by middleware
+			throw new \Exception('User is not logged in.'); // Should not happen, since method is guarded by middleware
 		}
 
 		if (!$this->isAllowedToChangedKey($user, $app, $key)) {
@@ -153,9 +136,9 @@ class AppConfigController extends OCSController {
 
 		/** @psalm-suppress InternalMethod */
 		match ($type) {
-			IAppConfig::VALUE_BOOL => $this->appConfig->setValueBool($app, $key, (bool)$value),
-			IAppConfig::VALUE_FLOAT => $this->appConfig->setValueFloat($app, $key, (float)$value),
-			IAppConfig::VALUE_INT => $this->appConfig->setValueInt($app, $key, (int)$value),
+			IAppConfig::VALUE_BOOL => $this->appConfig->setValueBool($app, $key, (bool) $value),
+			IAppConfig::VALUE_FLOAT => $this->appConfig->setValueFloat($app, $key, (float) $value),
+			IAppConfig::VALUE_INT => $this->appConfig->setValueInt($app, $key, (int) $value),
 			IAppConfig::VALUE_STRING => $this->appConfig->setValueString($app, $key, $value),
 			IAppConfig::VALUE_ARRAY => $this->appConfig->setValueArray($app, $key, \json_decode($value, true)),
 			default => $this->appConfig->setValueMixed($app, $key, $value),
@@ -165,8 +148,6 @@ class AppConfigController extends OCSController {
 	}
 
 	/**
-	 * @PasswordConfirmationRequired
-	 *
 	 * Delete a config key of an app
 	 *
 	 * @param string $app ID of the app
@@ -176,6 +157,7 @@ class AppConfigController extends OCSController {
 	 * 200: Key deleted successfully
 	 * 403: App or key is not allowed
 	 */
+	#[PasswordConfirmationRequired]
 	public function deleteKey(string $app, string $key): DataResponse {
 		try {
 			$this->verifyAppId($app);

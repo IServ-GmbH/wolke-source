@@ -151,6 +151,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -360,7 +362,7 @@ and <code class="docutils literal notranslate"><span class="pre">encryption:list
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Command autocompletion currently only works if the user you use to execute the occ commands has a profile.
-<code class="docutils literal notranslate"><span class="pre">www-data</span></code> in most cases is <code class="docutils literal notranslate"><span class="pre">nologon</span></code> and therefor <strong>cannot</strong> use this feature.</p>
+<code class="docutils literal notranslate"><span class="pre">www-data</span></code> in most cases is <code class="docutils literal notranslate"><span class="pre">nologon</span></code> and therefore <strong>cannot</strong> use this feature.</p>
 </div>
 <p>Autocompletion is available for bash (and bash based consoles).
 To enable it, you have to run <strong>one</strong> of the following commands:</p>
@@ -683,6 +685,7 @@ before. If you want to be notified in that case, set the
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dav</span>
  <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">addressbook</span>                 <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">addressbook</span>
  <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">calendar</span>                    <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
+ <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">subscription</span>                <span class="n">Create</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span> <span class="n">subscription</span>
  <span class="n">dav</span><span class="p">:</span><span class="n">delete</span><span class="o">-</span><span class="n">calendar</span>                    <span class="n">Delete</span> <span class="n">a</span> <span class="n">dav</span> <span class="n">calendar</span>
  <span class="n">dav</span><span class="p">:</span><span class="n">fix</span><span class="o">-</span><span class="n">missing</span><span class="o">-</span><span class="n">caldav</span><span class="o">-</span><span class="n">changes</span>         <span class="n">Insert</span> <span class="n">missing</span> <span class="n">calendarchanges</span> <span class="n">rows</span> <span class="k">for</span> <span class="n">existing</span> <span class="n">events</span>
  <span class="n">dav</span><span class="p">:</span><span class="nb">list</span><span class="o">-</span><span class="n">calendars</span>                     <span class="n">List</span> <span class="nb">all</span> <span class="n">calendars</span> <span class="n">of</span> <span class="n">a</span> <span class="n">user</span>
@@ -704,6 +707,18 @@ before. If you want to be notified in that case, set the
 </pre></div>
 </div>
 <p>Molly will immediately see these in the Calendar and Contacts apps.</p>
+<p>The syntax for <code class="docutils literal notranslate"><span class="pre">dav:create-subscription</span></code> is
+<code class="docutils literal notranslate"><span class="pre">dav:create-subscription</span> <span class="pre">[user]</span> <span class="pre">[name]</span> <span class="pre">[url]</span> <span class="pre">[optional</span> <span class="pre">color]</span></code>. This example creates the subscription subscription for the lunar
+calendar <code class="docutils literal notranslate"><span class="pre">Lunar</span> <span class="pre">Calendar</span></code> for the user molly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">subscription</span> <span class="n">molly</span> <span class="s2">&quot;Lunar Calendar&quot;</span> <span class="n">webcal</span><span class="p">:</span><span class="o">//</span><span class="n">cantonbecker</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">astronomy</span><span class="o">-</span><span class="n">calendar</span><span class="o">/</span><span class="n">astrocal</span><span class="o">.</span><span class="n">ics</span>
+</pre></div>
+</div>
+<p>Molly will immediately see this new subscription calendar in the Calendar app.</p>
+<p>Optionally, a color for the new subscription calendar can be passed as a HEX color code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">dav</span><span class="p">:</span><span class="n">create</span><span class="o">-</span><span class="n">subscription</span> <span class="n">molly</span> <span class="s2">&quot;Lunar Calendar&quot;</span> <span class="n">calendar</span> <span class="n">webcal</span><span class="p">:</span><span class="o">//</span><span class="n">cantonbecker</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">astronomy</span><span class="o">-</span><span class="n">calendar</span><span class="o">/</span><span class="n">astrocal</span><span class="o">.</span><span class="n">ics</span> <span class="s2">&quot;#ff5733&quot;</span>
+</pre></div>
+</div>
+<p>If not set, the theming default color will be used.</p>
 <p><code class="docutils literal notranslate"><span class="pre">dav:delete-calendar</span> <span class="pre">[--birthday]</span> <span class="pre">[-f|--force]</span> <span class="pre">&lt;uid&gt;</span> <span class="pre">[&lt;name&gt;]</span></code> deletes the
 calendar named <code class="docutils literal notranslate"><span class="pre">name</span></code> (or the birthday calendar if <code class="docutils literal notranslate"><span class="pre">--birthday</span></code> is
 specified) of the user <code class="docutils literal notranslate"><span class="pre">uid</span></code>. You can use the force option <code class="docutils literal notranslate"><span class="pre">-f</span></code> or
@@ -882,17 +897,22 @@ to synchronize federated servers:</p>
 </section>
 <section id="file-operations">
 <span id="file-operations-label"></span><h2>File operations<a class="headerlink" href="#file-operations" title="Link to this heading"></a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">occ</span></code> has three commands for managing files in Nextcloud:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files</span>
- <span class="n">files</span><span class="p">:</span><span class="n">cleanup</span>              <span class="n">Cleanup</span> <span class="n">filecache</span>
- <span class="n">files</span><span class="p">:</span><span class="n">repair</span><span class="o">-</span><span class="n">tree</span>          <span class="n">Try</span> <span class="ow">and</span> <span class="n">repair</span> <span class="n">malformed</span> <span class="n">filesystem</span> <span class="n">tree</span> <span class="n">structures</span>
- <span class="n">files</span><span class="p">:</span><span class="n">scan</span>                 <span class="n">Rescan</span> <span class="n">filesystem</span>
- <span class="n">files</span><span class="p">:</span><span class="n">scan</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">data</span>        <span class="n">Rescan</span> <span class="n">the</span> <span class="n">AppData</span> <span class="n">folder</span>
- <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span>   <span class="n">All</span> <span class="n">files</span><span class="s1">&#39; and folders&#39;</span> <span class="n">ownerships</span> <span class="n">are</span> <span class="n">moved</span> <span class="n">to</span> <span class="n">another</span>
-                            <span class="n">user</span><span class="o">.</span> <span class="n">Outgoing</span> <span class="n">shares</span> <span class="n">are</span> <span class="n">moved</span> <span class="k">as</span> <span class="n">well</span><span class="o">.</span>
-                            <span class="n">Incoming</span> <span class="n">shares</span> <span class="n">are</span> <span class="ow">not</span> <span class="n">moved</span> <span class="n">by</span> <span class="n">default</span> <span class="n">because</span> <span class="n">the</span>
-                            <span class="n">sharing</span> <span class="n">user</span> <span class="n">holds</span> <span class="n">the</span> <span class="n">ownership</span> <span class="n">of</span> <span class="n">the</span> <span class="n">respective</span> <span class="n">files</span><span class="o">.</span>
-                            <span class="n">There</span> <span class="ow">is</span> <span class="n">however</span> <span class="n">an</span> <span class="n">option</span> <span class="n">to</span> <span class="n">enable</span> <span class="n">moving</span> <span class="n">incoming</span> <span class="n">shares</span><span class="o">.</span>
+<p>Available <code class="docutils literal notranslate"><span class="pre">occ</span></code> commands for the <code class="docutils literal notranslate"><span class="pre">files</span></code> namespace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">files</span><span class="p">:</span><span class="n">cleanup</span>                    <span class="n">cleanup</span> <span class="n">filecache</span>
+<span class="n">files</span><span class="p">:</span><span class="n">copy</span>                       <span class="n">Copy</span> <span class="n">a</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">folder</span>
+<span class="n">files</span><span class="p">:</span><span class="n">delete</span>                     <span class="n">Delete</span> <span class="n">a</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">folder</span>
+<span class="n">files</span><span class="p">:</span><span class="n">get</span>                        <span class="n">Get</span> <span class="n">the</span> <span class="n">contents</span> <span class="n">of</span> <span class="n">a</span> <span class="n">file</span>
+<span class="n">files</span><span class="p">:</span><span class="n">move</span>                       <span class="n">Move</span> <span class="n">a</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">folder</span>
+<span class="n">files</span><span class="p">:</span><span class="nb">object</span><span class="p">:</span><span class="n">delete</span>              <span class="n">Delete</span> <span class="n">an</span> <span class="nb">object</span> <span class="kn">from</span> <span class="nn">the</span> <span class="nb">object</span> <span class="n">store</span>
+<span class="n">files</span><span class="p">:</span><span class="nb">object</span><span class="p">:</span><span class="n">get</span>                 <span class="n">Get</span> <span class="n">the</span> <span class="n">contents</span> <span class="n">of</span> <span class="n">an</span> <span class="nb">object</span>
+<span class="n">files</span><span class="p">:</span><span class="nb">object</span><span class="p">:</span><span class="n">put</span>                 <span class="n">Write</span> <span class="n">a</span> <span class="n">file</span> <span class="n">to</span> <span class="n">the</span> <span class="nb">object</span> <span class="n">store</span>
+<span class="n">files</span><span class="p">:</span><span class="n">put</span>                        <span class="n">Write</span> <span class="n">contents</span> <span class="n">of</span> <span class="n">a</span> <span class="n">file</span>
+<span class="n">files</span><span class="p">:</span><span class="n">recommendations</span><span class="p">:</span><span class="n">recommend</span>
+<span class="n">files</span><span class="p">:</span><span class="n">reminders</span>                  <span class="n">List</span> <span class="n">file</span> <span class="n">reminders</span>
+<span class="n">files</span><span class="p">:</span><span class="n">repair</span><span class="o">-</span><span class="n">tree</span>                <span class="n">Try</span> <span class="ow">and</span> <span class="n">repair</span> <span class="n">malformed</span> <span class="n">filesystem</span> <span class="n">tree</span> <span class="n">structures</span>
+<span class="n">files</span><span class="p">:</span><span class="n">scan</span>                       <span class="n">rescan</span> <span class="n">filesystem</span>
+<span class="n">files</span><span class="p">:</span><span class="n">scan</span><span class="o">-</span><span class="n">app</span><span class="o">-</span><span class="n">data</span>              <span class="n">rescan</span> <span class="n">the</span> <span class="n">AppData</span> <span class="n">folder</span>
+<span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span>         <span class="n">All</span> <span class="n">files</span> <span class="ow">and</span> <span class="n">folders</span> <span class="n">are</span> <span class="n">moved</span> <span class="n">to</span> <span class="n">another</span> <span class="n">user</span> <span class="o">-</span> <span class="n">outgoing</span> <span class="n">shares</span> <span class="ow">and</span> <span class="n">incoming</span> <span class="n">user</span> <span class="n">file</span> <span class="n">shares</span> <span class="p">(</span><span class="n">optionally</span><span class="p">)</span> <span class="n">are</span> <span class="n">moved</span> <span class="k">as</span> <span class="n">well</span><span class="o">.</span>
 </pre></div>
 </div>
 <section id="scan">
@@ -1020,6 +1040,7 @@ before removing a user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;path_to_dir&quot;</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
 </pre></div>
 </div>
+<p>Incoming shares are not moved by default because the sharing user holds the ownership of the respective files. There is however an option to enable moving incoming shares.</p>
 <p>In case the incoming shares must be transferred as well, use the argument <code class="docutils literal notranslate"><span class="pre">--transfer-incoming-shares</span></code> with <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span></code> as parameters</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">transfer</span><span class="o">-</span><span class="n">ownership</span> <span class="o">--</span><span class="n">transfer</span><span class="o">-</span><span class="n">incoming</span><span class="o">-</span><span class="n">shares</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;path_to_dir&quot;</span> <span class="o">&lt;</span><span class="n">source</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">-</span><span class="n">user</span><span class="o">&gt;</span>
 </pre></div>
@@ -1268,7 +1289,7 @@ command after modifying <code class="docutils literal notranslate"><span class="
 mimetype, run <code class="docutils literal notranslate"><span class="pre">maintenance:mimetype:update-db</span> <span class="pre">--repair-filecache</span></code> to apply the
 change to existing files.</p>
 <p>Run the <code class="docutils literal notranslate"><span class="pre">maintenance:theme:update</span></code> command if the icons of your custom theme are not
-updated correctly. This updates the mimetypelist.js and cleares the image cache.</p>
+updated correctly. This updates the mimetypelist.js and clears the image cache.</p>
 </section>
 <section id="security">
 <span id="security-commands-label"></span><h2>Security<a class="headerlink" href="#security" title="Link to this heading"></a></h2>
@@ -1877,7 +1898,7 @@ check for that user via the occ command:</p>
 <p class="admonition-title">Note</p>
 <p>This is not supported by all providers.</p>
 </div>
-<p>To re-enable two-factor auth again use the following commmand:</p>
+<p>To re-enable two-factor auth again use the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">twofactorauth</span><span class="p">:</span><span class="n">enable</span> <span class="o">&lt;</span><span class="n">uid</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">provider_id</span><span class="o">&gt;</span>
 </pre></div>
 </div>
@@ -2013,40 +2034,49 @@ network:
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -48,9 +28,11 @@ use OCP\Files\IRootFolder;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Server;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\IAttributes;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ShareWrapper
@@ -72,6 +54,7 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 	private int $status = 0;
 	private string $providerId = '';
 	private DateTime $shareTime;
+	private string $note = '';
 	private string $sharedWith = '';
 	private string $sharedBy = '';
 	private ?DateTime $expirationDate = null;
@@ -201,6 +184,16 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 
 	public function getShareTime(): DateTime {
 		return $this->shareTime;
+	}
+
+	public function setShareNote(string $note): self {
+		$this->note = $note;
+
+		return $this;
+	}
+
+	public function getShareNote(): string {
+		return $this->note;
 	}
 
 	public function setSharedWith(string $sharedWith): self {
@@ -400,8 +393,13 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 		$share->setTarget($this->getFileTarget());
 		$share->setProviderId($this->getProviderId());
 		$share->setStatus($this->getStatus());
+		$share->setToken($this->getToken());
+		if ($this->getExpirationDate() !== null) {
+			$share->setExpirationDate($this->getExpirationDate());
+		}
 		$share->setHideDownload($this->getHideDownload());
 		$share->setAttributes($this->getAttributes());
+		$share->setNote($this->getShareNote());
 		if ($this->hasShareToken()) {
 			$password = $this->getShareToken()->getPassword();
 			if ($password !== '') {
@@ -496,12 +494,16 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			 ->setSharedBy($this->get('sharedBy', $data))
 			 ->setShareOwner($this->get('shareOwner', $data))
 			 ->setToken($this->get('token', $data))
-			 ->setShareTime($shareTime);
+			 ->setShareTime($shareTime)
+			 ->setShareNote($this->get('note', $data));
 
 		$this->importAttributesFromDatabase($this->get('attributes', $data));
 
 		try {
-			$this->setExpirationDate(new DateTime($this->get('expiration', $data)));
+			$expirationDate = $this->getInt('expiration', $data);
+			if ($expirationDate > 0) {
+				$this->setExpirationDate((new DateTime())->setTimestamp($expirationDate));
+			}
 		} catch (\Exception $e) {
 		}
 
@@ -560,7 +562,17 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			 ->setSharedBy($this->get($prefix . 'uid_initiator', $data))
 			 ->setShareOwner($this->get($prefix . 'uid_owner', $data))
 			 ->setToken($this->get($prefix . 'token', $data))
-			 ->setShareTime($shareTime);
+			 ->setShareTime($shareTime)
+			 ->setShareNote($this->get($prefix . 'note', $data));
+
+		try {
+			$expirationDate = $this->get($prefix . 'expiration', $data);
+			if ($expirationDate !== '') {
+				$this->setExpirationDate(new DateTime($expirationDate));
+			}
+		} catch (\Exception $e) {
+			Server::get(LoggerInterface::class)->warning('could not parse expiration date', ['exception' => $e]);
+		}
 
 		$this->importAttributesFromDatabase($this->get('attributes', $data));
 
@@ -619,8 +631,10 @@ class ShareWrapper extends ManagedModel implements IDeserializable, IQueryRow, J
 			'itemTarget' => $this->getItemTarget(),
 			'fileSource' => $this->getFileSource(),
 			'fileTarget' => $this->getFileTarget(),
+			'expiration' => $this->getExpirationDate()?->getTimestamp(),
 			'status' => $this->getStatus(),
 			'shareTime' => $this->getShareTime()->getTimestamp(),
+			'note' => $this->getShareNote(),
 			'sharedWith' => $this->getSharedWith(),
 			'sharedBy' => $this->getSharedBy(),
 			'shareOwner' => $this->getShareOwner(),

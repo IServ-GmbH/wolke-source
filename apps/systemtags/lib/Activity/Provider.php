@@ -1,25 +1,8 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\SystemTags\Activity;
 
@@ -303,7 +286,7 @@ class Provider implements IProvider {
 	protected function getFileParameter($id, $path) {
 		return [
 			'type' => 'file',
-			'id' => $id,
+			'id' => (string) $id,
 			'name' => basename($path),
 			'path' => trim($path, '/'),
 		];
@@ -314,7 +297,7 @@ class Provider implements IProvider {
 		if ($tagData === null) {
 			[$name, $status] = explode('|||', substr($parameter, 3, -3));
 			$tagData = [
-				'id' => 0,// No way to recover the ID
+				'id' => '0',// No way to recover the ID
 				'name' => $name,
 				'assignable' => $status === 'assignable',
 				'visible' => $status !== 'invisible',
@@ -323,7 +306,7 @@ class Provider implements IProvider {
 
 		return [
 			'type' => 'systemtag',
-			'id' => (int) $tagData['id'],
+			'id' => (string) $tagData['id'],
 			'name' => $tagData['name'],
 			'assignable' => $tagData['assignable'] ? '1' : '0',
 			'visibility' => $tagData['visible'] ? '1' : '0',

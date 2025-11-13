@@ -3,28 +3,13 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2021 Anna Larch <anna.larch@gmx.net>
- *
- * @author Anna Larch <anna.larch@gmx.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\CalDAV;
 
+use OCA\DAV\Db\Property;
+use OCA\DAV\Db\PropertyMapper;
 use OCP\Calendar\ICalendarProvider;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -44,11 +29,15 @@ class CalendarProvider implements ICalendarProvider {
 	/** @var LoggerInterface */
 	private $logger;
 
-	public function __construct(CalDavBackend $calDavBackend, IL10N $l10n, IConfig $config, LoggerInterface $logger) {
+	/** @var PropertyMapper */
+	private $propertyMapper;
+
+	public function __construct(CalDavBackend $calDavBackend, IL10N $l10n, IConfig $config, LoggerInterface $logger, PropertyMapper $propertyMapper) {
 		$this->calDavBackend = $calDavBackend;
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->logger = $logger;
+		$this->propertyMapper = $propertyMapper;
 	}
 
 	public function getCalendars(string $principalUri, array $calendarUris = []): array {
@@ -65,6 +54,7 @@ class CalendarProvider implements ICalendarProvider {
 
 		$iCalendars = [];
 		foreach ($calendarInfos as $calendarInfo) {
+			$calendarInfo = array_merge($calendarInfo, $this->getAdditionalProperties($calendarInfo['principaluri'], $calendarInfo['uri']));
 			$calendar = new Calendar($this->calDavBackend, $calendarInfo, $this->l10n, $this->config, $this->logger);
 			$iCalendars[] = new CalendarImpl(
 				$calendar,
@@ -73,5 +63,24 @@ class CalendarProvider implements ICalendarProvider {
 			);
 		}
 		return $iCalendars;
+	}
+
+	public function getAdditionalProperties(string $principalUri, string $calendarUri): array {
+		$user = str_replace('principals/users/', '', $principalUri);
+		$path = 'calendars/' . $user . '/' . $calendarUri;
+
+		$properties = $this->propertyMapper->findPropertiesByPath($user, $path);
+
+		$list = [];
+		foreach ($properties as $property) {
+			if ($property instanceof Property) {
+				$list[$property->getPropertyname()] = match ($property->getPropertyname()) {
+					'{http://owncloud.org/ns}calendar-enabled' => (bool) $property->getPropertyvalue(),
+					default => $property->getPropertyvalue()
+				};
+			}
+		}
+
+		return $list;
 	}
 }

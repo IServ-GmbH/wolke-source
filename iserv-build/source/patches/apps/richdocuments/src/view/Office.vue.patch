@@ -1,17 +1,34 @@
 diff --git apps/richdocuments/src/view/Office.vue apps/richdocuments/src/view/Office.vue
-index f63a9db1f..b0e5db9cc 100644
+index 0ad3dcee5..a6e18957b 100644
 --- apps/richdocuments/src/view/Office.vue
 +++ apps/richdocuments/src/view/Office.vue
-@@ -42,7 +42,7 @@
+@@ -25,16 +25,7 @@
  				<template #description>
  					<p>{{ errorMessage }}</p>
  					<p v-if="showAdminStorageFailure">
 -						{{ t('richdocuments', 'Please check the Collabora Online server log for more details and make sure that Nextcloud can be reached from there.') }}
+-					</p>
+-					<p v-if="showAdminWebsocketFailure">
+-						{{ t('richdocuments', 'Socket connection closed unexpectedly. The reverse proxy might be misconfigured, please contact the administrator.') }}
+-						<a href="https://docs.nextcloud.com/server/latest/admin_manual/office/proxy.html"
+-							target="_blank"
+-							rel="noreferrer noopener"
+-							class="external">
+-							{{ t('richdocuments', 'More information can be found in the reverse proxy documentation') }}
+-						</a>
 +						{{ t('richdocuments', 'Please check the Collabora Online server log for more details and make sure that cloudfiles can be reached from there.') }}
  					</p>
- 					<p v-if="showAdminWebsocketFailure">
- 						{{ t('richdocuments', 'Socket connection closed unexpectedly. The reverse proxy might be misconfigured, please contact the administrator.') }}
-@@ -219,7 +219,7 @@ export default {
+ 				</template>
+ 				<template #action>
+@@ -53,7 +44,6 @@
+ 			<input name="ui_defaults" :value="formData.uiDefaults" type="hidden">
+ 			<input name="css_variables" :value="formData.cssVariables" type="hidden">
+ 			<input name="theme" :value="formData.theme" type="hidden">
+-			<input name="buy_product" value="https://nextcloud.com/pricing" type="hidden">
+ 			<input name="host_session_id" :value="formData.hostSessionID" type="hidden">
+ 		</form>
+ 		<iframe :id="iframeId"
+@@ -204,7 +194,7 @@ export default {
  			return this.loading >= LOADING_STATE.FRAME_READY || this.debug
  		},
  		iframeTitle() {
@@ -20,7 +37,7 @@ index f63a9db1f..b0e5db9cc 100644
  		},
  		showLoadingIndicator() {
  			return this.loading < LOADING_STATE.FRAME_READY
-@@ -227,7 +227,7 @@ export default {
+@@ -212,7 +202,7 @@ export default {
  		errorMessage() {
  			switch (parseInt(this.error)) {
  			case LOADING_ERROR.COLLABORA_UNCONFIGURED:
@@ -29,12 +46,12 @@ index f63a9db1f..b0e5db9cc 100644
  			case LOADING_ERROR.PROXY_FAILED:
  				return t('richdocuments', 'Starting the built-in CODE server failed')
  			default:
-@@ -349,7 +349,7 @@ export default {
+@@ -334,7 +324,7 @@ export default {
  			this.loadingTimeout = setTimeout(() => {
  				console.error('Document loading failed due to timeout: Please check for failing network requests')
  				this.loading = LOADING_STATE.FAILED
 -				this.error = t('richdocuments', 'Failed to load {productName} - please try again later', { productName: loadState('richdocuments', 'productName', 'Nextcloud Office') })
 +				this.error = t('richdocuments', 'Failed to load {productName} - please try again later', { productName: loadState('richdocuments', 'productName', 'IServ Office') })
- 			}, (getCapabilities().richdocuments.config.timeout * 1000 || 15000))
+ 			}, (getCapabilities().config.timeout * 1000 || 15000))
  		},
  		sendPostMessage(msgId, values = {}) {

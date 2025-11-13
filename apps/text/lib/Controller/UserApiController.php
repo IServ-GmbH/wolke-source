@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\Text\Controller;
 
 use OCA\Text\Middleware\Attribute\RequireDocumentSession;
@@ -39,11 +44,12 @@ class UserApiController extends ApiController implements ISessionAwareController
 		// Add joined users to the autocomplete list
 		foreach ($sessions as $session) {
 			$sessionUserId = $session['userId'];
-			if ($sessionUserId !== null && !isset($users[$sessionUserId])) {
-				$displayName = $this->userManager->getDisplayName($sessionUserId);
-				if ($displayName && stripos($displayName, $filter) !== false || stripos($sessionUserId, $filter) !== false) {
-					$users[$sessionUserId] = $displayName;
-				}
+			if ($sessionUserId === null || isset($users[$sessionUserId])) {
+				continue;
+			}
+			$displayName = $this->userManager->getDisplayName($sessionUserId) ?? '';
+			if (stripos($displayName, $filter) !== false || stripos($sessionUserId, $filter) !== false) {
+				$users[$sessionUserId] = $displayName;
 			}
 		}
 

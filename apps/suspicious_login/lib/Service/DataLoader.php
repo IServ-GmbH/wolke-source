@@ -2,25 +2,9 @@
 
 declare(strict_types=1);
 
-/*
- * @copyright 2021 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2021 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Service;
@@ -38,8 +22,11 @@ use function array_merge;
 use function floor;
 use function log;
 use function max;
+use function random_int;
 
 class DataLoader {
+	private const MAX_SAMPLES_POSITIVES = 15_000;
+	private const MAX_SAMPLES_VALIDATE_POSITIVES = 3_000;
 
 	/** @var LoginAddressAggregatedMapper */
 	private $loginAddressMapper;
@@ -48,7 +35,7 @@ class DataLoader {
 	private $negativeSampleGenerator;
 
 	public function __construct(LoginAddressAggregatedMapper $loginAddressMapper,
-								NegativeSampleGenerator $negativeSampleGenerator) {
+		NegativeSampleGenerator $negativeSampleGenerator) {
 		$this->loginAddressMapper = $loginAddressMapper;
 		$this->negativeSampleGenerator = $negativeSampleGenerator;
 	}
@@ -60,7 +47,7 @@ class DataLoader {
 	 * @throws InsufficientDataException
 	 */
 	public function loadTrainingAndValidationData(TrainingDataConfig $dataConfig,
-												  AClassificationStrategy $strategy): CollectedData {
+		AClassificationStrategy $strategy): CollectedData {
 		$validationThreshold = $dataConfig->getNow() - $dataConfig->getThreshold() * 60 * 60 * 24;
 		$maxAge = $dataConfig->getMaxAge() === -1 ? 0 : $dataConfig->getNow() - $dataConfig->getMaxAge() * 60 * 60 * 24;
 
@@ -81,6 +68,14 @@ class DataLoader {
 
 		$positives = $this->addressesToDataSet($historyRaw, $strategy);
 		$validationPositives = $this->addressesToDataSet($recentRaw, $strategy);
+		if ($positives->count() > self::MAX_SAMPLES_POSITIVES) {
+			$threshold = (self::MAX_SAMPLES_POSITIVES / $positives->count()) * 100;
+			$positives = $positives->filter(fn () => random_int(0, 100) <= $threshold);
+		}
+		if ($validationPositives->count() > self::MAX_SAMPLES_VALIDATE_POSITIVES) {
+			$threshold = (self::MAX_SAMPLES_VALIDATE_POSITIVES / $validationPositives->count()) * 100;
+			$validationPositives = $validationPositives->filter(fn () => random_int(0, 100) <= $threshold);
+		}
 
 		return new CollectedData(
 			$positives,
@@ -113,8 +108,8 @@ class DataLoader {
 	 * @return TrainingDataSet
 	 */
 	public function generateRandomShuffledData(CollectedData $collectedData,
-												Config $config,
-												AClassificationStrategy $strategy): TrainingDataSet {
+		Config $config,
+		AClassificationStrategy $strategy): TrainingDataSet {
 		$numPositives = count($collectedData->getTrainingPositives());
 		$numValidation = count($collectedData->getValidationPositives());
 		$numRandomNegatives = max((int)floor($numPositives * $config->getRandomNegativeRate()), 1);

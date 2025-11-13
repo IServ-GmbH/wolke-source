@@ -1,42 +1,21 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @author Michael Jobst <mjobst+github@tecratech.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Tobias Kaminsky <tobias@kaminsky.me>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\Connector\Sabre;
 
 use OC\AppFramework\Http\Request;
+use OC\FilesMetadata\Model\FilesMetadata;
+use OC\User\NoUserException;
+use OCA\DAV\Connector\Sabre\Exception\InvalidPath;
+use OCP\Accounts\IAccountManager;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
+use OCP\Files\IFilenameValidator;
+use OCP\Files\InvalidPathException;
 use OCP\Files\StorageNotAvailableException;
 use OCP\FilesMetadata\Exceptions\FilesMetadataException;
 use OCP\FilesMetadata\Exceptions\FilesMetadataNotFoundException;
@@ -46,6 +25,7 @@ use OCP\IConfig;
 use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\IFile;
@@ -80,7 +60,6 @@ class FilesPlugin extends ServerPlugin {
 	public const HAS_PREVIEW_PROPERTYNAME = '{http://nextcloud.org/ns}has-preview';
 	public const MOUNT_TYPE_PROPERTYNAME = '{http://nextcloud.org/ns}mount-type';
 	public const MOUNT_ROOT_PROPERTYNAME = '{http://nextcloud.org/ns}is-mount-root';
-	public const IS_ENCRYPTED_PROPERTYNAME = '{http://nextcloud.org/ns}is-encrypted';
 	public const IS_FEDERATED_PROPERTYNAME = '{http://nextcloud.org/ns}is-federated';
 	public const METADATA_ETAG_PROPERTYNAME = '{http://nextcloud.org/ns}metadata_etag';
 	public const UPLOAD_TIME_PROPERTYNAME = '{http://nextcloud.org/ns}upload_time';
@@ -93,33 +72,28 @@ class FilesPlugin extends ServerPlugin {
 
 	/** Reference to main server object */
 	private ?Server $server = null;
-	private Tree $tree;
-	private IUserSession $userSession;
 
 	/**
-	 * Whether this is public webdav.
-	 * If true, some returned information will be stripped off.
+	 * @param Tree $tree
+	 * @param IConfig $config
+	 * @param IRequest $request
+	 * @param IPreview $previewManager
+	 * @param IUserSession $userSession
+	 * @param bool $isPublic Whether this is public WebDAV. If true, some returned information will be stripped off.
+	 * @param bool $downloadAttachment
+	 * @return void
 	 */
-	private bool $isPublic;
-	private bool $downloadAttachment;
-	private IConfig $config;
-	private IRequest $request;
-	private IPreview $previewManager;
-
-	public function __construct(Tree $tree,
-		IConfig $config,
-		IRequest $request,
-		IPreview $previewManager,
-		IUserSession $userSession,
-		bool $isPublic = false,
-		bool $downloadAttachment = true) {
-		$this->tree = $tree;
-		$this->config = $config;
-		$this->request = $request;
-		$this->userSession = $userSession;
-		$this->isPublic = $isPublic;
-		$this->downloadAttachment = $downloadAttachment;
-		$this->previewManager = $previewManager;
+	public function __construct(
+		private Tree $tree,
+		private IConfig $config,
+		private IRequest $request,
+		private IPreview $previewManager,
+		private IUserSession $userSession,
+		private IFilenameValidator $validator,
+		private IAccountManager $accountManager,
+		private bool $isPublic = false,
+		private bool $downloadAttachment = true,
+	) {
 	}
 
 	/**
@@ -149,7 +123,6 @@ class FilesPlugin extends ServerPlugin {
 		$server->protectedProperties[] = self::DATA_FINGERPRINT_PROPERTYNAME;
 		$server->protectedProperties[] = self::HAS_PREVIEW_PROPERTYNAME;
 		$server->protectedProperties[] = self::MOUNT_TYPE_PROPERTYNAME;
-		$server->protectedProperties[] = self::IS_ENCRYPTED_PROPERTYNAME;
 		$server->protectedProperties[] = self::IS_FEDERATED_PROPERTYNAME;
 		$server->protectedProperties[] = self::SHARE_NOTE;
 
@@ -171,37 +144,70 @@ class FilesPlugin extends ServerPlugin {
 			}
 		});
 		$this->server->on('beforeMove', [$this, 'checkMove']);
+		$this->server->on('beforeCopy', [$this, 'checkCopy']);
+	}
+
+	/**
+	 * Plugin that checks if a copy can actually be performed.
+	 *
+	 * @param string $source source path
+	 * @param string $target target path
+	 * @throws NotFound If the source does not exist
+	 * @throws InvalidPath If the target is invalid
+	 */
+	public function checkCopy($source, $target): void {
+		$sourceNode = $this->tree->getNodeForPath($source);
+		if (!$sourceNode instanceof Node) {
+			return;
+		}
+
+		// Ensure source exists
+		$sourceNodeFileInfo = $sourceNode->getFileInfo();
+		if ($sourceNodeFileInfo === null) {
+			throw new NotFound($source . ' does not exist');
+		}
+		// Ensure the target name is valid
+		try {
+			[$targetPath, $targetName] = \Sabre\Uri\split($target);
+			$this->validator->validateFilename($targetName);
+		} catch (InvalidPathException $e) {
+			throw new InvalidPath($e->getMessage(), false);
+		}
+		// Ensure the target path is valid
+		$segments = array_slice(explode('/', $targetPath), 2);
+		foreach ($segments as $segment) {
+			if ($this->validator->isFilenameValid($segment) === false) {
+				$l = \OCP\Server::get(IFactory::class)->get('dav');
+				throw new InvalidPath($l->t('Invalid target path'));
+			}
+		}
 	}
 
 	/**
 	 * Plugin that checks if a move can actually be performed.
 	 *
 	 * @param string $source source path
-	 * @param string $destination destination path
-	 * @throws Forbidden
-	 * @throws NotFound
+	 * @param string $target target path
+	 * @throws Forbidden If the source is not deletable
+	 * @throws NotFound If the source does not exist
+	 * @throws InvalidPath If the target name is invalid
 	 */
-	public function checkMove($source, $destination) {
+	public function checkMove(string $source, string $target): void {
 		$sourceNode = $this->tree->getNodeForPath($source);
 		if (!$sourceNode instanceof Node) {
 			return;
 		}
-		[$sourceDir,] = \Sabre\Uri\split($source);
-		[$destinationDir,] = \Sabre\Uri\split($destination);
 
-		if ($sourceDir !== $destinationDir) {
-			$sourceNodeFileInfo = $sourceNode->getFileInfo();
-			if ($sourceNodeFileInfo === null) {
-				throw new NotFound($source . ' does not exist');
-			}
-
-			if (!$sourceNodeFileInfo->isDeletable()) {
-				throw new Forbidden($source . " cannot be deleted");
-			}
+		// First check copyable (move only needs additional delete permission)
+		$this->checkCopy($source, $target);
+		// The source needs to be deletable for moving
+		$sourceNodeFileInfo = $sourceNode->getFileInfo();
+		if (!$sourceNodeFileInfo->isDeletable()) {
+			throw new Forbidden($source . ' cannot be deleted');
 		}
 
 		// The source is not allowed to be the parent of the target
-		if (str_starts_with($source, $destination . '/')) {
+		if (str_starts_with($source, $target . '/')) {
 			throw new Forbidden($source . ' cannot be moved to it\'s parent');
 		}
 	}
@@ -354,9 +360,32 @@ class FilesPlugin extends ServerPlugin {
 				$owner = $node->getOwner();
 				if (!$owner) {
 					return null;
-				} else {
+				}
+
+				// Get current user to see if we're in a public share or not
+				$user = $this->userSession->getUser();
+
+				// If the user is logged in, we can return the display name
+				if ($user !== null) {
 					return $owner->getDisplayName();
 				}
+
+				// Check if the user published their display name
+				try {
+					$ownerAccount = $this->accountManager->getAccount($owner);
+				} catch (NoUserException) {
+					// do not lock process if owner is not local
+					return null;
+				}
+
+				$ownerNameProperty = $ownerAccount->getProperty(IAccountManager::PROPERTY_DISPLAYNAME);
+
+				// Since we are not logged in, we need to have at least the published scope
+				if ($ownerNameProperty->getScope() === IAccountManager::SCOPE_PUBLISHED) {
+					return $owner->getDisplayName();
+				}
+
+				return null;
 			});
 
 			$propFind->handle(self::HAS_PREVIEW_PROPERTYNAME, function () use ($node) {
@@ -379,17 +408,14 @@ class FilesPlugin extends ServerPlugin {
 				return $node->getNode()->getInternalPath() === '' ? 'true' : 'false';
 			});
 
-			$propFind->handle(self::SHARE_NOTE, function () use ($node, $httpRequest): ?string {
+			$propFind->handle(self::SHARE_NOTE, function () use ($node): ?string {
 				$user = $this->userSession->getUser();
-				if ($user === null) {
-					return null;
-				}
 				return $node->getNoteFromShare(
-					$user->getUID()
+					$user?->getUID()
 				);
 			});
 
-			$propFind->handle(self::DATA_FINGERPRINT_PROPERTYNAME, function () use ($node) {
+			$propFind->handle(self::DATA_FINGERPRINT_PROPERTYNAME, function () {
 				return $this->config->getSystemValue('data-fingerprint', '');
 			});
 			$propFind->handle(self::CREATIONDATE_PROPERTYNAME, function () use ($node) {
@@ -459,10 +485,6 @@ class FilesPlugin extends ServerPlugin {
 		if ($node instanceof Directory) {
 			$propFind->handle(self::SIZE_PROPERTYNAME, function () use ($node) {
 				return $node->getSize();
-			});
-
-			$propFind->handle(self::IS_ENCRYPTED_PROPERTYNAME, function () use ($node) {
-				return $node->getFileInfo()->isEncrypted() ? '1' : '0';
 			});
 
 			$requestProperties = $propFind->getRequestedProperties();
@@ -591,12 +613,20 @@ class FilesPlugin extends ServerPlugin {
 			$propPatch->handle(
 				$mutation,
 				function (mixed $value) use ($accessRight, $knownMetadata, $node, $mutation, $filesMetadataManager): bool {
-					$metadata = $filesMetadataManager->getMetadata((int)$node->getFileId(), true);
+					/** @var FilesMetadata $metadata */
+					$metadata = $filesMetadataManager->getMetadata((int) $node->getFileId(), true);
+					$metadata->setStorageId($node->getNode()->getStorage()->getCache()->getNumericStorageId());
 					$metadataKey = substr($mutation, strlen(self::FILE_METADATA_PREFIX));
 
 					// confirm metadata key is editable via PROPPATCH
 					if ($knownMetadata->getEditPermission($metadataKey) < $accessRight) {
 						throw new FilesMetadataException('you do not have enough rights to update \'' . $metadataKey . '\' on this node');
+					}
+
+					if ($value === null) {
+						$metadata->unset($metadataKey);
+						$filesMetadataManager->saveMetadata($metadata);
+						return true;
 					}
 
 					// If the metadata is unknown, it defaults to string.
@@ -681,15 +711,6 @@ class FilesPlugin extends ServerPlugin {
 	 * @throws \Sabre\DAV\Exception\BadRequest
 	 */
 	public function sendFileIdHeader($filePath, ?\Sabre\DAV\INode $node = null) {
-		// chunked upload handling
-		if (isset($_SERVER['HTTP_OC_CHUNKED'])) {
-			[$path, $name] = \Sabre\Uri\split($filePath);
-			$info = \OC_FileChunking::decodeName($name);
-			if (!empty($info)) {
-				$filePath = $path . '/' . $info['name'];
-			}
-		}
-
 		// we get the node for the given $filePath here because in case of afterCreateFile $node is the parent folder
 		if (!$this->server->tree->nodeExists($filePath)) {
 			return;

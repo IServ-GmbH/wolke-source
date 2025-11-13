@@ -21,7 +21,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Poskytuje užitočné informácie o serveri, ako napríklad vyťaženie CPU, RAM, využitie diskov, počet používateľov, atď.",
     "Operating System:" : "Operačný systém:",
     "CPU:" : "CPU:",
-    "Unknown Processor" : "Neznámy procesor",
     "Memory:" : "Pamäť:",
     "Server time:" : "Čas na serveri:",
     "Uptime:" : "Doba behu:",
@@ -92,11 +91,6 @@ OC.L10N.register(
     "Skip server update" : "Preskočiť aktualizáciu servera",
     "To use an access token, please generate one then set it using the following command:" : "Pre používanie prístupového tokenu ho vygenerujte a potom ho nastavte použitím nasledujúceho príkazu:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Pri dotazovaní na vyššie uvedenú adresu URL potom poslať token s hlavičkou „NC-Token“.",
-    "Load average: {cpu} (last minute)" : "Priemerné zaťaženie:  {cpu} (za poslednú minútu)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Používateľov celkom:",
-    "24 hours:" : "24 hodín:",
-    "1 hour:" : "1 hodina:",
-    "5 mins:" : "5 minút:"
+    "Unknown Processor" : "Neznámy procesor"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

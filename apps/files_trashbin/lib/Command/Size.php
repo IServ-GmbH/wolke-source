@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2020 Robin Appelman <robin@icewind.nl>
- *
- * @author Robin Appelman <robin@icewind.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Files_Trashbin\Command;
 
@@ -72,16 +55,16 @@ class Size extends Base {
 		if ($size) {
 			$parsedSize = \OC_Helper::computerFileSize($size);
 			if ($parsedSize === false) {
-				$output->writeln("<error>Failed to parse input size</error>");
+				$output->writeln('<error>Failed to parse input size</error>');
 				return -1;
 			}
 			if ($user) {
-				$this->config->setUserValue($user, 'files_trashbin', 'trashbin_size', (string)$parsedSize);
+				$this->config->setUserValue($user, 'files_trashbin', 'trashbin_size', (string) $parsedSize);
 				$this->commandBus->push(new Expire($user));
 			} else {
-				$this->config->setAppValue('files_trashbin', 'trashbin_size', (string)$parsedSize);
-				$output->writeln("<info>Warning: changing the default trashbin size will automatically trigger cleanup of existing trashbins,</info>");
-				$output->writeln("<info>a users trashbin can exceed the configured size until they move a new file to the trashbin.</info>");
+				$this->config->setAppValue('files_trashbin', 'trashbin_size', (string) $parsedSize);
+				$output->writeln('<info>Warning: changing the default trashbin size will automatically trigger cleanup of existing trashbins,</info>');
+				$output->writeln('<info>a users trashbin can exceed the configured size until they move a new file to the trashbin.</info>');
 			}
 		} else {
 			$this->printTrashbinSize($input, $output, $user);
@@ -91,15 +74,15 @@ class Size extends Base {
 	}
 
 	private function printTrashbinSize(InputInterface $input, OutputInterface $output, ?string $user) {
-		$globalSize = (int)$this->config->getAppValue('files_trashbin', 'trashbin_size', '-1');
+		$globalSize = (int) $this->config->getAppValue('files_trashbin', 'trashbin_size', '-1');
 		if ($globalSize < 0) {
-			$globalHumanSize = "default (50% of available space)";
+			$globalHumanSize = 'default (50% of available space)';
 		} else {
 			$globalHumanSize = \OC_Helper::humanFileSize($globalSize);
 		}
 
 		if ($user) {
-			$userSize = (int)$this->config->getUserValue($user, 'files_trashbin', 'trashbin_size', '-1');
+			$userSize = (int) $this->config->getUserValue($user, 'files_trashbin', 'trashbin_size', '-1');
 
 			if ($userSize < 0) {
 				$userHumanSize = ($globalSize < 0) ? $globalHumanSize : "default($globalHumanSize)";
@@ -127,14 +110,14 @@ class Size extends Base {
 
 			if ($input->getOption('output') == self::OUTPUT_FORMAT_PLAIN) {
 				$output->writeln("Default size: $globalHumanSize");
-				$output->writeln("");
+				$output->writeln('');
 				if (count($userValues)) {
-					$output->writeln("Per-user sizes:");
+					$output->writeln('Per-user sizes:');
 					$this->writeArrayInOutputFormat($input, $output, array_map(function ($size) {
 						return \OC_Helper::humanFileSize($size);
 					}, $userValues));
 				} else {
-					$output->writeln("No per-user sizes configured");
+					$output->writeln('No per-user sizes configured');
 				}
 			} else {
 				$globalValue = ($globalSize < 0) ? 'default' : $globalSize;

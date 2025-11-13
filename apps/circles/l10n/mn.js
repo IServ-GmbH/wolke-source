@@ -9,7 +9,6 @@ OC.L10N.register(
     "Password protected" : "Нууц үгээх хамгаалагдсан",
     "Hidden" : "Далд",
     "Federated" : "Federated",
-    "Circle" : "Тойрог",
     "Member" : "Гишүүн",
     "Moderator" : "Шалгагч",
     "Admin" : "Админ",
@@ -21,10 +20,13 @@ OC.L10N.register(
     "You are already a member of this circle" : "та аль хэдийн энэ тойргийн гишүүн болсон",
     "You have been blocked from this circle" : "та энэ тойргоос хасагдсан ",
     "Accept" : "Хүлээн зөвшөөрөх",
+    "Open %s" : "Нээх {Файлын нэр}",
+    "Loading…" : "уншиж байна",
     "No files in here" : "Энд файл алга",
     "No entries found in this folder" : "Энэ хавтаст юм олдсонгүй",
     "Name" : "Нэр",
     "Size" : "Хэмжээ",
-    "Modified" : "Өөрчлөгдсөн"
+    "Modified" : "Өөрчлөгдсөн",
+    "Circle" : "Тойрог"
 },
 "nplurals=2; plural=(n != 1);");

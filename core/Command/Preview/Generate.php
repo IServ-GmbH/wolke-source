@@ -2,23 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2023 Robin Appelman <robin@icewind.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OC\Core\Command\Preview;
@@ -48,15 +33,15 @@ class Generate extends Command {
 		$this
 			->setName('preview:generate')
 			->setDescription('generate a preview for a file')
-			->addArgument("file", InputArgument::REQUIRED, "path or fileid of the file to generate the preview for")
-			->addOption("size", "s", InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, "size to generate the preview for in pixels, defaults to 64x64", ["64x64"])
-			->addOption("crop", "c", InputOption::VALUE_NONE, "crop the previews instead of maintaining aspect ratio")
-			->addOption("mode", "m", InputOption::VALUE_REQUIRED, "mode for generating uncropped previews, 'cover' or 'fill'", IPreview::MODE_FILL);
+			->addArgument('file', InputArgument::REQUIRED, 'path or fileid of the file to generate the preview for')
+			->addOption('size', 's', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'size to generate the preview for in pixels, defaults to 64x64', ['64x64'])
+			->addOption('crop', 'c', InputOption::VALUE_NONE, 'crop the previews instead of maintaining aspect ratio')
+			->addOption('mode', 'm', InputOption::VALUE_REQUIRED, "mode for generating uncropped previews, 'cover' or 'fill'", IPreview::MODE_FILL);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$fileInput = $input->getArgument("file");
-		$sizes = $input->getOption("size");
+		$fileInput = $input->getArgument('file');
+		$sizes = $input->getOption('size');
 		$sizes = array_map(function (string $size) use ($output) {
 			if (str_contains($size, 'x')) {
 				$sizeParts = explode('x', $size, 2);
@@ -68,18 +53,18 @@ class Generate extends Command {
 				return null;
 			}
 
-			return array_map("intval", $sizeParts);
+			return array_map('intval', $sizeParts);
 		}, $sizes);
 		if (in_array(null, $sizes)) {
 			return 1;
 		}
 
-		$mode = $input->getOption("mode");
+		$mode = $input->getOption('mode');
 		if ($mode !== IPreview::MODE_FILL && $mode !== IPreview::MODE_COVER) {
 			$output->writeln("<error>Invalid mode $mode</error>");
 			return 1;
 		}
-		$crop = $input->getOption("crop");
+		$crop = $input->getOption('crop');
 		$file = $this->getFile($fileInput);
 		if (!$file) {
 			$output->writeln("<error>File $fileInput not found</error>");
@@ -91,7 +76,7 @@ class Generate extends Command {
 		}
 
 		if (!$this->previewManager->isAvailable($file)) {
-			$output->writeln("<error>No preview generator available for file of type" . $file->getMimetype() . "</error>");
+			$output->writeln('<error>No preview generator available for file of type' . $file->getMimetype() . '</error>');
 			return 1;
 		}
 
@@ -106,22 +91,22 @@ class Generate extends Command {
 
 		$this->previewManager->generatePreviews($file, $specifications);
 		if (count($specifications) > 1) {
-			$output->writeln("generated <info>" . count($specifications) . "</info> previews");
+			$output->writeln('generated <info>' . count($specifications) . '</info> previews');
 		} else {
-			$output->writeln("preview generated");
+			$output->writeln('preview generated');
 		}
 		return 0;
 	}
 
 	private function getFile(string $fileInput): ?Node {
 		if (is_numeric($fileInput)) {
-			$mounts = $this->userMountCache->getMountsForFileId((int)$fileInput);
+			$mounts = $this->userMountCache->getMountsForFileId((int) $fileInput);
 			if (!$mounts) {
 				return null;
 			}
 			$mount = $mounts[0];
 			$userFolder = $this->rootFolder->getUserFolder($mount->getUser()->getUID());
-			return $userFolder->getFirstNodeById((int)$fileInput);
+			return $userFolder->getFirstNodeById((int) $fileInput);
 		} else {
 			try {
 				return $this->rootFolder->get($fileInput);

@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'nextcloud/bruteforcesttings',
-        'pretty_version' => 'dev-stable29',
-        'version' => 'dev-stable29',
-        'reference' => '2a7f9e4df5c06fc7b94ac3bd868730c363f84e52',
+        'pretty_version' => 'dev-stable30',
+        'version' => 'dev-stable30',
+        'reference' => '7048fb929fa42a7ea6cacb3ca308a619667ba7b4',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'nextcloud/bruteforcesttings' => array(
-            'pretty_version' => 'dev-stable29',
-            'version' => 'dev-stable29',
-            'reference' => '2a7f9e4df5c06fc7b94ac3bd868730c363f84e52',
+            'pretty_version' => 'dev-stable30',
+            'version' => 'dev-stable30',
+            'reference' => '7048fb929fa42a7ea6cacb3ca308a619667ba7b4',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

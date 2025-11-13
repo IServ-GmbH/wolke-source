@@ -1,11 +1,12 @@
 diff --git apps/files_sharing/lib/Controller/ExternalSharesController.php apps/files_sharing/lib/Controller/ExternalSharesController.php
-index d62df7a..0bc4430 100644
+index be7764f..fa828a9 100644
 --- apps/files_sharing/lib/Controller/ExternalSharesController.php
 +++ apps/files_sharing/lib/Controller/ExternalSharesController.php
-@@ -26,10 +26,7 @@
- namespace OCA\Files_Sharing\Controller;
+@@ -9,11 +9,7 @@ namespace OCA\Files_Sharing\Controller;
  
  use OCP\AppFramework\Controller;
+ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+-use OCP\AppFramework\Http\Attribute\PublicPage;
 -use OCP\AppFramework\Http\DataResponse;
  use OCP\AppFramework\Http\JSONResponse;
 -use OCP\Http\Client\IClientService;
@@ -13,7 +14,7 @@ index d62df7a..0bc4430 100644
  use OCP\IRequest;
  
  /**
-@@ -42,8 +39,6 @@ class ExternalSharesController extends Controller {
+@@ -26,8 +22,6 @@ class ExternalSharesController extends Controller {
  		string $appName,
  		IRequest $request,
  		private \OCA\Files_Sharing\External\Manager $externalManager,
@@ -22,7 +23,7 @@ index d62df7a..0bc4430 100644
  	) {
  		parent::__construct($appName, $request);
  	}
-@@ -81,64 +76,4 @@ class ExternalSharesController extends Controller {
+@@ -65,64 +59,4 @@ class ExternalSharesController extends Controller {
  		$this->externalManager->declineShare($id);
  		return new JSONResponse();
  	}
@@ -57,7 +58,6 @@ index d62df7a..0bc4430 100644
 -	}
 -
 -	/**
--	 * @PublicPage
 -	 * @NoOutgoingFederatedSharingRequired
 -	 * @NoIncomingFederatedSharingRequired
 -	 *
@@ -65,6 +65,7 @@ index d62df7a..0bc4430 100644
 -	 * @return DataResponse
 -	 * @AnonRateThrottle(limit=5, period=120)
 -	 */
+-	#[PublicPage]
 -	public function testRemote($remote) {
 -		if (preg_match('%[!#$&\'()*+,;=?@[\]]%', $remote)) {
 -			return new DataResponse(false);

@@ -41,21 +41,21 @@
 	margin: 10px 0;
 }
 
-.columns div img {
+.columns div > img {
 	height: 50px;
 	margin-top: 60px;
 	display: inline-block;
 }
 
-.columns div img:not(.account-manager-avatar) {
+.columns div > img:not(.account-manager-avatar) {
 	width: 50px;
 }
 
-.columns div img:not(.account-manager-avatar) {
+.columns div > img:not(.account-manager-avatar) {
 	filter: var(--background-invert-if-dark);
 }
 
-.columns div img.account-manager-avatar {
+.columns div > img.account-manager-avatar {
 	margin-top: 10px;
 	height: 100px;
 	border-radius: var(--border-radius-large);
@@ -130,7 +130,13 @@ ul.normal-list {
 	background-position: 5px center;
 	border: 1px solid #555;
 	border-radius: 3px;
-	padding: 3px 6px 3px 25px;
+	padding: 3px 6px;
+}
+.badge > img {
+	width: 16px;
+	height: 16px;
+	filter: var(--background-invert-if-dark);
+	margin-bottom: -3px;
 }
 
 .unsupported {

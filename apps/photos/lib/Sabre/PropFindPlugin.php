@@ -2,23 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2022 Robin Appelman <robin@icewind.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Photos\Sabre;
@@ -31,9 +16,11 @@ use OCA\Photos\Sabre\Album\PublicAlbumPhoto;
 use OCA\Photos\Sabre\Place\PlacePhoto;
 use OCA\Photos\Sabre\Place\PlaceRoot;
 use OCP\Files\DavUtil;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IPreview;
+use OCP\IUserSession;
 use Sabre\DAV\INode;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\PropPatch;
@@ -52,6 +39,7 @@ class PropFindPlugin extends ServerPlugin {
 	public const NBITEMS_PROPERTYNAME = '{http://nextcloud.org/ns}nbItems';
 	public const COLLABORATORS_PROPERTYNAME = '{http://nextcloud.org/ns}collaborators';
 	public const PERMISSIONS_PROPERTYNAME = '{http://owncloud.org/ns}permissions';
+	public const PHOTOS_COLLECTION_FILE_ORIGINAL_FILENAME_PROPERTYNAME = '{http://nextcloud.org/ns}photos-collection-file-original-filename';
 
 	private IPreview $previewManager;
 	private ?Tree $tree;
@@ -61,6 +49,8 @@ class PropFindPlugin extends ServerPlugin {
 		IPreview $previewManager,
 		AlbumMapper $albumMapper,
 		private IFilesMetadataManager $filesMetadataManager,
+		private readonly IUserSession $userSession,
+		private readonly IRootFolder $rootFolder,
 	) {
 		$this->previewManager = $previewManager;
 		$this->albumMapper = $albumMapper;
@@ -125,6 +115,18 @@ class PropFindPlugin extends ServerPlugin {
 				return $metadata->hasKey('files-live-photo') && $node->getFileInfo()->getMimetype() === 'video/quicktime' ? 'true' : 'false';
 			});
 
+			$propFind->handle(self::PHOTOS_COLLECTION_FILE_ORIGINAL_FILENAME_PROPERTYNAME, function () use ($node) {
+				if (!($node instanceof AlbumPhoto)) {
+					return;
+				}
+
+				$currentUser = $this->userSession->getUser();
+				$fileOwner = $node->getFileInfo()->getOwner();
+				if ($currentUser !== null && $currentUser === $fileOwner) {
+					$userFolder = $this->rootFolder->getUserFolder($currentUser->getUID());
+					return $userFolder->getRelativePath($node->getFileInfo()->getPath());
+				}
+			});
 		}
 
 		if ($node instanceof AlbumRoot) {

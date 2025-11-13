@@ -1,48 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Ashod Nakashian <ashod.nakashian@collabora.co.uk>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Florin Peter <github@florin-peter.de>
- * @author Jesús Macias <jmacias@solidgear.es>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author karakayasemi <karakayasemi@itu.edu.tr>
- * @author Klaas Freitag <freitag@owncloud.com>
- * @author korelstar <korelstar@users.noreply.github.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Luke Policinski <lpolicinski@gmail.com>
- * @author Michael Gapczynski <GapczynskiM@gmail.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Piotr Filiciak <piotr@filiciak.pl>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sam Tuke <mail@samtuke.com>
- * @author Scott Dutton <exussum12@users.noreply.github.com>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Files;
 
@@ -262,7 +223,7 @@ class View {
 			$relPath = '/' . $pathParts[3];
 			$this->lockFile($relPath, ILockingProvider::LOCK_SHARED, true);
 			\OC_Hook::emit(
-				Filesystem::CLASSNAME, "umount",
+				Filesystem::CLASSNAME, 'umount',
 				[Filesystem::signal_param_path => $relPath]
 			);
 			$this->changeLock($relPath, ILockingProvider::LOCK_EXCLUSIVE, true);
@@ -270,7 +231,7 @@ class View {
 			$this->changeLock($relPath, ILockingProvider::LOCK_SHARED, true);
 			if ($result) {
 				\OC_Hook::emit(
-					Filesystem::CLASSNAME, "post_umount",
+					Filesystem::CLASSNAME, 'post_umount',
 					[Filesystem::signal_param_path => $relPath]
 				);
 			}
@@ -747,7 +708,7 @@ class View {
 		$absolutePath2 = Filesystem::normalizePath($this->getAbsolutePath($target));
 
 		if (str_starts_with($absolutePath2, $absolutePath1 . '/')) {
-			throw new ForbiddenException("Moving a folder into a child folder is forbidden", false);
+			throw new ForbiddenException('Moving a folder into a child folder is forbidden', false);
 		}
 
 		/** @var IMountManager $mountManager */
@@ -766,6 +727,12 @@ class View {
 			$exists = $this->file_exists($target);
 
 			if ($source == null || $target == null) {
+				return false;
+			}
+
+			try {
+				$this->verifyPath(dirname($target), basename($target));
+			} catch (InvalidPathException) {
 				return false;
 			}
 
@@ -792,8 +759,6 @@ class View {
 					}
 				}
 				if ($run) {
-					$this->verifyPath(dirname($target), basename($target));
-
 					$manager = Filesystem::getMountManager();
 					$mount1 = $this->getMount($source);
 					$mount2 = $this->getMount($target);
@@ -970,7 +935,7 @@ class View {
 
 			try {
 				$exists = $this->file_exists($target);
-				if ($this->shouldEmitHooks()) {
+				if ($this->shouldEmitHooks($target)) {
 					\OC_Hook::emit(
 						Filesystem::CLASSNAME,
 						Filesystem::signal_copy,
@@ -1010,7 +975,7 @@ class View {
 					$this->changeLock($target, ILockingProvider::LOCK_SHARED);
 					$lockTypePath2 = ILockingProvider::LOCK_SHARED;
 
-					if ($this->shouldEmitHooks() && $result !== false) {
+					if ($this->shouldEmitHooks($target) && $result !== false) {
 						\OC_Hook::emit(
 							Filesystem::CLASSNAME,
 							Filesystem::signal_post_copy,
@@ -1261,7 +1226,7 @@ class View {
 					$this->writeUpdate($storage, $internalPath, null, $isCreateOperation ? $sizeDifference : null);
 				}
 				if ($result !== false && in_array('touch', $hooks)) {
-					$this->writeUpdate($storage, $internalPath, $extraParam);
+					$this->writeUpdate($storage, $internalPath, $extraParam, 0);
 				}
 
 				if ((in_array('write', $hooks) || in_array('delete', $hooks)) && ($operation !== 'fopen' || $result === false)) {
@@ -1438,7 +1403,7 @@ class View {
 	 *
 	 * @param string $path
 	 * @param bool|string $includeMountPoints true to add mountpoint sizes,
-	 * 'ext' to add only ext storage mount point sizes. Defaults to true.
+	 *                                        'ext' to add only ext storage mount point sizes. Defaults to true.
 	 * @return \OC\Files\FileInfo|false False if file does not exist
 	 */
 	public function getFileInfo($path, $includeMountPoints = true) {
@@ -1834,7 +1799,7 @@ class View {
 	 * @throws NotFoundException
 	 */
 	public function getPath($id, ?int $storageId = null) {
-		$id = (int)$id;
+		$id = (int) $id;
 		$manager = Filesystem::getMountManager();
 		$mounts = $manager->findIn($this->fakeRoot);
 		$mounts[] = $manager->find($this->fakeRoot);
@@ -1951,22 +1916,39 @@ class View {
 	/**
 	 * @param string $path
 	 * @param string $fileName
+	 * @param bool $readonly Check only if the path is allowed for read-only access
 	 * @throws InvalidPathException
 	 */
-	public function verifyPath($path, $fileName): void {
+	public function verifyPath($path, $fileName, $readonly = false): void {
+		// All of the view's functions disallow '..' in the path so we can short cut if the path is invalid
+		if (!Filesystem::isValidPath($path ?: '/')) {
+			$l = \OCP\Util::getL10N('lib');
+			throw new InvalidPathException($l->t('Path contains invalid segments'));
+		}
+
+		// Short cut for read-only validation
+		if ($readonly) {
+			$validator = \OCP\Server::get(FilenameValidator::class);
+			if ($validator->isForbidden($fileName)) {
+				$l = \OCP\Util::getL10N('lib');
+				throw new InvalidPathException($l->t('Filename is a reserved word'));
+			}
+			return;
+		}
+
 		try {
 			/** @type \OCP\Files\Storage $storage */
 			[$storage, $internalPath] = $this->resolvePath($path);
 			$storage->verifyPath($internalPath, $fileName);
 		} catch (ReservedWordException $ex) {
 			$l = \OCP\Util::getL10N('lib');
-			throw new InvalidPathException($l->t('File name is a reserved word'));
+			throw new InvalidPathException($ex->getMessage() ?: $l->t('Filename is a reserved word'));
 		} catch (InvalidCharacterInPathException $ex) {
 			$l = \OCP\Util::getL10N('lib');
-			throw new InvalidPathException($l->t('File name contains at least one invalid character'));
+			throw new InvalidPathException($ex->getMessage() ?: $l->t('Filename contains at least one invalid character'));
 		} catch (FileNameTooLongException $ex) {
 			$l = \OCP\Util::getL10N('lib');
-			throw new InvalidPathException($l->t('File name is too long'));
+			throw new InvalidPathException($l->t('Filename is too long'));
 		} catch (InvalidDirectoryException $ex) {
 			$l = \OCP\Util::getL10N('lib');
 			throw new InvalidPathException($l->t('Dot files are not allowed'));
@@ -2008,7 +1990,7 @@ class View {
 	 *
 	 * @param string $absolutePath absolute path
 	 * @param bool $useParentMount true to return parent mount instead of whatever
-	 * is mounted directly on the given path, false otherwise
+	 *                             is mounted directly on the given path, false otherwise
 	 * @return IMountPoint mount point for which to apply locks
 	 */
 	private function getMountForLock(string $absolutePath, bool $useParentMount = false): IMountPoint {
@@ -2214,7 +2196,7 @@ class View {
 	 * @param string $absolutePath absolute path which is under "files"
 	 *
 	 * @return string path relative to "files" with trimmed slashes or null
-	 * if the path was NOT relative to files
+	 *                if the path was NOT relative to files
 	 *
 	 * @throws \InvalidArgumentException if the given path was not under "files"
 	 * @since 8.1.0

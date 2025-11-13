@@ -1,35 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Hansson <daniel@techandme.se>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Stefan Weil <sw@weilnetz.de>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Files_Sharing\External;
@@ -274,10 +248,10 @@ class Manager {
 		$validShare = is_array($share) && isset($share['share_type']) && isset($share['user']);
 
 		// check if the user is allowed to access it
-		if ($validShare && (int)$share['share_type'] === IShare::TYPE_USER && $share['user'] === $this->uid) {
+		if ($validShare && (int) $share['share_type'] === IShare::TYPE_USER && $share['user'] === $this->uid) {
 			return $share;
-		} elseif ($validShare && (int)$share['share_type'] === IShare::TYPE_GROUP) {
-			$parentId = (int)$share['parent'];
+		} elseif ($validShare && (int) $share['share_type'] === IShare::TYPE_GROUP) {
+			$parentId = (int) $share['parent'];
 			if ($parentId !== -1) {
 				// we just retrieved a sub-share, switch to the parent entry for verification
 				$groupShare = $this->fetchShare($parentId);
@@ -325,7 +299,7 @@ class Manager {
 			$hash = md5($mountPoint);
 			$userShareAccepted = false;
 
-			if ((int)$share['share_type'] === IShare::TYPE_USER) {
+			if ((int) $share['share_type'] === IShare::TYPE_USER) {
 				$acceptShare = $this->connection->prepare('
 				UPDATE `*PREFIX*share_external`
 				SET `accepted` = ?,
@@ -334,7 +308,7 @@ class Manager {
 				WHERE `id` = ? AND `user` = ?');
 				$userShareAccepted = $acceptShare->execute([1, $mountPoint, $hash, $id, $this->uid]);
 			} else {
-				$parentId = (int)$share['parent'];
+				$parentId = (int) $share['parent'];
 				if ($parentId !== -1) {
 					// this is the sub-share
 					$subshare = $share;
@@ -401,7 +375,7 @@ class Manager {
 		$share = $this->getShare($id);
 		$result = false;
 
-		if ($share && (int)$share['share_type'] === IShare::TYPE_USER) {
+		if ($share && (int) $share['share_type'] === IShare::TYPE_USER) {
 			$removeShare = $this->connection->prepare('
 				DELETE FROM `*PREFIX*share_external` WHERE `id` = ? AND `user` = ?');
 			$removeShare->execute([$id, $this->uid]);
@@ -409,8 +383,8 @@ class Manager {
 
 			$this->processNotification($id);
 			$result = true;
-		} elseif ($share && (int)$share['share_type'] === IShare::TYPE_GROUP) {
-			$parentId = (int)$share['parent'];
+		} elseif ($share && (int) $share['share_type'] === IShare::TYPE_GROUP) {
+			$parentId = (int) $share['parent'];
 			if ($parentId !== -1) {
 				// this is the sub-share
 				$subshare = $share;
@@ -420,7 +394,7 @@ class Manager {
 
 			if ($subshare !== null) {
 				try {
-					$this->updateAccepted((int)$subshare['id'], false);
+					$this->updateAccepted((int) $subshare['id'], false);
 					$result = true;
 				} catch (Exception $e) {
 					$this->logger->emergency('Could not update share', ['exception' => $e]);
@@ -457,7 +431,7 @@ class Manager {
 		$filter = $this->notificationManager->createNotification();
 		$filter->setApp('files_sharing')
 			->setUser($this->uid)
-			->setObject('remote_share', (string)$remoteShare);
+			->setObject('remote_share', (string) $remoteShare);
 		$this->notificationManager->markProcessed($filter);
 	}
 
@@ -598,7 +572,7 @@ class Manager {
 			WHERE `mountpoint_hash` = ?
 			AND `user` = ?
 		');
-		$result = (bool)$query->execute([$target, $targetHash, $sourceHash, $this->uid]);
+		$result = (bool) $query->execute([$target, $targetHash, $sourceHash, $this->uid]);
 
 		$this->eventDispatcher->dispatchTyped(new Files\Events\InvalidateMountCacheEvent($this->userManager->get($this->uid)));
 
@@ -629,7 +603,7 @@ class Manager {
 			$result = $getShare->execute([$hash, $this->uid]);
 			$share = $result->fetch();
 			$result->closeCursor();
-			if ($share !== false && (int)$share['share_type'] === IShare::TYPE_USER) {
+			if ($share !== false && (int) $share['share_type'] === IShare::TYPE_USER) {
 				try {
 					$this->sendFeedbackToRemote($share['remote'], $share['share_token'], $share['remote_id'], 'decline');
 				} catch (\Throwable $e) {
@@ -641,10 +615,10 @@ class Manager {
 					DELETE FROM `*PREFIX*share_external`
 					WHERE `id` = ?
 				');
-				$deleteResult = $query->execute([(int)$share['id']]);
+				$deleteResult = $query->execute([(int) $share['id']]);
 				$deleteResult->closeCursor();
-			} elseif ($share !== false && (int)$share['share_type'] === IShare::TYPE_GROUP) {
-				$this->updateAccepted((int)$share['id'], false);
+			} elseif ($share !== false && (int) $share['share_type'] === IShare::TYPE_GROUP) {
+				$this->updateAccepted((int) $share['id'], false);
 			}
 
 			$this->removeReShares($id);
@@ -739,12 +713,12 @@ class Manager {
 			$qb = $this->connection->getQueryBuilder();
 			// delete group share entry and matching sub-entries
 			$qb->delete('share_external')
-			   ->where(
-			   	$qb->expr()->orX(
-			   		$qb->expr()->eq('id', $qb->createParameter('share_id')),
-			   		$qb->expr()->eq('parent', $qb->createParameter('share_parent_id'))
-			   	)
-			   );
+				->where(
+					$qb->expr()->orX(
+						$qb->expr()->eq('id', $qb->createParameter('share_id')),
+						$qb->expr()->eq('parent', $qb->createParameter('share_parent_id'))
+					)
+				);
 
 			foreach ($shares as $share) {
 				$qb->setParameter('share_id', $share['id']);
@@ -815,7 +789,7 @@ class Manager {
 			// remove parent group share entry if we have a specific user share entry for the user
 			$toRemove = [];
 			foreach ($shares as $share) {
-				if ((int)$share['share_type'] === IShare::TYPE_GROUP && (int)$share['parent'] > 0) {
+				if ((int) $share['share_type'] === IShare::TYPE_GROUP && (int) $share['parent'] > 0) {
 					$toRemove[] = $share['parent'];
 				}
 			}
@@ -825,10 +799,9 @@ class Manager {
 
 			if (!is_null($accepted)) {
 				$shares = array_filter($shares, function ($share) use ($accepted) {
-					return (bool)$share['accepted'] === $accepted;
+					return (bool) $share['accepted'] === $accepted;
 				});
 			}
-
 			return array_values($shares);
 		} catch (\Doctrine\DBAL\Exception $e) {
 			$this->logger->emergency('Error when retrieving shares', ['exception' => $e]);

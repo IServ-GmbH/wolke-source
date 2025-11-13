@@ -30,12 +30,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SystemReport extends Command {
-	private DetailManager $detailManager;
-
-	public function __construct(DetailManager $detailManager) {
+	public function __construct(
+		protected readonly DetailManager $detailManager,
+	) {
 		parent::__construct();
-
-		$this->detailManager = $detailManager;
 	}
 
 	protected function configure(): void {

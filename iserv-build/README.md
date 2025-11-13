@@ -37,14 +37,14 @@ If you are on an architecture other than linux/x86_64, the image ID comparison i
 
 ### In CI
 
-* Simply push your changes and wait for the pipeline to finish.  
-* The image will be built and pushed to the IServ Docker registry, tagged with your last commit SHA.  
-* Run `download_image.sh` to download the image tagged with the current commit SHA from the IServ Docker registry.  
+* Simply push your changes and wait for the pipeline to finish.
+* The image will be built and pushed to the IServ Docker registry, tagged with your last commit SHA.
+* Run `download_image.sh` to download the image tagged with the current commit SHA from the IServ Docker registry.
 * You can also pass a specific tag to `download_image.sh` to download a particular image version (e.g., `latest`).
 
-_To download images from the registry, you must be logged into the `git.iserv.eu` Docker registry._  
-To log in, create an [Access Token](https://git.iserv.eu/-/user_settings/personal_access_tokens) with the `read_registry` scope and run `docker login git.iserv.eu:443 -u <your.username>`  
-Enter the token as the password.  
+_To download images from the registry, you must be logged into the `git.iserv.eu` Docker registry._
+To log in, create an [Access Token](https://git.iserv.eu/-/user_settings/personal_access_tokens) with the `read_registry` and `write_registry` scope and run `docker login git.iserv.eu:443 -u <your.username>`  
+Enter the token as the password.
 (Caution: Do not log in on your VM if others might have access to your session.)
 
 ### Building on the VM
@@ -78,7 +78,7 @@ If for some reason you need to manually restart the container with a new image, 
 
 ### 1. Clone Nextcloud and apply existing patches  
 - `rm -rf ~/nextcloud-server`
-- `./docker/cloudfiles/source/clone_and_apply_patches.sh 29.0.16 ~/nextcloud-server`  
+- `./docker/cloudfiles/source/clone_and_apply_patches.sh 30.0.17 ~/nextcloud-server`  
   - arg1: Nextcloud version currently used for the image  
     - You can find the current version in the [.env](.env) file.  
   - arg2: destination path for the repo that gets temporarily checked out.
@@ -121,11 +121,13 @@ If patches need to be applied to an app that has not been patched yet, make sure
 ## Handling failed patches
 
 1. Move the affected patch file out of `./source/patches`.
-2. Run `clone_and_apply_patches.sh 29.0.16 ~/nextcloud-server` again.  
+2. Run `clone_and_apply_patches.sh 30.0.17 ~/nextcloud-server` again.  
 3. Repeat steps 1 and 2 until all remaining patches have been applied successfully.
 4. Manually apply the changes of the moved patch files to the affected files in the working copy `~/nextcloud-server`.  
 5. Check if (non-)core apps need to be upgraded.
 6. Run `extract_patches.sh ~/nextcloud-server` to regenerate the patches.
+
+> if the clone_and_apply script hangs, then it could be that the source file was removed or renamed. Look in the source code and rename/remove patch
 
 ## Running the image
 
@@ -147,3 +149,23 @@ The following files/volumes are required by this image:
 - `/ldap_pass.txt`
 
 If using `tmpfs` for the `/var/www/html` folder as mentioned earlier, the `NEXTCLOUD_DATA_DIR` environment variable must also be set to a volume-mounted persistent path.
+
+## Logging in via admin super user
+
+Configuration of Nextcloud System is done via OCC commands at the start of the container. The usual IServ-Admin should not be able to alter those settings. 
+To access the Nextcloud admin page for development, follow these steps:
+
+1. Logout from IServ or if on cloudfiles.domain logout from cloudfiles
+
+2. copy the password from
+```bash
+cat /var/lib/iserv/docker-cloudfiles/pwd/admin.pwd
+```
+
+3. Go to https://cloudfiles.mein-iserv.dev/index.php/login?direct=1
+- user: 00_admin
+- password: from the file
+
+Because of [#53856](https://redmine.iserv.eu/issues/53856) we had to rename the default admin user to 00_admin.
+
+4. Go to Account Settings Bubble -> Administratoreinstellungen

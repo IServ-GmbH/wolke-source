@@ -3,25 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\Notifications\Controller;
@@ -32,6 +16,7 @@ use OCA\Notifications\Push;
 use OCA\Notifications\ResponseDefinitions;
 use OCA\Notifications\Service\ClientService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -39,8 +24,10 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IAction;
 use OCP\Notification\IManager;
+use OCP\Notification\IncompleteParsedNotificationException;
 use OCP\Notification\INotification;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -66,9 +53,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
 	 * Get all notifications
 	 *
 	 * @param string $apiVersion Version of the API to use
@@ -77,6 +61,7 @@ class EndpointController extends OCSController {
 	 * 200: Notifications returned
 	 * 204: No app uses notifications
 	 */
+	#[NoAdminRequired]
 	public function listNotifications(string $apiVersion): DataResponse {
 		$userStatus = $this->userStatusManager->getUserStatuses([
 			$this->getCurrentUser(),
@@ -116,7 +101,8 @@ class EndpointController extends OCSController {
 			/** @var INotification $notification */
 			try {
 				$notification = $this->manager->prepare($notification, $language);
-			} catch (\InvalidArgumentException) {
+			} catch (AlreadyProcessedException|IncompleteParsedNotificationException|\InvalidArgumentException) {
+				// FIXME remove \InvalidArgumentException in Nextcloud 39
 				// The app was disabled, skip the notification
 				continue;
 			}
@@ -138,9 +124,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
-	 *
 	 * Get a notification
 	 *
 	 * @param string $apiVersion Version of the API to use
@@ -150,6 +133,7 @@ class EndpointController extends OCSController {
 	 * 200: Notification returned
 	 * 404: Notification not found
 	 */
+	#[NoAdminRequired]
 	public function getNotification(string $apiVersion, int $id): DataResponse {
 		if (!$this->manager->hasNotifiers()) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -170,7 +154,8 @@ class EndpointController extends OCSController {
 
 		try {
 			$notification = $this->manager->prepare($notification, $language);
-		} catch (\InvalidArgumentException $e) {
+		} catch (AlreadyProcessedException|IncompleteParsedNotificationException|\InvalidArgumentException) {
+			// FIXME remove \InvalidArgumentException in Nextcloud 39
 			// The app was disabled
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
 		}
@@ -187,8 +172,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Check if notification IDs exist
 	 *
 	 * @param string $apiVersion Version of the API to use
@@ -198,6 +181,7 @@ class EndpointController extends OCSController {
 	 * 200: Existing notification IDs returned
 	 * 400: Too many notification IDs requested
 	 */
+	#[NoAdminRequired]
 	public function confirmIdsForUser(string $apiVersion, array $ids): DataResponse {
 		if (!$this->manager->hasNotifiers()) {
 			return new DataResponse([], Http::STATUS_OK);
@@ -221,8 +205,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Delete a notification
 	 *
 	 * @param int $id ID of the notification
@@ -232,6 +214,7 @@ class EndpointController extends OCSController {
 	 * 403: Deleting notification for impersonated user is not allowed
 	 * 404: Notification not found
 	 */
+	#[NoAdminRequired]
 	public function deleteNotification(int $id): DataResponse {
 		if ($id === 0) {
 			return new DataResponse(null, Http::STATUS_NOT_FOUND);
@@ -255,8 +238,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Delete all notifications
 	 *
 	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_FORBIDDEN, null, array{}>
@@ -264,6 +245,7 @@ class EndpointController extends OCSController {
 	 * 200: All notifications deleted successfully
 	 * 403: Deleting notification for impersonated user is not allowed
 	 */
+	#[NoAdminRequired]
 	public function deleteAllNotifications(): DataResponse {
 		if ($this->session->getImpersonatingUserID() !== null) {
 			return new DataResponse(null, Http::STATUS_FORBIDDEN);
@@ -286,7 +268,6 @@ class EndpointController extends OCSController {
 	/**
 	 * Get an ETag for the notification ids
 	 *
-	 * @param array $notifications
 	 * @return string
 	 */
 	protected function generateETag(array $notifications): string {
@@ -294,10 +275,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @param int $notificationId
-	 * @param INotification $notification
-	 * @param string $apiVersion
-	 * @param bool $hasActiveTalkDesktop
 	 * @return NotificationsNotification
 	 */
 	protected function notificationToArray(int $notificationId, INotification $notification, string $apiVersion, bool $hasActiveTalkDesktop = false): array {
@@ -339,7 +316,6 @@ class EndpointController extends OCSController {
 	}
 
 	/**
-	 * @param IAction $action
 	 * @return NotificationsNotificationAction
 	 */
 	protected function actionToArray(IAction $action): array {
@@ -351,9 +327,6 @@ class EndpointController extends OCSController {
 		];
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getCurrentUser(): string {
 		$user = $this->session->getUser();
 		if ($user instanceof IUser) {

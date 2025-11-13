@@ -2,7 +2,7 @@ OC.L10N.register(
     "privacy",
     {
     "Privacy" : "Privacidade",
-    "-" : "–",
+    "-" : "—",
     "The privacy center shows you where your data is stored and who can access it, either because you shared with them or because they are administrators." : "O centro de privacidade amósalle onde están almacenados os seus datos e quen pode acceder a eles, ben porque compartiu con eles ou porque son administradores.",
     "Error loading additional administrator." : "Produciuse un erro ao cargar un administrador adicional.",
     "Error adding new administrator." : "Produciuse un erro ao engadir un novo administrador.",
@@ -32,7 +32,7 @@ OC.L10N.register(
     "Error loading information about shares." : "Produciuse un erro ao cargar a información sobre as comparticións.",
     "People you've shared with" : "Persoas coas que compartiu",
     "Loading people you've shared with …" : "Cargando as persoas coas que compartíu…",
-    "You do not have any shares with individual users." : "Vde. non te ningunha compartición con usuarios individuais.",
+    "You do not have any shares with individual users." : "Vde. non ten ningunha compartición con usuarios individuais.",
     "Who has access to your data?" : "Quen ten acceso aos seus datos?",
     "Error saving new location of the server" : "Produciuse un erro ao gardar a nova localización do servidor",
     "Where is your data?" : "Onde están os seus datos?",

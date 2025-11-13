@@ -4,31 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @author Vinicius Cubas Brand <vinicius@eita.org.br>
- * @author Daniel Tygel <dtygel@eita.org.br>
- *
- * @copyright 2017
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -232,9 +209,11 @@ class ShareByCircleProvider implements IShareProvider {
 			->setShareOwner($share->getShareOwner())
 			->setAttributes($share->getAttributes())
 			->setSharedBy($share->getSharedBy())
-			->setExpirationDate($share->getExpirationDate());
+			->setExpirationDate($share->getExpirationDate())
+			->setShareNote($share->getNote());
 
 		$this->shareWrapperService->update($wrappedShare);
+		$this->shareWrapperService->updateChildPermissions($wrappedShare);
 
 		return $wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
 	}
@@ -766,6 +745,9 @@ class ShareByCircleProvider implements IShareProvider {
 		$users = $mails = [];
 		$remote = false;
 		foreach ($this->shareWrapperService->getSharesByFileIds($ids, true) as $share) {
+			if (!$share->hasCircle()) {
+				continue;
+			}
 			$circle = $share->getCircle();
 			foreach ($circle->getInheritedMembers() as $member) {
 				switch ($member->getUserType()) {

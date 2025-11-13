@@ -44,12 +44,11 @@
     "Automatically accept shares from trusted federated accounts and groups by default" : "يتم آليّاً قبول المشاركات من حسابات ومجموعات الاتحادات الموثوقة بشكل تلقائي ",
     "Share with me through my #Nextcloud Federated Cloud ID, see {url}" : "شارك معي عبر #مُعرّف سحابة نكست كلاود الاتحادية، أنظُر {url} ",
     "Share with me through my #Nextcloud Federated Cloud ID" : "شارك معي عبر #مُعرّف سحابة نكست كلاود الاتحادية",
-    "Cloud ID copied to the clipboard" : "تمّ نسخ مُعرِّف السحابة إلى الحافظة",
-    "Copy to clipboard" : "نسخ الرابط",
+    "Share with me via Nextcloud" : "شاركه معي عبر النكست كلاود",
+    "Copy" : "إنسَخ",
     "Clipboard not available. Please copy the cloud ID manually." : "الحافظة غير متوفرة. رجاءً، قم بنسخ مُعرِّف السحابة يدوياً.",
     "Copied!" : "تمَّ النسخ!",
     "Federated Cloud" : "السحابة الاتحادية",
-    "You can share with anyone who uses a Nextcloud server or other Open Cloud Mesh (OCM) compatible servers and services! Just put their Federated Cloud ID in the share dialog. It looks like person@cloud.example.com" : "يُمكنك المشاركة مع أي شخص يستخدم خادم نكست كلاود أو خوادم وخدمات أخرى متوافقة مع بروتوكول Open Cloud Mesh (OCM)! فقط ضع مُعرّف السحابة الاتحادية في مربع حوار المُشاركة؛ و الذي سيكون شكله على هذا النسق: person@cloud.example.com",
     "Your Federated Cloud ID" : "مُعرِّف شبكتك الاتحادية",
     "Share it so your friends can share files with you:" : "شاركه مع أصدقائك بحيث يمكنهم مُشاركة الملفات معك:",
     "Facebook" : "فيسبوك",
@@ -57,7 +56,6 @@
     "formerly Twitter" : "تويتر سابقاً",
     "Mastodon" : "برنامج ماستودون Mastodon",
     "Add to your website" : "أضِف إلى موقعك على الويب",
-    "Share with me via Nextcloud" : "شاركه معي عبر النكست كلاود",
     "HTML Code:" : "كود HTML: ",
     "Cancel" : "إلغاء",
     "Add remote share" : "إضافة مشاركة بعيدة remote",
@@ -65,9 +63,8 @@
     "Do you want to add the remote share {name} from {owner}@{remote}?" : "هل ترغب في إضافة مُشاركة بعيدة remote ـ {name} من {owner}@{remote}؟",
     "Remote share password" : "كلمة مرور المشاركة البعيدة remote",
     "Incoming share could not be processed" : "لا يمكن معالجة المشاركة الواردة",
-    "Clipboard is not available" : "الحافظة غير متوفرة",
-    "Your Federated Cloud ID:" : "معرف السحابة الاتحادية خاصّتُك:",
-    "Twitter" : "تويتر",
-    "Diaspora" : "دياسبورا"
+    "Cloud ID copied to the clipboard" : "تمّ نسخ مُعرِّف السحابة إلى الحافظة",
+    "Copy to clipboard" : "نسخ الرابط",
+    "You can share with anyone who uses a Nextcloud server or other Open Cloud Mesh (OCM) compatible servers and services! Just put their Federated Cloud ID in the share dialog. It looks like person@cloud.example.com" : "يُمكنك المشاركة مع أي شخص يستخدم خادم نكست كلاود أو خوادم وخدمات أخرى متوافقة مع بروتوكول Open Cloud Mesh (OCM)! فقط ضع مُعرّف السحابة الاتحادية في مربع حوار المُشاركة؛ و الذي سيكون شكله على هذا النسق: person@cloud.example.com"
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }

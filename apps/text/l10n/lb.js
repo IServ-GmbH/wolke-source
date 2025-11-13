@@ -8,11 +8,13 @@ OC.L10N.register(
     "guest" : "Gaascht",
     "Saved" : "Gespäichert",
     "Save changes" : "Ännerunge späicheren",
+    "Cancel" : "Cancel",
     "URL" : "URL",
     "to" : "bis",
     "Upload" : "Eroplueden",
     "Edit" : "Änneren",
     "Details" : "Detailer",
+    "Choose" : "Auswielen",
     "Info" : "Info",
     "Warning" : "Warnung"
 },

@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2023 Anna Larch <anna.larch@gmx.net>
- *
- * @author Anna Larch <anna.larch@gmx.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\CalDAV\Status;
 
@@ -56,23 +39,23 @@ class StatusService {
 
 	public function processCalendarStatus(string $userId): void {
 		$user = $this->userManager->get($userId);
-		if($user === null) {
+		if ($user === null) {
 			return;
 		}
 
 		$availability = $this->availabilityCoordinator->getCurrentOutOfOfficeData($user);
-		if($availability !== null && $this->availabilityCoordinator->isInEffect($availability)) {
+		if ($availability !== null && $this->availabilityCoordinator->isInEffect($availability)) {
 			$this->logger->debug('An Absence is in effect, skipping calendar status check', ['user' => $userId]);
 			return;
 		}
 
 		$calendarEvents = $this->cache->get($userId);
-		if($calendarEvents === null) {
+		if ($calendarEvents === null) {
 			$calendarEvents = $this->getCalendarEvents($user);
 			$this->cache->set($userId, $calendarEvents, 300);
 		}
 
-		if(empty($calendarEvents)) {
+		if (empty($calendarEvents)) {
 			try {
 				$this->userStatusService->revertUserStatus($userId, IUserStatus::MESSAGE_CALENDAR_BUSY);
 			} catch (Exception $e) {
@@ -98,7 +81,7 @@ class StatusService {
 			$currentStatus = null;
 		}
 
-		if(($currentStatus !== null && $currentStatus->getMessageId() === IUserStatus::MESSAGE_CALL)
+		if (($currentStatus !== null && $currentStatus->getMessageId() === IUserStatus::MESSAGE_CALL)
 			|| ($currentStatus !== null && $currentStatus->getStatus() === IUserStatus::DND)
 			|| ($currentStatus !== null && $currentStatus->getStatus() === IUserStatus::INVISIBLE)) {
 			// We don't overwrite the call status, DND status or Invisible status
@@ -118,7 +101,7 @@ class StatusService {
 			if (isset($component['DTSTART']) && $userStatusTimestamp !== null) {
 				/** @var DateTimeImmutable $dateTime */
 				$dateTime = $component['DTSTART'][0];
-				if($dateTime instanceof DateTimeImmutable && $userStatusTimestamp > $dateTime->getTimestamp()) {
+				if ($dateTime instanceof DateTimeImmutable && $userStatusTimestamp > $dateTime->getTimestamp()) {
 					return false;
 				}
 			}
@@ -129,7 +112,7 @@ class StatusService {
 			return true;
 		});
 
-		if(empty($applicableEvents)) {
+		if (empty($applicableEvents)) {
 			try {
 				$this->userStatusService->revertUserStatus($userId, IUserStatus::MESSAGE_CALENDAR_BUSY);
 			} catch (Exception $e) {
@@ -147,7 +130,7 @@ class StatusService {
 		}
 
 		// Only update the status if it's neccesary otherwise we mess up the timestamp
-		if($currentStatus === null || $currentStatus->getMessageId() !== IUserStatus::MESSAGE_CALENDAR_BUSY) {
+		if ($currentStatus === null || $currentStatus->getMessageId() !== IUserStatus::MESSAGE_CALENDAR_BUSY) {
 			// One event that fulfills all status conditions is enough
 			// 1. Not an OOO event
 			// 2. Current user status (that is not a calendar status) was not set after the start of this event
@@ -165,7 +148,7 @@ class StatusService {
 
 	private function getCalendarEvents(User $user): array {
 		$calendars = $this->calendarManager->getCalendarsForPrincipal('principals/users/' . $user->getUID());
-		if(empty($calendars)) {
+		if (empty($calendars)) {
 			return [];
 		}
 
@@ -189,7 +172,7 @@ class StatusService {
 		$dtEnd = DateTimeImmutable::createFromMutable($this->timeFactory->getDateTime('+5 minutes'));
 
 		// Only query the calendars when there's any to search
-		if($query instanceof CalendarQuery && !empty($query->getCalendarUris())) {
+		if ($query instanceof CalendarQuery && !empty($query->getCalendarUris())) {
 			// Query the next hour
 			$query->setTimerangeStart($dtStart);
 			$query->setTimerangeEnd($dtEnd);

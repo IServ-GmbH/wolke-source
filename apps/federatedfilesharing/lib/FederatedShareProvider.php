@@ -1,39 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sergej Pupykin <pupykin.s@gmail.com>
- * @author Stefan Weil <sw@weilnetz.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Valdnet <47037905+Valdnet@users.noreply.github.com>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\FederatedFileSharing;
 
@@ -301,7 +271,7 @@ class FederatedShareProvider implements IShareProvider {
 		$result = $qResult->fetchAll();
 		$qResult->closeCursor();
 
-		if (isset($result[0]) && (int)$result[0]['remote_id'] > 0) {
+		if (isset($result[0]) && (int) $result[0]['remote_id'] > 0) {
 			return $result[0];
 		}
 
@@ -359,12 +329,12 @@ class FederatedShareProvider implements IShareProvider {
 		 */
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->update('share')
-				->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
-				->set('permissions', $qb->createNamedParameter($share->getPermissions()))
-				->set('uid_owner', $qb->createNamedParameter($share->getShareOwner()))
-				->set('uid_initiator', $qb->createNamedParameter($share->getSharedBy()))
-				->set('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
-				->execute();
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
+			->set('permissions', $qb->createNamedParameter($share->getPermissions()))
+			->set('uid_owner', $qb->createNamedParameter($share->getShareOwner()))
+			->set('uid_initiator', $qb->createNamedParameter($share->getSharedBy()))
+			->set('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
+			->execute();
 
 		// send the updated permission to the owner/initiator, if they are not the same
 		if ($share->getShareOwner() !== $share->getSharedBy()) {
@@ -435,7 +405,7 @@ class FederatedShareProvider implements IShareProvider {
 	public function getRemoteId(IShare $share): string {
 		$query = $this->dbConnection->getQueryBuilder();
 		$query->select('remote_id')->from('federated_reshares')
-			->where($query->expr()->eq('share_id', $query->createNamedParameter((int)$share->getId())));
+			->where($query->expr()->eq('share_id', $query->createNamedParameter((int) $share->getId())));
 		$result = $query->execute();
 		$data = $result->fetch();
 		$result->closeCursor();
@@ -444,7 +414,7 @@ class FederatedShareProvider implements IShareProvider {
 			throw new ShareNotFound();
 		}
 
-		return (string)$data['remote_id'];
+		return (string) $data['remote_id'];
 	}
 
 	/**
@@ -578,13 +548,14 @@ class FederatedShareProvider implements IShareProvider {
 
 
 	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true) {
+		if (!$shallow) {
+			throw new \Exception('non-shallow getSharesInFolder is no longer supported');
+		}
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
 			->from('share', 's')
-			->andWhere($qb->expr()->orX(
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-			))
+			->andWhere($qb->expr()->in('item_type', $qb->createNamedParameter(['file', 'folder'], IQueryBuilder::PARAM_STR_ARRAY)))
 			->andWhere(
 				$qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_REMOTE))
 			);
@@ -605,12 +576,7 @@ class FederatedShareProvider implements IShareProvider {
 
 		$qb->innerJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'));
 
-		$qb->andWhere($qb->expr()->eq('f.storage', $qb->createNamedParameter($node->getMountPoint()->getNumericStorageId(), IQueryBuilder::PARAM_INT)));
-		if ($shallow) {
-			$qb->andWhere($qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId(), IQueryBuilder::PARAM_INT)));
-		} else {
-			$qb->andWhere($qb->expr()->like('f.path', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($node->getInternalPath()) . '/%')));
-		}
+		$qb->andWhere($qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())));
 
 		$qb->orderBy('id');
 
@@ -839,15 +805,15 @@ class FederatedShareProvider implements IShareProvider {
 	 */
 	private function createShareObject($data) {
 		$share = new Share($this->rootFolder, $this->userManager);
-		$share->setId((int)$data['id'])
-			->setShareType((int)$data['share_type'])
-			->setPermissions((int)$data['permissions'])
+		$share->setId((int) $data['id'])
+			->setShareType((int) $data['share_type'])
+			->setPermissions((int) $data['permissions'])
 			->setTarget($data['file_target'])
-			->setMailSend((bool)$data['mail_send'])
+			->setMailSend((bool) $data['mail_send'])
 			->setToken($data['token']);
 
 		$shareTime = new \DateTime();
-		$shareTime->setTimestamp((int)$data['stime']);
+		$shareTime->setTimestamp((int) $data['stime']);
 		$share->setShareTime($shareTime);
 		$share->setSharedWith($data['share_with']);
 
@@ -857,13 +823,13 @@ class FederatedShareProvider implements IShareProvider {
 		} else {
 			//OLD SHARE
 			$share->setSharedBy($data['uid_owner']);
-			$path = $this->getNode($share->getSharedBy(), (int)$data['file_source']);
+			$path = $this->getNode($share->getSharedBy(), (int) $data['file_source']);
 
 			$owner = $path->getOwner();
 			$share->setShareOwner($owner->getUID());
 		}
 
-		$share->setNodeId((int)$data['file_source']);
+		$share->setNodeId((int) $data['file_source']);
 		$share->setNodeType($data['item_type']);
 
 		$share->setProviderId($this->identifier());
@@ -1076,10 +1042,7 @@ class FederatedShareProvider implements IShareProvider {
 			->from('share')
 			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_REMOTE)))
 			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
-			->andWhere($qb->expr()->orX(
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-			));
+			->andWhere($qb->expr()->in('item_type', $qb->createNamedParameter(['file', 'folder'], IQueryBuilder::PARAM_STR_ARRAY)));
 		$cursor = $qb->execute();
 
 		if ($currentAccess === false) {
@@ -1106,12 +1069,7 @@ class FederatedShareProvider implements IShareProvider {
 
 		$qb->select('*')
 			->from('share')
-			->where(
-				$qb->expr()->orX(
-					$qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share\IShare::TYPE_REMOTE)),
-					$qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share\IShare::TYPE_REMOTE_GROUP))
-				)
-			);
+			->where($qb->expr()->in('share_type', $qb->createNamedParameter([IShare::TYPE_REMOTE, IShare::TYPE_REMOTE_GROUP], IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$cursor = $qb->execute();
 		while ($data = $cursor->fetch()) {

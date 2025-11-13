@@ -85,6 +85,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -124,6 +126,13 @@ manage a set of rule groups. Each of the rule groups consists of one or more
 rules. If all rules of a group hold true, the group matches the request and
 access is being denied. The rules criteria range from IP address, to user
 groups, collaborative tags and <a class="reference internal" href="#available-rules-label"><span class="std std-ref">some more</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In case you are using the <a class="reference internal" href="../ai/app_context_chat.html#ai-app-context-chat"><span class="std std-ref">Context Chat App</span></a>,
+please keep in mind, that it is not affected by the File Access Control rules
+and will respond with indexed information, even when the file is not accessible
+by the user due to access control rules.</p>
+</div>
 <section id="denied-access">
 <h2>Denied access<a class="headerlink" href="#denied-access" title="Link to this heading"></a></h2>
 <p>If access to a file has been denied for a user, the user can not:</p>
@@ -157,7 +166,7 @@ either the file itself or one of the parents needs to have the given tag
 assigned.</p>
 <p>So you just need to assign the tag to the folder or file, and then block the
 tag with a rule group. The check is independent of the user’s permissions for
-the tag. Therefor restricted and invisible tags are recommended, otherwise a
+the tag. Therefore restricted and invisible tags are recommended, otherwise a
 user could remove and reassign the tag.</p>
 <p>This example blocks access to any folder with the tag <code class="docutils literal notranslate"><span class="pre">Confidential</span></code>.</p>
 <blockquote>
@@ -188,7 +197,7 @@ expression: <code class="docutils literal notranslate"><span class="pre">/^appli
 <p>When trying to deny access to a group of users, make sure that sharing does not
 allow them to create a way back in. When users are able to create a public link,
 the users can log themselves out and visit their own public link to access the
-files. Since at this point they are no user and therefor no member of the
+files. Since at this point they are no user and therefore no member of the
 blocked group, they will be able to read and change the file.</p>
 <p>The recommended work around is to create the same rule again, and deny access
 for all users that are <code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">member</span> <span class="pre">of</span></code> a group, that contains all users of
@@ -198,7 +207,7 @@ your installation.</p>
 <h3>External storage<a class="headerlink" href="#external-storage" title="Link to this heading"></a></h3>
 <p>While access to files in external storages is not possible via Nextcloud, users
 that have direct access to the external storage, can of course change files
-there directly. Therefor it is recommended to disable the <code class="docutils literal notranslate"><span class="pre">Allow</span> <span class="pre">users</span> <span class="pre">to</span> <span class="pre">mount</span>
+there directly. Therefore it is recommended to disable the <code class="docutils literal notranslate"><span class="pre">Allow</span> <span class="pre">users</span> <span class="pre">to</span> <span class="pre">mount</span>
 <span class="pre">external</span> <span class="pre">storage</span></code> option, when trying to to completely lock out users.</p>
 </section>
 </section>
@@ -259,40 +268,49 @@ options.</p></li>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

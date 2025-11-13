@@ -3,26 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2020, Julien Veyssier
- *
- * @author Julien Veyssier <eneiluj@posteo.net>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\WeatherStatus\Service;
 
@@ -275,12 +257,19 @@ class WeatherStatusService {
 		];
 		$url = 'https://nominatim.openstreetmap.org/search';
 		$results = $this->requestJSON($url, $params);
-		if ($results['error'] !== null) {
-			return $results;
+
+		if (isset($results['error'])) {
+			return ['error' => (string) $results['error']];
 		}
-		if (count($results) > 0) {
-			return $results[0];
+
+		if (count($results) > 0 && is_array($results[0])) {
+			return [
+				'display_name' => (string) ($results[0]['display_name'] ?? null),
+				'lat' => (string) ($results[0]['lat'] ?? null),
+				'lon' => (string) ($results[0]['lon'] ?? null),
+			];
 		}
+
 		return ['error' => $this->l10n->t('No result.')];
 	}
 

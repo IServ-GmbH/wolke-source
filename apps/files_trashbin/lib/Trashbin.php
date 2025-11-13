@@ -1,46 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Bastien Ho <bastienho@urbancube.fr>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Florin Peter <github@florin-peter.de>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Juan Pablo Villafáñez <jvillafanez@solidgear.es>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lars Knickrehm <mail@lars-sh.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Qingping Hou <dave2008713@gmail.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sjors van der Pluijm <sjors@desjors.nl>
- * @author Steven Bühner <buehner@me.com>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Victor Dubiniuk <dubiniuk@owncloud.com>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Trashbin;
 
@@ -67,10 +30,13 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\Storage\ILockingStorage;
+use OCP\Files\Storage\IStorage;
 use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class Trashbin {
@@ -126,24 +92,23 @@ class Trashbin {
 	}
 
 	/**
-	 * get original location of files for user
+	 * get original location and deleted by of files for user
 	 *
 	 * @param string $user
-	 * @return array (filename => array (timestamp => original location))
+	 * @return array<string, array<string, array{location: string, deletedBy: string}>>
 	 */
-	public static function getLocations($user) {
+	public static function getExtraData($user) {
 		$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
-		$query->select('id', 'timestamp', 'location')
+		$query->select('id', 'timestamp', 'location', 'deleted_by')
 			->from('files_trash')
 			->where($query->expr()->eq('user', $query->createNamedParameter($user)));
 		$result = $query->executeQuery();
 		$array = [];
 		while ($row = $result->fetch()) {
-			if (isset($array[$row['id']])) {
-				$array[$row['id']][$row['timestamp']] = $row['location'];
-			} else {
-				$array[$row['id']] = [$row['timestamp'] => $row['location']];
-			}
+			$array[$row['id']][$row['timestamp']] = [
+				'location' => (string) $row['location'],
+				'deletedBy' => (string) $row['deleted_by'],
+			];
 		}
 		$result->closeCursor();
 		return $array;
@@ -228,7 +193,8 @@ class Trashbin {
 				->setValue('id', $query->createNamedParameter($targetFilename))
 				->setValue('timestamp', $query->createNamedParameter($timestamp))
 				->setValue('location', $query->createNamedParameter($targetLocation))
-				->setValue('user', $query->createNamedParameter($user));
+				->setValue('user', $query->createNamedParameter($user))
+				->setValue('deleted_by', $query->createNamedParameter($user));
 			$result = $query->executeStatement();
 			if (!$result) {
 				\OC::$server->get(LoggerInterface::class)->error('trash bin database couldn\'t be updated for the files owner', ['app' => 'files_trashbin']);
@@ -291,7 +257,7 @@ class Trashbin {
 		$gotLock = false;
 
 		do {
-			/** @var ILockingStorage & Storage $trashStorage */
+			/** @var ILockingStorage & IStorage $trashStorage */
 			[$trashStorage, $trashInternalPath] = $ownerView->resolvePath($trashPath);
 			try {
 				$trashStorage->acquireLock($trashInternalPath, ILockingProvider::LOCK_EXCLUSIVE, $lockingProvider);
@@ -355,7 +321,8 @@ class Trashbin {
 				->setValue('id', $query->createNamedParameter($filename))
 				->setValue('timestamp', $query->createNamedParameter($timestamp))
 				->setValue('location', $query->createNamedParameter($location))
-				->setValue('user', $query->createNamedParameter($owner));
+				->setValue('user', $query->createNamedParameter($owner))
+				->setValue('deleted_by', $query->createNamedParameter($user));
 			$result = $query->executeStatement();
 			if (!$result) {
 				\OC::$server->get(LoggerInterface::class)->error('trash bin database couldn\'t be updated', ['app' => 'files_trashbin']);
@@ -473,7 +440,7 @@ class Trashbin {
 	 * Restore a file or folder from trash bin
 	 *
 	 * @param string $file path to the deleted file/folder relative to "files_trashbin/files/",
-	 * including the timestamp suffix ".d12345678"
+	 *                     including the timestamp suffix ".d12345678"
 	 * @param string $filename name of the file/folder
 	 * @param int $timestamp time when the file/folder was deleted
 	 *
@@ -903,7 +870,13 @@ class Trashbin {
 			foreach ($files as $file) {
 				if ($availableSpace < 0 && $expiration->isExpired($file['mtime'], true)) {
 					$tmp = self::delete($file['name'], $user, $file['mtime']);
-					\OC::$server->get(LoggerInterface::class)->info('remove "' . $file['name'] . '" (' . $tmp . 'B) to meet the limit of trash bin size (50% of available quota)', ['app' => 'files_trashbin']);
+					Server::get(LoggerInterface::class)->info(
+						'remove "' . $file['name'] . '" (' . $tmp . 'B) to meet the limit of trash bin size (50% of available quota) for user "{user}"',
+						[
+							'app' => 'files_trashbin',
+							'user' => $user,
+						]
+					);
 					$availableSpace += $tmp;
 					$size += $tmp;
 				} else {
@@ -934,16 +907,20 @@ class Trashbin {
 					$size += self::delete($filename, $user, $timestamp);
 					$count++;
 				} catch (\OCP\Files\NotPermittedException $e) {
-					\OC::$server->get(LoggerInterface::class)->warning('Removing "' . $filename . '" from trashbin failed.',
+					Server::get(LoggerInterface::class)->warning('Removing "' . $filename . '" from trashbin failed for user "{user}"',
 						[
 							'exception' => $e,
 							'app' => 'files_trashbin',
+							'user' => $user,
 						]
 					);
 				}
-				\OC::$server->get(LoggerInterface::class)->info(
-					'Remove "' . $filename . '" from trashbin because it exceeds max retention obligation term.',
-					['app' => 'files_trashbin']
+				Server::get(LoggerInterface::class)->info(
+					'Remove "' . $filename . '" from trashbin for user "{user}" because it exceeds max retention obligation term.',
+					[
+						'app' => 'files_trashbin',
+						'user' => $user,
+					],
 				);
 			} else {
 				break;
@@ -1017,10 +994,8 @@ class Trashbin {
 		// Manually fetch all versions from the file cache to be able to filter them by their parent
 		$cache = $storage->getCache('');
 		$query = new CacheQueryBuilder(
-			\OC::$server->getDatabaseConnection(),
-			\OC::$server->getSystemConfig(),
-			\OC::$server->get(LoggerInterface::class),
-			\OC::$server->get(IFilesMetadataManager::class),
+			Server::get(IDBConnection::class)->getQueryBuilder(),
+			Server::get(IFilesMetadataManager::class),
 		);
 		$normalizedParentPath = ltrim(Filesystem::normalizePath(dirname('files_trashbin/versions/'. $filename)), '/');
 		$parentId = $cache->getId($normalizedParentPath);
@@ -1077,9 +1052,9 @@ class Trashbin {
 
 		if ($view->file_exists('files' . $location . '/' . $filename)) {
 			$i = 2;
-			$uniqueName = $name . " (" . $l->t("restored") . ")" . $ext;
+			$uniqueName = $name . ' (' . $l->t('restored') . ')' . $ext;
 			while ($view->file_exists('files' . $location . '/' . $uniqueName)) {
-				$uniqueName = $name . " (" . $l->t("restored") . " " . $i . ")" . $ext;
+				$uniqueName = $name . ' (' . $l->t('restored') . ' ' . $i . ')' . $ext;
 				$i++;
 			}
 

@@ -1,9 +1,10 @@
 OC.L10N.register(
     "circles",
     {
+    "Teams" : "Jamoalar",
     "Personal" : "Personal",
     "System" : "System",
-    "Open" : "Open",
+    "Open" : "Ochish",
     "Invite" : "Taklif qiling",
     "Hidden" : "Yashirin",
     "Local" : "Local",
@@ -13,8 +14,10 @@ OC.L10N.register(
     "Admin" : "Admin",
     "Owner" : "Owner",
     "Open »%s«" : "ochish »%s«",
-    "Files" : "Files",
+    "Files" : "Fayllar",
     "Accept" : "Qabul qiling",
+    "Open %s" : "Ochiq %s",
+    "Loading…" : "Yuklanmoqda...",
     "No files in here" : "No files in here",
     "No entries found in this folder" : "Ushbu papkada hech qanday yozuv topilmadi",
     "Name" : "Name",

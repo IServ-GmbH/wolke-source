@@ -18,9 +18,9 @@ OC.L10N.register(
     "Translate" : "Translate",
     "Reload" : "Recargar",
     "Reconnect" : "Se reconnectar",
-    "Edit guest name" : "Modificar lo nom de convidat",
+    "Enter your name" : "Picatz vòstre nom",
     "Guest" : "Convidat",
-    "Save guest name" : "Enregistrar lo nom de convidat",
+    "you" : "vos",
     "Insert an attachment" : "Inserir una pèça junta",
     "guest" : "convidat",
     "Offline" : "Fòra linha",
@@ -64,12 +64,13 @@ OC.L10N.register(
     "Insert link" : "Inserir un ligam",
     "Insert attachment" : "Inserir una pèça junta",
     "Command" : "Comanda",
+    "Choose" : "Causir",
     "Use current version" : "Utilizar la version actuala",
     "Use the saved version" : "Utilizar la version salvada",
-    "Show author colors" : "Afichar las colors dels utilizaires",
+    "Edit guest name" : "Modificar lo nom de convidat",
+    "Save guest name" : "Enregistrar lo nom de convidat",
     "Info" : "Info",
     "Success" : "Succès",
-    "Warning" : "Avertiment",
-    "Add notes, lists or links …" : "Apondre nòtas, listas o ligams…"
+    "Warning" : "Avertiment"
 },
 "nplurals=2; plural=(n > 1);");

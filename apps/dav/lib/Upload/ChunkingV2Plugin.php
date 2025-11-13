@@ -1,26 +1,9 @@
 <?php
 
 declare(strict_types=1);
-/*
- * @copyright Copyright (c) 2021 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+/**
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\DAV\Upload;
@@ -156,7 +139,7 @@ class ChunkingV2Plugin extends ServerPlugin {
 		[$storage, $storagePath] = $this->getUploadStorage($this->uploadPath);
 
 		$chunkName = basename($request->getPath());
-		$partId = is_numeric($chunkName) ? (int)$chunkName : -1;
+		$partId = is_numeric($chunkName) ? (int) $chunkName : -1;
 		if (!($partId >= 1 && $partId <= 10000)) {
 			throw new BadRequest('Invalid chunk name, must be numeric between 1 and 10000');
 		}
@@ -164,7 +147,7 @@ class ChunkingV2Plugin extends ServerPlugin {
 		$uploadFile = $this->getUploadFile($this->uploadPath);
 		$tempTargetFile = null;
 
-		$additionalSize = (int)$request->getHeader('Content-Length');
+		$additionalSize = (int) $request->getHeader('Content-Length');
 		if ($this->uploadFolder->childExists(self::TEMP_TARGET) && $this->uploadPath) {
 			/** @var UploadFile $tempTargetFile */
 			$tempTargetFile = $this->uploadFolder->getChild(self::TEMP_TARGET);
@@ -179,7 +162,7 @@ class ChunkingV2Plugin extends ServerPlugin {
 		}
 
 		$stream = $request->getBodyAsStream();
-		$storage->putChunkedWritePart($storagePath, $this->uploadId, (string)$partId, $stream, $additionalSize);
+		$storage->putChunkedWritePart($storagePath, $this->uploadId, (string) $partId, $stream, $additionalSize);
 
 		$storage->getCache()->update($uploadFile->getId(), ['size' => $uploadFile->getSize() + $additionalSize]);
 		if ($tempTargetFile) {
@@ -311,7 +294,7 @@ class ChunkingV2Plugin extends ServerPlugin {
 			throw new InvalidArgumentException('X-OC-MTime header must be an integer (unix timestamp).');
 		}
 
-		return (int)$mtimeFromRequest;
+		return (int) $mtimeFromRequest;
 	}
 
 	/**

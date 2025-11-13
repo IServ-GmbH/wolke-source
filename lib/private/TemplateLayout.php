@@ -1,49 +1,16 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Christopher Schäpers <kondou@ts.unde.re>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Clark Tomlinson <fallen013@gmail.com>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Guillaume COMPAGNON <gcompagnon@outlook.com>
- * @author Hendrik Leppelsack <hendrik@leppelsack.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Haertl <jus@bitgrid.net>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Michael Gapczynski <GapczynskiM@gmail.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Nils <git@to.nilsschnabel.de>
- * @author Remco Brenninkmeijer <requist1@starmail.nl>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <nextcloud@tcit.fr>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
 use bantu\IniGetWrapper\IniGetWrapper;
+use OC\AppFramework\Http\Request;
 use OC\Authentication\Token\IProvider;
+use OC\Files\FilenameValidator;
 use OC\Search\SearchQuery;
 use OC\Template\CSSResourceLocator;
 use OC\Template\JSConfigHelper;
@@ -54,6 +21,7 @@ use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\INavigationManager;
+use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
@@ -102,11 +70,11 @@ class TemplateLayout extends \OC_Template {
 			}
 
 			$this->initialState->provideInitialState('core', 'active-app', $this->navigationManager->getActiveEntry());
-			$this->initialState->provideInitialState('core', 'apps', $this->navigationManager->getAll());
+			$this->initialState->provideInitialState('core', 'apps', array_values($this->navigationManager->getAll()));
 
 			if ($this->config->getSystemValueBool('unified_search.enabled', false) || !$this->config->getSystemValueBool('enable_non-accessible_features', true)) {
-				$this->initialState->provideInitialState('unified-search', 'limit-default', (int)$this->config->getAppValue('core', 'unified-search.limit-default', (string)SearchQuery::LIMIT_DEFAULT));
-				$this->initialState->provideInitialState('unified-search', 'min-search-length', (int)$this->config->getAppValue('core', 'unified-search.min-search-length', (string)1));
+				$this->initialState->provideInitialState('unified-search', 'limit-default', (int) $this->config->getAppValue('core', 'unified-search.limit-default', (string) SearchQuery::LIMIT_DEFAULT));
+				$this->initialState->provideInitialState('unified-search', 'min-search-length', (int) $this->config->getAppValue('core', 'unified-search.min-search-length', (string) 1));
 				$this->initialState->provideInitialState('unified-search', 'live-search', $this->config->getAppValue('core', 'unified-search.live-search', 'yes') === 'yes');
 				Util::addScript('core', 'legacy-unified-search', 'core');
 			} else {
@@ -257,6 +225,7 @@ class TemplateLayout extends \OC_Template {
 				\OC::$server->get(CapabilitiesManager::class),
 				\OCP\Server::get(IInitialStateService::class),
 				\OCP\Server::get(IProvider::class),
+				\OCP\Server::get(FilenameValidator::class),
 			);
 			$config = $jsConfigHelper->getConfig();
 			if (\OC::$server->getContentSecurityPolicyNonceManager()->browserSupportsCspV3()) {
@@ -314,6 +283,13 @@ class TemplateLayout extends \OC_Template {
 			}
 		}
 
+		$request = \OCP\Server::get(IRequest::class);
+		if ($request->isUserAgent([Request::USER_AGENT_CLIENT_IOS, Request::USER_AGENT_SAFARI, Request::USER_AGENT_SAFARI_MOBILE])) {
+			// Prevent auto zoom with iOS but still allow user zoom
+			// On chrome (and others) this does not work (will also disable user zoom)
+			$this->assign('viewport_maximum_scale', '1.0');
+		}
+
 		$this->assign('initialStates', $this->initialState->getInitialStates());
 
 		$this->assign('id-app-content', $renderAs === TemplateResponse::RENDER_AS_USER ? '#app-content' : '#content');
@@ -323,7 +299,7 @@ class TemplateLayout extends \OC_Template {
 	protected function getVersionHashSuffix(string $path = '', string $file = ''): string {
 		if ($this->config->getSystemValueBool('debug', false)) {
 			// allows chrome workspace mapping in debug mode
-			return "";
+			return '';
 		}
 
 		if ($this->config->getSystemValueBool('installed', false) === false) {

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Text" : "ტექსტი",
     "Translate" : "გადათარგმნეთ",
     "Guest" : "სტუმარი",
+    "you" : "თქვენ",
     "Offline" : "კავშირ-გარეშე რეჟიმი",
     "Saved" : "შენახულია",
     "Unsaved changes" : "შეუნახავი ცვლილებები",
@@ -28,6 +29,7 @@ OC.L10N.register(
     "Source code" : "კოდი",
     "Done" : "დასრულდა",
     "Details" : "დეტალები",
+    "Choose" : "აირჩიეთ",
     "Info" : "ინფორმაცია",
     "Success" : "წარმატება",
     "Warning" : "გაფრთხილება"

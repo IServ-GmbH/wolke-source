@@ -86,6 +86,8 @@
 <li class="toctree-l1"><a class="reference internal" href="office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
@@ -122,7 +124,7 @@
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
 <p>Nextcloud releases multiple major versions <em>throughout</em> the year, but maintains support for <em>each</em> major version for one full year each through “lighter” maintenance updates (and regularly <a class="reference external" href="https://en.wikipedia.org/wiki/Backporting">backporting</a> applicable security and bug fixes). This permits a high velocity development cadence, while still giving administrators flexibility when planning deployments, upgrades, and maintenance activities.</p>
-<p>A detailed <a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">schedule for upcoming major and maintenance releases</a> (as well as end-of-life projections) is regularly updated to faciliate planning deployment, testing, and upgrade planning.</p>
+<p>A detailed <a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">schedule for upcoming major and maintenance releases</a> (as well as end-of-life projections) is regularly updated to facilitate planning deployment, testing, and upgrade planning.</p>
 <p>Whether you want the latest features and optimizations, want to help with testing, or just want to wait until everything is perfectly ready to go, you’ve got options with regards to which version of Nextcloud Server to initially deploy as well as how frequently to do major upgrades.</p>
 <div class="admonition danger">
 <p class="admonition-title">Danger</p>
@@ -284,40 +286,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

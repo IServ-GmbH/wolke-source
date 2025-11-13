@@ -1,8 +1,8 @@
 diff --git apps/files/src/components/FilesListTableHeaderActions.vue apps/files/src/components/FilesListTableHeaderActions.vue
-index 8d064a2..9c88186 100644
+index 0fe6e43..d5d6e23 100644
 --- apps/files/src/components/FilesListTableHeaderActions.vue
 +++ apps/files/src/components/FilesListTableHeaderActions.vue
-@@ -27,7 +27,7 @@
+@@ -12,7 +12,7 @@
  			:inline="inlineActions"
  			:menu-name="inlineActions <= 1 ? t('files', 'Actions') : null"
  			:open.sync="openedMenu">
@@ -11,7 +11,7 @@ index 8d064a2..9c88186 100644
  				:key="action.id"
  				:class="'files-list__row-actions-batch-' + action.id"
  				:data-cy-files-list-selection-action="action.id"
-@@ -147,6 +147,18 @@ export default defineComponent({
+@@ -141,6 +141,18 @@ export default defineComponent({
  			}
  			return 3
  		},

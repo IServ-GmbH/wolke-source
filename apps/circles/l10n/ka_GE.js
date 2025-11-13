@@ -50,7 +50,6 @@ OC.L10N.register(
     "Root" : "Root",
     "Federated" : "ფედერალური",
     "Contact" : "კონტაქტი",
-    "Circle" : "წრე",
     "Member" : "წევრი",
     "Moderator" : "მოდერატორი",
     "Admin" : "ადმინისტრატორი",
@@ -69,11 +68,13 @@ OC.L10N.register(
     "You have been blocked from this circle" : "ამ წრეში დაბლოკილი ხართ",
     "Accept" : "მიღება",
     "%s" : "%s",
+    "Try again" : "სცადეთ ახლიდან",
     "No files in here" : "აქ ფაილები არაა",
     "No entries found in this folder" : "ამ დირექტორიაში შენატანები ვერ იქნა ნაპოვნი",
     "Name" : "სახელი",
     "Size" : "ზომა",
     "Modified" : "შეიცვალა",
-    "Shared to Circles" : "წრეებთან გაზიარებული"
+    "Shared to Circles" : "წრეებთან გაზიარებული",
+    "Circle" : "წრე"
 },
 "nplurals=2; plural=(n!=1);");

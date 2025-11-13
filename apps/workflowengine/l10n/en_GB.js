@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "Select a filter",
     "Select a comparator" : "Select a comparator",
     "Remove filter" : "Remove filter",
+    "Audio" : "Audio",
     "Folder" : "Folder",
     "Images" : "Images",
     "Office documents" : "Office documents",
     "PDF documents" : "PDF documents",
+    "Video" : "Video",
     "Custom MIME type" : "Custom MIME type",
     "Custom mimetype" : "Custom mimetype",
     "Select a file type" : "Select a file type",
@@ -69,7 +71,6 @@ OC.L10N.register(
     "Select a user agent" : "Select a user agent",
     "Select groups" : "Select groups",
     "Groups" : "Groups",
-    "Type to search for group …" : "Type to search for group …",
     "Select a trigger" : "Select a trigger",
     "At least one event must be selected" : "At least one event must be selected",
     "Add new flow" : "Add new flow",
@@ -118,6 +119,7 @@ OC.L10N.register(
     "Request user agent" : "Request user agent",
     "Group membership" : "Group membership",
     "is member of" : "is member of",
-    "is not member of" : "is not member of"
+    "is not member of" : "is not member of",
+    "Type to search for group …" : "Type to search for group …"
 },
 "nplurals=2; plural=(n != 1);");

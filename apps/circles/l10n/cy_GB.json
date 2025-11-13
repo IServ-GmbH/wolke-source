@@ -58,7 +58,6 @@
     "Nextcloud Group" : "Grŵp Nextcloud",
     "Email address" : "Cyfeiriad e-bost",
     "Contact" : "Cysylltu",
-    "Circle" : "Cylch",
     "Nextcloud App" : "Ap Nextcloud",
     "Member" : "Aelod",
     "Moderator" : "Cymedrolwr",
@@ -103,20 +102,19 @@
     "%s owned by %s" : "%s sy'n eiddo i %s",
     "%s shared a file with \"%s\"." : "Mae %s wedi rhannu ffeil gyda \"%s\".",
     "%s shared a file with you." : "Mae %s wedi rhannu ffeil gyda chi.",
+    "Open %s" : "Agor %s",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "Mae %1$s wedi rhannu rhywfaint o gynnwys â chi.\nDylech fod wedi derbyn e-bost ar wahân yn barod gyda dolen i gael mynediad iddo.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "Mae %1$s wedi rhannu rhywfaint o gynnwys â chi. Dylech fod wedi derbyn e-bost ar wahân yn barod gyda dolen i gael mynediad iddo.",
     "Password to access content shared with you by %1$s" : "Cyfrinair i gael mynediad at gynnwys a rennir gyda chi gan %1$s",
     "Password to access content" : "Cyfrinair i gyrchu cynnwys",
     "Bring cloud-users closer together." : "Dod â defnyddwyr cwmwl yn nes at ei gilydd.",
+    "Loading…" : "Yn llwytho…",
     "No files in here" : "Dim ffeiliau i mewn yma",
     "No entries found in this folder" : "Ni chanfuwyd unrhyw gofnodion yn y ffolder hwn",
     "Name" : "Enw",
     "Size" : "Maint",
     "Modified" : "Addaswyd",
     "Shared to Circles" : "Wedi'i rannu i Gylchoedd",
-    "You are now a member of the Circle \"%2$s\"" : "Rydych nawr yn aelod o'r Cylch \"%2$s\"",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "Rydych chi wedi cael eich gwahodd gan %1$s i'r Cylch \"%2$s\"",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "Anfonodd %1$s gais i fod yn aelod o'r Cylch \"%2$s\"",
-    "Leave the circle" : "Gadael y cylch"
+    "Circle" : "Cylch"
 },"pluralForm" :"nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;"
 }

@@ -1,40 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Dominik Schmidt <dev@dominik-schmidt.de>
- * @author felixboehm <felix@webhippie.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roger Szabo <roger.szabo@web.de>
- * @author root <root@localhost.localdomain>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Tom Needham <tom@owncloud.com>
- * @author Victor Dubiniuk <dubiniuk@owncloud.com>
- * @author Vinicius Cubas Brand <vinicius@eita.org.br>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\User_LDAP;
 
@@ -225,7 +194,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 		if ($user->getUsername() !== false && $this->access->setPassword($user->getDN(), $password)) {
 			$ldapDefaultPPolicyDN = $this->access->connection->ldapDefaultPPolicyDN;
 			$turnOnPasswordChange = $this->access->connection->turnOnPasswordChange;
-			if (!empty($ldapDefaultPPolicyDN) && ((int)$turnOnPasswordChange === 1)) {
+			if (!empty($ldapDefaultPPolicyDN) && ((int) $turnOnPasswordChange === 1)) {
 				//remove last password expiry warning if any
 				$notification = $this->notificationManager->createNotification();
 				$notification->setApp('user_ldap')
@@ -292,7 +261,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 	 * checks whether a user is still available on LDAP
 	 *
 	 * @param string|\OCA\User_LDAP\User\User $user either the Nextcloud user
-	 * name or an instance of that user
+	 *                                              name or an instance of that user
 	 * @throws \Exception
 	 * @throws \OC\ServerNotAvailableException
 	 */
@@ -308,7 +277,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 		if (!$ignoreCache) {
 			$userExists = $this->access->connection->getFromCache($cacheKey);
 			if (!is_null($userExists)) {
-				return (bool)$userExists;
+				return (bool) $userExists;
 			}
 		}
 
@@ -353,7 +322,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 	public function userExists($uid) {
 		$userExists = $this->access->connection->getFromCache('userExists'.$uid);
 		if (!is_null($userExists)) {
-			return (bool)$userExists;
+			return (bool) $userExists;
 		}
 		$userExists = $this->access->userManager->exists($uid);
 
@@ -496,7 +465,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 				$this->access->connection->writeToCache($cacheKey, $displayName);
 			}
 			if ($user instanceof OfflineUser) {
-				/** @var OfflineUser $user*/
+				/** @var OfflineUser $user */
 				$displayName = $user->getDisplayName();
 			}
 			return $displayName;
@@ -552,12 +521,12 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 	 * compared with \OC\User\Backend::CREATE_USER etc.
 	 */
 	public function implementsActions($actions) {
-		return (bool)((Backend::CHECK_PASSWORD
+		return (bool) ((Backend::CHECK_PASSWORD
 			| Backend::GET_HOME
 			| Backend::GET_DISPLAYNAME
 			| (($this->access->connection->ldapUserAvatarRule !== 'none') ? Backend::PROVIDE_AVATAR : 0)
 			| Backend::COUNT_USERS
-			| (((int)$this->access->connection->turnOnPasswordChange === 1)? Backend::SET_PASSWORD :0)
+			| (((int) $this->access->connection->turnOnPasswordChange === 1)? Backend::SET_PASSWORD :0)
 			| $this->userPluginManager->getImplementedActions())
 			& $actions);
 	}
@@ -615,7 +584,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 	 * The cloned connection needs to be closed manually.
 	 * of the current access.
 	 * @param string $uid
-	 * @return resource|\LDAP\Connection The LDAP connection
+	 * @return \LDAP\Connection The LDAP connection
 	 */
 	public function getNewLDAPConnection($uid) {
 		$connection = clone $this->access->getConnection();
@@ -653,7 +622,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 						);
 					}
 				} else {
-					throw new \UnexpectedValueException("LDAP Plugin: Method createUser changed to return the user DN instead of boolean.");
+					throw new \UnexpectedValueException('LDAP Plugin: Method createUser changed to return the user DN instead of boolean.');
 				}
 			}
 			return (bool) $dn;
@@ -662,7 +631,7 @@ class User_LDAP extends BackendUtility implements IUserBackend, UserInterface, I
 	}
 
 	public function isUserEnabled(string $uid, callable $queryDatabaseValue): bool {
-		if ($this->deletedUsersIndex->isUserMarked($uid) && ((int)$this->access->connection->markRemnantsAsDisabled === 1)) {
+		if ($this->deletedUsersIndex->isUserMarked($uid) && ((int) $this->access->connection->markRemnantsAsDisabled === 1)) {
 			return false;
 		} else {
 			return $queryDatabaseValue();

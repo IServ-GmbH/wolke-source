@@ -12,7 +12,7 @@ OC.L10N.register(
     "Simple email app nicely integrated with Files, Contacts and Calendar." : "Опростено приложение за електронна поща, добре интегрирано с файлове, контакти и календар.",
     "App recommendation: Tasks" : "Препоръка за приложение: Задачи",
     "Sync tasks from various devices with your Nextcloud and edit them online." : "Синхронизира задачи от различни устройства с вашия Nextcloud и ги редактира онлайн.",
-    "App recommendation: Deck" : "Препоръка за приложение: Набор",
+    "App recommendation: Deck" : "Препоръка за приложение: Deck табло",
     "Kanban style organization for personal planning and team projects." : "Организация в стил Kanban за лично планиране и екипни проекти.",
     "App recommendation: Forms" : "Препоръка за приложение: Формуляри",
     "Simple surveys and questionnaires, self-hosted" : "Опростени анкети и въпросници, хоствани самостоятелно",
@@ -43,6 +43,7 @@ OC.L10N.register(
     "Share on social media" : "Споделяне в социалните мрежи",
     "App recommendation: Nextcloud Calendar" : "Препоръка за приложение: Календар Nextcloud",
     "App recommendation: Nextcloud Contacts" : "Препоръка за приложение: Контакти Nextcloud",
-    "App recommendation: Nextcloud Mail" : "Препоръка за приложение: Поща Nextcloud"
+    "App recommendation: Nextcloud Mail" : "Препоръка за приложение: Поща Nextcloud",
+    "Your own new personal assistant" : "Твоят нов личен асистент"
 },
 "nplurals=2; plural=(n != 1);");

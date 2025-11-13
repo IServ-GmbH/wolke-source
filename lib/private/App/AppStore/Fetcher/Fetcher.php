@@ -1,36 +1,14 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Steffen Lindner <mail@steffen-lindner.de>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\App\AppStore\Fetcher;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 use OC\Files\AppData\Factory;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -80,7 +58,7 @@ abstract class Fetcher {
 	 */
 	protected function fetch($ETag, $content) {
 		$appstoreenabled = $this->config->getSystemValueBool('appstoreenabled', true);
-		if ((int)$this->config->getAppValue('settings', 'appstore-fetcher-lastFailure', '0') > time() - self::RETRY_AFTER_FAILURE_SECONDS) {
+		if ((int) $this->config->getAppValue('settings', 'appstore-fetcher-lastFailure', '0') > time() - self::RETRY_AFTER_FAILURE_SECONDS) {
 			return [];
 		}
 
@@ -110,9 +88,10 @@ abstract class Fetcher {
 		$client = $this->clientService->newClient();
 		try {
 			$response = $client->get($this->getEndpoint(), $options);
-		} catch (ConnectException $e) {
-			$this->config->setAppValue('settings', 'appstore-fetcher-lastFailure', (string)time());
-			throw $e;
+		} catch (ConnectException|ClientException|ServerException $e) {
+			$this->config->setAppValue('settings', 'appstore-fetcher-lastFailure', (string) time());
+			$this->logger->error('Failed to connect to the app store', ['exception' => $e]);
+			return [];
 		}
 
 		$responseJson = [];
@@ -169,7 +148,7 @@ abstract class Fetcher {
 						$invalidateAfterSeconds = self::INVALIDATE_AFTER_SECONDS_UNSTABLE;
 					}
 
-					if ((int)$jsonBlob['timestamp'] > ($this->timeFactory->getTime() - $invalidateAfterSeconds)) {
+					if ((int) $jsonBlob['timestamp'] > ($this->timeFactory->getTime() - $invalidateAfterSeconds)) {
 						return $jsonBlob['data'];
 					}
 

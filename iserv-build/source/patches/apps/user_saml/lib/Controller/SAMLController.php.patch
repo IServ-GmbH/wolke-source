@@ -1,13 +1,13 @@
 diff --git apps/user_saml/lib/Controller/SAMLController.php apps/user_saml/lib/Controller/SAMLController.php
-index 9fddc08b..444615c7 100644
+index 30c98063..667bcb52 100644
 --- apps/user_saml/lib/Controller/SAMLController.php
 +++ apps/user_saml/lib/Controller/SAMLController.php
-@@ -166,7 +166,7 @@ class SAMLController extends Controller {
+@@ -169,7 +169,7 @@ class SAMLController extends Controller {
  
  
  				$returnUrl = $originalUrl ?: $this->urlGenerator->linkToRouteAbsolute('user_saml.SAML.login');
 -				$ssoUrl = $auth->login($returnUrl, $passthroughValues, false, false, true);
 +				$ssoUrl = $auth->login($returnUrl, $passthroughValues, $this->config->getSystemValueBool('iserv_force_authn'), false, true);
- 				$response = new Http\RedirectResponse($ssoUrl);
+ 				$settings = $this->samlSettings->get($idp);
+ 				$isSAMLRequestUsingPost = isset($settings['general-is_saml_request_using_post']) && $settings['general-is_saml_request_using_post'] === '1';
  
- 				// Small hack to make user_saml work with the loginflows

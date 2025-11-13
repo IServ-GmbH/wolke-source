@@ -69,15 +69,18 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Artificial Intelligence</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html">Nextcloud Assistant</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html">App: Local Machine translation (translate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_api_and_external_apps.html">AppAPI and External Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -117,6 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="overview.html#overview-of-ai-features">Overview of AI features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overview.html#ethical-ai-rating">Ethical AI Rating</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overview.html#features-used-by-other-apps">Features used by other apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#improve-ai-task-pickup-speed">Improve AI task pickup speed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="overview.html#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </li>
@@ -125,18 +129,21 @@
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html#app-store">App store</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html#repository">Repository</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_assistant.html#related-apps">Related apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_assistant.html#configuration">Configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="app_translate.html">App: Local Machine translation (translate)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#requirements">Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#app-store">App store</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#repository">Repository</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#ethical-ai-rating">Ethical AI Rating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_translate.html#known-limitations">Known Limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app_translate2.html">App: Local Machine translation 2 (translate2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#model-switch">Model Switch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#app-store">App store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#repository">Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#ethical-ai-rating">Ethical AI Rating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_translate2.html#known-limitations">Known Limitations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="app_llm2.html">App: Local large language model (llm2)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app_llm2.html#multilinguality">Multilinguality</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html#scaling">Scaling</a></li>
@@ -168,10 +175,27 @@
 <li class="toctree-l1"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#initial-loading-of-data">Initial loading of data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#scaling">Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#app-store">App store</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#repository">Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#commands-occ">Commands (OCC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#configuration-options-occ">Configuration Options (OCC)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#configuration-options-backend">Configuration Options (Backend)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#logs">Logs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#possibility-of-data-leak">Possibility of Data Leak</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html#known-limitations">Known Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#app-store">App store</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#repository">Repository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#ethical-ai-rating">Ethical AI Rating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html#known-limitations">Known Limitations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="app_api_and_external_apps.html">AppAPI and External Apps</a><ul>
@@ -181,6 +205,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html#openai-integration">OpenAI integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html#improve-performance">Improve performance</a></li>
 </ul>
 </li>
 </ul>
@@ -210,40 +236,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

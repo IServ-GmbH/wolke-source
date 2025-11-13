@@ -16,7 +16,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Предоставя полезна информация за сървъра, като натоварване на процесора, използване на RAM, използване на диск, брой потребители и др.",
     "Operating System:" : "Операционна система:",
     "CPU:" : "CPU /ПРОЦЕСОР/:",
-    "Unknown Processor" : "Неизвестен процесор",
     "Memory:" : "Памет:",
     "Server time:" : "Време на сървъра:",
     "Uptime:" : "Време на работа:",
@@ -43,6 +42,8 @@ OC.L10N.register(
     "IPv6:" : "IPv6:",
     "Active users" : "Активни потребители",
     "Last hour" : "Последния  час",
+    "Last 7 Days" : "Последните 7 дни",
+    "Last 30 Days" : "Последните 30 дни",
     "Shares" : "Споделени папки",
     "Users:" : "Потребители:",
     "Groups:" : "Групи:",
@@ -64,11 +65,6 @@ OC.L10N.register(
     "Copy" : "Копиране",
     "To use an access token, please generate one then set it using the following command:" : "За да използвате токен за достъп, моля, генерирайте такъв, след което го задайте с помощта на следната команда:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "След това предайте токена със заглавката „NC-Token “, когато правите заявка към горния URL адрес.",
-    "Load average: {cpu} (last minute)" : "Средна стойност на зареждане: {cpu} (последната минута)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Регистрирани:",
-    "24 hours:" : "24 часа:",
-    "1 hour:" : "1 час:",
-    "5 mins:" : "5 минути:"
+    "Unknown Processor" : "Неизвестен процесор"
 },
 "nplurals=2; plural=(n != 1);");

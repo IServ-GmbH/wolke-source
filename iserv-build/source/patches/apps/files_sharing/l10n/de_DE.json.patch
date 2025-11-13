@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/l10n/de_DE.json apps/files_sharing/l10n/de_DE.json
-index 4d8e690..9f06fc8 100644
+index 65806a6..052dd8f 100644
 --- apps/files_sharing/l10n/de_DE.json
 +++ apps/files_sharing/l10n/de_DE.json
 @@ -1,4 +1,5 @@
@@ -8,10 +8,3 @@ index 4d8e690..9f06fc8 100644
      "File shares" : "Dateifreigaben",
      "Downloaded via public link" : "Über den öffentlichen Link heruntergeladen",
      "Downloaded by {email}" : "Heruntergeladen von {email}",
-@@ -423,4 +424,4 @@
-     "_1 email address added_::_{count} email addresses added_" : ["1 E-Mail-Adresse hinzugefügt","{count} E-Mail-Adressen hinzugefügt"],
-     "Enter your name" : "Geben Sie Ihren Namen ein"
- },"pluralForm" :"nplurals=2; plural=(n != 1);"
--}
-\ No newline at end of file
-+}

@@ -3,27 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2019, Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @author Joas Schilling <coding@schilljs.com>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sascha Wiswedel <sascha.wiswedel@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Files\Notification;
 
@@ -41,6 +22,7 @@ use OCP\Notification\IDismissableNotifier;
 use OCP\Notification\IManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 class Notifier implements INotifier, IDismissableNotifier {
 	/** @var IFactory */
@@ -87,11 +69,11 @@ class Notifier implements INotifier, IDismissableNotifier {
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
-	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
+	 * @throws UnknownNotificationException When the notification was not prepared by a notifier
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'files') {
-			throw new \InvalidArgumentException('Unhandled app');
+			throw new UnknownNotificationException('Unhandled app');
 		}
 
 		$imagePath = $this->urlGenerator->imagePath('files', 'folder-move.svg');
@@ -105,7 +87,7 @@ class Notifier implements INotifier, IDismissableNotifier {
 			'transferOwnershipFailedTarget' => $this->handleTransferOwnershipFailedTarget($notification, $languageCode),
 			'transferOwnershipDoneSource' => $this->handleTransferOwnershipDoneSource($notification, $languageCode),
 			'transferOwnershipDoneTarget' => $this->handleTransferOwnershipDoneTarget($notification, $languageCode),
-			default => throw new \InvalidArgumentException('Unhandled subject')
+			default => throw new UnknownNotificationException('Unhandled subject')
 		};
 	}
 
@@ -285,15 +267,15 @@ class Notifier implements INotifier, IDismissableNotifier {
 
 	public function dismissNotification(INotification $notification): void {
 		if ($notification->getApp() !== 'files') {
-			throw new \InvalidArgumentException('Unhandled app');
+			throw new UnknownNotificationException('Unhandled app');
 		}
 		if ($notification->getSubject() !== 'transferownershipRequest') {
-			throw new \InvalidArgumentException('Unhandled notification type');
+			throw new UnknownNotificationException('Unhandled notification type');
 		}
 
 		// TODO: This should all be moved to a service that also the transferownershipController uses.
 		try {
-			$transferOwnership = $this->mapper->getById((int)$notification->getObjectId());
+			$transferOwnership = $this->mapper->getById((int) $notification->getObjectId());
 		} catch (DoesNotExistException $e) {
 			return;
 		}
@@ -313,7 +295,7 @@ class Notifier implements INotifier, IDismissableNotifier {
 				'targetUser' => $transferOwnership->getTargetUser(),
 				'nodeName' => $transferOwnership->getNodeName()
 			])
-			->setObject('transfer', (string)$transferOwnership->getId());
+			->setObject('transfer', (string) $transferOwnership->getId());
 		$this->notificationManager->notify($notification);
 
 		$this->mapper->delete($transferOwnership);

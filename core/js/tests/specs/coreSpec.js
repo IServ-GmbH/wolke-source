@@ -1,23 +1,8 @@
 /**
-* ownCloud
-*
-* @author Vincent Petry
-* @copyright 2014 Vincent Petry <pvince81@owncloud.com>
-*
-* This library is free software; you can redistribute it and/or
-* modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE
-* License as published by the Free Software Foundation; either
-* version 3 of the License, or any later version.
-*
-* This library is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU AFFERO GENERAL PUBLIC LICENSE for more details.
-*
-* You should have received a copy of the GNU Affero General Public
-* License along with this library.  If not, see <http://www.gnu.org/licenses/>.
-*
-*/
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2014 ownCloud Inc.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 
 describe('Core base tests', function() {
 	var debounceStub
@@ -132,93 +117,6 @@ describe('Core base tests', function() {
 			expect(OC.buildQueryString({
 				'number': 123
 			})).toEqual('number=123');
-		});
-	});
-	describe('Session heartbeat', function() {
-		var clock,
-			oldConfig,
-			counter;
-
-		beforeEach(function() {
-			clock = sinon.useFakeTimers();
-			oldConfig = OC.config;
-			counter = 0;
-
-			fakeServer.autoRespond = true;
-			fakeServer.autoRespondAfter = 0;
-			fakeServer.respondWith(/\/csrftoken/, function(xhr) {
-				counter++;
-				xhr.respond(200, {'Content-Type': 'application/json'}, '{"token": "pgBEsb3MzTb1ZPd2mfDZbQ6/0j3OrXHMEZrghHcOkg8=:3khw5PSa+wKQVo4f26exFD3nplud9ECjJ8/Y5zk5/k4="}');
-			});
-			$(document).off('ajaxComplete'); // ignore previously registered heartbeats
-		});
-		afterEach(function() {
-			clock.restore();
-			/* jshint camelcase: false */
-			OC.config = oldConfig;
-			$(document).off('ajaxError');
-			$(document).off('ajaxComplete');
-		});
-		it('sends heartbeat half the session lifetime when heartbeat enabled', function() {
-			/* jshint camelcase: false */
-			OC.config = {
-				session_keepalive: true,
-				session_lifetime: 300
-			};
-			window.initCore();
-
-			expect(counter).toEqual(0);
-
-			// less than half, still nothing
-			clock.tick(100 * 1000);
-			expect(counter).toEqual(0);
-
-			// reach past half (160), one call
-			clock.tick(55 * 1000);
-			expect(counter).toEqual(1);
-
-			// almost there to the next, still one
-			clock.tick(140 * 1000);
-			expect(counter).toEqual(1);
-
-			// past it, second call
-			clock.tick(20 * 1000);
-			expect(counter).toEqual(2);
-		});
-		it('does not send heartbeat when heartbeat disabled', function() {
-			/* jshint camelcase: false */
-			OC.config = {
-				session_keepalive: false,
-				session_lifetime: 300
-			};
-			window.initCore();
-
-			expect(counter).toEqual(0);
-
-			clock.tick(1000000);
-
-			// still nothing
-			expect(counter).toEqual(0);
-		});
-		it('limits the heartbeat between one minute and one day', function() {
-			/* jshint camelcase: false */
-			var setIntervalStub = sinon.stub(window, 'setInterval');
-			OC.config = {
-				session_keepalive: true,
-				session_lifetime: 5
-			};
-			window.initCore();
-			expect(setIntervalStub.getCall(0).args[1]).toEqual(60 * 1000);
-			setIntervalStub.reset();
-
-			OC.config = {
-				session_keepalive: true,
-				session_lifetime: 48 * 3600
-			};
-			window.initCore();
-			expect(setIntervalStub.getCall(0).args[1]).toEqual(24 * 3600 * 1000);
-
-			setIntervalStub.restore();
 		});
 	});
 	describe('Parse query string', function() {

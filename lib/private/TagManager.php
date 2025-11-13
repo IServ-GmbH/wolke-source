@@ -1,28 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bernhard Reiter <ockham@raz.or.at>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
@@ -62,7 +43,7 @@ class TagManager implements ITagManager, IEventListener {
 	 * @param array $defaultTags An array of default tags to be used if none are stored.
 	 * @param boolean $includeShared Whether to include tags for items shared with this user by others.
 	 * @param string $userId user for which to retrieve the tags, defaults to the currently
-	 * logged in user
+	 *                       logged in user
 	 * @return \OCP\ITags
 	 *
 	 * since 20.0.0 $includeShared isn't used anymore
@@ -123,7 +104,7 @@ class TagManager implements ITagManager, IEventListener {
 			return;
 		}
 
-		$tagsIds = array_map(fn (array $row) => (int)$row['id'], $result->fetchAll());
+		$tagsIds = array_map(fn (array $row) => (int) $row['id'], $result->fetchAll());
 		$result->closeCursor();
 
 		if (count($tagsIds) === 0) {

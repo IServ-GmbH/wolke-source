@@ -3,31 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2019, Thomas Citharel
- * @copyright Copyright (c) 2019, Georg Ehrke
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <nextcloud@tcit.fr>
- * @author Richard Steinmetz <richard@steinmetz.cloud>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\CalDAV\Reminder;
 
@@ -467,7 +444,14 @@ class ReminderService {
 	 * @param array $reminders
 	 */
 	private function writeRemindersToDatabase(array $reminders): void {
+		$uniqueReminders = [];
 		foreach ($reminders as $reminder) {
+			$key = $reminder['notification_date']. $reminder['event_hash'].$reminder['type'];
+			if (!isset($uniqueReminders[$key])) {
+				$uniqueReminders[$key] = $reminder;
+			}
+		}
+		foreach (array_values($uniqueReminders) as $reminder) {
 			$this->backend->insertReminder(
 				(int) $reminder['calendar_id'],
 				(int) $reminder['object_id'],
@@ -870,7 +854,7 @@ class ReminderService {
 	private function getCalendarTimeZone(int $calendarid): DateTimeZone {
 		$calendarInfo = $this->caldavBackend->getCalendarById($calendarid);
 		$tzProp = '{urn:ietf:params:xml:ns:caldav}calendar-timezone';
-		if (!isset($calendarInfo[$tzProp])) {
+		if (empty($calendarInfo[$tzProp])) {
 			// Defaulting to UTC
 			return new DateTimeZone('UTC');
 		}

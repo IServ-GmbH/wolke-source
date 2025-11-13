@@ -1,48 +1,10 @@
 <?php
 
 declare(strict_types=1);
-
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bartek Przybylski <bart.p.pl@gmail.com>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Byron Marohn <combustible@live.com>
- * @author Côme Chilliet <come.chilliet@nextcloud.com>
- * @author Christopher Schäpers <kondou@ts.unde.re>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author J0WI <J0WI@users.noreply.github.com>
- * @author j-ed <juergen@eisfair.org>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Johannes Willnecker <johannes@willnecker.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Olivier Paroz <github@oparoz.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Samuel CHEMLA <chemla.samuel@gmail.com>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- * @author Richard Steinmetz <richard@steinmetz.cloud>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 use OCP\IImage;
 
@@ -59,7 +21,7 @@ class OC_Image implements \OCP\IImage {
 	// Default quality for webp images
 	protected const DEFAULT_WEBP_QUALITY = 80;
 
-	/** @var false|resource|\GdImage */
+	/** @var false|\GdImage */
 	protected $resource = false; // tmp resource.
 	/** @var int */
 	protected $imageType = IMAGETYPE_PNG; // Default to png if file type isn't evident.
@@ -67,20 +29,20 @@ class OC_Image implements \OCP\IImage {
 	protected $mimeType = 'image/png'; // Default to png
 	/** @var null|string */
 	protected $filePath = null;
-	/** @var finfo */
-	private $fileInfo;
+	/** @var ?finfo */
+	private $fileInfo = null;
 	/** @var \OCP\ILogger */
 	private $logger;
 	/** @var \OCP\IConfig */
 	private $config;
-	/** @var array */
-	private $exif;
+	/** @var ?array */
+	private $exif = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param resource|string|\GdImage $imageRef The path to a local file, a base64 encoded string or a resource created by
-	 * an imagecreate* function.
+	 * @param mixed $imageRef Deprecated, should be null
+	 * @psalm-assert null $imageRef
 	 * @param \OCP\ILogger $logger
 	 * @param \OCP\IConfig $config
 	 * @throws \InvalidArgumentException in case the $imageRef parameter is not null
@@ -107,11 +69,11 @@ class OC_Image implements \OCP\IImage {
 	/**
 	 * Determine whether the object contains an image resource.
 	 *
+	 * @psalm-assert-if-true \GdImage $this->resource
 	 * @return bool
 	 */
 	public function valid(): bool {
-		if ((is_resource($this->resource) && get_resource_type($this->resource) === 'gd') ||
-			(is_object($this->resource) && get_class($this->resource) === \GdImage::class)) {
+		if (is_object($this->resource) && get_class($this->resource) === \GdImage::class) {
 			return true;
 		}
 
@@ -134,10 +96,7 @@ class OC_Image implements \OCP\IImage {
 	 */
 	public function width(): int {
 		if ($this->valid()) {
-			$width = imagesx($this->resource);
-			if ($width !== false) {
-				return $width;
-			}
+			return imagesx($this->resource);
 		}
 		return -1;
 	}
@@ -149,10 +108,7 @@ class OC_Image implements \OCP\IImage {
 	 */
 	public function height(): int {
 		if ($this->valid()) {
-			$height = imagesy($this->resource);
-			if ($height !== false) {
-				return $height;
-			}
+			return imagesy($this->resource);
 		}
 		return -1;
 	}
@@ -300,8 +256,7 @@ class OC_Image implements \OCP\IImage {
 				$retVal = imagegif($this->resource, $filePath);
 				break;
 			case IMAGETYPE_JPEG:
-				/** @psalm-suppress InvalidScalarArgument */
-				imageinterlace($this->resource, (PHP_VERSION_ID >= 80000 ? true : 1));
+				imageinterlace($this->resource, true);
 				$retVal = imagejpeg($this->resource, $filePath, $this->getJpegQuality());
 				break;
 			case IMAGETYPE_PNG:
@@ -338,25 +293,14 @@ class OC_Image implements \OCP\IImage {
 	}
 
 	/**
-	 * @param resource|\GdImage $resource
-	 * @throws \InvalidArgumentException in case the supplied resource does not have the type "gd"
+	 * @param \GdImage $resource
 	 */
-	public function setResource($resource) {
-		// For PHP<8
-		if (is_resource($resource) && get_resource_type($resource) === 'gd') {
-			$this->resource = $resource;
-			return;
-		}
-		// PHP 8 has real objects for GD stuff
-		if (is_object($resource) && get_class($resource) === \GdImage::class) {
-			$this->resource = $resource;
-			return;
-		}
-		throw new \InvalidArgumentException('Supplied resource is not of type "gd".');
+	public function setResource(\GdImage $resource): void {
+		$this->resource = $resource;
 	}
 
 	/**
-	 * @return false|resource|\GdImage Returns the image resource if any
+	 * @return false|\GdImage Returns the image resource if any
 	 */
 	public function resource() {
 		return $this->resource;
@@ -390,19 +334,18 @@ class OC_Image implements \OCP\IImage {
 		}
 		ob_start();
 		switch ($this->mimeType) {
-			case "image/png":
+			case 'image/png':
 				$res = imagepng($this->resource);
 				break;
-			case "image/jpeg":
-				/** @psalm-suppress InvalidScalarArgument */
-				imageinterlace($this->resource, (PHP_VERSION_ID >= 80000 ? true : 1));
+			case 'image/jpeg':
+				imageinterlace($this->resource, true);
 				$quality = $this->getJpegQuality();
 				$res = imagejpeg($this->resource, null, $quality);
 				break;
-			case "image/gif":
+			case 'image/gif':
 				$res = imagegif($this->resource);
 				break;
-			case "image/webp":
+			case 'image/webp':
 				$res = imagewebp($this->resource, null, $this->getWebpQuality());
 				break;
 			default:
@@ -419,7 +362,7 @@ class OC_Image implements \OCP\IImage {
 	/**
 	 * @return string - base64 encoded, which is suitable for embedding in a VCard.
 	 */
-	public function __toString() {
+	public function __toString(): string {
 		return base64_encode($this->data());
 	}
 
@@ -491,7 +434,7 @@ class OC_Image implements \OCP\IImage {
 			return -1;
 		}
 		$this->exif = $exif;
-		return (int)$exif['Orientation'];
+		return (int) $exif['Orientation'];
 	}
 
 	public function readExif($data): void {
@@ -590,7 +533,7 @@ class OC_Image implements \OCP\IImage {
 	 * It is the responsibility of the caller to position the pointer at the correct place and to close the handle again.
 	 *
 	 * @param resource $handle
-	 * @return resource|\GdImage|false An image resource or false on error
+	 * @return \GdImage|false An image resource or false on error
 	 */
 	public function loadFromFileHandle($handle) {
 		$contents = stream_get_contents($handle);
@@ -669,7 +612,7 @@ class OC_Image implements \OCP\IImage {
 	 * Loads an image from a local file.
 	 *
 	 * @param bool|string $imagePath The path to a local file.
-	 * @return bool|resource|\GdImage An image resource or false on error
+	 * @return bool|\GdImage An image resource or false on error
 	 */
 	public function loadFromFile($imagePath = false) {
 		// exif_imagetype throws "read error!" if file is less than 12 byte
@@ -854,7 +797,7 @@ class OC_Image implements \OCP\IImage {
 	 * Loads an image from a string of data.
 	 *
 	 * @param string $str A string of image data as read from a file.
-	 * @return bool|resource|\GdImage An image resource or false on error
+	 * @return bool|\GdImage An image resource or false on error
 	 */
 	public function loadFromData(string $str) {
 		if (!$this->checkImageDataSize($str)) {
@@ -880,7 +823,7 @@ class OC_Image implements \OCP\IImage {
 	 * Loads an image from a base64 encoded string.
 	 *
 	 * @param string $str A string base64 encoded string of image data.
-	 * @return bool|resource|\GdImage An image resource or false on error
+	 * @return bool|\GdImage An image resource or false on error
 	 */
 	public function loadFromBase64(string $str) {
 		$data = base64_decode($str);
@@ -921,7 +864,7 @@ class OC_Image implements \OCP\IImage {
 
 	/**
 	 * @param $maxSize
-	 * @return resource|bool|\GdImage
+	 * @return bool|\GdImage
 	 */
 	private function resizeNew(int $maxSize) {
 		if (!$this->valid()) {
@@ -940,7 +883,7 @@ class OC_Image implements \OCP\IImage {
 			$newHeight = $maxSize;
 		}
 
-		return $this->preciseResizeNew((int)round($newWidth), (int)round($newHeight));
+		return $this->preciseResizeNew((int) round($newWidth), (int) round($newHeight));
 	}
 
 	/**
@@ -962,7 +905,7 @@ class OC_Image implements \OCP\IImage {
 	/**
 	 * @param int $width
 	 * @param int $height
-	 * @return resource|bool|\GdImage
+	 * @return bool|\GdImage
 	 */
 	public function preciseResizeNew(int $width, int $height) {
 		if (!($width > 0) || !($height > 0)) {
@@ -1038,13 +981,13 @@ class OC_Image implements \OCP\IImage {
 
 		// preserve transparency
 		if ($this->imageType == IMAGETYPE_GIF or $this->imageType == IMAGETYPE_PNG) {
-			imagecolortransparent($process, imagecolorallocatealpha($process, 0, 0, 0, 127));
+			imagecolortransparent($process, imagecolorallocatealpha($process, 0, 0, 0, 127) ?: null);
 			imagealphablending($process, false);
 			imagesavealpha($process, true);
 		}
 
-		imagecopyresampled($process, $this->resource, 0, 0, $x, $y, $targetWidth, $targetHeight, $width, $height);
-		if ($process === false) {
+		$result = imagecopyresampled($process, $this->resource, 0, 0, $x, $y, $targetWidth, $targetHeight, $width, $height);
+		if ($result === false) {
 			$this->logger->debug('OC_Image->centerCrop, Error re-sampling process image ' . $width . 'x' . $height, ['app' => 'core']);
 			return false;
 		}
@@ -1080,7 +1023,7 @@ class OC_Image implements \OCP\IImage {
 	 * @param int $y Vertical position
 	 * @param int $w Width
 	 * @param int $h Height
-	 * @return resource|\GdImage|false
+	 * @return \GdImage|false
 	 */
 	public function cropNew(int $x, int $y, int $w, int $h) {
 		if (!$this->valid()) {
@@ -1095,13 +1038,13 @@ class OC_Image implements \OCP\IImage {
 
 		// preserve transparency
 		if ($this->imageType == IMAGETYPE_GIF or $this->imageType == IMAGETYPE_PNG) {
-			imagecolortransparent($process, imagecolorallocatealpha($process, 0, 0, 0, 127));
+			imagecolortransparent($process, imagecolorallocatealpha($process, 0, 0, 0, 127) ?: null);
 			imagealphablending($process, false);
 			imagesavealpha($process, true);
 		}
 
-		imagecopyresampled($process, $this->resource, 0, 0, $x, $y, $w, $h, $w, $h);
-		if ($process === false) {
+		$result = imagecopyresampled($process, $this->resource, 0, 0, $x, $y, $w, $h, $w, $h);
+		if ($result === false) {
 			$this->logger->debug(__METHOD__ . '(): Error re-sampling process image ' . $w . 'x' . $h, ['app' => 'core']);
 			return false;
 		}
@@ -1129,7 +1072,7 @@ class OC_Image implements \OCP\IImage {
 		$newWidth = min($maxWidth, $ratio * $maxHeight);
 		$newHeight = min($maxHeight, $maxWidth / $ratio);
 
-		$this->preciseResize((int)round($newWidth), (int)round($newHeight));
+		$this->preciseResize((int) round($newWidth), (int) round($newHeight));
 		return true;
 	}
 

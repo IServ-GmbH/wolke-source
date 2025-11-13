@@ -1,8 +1,8 @@
 diff --git apps/dav/appinfo/info.xml apps/dav/appinfo/info.xml
-index 71d15bc..5720bb0 100644
+index 5d1b86f..fa9dfbc 100644
 --- apps/dav/appinfo/info.xml
 +++ apps/dav/appinfo/info.xml
-@@ -65,29 +65,5 @@
+@@ -73,29 +73,5 @@
  
  	<settings>
  		<admin>OCA\DAV\Settings\CalDAVSettings</admin>

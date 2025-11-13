@@ -44,7 +44,7 @@
 * @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
 */
 
-/*! @license DOMPurify 3.0.5 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.0.5/LICENSE */
+/*! @license DOMPurify 3.1.2 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.1.2/LICENSE */
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
@@ -187,7 +187,7 @@
  * @author Julius Härtl <jus@bitgrid.net>
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -196,11 +196,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 /**
@@ -270,10 +271,9 @@
  */
 
 /**
- * @copyright Copyright (c) 2023 Ferdinand Thiessen <opensource@fthiessen.de>
+ * @copyright Copyright (c) 2023 Grigorii K. Shartsev <me@shgk.me>
  *
- * @author Ferdinand Thiessen <opensource@fthiessen.de>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Grigorii K. Shartsev <me@shgk.me>
  *
  * @license AGPL-3.0-or-later
  *
@@ -293,9 +293,9 @@
  */
 
 /**
- * @copyright Copyright (c) 2023 Grigorii K. Shartsev <me@shgk.me>
+ * @copyright Copyright (c) 2024 Maksim Sukharev <antreesy.web@gmail.com>
  *
- * @author Grigorii K. Shartsev <me@shgk.me>
+ * @author Maksim Sukharev <antreesy.web@gmail.com>
  *
  * @license AGPL-3.0-or-later
  *
@@ -306,7 +306,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License

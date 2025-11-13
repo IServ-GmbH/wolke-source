@@ -3,35 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017, Sandro Lutz <sandro.lutz@temparus.ch>
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Michael Weimann <mail@michael-weimann.eu>
- * @author Rayn0r <andrew@ilpss8.myfirewall.org>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Core\Controller;
 
@@ -46,9 +20,12 @@ use OCA\User_LDAP\Helper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -91,10 +68,9 @@ class LoginController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @return RedirectResponse
 	 */
+	#[NoAdminRequired]
 	#[UseSession]
 	#[FrontpageRoute(verb: 'GET', url: '/logout')]
 	public function logout() {
@@ -123,14 +99,13 @@ class LoginController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $user
 	 * @param string $redirect_url
 	 *
 	 * @return TemplateResponse|RedirectResponse
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	#[UseSession]
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[FrontpageRoute(verb: 'GET', url: '/login')]
@@ -295,12 +270,11 @@ class LoginController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=login)
-	 *
 	 * @return RedirectResponse
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
+	#[BruteForceProtection(action: 'login')]
 	#[UseSession]
 	#[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 	#[FrontpageRoute(verb: 'POST', url: '/login')]
@@ -403,9 +377,6 @@ class LoginController extends Controller {
 	/**
 	 * Confirm the user password
 	 *
-	 * @NoAdminRequired
-	 * @BruteForceProtection(action=sudo)
-	 *
 	 * @license GNU AGPL version 3 or any later version
 	 *
 	 * @param string $password The password of the user
@@ -415,6 +386,8 @@ class LoginController extends Controller {
 	 * 200: Password confirmation succeeded
 	 * 403: Password confirmation failed
 	 */
+	#[NoAdminRequired]
+	#[BruteForceProtection(action: 'sudo')]
 	#[UseSession]
 	#[NoCSRFRequired]
 	#[FrontpageRoute(verb: 'POST', url: '/login/confirm')]

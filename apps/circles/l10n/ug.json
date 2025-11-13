@@ -74,7 +74,7 @@
     "Nextcloud Group" : "Nextcloud گۇرۇپپىسى",
     "Email address" : "ئېلخەت ئادرېسى",
     "Contact" : "ئالاقىلىشىڭ",
-    "Circle" : "Circle",
+    "Team" : "Team",
     "Nextcloud App" : "Nextcloud App",
     "Member" : "ئەزا",
     "Moderator" : "رىياسەتچى",
@@ -132,6 +132,7 @@
     "You have no permission to create a new team" : "يېڭى گۇرۇپپا قۇرۇش ھوقۇقىڭىز يوق",
     "%s shared a file with \"%s\"." : "% s ھۆججەتنى \"% s\" بىلەن ئورتاقلاشتى.",
     "%s shared a file with you." : "% s ھۆججەتنى سىز بىلەن ئورتاقلاشتى.",
+    "Open %s" : "% S نى ئېچىڭ",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1 $ s بەزى مەزمۇنلارنى سىز بىلەن ئورتاقلاشتى.\nئۇنى زىيارەت قىلىش ئۈچۈن ئۇلانمىسى بار ئايرىم ئېلېكترونلۇق خەت تاپشۇرۇۋالغان بولۇشىڭىز كېرەك.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1 $ s بەزى مەزمۇنلارنى سىز بىلەن ئورتاقلاشتى. ئۇنى زىيارەت قىلىش ئۈچۈن ئۇلانمىسى بار ئايرىم ئېلېكترونلۇق خەت تاپشۇرۇۋالغان بولۇشىڭىز كېرەك.",
     "Password to access content shared with you by %1$s" : "سىز بىلەن ئورتاقلاشقان مەزمۇننى زىيارەت قىلىش پارولى%1 $ s",
@@ -139,6 +140,9 @@
     "This item is already shared with this team" : "بۇ تۈر ئاللىقاچان بۇ گۇرۇپپا بىلەن ئورتاقلاشتى",
     "Bring cloud-users closer together." : "بۇلۇت ئىشلەتكۈچىلەرنى يېقىنلاشتۇرۇڭ.",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "كوماندىلار كىشىلەرگە ئۆزىنىڭ كىشىلەر / خىزمەتداشلىرى / دوستلىرى توپىنى قۇرالايدۇ.\nئۇ گۇرۇپپىلارنى باشقا ھەرقانداق ئەپ ئارقىلىق ئورتاقلىشىش مەقسىتىدە ئىشلىتىشكە بولىدۇ.",
+    "Try again" : "قايتا سىناڭ",
+    "No teams found" : "ھېچقانداق كوماندا تېپىلمىدى",
+    "Loading…" : "Loading…",
     "No files in here" : "بۇ يەردە ھۆججەت يوق",
     "No entries found in this folder" : "بۇ ھۆججەت قىسقۇچتا ھېچقانداق مەزمۇن تېپىلمىدى",
     "Name" : "ئاتى",
@@ -146,14 +150,9 @@
     "Modified" : "ئۆزگەرتكەن",
     "Teams' files" : "كوماندىلارنىڭ ھۆججەتلىرى",
     "Select team to filter by" : "سۈزۈش ئۈچۈن گۇرۇپپا تاللاڭ",
-    "No teams found" : "ھېچقانداق كوماندا تېپىلمىدى",
     "Please select teams to filter by" : "سۈزۈش ئۈچۈن گۇرۇپپىلارنى تاللاڭ",
     "No files found for the selected teams" : "تاللانغان گۇرۇپپىلارغا ھۆججەت تېپىلمىدى",
-    "{author} added team {member} has been added as member to {circle}" : "{author} قوشۇلغان گۇرۇپپا {member} {circle} ئەزا سۈپىتىدە قوشۇلدى",
     "Shared to Circles" : "چەمبىرەككە ئورتاقلاشتى",
-    "You are now a member of the Circle \"%2$s\"" : "سىز ھازىر «%2 $ s» چەمبىرىكىنىڭ ئەزاسى.",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "سىزنى%1 $ s چەمبىرىكىگە تەكلىپ قىلدىڭىز \"%2 $ s\"",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1 $ s چەمبىرەككە ئەزا بولۇش تەلىپىنى «%2 $ s» ئەۋەتتى",
-    "Leave the circle" : "چەمبىرەكتىن ئايرىڭ"
+    "Circle" : "Circle"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

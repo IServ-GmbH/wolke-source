@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'christophwurst/suspicious_login',
-        'pretty_version' => 'dev-stable29',
-        'version' => 'dev-stable29',
-        'reference' => '4acf946b067db8290a022c2490e91bc78edace7d',
+        'pretty_version' => 'dev-stable30',
+        'version' => 'dev-stable30',
+        'reference' => '30a71e076911149181c08c1d617c0de66e6c2b71',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'amphp/amp' => array(
-            'pretty_version' => 'v2.6.2',
-            'version' => '2.6.2.0',
-            'reference' => '9d5100cebffa729aaffecd3ad25dc5aeea4f13bb',
+            'pretty_version' => 'v2.6.4',
+            'version' => '2.6.4.0',
+            'reference' => 'ded3d9be08f526089eb7ee8d9f16a9768f9dec2d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../amphp/amp',
             'aliases' => array(),
@@ -73,10 +73,19 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'bamarni/composer-bin-plugin' => array(
+            'pretty_version' => '1.8.2',
+            'version' => '1.8.2.0',
+            'reference' => '92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880',
+            'type' => 'composer-plugin',
+            'install_path' => __DIR__ . '/../bamarni/composer-bin-plugin',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'christophwurst/suspicious_login' => array(
-            'pretty_version' => 'dev-stable29',
-            'version' => 'dev-stable29',
-            'reference' => '4acf946b067db8290a022c2490e91bc78edace7d',
+            'pretty_version' => 'dev-stable30',
+            'version' => 'dev-stable30',
+            'reference' => '30a71e076911149181c08c1d617c0de66e6c2b71',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

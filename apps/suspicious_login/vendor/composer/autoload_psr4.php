@@ -17,6 +17,7 @@ return array(
     'League\\MimeTypeDetection\\' => array($vendorDir . '/league/mime-type-detection/src'),
     'League\\Flysystem\\' => array($vendorDir . '/league/flysystem/src'),
     'JAMA\\' => array($vendorDir . '/rubix/tensor/lib/JAMA'),
+    'Bamarni\\Composer\\Bin\\' => array($vendorDir . '/bamarni/composer-bin-plugin/src'),
     'Amp\\Sync\\' => array($vendorDir . '/amphp/sync/src'),
     'Amp\\Serialization\\' => array($vendorDir . '/amphp/serialization/src'),
     'Amp\\Process\\' => array($vendorDir . '/amphp/process/lib'),

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05d1566df2b3674c98f69e6fe0e3fb00",
+    "content-hash": "0847b120ee47ead495a438b8b2caec8e",
     "packages": [],
     "packages-dev": [
         {
@@ -50,16 +50,16 @@
         },
         {
             "name": "php-cs-fixer/shim",
-            "version": "v3.51.0",
+            "version": "v3.56.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/shim.git",
-                "reference": "a792394f7f3934f75a4df9dca544796c6f503027"
+                "reference": "98c0b531f2e7a43a4da2449498398f484b29df50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/shim/zipball/a792394f7f3934f75a4df9dca544796c6f503027",
-                "reference": "a792394f7f3934f75a4df9dca544796c6f503027",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/shim/zipball/98c0b531f2e7a43a4da2449498398f484b29df50",
+                "reference": "98c0b531f2e7a43a4da2449498398f484b29df50",
                 "shasum": ""
             },
             "require": {
@@ -96,9 +96,9 @@
             "description": "A tool to automatically fix PHP code style",
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/shim/issues",
-                "source": "https://github.com/PHP-CS-Fixer/shim/tree/v3.51.0"
+                "source": "https://github.com/PHP-CS-Fixer/shim/tree/v3.56.1"
             },
-            "time": "2024-02-28T19:51:07+00:00"
+            "time": "2024-05-10T11:31:44+00:00"
         }
     ],
     "aliases": [],
@@ -106,12 +106,10 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {
-        "php": "^8.0|^8.1"
-    },
+    "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "8.0"
+        "php": "8.1"
     },
     "plugin-api-version": "2.6.0"
 }

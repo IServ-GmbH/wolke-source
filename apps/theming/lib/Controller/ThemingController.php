@@ -1,62 +1,34 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016 Bjoern Schiessle <bjoern@schiessle.org>
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Calviño Sánchez <danxuliu@gmail.com>
- * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Haertl <jus@bitgrid.net>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Kyle Fazzari <kyrofa@ubuntu.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author nhirokinet <nhirokinet@nhiroki.net>
- * @author rakekniven <mark.ziegler@rakekniven.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Citharel <nextcloud@tcit.fr>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Theming\Controller;
 
 use InvalidArgumentException;
 use OCA\Theming\ImageManager;
 use OCA\Theming\Service\ThemesService;
+use OCA\Theming\Settings\Admin;
 use OCA\Theming\ThemingDefaults;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
-use OCP\Files\IAppData;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\ITempManager;
 use OCP\IURLGenerator;
 use ScssPhp\ScssPhp\Compiler;
 
@@ -70,52 +42,32 @@ use ScssPhp\ScssPhp\Compiler;
 class ThemingController extends Controller {
 	public const VALID_UPLOAD_KEYS = ['header', 'logo', 'logoheader', 'background', 'favicon'];
 
-	private ThemingDefaults $themingDefaults;
-	private IL10N $l10n;
-	private IConfig $config;
-	private ITempManager $tempManager;
-	private IAppData $appData;
-	private IURLGenerator $urlGenerator;
-	private IAppManager $appManager;
-	private ImageManager $imageManager;
-	private ThemesService $themesService;
-
 	public function __construct(
 		$appName,
 		IRequest $request,
-		IConfig $config,
-		ThemingDefaults $themingDefaults,
-		IL10N $l,
-		ITempManager $tempManager,
-		IAppData $appData,
-		IURLGenerator $urlGenerator,
-		IAppManager $appManager,
-		ImageManager $imageManager,
-		ThemesService $themesService
+		private IConfig $config,
+		private IAppConfig $appConfig,
+		private ThemingDefaults $themingDefaults,
+		private IL10N $l10n,
+		private IURLGenerator $urlGenerator,
+		private IAppManager $appManager,
+		private ImageManager $imageManager,
+		private ThemesService $themesService,
 	) {
 		parent::__construct($appName, $request);
-
-		$this->themingDefaults = $themingDefaults;
-		$this->l10n = $l;
-		$this->config = $config;
-		$this->tempManager = $tempManager;
-		$this->appData = $appData;
-		$this->urlGenerator = $urlGenerator;
-		$this->appManager = $appManager;
-		$this->imageManager = $imageManager;
-		$this->themesService = $themesService;
 	}
 
 	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Theming\Settings\Admin)
 	 * @param string $setting
 	 * @param string $value
 	 * @return DataResponse
 	 * @throws NotPermittedException
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function updateStylesheet($setting, $value) {
 		$value = trim($value);
 		$error = null;
+		$saved = false;
 		switch ($setting) {
 			case 'name':
 				if (strlen($value) > 250) {
@@ -151,14 +103,28 @@ class ThemingController extends Controller {
 					$error = $this->l10n->t('The given slogan is too long');
 				}
 				break;
-			case 'color':
+			case 'primary_color':
 				if (!preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $value)) {
 					$error = $this->l10n->t('The given color is invalid');
+				} else {
+					$this->appConfig->setAppValueString('primary_color', $value);
+					$saved = true;
+				}
+				break;
+			case 'background_color':
+				if (!preg_match('/^\#([0-9a-f]{3}|[0-9a-f]{6})$/i', $value)) {
+					$error = $this->l10n->t('The given color is invalid');
+				} else {
+					$this->appConfig->setAppValueString('background_color', $value);
+					$saved = true;
 				}
 				break;
 			case 'disable-user-theming':
-				if ($value !== 'yes' && $value !== 'no') {
+				if (!in_array($value, ['yes', 'true', 'no', 'false'])) {
 					$error = $this->l10n->t('Disable-user-theming should be true or false');
+				} else {
+					$this->appConfig->setAppValueBool('disable-user-theming', $value === 'yes' || $value === 'true');
+					$saved = true;
 				}
 				break;
 		}
@@ -171,7 +137,9 @@ class ThemingController extends Controller {
 			], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->themingDefaults->set($setting, $value);
+		if (!$saved) {
+			$this->themingDefaults->set($setting, $value);
+		}
 
 		return new DataResponse([
 			'data' => [
@@ -182,12 +150,12 @@ class ThemingController extends Controller {
 	}
 
 	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Theming\Settings\Admin)
 	 * @param string $setting
 	 * @param mixed $value
 	 * @return DataResponse
 	 * @throws NotPermittedException
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function updateAppMenu($setting, $value) {
 		$error = null;
 		switch ($setting) {
@@ -233,10 +201,10 @@ class ThemingController extends Controller {
 	}
 
 	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Theming\Settings\Admin)
 	 * @return DataResponse
 	 * @throws NotPermittedException
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function uploadImage(): DataResponse {
 		$key = $this->request->getParam('key');
 		if (!in_array($key, self::VALID_UPLOAD_KEYS, true)) {
@@ -313,12 +281,12 @@ class ThemingController extends Controller {
 
 	/**
 	 * Revert setting to default value
-	 * @AuthorizedAdminSetting(settings=OCA\Theming\Settings\Admin)
 	 *
 	 * @param string $setting setting which should be reverted
 	 * @return DataResponse
 	 * @throws NotPermittedException
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function undo(string $setting): DataResponse {
 		$value = $this->themingDefaults->undo($setting);
 
@@ -336,11 +304,11 @@ class ThemingController extends Controller {
 
 	/**
 	 * Revert all theming settings to their default values
-	 * @AuthorizedAdminSetting(settings=OCA\Theming\Settings\Admin)
 	 *
 	 * @return DataResponse
 	 * @throws NotPermittedException
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	public function undoAll(): DataResponse {
 		$this->themingDefaults->undoAll();
 		$this->appManager->setDefaultApps([]);
@@ -357,8 +325,6 @@ class ThemingController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
 	 * @NoSameSiteCookieRequired
 	 *
 	 * Get an image
@@ -371,6 +337,8 @@ class ThemingController extends Controller {
 	 * 200: Image returned
 	 * 404: Image not found
 	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	public function getImage(string $key, bool $useSvg = true) {
 		try {
 			$file = $this->imageManager->getImage($key, $useSvg);
@@ -394,8 +362,6 @@ class ThemingController extends Controller {
 	}
 
 	/**
-	 * @NoCSRFRequired
-	 * @PublicPage
 	 * @NoSameSiteCookieRequired
 	 * @NoTwoFactorRequired
 	 *
@@ -409,6 +375,8 @@ class ThemingController extends Controller {
 	 * 200: Stylesheet returned
 	 * 404: Theme not found
 	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	public function getThemeStylesheet(string $themeId, bool $plain = false, bool $withCustomCss = false) {
 		$themes = $this->themesService->getThemes();
 		if (!in_array($themeId, array_keys($themes))) {
@@ -445,10 +413,6 @@ class ThemingController extends Controller {
 	}
 
 	/**
-	 * @NoCSRFRequired
-	 * @PublicPage
-	 * @BruteForceProtection(action=manifest)
-	 *
 	 * Get the manifest for an app
 	 *
 	 * @param string $app ID of the app
@@ -458,6 +422,9 @@ class ThemingController extends Controller {
 	 * 200: Manifest returned
 	 * 404: App not found
 	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
+	#[BruteForceProtection(action: 'manifest')]
 	public function getManifest(string $app): JSONResponse {
 		$cacheBusterValue = $this->config->getAppValue('theming', 'cachebuster', '0');
 		if ($app === 'core' || $app === 'settings') {

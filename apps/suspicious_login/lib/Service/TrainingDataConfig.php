@@ -3,29 +3,14 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Service;
 
 use JsonSerializable;
+use ReturnTypeWillChange;
 use function time;
 
 class TrainingDataConfig implements JsonSerializable {
@@ -40,14 +25,14 @@ class TrainingDataConfig implements JsonSerializable {
 	private $now;
 
 	public function __construct(int $maxAge,
-								int $threshold,
-								int $now) {
+		int $threshold,
+		int $now) {
 		$this->maxAge = $maxAge;
 		$this->threshold = $threshold;
 		$this->now = $now;
 	}
 
-	public static function default(int $time = null) {
+	public static function default(?int $time = null) {
 		return new self(60, 7, $time ?? time());
 	}
 
@@ -105,7 +90,8 @@ class TrainingDataConfig implements JsonSerializable {
 		return $clone;
 	}
 
-	public function jsonSerialize() {
+	#[ReturnTypeWillChange]
+	public function jsonSerialize(): array {
 		return [
 			'maxAge' => $this->getMaxAge(),
 			'threshold' => $this->getThreshold(),

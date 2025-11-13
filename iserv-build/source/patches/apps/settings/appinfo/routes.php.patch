@@ -1,8 +1,8 @@
 diff --git apps/settings/appinfo/routes.php apps/settings/appinfo/routes.php
-index 50c4e7f..cdcf5af 100644
+index 5038cf3..9eb8b14 100644
 --- apps/settings/appinfo/routes.php
 +++ apps/settings/appinfo/routes.php
-@@ -67,7 +67,7 @@ return [
+@@ -48,7 +48,7 @@ return [
  		['name' => 'CheckSetup#check', 'url' => '/settings/ajax/checksetup', 'verb' => 'GET' , 'root' => ''],
  		['name' => 'CheckSetup#getFailedIntegrityCheckFiles', 'url' => '/settings/integrity/failed', 'verb' => 'GET' , 'root' => ''],
  		['name' => 'CheckSetup#rescanFailedIntegrityCheck', 'url' => '/settings/integrity/rescan', 'verb' => 'GET' , 'root' => ''],

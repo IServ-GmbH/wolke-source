@@ -11,7 +11,7 @@ OC.L10N.register(
     "Password needs to contain at least one lower and one upper case character." : "O contrasinal precisa conter polo menos un caracter en minúsculas e un en maiúsculas.",
     "Password policy" : "Directiva de contrasinais",
     "Allows admins to configure a password policy" : "Permítelle aos administradores  configurar unha directiva de contrasinais",
-    "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Permítelle aos administradores definir certas precondicións para os contrasinais, p. ex., impor unha lonxitude mínima",
+    "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Permítelle aos administradores definir certas precondicións para os contrasinais, p. ex., facer obrigatorio unha lonxitude mínima",
     "General password policies" : "Directiva xeral sobre contrasinais",
     "Add policy set" : "Engadir un grupo de directivas",
     "Login policies" : "Directivas de acceso",
@@ -26,9 +26,9 @@ OC.L10N.register(
     "Remove policy" : "Retirar a directiva",
     "Minimum password length" : "Lonxitude mínima do contrasinal",
     "Forbid common passwords" : "Prohibir contrasinais comúns",
-    "Enforce upper and lower case characters" : "Impor caracteres en maiúsculas e minúsculas",
-    "Enforce numeric characters" : "Impor caracteres numéricos",
-    "Enforce special characters" : "Impor caracteres especiais",
+    "Enforce upper and lower case characters" : "Facer obrigatorios os caracteres en maiúsculas e minúsculas",
+    "Enforce numeric characters" : "Facer obrigatorios os caracteres numéricos",
+    "Enforce special characters" : "Facer obrigatorios os caracteres especiais",
     "Check password against the list of breached passwords from haveibeenpwned.com" : "Comprobar o contrasinal contra a lista de contrasinais comprometidos de haveibeenpwned.com",
     "This check creates a hash of the password and sends the first 5 characters of this hash to the haveibeenpwned.com API to retrieve a list of all hashes that start with those. Then it checks on the Nextcloud instance if the password hash is in the result set." : "Esta comprobación crea un resumo criptográfico dos contrasinais e envía os 5 primeiros caracteres deste resumo criptográfico á API de haveibeenpwned.com para recuperar unha lista de todos os resumo criptográfico que comezan desa forma. Após comprobase na instancia de Nextcloud se o resumo criptográfico do contrasinal está no conxunto de resultados.",
     "Account password policies" : "Directiva de contrasinais de contas",
@@ -40,7 +40,6 @@ OC.L10N.register(
     "Maximum login attempts have to be a non negative number" : "O máximo de intentos de acceso debe ser un número non negativo",
     "Settings saved" : "Axustes gardados",
     "Error while saving settings" : "Produciuse un erro ao gardar os axustes",
-    "User password history" : "Historial de contrasinais do usuario",
-    "Please note, that this option is meant to protect attacked accounts. Disabled accounts have to be re-enabled manually by administration. Attackers that try to guess passwords of accounts will have their IP address blocked by the bruteforce protection independent from this setting." : "Teña en conta que esta opción está destinada a protexer as contas atacadas. As contas desactivadas teñen que ser reactivadas manualmente pola administración. Os atacantes que intenten adiviñar os contrasinais das contas terán o seu enderezo IP bloqueado pola protección de forza bruta independentemente deste axuste."
+    "User password history" : "Historial de contrasinais do usuario"
 },
 "nplurals=2; plural=(n != 1);");

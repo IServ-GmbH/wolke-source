@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/src/components/SharingInput.vue apps/files_sharing/src/components/SharingInput.vue
-index e7dca2f..ddbd0cd 100644
+index 9fee729..d8af383 100644
 --- apps/files_sharing/src/components/SharingInput.vue
 +++ apps/files_sharing/src/components/SharingInput.vue
-@@ -40,6 +40,14 @@
+@@ -23,6 +23,14 @@
  				{{ search ? noResultText : t('files_sharing', 'No recommendations. Start typing.') }}
  			</template>
  		</NcSelect>
@@ -17,9 +17,9 @@ index e7dca2f..ddbd0cd 100644
  	</div>
  </template>
  
-@@ -58,11 +66,14 @@ import ShareRequests from '../mixins/ShareRequests.js'
- import ShareTypes from '../mixins/ShareTypes.js'
+@@ -40,11 +48,14 @@ import ShareRequests from '../mixins/ShareRequests.js'
  import ShareDetails from '../mixins/ShareDetails.js'
+ import { ShareType } from '@nextcloud/sharing'
  
 +import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 +
@@ -31,8 +31,8 @@ index e7dca2f..ddbd0cd 100644
 +		NcCheckboxRadioSwitch,
  	},
  
- 	mixins: [ShareTypes, ShareRequests, ShareDetails],
-@@ -108,6 +119,7 @@ export default {
+ 	mixins: [ShareRequests, ShareDetails],
+@@ -90,6 +101,7 @@ export default {
  			ShareSearch: OCA.Sharing.ShareSearch.state,
  			suggestions: [],
  			value: null,
@@ -40,7 +40,7 @@ index e7dca2f..ddbd0cd 100644
  		}
  	},
  
-@@ -154,6 +166,11 @@ export default {
+@@ -136,6 +148,11 @@ export default {
  			}
  			return t('files_sharing', 'No elements found.')
  		},
@@ -52,28 +52,28 @@ index e7dca2f..ddbd0cd 100644
  	},
  
  	mounted() {
-@@ -194,8 +211,6 @@ export default {
+@@ -176,8 +193,6 @@ export default {
  			const shareType = [
- 				this.SHARE_TYPES.SHARE_TYPE_USER,
- 				this.SHARE_TYPES.SHARE_TYPE_GROUP,
--				this.SHARE_TYPES.SHARE_TYPE_REMOTE,
--				this.SHARE_TYPES.SHARE_TYPE_REMOTE_GROUP,
- 				this.SHARE_TYPES.SHARE_TYPE_CIRCLE,
- 				this.SHARE_TYPES.SHARE_TYPE_ROOM,
- 				this.SHARE_TYPES.SHARE_TYPE_GUEST,
-@@ -203,6 +218,11 @@ export default {
- 				this.SHARE_TYPES.SHARE_TYPE_SCIENCEMESH,
+ 				ShareType.User,
+ 				ShareType.Group,
+-				ShareType.Remote,
+-				ShareType.RemoteGroup,
+ 				ShareType.Team,
+ 				ShareType.Room,
+ 				ShareType.Guest,
+@@ -185,6 +200,11 @@ export default {
+ 				ShareType.ScienceMesh,
  			]
  
 +			if (!this.onlyLocalUsers) {
-+				shareType.push(this.SHARE_TYPES.SHARE_TYPE_REMOTE);
-+				shareType.push(this.SHARE_TYPES.SHARE_TYPE_REMOTE_GROUP);
++				shareType.push(ShareType.Remote);
++				shareType.push(ShareType.RemoteGroup);
 +			}
 +
  			if (getCapabilities().files_sharing.public.enabled === true) {
- 				shareType.push(this.SHARE_TYPES.SHARE_TYPE_EMAIL)
+ 				shareType.push(ShareType.Email)
  			}
-@@ -468,6 +488,11 @@ export default {
+@@ -450,6 +470,11 @@ export default {
  				...this.shareTypeToIcon(result.value.shareType),
  			}
  		},

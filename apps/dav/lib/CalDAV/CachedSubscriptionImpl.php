@@ -3,32 +3,16 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2024 Daniel Kesselberg <mail@danielkesselberg.de>
- *
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\CalDAV;
 
 use OCP\Calendar\ICalendar;
+use OCP\Calendar\ICalendarIsEnabled;
 use OCP\Constants;
 
-class CachedSubscriptionImpl implements ICalendar {
+class CachedSubscriptionImpl implements ICalendar, ICalendarIsEnabled {
 	private CalDavBackend $backend;
 	private CachedSubscription $calendar;
 	/** @var array<string, mixed> */
@@ -79,7 +63,7 @@ class CachedSubscriptionImpl implements ICalendar {
 	 * @param string $pattern which should match within the $searchProperties
 	 * @param array $searchProperties defines the properties within the query pattern should match
 	 * @param array $options - optional parameters:
-	 * 	['timerange' => ['start' => new DateTime(...), 'end' => new DateTime(...)]]
+	 *                       ['timerange' => ['start' => new DateTime(...), 'end' => new DateTime(...)]]
 	 * @param int|null $limit - limit number of search results
 	 * @param int|null $offset - offset for paging of search results
 	 * @return array an array of events/journals/todos which are arrays of key-value-pairs
@@ -105,6 +89,13 @@ class CachedSubscriptionImpl implements ICalendar {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @since 30.0.12
+	 */
+	public function isEnabled(): bool {
+		return $this->calendarInfo['{http://owncloud.org/ns}calendar-enabled'] ?? true;
 	}
 
 	public function isDeleted(): bool {

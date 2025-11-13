@@ -1,38 +1,12 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Loki3000 <github@labcms.ru>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author MichaIng <micha@dietpi.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
-use Doctrine\DBAL\Platforms\OraclePlatform;
 use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
@@ -269,9 +243,9 @@ class AllConfig implements IConfig {
 		$prevValue = $this->getUserValue($userId, $appName, $key, null);
 
 		if ($prevValue !== null) {
-			if ($preCondition !== null && $prevValue !== (string)$preCondition) {
+			if ($preCondition !== null && $prevValue !== (string) $preCondition) {
 				throw new PreConditionNotMetException();
-			} elseif ($prevValue === (string)$value) {
+			} elseif ($prevValue === (string) $value) {
 				return;
 			} else {
 				$qb = $this->connection->getQueryBuilder();
@@ -282,7 +256,7 @@ class AllConfig implements IConfig {
 					->andWhere($qb->expr()->eq('configkey', $qb->createNamedParameter($key)));
 				$qb->executeStatement();
 
-				$this->userCache[$userId][$appName][$key] = (string)$value;
+				$this->userCache[$userId][$appName][$key] = (string) $value;
 				return;
 			}
 		}
@@ -307,7 +281,7 @@ class AllConfig implements IConfig {
 			if (!isset($this->userCache[$userId][$appName])) {
 				$this->userCache[$userId][$appName] = [];
 			}
-			$this->userCache[$userId][$appName][$key] = (string)$value;
+			$this->userCache[$userId][$appName][$key] = (string) $value;
 		}
 	}
 
@@ -409,9 +383,9 @@ class AllConfig implements IConfig {
 	 * @param ?string $userId the user ID to get the app configs from
 	 * @psalm-return array<string, array<string, string>>
 	 * @return array[] - 2 dimensional array with the following structure:
-	 *     [ $appId =>
-	 *         [ $key => $value ]
-	 *     ]
+	 *                 [ $appId =>
+	 *                 [ $key => $value ]
+	 *                 ]
 	 */
 	public function getAllUserValues(?string $userId): array {
 		if (isset($this->userCache[$userId])) {
@@ -496,7 +470,7 @@ class AllConfig implements IConfig {
 		$this->fixDIInit();
 
 		$qb = $this->connection->getQueryBuilder();
-		$configValueColumn = ($this->connection->getDatabasePlatform() instanceof OraclePlatform)
+		$configValueColumn = ($this->connection->getDatabaseProvider() === IDBConnection::PLATFORM_ORACLE)
 			? $qb->expr()->castColumn('configvalue', IQueryBuilder::PARAM_STR)
 			: 'configvalue';
 		$result = $qb->select('userid')
@@ -535,7 +509,7 @@ class AllConfig implements IConfig {
 		}
 
 		$qb = $this->connection->getQueryBuilder();
-		$configValueColumn = ($this->connection->getDatabasePlatform() instanceof OraclePlatform)
+		$configValueColumn = ($this->connection->getDatabaseProvider() === IDBConnection::PLATFORM_ORACLE)
 			? $qb->expr()->castColumn('configvalue', IQueryBuilder::PARAM_STR)
 			: 'configvalue';
 

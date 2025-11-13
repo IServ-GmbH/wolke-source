@@ -1,8 +1,8 @@
 diff --git apps/viewer/src/views/Viewer.vue apps/viewer/src/views/Viewer.vue
-index ffdc624..f768f63 100644
+index 33e1a26..4878440 100644
 --- apps/viewer/src/views/Viewer.vue
 +++ apps/viewer/src/views/Viewer.vue
-@@ -93,7 +93,7 @@
+@@ -94,7 +94,7 @@
  				@click="showSidebar">
  				{{ t('viewer', 'Open sidebar') }}
  			</NcActionButton>
@@ -11,7 +11,7 @@ index ffdc624..f768f63 100644
  				:download="currentFile.basename"
  				:close-after-click="true"
  				:href="downloadPath">
-@@ -442,6 +442,16 @@ export default defineComponent({
+@@ -446,6 +446,16 @@ export default defineComponent({
  				return false
  			}
  		},

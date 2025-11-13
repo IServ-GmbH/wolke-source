@@ -4,35 +4,14 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
 namespace OCA\Circles\Notification;
 
 use Exception;
-use InvalidArgumentException;
 use OCA\Circles\AppInfo\Application;
 use OCA\Circles\Exceptions\FederatedUserException;
 use OCA\Circles\Exceptions\FederatedUserNotFoundException;
@@ -50,8 +29,10 @@ use OCP\Federation\ICloudIdManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 /**
  * Class Notifier
@@ -134,11 +115,12 @@ class Notifier implements INotifier {
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 *
 	 * @return INotification
-	 * @throws InvalidArgumentException
+	 * @throws UnknownNotificationException
+	 * @throws AlreadyProcessedException
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
-			throw new InvalidArgumentException();
+			throw new UnknownNotificationException();
 		}
 
 		$iconPath = $this->urlGenerator->imagePath(Application::APP_ID, 'circles.svg');
@@ -147,8 +129,10 @@ class Notifier implements INotifier {
 		if ($notification->getObjectType() === 'member') {
 			try {
 				$this->prepareMemberNotification($notification);
+			} catch (UnknownNotificationException $e) {
+				throw $e;
 			} catch (Exception $e) {
-				// TODO: delete notification
+				throw new AlreadyProcessedException();
 			}
 		}
 
@@ -168,6 +152,7 @@ class Notifier implements INotifier {
 	 * @throws FederatedUserNotFoundException
 	 * @throws InvalidIdException
 	 * @throws SingleCircleNotFoundException
+	 * @throws UnknownNotificationException
 	 */
 	private function prepareMemberNotification(INotification $notification) {
 		$this->federatedUserService->initCurrentUser($notification->getUser());
@@ -185,7 +170,7 @@ class Notifier implements INotifier {
 		switch ($notification->getSubject()) {
 			case 'memberAdd':
 				$subject = $this->l10n->t(
-					'You are now a member of the Circle "%2$s"',
+					'You are now a member of the Team "%2$s"',
 					[
 						$member->getCircle()->getDisplayName()
 					]
@@ -194,7 +179,7 @@ class Notifier implements INotifier {
 
 			case 'invitation':
 				$subject = $this->l10n->t(
-					'You have been invited by %1$s into the Circle "%2$s"',
+					'You have been invited by %1$s into the Team "%2$s"',
 					[
 						$member->getInvitedBy()->getDisplayName(),
 						$member->getCircle()->getDisplayName()
@@ -204,7 +189,7 @@ class Notifier implements INotifier {
 
 			case 'joinRequest':
 				$subject = $this->l10n->t(
-					'%1$s sent a request to be a member of the Circle "%2$s"',
+					'%1$s sent a request to be a member of the Team "%2$s"',
 					[
 						$this->configService->displayFederatedUser($member, true),
 						$member->getCircle()->getDisplayName()
@@ -213,7 +198,7 @@ class Notifier implements INotifier {
 				break;
 
 			default:
-				throw new InvalidArgumentException();
+				throw new UnknownNotificationException();
 		}
 
 		$notification->setParsedSubject($subject);
@@ -236,7 +221,7 @@ class Notifier implements INotifier {
 					break;
 
 				case 'leave':
-					$action->setParsedLabel($this->l10n->t('Leave the circle'));
+					$action->setParsedLabel($this->l10n->t('Leave the team'));
 					break;
 			}
 

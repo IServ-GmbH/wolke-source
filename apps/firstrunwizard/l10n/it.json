@@ -84,8 +84,6 @@
     "Could not copy the URL, please copy manually" : "Impossibile copiare l'URL, copialo manualmente:",
     "Server address" : "Indirizzo del server",
     "Use this link to connect your apps and desktop client to this server:" : "Usa questo collegamento per connettere le tue applicazioni e il client desktop a questo server:",
-    "End-to-end encryption in calls and web" : "Cifratura end-to-end per chiamate e web",
-    "Your own new personal assistant" : "Il tuo assistente personale",
     "What's new?" : "Cosa c'è di nuovo?",
     "Nextcloud on all your devices" : "Nextcloud in tutti i tuoi dispositivi",
     "Nextcloud Hub {version}" : "Nextcloud Hub {version}",
@@ -95,20 +93,15 @@
     "App recommendation: Nextcloud Calendar" : "Applicazione consigliata: Calendario di Nextcloud",
     "App recommendation: Nextcloud Contacts" : "Applicazione consigliata: Contatti di Nextcloud",
     "App recommendation: Nextcloud Mail" : "Applicazione consigliata: Posta di Nextcloud",
-    "Assistant: chat summaries, Mail reply suggestions, answers based on your data, and more" : "Assistente: riassunti di chat, suggerimenti di risposta in Mail, risposte basate sui tuoi dati, e altro",
-    "Interactive previews for files, folders, boards and events" : "Anteprime interattive per file, cartelle, lavagne ed eventi",
-    "Federated chat and message editing in Talk" : "Chat federata e modifica dei messaggi in Talk",
-    "Mini-apps based on Tables" : "Mini-app basate su Tables",
-    "Public Collectives sharing, previews and QR-codes" : "Condivisione, anteprime e codici QR di Public Collectives",
-    "Manage your team resources like a pro with Nextcloud Teams" : "Gestisci le risorse del tuo team da professionista con Nextcloud Teams",
-    "Forms: automatically sync with a spreadsheet" : "Forms: sincr. automatica con un foglio di calcolo",
-    "Get to know the new features of Hub 8" : "Scopri le nuove caratteristiche di Hub 8",
     "Federated collaboration: file sharing, messaging, calls" : "Collaborazione federata: condivisione di file, messaggistica, chiamate",
     "Nextcloud Whiteboard" : "Lavagna di Nextcloud",
     "Workflow Engine" : "Motore del flusso di lavoro",
     "Safer and swifter mail" : "Email più sicura e leggera",
+    "Public Collectives sharing, previews and QR-codes" : "Condivisione, anteprime e codici QR di Public Collectives",
     "Office and PDF templates" : "Office e modelli PDF",
     "Chat mode for Nextcloud Assistant" : "Modalità chat per Assistente di Nextcloud",
-    "Get to know the new features of Hub 9" : "Scopri le nuove caratteristiche di Hub 9"
+    "Get to know the new features of Hub 9" : "Scopri le nuove caratteristiche di Hub 9",
+    "End-to-end encryption in calls and web" : "Cifratura end-to-end per chiamate e web",
+    "Your own new personal assistant" : "Il tuo assistente personale"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

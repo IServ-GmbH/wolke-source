@@ -32,3 +32,4 @@ echo ">>> Saving image ID"
 docker image inspect "$IMAGE_NAME" --format '{{ .Id }}' > "$DATA_DIR/image.id"
 
 echo ">>> Done. Image and metadata available in $DATA_DIR"
+echo ">>> Version: $VERSION"

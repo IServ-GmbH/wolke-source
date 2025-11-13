@@ -3,23 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Db;
@@ -82,7 +67,9 @@ class LoginAddressAggregatedMapper extends QBMapper {
 				$qb->expr()->like('ip', $qb->createNamedParameter('_%._%._%._%')),
 				$qb->expr()->gte('last_seen', $qb->createNamedParameter($maxAge)),
 				$qb->expr()->lte('first_seen', $qb->createNamedParameter($threshold))
-			));
+			))
+			->orderBy('last_seen', 'DESC') // Use most recent data in case of limiting
+			->setMaxResults(15_000); // More data will like exhaust memory
 
 		return $this->findEntities($query);
 	}
@@ -96,7 +83,9 @@ class LoginAddressAggregatedMapper extends QBMapper {
 			->where($qb->expr()->andX(
 				$qb->expr()->like('ip', $qb->createNamedParameter('_%._%._%._%')),
 				$qb->expr()->gt('last_seen', $qb->createNamedParameter($threshold))
-			));
+			))
+			->orderBy('last_seen', 'DESC') // Use most recent data in case of limiting
+			->setMaxResults(3_000); // More data will like exhaust memory;
 
 		return $this->findEntities($query);
 	}
@@ -160,7 +149,9 @@ class LoginAddressAggregatedMapper extends QBMapper {
 				$qb->expr()->notLike('ip', $qb->createNamedParameter('_%._%._%._%')),
 				$qb->expr()->gte('last_seen', $qb->createNamedParameter($maxAge)),
 				$qb->expr()->lte('first_seen', $qb->createNamedParameter($threshold))
-			));
+			))
+			->orderBy('last_seen', 'DESC') // Use most recent data in case of limiting
+			->setMaxResults(15_000); // More data will like exhaust memory;
 
 		return $this->findEntities($query);
 	}
@@ -174,7 +165,9 @@ class LoginAddressAggregatedMapper extends QBMapper {
 			->where($qb->expr()->andX(
 				$qb->expr()->notLike('ip', $qb->createNamedParameter('_%._%._%._%')),
 				$qb->expr()->gt('last_seen', $qb->createNamedParameter($threshold))
-			));
+			))
+			->orderBy('last_seen', 'DESC') // Use most recent data in case of limiting
+			->setMaxResults(3_000); // More data will like exhaust memory
 
 		return $this->findEntities($query);
 	}

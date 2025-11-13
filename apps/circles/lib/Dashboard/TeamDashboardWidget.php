@@ -1,23 +1,7 @@
 <?php
 /**
- * @copyright Copyright (c) 2024 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Circles\Dashboard;
@@ -34,15 +18,17 @@ use OCP\Dashboard\IAPIWidgetV2;
 use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IConditionalWidget;
 use OCP\Dashboard\IIconWidget;
+use OCP\Dashboard\IOptionWidget;
 use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
 use OCP\Dashboard\Model\WidgetItems;
+use OCP\Dashboard\Model\WidgetOptions;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
-class TeamDashboardWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditionalWidget {
+class TeamDashboardWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditionalWidget, IOptionWidget {
 	public function __construct(
 		private IURLGenerator $urlGenerator,
 		private IL10N $l10n,
@@ -81,7 +67,7 @@ class TeamDashboardWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, I
 					$circle->getDisplayName(),
 					'',
 					$this->urlGenerator->getAbsoluteURL($this->modelManager->generateLinkToCircle($circle->getSingleId())),
-					$this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('core.GuestAvatar.getAvatar', ['guestName' => $circle->getDisplayName(), 'size' => 64]))
+					$this->urlGenerator->getAbsoluteURL($this->urlGenerator->linkToRoute('core.GuestAvatar.getAvatar', ['guestName' => $circle->getSanitizedName(), 'size' => 64]))
 				);
 			}, $this->circleService->probeCircles($probe));
 		} catch (\Exception $e) {
@@ -101,7 +87,7 @@ class TeamDashboardWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, I
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return 'Teams';
+		return $this->l10n->t('Teams');
 	}
 
 	/**
@@ -159,5 +145,11 @@ class TeamDashboardWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, I
 	public function isEnabled(): bool {
 		return $this->appManager->isEnabledForUser('contacts') &&
 			$this->configService->getAppValueBool(ConfigService::FRONTEND_ENABLED);
+	}
+
+	public function getWidgetOptions(): WidgetOptions {
+		return new WidgetOptions(
+			roundItemIcons: true,
+		);
 	}
 }

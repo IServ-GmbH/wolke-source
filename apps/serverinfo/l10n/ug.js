@@ -16,7 +16,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "CPU يۈكى ، RAM ئىشلىتىش ، دىسكا ئىشلىتىش ، ئىشلەتكۈچى سانى قاتارلىق پايدىلىق مۇلازىمېتىر ئۇچۇرلىرى بىلەن تەمىنلەيدۇ.",
     "Operating System:" : "مەشغۇلات سىستېمىسى:",
     "CPU:" : "CPU:",
-    "Unknown Processor" : "نامەلۇم بىر تەرەپ قىلغۇچ",
     "Memory:" : "ئەستە ساقلاش:",
     "Server time:" : "مۇلازىمېتىر ۋاقتى:",
     "Uptime:" : "Uptime:",
@@ -74,11 +73,6 @@ OC.L10N.register(
     "Skip server update" : "مۇلازىمېتىر يېڭىلاشتىن ئاتلاڭ",
     "To use an access token, please generate one then set it using the following command:" : "زىيارەت بەلگىسىنى ئىشلىتىش ئۈچۈن بىرنى ھاسىل قىلىڭ ، ئاندىن تۆۋەندىكى بۇيرۇقنى ئىشلىتىپ تەڭشەڭ:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "ئاندىن يۇقارقى URL نى سورىغاندا «NC-Token» ماۋزۇسى ئارقىلىق بەلگە يوللاڭ.",
-    "Load average: {cpu} (last minute)" : "ئوتتۇرىچە يۈك: {cpu} (ئاخىرقى مىنۇت)",
-    "DNS:" : "DNS:",
-    "Total users:" : "ئومۇمىي ئىشلەتكۈچى:",
-    "24 hours:" : "24 سائەت:",
-    "1 hour:" : "1 سائەت:",
-    "5 mins:" : "5 مىنۇت:"
+    "Unknown Processor" : "نامەلۇم بىر تەرەپ قىلغۇچ"
 },
 "nplurals=2; plural=(n != 1);");

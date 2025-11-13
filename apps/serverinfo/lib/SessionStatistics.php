@@ -3,29 +3,15 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016 Bjoern Schiessle <bjoern@schiessle.org>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
 namespace OCA\ServerInfo;
 
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 /**
@@ -40,6 +26,11 @@ class SessionStatistics {
 	private const OFFSET_5MIN = 300;
 	private const OFFSET_1HOUR = 3600;
 	private const OFFSET_1DAY = 86400;
+	private const OFFSET_7DAYS = 604800;
+	private const OFFSET_1MONTH = 2592000;
+	private const OFFSET_3MONTHS = 7776000;
+	private const OFFSET_6MONTHS = 15552000;
+	private const OFFSET_1YEAR = 31536000;
 
 	private IDBConnection $connection;
 	private ITimeFactory $timeFactory;
@@ -54,6 +45,11 @@ class SessionStatistics {
 			'last5minutes' => $this->getNumberOfActiveUsers(self::OFFSET_5MIN),
 			'last1hour' => $this->getNumberOfActiveUsers(self::OFFSET_1HOUR),
 			'last24hours' => $this->getNumberOfActiveUsers(self::OFFSET_1DAY),
+			'last7days' => $this->getNumberOfActiveUsers(self::OFFSET_7DAYS),
+			'last1month' => $this->getNumberOfActiveUsers(self::OFFSET_1MONTH),
+			'last3months' => $this->getNumberOfActiveUsers(self::OFFSET_3MONTHS),
+			'last6months' => $this->getNumberOfActiveUsers(self::OFFSET_6MONTHS),
+			'lastyear' => $this->getNumberOfActiveUsers(self::OFFSET_1YEAR),
 		];
 	}
 
@@ -63,18 +59,21 @@ class SessionStatistics {
 	 * @param int $offset seconds
 	 */
 	private function getNumberOfActiveUsers(int $offset): int {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('uid')
-			->from('authtoken')
-			->where($query->expr()->gte(
-				'last_activity',
-				$query->createNamedParameter($this->timeFactory->getTime() - $offset)
-			))->groupBy('uid');
+		$queryBuilder = $this->connection->getQueryBuilder();
+		$queryBuilder->select($queryBuilder->func()->count('userid'))
+			->from('preferences')
+			->where($queryBuilder->expr()->eq('appid', $queryBuilder->createNamedParameter('login')))
+			->andWhere($queryBuilder->expr()->eq('configkey', $queryBuilder->createNamedParameter('lastLogin')))
+			->andwhere($queryBuilder->expr()->gte(
+				$queryBuilder->expr()->castColumn('configvalue', IQueryBuilder::PARAM_INT),
+				$queryBuilder->createNamedParameter($this->timeFactory->getTime() - $offset, IQueryBuilder::PARAM_INT),
+				IQueryBuilder::PARAM_INT,
+			));
 
-		$result = $query->executeQuery();
-		$activeUsers = $result->fetchAll();
+		$result = $queryBuilder->executeQuery();
+		$activeUsers = (int)$result->fetchOne();
 		$result->closeCursor();
 
-		return count($activeUsers);
+		return $activeUsers;
 	}
 }

@@ -1,30 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\DB;
 
@@ -32,7 +11,11 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Event\Listeners\OracleSessionInit;
+use OC\DB\QueryBuilder\Sharded\AutoIncrementHandler;
+use OC\DB\QueryBuilder\Sharded\ShardConnectionManager;
 use OC\SystemConfig;
+use OCP\ICacheFactory;
+use OCP\Server;
 
 /**
  * Takes care of creating and configuring Doctrine connections.
@@ -75,9 +58,12 @@ class ConnectionFactory {
 		],
 	];
 
+	private ShardConnectionManager $shardConnectionManager;
+	private ICacheFactory $cacheFactory;
 
 	public function __construct(
-		private SystemConfig $config
+		private SystemConfig $config,
+		?ICacheFactory $cacheFactory = null,
 	) {
 		if ($this->config->getValue('mysql.utf8mb4', false)) {
 			$this->defaultConnectionParams['mysql']['charset'] = 'utf8mb4';
@@ -86,6 +72,8 @@ class ConnectionFactory {
 		if ($collationOverride) {
 			$this->defaultConnectionParams['mysql']['collation'] = $collationOverride;
 		}
+		$this->shardConnectionManager = new ShardConnectionManager($this->config, $this);
+		$this->cacheFactory = $cacheFactory ?? Server::get(ICacheFactory::class);
 	}
 
 	/**
@@ -133,21 +121,9 @@ class ConnectionFactory {
 
 			case 'oci':
 				$eventManager->addEventSubscriber(new OracleSessionInit);
-				// the driverOptions are unused in dbal and need to be mapped to the parameters
-				if (isset($connectionParams['driverOptions'])) {
-					$connectionParams = array_merge($connectionParams, $connectionParams['driverOptions']);
-				}
-				$host = $connectionParams['host'];
-				$port = $connectionParams['port'] ?? null;
-				$dbName = $connectionParams['dbname'];
-
-				// we set the connect string as dbname and unset the host to coerce doctrine into using it as connect string
-				if ($host === '') {
-					$connectionParams['dbname'] = $dbName; // use dbname as easy connect name
-				} else {
-					$connectionParams['dbname'] = '//' . $host . (!empty($port) ? ":{$port}" : "") . '/' . $dbName;
-				}
-				unset($connectionParams['host']);
+				$connectionParams = $this->forceConnectionStringOracle($connectionParams);
+				$connectionParams['primary'] = $this->forceConnectionStringOracle($connectionParams['primary']);
+				$connectionParams['replica'] = array_map([$this, 'forceConnectionStringOracle'], $connectionParams['replica']);
 				break;
 
 			case 'sqlite3':
@@ -199,7 +175,7 @@ class ConnectionFactory {
 		$name = $this->config->getValue($configPrefix . 'dbname', $this->config->getValue('dbname', self::DEFAULT_DBNAME));
 
 		if ($this->normalizeType($type) === 'sqlite3') {
-			$dataDir = $this->config->getValue("datadirectory", \OC::$SERVERROOT . '/data');
+			$dataDir = $this->config->getValue('datadirectory', \OC::$SERVERROOT . '/data');
 			$connectionParams['path'] = $dataDir . '/' . $name . '.db';
 		} else {
 			$host = $this->config->getValue($configPrefix . 'dbhost', $this->config->getValue('dbhost', ''));
@@ -222,6 +198,17 @@ class ConnectionFactory {
 			'tablePrefix' => $connectionParams['tablePrefix']
 		];
 
+		if ($type === 'pgsql') {
+			$pgsqlSsl = $this->config->getValue('pgsql_ssl', false);
+			if (is_array($pgsqlSsl)) {
+				$connectionParams['sslmode'] = $pgsqlSsl['mode'] ?? '';
+				$connectionParams['sslrootcert'] = $pgsqlSsl['rootcert'] ?? '';
+				$connectionParams['sslcert'] = $pgsqlSsl['cert'] ?? '';
+				$connectionParams['sslkey'] = $pgsqlSsl['key'] ?? '';
+				$connectionParams['sslcrl'] = $pgsqlSsl['crl'] ?? '';
+			}
+		}
+
 		if ($type === 'mysql' && $this->config->getValue('mysql.utf8mb4', false)) {
 			$connectionParams['defaultTableOptions'] = [
 				'collate' => 'utf8mb4_bin',
@@ -233,6 +220,19 @@ class ConnectionFactory {
 		if ($this->config->getValue('dbpersistent', false)) {
 			$connectionParams['persistent'] = true;
 		}
+
+		$connectionParams['sharding'] = $this->config->getValue('dbsharding', []);
+		if (!empty($connectionParams['sharding'])) {
+			$connectionParams['shard_connection_manager'] = $this->shardConnectionManager;
+			$connectionParams['auto_increment_handler'] = new AutoIncrementHandler(
+				$this->cacheFactory,
+				$this->shardConnectionManager,
+			);
+		} else {
+			// just in case only the presence could lead to funny behaviour
+			unset($connectionParams['sharding']);
+		}
+
 		$connectionParams = array_merge($connectionParams, $additionalConnectionParams);
 
 		$replica = $this->config->getValue($configPrefix . 'dbreplica', $this->config->getValue('dbreplica', [])) ?: [$connectionParams];
@@ -263,5 +263,25 @@ class ConnectionFactory {
 		}
 
 		return $params;
+	}
+
+	protected function forceConnectionStringOracle(array $connectionParams): array {
+		// the driverOptions are unused in dbal and need to be mapped to the parameters
+		if (isset($connectionParams['driverOptions'])) {
+			$connectionParams = array_merge($connectionParams, $connectionParams['driverOptions']);
+		}
+		$host = $connectionParams['host'];
+		$port = $connectionParams['port'] ?? null;
+		$dbName = $connectionParams['dbname'];
+
+		// we set the connect string as dbname and unset the host to coerce doctrine into using it as connect string
+		if ($host === '') {
+			$connectionParams['dbname'] = $dbName; // use dbname as easy connect name
+		} else {
+			$connectionParams['dbname'] = '//' . $host . (!empty($port) ? ":{$port}" : '') . '/' . $dbName;
+		}
+		unset($connectionParams['host']);
+
+		return $connectionParams;
 	}
 }

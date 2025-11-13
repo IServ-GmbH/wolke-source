@@ -16,7 +16,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Zapewnia przydatne informacje o serwerze, takie jak obciążenie procesora, użycie pamięci RAM, wykorzystanie dysku, liczba użytkowników itp.",
     "Operating System:" : "System operacyjny:",
     "CPU:" : "Procesor CPU:",
-    "Unknown Processor" : "Procesor nieznany",
     "Memory:" : "Pamięć:",
     "Server time:" : "Czas serwera:",
     "Uptime:" : "Czas pracy:",
@@ -74,11 +73,6 @@ OC.L10N.register(
     "Skip server update" : "Pomiń aktualizację serwera",
     "To use an access token, please generate one then set it using the following command:" : "Aby użyć tokena dostępu, wygeneruj go, a następnie ustaw za pomocą następującego polecenia:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Następnie przekaż token z nagłówkiem \"NC-Token\" podczas odpytywania powyższego adresu URL.",
-    "Load average: {cpu} (last minute)" : "Średnie obciążenie: {cpu} (ostatnia minuta)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Ilość użytkowników:",
-    "24 hours:" : "24 godziny:",
-    "1 hour:" : "1 godzina:",
-    "5 mins:" : "5 minut:"
+    "Unknown Processor" : "Procesor nieznany"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

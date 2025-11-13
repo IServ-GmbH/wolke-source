@@ -52,7 +52,6 @@ OC.L10N.register(
     "Federated" : "Federated",
     "Email address" : "Retpoŝtadreso",
     "Contact" : "Kontakto",
-    "Circle" : "Rondo",
     "Member" : "Membro",
     "Moderator" : "Kontrolanto",
     "Admin" : "Administranto",
@@ -71,12 +70,15 @@ OC.L10N.register(
     "You have been blocked from this circle" : "Vi estis barita el tiu ĉi rondo",
     "Accept" : "Akcepti",
     "%s" : "%s",
+    "Open %s" : "Malfermi %s",
     "Bring cloud-users closer together." : "Pliproksimigi uzantojn kune.",
+    "Loading…" : "Ŝargado...",
     "No files in here" : "Neniu dosiero ĉi tie",
     "No entries found in this folder" : "Neniu elemento en tiu ĉi dosierujo",
     "Name" : "Nomo",
     "Size" : "Grando",
     "Modified" : "Modifita",
-    "Shared to Circles" : "Kunhavigita kun rondoj"
+    "Shared to Circles" : "Kunhavigita kun rondoj",
+    "Circle" : "Rondo"
 },
 "nplurals=2; plural=(n != 1);");

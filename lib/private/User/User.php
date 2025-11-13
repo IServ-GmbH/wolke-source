@@ -1,36 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Leon Klingele <leon@struktur.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\User;
 
@@ -54,6 +27,7 @@ use OCP\IUser;
 use OCP\IUserBackend;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\User\Backend\IGetHomeBackend;
+use OCP\User\Backend\IPasswordHashBackend;
 use OCP\User\Backend\IProvideAvatarBackend;
 use OCP\User\Backend\IProvideEnabledStateBackend;
 use OCP\User\Backend\ISetDisplayNameBackend;
@@ -181,6 +155,7 @@ class User implements IUser {
 	 */
 	public function setSystemEMailAddress(string $mailAddress): void {
 		$oldMailAddress = $this->getSystemEMailAddress();
+		$mailAddress = mb_strtolower(trim($mailAddress));
 
 		if ($mailAddress === '') {
 			$this->config->deleteUserValue($this->uid, 'settings', 'email');
@@ -203,6 +178,7 @@ class User implements IUser {
 	 * @inheritDoc
 	 */
 	public function setPrimaryEMailAddress(string $mailAddress): void {
+		$mailAddress = mb_strtolower(trim($mailAddress));
 		if ($mailAddress === '') {
 			$this->config->deleteUserValue($this->uid, 'settings', 'primary_email');
 			return;
@@ -249,7 +225,7 @@ class User implements IUser {
 		if ($now - $previousLogin > 60) {
 			$this->lastLogin = time();
 			$this->config->setUserValue(
-				$this->uid, 'login', 'lastLogin', (string)$this->lastLogin);
+				$this->uid, 'login', 'lastLogin', (string) $this->lastLogin);
 		}
 
 		return $firstTimeLogin;
@@ -370,6 +346,20 @@ class User implements IUser {
 		} else {
 			return false;
 		}
+	}
+
+	public function getPasswordHash(): ?string {
+		if (!($this->backend instanceof IPasswordHashBackend)) {
+			return null;
+		}
+		return $this->backend->getPasswordHash($this->uid);
+	}
+
+	public function setPasswordHash(string $passwordHash): bool {
+		if (!($this->backend instanceof IPasswordHashBackend)) {
+			return false;
+		}
+		return $this->backend->setPasswordHash($this->uid, $passwordHash);
 	}
 
 	/**
@@ -508,14 +498,16 @@ class User implements IUser {
 	 * @inheritDoc
 	 */
 	public function getSystemEMailAddress(): ?string {
-		return $this->config->getUserValue($this->uid, 'settings', 'email', null);
+		$email = $this->config->getUserValue($this->uid, 'settings', 'email', null);
+		return $email ? mb_strtolower(trim($email)) : null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getPrimaryEMailAddress(): ?string {
-		return $this->config->getUserValue($this->uid, 'settings', 'primary_email', null);
+		$email = $this->config->getUserValue($this->uid, 'settings', 'primary_email', null);
+		return $email ? mb_strtolower(trim($email)) : null;
 	}
 
 	/**

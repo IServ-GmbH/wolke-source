@@ -1,15 +1,20 @@
 { "translations": {
+    "Cancel" : "Bekor qilish",
+    "Overwrite" : "ustiga yozish",
     "Edit" : "Tahrirlash",
-    "Download" : "Download",
-    "Delete" : "Delete",
+    "Download" : "Yuklab olish",
+    "Delete" : "O'chirish",
+    "View" : "Ko'rish",
     "Name" : "Name",
-    "Save" : "Save",
+    "Save" : "Saqlash",
     "Back" : "Orqaga",
-    "Cancel" : "Cancel",
+    "Reset" : "Qayta tiklash",
     "Confirm" : "Confirm",
+    "Undo" : "Bekor qilish",
     "Custom" : "Boshqa",
     "Value" : "Qiymati",
     "Line" : "Chiziq",
+    "Text" : "Matn",
     "Size" : "Size"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

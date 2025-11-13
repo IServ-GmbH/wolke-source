@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class FixShareOwners extends Base {
 	public function __construct(
-		private OrphanHelper $orphanHelper,
+		private readonly OrphanHelper $orphanHelper,
 	) {
 		parent::__construct();
 	}

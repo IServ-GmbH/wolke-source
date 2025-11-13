@@ -22,8 +22,9 @@ class ModifyColumn extends ColumnMigrationAttribute {
 	 * @since 30.0.0
 	 */
 	public function definition(): string {
+		$type = is_null($this->getType()) ? '' : ' to ' . $this->getType()->value;
 		return empty($this->getName()) ?
-			'Modification of a column from table \'' . $this->getTable() . '\''
-			: 'Modification of column \'' . $this->getName() . '\' from table \'' . $this->getTable() . '\'';
+			'Modification of a column from table \'' . $this->getTable() . '\'' . $type
+			: 'Modification of column \'' . $this->getName() . '\' from table \'' . $this->getTable() . '\'' . $type;
 	}
 }

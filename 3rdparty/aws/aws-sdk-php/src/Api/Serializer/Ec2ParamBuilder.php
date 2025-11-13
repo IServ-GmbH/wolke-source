@@ -28,7 +28,9 @@ class Ec2ParamBuilder extends QueryParamBuilder
         &$query
     ) {
         // Handle empty list serialization
-        if (!empty($value)) {
+        if (!$value) {
+            $query[$prefix] = false;
+        } else {
             $items = $shape->getMember();
             foreach ($value as $k => $v) {
                 $this->format($items, $v, $prefix . '.' . ($k + 1), $query);

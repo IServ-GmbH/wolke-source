@@ -8,9 +8,11 @@ OC.L10N.register(
     "guest" : "ಅತಿಥಿ",
     "Saved" : "﻿ಉಳಿಸಿದ",
     "Link" : "ಸಂಪರ್ಕ ಕೊಂಡಿ",
+    "Cancel" : "Cancel",
     "URL" : "ಜಾಲದ ಕೊಂಡಿ",
     "Upload" : "ವರ್ಗಾಯಿಸಿ",
     "Edit" : "ಸಂಪಾದಿಸು",
+    "Choose" : "﻿ಆಯ್ಕೆ",
     "Info" : "Info",
     "Warning" : "﻿ಎಚ್ಚರಿಕೆ"
 },

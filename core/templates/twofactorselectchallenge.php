@@ -1,4 +1,9 @@
 <?php
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 $noProviders = empty($_['providers']);
 ?>
 <div class="body-login-container update two-factor">
@@ -71,7 +76,7 @@ $noProviders = empty($_['providers']);
 		</a>
 	</p>
 	<?php endif; ?>
-	<p><a class="two-factor-secondary" href="<?php print_unescaped($_['logout_url']); ?>">
+	<p><a id="cancel-login" class="two-factor-secondary" href="<?php print_unescaped($_['logout_url']); ?>">
 		<?php p($l->t('Cancel login')) ?>
 	</a></p>
 </div>

@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/lib/Service/CapabilitiesService.php apps/richdocuments/lib/Service/CapabilitiesService.php
-index 60a87a731..d7d5f3a17 100644
+index d537453df..215064515 100644
 --- apps/richdocuments/lib/Service/CapabilitiesService.php
 +++ apps/richdocuments/lib/Service/CapabilitiesService.php
-@@ -115,7 +115,7 @@ class CapabilitiesService extends CachedRequestService {
+@@ -105,7 +105,7 @@ class CapabilitiesService extends CachedRequestService {
  			return $this->capabilitites['productName'];
  		}
  

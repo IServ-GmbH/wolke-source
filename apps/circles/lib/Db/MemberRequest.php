@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -217,7 +197,9 @@ class MemberRequest extends MemberRequestBuilder {
 	public function getMembers(
 		string $singleId,
 		?IFederatedUser $initiator = null,
-		?MemberProbe $probe = null
+		?MemberProbe $probe = null,
+		int $limit = 0,
+		bool $fullDetails = false,
 	): array {
 		if (is_null($probe)) {
 			$probe = new MemberProbe();
@@ -225,6 +207,9 @@ class MemberRequest extends MemberRequestBuilder {
 
 		$qb = $this->getMemberSelectSql($initiator);
 		$qb->limitToCircleId($singleId);
+		if ($limit > 0) {
+			$qb->chunk(0, $limit);
+		}
 
 		$qb->setOptions(
 			[CoreQueryBuilder::MEMBER],
@@ -234,8 +219,10 @@ class MemberRequest extends MemberRequestBuilder {
 			)
 		);
 
-		$qb->leftJoinCircle(CoreQueryBuilder::MEMBER, $initiator);
-		$qb->leftJoinInvitedBy(CoreQueryBuilder::MEMBER);
+		if ($fullDetails) {
+			$qb->leftJoinCircle(CoreQueryBuilder::MEMBER, $initiator);
+			$qb->leftJoinInvitedBy(CoreQueryBuilder::MEMBER);
+		}
 
 		if ($probe->hasFilterRemoteInstance()) {
 			$aliasCircle = $qb->generateAlias(CoreQueryBuilder::MEMBER, CoreQueryBuilder::CIRCLE);

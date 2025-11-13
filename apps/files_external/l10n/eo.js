@@ -2,8 +2,6 @@ OC.L10N.register(
     "files_external",
     {
     "Grant access" : "Doni alirpermeson",
-    "Error configuring OAuth1" : "Eraro dum agordo de OAuth1",
-    "Please provide a valid app key and secret." : "Bv. doni validan aplikaĵan ŝlosilon kaj sekreton.",
     "Error configuring OAuth2" : "Eraro dum agordo de OAuth2",
     "Generate keys" : "Generi ŝlosilojn",
     "Error generating key pair" : "Eraro dum generado de ŝlosila paro",
@@ -22,9 +20,6 @@ OC.L10N.register(
     "Secret key" : "Sekreta ŝlosilo",
     "Builtin" : "Interne instalita",
     "None" : "Nenio",
-    "OAuth1" : "OAuth1",
-    "App key" : "Aplikaĵa ŝlosilo",
-    "App secret" : "Aplikaĵosekreto",
     "OAuth2" : "OAuth2",
     "Client ID" : "Klientidentigilo",
     "Client secret" : "Klientosekreto",
@@ -99,7 +94,6 @@ OC.L10N.register(
     "Delete storage?" : "Ĉu forigi konservejon?",
     "Click to recheck the configuration" : "Alklaku por rekontroli la agordon",
     "Saved" : "Konservita",
-    "Saving …" : "Konservado...",
     "Save" : "Konservi",
     "No external storage configured or you don't have the permission to configure them" : "Neniu ekstera konservejo agordita, aŭ vi ne rajtas agordi ĝin.",
     "Open documentation" : "Malfermi la dokumentaron",
@@ -109,6 +103,12 @@ OC.L10N.register(
     "Available for" : "Disponebla por",
     "Add storage" : "Aldoni konservejon",
     "Advanced settings" : "Altanivela agordo",
-    "Global credentials can be used to authenticate with multiple external storages that have the same credentials." : "Ĝeneralaj akreditiloj utilas, kiam pluraj eksteraj konservejoj kunuzas la samajn akreditilojn."
+    "Global credentials can be used to authenticate with multiple external storages that have the same credentials." : "Ĝeneralaj akreditiloj utilas, kiam pluraj eksteraj konservejoj kunuzas la samajn akreditilojn.",
+    "Error configuring OAuth1" : "Eraro dum agordo de OAuth1",
+    "Please provide a valid app key and secret." : "Bv. doni validan aplikaĵan ŝlosilon kaj sekreton.",
+    "OAuth1" : "OAuth1",
+    "App key" : "Aplikaĵa ŝlosilo",
+    "App secret" : "Aplikaĵosekreto",
+    "Saving …" : "Konservado..."
 },
 "nplurals=2; plural=(n != 1);");

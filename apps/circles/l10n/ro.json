@@ -57,7 +57,7 @@
     "Nextcloud Group" : "Grup Nextcloud",
     "Email address" : "Email",
     "Contact" : "Contact",
-    "Circle" : "Cerc",
+    "Team" : "Echipă",
     "Nextcloud App" : "Aplicație Nextcloud",
     "Member" : "Membru",
     "Moderator" : "Moderator",
@@ -101,20 +101,19 @@
     "%s owned by %s" : "%s proprietatea lui %s",
     "%s shared a file with \"%s\"." : "%s a partajat un fișier cu \"%s\".",
     "%s shared a file with you." : "%s a partajat un fișier cu tine.",
+    "Open %s" : "Deschide %s",
     "%1$s shared some content with you.\nYou should have already received a separate email with a link to access it.\n" : "%1$s a partajat ceva cu tine.\nTrebuie să fi primit deja un email separat cu linkul de acces.\n",
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s a partajat ceva cu tine. Trebuie să fi primit un email separat cu linkul de acces.",
     "Password to access content shared with you by %1$s" : "Parola pentru accesarea conținutului partajat de %1$s",
     "Password to access content" : "Parola pentru accesarea conținutului",
     "Bring cloud-users closer together." : "Adu utilizatorii cloud-ului mai aproape.",
+    "Loading…" : "Se încarcă...",
     "No files in here" : "Nu sunt fișiere aici",
     "No entries found in this folder" : "Nici o intrare găsită în acest folder",
     "Name" : "Nume",
     "Size" : "Mărime",
     "Modified" : "Modificat",
     "Shared to Circles" : "Distribuit în Cercuri",
-    "You are now a member of the Circle \"%2$s\"" : "Sunteți acum membru al Cercului \"%2$s\"",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "Ați fost invitat de %1$s în Cercul \"%2$s\"",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s a solicitat să fie membru al Cercului \"%2$s\"",
-    "Leave the circle" : "Părăsește cercul"
+    "Circle" : "Cerc"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }

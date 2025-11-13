@@ -1,11 +1,16 @@
 <?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-FileCopyrightText: 2015-2016 ownCloud, Inc.
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>logreader</id>
 	<name>Log Reader</name>
 	<summary>A log reader for Nextcloud</summary>
 	<description>Log reader for Nextcloud</description>
-	<version>2.14.0</version>
+	<version>3.0.0</version>
 	<licence>agpl</licence>
 	<author>Robin Appelman</author>
 	<author>Ferdinand Thiessen</author>
@@ -25,7 +30,7 @@
 	</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="29" max-version="29" />
+		<nextcloud min-version="30" max-version="30" />
 	</dependencies>
 
 	<commands>

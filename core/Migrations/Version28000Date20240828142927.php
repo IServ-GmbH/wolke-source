@@ -13,12 +13,16 @@ use Closure;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Migration\Attributes\ColumnType;
+use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Migrate the argument_hash column of oc_jobs to use sha256 instead of md5.
  */
+#[ModifyColumn(table: 'jobs', name: 'argument_hash', type: ColumnType::STRING, description: 'Increase the column size from 32 to 64')]
+#[ModifyColumn(table: 'jobs', name: 'argument_hash', type: ColumnType::STRING, description: 'Rehash the argument_hash column using sha256')]
 class Version28000Date20240828142927 extends SimpleMigrationStep {
 	public function __construct(
 		protected IDBConnection $connection,
@@ -68,7 +72,7 @@ class Version28000Date20240828142927 extends SimpleMigrationStep {
 				} else {
 					$hash = hash('sha256', $jobRow['argument']);
 				}
-				$insertQuery->setParameter('id', (string)$jobRow['id'], IQueryBuilder::PARAM_INT);
+				$insertQuery->setParameter('id', (string) $jobRow['id'], IQueryBuilder::PARAM_INT);
 				$insertQuery->setParameter('argument_hash', $hash);
 				$insertQuery->executeStatement();
 			}

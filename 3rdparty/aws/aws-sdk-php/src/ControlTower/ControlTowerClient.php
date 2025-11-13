@@ -39,8 +39,6 @@ use Aws\AwsClient;
  * @method \GuzzleHttp\Promise\Promise listEnabledBaselinesAsync(array $args = [])
  * @method \Aws\Result listEnabledControls(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listEnabledControlsAsync(array $args = [])
- * @method \Aws\Result listLandingZoneOperations(array $args = [])
- * @method \GuzzleHttp\Promise\Promise listLandingZoneOperationsAsync(array $args = [])
  * @method \Aws\Result listLandingZones(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listLandingZonesAsync(array $args = [])
  * @method \Aws\Result listTagsForResource(array $args = [])

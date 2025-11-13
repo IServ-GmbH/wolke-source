@@ -1,35 +1,10 @@
 <?php
-/**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Stefan Weil <sw@weilnetz.de>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
- */
 
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 namespace OC\Files\Node;
 
 use OC\Files\FileInfo;
@@ -414,13 +389,17 @@ class Root extends Folder implements IRootFolder {
 		// scope the cache by user, so we don't return nodes for different users
 		if ($this->user) {
 			$cachedPath = $this->pathByIdCache->get($this->user->getUID() . '::' . $id);
-			if ($cachedPath && str_starts_with($path, $cachedPath)) {
+			if ($cachedPath && str_starts_with($cachedPath, $path)) {
 				// getting the node by path is significantly cheaper than finding it by id
-				$node = $this->get($cachedPath);
-				// by validating that the cached path still has the requested fileid we can work around the need to invalidate the cached path
-				// if the cached path is invalid or a different file now we fall back to the uncached logic
-				if ($node && $node->getId() === $id) {
-					return $node;
+				try {
+					$node = $this->get($cachedPath);
+					// by validating that the cached path still has the requested fileid we can work around the need to invalidate the cached path
+					// if the cached path is invalid or a different file now we fall back to the uncached logic
+					if ($node && $node->getId() === $id) {
+						return $node;
+					}
+				} catch (NotFoundException|NotPermittedException) {
+					// The file may be moved but the old path still in cache
 				}
 			}
 		}
@@ -484,7 +463,7 @@ class Root extends Folder implements IRootFolder {
 				if ($folder instanceof Folder) {
 					return $folder->getByIdInRootMount($id);
 				} else {
-					throw new \Exception("getByIdInPath with non folder");
+					throw new \Exception('getByIdInPath with non folder');
 				}
 			}
 			return [];

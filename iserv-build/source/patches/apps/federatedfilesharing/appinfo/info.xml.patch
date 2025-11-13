@@ -1,8 +1,8 @@
 diff --git apps/federatedfilesharing/appinfo/info.xml apps/federatedfilesharing/appinfo/info.xml
-index e6cc2b2..4b2d38f 100644
+index 213134a..c0c381c 100644
 --- apps/federatedfilesharing/appinfo/info.xml
 +++ apps/federatedfilesharing/appinfo/info.xml
-@@ -20,7 +20,5 @@
+@@ -25,7 +25,5 @@
  
  	<settings>
  		<admin>OCA\FederatedFileSharing\Settings\Admin</admin>

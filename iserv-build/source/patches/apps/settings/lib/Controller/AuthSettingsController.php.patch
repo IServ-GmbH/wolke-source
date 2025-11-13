@@ -1,8 +1,8 @@
 diff --git apps/settings/lib/Controller/AuthSettingsController.php apps/settings/lib/Controller/AuthSettingsController.php
-index 8a01c7c..980555d 100644
+index 4b126e8..8234556 100644
 --- apps/settings/lib/Controller/AuthSettingsController.php
 +++ apps/settings/lib/Controller/AuthSettingsController.php
-@@ -47,6 +47,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;
+@@ -25,6 +25,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;
  use OCP\Authentication\Exceptions\WipeTokenException;
  use OCP\Authentication\Token\IToken;
  use OCP\IRequest;
@@ -10,7 +10,7 @@ index 8a01c7c..980555d 100644
  use OCP\ISession;
  use OCP\IUserSession;
  use OCP\Security\ISecureRandom;
-@@ -57,6 +58,9 @@ class AuthSettingsController extends Controller {
+@@ -35,6 +36,9 @@ class AuthSettingsController extends Controller {
  	/** @var IProvider */
  	private $tokenProvider;
  
@@ -20,7 +20,7 @@ index 8a01c7c..980555d 100644
  	/** @var ISession */
  	private $session;
  
-@@ -93,6 +97,7 @@ class AuthSettingsController extends Controller {
+@@ -71,6 +75,7 @@ class AuthSettingsController extends Controller {
  	public function __construct(string $appName,
  		IRequest $request,
  		IProvider $tokenProvider,
@@ -28,7 +28,7 @@ index 8a01c7c..980555d 100644
  		ISession $session,
  		ISecureRandom $random,
  		?string $userId,
-@@ -102,6 +107,7 @@ class AuthSettingsController extends Controller {
+@@ -80,6 +85,7 @@ class AuthSettingsController extends Controller {
  		LoggerInterface $logger) {
  		parent::__construct($appName, $request);
  		$this->tokenProvider = $tokenProvider;
@@ -36,9 +36,9 @@ index 8a01c7c..980555d 100644
  		$this->uid = $userId;
  		$this->userSession = $userSession;
  		$this->session = $session;
-@@ -120,6 +126,12 @@ class AuthSettingsController extends Controller {
- 	 * @return JSONResponse
- 	 */
+@@ -98,6 +104,12 @@ class AuthSettingsController extends Controller {
+ 	#[NoAdminRequired]
+ 	#[PasswordConfirmationRequired]
  	public function create($name) {
 +
 +		// Don't create app auth token if disallowed in configuration.

@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/**
  * This configuration file is only provided to document the different
  * configuration options and their usage.
  *
@@ -223,6 +229,15 @@ $CONFIG = [
 'default_locale' => 'en_US',
 
 /**
+ * With this setting is possible to reduce the languages available in the
+ * language chooser. The languages have to be set as array values using ISO_639-1
+ * language codes such as ``en`` for English, ``de`` for German etc.
+ *
+ * For example: Set to ['de', 'fr'] to only allow German and French languages.
+ */
+'reduce_to_languages' => [],
+
+/**
  * This sets the default region for phone numbers on your Nextcloud server,
  * using ISO 3166-1 country codes such as ``DE`` for Germany, ``FR`` for France, …
  * It is required to allow inserting phone numbers in the user profiles starting
@@ -273,8 +288,9 @@ $CONFIG = [
 
 /**
  * The directory where the skeleton files are located. These files will be
- * copied to the data directory of new users. Leave empty to not copy any
- * skeleton files.
+ * copied to the data directory of new users. Set empty string to not copy any
+ * skeleton files. If unset and templatedirectory is empty string, shipped
+ * templates will be used to create a template directory for the user.
  * ``{lang}`` can be used as a placeholder for the language of the user.
  * If the directory does not exist, it falls back to non dialect (from ``de_DE``
  * to ``de``). If that does not exist either, it falls back to ``default``
@@ -283,18 +299,16 @@ $CONFIG = [
  */
 'skeletondirectory' => '/path/to/nextcloud/core/skeleton',
 
-
 /**
  * The directory where the template files are located. These files will be
- * copied to the template directory of new users. Leave empty to not copy any
+ * copied to the template directory of new users. Set empty string to not copy any
  * template files.
  * ``{lang}`` can be used as a placeholder for the language of the user.
  * If the directory does not exist, it falls back to non dialect (from ``de_DE``
  * to ``de``). If that does not exist either, it falls back to ``default``
  *
- * If this is not set creating a template directory will only happen if no custom
- * ``skeletondirectory`` is defined, otherwise the shipped templates will be used
- * to create a template directory for the user.
+ * To disable creating a template directory, set both skeletondirectory and
+ * templatedirectory to empty strings.
  */
 'templatedirectory' => '/path/to/nextcloud/templates',
 
@@ -406,6 +420,16 @@ $CONFIG = [
 'ratelimit.protection.enabled' => true,
 
 /**
+ * Size of subnet used to normalize IPv6
+ *
+ * For Brute Force Protection and Rate Limiting, IPv6 are truncated using subnet size.
+ * It defaults to /56 but you can set it between /32 and /64
+ *
+ * Defaults to ``56``
+ */
+'security.ipv6_normalized_subnet_size' => 56,
+
+/**
  * By default, WebAuthn is available, but it can be explicitly disabled by admins
  */
 'auth.webauthn.enabled' => true,
@@ -478,7 +502,7 @@ $CONFIG = [
 
 /**
  * Enable SMTP class debugging.
- * NOTE: ``loglevel`` will likely need to be adjusted too. See docs: 
+ * NOTE: ``loglevel`` will likely need to be adjusted too. See docs:
  *   https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/email_configuration.html#enabling-debug-mode
  *
  * Defaults to ``false``
@@ -639,7 +663,7 @@ $CONFIG = [
  * are generated within Nextcloud using any kind of command line tools (cron or
  * occ). The value should contain the full base URL:
  * ``https://www.example.com/nextcloud``
- * Please make sure to set the value to the URL that your users mainly use to access this Nextcloud. 
+ * Please make sure to set the value to the URL that your users mainly use to access this Nextcloud.
  * Otherwise there might be problems with the URL generation via cron.
  *
  * Defaults to ``''`` (empty string)
@@ -732,6 +756,11 @@ $CONFIG = [
 /**
  * If the trash bin app is enabled (default), this setting defines the policy
  * for when files and folders in the trash bin will be permanently deleted.
+ *
+ * If the user quota limit is exceeded due to deleted files in the trash bin,
+ * retention settings will be ignored and files will be cleaned up until
+ * the quota requirements are met.
+ *
  * The app allows for two settings, a minimum time for trash bin retention,
  * and a maximum time for trash bin retention.
  *
@@ -1046,6 +1075,9 @@ $CONFIG = [
  *                this condition is met
  *  - ``apps``:   if the log message is invoked by one of the specified apps,
  *                this condition is met
+ *  - ``matches``: if all the conditions inside a group match,
+ *                this condition is met. This allows to log only entries to an app
+ *                by a few users.
  *
  * Defaults to an empty array.
  */
@@ -1053,6 +1085,15 @@ $CONFIG = [
 	'shared_secret' => '57b58edb6637fe3059b3595cf9c41b9',
 	'users' => ['sample-user'],
 	'apps' => ['files'],
+	'matches' => [
+		[
+			'shared_secret' => '57b58edb6637fe3059b3595cf9c41b9',
+			'users' => ['sample-user'],
+			'apps' => ['files'],
+			'loglevel' => 1,
+			'message' => 'contains substring'
+		],
+	],
 ],
 
 /**
@@ -1282,13 +1323,19 @@ $CONFIG = [
 /**
  * custom path for ffmpeg binary
  *
- * Defaults to ``null`` and falls back to searching ``avconv`` and ``ffmpeg`` in the configured ``PATH`` environment
+ * Defaults to ``null`` and falls back to searching ``avconv`` and ``ffmpeg``
+ * in the configured ``PATH`` environment
  */
 'preview_ffmpeg_path' => '/usr/bin/ffmpeg',
 
 /**
  * Set the URL of the Imaginary service to send image previews to.
- * Also requires the ``OC\Preview\Imaginary`` provider to be enabled.
+ * Also requires the ``OC\Preview\Imaginary`` provider to be enabled in the
+ * ``enabledPreviewProviders`` array, to create previews for these mimetypes: bmp,
+ * x-bitmap, png, jpeg, gif, heic, heif, svg+xml, tiff, webp and illustrator.
+ *
+ * If you want Imaginary to also create preview images from PDF Documents, you
+ * have to add the ``OC\Preview\ImaginaryPDF`` provider as well.
  *
  * See https://github.com/h2non/imaginary
  */
@@ -1484,7 +1531,7 @@ $CONFIG = [
  *
  * Defaults to ``none``
  */
-'memcache.local' => '\OC\Memcache\APCu',
+'memcache.local' => '\\OC\\Memcache\\APCu',
 
 /**
  * Memory caching backend for distributed data
@@ -1494,7 +1541,7 @@ $CONFIG = [
  *
  * Defaults to ``none``
  */
-'memcache.distributed' => '\OC\Memcache\Memcached',
+'memcache.distributed' => '\\OC\\Memcache\\Memcached',
 
 /**
  * Connection details for redis to use for memory caching in a single server configuration.
@@ -1932,6 +1979,17 @@ $CONFIG = [
 'mysql.collation' => null,
 
 /**
+ * PostgreSQL SSL connection
+ */
+'pgsql_ssl' => [
+	'mode' => '',
+	'cert' => '',
+	'rootcert' => '',
+	'key' => '',
+	'crl' => '',
+],
+
+/**
  * Database types that are supported for installation.
  *
  * Available:
@@ -1977,26 +2035,54 @@ $CONFIG = [
 'updatedirectory' => '',
 
 /**
- * Blacklist a specific file or files and disallow the upload of files
- * with this name. ``.htaccess`` is blocked by default.
+ * Block a specific file or files and disallow the upload of files with this name.
+ * This blocks any access to those files (read and write).
+ * ``.htaccess`` is blocked by default.
+ *
  * WARNING: USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.
+ *
+ * Note that this list is case-insensitive.
  *
  * Defaults to ``array('.htaccess')``
  */
-'blacklisted_files' => ['.htaccess'],
+'forbidden_filenames' => ['.htaccess'],
 
 /**
- * Blacklist characters from being used in filenames. This is useful if you
+ * Disallow the upload of files with specific basenames.
+ * Matching existing files can no longer be updated and in matching folders no files can be created anymore.
+ *
+ * The basename is the name of the file without the extension,
+ * e.g. for "archive.tar.gz" the basename would be "archive".
+ *
+ * Note that this list is case-insensitive.
+ *
+ * Defaults to ``array()``
+ */
+'forbidden_filename_basenames' => [],
+
+/**
+ * Block characters from being used in filenames. This is useful if you
  * have a filesystem or OS which does not support certain characters like windows.
+ * Matching existing files can no longer be updated and in matching folders no files can be created anymore.
  *
- * The '/' and '\' characters are always forbidden.
+ * The '/' and '\' characters are always forbidden, as well as all characters in the ASCII range [0-31].
  *
- * Example for windows systems: ``array('?', '<', '>', ':', '*', '|', '"', chr(0), "\n", "\r")``
+ * Example for windows systems: ``array('?', '<', '>', ':', '*', '|', '"')``
  * see https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits
  *
  * Defaults to ``array()``
  */
-'forbidden_chars' => [],
+'forbidden_filename_characters' => [],
+
+/**
+ * Deny extensions from being used for filenames.
+ * Matching existing files can no longer be updated and in matching folders no files can be created anymore.
+ *
+ * The '.part' extension is always forbidden, as this is used internally by Nextcloud.
+ *
+ * Defaults to ``array('.filepart', '.part')``
+ */
+'forbidden_filename_extensions' => ['.part', '.filepart'],
 
 /**
  * If you are applying a theme to Nextcloud, enter the name of the theme here.
@@ -2193,6 +2279,16 @@ $CONFIG = [
 'forwarded_for_headers' => ['HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR'],
 
 /**
+ * List of trusted IP ranges for admin actions
+ *
+ * If this list is non-empty, all admin actions must be triggered from
+ * IP addresses inside theses ranges.
+ *
+ * Defaults to an empty array.
+ */
+'allowed_admin_ranges' => ['192.0.2.42/32', '233.252.0.0/24', '2001:db8::13:37/64'],
+
+/**
  * max file size for animating gifs on public-sharing-site.
  * If the gif is bigger, it'll show a static preview
  *
@@ -2258,6 +2354,11 @@ $CONFIG = [
  * Allows to modify the cli-upgrade link in order to link to a different documentation
  */
 'upgrade.cli-upgrade-link' => '',
+
+/**
+ * Allows to modify the exception server logs documentation link in order to link to a different documentation
+ */
+'documentation_url.server_logs' => '',
 
 /**
  * Set this Nextcloud instance to debugging mode

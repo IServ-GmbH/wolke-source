@@ -1,8 +1,8 @@
 diff --git apps/files/src/views/Settings.vue apps/files/src/views/Settings.vue
-index 6005975..6ae4ee0 100644
+index c64f3b8..f04ac3a 100644
 --- apps/files/src/views/Settings.vue
 +++ apps/files/src/views/Settings.vue
-@@ -80,18 +80,7 @@
+@@ -68,18 +68,7 @@
  				</template>
  			</NcInputField>
  			<em>

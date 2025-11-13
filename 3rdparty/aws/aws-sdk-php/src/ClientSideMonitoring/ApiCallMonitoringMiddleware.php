@@ -13,6 +13,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class ApiCallMonitoringMiddleware extends AbstractMonitoringMiddleware
 {
+
     /**
      * Api Call Attempt event keys for each Api Call event key
      *

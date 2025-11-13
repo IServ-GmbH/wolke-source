@@ -1,35 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bernhard Posselt <dev@bernhard-posselt.com>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sebastian Wessalowski <sebastian@wessalowski.org>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Thomas Tanghus <thomas@tanghus.net>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\AppFramework\DependencyInjection;
 
@@ -75,6 +49,7 @@ use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\Ip\IRemoteAddress;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -236,7 +211,8 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 					$c->get(IRequest::class),
 					$c->get(IControllerMethodReflector::class),
 					$c->get(IUserSession::class),
-					$c->get(IThrottler::class)
+					$c->get(IThrottler::class),
+					$c->get(LoggerInterface::class)
 				)
 			);
 			$dispatcher->registerMiddleware(
@@ -260,7 +236,8 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				$server->getAppManager(),
 				$server->getL10N('lib'),
 				$c->get(AuthorizedGroupMapper::class),
-				$server->get(IUserSession::class)
+				$server->get(IUserSession::class),
+				$c->get(IRemoteAddress::class),
 			);
 			$dispatcher->registerMiddleware($securityMiddleware);
 			$dispatcher->registerMiddleware(
@@ -303,20 +280,12 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 					$c->get(LoggerInterface::class)
 				)
 			);
-			$dispatcher->registerMiddleware(
-				new RateLimitingMiddleware(
-					$c->get(IRequest::class),
-					$c->get(IUserSession::class),
-					$c->get(IControllerMethodReflector::class),
-					$c->get(OC\Security\RateLimiting\Limiter::class),
-					$c->get(ISession::class)
-				)
-			);
+			$dispatcher->registerMiddleware($c->get(RateLimitingMiddleware::class));
 			$dispatcher->registerMiddleware(
 				new OC\AppFramework\Middleware\PublicShare\PublicShareMiddleware(
 					$c->get(IRequest::class),
 					$c->get(ISession::class),
-					$c->get(\OCP\IConfig::class),
+					$c->get(IConfig::class),
 					$c->get(IThrottler::class)
 				)
 			);

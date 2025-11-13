@@ -3,42 +3,25 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2020, Georg Ehrke
- *
- * @author Georg Ehrke <oc.list@georgehrke.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\Events;
 
 use OCP\EventDispatcher\Event;
-use Sabre\CalDAV\Xml\Property\ScheduleCalendarTransp;
-use Sabre\CalDAV\Xml\Property\SupportedCalendarComponentSet;
 
 /**
  * Class CalendarShareUpdatedEvent
  *
  * @package OCA\DAV\Events
  * @since 20.0.0
+ *
+ * @psalm-import-type CalendarInfo from \OCA\DAV\CalDAV\CalDavBackend
  */
 class CalendarShareUpdatedEvent extends Event {
 	private int $calendarId;
 
-	/** @var array{id: int, uri: string, '{http://calendarserver.org/ns/}getctag': string, '{http://sabredav.org/ns}sync-token': int, '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set': SupportedCalendarComponentSet, '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp': ScheduleCalendarTransp, '{urn:ietf:params:xml:ns:caldav}calendar-timezone': ?string } */
+	/** @psalm-var CalendarInfo $calendarData */
 	private array $calendarData;
 
 	/** @var list<array{href: string, commonName: string, status: int, readOnly: bool, '{http://owncloud.org/ns}principal': string, '{http://owncloud.org/ns}group-share': bool}> */
@@ -54,7 +37,8 @@ class CalendarShareUpdatedEvent extends Event {
 	 * CalendarShareUpdatedEvent constructor.
 	 *
 	 * @param int $calendarId
-	 * @param array{id: int, uri: string, '{http://calendarserver.org/ns/}getctag': string, '{http://sabredav.org/ns}sync-token': int, '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set': SupportedCalendarComponentSet, '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp': ScheduleCalendarTransp, '{urn:ietf:params:xml:ns:caldav}calendar-timezone': ?string } $calendarData
+	 * @psalm-param CalendarInfo $calendarData
+	 * @param array $calendarData
 	 * @param list<array{href: string, commonName: string, status: int, readOnly: bool, '{http://owncloud.org/ns}principal': string, '{http://owncloud.org/ns}group-share': bool}> $oldShares
 	 * @param list<array{href: string, commonName: string, readOnly: bool}> $added
 	 * @param list<string> $removed
@@ -81,7 +65,8 @@ class CalendarShareUpdatedEvent extends Event {
 	}
 
 	/**
-	 * @return array{id: int, uri: string, '{http://calendarserver.org/ns/}getctag': string, '{http://sabredav.org/ns}sync-token': int, '{urn:ietf:params:xml:ns:caldav}supported-calendar-component-set': SupportedCalendarComponentSet, '{urn:ietf:params:xml:ns:caldav}schedule-calendar-transp': ScheduleCalendarTransp, '{urn:ietf:params:xml:ns:caldav}calendar-timezone': ?string }
+	 * @psalm-return CalendarInfo
+	 * @return array
 	 * @since 20.0.0
 	 */
 	public function getCalendarData(): array {

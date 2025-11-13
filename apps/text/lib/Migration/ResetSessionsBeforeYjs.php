@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\Text\Migration;
 
 use OCA\Text\Service\DocumentService;
@@ -22,7 +27,7 @@ class ResetSessionsBeforeYjs implements IRepairStep {
 	public function run(IOutput $output): void {
 		$appVersion = $this->config->getValueString('text', 'installed_version');
 
-		if (!$appVersion || version_compare($appVersion, '3.10.1') !== -1) {
+		if (!$appVersion || version_compare($appVersion, '4.0.1') !== -1) {
 			return;
 		}
 

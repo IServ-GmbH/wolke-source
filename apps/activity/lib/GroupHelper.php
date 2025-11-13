@@ -1,28 +1,13 @@
 <?php
 
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 namespace OCA\Activity;
 
+use OCP\Activity\Exceptions\UnknownActivityException;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IL10N;
@@ -76,19 +61,31 @@ class GroupHelper {
 				} else {
 					$event = $provider->parse($language, $event);
 				}
-			} catch (\InvalidArgumentException $e) {
+
+				if (!$event->isValidParsed()) {
+					$this->logger->info('Activity event was claimed to be parsed, but was not fully parsed by ' . get_class($provider) . ' [app: ' . $event->getApp() . ', subject: ' . $event->getSubject() . ']', ['app' => $event->getApp()]);
+				}
+			} catch (UnknownActivityException) {
+			} catch (\InvalidArgumentException) {
+				// todo 33.0.0 Log as warning
+				// todo 39.0.0 Log as error
+				$this->logger->debug(get_class($provider) . '::parse() threw \InvalidArgumentException which is deprecated. Throw \OCP\Activity\Exceptions\UnknownActivityException when the event is not known to your provider and otherwise handle all \InvalidArgumentException yourself.', ['app' => $event->getApp()]);
 			} catch (\Throwable $e) {
-				$this->logger->error('Error while parsing activity event', ['exception' => $e]);
+				$this->logger->error('Error while parsing activity event', ['exception' => $e, 'app' => $event->getApp()]);
 			}
+		}
+
+		if (!$event->isValidParsed()) {
+			$this->logger->info('Activity event was not parsed by any provider [app: ' . $event->getApp() . ', subject: ' . $event->getSubject() . ']', ['app' => $event->getApp()]);
 		}
 
 		try {
 			$this->richObjectValidator->validate($event->getRichSubject(), $event->getRichSubjectParameters());
 		} catch (InvalidObjectExeption $e) {
 			$this->logger->error(
-				$e->getMessage(),
+				'Activity event had invalid subject parameters provided [app: ' . $event->getApp() . ', subject: ' . $event->getSubject() . ']',
 				[
-					'app' => 'activity',
+					'app' => $event->getApp(),
 					'exception' => $e
 				],
 			);
@@ -101,9 +98,9 @@ class GroupHelper {
 				$this->richObjectValidator->validate($event->getRichMessage(), $event->getRichMessageParameters());
 			} catch (InvalidObjectExeption $e) {
 				$this->logger->error(
-					$e->getMessage(),
+					'Activity event had invalid message parameters provided [app: ' . $event->getApp() . ', subject: ' . $event->getSubject() . ']',
 					[
-						'app' => 'activity',
+						'app' => $event->getApp(),
 						'exception' => $e
 					],
 				);
@@ -120,7 +117,7 @@ class GroupHelper {
 		}
 
 		if (!$event->getParsedSubject()) {
-			$this->logger->debug('Activity "' . $event->getRichSubject() . '" was not parsed by any provider');
+			$this->logger->debug('Activity "' . $event->getRichSubject() . '" was not parsed by any provider', ['app' => $event->getApp()]);
 			return;
 		}
 

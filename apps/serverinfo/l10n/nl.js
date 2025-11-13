@@ -16,7 +16,6 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "Toont nuttige serverinformatie, zoals CPU belasting, RAM gebruik, disk gebruik, aantal gebruikers, etc.",
     "Operating System:" : "Besturingssysteem:",
     "CPU:" : "CPU:",
-    "Unknown Processor" : "Onbekende Processor",
     "Memory:" : "Geheugen:",
     "Server time:" : "Servertijd:",
     "Uptime:" : "Bedrijfstijd:",
@@ -69,11 +68,6 @@ OC.L10N.register(
     "Skip server update" : "Serverupdate overslaan",
     "To use an access token, please generate one then set it using the following command:" : "Om een ​​toegangstoken te gebruiken, genereert u er een en stelt u deze in met de volgende opdracht:",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Geef vervolgens het token met de \"NC-Token\" -header door bij het opvragen van de bovenstaande URL.",
-    "Load average: {cpu} (last minute)" : "Gemiddelde belasting: {cpu} (laatste minuut)",
-    "DNS:" : "DNS:",
-    "Total users:" : "Totaal aantal gebruikers:",
-    "24 hours:" : "24 uur:",
-    "1 hour:" : "1 uur:",
-    "5 mins:" : "5 min.:"
+    "Unknown Processor" : "Onbekende Processor"
 },
 "nplurals=2; plural=(n != 1);");

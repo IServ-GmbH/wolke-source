@@ -3,24 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2018 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2018 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Service;
@@ -46,14 +30,14 @@ class ETLService {
 	private $logger;
 
 	public function __construct(IDBConnection $db,
-								LoginAddressAggregatedMapper $aggregatedMapper,
-								ILogger $logger) {
+		LoginAddressAggregatedMapper $aggregatedMapper,
+		ILogger $logger) {
 		$this->db = $db;
 		$this->aggregatedMapper = $aggregatedMapper;
 		$this->logger = $logger;
 	}
 
-	private function getRaw(int $max, OutputInterface $output = null): Generator {
+	private function getRaw(int $max, ?OutputInterface $output = null): Generator {
 		if (!is_null($output)) {
 			$progress = new ProgressBar($output);
 		}
@@ -84,7 +68,7 @@ class ETLService {
 	/**
 	 * Extract raw login data and feed it into the aggregated table
 	 */
-	public function extractAndTransform(int $max = self::MAX_BATCH_SIZE, OutputInterface $output = null) {
+	public function extractAndTransform(int $max = self::MAX_BATCH_SIZE, ?OutputInterface $output = null) {
 		$this->logger->debug('starting login data ETL process');
 		$this->db->beginTransaction();
 

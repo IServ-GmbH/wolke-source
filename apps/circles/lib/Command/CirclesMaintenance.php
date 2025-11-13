@@ -2,28 +2,8 @@
 
 declare(strict_types=1);
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Circles\Command;
@@ -35,7 +15,10 @@ use OCA\Circles\Exceptions\MaintenanceException;
 use OCA\Circles\Service\FederatedUserService;
 use OCA\Circles\Service\MaintenanceService;
 use OCA\Circles\Service\OutputService;
+use OCA\User_LDAP\Mapping\UserMapping;
+use OCP\App\IAppManager;
 use OCP\IDBConnection;
+use OCP\Server;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,6 +37,7 @@ class CirclesMaintenance extends Base {
 		private MaintenanceService $maintenanceService,
 		private OutputService $outputService,
 		private IDBConnection $dbConnection,
+		private IAppManager $appManager,
 	) {
 		parent::__construct();
 	}
@@ -65,6 +49,8 @@ class CirclesMaintenance extends Base {
 			->setDescription('Clean stuff, keeps the app running')
 			->addOption('refresh-display-name', '', InputOption::VALUE_REQUIRED, 'refresh single user display name', '')
 			->addOption('fix-saml-users-display-name', '', InputOption::VALUE_NONE, 'retrieve users from the db table \'user_saml_users\' to fix their display-name')
+			->addOption('fix-ldap-users-display-name', '',
+				InputOption::VALUE_NONE, 'retrieve users from the db table \'user_ldap_users\' to fix their display-name')
 			->addOption('level', '', InputOption::VALUE_REQUIRED, 'level of maintenance', '3')
 			->addOption(
 				'reset', '', InputOption::VALUE_NONE, 'reset Circles; remove all data related to the App'
@@ -92,6 +78,15 @@ class CirclesMaintenance extends Base {
 
 		if ($input->getOption('fix-saml-users-display-name')) {
 			$this->fixSamlDisplayName($output);
+			return 0;
+		}
+
+		if ($input->getOption('fix-ldap-users-display-name')) {
+			if (!in_array('user_ldap', $this->appManager->getInstalledApps())) {
+				$output->writeln('The "user_ldap" app is not enabled');
+				return 1;
+			}
+			$this->fixLdapUsersDisplayName($output);
 			return 0;
 		}
 
@@ -187,6 +182,19 @@ class CirclesMaintenance extends Base {
 				$this->refreshSingleDisplayName($row['uid'], $output);
 			} catch (Exception $e) {
 				$output->writeln(get_class($e) . ' while trying to update display name of ' . $row['uid']);
+			}
+		}
+	}
+
+	public function fixLdapUsersDisplayName(OutputInterface $output): void {
+		$ldapUserMapping = Server::get(UserMapping::class);
+		/** @var array<int, array{dn: string, name: string, uuid: string}> $list */
+		$list = $ldapUserMapping->getList();
+		foreach ($list as $user) {
+			try {
+				$this->refreshSingleDisplayName($user['name'], $output);
+			} catch (Exception $e) {
+				$output->writeln(get_class($e) . ' while trying to update display name of ' . $user['name']);
 			}
 		}
 	}

@@ -68,11 +68,14 @@
 <li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts / CardDAV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html">Mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="out_of_office.html">Out-of-office feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -109,6 +112,7 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="calendar.html">Calendar / CalDAV</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="calendar.html#calendar-server-settings">Calendar server settings</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendar.html#events">Events</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendar.html#invitations">Invitations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="calendar.html#birthday-calendar">Birthday calendar</a></li>
@@ -132,11 +136,18 @@
 <li class="toctree-l2"><a class="reference internal" href="mail.html#snooze-and-scheduled-sending">Snooze and scheduled sending</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html#xoauth2-authentication-with-microsoft-azure-ad">XOAUTH2 Authentication with Microsoft Azure AD</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html#mailbox-share">Mailbox Share</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mail.html#user-interface-preference-defaults">User Interface Preference Defaults</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html#llm-processing">LLM Processing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html#thread-summary">Thread Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mail.html#follow-up-reminders">Follow-up reminders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mail.html#translation">Translation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="out_of_office.html">Out-of-office feature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#calendar">Calendar</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -164,40 +175,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

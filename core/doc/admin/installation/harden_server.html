@@ -64,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Hardening and security guidance</a><ul>
@@ -90,11 +89,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#proper-ssl-configuration">Proper SSL configuration</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#restrict-admin-actions-to-a-specific-range-of-ip-addresses">Restrict admin actions to a specific range of IP addresses</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#use-a-dedicated-domain-for-nextcloud">Use a dedicated domain for Nextcloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ensure-that-your-nextcloud-instance-is-installed-in-a-dmz">Ensure that your Nextcloud instance is installed in a DMZ</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#serve-security-related-headers-by-the-web-server">Serve security related headers by the Web server</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#connections-to-remote-servers">Connections to remote servers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setup-fail2ban">Setup fail2ban</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#nextcloud-prerequisites">Nextcloud prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fail2ban-introduction">Fail2ban introduction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#setup-a-filter-and-a-jail-for-nextcloud">Setup a filter and a jail for Nextcloud</a></li>
 </ul>
 </li>
@@ -104,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -115,6 +118,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -301,6 +306,20 @@ information about the TLS settings.</p>
 <p>Also ensure that HTTP compression is disabled to mitigate the BREACH attack.</p>
 </section>
 </section>
+<section id="restrict-admin-actions-to-a-specific-range-of-ip-addresses">
+<h2>Restrict admin actions to a specific range of IP addresses<a class="headerlink" href="#restrict-admin-actions-to-a-specific-range-of-ip-addresses" title="Link to this heading"></a></h2>
+<p>Configure <code class="docutils literal notranslate"><span class="pre">allowed_admin_ranges</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> to restrict the admin actions to trusted IP ranges.</p>
+<p>This can be achieved with this kind of setting, usually using private IP ranges:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;allowed_admin_ranges&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+  <span class="s1">&#39;127.0.0.1/8&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;192.168.0.0/16&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;fd00::/8&#39;</span><span class="p">,</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<p>All requests originating from IP addresses outside of these ranges will not be able to execute admin actions.</p>
+<p>Administrators connected from untrusted IP addresses will be able to use Nextcloud, but all admin specific actions will be hidden.</p>
+</section>
 <section id="use-a-dedicated-domain-for-nextcloud">
 <h2>Use a dedicated domain for Nextcloud<a class="headerlink" href="#use-a-dedicated-domain-for-nextcloud" title="Link to this heading"></a></h2>
 <p>Administrators are encouraged to install Nextcloud on a dedicated domain such as
@@ -374,7 +393,7 @@ security headers are shipped.</p>
 </section>
 <section id="connections-to-remote-servers">
 <h2>Connections to remote servers<a class="headerlink" href="#connections-to-remote-servers" title="Link to this heading"></a></h2>
-<p>Some functionalites require the Nextcloud server to be able to connect remote systems via https/443.
+<p>Some functionalities require the Nextcloud server to be able to connect remote systems via https/443.
 This pragraph also includes the data which is being transmitted to the Nextcloud GmbH.
 Depending on your server setup, these are the possible connections:</p>
 <ul class="simple">
@@ -446,7 +465,7 @@ Depending on your server setup, these are the possible connections:</p>
 <dt>surveyserver.nextcloud.com</dt><dd><ul>
 <li><p>optional</p></li>
 <li><p>if the admin has agreed to share anonymized server data</p></li>
-<li><p>submitted data: instance id, server versions (incl. php &amp; db), installed apps</p></li>
+<li><p>submitted data: statistical data. see here for the <a class="reference external" href="https://github.com/nextcloud/survey_client">detailed field list</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -458,6 +477,20 @@ Depending on your server setup, these are the possible connections:</p>
 <h2>Setup fail2ban<a class="headerlink" href="#setup-fail2ban" title="Link to this heading"></a></h2>
 <p>Exposing your server to the internet will inevitably lead to the exposure of the
 services running on the internet-exposed ports to brute force login attempts.</p>
+<p>This guide will enable blocking of the originating IP addresses at an operating
+system level, so the webserver, PHP and the database do not need to handle this
+unnecessary traffic at all.</p>
+<section id="nextcloud-prerequisites">
+<h3>Nextcloud prerequisites<a class="headerlink" href="#nextcloud-prerequisites" title="Link to this heading"></a></h3>
+<p>Nextcloud logs failed login attempts in <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code> with log level <code class="docutils literal notranslate"><span class="pre">2</span></code>,
+so you need to define a <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> of <code class="docutils literal notranslate"><span class="pre">2</span></code> or less in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
+<p>Make sure your <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code> is writeable by your webserver user, possibly by
+defining a correct <code class="docutils literal notranslate"><span class="pre">logfilemode</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
+<p>Perform a bad login attempt and check whether it does get logged to <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code>.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">audit.log</span></code> (if enabled) currently only logs successful logins and cannot be used.</p>
+</section>
+<section id="fail2ban-introduction">
+<h3>Fail2ban introduction<a class="headerlink" href="#fail2ban-introduction" title="Link to this heading"></a></h3>
 <p>Fail2ban is a service that uses iptables to automatically drop connections for a
 pre-defined amount of time from IPs that continuously failed to authenticate to
 the configured services.</p>
@@ -466,6 +499,7 @@ server. Downloads for several distributions can be found on <a class="reference 
 page</a>. It is often available from most distributions’ package managers (e.g.
 <code class="docutils literal notranslate"><span class="pre">apt-get</span></code>).</p>
 <p>The standard path for fail2ban’s configuration is <code class="docutils literal notranslate"><span class="pre">/etc/fail2ban</span></code>.</p>
+</section>
 <section id="setup-a-filter-and-a-jail-for-nextcloud">
 <h3>Setup a filter and a jail for Nextcloud<a class="headerlink" href="#setup-a-filter-and-a-jail-for-nextcloud" title="Link to this heading"></a></h3>
 <p>A filter defines regex rules to identify when users fail to authenticate on
@@ -476,6 +510,7 @@ following contents:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[Definition]
 _groupsre = (?:(?:,?\s*&quot;\w+&quot;:(?:&quot;[^&quot;]+&quot;|\w+))*)
 failregex = ^\{%(_groupsre)s,?\s*&quot;remoteAddr&quot;:&quot;&lt;HOST&gt;&quot;%(_groupsre)s,?\s*&quot;message&quot;:&quot;Login failed:
+            ^\{%(_groupsre)s,?\s*&quot;remoteAddr&quot;:&quot;&lt;HOST&gt;&quot;%(_groupsre)s,?\s*&quot;message&quot;:&quot;Two-factor challenge failed:
             ^\{%(_groupsre)s,?\s*&quot;remoteAddr&quot;:&quot;&lt;HOST&gt;&quot;%(_groupsre)s,?\s*&quot;message&quot;:&quot;Trusted domain error.
 datepattern = ,?\s*&quot;time&quot;\s*:\s*&quot;%%Y-%%m-%%d[T ]%%H:%%M:%%S(%%z)?&quot;
 </pre></div>
@@ -505,6 +540,14 @@ running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fail2ban</span><span class="o">-</span><span class="n">client</span> <span class="n">status</span> <span class="n">nextcloud</span>
 </pre></div>
 </div>
+<p>If you need to unban certain IP addresses (<code class="docutils literal notranslate"><span class="pre">1.2.3.4</span></code> in this example),
+you may do so by issuing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fail2ban</span><span class="o">-</span><span class="n">client</span> <span class="n">unban</span> <span class="mf">1.2.3.4</span>
+</pre></div>
+</div>
+<p>There may be scenarios where you want to more permantently ban certain IP
+addresses that repeatedly generate bad login attempts (or other attacks) by
+using fail2ban’s <code class="docutils literal notranslate"><span class="pre">recidive</span></code> feature.</p>
 </section>
 </section>
 </section>
@@ -532,40 +575,49 @@ running:</p>
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

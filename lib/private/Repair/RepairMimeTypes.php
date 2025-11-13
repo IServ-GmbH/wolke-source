@@ -1,35 +1,8 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author nik gaffney <nik@fo.am>
- * @author Olivier Paroz <github@oparoz.com>
- * @author Rello <Rello@users.noreply.github.com>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Stefan Weil <sw@weilnetz.de>
- * @author Thomas Ebert <thomas.ebert@usability.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Repair;
 
@@ -79,12 +52,13 @@ class RepairMimeTypes implements IRepairStep {
 		if (empty($this->folderMimeTypeId)) {
 			$query->setParameter('mimetype', 'httpd/unix-directory');
 			$result = $query->execute();
-			$this->folderMimeTypeId = (int)$result->fetchOne();
+			$this->folderMimeTypeId = (int) $result->fetchOne();
 			$result->closeCursor();
 		}
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('filecache')
+			->runAcrossAllShards()
 			->set('mimetype', $update->createParameter('mimetype'))
 			->where($update->expr()->neq('mimetype', $update->createParameter('mimetype'), IQueryBuilder::PARAM_INT))
 			->andWhere($update->expr()->neq('mimetype', $update->createParameter('folder'), IQueryBuilder::PARAM_INT))
@@ -96,7 +70,7 @@ class RepairMimeTypes implements IRepairStep {
 			// get target mimetype id
 			$query->setParameter('mimetype', $mimetype);
 			$result = $query->execute();
-			$mimetypeId = (int)$result->fetchOne();
+			$mimetypeId = (int) $result->fetchOne();
 			$result->closeCursor();
 
 			if (!$mimetypeId) {
@@ -253,10 +227,10 @@ class RepairMimeTypes implements IRepairStep {
 	 */
 	private function introduceFlatOpenDocumentType(): IResult|int|null {
 		$updatedMimetypes = [
-			"fodt" => "application/vnd.oasis.opendocument.text-flat-xml",
-			"fods" => "application/vnd.oasis.opendocument.spreadsheet-flat-xml",
-			"fodg" => "application/vnd.oasis.opendocument.graphics-flat-xml",
-			"fodp" => "application/vnd.oasis.opendocument.presentation-flat-xml",
+			'fodt' => 'application/vnd.oasis.opendocument.text-flat-xml',
+			'fods' => 'application/vnd.oasis.opendocument.spreadsheet-flat-xml',
+			'fodg' => 'application/vnd.oasis.opendocument.graphics-flat-xml',
+			'fodp' => 'application/vnd.oasis.opendocument.presentation-flat-xml',
 		];
 
 		return $this->updateMimetypes($updatedMimetypes);
@@ -278,8 +252,8 @@ class RepairMimeTypes implements IRepairStep {
 	 */
 	private function introduceOnlyofficeFormType(): IResult|int|null {
 		$updatedMimetypes = [
-			"oform" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document.oform",
-			"docxf" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document.docxf",
+			'oform' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.oform',
+			'docxf' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.docxf',
 		];
 
 		return $this->updateMimetypes($updatedMimetypes);
@@ -341,11 +315,13 @@ class RepairMimeTypes implements IRepairStep {
 	}
 
 	private function getMimeTypeVersion(): string {
-		$mimeVersion = $this->config->getAppValue('files', 'mimetype_version', '');
-		if ($mimeVersion) {
-			return $mimeVersion;
+		$serverVersion = $this->config->getSystemValueString('version', '0.0.0');
+		// 29.0.0.10 is the last version with a mimetype migration before it was moved to a separate version number
+		if (version_compare($serverVersion, '29.0.0.10', '>')) {
+			return $this->config->getAppValue('files', 'mimetype_version', '29.0.0.10');
 		}
-		return $this->config->getSystemValueString('version', '0.0.0');
+
+		return $serverVersion;
 	}
 
 	/**
@@ -424,7 +400,7 @@ class RepairMimeTypes implements IRepairStep {
 			$out->info('Fixed ReStructured Text mime type');
 		}
 
-		if (version_compare($mimeTypeVersion, '29.0.5.0', '<') && $this->introduceExcalidrawType()) {
+		if (version_compare($mimeTypeVersion, '30.0.0.0', '<') && $this->introduceExcalidrawType()) {
 			$out->info('Fixed Excalidraw mime type');
 		}
 

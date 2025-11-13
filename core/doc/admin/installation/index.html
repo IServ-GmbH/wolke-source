@@ -64,7 +64,6 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html">Supported apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nginx.html">NGINX configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html">Hardening and security guidance</a></li>
@@ -72,6 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_ubuntu.html">Example installation on Ubuntu 22.04 LTS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_centos.html">Example installation on CentOS 8</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html">Example installation on OpenBSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
@@ -83,6 +83,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -140,7 +142,7 @@
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#installation-wizard">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#setting-up-background-jobs">Setting up background jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#selinux-configuration-tips">SELinux configuration tips</a></li>
-<li class="toctree-l2"><a class="reference internal" href="source_installation.html#php-fpm-configuration-notes">php-fpm configuration notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source_installation.html#php-fpm-configuration">PHP-FPM configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#other-web-servers">Other Web servers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#installing-on-windows-virtual-machine">Installing on Windows (virtual machine)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html#installing-via-snap-packages">Installing via Snap packages</a></li>
@@ -157,14 +159,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apps_supported.html">Supported apps</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html#nextcloud-files">Nextcloud Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html#nextcloud-groupware">Nextcloud Groupware</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html#nextcloud-talk">Nextcloud Talk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html#collaborative-editing">Collaborative editing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apps_supported.html#global-scale">Global Scale</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="selinux_configuration.html">SELinux configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html#enable-updates-via-the-web-interface">Enable updates via the web interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="selinux_configuration.html#disallow-write-access-to-the-whole-web-directory">Disallow write access to the whole web directory</a></li>
@@ -190,6 +184,7 @@
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#operating-system">Operating system</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#deployment">Deployment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#use-https">Use HTTPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="harden_server.html#restrict-admin-actions-to-a-specific-range-of-ip-addresses">Restrict admin actions to a specific range of IP addresses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#use-a-dedicated-domain-for-nextcloud">Use a dedicated domain for Nextcloud</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#ensure-that-your-nextcloud-instance-is-installed-in-a-dmz">Ensure that your Nextcloud instance is installed in a DMZ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="harden_server.html#serve-security-related-headers-by-the-web-server">Serve security related headers by the Web server</a></li>
@@ -235,6 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="example_openbsd.html#note">NOTE</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </div>
 </section>
@@ -262,40 +258,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

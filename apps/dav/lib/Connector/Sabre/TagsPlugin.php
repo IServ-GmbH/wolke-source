@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright 2014 Vincent Petry <pvince81@owncloud.com>
- * @copyright 2014 Vincent Petry <pvince81@owncloud.com>
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Sergio Bertolín <sbertolin@solidgear.es>
- * @author Thomas Citharel <nextcloud@tcit.fr>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\Connector\Sabre;
 
@@ -120,6 +98,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 		$this->server = $server;
 		$this->server->on('propFind', [$this, 'handleGetProperties']);
 		$this->server->on('propPatch', [$this, 'handleUpdateProperties']);
+		$this->server->on('preloadProperties', [$this, 'handlePreloadProperties']);
 	}
 
 	/**
@@ -139,7 +118,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	 *
 	 * @param integer $fileId file id
 	 * @return array list($tags, $favorite) with $tags as tag array
-	 * and $favorite is a boolean whether the file was favorited
+	 *               and $favorite is a boolean whether the file was favorited
 	 */
 	private function getTagsAndFav($fileId) {
 		$isFav = false;
@@ -173,6 +152,24 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Prefetches tags for a list of file IDs and caches the results
+	 *
+	 * @param array $fileIds List of file IDs to prefetch tags for
+	 * @return void
+	 */
+	private function prefetchTagsForFileIds(array $fileIds) {
+		$tags = $this->getTagger()->getTagsForObjects($fileIds);
+		if ($tags === false) {
+			// the tags API returns false on error...
+			$tags = [];
+		}
+
+		foreach ($fileIds as $fileId) {
+			$this->cachedTags[$fileId] = $tags[$fileId] ?? [];
+		}
 	}
 
 	/**
@@ -225,22 +222,11 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 			)) {
 			// note: pre-fetching only supported for depth <= 1
 			$folderContent = $node->getChildren();
-			$fileIds[] = (int)$node->getId();
+			$fileIds = [(int) $node->getId()];
 			foreach ($folderContent as $info) {
-				$fileIds[] = (int)$info->getId();
+				$fileIds[] = (int) $info->getId();
 			}
-			$tags = $this->getTagger()->getTagsForObjects($fileIds);
-			if ($tags === false) {
-				// the tags API returns false on error...
-				$tags = [];
-			}
-
-			$this->cachedTags = $this->cachedTags + $tags;
-			$emptyFileIds = array_diff($fileIds, array_keys($tags));
-			// also cache the ones that were not found
-			foreach ($emptyFileIds as $fileId) {
-				$this->cachedTags[$fileId] = [];
-			}
+			$this->prefetchTagsForFileIds($fileIds);
 		}
 
 		$isFav = null;
@@ -282,7 +268,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 		});
 
 		$propPatch->handle(self::FAVORITE_PROPERTYNAME, function ($favState) use ($node) {
-			if ((int)$favState === 1 || $favState === 'true') {
+			if ((int) $favState === 1 || $favState === 'true') {
 				$this->getTagger()->tagAs($node->getId(), self::TAG_FAVORITE);
 			} else {
 				$this->getTagger()->unTag($node->getId(), self::TAG_FAVORITE);
@@ -295,5 +281,15 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 
 			return 200;
 		});
+	}
+
+	public function handlePreloadProperties(array $nodes, array $requestProperties): void {
+		if (
+			!in_array(self::FAVORITE_PROPERTYNAME, $requestProperties, true) &&
+			!in_array(self::TAGS_PROPERTYNAME, $requestProperties, true)
+		) {
+			return;
+		}
+		$this->prefetchTagsForFileIds(array_map(fn ($node) => $node->getId(), $nodes));
 	}
 }

@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2021 Robin Appelman <robin@icewind.nl>
- *
- * @author Robin Appelman <robin@icewind.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\Files\Command;
 
@@ -50,7 +33,7 @@ class RepairTree extends Command {
 		$rows = $this->findBrokenTreeBits();
 		$fix = !$input->getOption('dry-run');
 
-		$output->writeln("Found " . count($rows) . " file entries with an invalid path");
+		$output->writeln('Found ' . count($rows) . ' file entries with an invalid path');
 
 		if ($fix) {
 			$this->connection->beginTransaction();
@@ -67,10 +50,10 @@ class RepairTree extends Command {
 			$output->writeln("Path of file {$row['fileid']} is {$row['path']} but should be {$row['parent_path']}/{$row['name']} based on its parent", OutputInterface::VERBOSITY_VERBOSE);
 
 			if ($fix) {
-				$fileId = $this->getFileId((int)$row['parent_storage'], $row['parent_path'] . '/' . $row['name']);
+				$fileId = $this->getFileId((int) $row['parent_storage'], $row['parent_path'] . '/' . $row['name']);
 				if ($fileId > 0) {
 					$output->writeln("Cache entry has already be recreated with id $fileId, deleting instead");
-					$this->deleteById((int)$row['fileid']);
+					$this->deleteById((int) $row['fileid']);
 				} else {
 					$query->setParameters([
 						'fileid' => $row['fileid'],

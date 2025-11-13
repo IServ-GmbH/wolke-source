@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/appinfo/routes.php apps/files_sharing/appinfo/routes.php
-index 7b6334b..bd41a56 100644
+index 9d8c576..f9e10eb 100644
 --- apps/files_sharing/appinfo/routes.php
 +++ apps/files_sharing/appinfo/routes.php
-@@ -62,12 +62,6 @@ return [
+@@ -41,12 +41,6 @@ return [
  			'verb' => 'GET',
  			'root' => '',
  		],

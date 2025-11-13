@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: CC0-1.0
+-->
 # Adding a provider
 
 Providers are used to parse, translate and beautify activities. They need to implement the `OCP\Activity\IProvider` interface and are registered in `appinfo/info.xml`. An example can be seen in the [files app](https://github.com/nextcloud/server/blob/8baf986d3bf6efb4d81fb18eac07592932467b8e/apps/files/appinfo/info.xml#L35-L38)
@@ -37,11 +41,11 @@ The first thing the provider should do, is to check whether the `IEvent` is one 
 
 ```php
 		if ($event->getApp() !== 'files' || $event->getType() !== 'favorite') {
-			throw new \InvalidArgumentException();
+			throw new \OCP\Activity\Exceptions\UnknownActivityException();
 		}
 ```
 
-Whenever a provider throws an `\InvalidArgumentException` the activity app will continue and pass the event to the next provider, so this should always be thrown when the event is unknown.
+Whenever a provider throws an `UnknownActivityException` (*Added in Nextcloud 30, before throw `\InvalidArgumentException`*), the activity app will continue and pass the event to the next provider, so this should always be thrown when the event is unknown.
 
 ### Short translation
 

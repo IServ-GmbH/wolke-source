@@ -4,28 +4,8 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
@@ -104,10 +84,27 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			->set('uid_initiator', $qb->createNamedParameter($shareWrapper->getSharedBy()))
 			->set('accepted', $qb->createNamedParameter(IShare::STATUS_ACCEPTED))
 			->set('permissions', $qb->createNamedParameter($shareWrapper->getPermissions()))
+			->set('note', $qb->createNamedParameter($shareWrapper->getShareNote()))
 			->set('expiration', $qb->createNamedParameter($shareWrapper->getExpirationDate(), IQueryBuilder::PARAM_DATE))
 			->set('attributes', $qb->createNamedParameter($shareAttributes));
 
 		$qb->limitToId((int)$shareWrapper->getId());
+
+		$qb->execute();
+	}
+
+	/**
+	 * update permissions and attributes from child
+	 */
+	public function updateChildPermissions(ShareWrapper $shareWrapper): void {
+		$qb = $this->getShareUpdateSql();
+		$shareAttributes = $this->formatShareAttributes($shareWrapper->getAttributes());
+
+		$qb->set('permissions', $qb->createNamedParameter($shareWrapper->getPermissions()))
+			->set('attributes', $qb->createNamedParameter($shareAttributes));
+
+		$qb->limitToShareParent((int)$shareWrapper->getId());
+		$qb->gt('permissions', 0);
 
 		$qb->execute();
 	}
@@ -535,7 +532,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			$compressedAttributes[] = [
 				$attribute['scope'],
 				$attribute['key'],
-				$attribute['value'] ?? $attribute['enabled']
+				$attribute['value']
 			];
 		}
 

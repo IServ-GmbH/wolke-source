@@ -3,22 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @author Frank Karlitschek <frank@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\ServerInfo\OperatingSystems;
@@ -106,10 +92,7 @@ class Linux implements IOperatingSystem {
 
 		$model = $matches[1][0];
 
-		$pattern = '/processor\s+:\s(.+)/';
-
-		preg_match_all($pattern, $cpuinfo, $matches);
-		$threads = count($matches[1]);
+		$threads = $this->getCpuCount();
 
 		if ($threads === 1) {
 			$data = $model . ' (1 thread)';
@@ -118,6 +101,21 @@ class Linux implements IOperatingSystem {
 		}
 
 		return $data;
+	}
+
+	public function getCpuCount(): int {
+		$numCpu = -1;
+
+		try {
+			$cpuinfo = $this->readContent('/proc/cpuinfo');
+		} catch (RuntimeException $e) {
+			return $numCpu;
+		}
+
+		$pattern = '/processor\s+:\s(.+)/';
+
+		preg_match_all($pattern, $cpuinfo, $matches);
+		return count($matches[1]);
 	}
 
 	public function getTime(): string {
@@ -144,13 +142,11 @@ class Linux implements IOperatingSystem {
 
 	public function getNetworkInfo(): array {
 		$result = [
-			'hostname' => \gethostname(),
-			'dns' => '',
 			'gateway' => '',
+			'hostname' => \gethostname(),
 		];
 
 		if (function_exists('shell_exec')) {
-			$result['dns'] = shell_exec('cat /etc/resolv.conf |grep -i \'^nameserver\'|head -n1|cut -d \' \' -f2');
 			$result['gateway'] = shell_exec('ip route | awk \'/default/ { print $3 }\'');
 		}
 

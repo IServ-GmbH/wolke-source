@@ -1,16 +1,7 @@
-/**
- * @copyright Copyright (c) 2016, John Molakvoæ <skjnldsv@protonmail.com>
- * @copyright Copyright (c) 2016, Julius Haertl <jus@bitgrid.net>
- * @copyright Copyright (c) 2016, Lukas Reschke <lukas@statuscode.ch>
- * @copyright Copyright (c) 2016, Jos Poortvliet <jos@opensuse.org>
- * @copyright Copyright (c) 2016, Erik Pellikka <erik@pellikka.org>
- * @copyright Copyright (c) 2016, jowi <sjw@gmx.ch>
- * @copyright Copyright (c) 2015, Hendrik Leppelsack <hendrik@leppelsack.de>
- * @copyright Copyright (c) 2015, Volker E <volker.e@temporaer.net>
- * @copyright Copyright (c) 2014-2017, Jan-Christoph Borchardt <hey@jancborchardt.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
+/*!
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 @use 'variables';
 
@@ -20,27 +11,31 @@
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	a:not(.button):focus-visible, button:not(.button-vue):focus-visible, div[role="button"]:focus-visible {
+	user-select: none;
+
+	#nextcloud:focus-visible,
+	.app-menu-entry a:focus-visible,
+	.header-menu button:first-of-type:focus-visible {
 		outline: none;
-	}
 
-	a:not(.button):focus-visible::after, .button-vue:focus-visible::after, div[role=button]:focus-visible::after {
-		content: " ";
-		position: absolute;
-		transform: translateX(-50%);
-		width: 12px;
-		height: 2px;
-		border-radius: 3px;
-		background-color: var(--color-primary-text);
-		left: 50%;
-		opacity: 1;
-	}
-
-	a:not(.button):focus-visible::after, .button-vue:focus-visible::after {
-		bottom: 2px;
+		&::after {
+			content: " ";
+			position: absolute;
+			inset-block-end: 2px;
+			transform: translateX(-50%);
+			width: 12px;
+			height: 2px;
+			border-radius: 3px;
+			background-color: var(--color-background-plain-text);
+			inset-inline-start: 50%;
+			opacity: 1;
+		}
 	}
 
 	.header-right {
+		// Add some spacing so the last entry looks ok
+		margin-inline-end: calc(3 * var(--default-grid-baseline));
+
 		a:not(.button):focus-visible::after, div[role=button]:focus-visible::after {
 			bottom: 4px;
 		}
@@ -93,7 +88,6 @@
 #header {
 	/* Header menu */
 	$header-menu-entry-height: 44px;
-	--color-primary-text: var(--background-image-color-text, #ffffff);
 
 	.header-right > div > .menu {
 		background-color: var(--color-main-background);
@@ -172,16 +166,8 @@
 
 	/* Right header standard */
 	.header-right {
-		> .header-menu:not(.user-menu):not(.unified-search-menu) {
-			// For general
-			> .header-menu__trigger {
-				filter: var(--background-image-invert-if-bright);
-			}
-
-			// For assistant button
-			> .trigger {
-				filter: var(--background-image-invert-if-bright);
-			}
+		> .header-menu__trigger img {
+			filter: var(--background-image-invert-if-bright);
 		}
 		> div,
 		> form {
@@ -219,7 +205,7 @@
 /* TODO: move into minimal css file for public shared template */
 /* only used for public share pages now as we have the app icons when logged in */
 .header-appname {
-	color: var(--color-primary-element-text);
+	color: var(--color-background-plain-text);
 	font-size: 16px;
 	font-weight: bold;
 	margin: 0;
@@ -238,16 +224,12 @@
 }
 
 .header-title {
-	// Ensure the header title is always readable
-	color: #ffffff;
-	filter: var(--background-image-invert-if-bright);
-
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 .header-shared-by  {
-	color: var(--color-primary-element-text);
+	color: var(--color-background-plain-text);
 	position: relative;
 	font-weight: 300;
 	font-size: 11px;

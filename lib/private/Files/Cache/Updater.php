@@ -1,29 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Jagszent <daniel@jagszent.de>
- * @author Michael Gapczynski <GapczynskiM@gmail.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Files\Cache;
 
@@ -136,7 +116,7 @@ class Updater implements IUpdater {
 		}
 
 		// encryption is a pita and touches the cache itself
-		if (isset($data['encrypted']) && !!$data['encrypted']) {
+		if (isset($data['encrypted']) && (bool) $data['encrypted']) {
 			$sizeDifference = null;
 		}
 
@@ -206,6 +186,9 @@ class Updater implements IUpdater {
 	public function copyFromStorage(IStorage $sourceStorage, string $source, string $target): void {
 		$this->copyOrRenameFromStorage($sourceStorage, $source, $target, function (ICache $sourceCache, ICacheEntry $sourceInfo) use ($target) {
 			$parent = dirname($target);
+			if ($parent === '.') {
+				$parent = '';
+			}
 			$parentInCache = $this->cache->inCache($parent);
 			if (!$parentInCache) {
 				$parentData = $this->scanner->scan($parent, Scanner::SCAN_SHALLOW, -1, false);
@@ -301,7 +284,7 @@ class Updater implements IUpdater {
 					// ignore the failure.
 					// with failures concurrent updates, someone else would have already done it.
 					// in the worst case the `storage_mtime` isn't updated, which should at most only trigger an extra rescan
-					$this->logger->warning("Error while updating parent storage_mtime, should be safe to ignore", ['exception' => $e]);
+					$this->logger->info('Error while updating parent storage_mtime, should be safe to ignore', ['exception' => $e]);
 				}
 			}
 		}

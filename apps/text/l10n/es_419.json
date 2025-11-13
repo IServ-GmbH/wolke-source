@@ -9,6 +9,7 @@
     "Translate" : "Traducir",
     "Reload" : "Volver a cargar",
     "Guest" : "Invitado",
+    "you" : "tú",
     "Offline" : "Sin conexión",
     "Saved" : "Guardado",
     "Unsaved changes" : "Cambios no guardados",
@@ -17,6 +18,7 @@
     "Action" : "Acción",
     "Undo" : "Deshacer",
     "Save changes" : "Guardar Cambios",
+    "Cancel" : "Cancel",
     "URL" : "URL",
     "Formatting help" : "Ayuda de formato",
     "Select language" : "Seleccionar idioma",
@@ -26,6 +28,7 @@
     "Edit" : "Editar",
     "Source code" : "Código fuente",
     "Details" : "Detalles",
+    "Choose" : "Seleccionar",
     "Info" : "Info",
     "Success" : "Éxito",
     "Warning" : "Advertencia"

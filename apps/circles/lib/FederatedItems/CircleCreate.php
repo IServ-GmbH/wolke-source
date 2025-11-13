@@ -4,33 +4,14 @@ declare(strict_types=1);
 
 
 /**
- * Circles - Bring cloud-users closer together.
- *
- * This file is licensed under the Affero General Public License version 3 or
- * later. See the COPYING file.
- *
- * @author Maxence Lange <maxence@artificial-owl.com>
- * @copyright 2021
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 
 namespace OCA\Circles\FederatedItems;
 
+use OC\User\NoUserException;
 use OCA\Circles\Db\CircleRequest;
 use OCA\Circles\Db\MemberRequest;
 use OCA\Circles\Exceptions\CircleNotFoundException;
@@ -45,6 +26,7 @@ use OCA\Circles\IFederatedItemMustBeInitializedLocally;
 use OCA\Circles\Model\Federated\FederatedEvent;
 use OCA\Circles\Service\CircleService;
 use OCA\Circles\Service\EventService;
+use OCA\Circles\Service\MaintenanceService;
 use OCA\Circles\Service\MembershipService;
 use OCA\Circles\Tools\Traits\TDeserialize;
 
@@ -60,44 +42,14 @@ class CircleCreate implements
 	IFederatedItemMustBeInitializedLocally {
 	use TDeserialize;
 
-
-	/** @var CircleRequest */
-	private $circleRequest;
-
-	/** @var MemberRequest */
-	private $memberRequest;
-
-	/** @var CircleService */
-	private $circleService;
-
-	/** @var MembershipService */
-	private $membershipService;
-
-	/** @var EventService */
-	private $eventService;
-
-
-	/**
-	 * CircleCreate constructor.
-	 *
-	 * @param CircleRequest $circleRequest
-	 * @param MemberRequest $memberRequest
-	 * @param CircleService $circleService
-	 * @param MembershipService $membershipService
-	 * @param EventService $eventService
-	 */
 	public function __construct(
-		CircleRequest $circleRequest,
-		MemberRequest $memberRequest,
-		CircleService $circleService,
-		MembershipService $membershipService,
-		EventService $eventService
+		private CircleRequest $circleRequest,
+		private MemberRequest $memberRequest,
+		private CircleService $circleService,
+		private MembershipService $membershipService,
+		private MaintenanceService $maintenanceService,
+		private EventService $eventService,
 	) {
-		$this->circleRequest = $circleRequest;
-		$this->memberRequest = $memberRequest;
-		$this->circleService = $circleService;
-		$this->membershipService = $membershipService;
-		$this->eventService = $eventService;
 	}
 
 
@@ -145,6 +97,12 @@ class CircleCreate implements
 
 		$this->membershipService->onUpdate($owner->getSingleId());
 		$this->membershipService->updatePopulation($circle);
+
+		try {
+			$this->maintenanceService->updateDisplayName($owner);
+		} catch (NoUserException) {
+			// ignoreable
+		}
 
 		$this->eventService->circleCreating($event);
 	}

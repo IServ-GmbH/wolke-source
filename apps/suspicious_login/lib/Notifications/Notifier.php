@@ -3,37 +3,21 @@
 declare(strict_types=1);
 
 /**
- * @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\SuspiciousLogin\Notifications;
 
-use OCP\IConfig;
-use InvalidArgumentException;
-use OCP\IURLGenerator;
 use OCA\SuspiciousLogin\AppInfo\Application;
+use OCP\IConfig;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
 use OCP\Notification\IAction;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 class Notifier implements INotifier {
 
@@ -67,7 +51,7 @@ class Notifier implements INotifier {
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
 			// Not my app => throw
-			throw new InvalidArgumentException();
+			throw new UnknownNotificationException();
 		}
 
 		// Read the language from the notification
@@ -81,21 +65,22 @@ class Notifier implements INotifier {
 			case 'suspicious_login_detected':
 				if ($suspiciousIp === $this->request->getRemoteAddress()) {
 					// It is the potential attacking user so don't render the notification for them
-					throw new InvalidArgumentException();
+					throw new UnknownNotificationException();
 				}
 
 				$additionalText = '';
 				// Add button for more information about the IP-address
 				if ($this->config->getAppValue('suspicious_login', 'show_more_info_button', '1') === "1") {
 					$action = $notification->createAction();
-					$label = $l->t('More information ↗');
+					$label = $l->t('Open %s ↗', ['iplookup.flagfox.net']);
 					$link = 'https://iplookup.flagfox.net/?ip=' . $suspiciousIp;
 					$action->setLabel($label)
 						->setParsedLabel($label)
 						->setLink($link, IAction::TYPE_WEB)
 						->setPrimary(true);
 					$notification->addParsedAction($action);
-					$additionalText = ' ' . $l->t('You can get more info by pressing the button which will open %s and show info about the suspicious IP-address.', 'https://iplookup.flagfox.net');
+					// TODO: deduplicate with \OCA\SuspiciousLogin\Listener\LoginMailListener::getMail
+					$additionalText = ' ' . $l->t('More info about the suspicious IP address available on %s', 'https://iplookup.flagfox.net');
 				}
 
 				$notification->setParsedSubject(
@@ -104,12 +89,12 @@ class Notifier implements INotifier {
 					$l->t('A new login into your account was detected. The IP address %s was classified as suspicious. If this was you, you can ignore this message. Otherwise you should change your password.', $suspiciousIp) . $additionalText
 				);
 
-				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('suspicious_login', 'app.svg')));
+				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('suspicious_login', 'app-dark.svg')));
 
 				return $notification;
 			default:
 				// Unknown subject => Unknown notification => throw
-				throw new InvalidArgumentException();
+				throw new UnknownNotificationException();
 		}
 	}
 }

@@ -1,0 +1,8 @@
+SPDX-License-Identifier: AGPL-3.0-or-later
+SPDX-FileCopyrightText: John Molakvoæ <skjnldsv@protonmail.com>
+
+
+This file is generated from multiple sources. Included packages:
+- files_pdfviewer
+	- version: 3.0.0
+	- license: AGPL-3.0-or-later

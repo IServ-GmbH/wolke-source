@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017, Joas Schilling <coding@schilljs.com>
- *
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Notifications\Notifier;
@@ -32,30 +15,18 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
-use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IAction;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 class AdminNotifications implements INotifier {
-	/** @var IFactory */
-	protected $l10nFactory;
-
-	/** @var IURLGenerator */
-	protected $urlGenerator;
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var IRootFolder */
-	protected $rootFolder;
-
-	public function __construct(IFactory $l10nFactory,
-		IURLGenerator $urlGenerator,
-		IUserManager $userManager,
-		IRootFolder $rootFolder) {
-		$this->l10nFactory = $l10nFactory;
-		$this->urlGenerator = $urlGenerator;
-		$this->userManager = $userManager;
-		$this->rootFolder = $rootFolder;
+	public function __construct(
+		protected IFactory $l10nFactory,
+		protected IURLGenerator $urlGenerator,
+		protected IUserManager $userManager,
+		protected IRootFolder $rootFolder,
+	) {
 	}
 
 	/**
@@ -82,12 +53,11 @@ class AdminNotifications implements INotifier {
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
-	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
-	 * @throws AlreadyProcessedException When the notification is not needed anymore and should be deleted
+	 * @throws UnknownNotificationException When the notification was not prepared by a notifier
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'admin_notifications' && $notification->getApp() !== 'admin_notification_talk') {
-			throw new \InvalidArgumentException('Unknown app');
+			throw new UnknownNotificationException('app');
 		}
 
 		switch ($notification->getSubject()) {
@@ -138,9 +108,9 @@ class AdminNotifications implements INotifier {
 					],
 					'item' => [
 						'type' => 'file',
-						'id' => $file1->getId(),
+						'id' => (string)$file1->getId(),
 						'name' => $file1->getName(),
-						'size' => $file1->getSize(),
+						'size' => (string)$file1->getSize(),
 						'path' => $path1,
 						'link' => $this->urlGenerator->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $file1->getId()]),
 						'mimetype' => $file1->getMimetype(),
@@ -154,9 +124,9 @@ class AdminNotifications implements INotifier {
 					],
 					'file-3' => [
 						'type' => 'file',
-						'id' => $file2->getId(),
+						'id' => (string)$file2->getId(),
 						'name' => $file2->getName(),
-						'size' => $file2->getSize(),
+						'size' => (string)$file2->getSize(),
 						'path' => $path2,
 						'link' => $this->urlGenerator->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $file2->getId()]),
 						'mimetype' => $file2->getMimetype(),
@@ -206,17 +176,29 @@ class AdminNotifications implements INotifier {
 			case 'cli':
 			case 'ocs':
 				$subjectParams = $notification->getSubjectParameters();
-				$notification->setParsedSubject($subjectParams[0]);
+				if (isset($subjectParams['subject'])) {
+					// Nextcloud 30+
+					$notification->setRichSubject($subjectParams['subject'], $subjectParams['parameters']);
+				} else {
+					// Legacy before Nextcloud 30 (v3)
+					$notification->setParsedSubject($subjectParams[0]);
+				}
 				$messageParams = $notification->getMessageParameters();
-				if (isset($messageParams[0]) && $messageParams[0] !== '') {
-					$notification->setParsedMessage($messageParams[0]);
+				if (!empty($messageParams)) {
+					if (!empty($messageParams['message'])) {
+						// Nextcloud 30+
+						$notification->setRichMessage($messageParams['message'], $messageParams['parameters']);
+					} elseif (!empty($messageParams[0])) {
+						// Legacy before Nextcloud 30 (v3)
+						$notification->setParsedMessage($messageParams[0]);
+					}
 				}
 
 				$notification->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('notifications', 'notifications-dark.svg')));
 				return $notification;
 
 			default:
-				throw new \InvalidArgumentException('Unknown subject');
+				throw new UnknownNotificationException('subject');
 		}
 	}
 }

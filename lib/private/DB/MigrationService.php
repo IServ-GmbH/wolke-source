@@ -1,46 +1,25 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
- * @copyright Copyright (c) 2017, ownCloud GmbH
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2017 ownCloud GmbH
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\DB;
 
-use Doctrine\DBAL\Platforms\OraclePlatform;
-use Doctrine\DBAL\Platforms\PostgreSQL94Platform;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Sequence;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Types;
 use OC\App\InfoParser;
 use OC\IntegrityCheck\Helpers\AppLocator;
 use OC\Migration\SimpleOutput;
 use OCP\AppFramework\App;
 use OCP\AppFramework\QueryException;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\Types;
+use OCP\IDBConnection;
 use OCP\Migration\IMigrationStep;
 use OCP\Migration\IOutput;
 use OCP\Server;
@@ -196,7 +175,7 @@ class MigrationService {
 		$rows = $result->fetchAll(\PDO::FETCH_COLUMN);
 		$result->closeCursor();
 
-		usort($rows, [$this, 'sortMigrations']);
+		usort($rows, $this->sortMigrations(...));
 
 		return $rows;
 	}
@@ -208,7 +187,7 @@ class MigrationService {
 	public function getAvailableVersions(): array {
 		$this->ensureMigrationsAreLoaded();
 		$versions = array_map('strval', array_keys($this->migrations));
-		usort($versions, [$this, 'sortMigrations']);
+		usort($versions, $this->sortMigrations(...));
 		return $versions;
 	}
 
@@ -216,8 +195,8 @@ class MigrationService {
 		preg_match('/(\d+)Date(\d+)/', basename($a), $matchA);
 		preg_match('/(\d+)Date(\d+)/', basename($b), $matchB);
 		if (!empty($matchA) && !empty($matchB)) {
-			$versionA = (int)$matchA[1];
-			$versionB = (int)$matchB[1];
+			$versionA = (int) $matchA[1];
+			$versionB = (int) $matchB[1];
 			if ($versionA !== $versionB) {
 				return ($versionA < $versionB) ? -1 : 1;
 			}
@@ -244,7 +223,7 @@ class MigrationService {
 			\RegexIterator::GET_MATCH);
 
 		$files = array_keys(iterator_to_array($iterator));
-		usort($files, [$this, 'sortMigrations']);
+		usort($files, $this->sortMigrations(...));
 
 		$migrations = [];
 
@@ -367,7 +346,7 @@ class MigrationService {
 			return null;
 		}
 
-		return (string)$versions[$offset + $delta];
+		return (string) $versions[$offset + $delta];
 	}
 
 	private function getCurrentVersion(): string {
@@ -488,7 +467,7 @@ class MigrationService {
 	 * @return IMigrationStep
 	 * @throws \InvalidArgumentException
 	 */
-	protected function createInstance($version) {
+	public function createInstance($version) {
 		$class = $this->getClass($version);
 		try {
 			$s = \OCP\Server::get($class);
@@ -628,7 +607,7 @@ class MigrationService {
 				$indexName = strtolower($primaryKey->getName());
 				$isUsingDefaultName = $indexName === 'primary';
 
-				if ($this->connection->getDatabasePlatform() instanceof PostgreSQL94Platform) {
+				if ($this->connection->getDatabaseProvider() === IDBConnection::PLATFORM_POSTGRES) {
 					$defaultName = $table->getName() . '_pkey';
 					$isUsingDefaultName = strtolower($defaultName) === $indexName;
 
@@ -638,7 +617,7 @@ class MigrationService {
 							return $sequence->getName() !== $sequenceName;
 						});
 					}
-				} elseif ($this->connection->getDatabasePlatform() instanceof OraclePlatform) {
+				} elseif ($this->connection->getDatabaseProvider() === IDBConnection::PLATFORM_ORACLE) {
 					$defaultName = $table->getName() . '_seq';
 					$isUsingDefaultName = strtolower($defaultName) === $indexName;
 				}

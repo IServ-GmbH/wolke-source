@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2017, Joas Schilling <coding@schilljs.com>
- *
- * @author Joas Schilling <coding@schilljs.com>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Notifications\Controller;
@@ -49,35 +32,16 @@ use OCP\IUserSession;
  */
 #[OpenAPI(scope: 'push')]
 class PushController extends OCSController {
-	/** @var IDBConnection */
-	private $db;
-
-	/** @var ISession */
-	private $session;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	/** @var IProvider */
-	private $tokenProvider;
-
-	/** @var Manager */
-	private $identityProof;
-
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IDBConnection $db,
-		ISession $session,
-		IUserSession $userSession,
-		IProvider $tokenProvider,
-		Manager $identityProof) {
+		protected IDBConnection $db,
+		protected ISession $session,
+		protected IUserSession $userSession,
+		protected IProvider $tokenProvider,
+		protected Manager $identityProof,
+	) {
 		parent::__construct($appName, $request);
-
-		$this->db = $db;
-		$this->session = $session;
-		$this->userSession = $userSession;
-		$this->tokenProvider = $tokenProvider;
-		$this->identityProof = $identityProof;
 	}
 
 	/**
@@ -197,13 +161,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param IToken $token
-	 * @param string $deviceIdentifier
-	 * @param string $devicePublicKey
-	 * @param string $pushTokenHash
-	 * @param string $proxyServer
-	 * @param string $appType
 	 * @return bool If the hash was new to the database
 	 */
 	protected function savePushToken(IUser $user, IToken $token, string $deviceIdentifier, string $devicePublicKey, string $pushTokenHash, string $proxyServer, string $appType): bool {
@@ -227,13 +184,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param IToken $token
-	 * @param string $deviceIdentifier
-	 * @param string $devicePublicKey
-	 * @param string $pushTokenHash
-	 * @param string $proxyServer
-	 * @param string $appType
 	 * @return bool If the entry was created
 	 */
 	protected function insertPushToken(IUser $user, IToken $token, string $deviceIdentifier, string $devicePublicKey, string $pushTokenHash, string $proxyServer, string $appType): bool {
@@ -255,12 +205,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param IToken $token
-	 * @param string $devicePublicKey
-	 * @param string $pushTokenHash
-	 * @param string $proxyServer
-	 * @param string $appType
 	 * @return bool If the entry was updated
 	 */
 	protected function updatePushToken(IUser $user, IToken $token, string $devicePublicKey, string $pushTokenHash, string $proxyServer, string $appType): bool {
@@ -280,8 +224,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param IToken $token
 	 * @return bool If the entry was deleted
 	 */
 	protected function deletePushToken(IUser $user, IToken $token): bool {
@@ -294,8 +236,6 @@ class PushController extends OCSController {
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param string $pushTokenHash
 	 * @return bool If the entry was deleted
 	 */
 	protected function deletePushTokenByHash(IUser $user, string $pushTokenHash): bool {

@@ -1,8 +1,8 @@
 diff --git apps/settings/appinfo/info.xml apps/settings/appinfo/info.xml
-index c106e92..fd89959 100644
+index 2674b97..2b0e95c 100644
 --- apps/settings/appinfo/info.xml
 +++ apps/settings/appinfo/info.xml
-@@ -20,6 +20,7 @@
+@@ -24,6 +24,7 @@
  		<command>OCA\Settings\Command\AdminDelegation\Show</command>
  		<command>OCA\Settings\Command\AdminDelegation\Add</command>
  		<command>OCA\Settings\Command\AdminDelegation\Remove</command>
@@ -10,8 +10,8 @@ index c106e92..fd89959 100644
  	</commands>
  
  	<settings>
-@@ -32,22 +33,15 @@
- 		<admin>OCA\Settings\Settings\Admin\Delegation</admin>
+@@ -37,22 +38,15 @@
+ 		<admin>OCA\Settings\Settings\Admin\Users</admin>
  		<admin-section>OCA\Settings\Sections\Admin\Additional</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Delegation</admin-section>
 -		<admin-section>OCA\Settings\Sections\Admin\Groupware</admin-section>

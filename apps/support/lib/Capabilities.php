@@ -31,8 +31,8 @@ use OCP\IConfig;
 
 class Capabilities implements ICapability {
 	public function __construct(
-		protected SubscriptionAdapter $adapter,
-		protected IConfig $config,
+		protected readonly SubscriptionAdapter $adapter,
+		protected readonly IConfig $config,
 	) {
 	}
 

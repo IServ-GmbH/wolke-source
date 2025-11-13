@@ -21,7 +21,7 @@ OC.L10N.register(
     "Provides useful server information, such as CPU load, RAM usage, disk usage, number of users, etc." : "提供有用的伺服器訊息，例如CPU負載、記憶體使用情況、磁碟使用情況、用戶數等。",
     "Operating System:" : "作業系統：",
     "CPU:" : "CPU：",
-    "Unknown Processor" : "未知的處理器",
+    "threads" : "執行緒",
     "Memory:" : "記憶體：",
     "Server time:" : "伺服器時間：",
     "Uptime:" : "運作時間：",
@@ -92,11 +92,6 @@ OC.L10N.register(
     "Skip server update" : "略過伺服器更新",
     "To use an access token, please generate one then set it using the following command:" : "要使用存取權杖，請產生一個，然後使用下列指令設定：",
     "Then pass the token with the \"NC-Token\" header when querying the above URL." : "然後在查詢上面的 URL 時，將權杖與「NC-Token」標頭一起傳遞。",
-    "Load average: {cpu} (last minute)" : "平均負載：{cpu}（前ㄧ分鐘）",
-    "DNS:" : "DNS：",
-    "Total users:" : "總使用者：",
-    "24 hours:" : "24小時：",
-    "1 hour:" : "1小時：",
-    "5 mins:" : "5分鐘："
+    "Unknown Processor" : "未知的處理器"
 },
 "nplurals=1; plural=0;");

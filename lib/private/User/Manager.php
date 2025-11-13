@@ -1,38 +1,13 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Chan <plus.vincchan@gmail.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\User;
 
+use Doctrine\DBAL\Platforms\OraclePlatform;
 use OC\Hooks\PublicEmitter;
 use OC\Memcache\WithLocalCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -100,7 +75,6 @@ class Manager extends PublicEmitter implements IUserManager {
 		$this->listen('\OC\User', 'postDelete', function (IUser $user): void {
 			unset($this->cachedUsers[$user->getUID()]);
 		});
-		$this->eventDispatcher = $eventDispatcher;
 		$this->displayNameCache = new DisplayNameCache($cacheFactory, $this);
 	}
 
@@ -488,7 +462,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * returns how many users per backend exist (if supported by backend)
 	 *
 	 * @param boolean $hasLoggedIn when true only users that have a lastLogin
-	 *                entry in the preferences table will be affected
+	 *                             entry in the preferences table will be affected
 	 * @return array<string, int> an array of backend class as key and count number as value
 	 */
 	public function countUsers() {
@@ -545,7 +519,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @psalm-param \Closure(\OCP\IUser):?bool $callback
 	 * @param string $search
 	 * @param boolean $onlySeen when true only users that have a lastLogin entry
-	 *                in the preferences table will be affected
+	 *                          in the preferences table will be affected
 	 * @since 9.0.0
 	 */
 	public function callForAllUsers(\Closure $callback, $search = '', $onlySeen = false) {
@@ -593,7 +567,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int)$count;
+			$count = (int) $count;
 		} else {
 			$count = 0;
 		}
@@ -616,7 +590,7 @@ class Manager extends PublicEmitter implements IUserManager {
 
 		$query = $queryBuilder->execute();
 
-		$result = (int)$query->fetchOne();
+		$result = (int) $query->fetchOne();
 		$query->closeCursor();
 
 		return $result;
@@ -633,7 +607,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	}
 
 	/**
-	 * Getting all userIds that have a listLogin value requires checking the
+	 * Getting all userIds that have a lastLogin value requires checking the
 	 * value in php because on oracle you cannot use a clob in a where clause,
 	 * preventing us from doing a not null or length(value) > 0 check.
 	 *
@@ -726,6 +700,57 @@ class Manager extends PublicEmitter implements IUserManager {
 		}
 	}
 
+	/**
+	 * Gets the list of user ids sorted by lastLogin, from most recent to least recent
+	 *
+	 * @param int|null $limit how many users to fetch (default: 25, max: 100)
+	 * @param int $offset from which offset to fetch
+	 * @param string $search search users based on search params
+	 * @return list<string> list of user IDs
+	 */
+	public function getLastLoggedInUsers(?int $limit = null, int $offset = 0, string $search = ''): array {
+		// We can't load all users who already logged in
+		$limit = min(100, $limit ?: 25);
+
+		$connection = \OC::$server->getDatabaseConnection();
+		$queryBuilder = $connection->getQueryBuilder();
+		$queryBuilder->select('pref_login.userid')
+			->from('preferences', 'pref_login')
+			->where($queryBuilder->expr()->eq('pref_login.appid', $queryBuilder->expr()->literal('login')))
+			->andWhere($queryBuilder->expr()->eq('pref_login.configkey', $queryBuilder->expr()->literal('lastLogin')))
+			->setFirstResult($offset)
+			->setMaxResults($limit)
+		;
+
+		// Oracle don't want to run ORDER BY on CLOB column
+		$loginOrder = $connection->getDatabasePlatform() instanceof OraclePlatform
+			? $queryBuilder->expr()->castColumn('pref_login.configvalue', IQueryBuilder::PARAM_INT)
+			: 'pref_login.configvalue';
+		$queryBuilder
+			->orderBy($loginOrder, 'DESC')
+			->addOrderBy($queryBuilder->func()->lower('pref_login.userid'), 'ASC');
+
+		if ($search !== '') {
+			$displayNameMatches = $this->searchDisplayName($search);
+			$matchedUids = array_map(static fn (IUser $u): string => $u->getUID(), $displayNameMatches);
+
+			$queryBuilder
+				->leftJoin('pref_login', 'preferences', 'pref_email', $queryBuilder->expr()->andX(
+					$queryBuilder->expr()->eq('pref_login.userid', 'pref_email.userid'),
+					$queryBuilder->expr()->eq('pref_email.appid', $queryBuilder->expr()->literal('settings')),
+					$queryBuilder->expr()->eq('pref_email.configkey', $queryBuilder->expr()->literal('email')),
+				))
+				->andWhere($queryBuilder->expr()->orX(
+					$queryBuilder->expr()->in('pref_login.userid', $queryBuilder->createNamedParameter($matchedUids, IQueryBuilder::PARAM_STR_ARRAY)),
+				));
+		}
+
+		/** @var list<string> */
+		$list = $queryBuilder->executeQuery()->fetchAll(\PDO::FETCH_COLUMN);
+
+		return $list;
+	}
+
 	private function verifyUid(string $uid, bool $checkDataDirectory = false): bool {
 		$appdata = 'appdata_' . $this->config->getSystemValueString('instanceid');
 
@@ -733,7 +758,7 @@ class Manager extends PublicEmitter implements IUserManager {
 			'.htaccess',
 			'files_external',
 			'__groupfolders',
-			'.ocdata',
+			'.ncdata',
 			'owncloud.log',
 			'nextcloud.log',
 			'updater.log',
@@ -755,29 +780,29 @@ class Manager extends PublicEmitter implements IUserManager {
 		return $this->displayNameCache;
 	}
 
-	/**
-	 * Gets the list of users sorted by lastLogin, from most recent to least recent
-	 *
-	 * @param int $offset from which offset to fetch
-	 * @return \Iterator<IUser> list of user IDs
-	 * @since 30.0.0
-	 */
-	public function getSeenUsers(int $offset = 0): \Iterator {
-		$limit = 1000;
+	public function getSeenUsers(int $offset = 0, ?int $limit = null): \Iterator {
+		$maxBatchSize = 1000;
 
 		do {
-			$userIds = $this->getSeenUserIds($limit, $offset);
-			$offset += $limit;
+			if ($limit !== null) {
+				$batchSize = min($limit, $maxBatchSize);
+				$limit -= $batchSize;
+			} else {
+				$batchSize = $maxBatchSize;
+			}
+
+			$userIds = $this->getSeenUserIds($batchSize, $offset);
+			$offset += $batchSize;
 
 			foreach ($userIds as $userId) {
 				foreach ($this->backends as $backend) {
 					if ($backend->userExists($userId)) {
-						$user = $this->getUserObject($userId, $backend, false);
+						$user = new LazyUser($userId, $this, null, $backend);
 						yield $user;
 						break;
 					}
 				}
 			}
-		} while (count($userIds) === $limit);
+		} while (count($userIds) === $batchSize && $limit !== 0);
 	}
 }

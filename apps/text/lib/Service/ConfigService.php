@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\Text\Service;
 
 use OCA\Text\AppInfo\Application;
@@ -33,5 +38,10 @@ class ConfigService {
 			return true;
 		}
 		return $this->config->getUserValue($userId, Application::APP_NAME, 'workspace_enabled', '1') === '1';
+	}
+
+	public function isNotifyPushSyncEnabled(): bool {
+		return $this->appConfig->getValueBool(Application::APP_NAME, 'notify_push');
+
 	}
 }

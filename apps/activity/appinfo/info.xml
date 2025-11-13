@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>activity</id>
 	<name>Activity</name>
@@ -11,7 +15,7 @@
 		More information is available in the Activity documentation.
 	</description>
 
-	<version>2.21.1</version>
+	<version>3.0.0</version>
 	<licence>agpl</licence>
 	<author>Frank Karlitschek</author>
 	<author>Joas Schilling</author>
@@ -22,7 +26,7 @@
 	</types>
 
 	<documentation>
-		<admin>https://docs.nextcloud.org/server/stable/admin_manual/configuration_server/activity_configuration.html</admin>
+		<admin>https://docs.nextcloud.com/server/stable/admin_manual/configuration_server/activity_configuration.html</admin>
 	</documentation>
 
 	<category>monitoring</category>
@@ -33,7 +37,7 @@
 	<repository>https://github.com/nextcloud/activity.git</repository>
 
 	<dependencies>
-		<nextcloud min-version="29" max-version="29" />
+		<nextcloud min-version="30" max-version="30" />
 	</dependencies>
 
 	<background-jobs>

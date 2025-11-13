@@ -15,6 +15,7 @@ use OCP\App\IAppManager;
 use OCP\Migration\Attributes\GenericMigrationAttribute;
 use OCP\Migration\Attributes\MigrationAttribute;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 /**
  * Helps managing DB Migrations' Metadata
@@ -23,10 +24,38 @@ use Psr\Log\LoggerInterface;
  */
 class MetadataManager {
 	public function __construct(
-		private IAppManager $appManager,
-		private Connection $connection,
-		private LoggerInterface $logger,
+		private readonly IAppManager $appManager,
+		private readonly Connection $connection,
+		private readonly LoggerInterface $logger,
 	) {
+	}
+
+	/**
+	 * We get all migrations from an app (or 'core'), and
+	 * for each migration files we extract its attributes
+	 *
+	 * @param string $appId
+	 *
+	 * @return array<string, MigrationAttribute[]>
+	 * @since 30.0.0
+	 */
+	public function extractMigrationAttributes(string $appId): array {
+		$ms = new MigrationService($appId, $this->connection);
+
+		$metadata = [];
+		foreach ($ms->getAvailableVersions() as $version) {
+			$metadata[$version] = [];
+			$class = new ReflectionClass($ms->createInstance($version));
+			$attributes = $class->getAttributes();
+			foreach ($attributes as $attribute) {
+				$item = $attribute->newInstance();
+				if ($item instanceof MigrationAttribute) {
+					$metadata[$version][] = $item;
+				}
+			}
+		}
+
+		return $metadata;
 	}
 
 	/**

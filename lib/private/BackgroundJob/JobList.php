@@ -1,35 +1,12 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Noveen Sachdeva <noveen.sachdeva@research.iiit.ac.in>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\BackgroundJob;
 
-use Doctrine\DBAL\Platforms\MySQLPlatform;
 use OCP\AppFramework\QueryException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\AutoloadNotAllowedException;
@@ -46,6 +23,9 @@ use function json_encode;
 use function strlen;
 
 class JobList implements IJobList {
+	/** @var array<string, int> */
+	protected array $alreadyVisitedParallelBlocked = [];
+
 	public function __construct(
 		protected IDBConnection $connection,
 		protected IConfig $config,
@@ -108,7 +88,7 @@ class JobList implements IJobList {
 
 		// Add galera safe delete chunking if using mysql
 		// Stops us hitting wsrep_max_ws_rows when large row counts are deleted
-		if ($this->connection->getDatabasePlatform() instanceof MySQLPlatform) {
+		if ($this->connection->getDatabaseProvider() === IDBConnection::PLATFORM_MYSQL) {
 			// Then use chunked delete
 			$max = IQueryBuilder::MAX_ROW_DELETION;
 
@@ -189,10 +169,9 @@ class JobList implements IJobList {
 	}
 
 	/**
-	 * Get the next job in the list
-	 * @return ?IJob the next job to run. Beware that this object may be a singleton and may be modified by the next call to buildJob.
+	 * @inheritDoc
 	 */
-	public function getNext(bool $onlyTimeSensitive = false): ?IJob {
+	public function getNext(bool $onlyTimeSensitive = false, ?array $jobClasses = null): ?IJob {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('jobs')
@@ -205,6 +184,14 @@ class JobList implements IJobList {
 			$query->andWhere($query->expr()->eq('time_sensitive', $query->createNamedParameter(IJob::TIME_SENSITIVE, IQueryBuilder::PARAM_INT)));
 		}
 
+		if (!empty($jobClasses)) {
+			$orClasses = [];
+			foreach ($jobClasses as $jobClass) {
+				$orClasses[] = $query->expr()->eq('class', $query->createNamedParameter($jobClass, IQueryBuilder::PARAM_STR));
+			}
+			$query->andWhere($query->expr()->orX(...$orClasses));
+		}
+
 		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
@@ -213,7 +200,13 @@ class JobList implements IJobList {
 			$job = $this->buildJob($row);
 
 			if ($job instanceof IParallelAwareJob && !$job->getAllowParallelRuns() && $this->hasReservedJob(get_class($job))) {
-				$this->logger->debug('Skipping ' . get_class($job) . ' job with ID ' . $job->getId() . ' because another job with the same class is already running', ['app' => 'cron']);
+				if (!isset($this->alreadyVisitedParallelBlocked[get_class($job)])) {
+					$this->alreadyVisitedParallelBlocked[get_class($job)] = $job->getId();
+				} elseif ($this->alreadyVisitedParallelBlocked[get_class($job)] === $job->getId()) {
+					$this->logger->info('Skipped through all jobs and revisited a IParallelAwareJob blocked job again, giving up.', ['app' => 'cron']);
+					return null;
+				}
+				$this->logger->info('Skipping ' . get_class($job) . ' job with ID ' . $job->getId() . ' because another job with the same class is already running', ['app' => 'cron']);
 
 				$update = $this->connection->getQueryBuilder();
 				$update->update('jobs')
@@ -222,7 +215,11 @@ class JobList implements IJobList {
 				$update->setParameter('jobid', $row['id']);
 				$update->executeStatement();
 
-				return $this->getNext($onlyTimeSensitive);
+				return $this->getNext($onlyTimeSensitive, $jobClasses);
+			}
+
+			if ($job !== null && isset($this->alreadyVisitedParallelBlocked[get_class($job)])) {
+				unset($this->alreadyVisitedParallelBlocked[get_class($job)]);
 			}
 
 			$update = $this->connection->getQueryBuilder();
@@ -239,7 +236,7 @@ class JobList implements IJobList {
 
 			if ($count === 0) {
 				// Background job already executed elsewhere, try again.
-				return $this->getNext($onlyTimeSensitive);
+				return $this->getNext($onlyTimeSensitive, $jobClasses);
 			}
 
 			if ($job === null) {
@@ -252,7 +249,7 @@ class JobList implements IJobList {
 				$reset->executeStatement();
 
 				// Background job from disabled app, try again.
-				return $this->getNext($onlyTimeSensitive);
+				return $this->getNext($onlyTimeSensitive, $jobClasses);
 			}
 
 			return $job;
@@ -333,7 +330,7 @@ class JobList implements IJobList {
 	 */
 	public function setLastJob(IJob $job): void {
 		$this->unlockJob($job);
-		$this->config->setAppValue('backgroundjob', 'lastjob', (string)$job->getId());
+		$this->config->setAppValue('backgroundjob', 'lastjob', (string) $job->getId());
 	}
 
 	/**
@@ -410,5 +407,27 @@ class JobList implements IJobList {
 			$this->logger->debug('Querying reserved jobs failed', ['exception' => $e]);
 			return false;
 		}
+	}
+
+	public function countByClass(): array {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('class')
+			->selectAlias($query->func()->count('id'), 'count')
+			->from('jobs')
+			->orderBy('count')
+			->groupBy('class');
+
+		$result = $query->executeQuery();
+
+		$jobs = [];
+
+		while (($row = $result->fetch()) !== false) {
+			/**
+			 * @var array{count:int, class:class-string} $row
+			 */
+			$jobs[] = $row;
+		}
+
+		return $jobs;
 	}
 }

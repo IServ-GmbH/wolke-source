@@ -1,8 +1,8 @@
 diff --git apps/federation/lib/TrustedServers.php apps/federation/lib/TrustedServers.php
-index b110be2..b07a75e 100644
+index 48cffd2..713ff1f 100644
 --- apps/federation/lib/TrustedServers.php
 +++ apps/federation/lib/TrustedServers.php
-@@ -27,6 +27,7 @@
+@@ -7,6 +7,7 @@
   */
  namespace OCA\Federation;
  
@@ -10,7 +10,7 @@ index b110be2..b07a75e 100644
  use OCA\Federation\BackgroundJob\RequestSharedSecret;
  use OCP\AppFramework\Http;
  use OCP\AppFramework\Utility\ITimeFactory;
-@@ -127,6 +128,16 @@ class TrustedServers {
+@@ -107,6 +108,16 @@ class TrustedServers {
  		$this->dbHandler->removeServer($id);
  		$this->dispatcher->dispatchTyped(new TrustedServerRemovedEvent($server['url_hash']));
  

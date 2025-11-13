@@ -16,6 +16,8 @@ OC.L10N.register(
     "Open »%s«" : "เปิด »%s«",
     "Accept" : "ยอมรับ",
     "%s" : "%s",
+    "Open %s" : "เปิด %s",
+    "Loading…" : "กำลังโหลด…",
     "No files in here" : "ไม่มีไฟล์ที่นี่",
     "No entries found in this folder" : "ไม่พบรายการในโฟลเดอร์นี้",
     "Name" : "ชื่อ",

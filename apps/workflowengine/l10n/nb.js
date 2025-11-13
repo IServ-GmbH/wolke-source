@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "Velg et filter",
     "Select a comparator" : "Velg en komparator",
     "Remove filter" : "Fjern filter",
+    "Audio" : "Lyd",
     "Folder" : "Mappe",
     "Images" : "Bilder",
     "Office documents" : "Office dokumenter",
     "PDF documents" : "PDF dokumenter",
+    "Video" : "Video",
     "Custom MIME type" : "Egendefinert MIME-type",
     "Custom mimetype" : "Egendefinert MIME-type",
     "Select a file type" : "Velg filtype",
@@ -69,7 +71,6 @@ OC.L10N.register(
     "Select a user agent" : "Velg en brukeragent",
     "Select groups" : "Velg grupper",
     "Groups" : "Grupper",
-    "Type to search for group …" : "Skriv for å søke etter gruppe...",
     "Select a trigger" : "Velg en utløser",
     "At least one event must be selected" : "Minst èn hendelse må velges",
     "Add new flow" : "Legg til ny flyt",
@@ -118,6 +119,7 @@ OC.L10N.register(
     "Request user agent" : "Ønsket brukeragent",
     "Group membership" : "Gruppemedlemskap",
     "is member of" : "er medlem av",
-    "is not member of" : "er ikke medlem av"
+    "is not member of" : "er ikke medlem av",
+    "Type to search for group …" : "Skriv for å søke etter gruppe..."
 },
 "nplurals=2; plural=(n != 1);");

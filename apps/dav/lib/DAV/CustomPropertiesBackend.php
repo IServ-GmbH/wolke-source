@@ -1,27 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright Copyright (c) 2017, Georg Ehrke <oc.list@georgehrke.com>
- *
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Richard Steinmetz <richard@steinmetz.cloud>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\DAV\DAV;
@@ -111,6 +93,11 @@ class CustomPropertiesBackend implements BackendInterface {
 		'{http://nextcloud.org/ns}lock-time',
 		'{http://nextcloud.org/ns}lock-timeout',
 		'{http://nextcloud.org/ns}lock-token',
+		// photos
+		'{http://nextcloud.org/ns}realpath',
+		'{http://nextcloud.org/ns}nbItems',
+		'{http://nextcloud.org/ns}face-detections',
+		'{http://nextcloud.org/ns}face-preview-image',
 	];
 
 	/**
@@ -383,16 +370,19 @@ class CustomPropertiesBackend implements BackendInterface {
 	private function cacheDirectory(string $path, Directory $node): void {
 		$prefix = ltrim($path . '/', '/');
 		$query = $this->connection->getQueryBuilder();
-		$query->select('name', 'propertypath', 'propertyname', 'propertyvalue', 'valuetype')
+		$query->select('name', 'p.propertypath', 'p.propertyname', 'p.propertyvalue', 'p.valuetype')
 			->from('filecache', 'f')
-			->leftJoin('f', 'properties', 'p', $query->expr()->andX(
-				$query->expr()->eq('propertypath', $query->func()->concat(
-					$query->createNamedParameter($prefix),
-					'name'
-				)),
-				$query->expr()->eq('userid', $query->createNamedParameter($this->user->getUID()))
-			))
-			->where($query->expr()->eq('parent', $query->createNamedParameter($node->getInternalFileId(), IQueryBuilder::PARAM_INT)));
+			->hintShardKey('storage', $node->getNode()->getMountPoint()->getNumericStorageId())
+			->leftJoin('f', 'properties', 'p', $query->expr()->eq('p.propertypath', $query->func()->concat(
+				$query->createNamedParameter($prefix),
+				'f.name'
+			)),
+			)
+			->where($query->expr()->eq('parent', $query->createNamedParameter($node->getInternalFileId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->orX(
+				$query->expr()->eq('p.userid', $query->createNamedParameter($this->user->getUID())),
+				$query->expr()->isNull('p.userid'),
+			));
 		$result = $query->executeQuery();
 
 		$propsByPath = [];
@@ -435,7 +425,7 @@ class CustomPropertiesBackend implements BackendInterface {
 			// request only a subset
 			$sql .= ' AND `propertyname` in (?)';
 			$whereValues[] = $requestedProperties;
-			$whereTypes[] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+			$whereTypes[] = IQueryBuilder::PARAM_STR_ARRAY;
 		}
 
 		$result = $this->connection->executeQuery(
@@ -526,6 +516,18 @@ class CustomPropertiesBackend implements BackendInterface {
 		return $path;
 	}
 
+	private static function checkIsArrayOfScalar(string $name, array $array): void {
+		foreach ($array as $item) {
+			if (is_array($item)) {
+				self::checkIsArrayOfScalar($name, $item);
+			} elseif ($item !== null && !is_scalar($item)) {
+				throw new DavException(
+					"Property \"$name\" has an invalid value of array containing " . gettype($item),
+				);
+			}
+		}
+	}
+
 	/**
 	 * @throws ParseException If parsing a \Sabre\DAV\Xml\Property\Complex value fails
 	 * @throws DavException If the property value is invalid
@@ -560,6 +562,23 @@ class CustomPropertiesBackend implements BackendInterface {
 			$valueType = self::PROPERTY_TYPE_HREF;
 			$value = $value->getHref();
 		} else {
+			if (is_array($value)) {
+				// For array only allow scalar values
+				self::checkIsArrayOfScalar($name, $value);
+			} elseif (!is_object($value)) {
+				throw new DavException(
+					"Property \"$name\" has an invalid value of type " . gettype($value),
+				);
+			} else {
+				if (!str_starts_with($value::class, 'Sabre\\DAV\\Xml\\Property\\')
+					&& !str_starts_with($value::class, 'Sabre\\CalDAV\\Xml\\Property\\')
+					&& !str_starts_with($value::class, 'Sabre\\CardDAV\\Xml\\Property\\')
+					&& !str_starts_with($value::class, 'OCA\\DAV\\')) {
+					throw new DavException(
+						"Property \"$name\" has an invalid value of class " . $value::class,
+					);
+				}
+			}
 			$valueType = self::PROPERTY_TYPE_OBJECT;
 			// serialize produces null character
 			// these can not be properly stored in some databases and need to be replaced
@@ -571,20 +590,26 @@ class CustomPropertiesBackend implements BackendInterface {
 	/**
 	 * @return mixed|Complex|string
 	 */
-	private function decodeValueFromDatabase(string $value, int $valueType) {
+	private function decodeValueFromDatabase(string $value, int $valueType): mixed {
 		switch ($valueType) {
 			case self::PROPERTY_TYPE_XML:
 				return new Complex($value);
 			case self::PROPERTY_TYPE_HREF:
 				return new Href($value);
 			case self::PROPERTY_TYPE_OBJECT:
+				if (preg_match('/^a:/', $value)) {
+					// Array, unserialize only scalar values
+					return unserialize(str_replace('\x00', chr(0), $value), ['allowed_classes' => false]);
+				}
+				if (!preg_match('/^O\:\d+\:\"(OCA\\\\DAV\\\\|Sabre\\\\(Cal|Card)?DAV\\\\Xml\\\\Property\\\\)/', $value)) {
+					throw new \LogicException('Found an object class serialized in DB that is not allowed');
+				}
 				// some databases can not handel null characters, these are custom encoded during serialization
 				// this custom encoding needs to be first reversed before unserializing
 				return unserialize(str_replace('\x00', chr(0), $value));
-			case self::PROPERTY_TYPE_STRING:
 			default:
 				return $value;
-		}
+		};
 	}
 
 	private function encodeDefaultCalendarUrl(Href $value): Href {

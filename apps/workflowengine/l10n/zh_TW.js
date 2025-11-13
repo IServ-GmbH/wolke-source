@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "選取過濾條件",
     "Select a comparator" : "選取比較程式",
     "Remove filter" : "移除過濾條件",
+    "Audio" : "音訊",
     "Folder" : "資料夾",
     "Images" : "圖片",
     "Office documents" : "Office 文件",
     "PDF documents" : "PDF 文件",
+    "Video" : "影片",
     "Custom MIME type" : "自訂 MIME 類型",
     "Custom mimetype" : "自訂 mimetype",
     "Select a file type" : "選取檔案類型",
@@ -69,7 +71,7 @@ OC.L10N.register(
     "Select a user agent" : "選取使用者代理字串",
     "Select groups" : "選擇群組",
     "Groups" : "群組",
-    "Type to search for group …" : "輸入以搜尋群組……",
+    "Type to search for group …" : "輸入以搜尋群組 ……",
     "Select a trigger" : "選取觸發條件",
     "At least one event must be selected" : "必須至少選取一個事件",
     "Add new flow" : "新增新流程",
@@ -118,6 +120,7 @@ OC.L10N.register(
     "Request user agent" : "請求使用者代理字串",
     "Group membership" : "群組成員資格",
     "is member of" : "是成員的群組",
-    "is not member of" : "不是成員的群組"
+    "is not member of" : "不是成員的群組",
+    "Type to search for group …" : "輸入以搜尋群組……"
 },
 "nplurals=1; plural=0;");

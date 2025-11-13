@@ -3,23 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2016 Bjoern Schiessle <bjoern@schiessle.org>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 use OCA\ServerInfo\Resources\Disk;
@@ -120,7 +105,7 @@ $phpinfo = $_['phpinfo'];
 						<canvas id="cpuloadcanvas" style="width:100%; height:200px" width="600" height="200"></canvas>
 					</div>
 				</div>
-				<p><em id="cpuFooterInfo"></em></p>
+				<p><span class="cpubox" id="cpubox">&nbsp;&nbsp;</span>&nbsp;&nbsp;<em id="cpuFooterInfo"></em></p>
 			</div>
 
 			<div class="col col-6 col-l-12">
@@ -151,7 +136,7 @@ $phpinfo = $_['phpinfo'];
 			</div>
 			<?php foreach ($disks as $disk): ?>
 				<div class="col col-4 col-xl-6 col-m-12">
-					<div class="infobox">
+					<div class="infobox text-center-mobile">
 						<div class="diskchart-container">
 							<canvas id="DiskChart" class="DiskChart" style="width:100%; height:200px" width="600"
 									height="200"></canvas>
@@ -194,10 +179,6 @@ $phpinfo = $_['phpinfo'];
 			<div class="col col-12">
 				<?php p($l->t('Hostname:')); ?>
 				<span class="info"><?php p($_['networkinfo']['hostname']); ?></span>
-			</div>
-			<div class="col col-12">
-				<?php p($l->t('DNS:')); ?>
-				<span class="info"><?php p($_['networkinfo']['dns']); ?></span>
 			</div>
 			<div class="col col-12">
 				<?php p($l->t('Gateway:')); ?>
@@ -246,27 +227,39 @@ $phpinfo = $_['phpinfo'];
 
 			<div class="col col-12">
 				<div class="row">
-					<div class="col col-4 col-l-6 col-m-12">
+					<div class="col">
 						<div class="infobox">
-							<div class="interface-wrapper">
-								<?php if ($_['storage']['num_users'] > 0) : ?>
-									<?php p($l->t('Total users:')); ?>
-									<span class="info"><?php p($_['storage']['num_users']); ?></span><br>
+							<div class="interface-wrapper active-users-wrapper">
+								<?php if ($_['activeUsers']['last1hour'] > 0) : ?>
+									<div class="active-users-box">
+										<?php p($l->t('Last hour')); ?><br>
+										<span class="info"><?php p($_['activeUsers']['last1hour']) ?></span><br>
+										<em><?php p($l->t('%s%% of all users', [round($_['activeUsers']['last1hour'] * 100 / $_['storage']['num_users'], 1)])) ?></em>
+									</div>
 								<?php endif; ?>
 
 								<?php if ($_['activeUsers']['last24hours'] > 0) : ?>
-									<?php p($l->t('24 hours:')); ?>
-									<span class="info"><?php p($_['activeUsers']['last24hours']) ?></span><br>
+									<div class="active-users-box">
+										<?php p($l->t('Last 24 Hours')); ?><br>
+										<span class="info"><?php p($_['activeUsers']['last24hours']) ?></span><br>
+										<em><?php p($l->t('%s%% of all users', [round($_['activeUsers']['last24hours'] * 100 / $_['storage']['num_users'], 1)])) ?></em>
+									</div>
 								<?php endif; ?>
 
-								<?php if ($_['activeUsers']['last1hour'] > 0) : ?>
-									<?php p($l->t('1 hour:')); ?>
-									<span class="info"><?php p($_['activeUsers']['last1hour']) ?></span><br>
+								<?php if ($_['activeUsers']['last7days'] > 0) : ?>
+									<div class="active-users-box">
+										<?php p($l->t('Last 7 Days')); ?><br>
+										<span class="info"><?php p($_['activeUsers']['last7days']) ?></span><br>
+										<em><?php p($l->t('%s%% of all users', [round($_['activeUsers']['last7days'] * 100 / $_['storage']['num_users'], 1)])) ?></em>
+									</div>
 								<?php endif; ?>
 
-								<?php if ($_['activeUsers']['last5minutes'] > 0) : ?>
-									<?php p($l->t('5 mins:')); ?>
-									<span class="info"><?php p($_['activeUsers']['last5minutes']) ?></span><br>
+								<?php if ($_['activeUsers']['last1month'] > 0) : ?>
+									<div class="active-users-box">
+										<?php p($l->t('Last 30 Days')); ?><br>
+										<span class="info"><?php p($_['activeUsers']['last1month']) ?></span><br>
+										<em><?php p($l->t('%s%% of all users', [round($_['activeUsers']['last1month'] * 100 / $_['storage']['num_users'], 1)])) ?></em>
+									</div>
 								<?php endif; ?>
 							</div>
 						</div>

@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2018, Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\Preview;
 
@@ -66,7 +49,7 @@ class BackgroundCleanupJob extends TimedJob {
 	public function run($argument) {
 		foreach ($this->getDeletedFiles() as $fileId) {
 			try {
-				$preview = $this->previewFolder->getFolder((string)$fileId);
+				$preview = $this->previewFolder->getFolder((string) $fileId);
 				$preview->delete();
 			} catch (NotFoundException $e) {
 				// continue
@@ -82,6 +65,11 @@ class BackgroundCleanupJob extends TimedJob {
 	}
 
 	private function getOldPreviewLocations(): \Iterator {
+		if ($this->connection->getShardDefinition('filecache')) {
+			// sharding is new enough that we don't need to support this
+			return;
+		}
+
 		$qb = $this->connection->getQueryBuilder();
 		$qb->select('a.name')
 			->from('filecache', 'a')
@@ -122,6 +110,15 @@ class BackgroundCleanupJob extends TimedJob {
 
 		if ($data === null) {
 			return [];
+		}
+
+		if ($this->connection->getShardDefinition('filecache')) {
+			$chunks = $this->getAllPreviewIds($data['path'], 1000);
+			foreach ($chunks as $chunk) {
+				yield from $this->findMissingSources($chunk);
+			}
+
+			return;
 		}
 
 		/*
@@ -172,5 +169,47 @@ class BackgroundCleanupJob extends TimedJob {
 		}
 
 		$cursor->closeCursor();
+	}
+
+	private function getAllPreviewIds(string $previewRoot, int $chunkSize): \Iterator {
+		// See `getNewPreviewLocations` for some more info about the logic here
+		$like = $this->connection->escapeLikeParameter($previewRoot). '/_/_/_/_/_/_/_/%';
+
+		$qb = $this->connection->getQueryBuilder();
+		$qb->select('name', 'fileid')
+			->from('filecache')
+			->where(
+				$qb->expr()->andX(
+					$qb->expr()->eq('storage', $qb->createNamedParameter($this->previewFolder->getStorageId())),
+					$qb->expr()->like('path', $qb->createNamedParameter($like)),
+					$qb->expr()->eq('mimetype', $qb->createNamedParameter($this->mimeTypeLoader->getId('httpd/unix-directory'))),
+					$qb->expr()->gt('fileid', $qb->createParameter('min_id')),
+				)
+			)
+			->orderBy('fileid', 'ASC')
+			->setMaxResults($chunkSize);
+
+		$minId = 0;
+		while (true) {
+			$qb->setParameter('min_id', $minId);
+			$rows = $qb->executeQuery()->fetchAll();
+			if (count($rows) > 0) {
+				$minId = $rows[count($rows) - 1]['fileid'];
+				yield array_map(function ($row) {
+					return (int) $row['name'];
+				}, $rows);
+			} else {
+				break;
+			}
+		}
+	}
+
+	private function findMissingSources(array $ids): array {
+		$qb = $this->connection->getQueryBuilder();
+		$qb->select('fileid')
+			->from('filecache')
+			->where($qb->expr()->in('fileid', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		$found = $qb->executeQuery()->fetchAll(\PDO::FETCH_COLUMN);
+		return array_diff($ids, $found);
 	}
 }

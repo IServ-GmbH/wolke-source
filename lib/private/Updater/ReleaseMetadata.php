@@ -19,7 +19,7 @@ use OCP\Http\Client\IClientService;
  */
 class ReleaseMetadata {
 	public function __construct(
-		private IClientService $clientService,
+		private readonly IClientService $clientService,
 	) {
 	}
 

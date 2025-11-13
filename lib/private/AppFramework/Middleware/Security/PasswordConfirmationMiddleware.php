@@ -1,25 +1,8 @@
 <?php
+
 /**
- * @copyright 2018, Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\AppFramework\Middleware\Security;
 
@@ -34,6 +17,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Exceptions\ExpiredTokenException;
 use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\Authentication\Exceptions\WipeTokenException;
+use OCP\Authentication\Token\IToken;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserSession;
@@ -51,9 +35,9 @@ class PasswordConfirmationMiddleware extends Middleware {
 		private IUserSession $userSession,
 		private ITimeFactory $timeFactory,
 		private IProvider $tokenProvider,
-		private LoggerInterface $logger,
-		private IRequest $request,
-		private Manager $userManager,
+		private readonly LoggerInterface $logger,
+		private readonly IRequest $request,
+		private readonly Manager $userManager,
 	) {
 	}
 
@@ -89,7 +73,7 @@ class PasswordConfirmationMiddleware extends Middleware {
 		}
 
 		$scope = $token->getScopeAsArray();
-		if (isset($scope['password-unconfirmable']) && $scope['password-unconfirmable'] === true) {
+		if (isset($scope[IToken::SCOPE_SKIP_PASSWORD_VALIDATION]) && $scope[IToken::SCOPE_SKIP_PASSWORD_VALIDATION] === true) {
 			// Users logging in from SSO backends cannot confirm their password by design
 			return;
 		}

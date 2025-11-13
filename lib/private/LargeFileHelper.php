@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- * @copyright Copyright (c) 2016, Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author marco44 <cousinmarc@gmail.com>
- * @author Michael Roitzsch <reactorcontrol@icloud.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC;
 
@@ -54,7 +32,7 @@ class LargeFileHelper {
 	 *                           PHP platform.
 	 */
 	public function __construct() {
-		$pow_2_53 = (float)self::POW_2_53_MINUS_1 + 1.0;
+		$pow_2_53 = (float) self::POW_2_53_MINUS_1 + 1.0;
 		if ($this->formatUnsignedInteger($pow_2_53) !== self::POW_2_53) {
 			throw new \RuntimeException(
 				'This class assumes floats to be double precision or "better".'
@@ -194,7 +172,7 @@ class LargeFileHelper {
 			if (\OCP\Util::isFunctionEnabled('exec')) {
 				$os = strtolower(php_uname('s'));
 				if (str_contains($os, 'linux')) {
-					return (int)($this->exec('stat -c %Y ' . escapeshellarg($fullPath)) ?? -1);
+					return (int) ($this->exec('stat -c %Y ' . escapeshellarg($fullPath)) ?? -1);
 				}
 			}
 		}

@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "Roghnaigh scagaire",
     "Select a comparator" : "Roghnaigh comparadóir",
     "Remove filter" : "Bain an scagaire",
+    "Audio" : "Fuaime",
     "Folder" : "Fillteán",
     "Images" : "Íomhánna",
     "Office documents" : "Doiciméid oifige",
     "PDF documents" : "Doiciméid PDF",
+    "Video" : "Físeán",
     "Custom MIME type" : "Cineál MIME saincheaptha",
     "Custom mimetype" : "Cineál MIME saincheaptha",
     "Select a file type" : "Roghnaigh cineál comhaid",
@@ -69,7 +71,7 @@ OC.L10N.register(
     "Select a user agent" : "Roghnaigh gníomhaire úsáideora",
     "Select groups" : "Roghnaigh grúpaí",
     "Groups" : "Grúpaí",
-    "Type to search for group …" : "Clóscríobh chun grúpa a chuardach…",
+    "Type to search for group …" : "Clóscríobh chun grúpa a chuardach …",
     "Select a trigger" : "Roghnaigh truicear",
     "At least one event must be selected" : "Ní mór imeacht amháin ar a laghad a roghnú",
     "Add new flow" : "Cuir sreabhadh nua leis",
@@ -118,6 +120,7 @@ OC.L10N.register(
     "Request user agent" : "Iarr gníomhaire úsáideora",
     "Group membership" : "Ballraíocht ghrúpa",
     "is member of" : "ina bhall de",
-    "is not member of" : "nach ball de"
+    "is not member of" : "nach ball de",
+    "Type to search for group …" : "Clóscríobh chun grúpa a chuardach…"
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");

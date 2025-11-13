@@ -1,30 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Maxence Lange <maxence@nextcloud.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Sharing;
 
@@ -74,7 +53,7 @@ class MountProvider implements IMountProvider {
 
 		// filter out excluded shares and group shares that includes self
 		$shares = array_filter($shares, function (\OCP\Share\IShare $share) use ($user) {
-			return $share->getPermissions() > 0 && $share->getShareOwner() !== $user->getUID();
+			return $share->getPermissions() > 0 && $share->getShareOwner() !== $user->getUID() && $share->getSharedBy() !== $user->getUID();
 		});
 
 		$superShares = $this->buildSuperShares($shares, $user);
@@ -148,7 +127,7 @@ class MountProvider implements IMountProvider {
 	 *
 	 * @param \OCP\Share\IShare[] $shares
 	 * @return \OCP\Share\IShare[][] array of grouped shares, each element in the
-	 * array is a group which itself is an array of shares
+	 *                               array is a group which itself is an array of shares
 	 */
 	private function groupShares(array $shares) {
 		$tmp = [];
@@ -237,7 +216,7 @@ class MountProvider implements IMountProvider {
 							continue;
 						}
 						// update supershare attributes with subshare attribute
-						$superAttributes->setAttribute($attribute['scope'], $attribute['key'], $attribute['enabled']);
+						$superAttributes->setAttribute($attribute['scope'], $attribute['key'], $attribute['value']);
 					}
 				}
 

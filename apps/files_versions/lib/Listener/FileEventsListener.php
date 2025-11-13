@@ -1,32 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Sam Tuke <mail@samtuke.com>
- * @author Louis Chmn <louis@chmn.me>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\Files_Versions\Listener;
 
@@ -35,6 +12,7 @@ use OC\DB\Exceptions\DbalException;
 use OC\Files\Filesystem;
 use OC\Files\Mount\MoveableMount;
 use OC\Files\Node\NonExistingFile;
+use OC\Files\Node\NonExistingFolder;
 use OC\Files\View;
 use OCA\Files_Versions\Storage;
 use OCA\Files_Versions\Versions\INeedSyncVersionBackend;
@@ -147,6 +125,22 @@ class FileEventsListener implements IEventListener {
 	}
 
 	public function touch_hook(Node $node): void {
+		// Do not handle folders.
+		if ($node instanceof Folder) {
+			return;
+		}
+
+		if ($node instanceof NonExistingFile) {
+			$this->logger->error(
+				'Failed to create or update version for {path}, node does not exist',
+				[
+					'path' => $node->getPath(),
+				]
+			);
+
+			return;
+		}
+
 		$previousNode = $this->nodesTouched[$node->getId()] ?? null;
 
 		if ($previousNode === null) {
@@ -174,7 +168,22 @@ class FileEventsListener implements IEventListener {
 
 	public function created(Node $node): void {
 		// Do not handle folders.
-		if ($node instanceof File && $this->versionManager instanceof INeedSyncVersionBackend) {
+		if (!($node instanceof File)) {
+			return;
+		}
+
+		if ($node instanceof NonExistingFile) {
+			$this->logger->error(
+				'Failed to create version for {path}, node does not exist',
+				[
+					'path' => $node->getPath(),
+				]
+			);
+
+			return;
+		}
+
+		if ($this->versionManager instanceof INeedSyncVersionBackend) {
 			$this->versionManager->createVersionEntity($node);
 		}
 	}
@@ -212,6 +221,17 @@ class FileEventsListener implements IEventListener {
 			return;
 		}
 
+		if ($node instanceof NonExistingFile) {
+			$this->logger->error(
+				'Failed to create or update version for {path}, node does not exist',
+				[
+					'path' => $node->getPath(),
+				]
+			);
+
+			return;
+		}
+
 		$writeHookInfo = $this->writeHookInfo[$node->getId()] ?? null;
 
 		if ($writeHookInfo === null) {
@@ -219,8 +239,8 @@ class FileEventsListener implements IEventListener {
 		}
 
 		if (
-			$writeHookInfo['versionCreated'] &&
-			$node->getMTime() !== $writeHookInfo['previousNode']->getMTime()
+			$writeHookInfo['versionCreated']
+			&& $node->getMTime() !== $writeHookInfo['previousNode']->getMTime()
 		) {
 			// If a new version was created, insert a version in the DB for the current content.
 			// If both versions have the same mtime, it means the latest version file simply got overrode,
@@ -240,6 +260,15 @@ class FileEventsListener implements IEventListener {
 							'mimetype' => $this->mimeTypeLoader->getId($node->getMimetype()),
 						],
 					);
+				}
+			} catch (DoesNotExistException $e) {
+				// This happens if the versions app was not enabled while the file was created or updated the last time.
+				// meaning there is no such revision and we need to create this file.
+				if ($writeHookInfo['versionCreated']) {
+					$this->created($node);
+				} else {
+					// Normally this should not happen so we re-throw the exception to not hide any potential issues.
+					throw $e;
 				}
 			} catch (Exception $e) {
 				$this->logger->error('Failed to update existing version for ' . $node->getPath(), [
@@ -346,11 +375,19 @@ class FileEventsListener implements IEventListener {
 			return;
 		}
 
-		// if we rename a movable mount point, then the versions don't have
-		// to be renamed
+		// if we rename a movable mount point, then the versions don't have to be renamed
 		$oldPath = $this->getPathForNode($source);
 		$newPath = $this->getPathForNode($target);
-		$absOldPath = Filesystem::normalizePath('/' . \OC_User::getUser() . '/files' . $oldPath);
+		if ($oldPath === null || $newPath === null) {
+			return;
+		}
+
+		$user = $this->userSession->getUser()?->getUID();
+		if ($user === null) {
+			return;
+		}
+
+		$absOldPath = Filesystem::normalizePath('/' . $user . '/files' . $oldPath);
 		$manager = Filesystem::getMountManager();
 		$mount = $manager->find($absOldPath);
 		$internalPath = $mount->getInternalPath($absOldPath);
@@ -358,7 +395,7 @@ class FileEventsListener implements IEventListener {
 			return;
 		}
 
-		$view = new View(\OC_User::getUser() . '/files');
+		$view = new View($user . '/files');
 		if ($view->file_exists($newPath)) {
 			Storage::store($newPath);
 		} else {
@@ -407,6 +444,24 @@ class FileEventsListener implements IEventListener {
 			}
 		}
 
+		if (!($node instanceof NonExistingFile) && !($node instanceof NonExistingFolder)) {
+			$this->logger->debug('Failed to compute path for node', [
+				'node' => [
+					'path' => $node->getPath(),
+					'owner' => $owner,
+					'fileid' => $node->getId(),
+					'size' => $node->getSize(),
+					'mtime' => $node->getMTime(),
+				]
+			]);
+		} else {
+			$this->logger->debug('Failed to compute path for node', [
+				'node' => [
+					'path' => $node->getPath(),
+					'owner' => $owner,
+				]
+			]);
+		}
 		return null;
 	}
 }

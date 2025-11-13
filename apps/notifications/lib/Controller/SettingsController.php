@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2021, Julien Barnoin <julien@barnoin.com>
- *
- * @author Julien Barnoin <julien@barnoin.com>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Notifications\Controller;
@@ -29,6 +12,7 @@ namespace OCA\Notifications\Controller;
 use OCA\Notifications\AppInfo\Application;
 use OCA\Notifications\Model\SettingsMapper;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -36,24 +20,17 @@ use OCP\IConfig;
 use OCP\IRequest;
 
 class SettingsController extends OCSController {
-	protected IConfig $config;
-	protected SettingsMapper $settingsMapper;
-	protected string $userId;
-
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
-		SettingsMapper $settingsMapper,
-		string $userId) {
+		protected IConfig $config,
+		protected SettingsMapper $settingsMapper,
+		protected string $userId,
+	) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
-		$this->settingsMapper = $settingsMapper;
-		$this->userId = $userId;
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Update personal notification settings
 	 *
 	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)
@@ -63,6 +40,7 @@ class SettingsController extends OCSController {
 	 *
 	 * 200: Personal settings updated
 	 */
+	#[NoAdminRequired]
 	#[OpenAPI]
 	public function personal(int $batchSetting, string $soundNotification, string $soundTalk): DataResponse {
 		$this->settingsMapper->setBatchSettingForUser($this->userId, $batchSetting);
@@ -74,8 +52,6 @@ class SettingsController extends OCSController {
 	}
 
 	/**
-	 * @AuthorizedAdminSetting(settings=OCA\Notifications\Settings\Admin)
-	 *
 	 * Update default notification settings for new users
 	 *
 	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)

@@ -1,42 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bart Visscher <bartv@thisnet.nl>
- * @author Brice Maron <brice@bmaron.net>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Frank Karlitschek <frank@karlitschek.de>
- * @author Individual IT Services <info@individual-it.net>
- * @author Jakob Sack <mail@jakobsack.de>
- * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
- * @author Joas Schilling <coding@schilljs.com>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Marin Treselj <marin@pixelipo.com>
- * @author Michael Letzgus <www@chronos.michael-letzgus.de>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- * @author Richard Steinmetz <richard@steinmetz.cloud>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 use OC\TemplateLayout;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
@@ -76,6 +43,7 @@ class OC_Template extends \OC\Template\Base {
 		$theme = OC_Util::getTheme();
 
 		$requestToken = (OC::$server->getSession() && $registerCall) ? \OCP\Util::callRegister() : '';
+		$cspNonce = \OCP\Server::get(\OC\Security\CSP\ContentSecurityPolicyNonceManager::class)->getNonce();
 
 		$parts = explode('/', $app); // fix translation when app is something like core/lostpassword
 		$l10n = \OC::$server->getL10N($parts[0]);
@@ -89,7 +57,13 @@ class OC_Template extends \OC\Template\Base {
 		$this->path = $path;
 		$this->app = $app;
 
-		parent::__construct($template, $requestToken, $l10n, $themeDefaults);
+		parent::__construct(
+			$template,
+			$requestToken,
+			$l10n,
+			$themeDefaults,
+			$cspNonce,
+		);
 	}
 
 
@@ -121,7 +95,7 @@ class OC_Template extends \OC\Template\Base {
 	 * @param string $tag tag name of the element
 	 * @param array $attributes array of attributes for the element
 	 * @param string $text the text content for the element. If $text is null then the
-	 * element will be written as empty element. So use "" to get a closing tag.
+	 *                     element will be written as empty element. So use "" to get a closing tag.
 	 */
 	public function addHeader($tag, $attributes, $text = null) {
 		$this->headers[] = [
@@ -198,7 +172,7 @@ class OC_Template extends \OC\Template\Base {
 	 * @return boolean|null
 	 */
 	public static function printUserPage($application, $name, $parameters = []) {
-		$content = new OC_Template($application, $name, "user");
+		$content = new OC_Template($application, $name, 'user');
 		foreach ($parameters as $key => $value) {
 			$content->assign($key, $value);
 		}
@@ -213,7 +187,7 @@ class OC_Template extends \OC\Template\Base {
 	 * @return bool
 	 */
 	public static function printAdminPage($application, $name, $parameters = []) {
-		$content = new OC_Template($application, $name, "admin");
+		$content = new OC_Template($application, $name, 'admin');
 		foreach ($parameters as $key => $value) {
 			$content->assign($key, $value);
 		}
@@ -306,6 +280,7 @@ class OC_Template extends \OC\Template\Base {
 		http_response_code($statusCode);
 		try {
 			$debug = \OC::$server->getSystemConfig()->getValue('debug', false);
+			$serverLogsDocumentation = \OC::$server->getSystemConfig()->getValue('documentation_url.server_logs', '');
 			$request = \OC::$server->getRequest();
 			$content = new \OC_Template('', 'exception', 'error', false);
 			$content->assign('errorClass', get_class($exception));
@@ -315,6 +290,7 @@ class OC_Template extends \OC\Template\Base {
 			$content->assign('line', $exception->getLine());
 			$content->assign('exception', $exception);
 			$content->assign('debugMode', $debug);
+			$content->assign('serverLogsDocumentation', $serverLogsDocumentation);
 			$content->assign('remoteAddr', $request->getRemoteAddress());
 			$content->assign('requestID', $request->getId());
 			$content->printPage();

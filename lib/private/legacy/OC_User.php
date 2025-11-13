@@ -1,45 +1,15 @@
 <?php
-/**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Aldo "xoen" Giambelluca <xoen@xoen.org>
- * @author Andreas Fischer <bantu@owncloud.com>
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author Bartek Przybylski <bart.p.pl@gmail.com>
- * @author Björn Schießle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Georg Ehrke <oc.list@georgehrke.com>
- * @author Jakob Sack <mail@jakobsack.de>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Robin McCorkell <robin@mccorkell.me.uk>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author shkdee <louis.traynard@m4x.org>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
- */
 
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 use OC\Authentication\Token\IProvider;
-use OC\User\LoginException;
+use OC\User\DisabledUserException;
 use OCP\Authentication\Exceptions\InvalidTokenException;
 use OCP\Authentication\Exceptions\WipeTokenException;
+use OCP\Authentication\Token\IToken;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IGroupManager;
 use OCP\ISession;
@@ -175,7 +145,7 @@ class OC_User {
 	public static function loginWithApache(\OCP\Authentication\IApacheBackend $backend) {
 		$uid = $backend->getCurrentUserId();
 		$run = true;
-		OC_Hook::emit("OC_User", "pre_login", ["run" => &$run, "uid" => $uid, 'backend' => $backend]);
+		OC_Hook::emit('OC_User', 'pre_login', ['run' => &$run, 'uid' => $uid, 'backend' => $backend]);
 
 		if ($uid) {
 			if (self::getUser() !== $uid) {
@@ -187,7 +157,7 @@ class OC_User {
 
 				if ($userSession->getUser() && !$userSession->getUser()->isEnabled()) {
 					$message = \OC::$server->getL10N('lib')->t('Account disabled');
-					throw new LoginException($message);
+					throw new DisabledUserException($message);
 				}
 				$userSession->setLoginName($uid);
 				$request = OC::$server->getRequest();
@@ -207,8 +177,8 @@ class OC_User {
 					try {
 						$token = $tokenProvider->getToken($userSession->getSession()->getId());
 						$token->setScope([
-							'password-unconfirmable' => true,
-							'filesystem' => true,
+							IToken::SCOPE_SKIP_PASSWORD_VALIDATION => true,
+							IToken::SCOPE_FILESYSTEM => true,
 						]);
 						$tokenProvider->updateToken($token);
 					} catch (InvalidTokenException|WipeTokenException|SessionNotAvailableException) {
@@ -251,9 +221,9 @@ class OC_User {
 	 * Verify with Apache whether user is authenticated.
 	 *
 	 * @return boolean|null
-	 *          true: authenticated
-	 *          false: not authenticated
-	 *          null: not handled / no backend available
+	 *                      true: authenticated
+	 *                      false: not authenticated
+	 *                      null: not handled / no backend available
 	 */
 	public static function handleApacheAuth() {
 		$backend = self::findFirstActiveUsedBackend();

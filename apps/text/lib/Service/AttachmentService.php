@@ -3,25 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2021 Julien Veyssier <eneiluj@posteo.net>
- *
- * @author Julien Veyssier <eneiluj@posteo.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Text\Service;
@@ -33,6 +16,7 @@ use OCA\Text\Db\Session;
 use OCP\Constants;
 use OCP\Files\File;
 use OCP\Files\Folder;
+use OCP\Files\IFilenameValidator;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -52,7 +36,8 @@ class AttachmentService {
 		private ShareManager $shareManager,
 		private IPreview $previewManager,
 		private IMimeTypeDetector $mimeTypeDetector,
-		private IURLGenerator $urlGenerator) {
+		private IURLGenerator $urlGenerator,
+		private IFilenameValidator $filenameValidator) {
 	}
 
 	/**
@@ -203,21 +188,15 @@ class AttachmentService {
 	}
 
 	/**
-	 * @param int          $documentId
-	 * @param string|null  $userId
-	 * @param Session|null $session
-	 * @param string|null  $shareToken
-	 *
-	 * @return array
 	 * @throws InvalidPathException
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
 	public function getAttachmentList(int $documentId, ?string $userId = null, ?Session $session = null, ?string $shareToken = null): array {
-		if ($shareToken) {
+		if ($shareToken !== null) {
 			$textFile = $this->getTextFilePublic($documentId, $shareToken);
-		} elseif ($userId) {
+		} elseif ($userId !== null) {
 			$textFile = $this->getTextFile($documentId, $userId);
 		} else {
 			throw new NotPermittedException('Unable to read document');
@@ -229,7 +208,7 @@ class AttachmentService {
 			return [];
 		}
 
-		$shareTokenUrlString = $shareToken
+		$shareTokenUrlString = $shareToken !== null
 			? '&shareToken=' . rawurlencode($shareToken)
 			: '';
 		$urlParamsBase = $session
@@ -237,7 +216,11 @@ class AttachmentService {
 			: '?documentId=' . $documentId . $shareTokenUrlString;
 
 		$attachments = [];
-		$userFolder = $userId ? $this->rootFolder->getUserFolder($userId) : null;
+
+		// Folder davPath need to be relative to.
+		$davFolder = $userId !== null
+			? $this->rootFolder->getUserFolder($userId)
+			: $this->getShareFolder($shareToken);
 		foreach ($attachmentDir->getDirectoryListing() as $node) {
 			if (!($node instanceof File)) {
 				// Ignore anything but files
@@ -252,7 +235,7 @@ class AttachmentService {
 				'mimetype' => $node->getMimeType(),
 				'mtime' => $node->getMTime(),
 				'isImage' => $isImage,
-				'davPath' => $userFolder?->getRelativePath($node->getPath()),
+				'davPath' => $davFolder?->getRelativePath($node->getPath()),
 				'fullUrl' => $isImage
 					? $this->urlGenerator->linkToRouteAbsolute('text.Attachment.getImageFile') . $urlParamsBase . '&imageFileName=' . rawurlencode($name) . '&preferRawImage=1'
 					: $this->urlGenerator->linkToRouteAbsolute('text.Attachment.getMediaFile') . $urlParamsBase . '&mediaFileName=' . rawurlencode($name),
@@ -286,6 +269,7 @@ class AttachmentService {
 		}
 		$saveDir = $this->getAttachmentDirectoryForFile($textFile, true);
 		$fileName = self::getUniqueFileName($saveDir, $newFileName);
+		$this->filenameValidator->validateFilename($fileName);
 		$savedFile = $saveDir->newFile($fileName, $newFileResource);
 		return [
 			'name' => $fileName,
@@ -316,6 +300,7 @@ class AttachmentService {
 		$textFile = $this->getTextFilePublic($documentId, $shareToken);
 		$saveDir = $this->getAttachmentDirectoryForFile($textFile, true);
 		$fileName = self::getUniqueFileName($saveDir, $newFileName);
+		$this->filenameValidator->validateFilename($fileName);
 		$savedFile = $saveDir->newFile($fileName, $newFileResource);
 		return [
 			'name' => $fileName,
@@ -412,8 +397,9 @@ class AttachmentService {
 					[IShare::TYPE_LINK, IShare::TYPE_EMAIL, IShare::TYPE_ROOM],
 					true
 				)
-				&& $share->getPermissions() & Constants::PERMISSION_UPDATE);
-		} catch (ShareNotFound $e) {
+				&& $share->getPermissions() & Constants::PERMISSION_UPDATE
+				&& $share->getNode()->getPermissions() & Constants::PERMISSION_UPDATE);
+		} catch (ShareNotFound|NotFoundException $e) {
 			return false;
 		}
 	}
@@ -437,9 +423,8 @@ class AttachmentService {
 		}
 		$ownerId = $owner->getUID();
 		$ownerUserFolder = $this->rootFolder->getUserFolder($ownerId);
-		$ownerTextFile = $ownerUserFolder->getById($textFile->getId());
-		if (count($ownerTextFile) > 0) {
-			$ownerTextFile = $ownerTextFile[0];
+		$ownerTextFile = $ownerUserFolder->getFirstNodeById($textFile->getId());
+		if ($ownerTextFile !== null) {
 			$ownerParentFolder = $ownerTextFile->getParent();
 			$attachmentFolderName = '.attachments.' . $textFile->getId();
 			if ($ownerParentFolder->nodeExists($attachmentFolderName)) {
@@ -504,8 +489,7 @@ class AttachmentService {
 	 */
 	private function getTextFile(int $documentId, string $userId): File {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$files = $userFolder->getById($documentId);
-		$file = array_shift($files);
+		$file = $userFolder->getFirstNodeById($documentId);
 		if ($file instanceof File && !$this->isDownloadDisabled($file)) {
 			return $file;
 		}
@@ -535,8 +519,7 @@ class AttachmentService {
 				} elseif ($documentId !== null && $share->getNodeType() === 'folder') {
 					$folder = $share->getNode();
 					if ($folder instanceof Folder) {
-						$textFile = $folder->getById($documentId);
-						$textFile = array_shift($textFile);
+						$textFile = $folder->getFirstNodeById($documentId);
 						if ($textFile instanceof File && !$this->isDownloadDisabled($textFile)) {
 							return $textFile;
 						}
@@ -547,6 +530,35 @@ class AttachmentService {
 			// same as below
 		}
 		throw new NotFoundException('Text file with id=' . $documentId . ' and shareToken ' . $shareToken . ' was not found.');
+	}
+
+	/**
+	 * Get share folder
+	 *
+	 * @param string $shareToken
+	 *
+	 * @throws NotFoundException
+	 */
+	private function getShareFolder(string $shareToken): ?Folder {
+		// is the file shared with this token?
+		try {
+			$share = $this->shareManager->getShareByToken($shareToken);
+			if (in_array($share->getShareType(), [IShare::TYPE_LINK, IShare::TYPE_EMAIL])) {
+				// shared file or folder?
+				if ($share->getNodeType() === 'file') {
+					return null;
+				} elseif ($share->getNodeType() === 'folder') {
+					$folder = $share->getNode();
+					if ($folder instanceof Folder) {
+						return $folder;
+					}
+					throw new NotFoundException('Share folder for ' . $shareToken . ' was not a folder.');
+				}
+			}
+		} catch (ShareNotFound $e) {
+			// same as below
+		}
+		throw new NotFoundException('Share folder for ' . $shareToken . ' was not found.');
 	}
 
 	/**
@@ -562,9 +574,8 @@ class AttachmentService {
 	 * @throws NoUserException
 	 */
 	public function cleanupAttachments(int $fileId): int {
-		$textFile = $this->rootFolder->getById($fileId);
-		if (count($textFile) > 0 && $textFile[0] instanceof File) {
-			$textFile = $textFile[0];
+		$textFile = $this->rootFolder->getFirstNodeById($fileId);
+		if ($textFile instanceof File) {
 			if ($textFile->getMimeType() === 'text/markdown') {
 				// get IDs of the files inside the attachment dir
 				try {
@@ -663,26 +674,67 @@ class AttachmentService {
 	 * @param File $source
 	 * @param File $target
 	 *
+	 * @return array file id translation map
 	 * @throws InvalidPathException
 	 * @throws NoUserException
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 * @throws LockedException
 	 */
-	public function copyAttachments(File $source, File $target): void {
+	public function copyAttachments(File $source, File $target): array {
 		try {
 			$sourceAttachmentDir = $this->getAttachmentDirectoryForFile($source);
 		} catch (NotFoundException $e) {
 			// silently return if no attachment dir was found for source file
-			return;
+			return [];
 		}
 		// create a new attachment dir next to the new file
 		$targetAttachmentDir = $this->getAttachmentDirectoryForFile($target, true);
 		// copy the attachment files
+		$fileIdMapping = [];
 		foreach ($sourceAttachmentDir->getDirectoryListing() as $sourceAttachment) {
 			if ($sourceAttachment instanceof File) {
-				$targetAttachmentDir->newFile($sourceAttachment->getName(), $sourceAttachment->getContent());
+				$newFile = $targetAttachmentDir->newFile($sourceAttachment->getName(), $sourceAttachment->getContent());
+				$fileIdMapping[] = [
+					$sourceAttachment->getId(),
+					$newFile->getId()
+				];
 			}
+		}
+		return $fileIdMapping;
+	}
+
+	public static function replaceAttachmentFolderId(File $source, File $target): void {
+		$sourceId = $source->getId();
+		$targetId = $target->getId();
+		$patterns = [
+			// Replace `[title](.attachments.1/file.png)` with `[title](attachments.2/file.png)`
+			// '/(\[[^]]+\]\(\s*\<?\.attachments\.)' . $sourceId . '(\/[^)]+\>?\s*\))/',
+			'/(\[(?:\\\]|[^]])+\]\(\s*\<?\.attachments\.)' . $sourceId . '(\/[^)]+\>?\s*\))/',
+			// Replace `[ref]: .attachments.1/file.png` with `[ref]: .attachments.2/file.png`
+			'/(\[(?:\\\]|[^]])+\]:\s+.attachments\.)' . $sourceId . '(\/[^\s]+)/',
+		];
+		$replacements = [
+			'${1}' . $targetId . '${2}',
+			'${1}' . $targetId . '${2}',
+		];
+		$content = preg_replace($patterns, $replacements, $target->getContent());
+		if ($content !== null) {
+			$target->putContent($content);
+		}
+	}
+
+	public static function replaceAttachmentFileIds(File $target, array $fileIdMapping): void {
+		$patterns = [];
+		$replacements = [];
+		foreach ($fileIdMapping as $mapping) {
+			$patterns[] = '/(\[(?:\\\]|[^]])+\]\(\s*\S+\/f\/)' . $mapping[0] . '(\s*)(\(preview\)\s*)?\)/';
+			// Replace `[title](URL/f/sourceId (preview))` with `[title](URL/f/targetId (preview))`
+			$replacements[] = '${1}' . $mapping[1] . '${2}${3})';
+		}
+		$content = preg_replace($patterns, $replacements, $target->getContent());
+		if ($content !== null) {
+			$target->putContent($content);
 		}
 	}
 }

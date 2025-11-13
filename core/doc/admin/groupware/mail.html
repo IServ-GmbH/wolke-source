@@ -80,16 +80,22 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#mailbox-share">Mailbox Share</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-interface-preference-defaults">User Interface Preference Defaults</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#llm-processing">LLM Processing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#thread-summary">Thread Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#follow-up-reminders">Follow-up reminders</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#translation">Translation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="out_of_office.html">Out-of-office feature</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -213,9 +219,19 @@
 <h2>Mailbox Share<a class="headerlink" href="#mailbox-share" title="Link to this heading"></a></h2>
 <p>Users can share mailboxes with each other. So far, there is no UI for users to change the ACL in the Mail app, but if you want to use it, you need to enable it on the IMAP sever and configure the shares there.</p>
 </section>
+<section id="user-interface-preference-defaults">
+<span id="mail-ui-defaults"></span><h2>User Interface Preference Defaults<a class="headerlink" href="#user-interface-preference-defaults" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 5.2.</span></p>
+</div>
+<p>The Mail app allows administrators to set default user interface preferences for all users, these preferences can be changed by the user afterwards. This can be useful to ensure a consistent experience across the application.</p>
+<figure class="align-default">
+<img alt="User Interface Preference Defaults" src="../_images/settings_mail-ui-defaults.png" />
+</figure>
+</section>
 <section id="llm-processing">
 <span id="mail-llm-processing"></span><h2>LLM Processing<a class="headerlink" href="#llm-processing" title="Link to this heading"></a></h2>
-<p>The Mail app can optionally use large language models to process emails and offer assistance features like thread summaries, smart replies and event agendas.</p>
+<p>The Mail app can optionally use large language models to process emails and offer assistance features like thread summaries, smart replies, event agendas and follow-up reminders.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The supported languages depend on the used large language model.</p>
@@ -239,6 +255,23 @@
 </div>
 <p>The feature is opt-in, it is disabled by default and can be enabled in mail administration settings.</p>
 <p>Administration settings &gt; Groupware &gt; Mail app &gt; Enable thread summary</p>
+</section>
+<section id="follow-up-reminders">
+<h2>Follow-up reminders<a class="headerlink" href="#follow-up-reminders" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.0.</span></p>
+</div>
+<p>The Mail app will automatically remind users when their outgoing emails remain unanswered for
+multiple days.
+Each sent email will be analyzed by an AI to check whether a reply is expected.</p>
+<p>The feature can be enabled through the global <a class="reference internal" href="#mail-llm-processing"><span class="std std-ref">LLM Processing</span></a> setting.</p>
+</section>
+<section id="translation">
+<h2>Translation<a class="headerlink" href="#translation" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 4.2.</span></p>
+</div>
+<p>The mail app can optionally provide translations for messages if the <a class="reference internal" href="../ai/app_assistant.html#machine-translation"><span class="std std-ref">translation API</span></a> is enabled.</p>
 </section>
 </section>
 
@@ -265,40 +298,49 @@
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

@@ -1,34 +1,8 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2017 Lukas Reschke <lukas@statuscode.ch>
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Mario Danic <mario@lovelyhq.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author RussellAult <RussellAult@users.noreply.github.com>
- * @author Sergej Nikolaev <kinolaev@gmail.com>
- * @author Kate Döen <kate.doeen@nextcloud.com>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\Core\Controller;
 
@@ -42,7 +16,11 @@ use OCA\OAuth2\Db\ClientMapper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
+use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\StandaloneTemplateResponse;
@@ -111,10 +89,8 @@ class ClientFlowLoginController extends Controller {
 		return $response;
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	#[UseSession]
 	#[FrontpageRoute(verb: 'GET', url: '/login/flow')]
 	public function showAuthPickerPage(string $clientIdentifier = '', string $user = '', int $direct = 0, string $providedRedirectUri = ''): StandaloneTemplateResponse {
@@ -180,16 +156,16 @@ class ClientFlowLoginController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 * @NoSameSiteCookieRequired
 	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
 	#[UseSession]
 	#[FrontpageRoute(verb: 'GET', url: '/login/flow/grant')]
 	public function grantPage(string $stateToken = '',
 		string $clientIdentifier = '',
-		string $providedRedirectUri = '',
-		int $direct = 0): StandaloneTemplateResponse {
+		int $direct = 0,
+		string $providedRedirectUri = ''): StandaloneTemplateResponse {
 		if (!$this->isValidToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -235,11 +211,11 @@ class ClientFlowLoginController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @return Http\RedirectResponse|Response
 	 */
+	#[NoAdminRequired]
 	#[UseSession]
+	#[PasswordConfirmationRequired(strict: false)]
 	#[FrontpageRoute(verb: 'POST', url: '/login/flow')]
 	public function generateAppPassword(string $stateToken,
 		string $clientIdentifier = '',
@@ -342,9 +318,7 @@ class ClientFlowLoginController extends Controller {
 		return new Http\RedirectResponse($redirectUri);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[FrontpageRoute(verb: 'POST', url: '/login/flow/apptoken')]
 	public function apptokenRedirect(string $stateToken, string $user, string $password): Response {
 		if (!$this->isValidToken($stateToken)) {
@@ -384,7 +358,7 @@ class ClientFlowLoginController extends Controller {
 
 		$protocol = $this->request->getServerProtocol();
 
-		if ($protocol !== "https") {
+		if ($protocol !== 'https') {
 			$xForwardedProto = $this->request->getHeader('X-Forwarded-Proto');
 			$xForwardedSSL = $this->request->getHeader('X-Forwarded-Ssl');
 			if ($xForwardedProto === 'https' || $xForwardedSSL === 'on') {
@@ -392,6 +366,6 @@ class ClientFlowLoginController extends Controller {
 			}
 		}
 
-		return $protocol . "://" . $this->request->getServerHost() . $serverPostfix;
+		return $protocol . '://' . $this->request->getServerHost() . $serverPostfix;
 	}
 }

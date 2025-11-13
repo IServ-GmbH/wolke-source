@@ -1,29 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Vincent Petry <vincent@nextcloud.com>
- * @author Vinicius Cubas Brand <vinicius@eita.org.br>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\Connector\Sabre;
 
@@ -204,9 +184,9 @@ class FilesReportPlugin extends ServerPlugin {
 			} elseif ($name === '{DAV:}limit') {
 				foreach ($reportProps['value'] as $propVal) {
 					if ($propVal['name'] === '{DAV:}nresults') {
-						$limit = (int)$propVal['value'];
+						$limit = (int) $propVal['value'];
 					} elseif ($propVal['name'] === $ncns . 'firstresult') {
-						$offset = (int)$propVal['value'];
+						$offset = (int) $propVal['value'];
 					}
 				}
 			}
@@ -383,7 +363,7 @@ class FilesReportPlugin extends ServerPlugin {
 	 * Prepare propfind response for the given nodes
 	 *
 	 * @param string $filesUri $filesUri URI leading to root of the files URI,
-	 * with a leading slash but no trailing slash
+	 *                         with a leading slash but no trailing slash
 	 * @param string[] $requestedProps requested properties
 	 * @param Node[] nodes nodes for which to fetch and prepare responses
 	 * @return Response[]
@@ -430,7 +410,7 @@ class FilesReportPlugin extends ServerPlugin {
 
 		$results = [];
 		foreach ($fileIds as $fileId) {
-			$entry = $folder->getFirstNodeById((int)$fileId);
+			$entry = $folder->getFirstNodeById((int) $fileId);
 			if ($entry) {
 				$results[] = $this->wrapNode($entry);
 			}

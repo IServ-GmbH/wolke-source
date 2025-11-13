@@ -1,27 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2017, ownCloud GmbH
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2017 ownCloud GmbH
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OCA\DAV\Upload;
 
@@ -124,7 +106,7 @@ class ChunkingPlugin extends ServerPlugin {
 
 		// casted to string because cast to float cause equality for non equal numbers
 		// and integer has the problem of limited size on 32 bit systems
-		if ((string)$expectedSize !== (string)$actualSize) {
+		if ((string) $expectedSize !== (string) $actualSize) {
 			throw new BadRequest("Chunks on server do not sum up to $expectedSize but to $actualSize bytes");
 		}
 	}

@@ -30,9 +30,6 @@ class AwsClient implements AwsClientInterface
     private $region;
 
     /** @var string */
-    private $signingRegionSet;
-
-    /** @var string */
     private $endpoint;
 
     /** @var Service */
@@ -211,16 +208,6 @@ class AwsClient implements AwsClientInterface
      *   client-side parameter validation.
      * - version: (string, required) The version of the webservice to
      *   utilize (e.g., 2006-03-01).
-     * - account_id_endpoint_mode: (string, default(preferred)) this option
-     *   decides whether credentials should resolve an accountId value,
-     *   which is going to be used as part of the endpoint resolution.
-     *   The valid values for this option are:
-     *   - preferred: when this value is set then, a warning is logged when
-     *     accountId is empty in the resolved identity.
-     *   - required: when this value is set then, an exception is thrown when
-     *     accountId is empty in the resolved identity.
-     *   - disabled: when this value is set then, the validation for if accountId
-     *     was resolved or not, is ignored.
      * - ua_append: (string, array) To pass custom user agent parameters.
      * - app_id: (string) an optional application specific identifier that can be set.
      *   When set it will be appended to the User-Agent header of every request
@@ -253,9 +240,8 @@ class AwsClient implements AwsClientInterface
         $this->credentialProvider = $config['credentials'];
         $this->tokenProvider = $config['token'];
         $this->region = $config['region'] ?? null;
-        $this->signingRegionSet = $config['sigv4a_signing_region_set'] ?? null;
         $this->config = $config['config'];
-        $this->setClientBuiltIns($args, $config);
+        $this->setClientBuiltIns($args);
         $this->clientContextParams = $this->setClientContextParams($args);
         $this->defaultRequestOptions = $config['http'];
         $this->endpointProvider = $config['endpoint_provider'];
@@ -436,7 +422,6 @@ class AwsClient implements AwsClientInterface
         $signatureVersion = $this->config['signature_version'];
         $name = $this->config['signing_name'];
         $region = $this->config['signing_region'];
-        $signingRegionSet = $this->signingRegionSet;
 
         if (isset($args['signature_version'])
          || isset($this->config['configured_signature_version'])
@@ -448,15 +433,7 @@ class AwsClient implements AwsClientInterface
 
         $resolver = static function (
             CommandInterface $c
-        ) use (
-                $api,
-                $provider,
-                $name,
-                $region,
-                $signatureVersion,
-                $configuredSignatureVersion,
-                $signingRegionSet
-        ) {
+        ) use ($api, $provider, $name, $region, $signatureVersion, $configuredSignatureVersion) {
             if (!$configuredSignatureVersion) {
                 if (!empty($c['@context']['signing_region'])) {
                     $region = $c['@context']['signing_region'];
@@ -480,16 +457,6 @@ class AwsClient implements AwsClientInterface
                         $signatureVersion = 'bearer';
                         break;
                 }
-            }
-
-            if ($signatureVersion === 'v4a') {
-                $commandSigningRegionSet = !empty($c['@context']['signing_region_set'])
-                    ? implode(', ', $c['@context']['signing_region_set'])
-                    : null;
-
-                $region = $signingRegionSet
-                    ?? $commandSigningRegionSet
-                    ?? $region;
             }
 
             return SignatureProvider::resolve($provider, $signatureVersion, $name, $region);
@@ -588,8 +555,7 @@ class AwsClient implements AwsClientInterface
             EndpointV2Middleware::wrap(
                 $this->endpointProvider,
                 $this->getApi(),
-                $endpointArgs,
-                $this->credentialProvider
+                $endpointArgs
             ),
             'endpoint-resolution'
         );
@@ -619,10 +585,10 @@ class AwsClient implements AwsClientInterface
     /**
      * Retrieves and sets default values used for endpoint resolution.
      */
-    private function setClientBuiltIns($args, $resolvedConfig)
+    private function setClientBuiltIns($args)
     {
         $builtIns = [];
-        $config = $resolvedConfig['config'];
+        $config = $this->getConfig();
         $service = $args['service'];
 
         $builtIns['SDK::Endpoint'] = null;
@@ -643,8 +609,6 @@ class AwsClient implements AwsClientInterface
             $builtIns['AWS::S3::ForcePathStyle'] = $config['use_path_style_endpoint'];
             $builtIns['AWS::S3::DisableMultiRegionAccessPoints'] = $config['disable_multiregion_access_points'];
         }
-        $builtIns['AWS::Auth::AccountIdEndpointMode'] = $resolvedConfig['account_id_endpoint_mode'];
-
         $this->clientBuiltIns += $builtIns;
     }
 
@@ -684,11 +648,6 @@ class AwsClient implements AwsClientInterface
     }
 
     public static function emitDeprecationWarning() {
-        trigger_error(
-            "This method is deprecated. It will be removed in an upcoming release."
-            , E_USER_DEPRECATED
-        );
-
         $phpVersion = PHP_VERSION_ID;
         if ($phpVersion <  70205) {
             $phpVersionString = phpversion();

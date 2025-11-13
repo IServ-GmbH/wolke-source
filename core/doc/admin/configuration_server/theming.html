@@ -95,6 +95,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
@@ -144,7 +146,8 @@ your admin-settings. If not, check in the apps management that this app is enabl
 <li><p>Name (e.g. ACME Inc. Cloud)</p></li>
 <li><p>Web link (e.g. <a class="reference external" href="https://acme.inc/">https://acme.inc/</a>)</p></li>
 <li><p>Slogan</p></li>
-<li><p>Color: The color of the header bar, checkboxes, and folder icon</p></li>
+<li><p>Primary color: The color used for important buttons, checkboxes, and folder icon</p></li>
+<li><p>Background color: The background color if no image is used, the color of header bar icons is also generated from this</p></li>
 <li><p>Logo: The logo will appear in the header and on the login page. The default has 62/34 px.</p></li>
 <li><p>Background and login image: The background image</p></li>
 </ul>
@@ -162,7 +165,7 @@ your admin-settings. If not, check in the apps management that this app is enabl
 <p>Theming configuration can also be adjusted through the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span></code> command.</p>
 <p>The following values are available to be set through this:</p>
 <ul class="simple">
-<li><p>name, url, imprintUrl, privacyUrl, slogan, color <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">name</span> <span class="pre">&quot;My</span> <span class="pre">Example</span> <span class="pre">Cloud&quot;</span></code></p></li>
+<li><p>name, url, imprintUrl, privacyUrl, slogan, color, primary_color <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">name</span> <span class="pre">&quot;My</span> <span class="pre">Example</span> <span class="pre">Cloud&quot;</span></code></p></li>
 <li><p>background, logo, favicon, logoheader <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">logo</span> <span class="pre">/tmp/mylogo.png</span></code></p></li>
 <li><p>disable-user-theming (yes/no) <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">disable-user-theming</span> <span class="pre">yes</span></code></p></li>
 </ul>
@@ -240,40 +243,49 @@ set via the <code class="docutils literal notranslate"><span class="pre">occ</sp
   </div>
   
 
-  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      <span class="fa fa-book"> Read the Docs</span>
-      v: latest
+      ☁️ latest
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
       <dl>
-        <dt>Versions</dt>
+        <dt>☁️ Versions</dt>
         
-          <dd><a href="https://docs.nextcloud.com/server/26/admin_manual">26</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/latest/admin_manual"
+             
+             style="color: var(--dark-link-color);"
+             
+          >
+            latest
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/27/admin_manual">27</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/stable/admin_manual"
+             
+          >
+            stable
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/28/admin_manual">28</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+             
+          >
+            29
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/stable/admin_manual">stable</a></dd>
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/28/admin_manual"
+             
+          >
+            28
+          </a>
+        </dd>
         
-          <dd><a href="https://docs.nextcloud.com/server/latest/admin_manual">latest</a></dd>
-        
-      </dl>
-      <dl>
-        <dt>Downloads</dt>
-        
-      </dl>
-      <dl>
-        
-        <dt>On Read the Docs</dt>
-          <dd>
-            <a href="///projects//?fromdocs=">Project Home</a>
-          </dd>
-          <dd>
-            <a href="///builds//?fromdocs=">Builds</a>
-          </dd>
       </dl>
     </div>
   </div>

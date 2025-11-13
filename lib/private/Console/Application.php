@@ -1,38 +1,15 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Lukas Reschke <lukas@statuscode.ch>
- * @author Michael Weimann <mail@michael-weimann.eu>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Thomas Müller <thomas.mueller@tmit.eu>
- * @author Victor Dubiniuk <dubiniuk@owncloud.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Console;
 
 use OC\MemoryInfo;
 use OC\NeedsUpdateException;
-use OC_App;
+use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\Console\ConsoleEvent;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -47,25 +24,18 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Application {
-	private IConfig $config;
 	private SymfonyApplication $application;
-	private IEventDispatcher $dispatcher;
-	private IRequest $request;
-	private LoggerInterface $logger;
-	private MemoryInfo $memoryInfo;
 
-	public function __construct(IConfig $config,
-		IEventDispatcher $dispatcher,
-		IRequest $request,
-		LoggerInterface $logger,
-		MemoryInfo $memoryInfo) {
+	public function __construct(
+		private IConfig $config,
+		private IEventDispatcher $dispatcher,
+		private IRequest $request,
+		private LoggerInterface $logger,
+		private MemoryInfo $memoryInfo,
+		private IAppManager $appManager,
+	) {
 		$defaults = \OC::$server->get('ThemingDefaults');
-		$this->config = $config;
 		$this->application = new SymfonyApplication($defaults->getName(), \OC_Util::getVersionString());
-		$this->dispatcher = $dispatcher;
-		$this->request = $request;
-		$this->logger = $logger;
-		$this->memoryInfo = $memoryInfo;
 	}
 
 	/**
@@ -111,20 +81,20 @@ class Application {
 				} elseif ($this->config->getSystemValueBool('maintenance')) {
 					$this->writeMaintenanceModeInfo($input, $output);
 				} else {
-					OC_App::loadApps();
-					$appManager = \OCP\Server::get(IAppManager::class);
-					foreach ($appManager->getInstalledApps() as $app) {
-						$appPath = \OC_App::getAppPath($app);
-						if ($appPath === false) {
+					$this->appManager->loadApps();
+					foreach ($this->appManager->getInstalledApps() as $app) {
+						try {
+							$appPath = $this->appManager->getAppPath($app);
+						} catch (AppPathNotFoundException) {
 							continue;
 						}
 						// load commands using info.xml
-						$info = $appManager->getAppInfo($app);
+						$info = $this->appManager->getAppInfo($app);
 						if (isset($info['commands'])) {
 							try {
 								$this->loadCommandsFromInfoXml($info['commands']);
 							} catch (\Throwable $e) {
-								$output->writeln("<error>" . $e->getMessage() . "</error>");
+								$output->writeln('<error>' . $e->getMessage() . '</error>');
 								$this->logger->error($e->getMessage(), [
 									'exception' => $e,
 								]);
@@ -146,13 +116,13 @@ class Application {
 				}
 			} elseif ($input->getArgument('command') !== '_completion' && $input->getArgument('command') !== 'maintenance:install') {
 				$errorOutput = $output->getErrorOutput();
-				$errorOutput->writeln("Nextcloud is not installed - only a limited number of commands are available");
+				$errorOutput->writeln('Nextcloud is not installed - only a limited number of commands are available');
 			}
 		} catch (NeedsUpdateException $e) {
 			if ($input->getArgument('command') !== '_completion') {
 				$errorOutput = $output->getErrorOutput();
-				$errorOutput->writeln("Nextcloud or one of the apps require upgrade - only a limited number of commands are available");
-				$errorOutput->writeln("You may use your browser or the occ upgrade command to do the upgrade");
+				$errorOutput->writeln('Nextcloud or one of the apps require upgrade - only a limited number of commands are available');
+				$errorOutput->writeln('You may use your browser or the occ upgrade command to do the upgrade');
 			}
 		}
 
@@ -160,11 +130,11 @@ class Application {
 			$errors = \OC_Util::checkServer(\OC::$server->getSystemConfig());
 			if (!empty($errors)) {
 				foreach ($errors as $error) {
-					$output->writeln((string)$error['error']);
-					$output->writeln((string)$error['hint']);
+					$output->writeln((string) $error['error']);
+					$output->writeln((string) $error['hint']);
 					$output->writeln('');
 				}
-				throw new \Exception("Environment not properly prepared.");
+				throw new \Exception('Environment not properly prepared.');
 			}
 		}
 	}
@@ -175,7 +145,7 @@ class Application {
 	 *
 	 * @param InputInterface $input The input implementation for reading inputs.
 	 * @param ConsoleOutputInterface $output The output implementation
-	 * for writing outputs.
+	 *                                       for writing outputs.
 	 * @return void
 	 */
 	private function writeMaintenanceModeInfo(InputInterface $input, ConsoleOutputInterface $output): void {

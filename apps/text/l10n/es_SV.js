@@ -14,6 +14,7 @@ OC.L10N.register(
     "Text" : "Texto",
     "Translate" : "Traducir",
     "Guest" : "Invitado",
+    "you" : "tú",
     "Offline" : "Sin conexión",
     "Saved" : "Guardado",
     "Unsaved changes" : "Cambios no guardados",
@@ -22,6 +23,7 @@ OC.L10N.register(
     "name" : "nombre",
     "Action" : "Acción",
     "Undo" : "Deshacer",
+    "Cancel" : "Cancel",
     "URL" : "URL",
     "Formatting help" : "Ayuda de formato",
     "Select language" : "Selecciona el idioma",
@@ -31,6 +33,7 @@ OC.L10N.register(
     "Edit" : "Editar",
     "Source code" : "Código fuente",
     "Details" : "Detalles",
+    "Choose" : "Seleccionar",
     "Info" : "Info",
     "Success" : "Éxito",
     "Warning" : "Advertencia"

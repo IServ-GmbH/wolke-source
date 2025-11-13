@@ -2,32 +2,14 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Text\DAV;
 
 use Exception;
 use OC\Files\Node\File;
-use OC\Files\Node\Folder;
 use OCA\DAV\Connector\Sabre\Directory;
 use OCA\DAV\Files\FilesHome;
 use OCA\Text\AppInfo\Application;
@@ -35,6 +17,7 @@ use OCA\Text\Service\WorkspaceService;
 use OCP\Files\GenericFileException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\Lock\LockedException;
 use Psr\Log\LoggerInterface;
@@ -50,27 +33,14 @@ class WorkspacePlugin extends ServerPlugin {
 	/** @var Server */
 	private $server;
 
-	/** @var WorkspaceService */
-	private $workspaceService;
-
-	/**  @var IRootFolder */
-	private $rootFolder;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var IConfig */
-	private $config;
-
-	/** @var string|null */
-	private $userId;
-
-	public function __construct(WorkspaceService $workspaceService, IRootFolder $rootFolder, IConfig $config, LoggerInterface $logger, $userId) {
-		$this->workspaceService = $workspaceService;
-		$this->rootFolder = $rootFolder;
-		$this->config = $config;
-		$this->logger = $logger;
-		$this->userId = $userId;
+	public function __construct(
+		private WorkspaceService $workspaceService,
+		private IRootFolder $rootFolder,
+		private ICacheFactory $cacheFactory,
+		private IConfig $config,
+		private LoggerInterface $logger,
+		private ?string $userId
+	) {
 	}
 
 	/**
@@ -108,33 +78,38 @@ class WorkspacePlugin extends ServerPlugin {
 			return;
 		}
 
-		$file = null;
-		$owner = $this->userId ?? $node->getFileInfo()->getStorage()->getOwner('');
-		/** @var Folder[] $nodes */
-		$nodes = $this->rootFolder->getUserFolder($owner)->getById($node->getId());
-		if (count($nodes) > 0) {
-			/** @var File $file */
-			try {
-				$file = $this->workspaceService->getFile($nodes[0]);
-			} catch (\Exception $e) {
-				// If a storage is not available we can for the propfind response assume that there is no rich workspace present
-			}
+		$node = $node->getNode();
+		try {
+			$file = $this->workspaceService->getFile($node);
+		} catch (\Exception $e) {
+			$file = null;
 		}
 
 		// Only return the property for the parent node and ignore it for further in depth nodes
 		$propFind->handle(self::WORKSPACE_PROPERTY, function () use ($file) {
-			try {
-				if ($file instanceof File) {
-					return $file->getContent();
+			$cachedContent = '';
+			if ($file instanceof File) {
+				$cache = $this->cacheFactory->createDistributed('text_workspace');
+				$cacheKey = $file->getFileInfo()->getId() . '_' . $file->getFileInfo()->getEtag();
+				if (($cachedContent = $cache->get($cacheKey)) !== null) {
+					return $cachedContent;
 				}
-			} catch (GenericFileException|NotPermittedException|LockedException) {
-			} catch (Exception $e) {
-				$this->logger->error($e->getMessage(), [
-					'exception' => $e,
-				]);
-			}
 
-			return '';
+				try {
+					$cachedContent = $file->getContent();
+					$cache->set($cacheKey, $cachedContent, 3600);
+				} catch (GenericFileException|NotPermittedException|LockedException $e) {
+					// Ignore but log when debugging
+					$this->logger->debug($e->getMessage(), [
+						'exception' => $e,
+					]);
+				} catch (Exception $e) {
+					$this->logger->error($e->getMessage(), [
+						'exception' => $e,
+					]);
+				}
+			}
+			return $cachedContent;
 		});
 		$propFind->handle(self::WORKSPACE_FILE_PROPERTY, function () use ($file) {
 			if ($file instanceof File) {

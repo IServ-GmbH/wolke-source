@@ -1,31 +1,9 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Johannes Leuker <j.leuker@hosting.de>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- * @author Loki3000 <github@labcms.ru>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author tgrant <tom.grant760@gmail.com>
- * @author Tom Grant <TomG736@users.noreply.github.com>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 namespace OC\Group;
 
@@ -347,17 +325,17 @@ class Database extends ABackend implements
 
 		$qb = $this->dbConn->getQueryBuilder();
 		$qb->select('gid', 'displayname')
-				->from('groups')
-				->where($qb->expr()->in('gid', $qb->createParameter('ids')));
+			->from('groups')
+			->where($qb->expr()->in('gid', $qb->createParameter('ids')));
 		foreach (array_chunk($notFoundGids, 1000) as $chunk) {
 			$qb->setParameter('ids', $chunk, IQueryBuilder::PARAM_STR_ARRAY);
 			$result = $qb->executeQuery();
 			while ($row = $result->fetch()) {
-				$this->groupCache[(string)$row['gid']] = [
-					'displayname' => (string)$row['displayname'],
-					'gid' => (string)$row['gid'],
+				$this->groupCache[(string) $row['gid']] = [
+					'displayname' => (string) $row['displayname'],
+					'gid' => (string) $row['gid'],
 				];
-				$existingGroups[] = (string)$row['gid'];
+				$existingGroups[] = (string) $row['gid'];
 			}
 			$result->closeCursor();
 		}
@@ -450,7 +428,7 @@ class Database extends ABackend implements
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int)$count;
+			$count = (int) $count;
 		} else {
 			$count = 0;
 		}
@@ -482,7 +460,7 @@ class Database extends ABackend implements
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int)$count;
+			$count = (int) $count;
 		} else {
 			$count = 0;
 		}
@@ -549,10 +527,10 @@ class Database extends ABackend implements
 
 			$result = $query->executeQuery();
 			while ($row = $result->fetch()) {
-				$details[(string)$row['gid']] = ['displayName' => (string)$row['displayname']];
-				$this->groupCache[(string)$row['gid']] = [
-					'displayname' => (string)$row['displayname'],
-					'gid' => (string)$row['gid'],
+				$details[(string) $row['gid']] = ['displayName' => (string) $row['displayname']];
+				$this->groupCache[(string) $row['gid']] = [
+					'displayname' => (string) $row['displayname'],
+					'gid' => (string) $row['gid'],
 				];
 			}
 			$result->closeCursor();

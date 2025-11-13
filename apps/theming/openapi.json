@@ -63,6 +63,7 @@
                             "color-element-dark",
                             "logo",
                             "background",
+                            "background-text",
                             "background-plain",
                             "background-default",
                             "logoheader",
@@ -97,6 +98,9 @@
                                 "type": "string"
                             },
                             "background": {
+                                "type": "string"
+                            },
+                            "background-text": {
                                 "type": "string"
                             },
                             "background-plain": {
@@ -136,6 +140,15 @@
                 ],
                 "parameters": [
                     {
+                        "name": "themeId",
+                        "in": "path",
+                        "description": "ID of the theme",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "plain",
                         "in": "query",
                         "description": "Let the browser decide the CSS priority",
@@ -159,15 +172,6 @@
                                 0,
                                 1
                             ]
-                        }
-                    },
-                    {
-                        "name": "themeId",
-                        "in": "path",
-                        "description": "ID of the theme",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],
@@ -214,6 +218,15 @@
                 ],
                 "parameters": [
                     {
+                        "name": "key",
+                        "in": "path",
+                        "description": "Key of the image",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "useSvg",
                         "in": "query",
                         "description": "Return image as SVG",
@@ -224,15 +237,6 @@
                                 0,
                                 1
                             ]
-                        }
-                    },
-                    {
-                        "name": "key",
-                        "in": "path",
-                        "description": "Key of the image",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],

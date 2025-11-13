@@ -42,7 +42,6 @@ OC.L10N.register(
     "Nextcloud Group" : "קבוצת Nextcloud",
     "Email address" : "כתובת דוא״ל",
     "Contact" : "איש/אשת קשר",
-    "Circle" : "מעגל",
     "Nextcloud App" : "יישומון Nextcloud",
     "Member" : "חבר",
     "Moderator" : "פיקוח",
@@ -68,14 +67,15 @@ OC.L10N.register(
     "Accept" : "אשר",
     "Refuse" : "סירוב",
     "%s" : "%s",
+    "Open %s" : "פתיחה (שם קובץ)",
+    "Try again" : "ניסיון חוזר",
+    "Loading…" : "בטעינה…",
     "No files in here" : "אין כאן קבצים",
     "No entries found in this folder" : "לא נמצאו רשומות בתיקייה הזאת",
     "Name" : "שם",
     "Size" : "גודל",
     "Modified" : "מועד שינוי",
     "Shared to Circles" : "שותף למעגלים",
-    "You are now a member of the Circle \"%2$s\"" : "התקבלת לחברות במעגל „%2$s”",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "הוזמנת על ידי %1$s למעגל „%2$s”",
-    "Leave the circle" : "לעזוב את המעגל"
+    "Circle" : "מעגל"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

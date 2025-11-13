@@ -49,10 +49,12 @@ OC.L10N.register(
     "Select a filter" : "フィルターを選択",
     "Select a comparator" : "比較演算子を指定",
     "Remove filter" : "フィルターを削除",
+    "Audio" : "オーディオ",
     "Folder" : "フォルダー",
     "Images" : "画像",
     "Office documents" : "Officeドキュメント",
     "PDF documents" : "PDFドキュメント",
+    "Video" : "ビデオ",
     "Custom MIME type" : "カスタムMIMEタイプ",
     "Custom mimetype" : "カスタムMIMEタイプ",
     "Select a file type" : "ファイルタイプを指定",
@@ -69,7 +71,6 @@ OC.L10N.register(
     "Select a user agent" : "ユーザーエージェントを選択",
     "Select groups" : "グループを選択",
     "Groups" : "グループ",
-    "Type to search for group …" : "グループを検索するためのタイプ",
     "Select a trigger" : "トリガーを選択",
     "At least one event must be selected" : "少なくともイベントを一つ指定してください",
     "Add new flow" : "新しいフローを追加",
@@ -118,6 +119,7 @@ OC.L10N.register(
     "Request user agent" : "リクエスト時のユーザーエージェント",
     "Group membership" : "グループメンバー",
     "is member of" : "が次のグループのメンバーである",
-    "is not member of" : "が次のグループのメンバーではない"
+    "is not member of" : "が次のグループのメンバーではない",
+    "Type to search for group …" : "グループを検索するためのタイプ"
 },
 "nplurals=1; plural=0;");

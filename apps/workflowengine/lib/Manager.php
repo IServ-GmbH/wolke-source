@@ -1,31 +1,8 @@
 <?php
+
 /**
- * @copyright Copyright (c) 2016 Morris Jobke <hey@morrisjobke.de>
- *
- * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
- * @author blizzz <blizzz@arthur-schiwon.de>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Daniel Kesselberg <mail@danielkesselberg.de>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Julius Härtl <jus@bitgrid.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\WorkflowEngine;
 
@@ -341,7 +318,7 @@ class Manager implements IManager {
 
 		$operations = [];
 		while (($opId = $result->fetchOne()) !== false) {
-			$operations[] = (int)$opId;
+			$operations[] = (int) $opId;
 		}
 		$this->operationsByScope[$scopeContext->getHash()] = $operations;
 		$result->closeCursor();
@@ -415,12 +392,12 @@ class Manager implements IManager {
 		$query = $this->connection->getQueryBuilder();
 		try {
 			$this->connection->beginTransaction();
-			$result = (bool)$query->delete('flow_operations')
+			$result = (bool) $query->delete('flow_operations')
 				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
 				->execute();
 			if ($result) {
 				$qb = $this->connection->getQueryBuilder();
-				$result &= (bool)$qb->delete('flow_operations_scope')
+				$result &= (bool) $qb->delete('flow_operations_scope')
 					->where($qb->expr()->eq('operation_id', $qb->createNamedParameter($id)))
 					->execute();
 			}
@@ -502,7 +479,7 @@ class Manager implements IManager {
 			throw new \UnexpectedValueException($this->l->t('At least one check needs to be provided'));
 		}
 
-		if (strlen((string)$operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
+		if (strlen((string) $operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
 			throw new \UnexpectedValueException($this->l->t('The provided operation data is too long'));
 		}
 
@@ -530,7 +507,7 @@ class Manager implements IManager {
 				throw new \UnexpectedValueException($this->l->t('Check %s is not allowed with this entity', [$class]));
 			}
 
-			if (strlen((string)$check['value']) > IManager::MAX_CHECK_VALUE_BYTES) {
+			if (strlen((string) $check['value']) > IManager::MAX_CHECK_VALUE_BYTES) {
 				throw new \UnexpectedValueException($this->l->t('The provided check value is too long'));
 			}
 

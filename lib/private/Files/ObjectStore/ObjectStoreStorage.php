@@ -1,33 +1,10 @@
 <?php
-/**
- * @copyright Copyright (c) 2016, ownCloud, Inc.
- *
- * @author Bjoern Schiessle <bjoern@schiessle.org>
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Joas Schilling <coding@schilljs.com>
- * @author Jörn Friedrich Dreyer <jfd@butonic.de>
- * @author Marcel Klehr <mklehr@gmx.net>
- * @author Morris Jobke <hey@morrisjobke.de>
- * @author Robin Appelman <robin@icewind.nl>
- * @author Roeland Jago Douma <roeland@famdouma.nl>
- * @author Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>
- *
- * @license AGPL-3.0
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program. If not, see <http://www.gnu.org/licenses/>
- *
- */
 
+/**
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 namespace OC\Files\ObjectStore;
 
 use Aws\S3\Exception\S3Exception;
@@ -81,14 +58,14 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 			$this->objectPrefix = $params['objectPrefix'];
 		}
 		if (isset($params['validateWrites'])) {
-			$this->validateWrites = (bool)$params['validateWrites'];
+			$this->validateWrites = (bool) $params['validateWrites'];
 		}
-		$this->handleCopiesAsOwned = (bool)($params['handleCopiesAsOwned'] ?? false);
+		$this->handleCopiesAsOwned = (bool) ($params['handleCopiesAsOwned'] ?? false);
 
 		$this->logger = \OCP\Server::get(LoggerInterface::class);
 	}
 
-	public function mkdir($path, bool $force = false) {
+	public function mkdir($path, bool $force = false, array $metadata = []) {
 		$path = $this->normalizePath($path);
 		if (!$force && $this->file_exists($path)) {
 			$this->logger->warning("Tried to create an object store folder that already exists: $path");
@@ -98,7 +75,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		$mTime = time();
 		$data = [
 			'mimetype' => 'httpd/unix-directory',
-			'size' => 0,
+			'size' => $metadata['size'] ?? 0,
 			'mtime' => $mTime,
 			'storage_mtime' => $mTime,
 			'permissions' => \OCP\Constants::PERMISSION_ALL,
@@ -340,7 +317,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 						$streamStat = fstat($handle);
 						$actualSize = $streamStat['size'] ?? -1;
 						if ($actualSize > -1 && $actualSize !== $filesize) {
-							$this->getCache()->update((int)$stat['fileid'], ['size' => $actualSize]);
+							$this->getCache()->update((int) $stat['fileid'], ['size' => $actualSize]);
 						}
 						return $handle;
 					} catch (NotFoundException $e) {
@@ -406,7 +383,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 
 	public function file_exists($path) {
 		$path = $this->normalizePath($path);
-		return (bool)$this->stat($path);
+		return (bool) $this->stat($path);
 	}
 
 	public function rename($source, $target) {
@@ -497,6 +474,13 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 	}
 
 	public function writeStream(string $path, $stream, ?int $size = null): int {
+		if ($size === null) {
+			$stats = fstat($stream);
+			if (is_array($stats) && isset($stats['size'])) {
+				$size = $stats['size'];
+			}
+		}
+
 		$stat = $this->stat($path);
 		if (empty($stat)) {
 			// create new file
@@ -506,7 +490,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		}
 		// update stat with new data
 		$mTime = time();
-		$stat['size'] = (int)$size;
+		$stat['size'] = (int) $size;
 		$stat['mtime'] = $mTime;
 		$stat['storage_mtime'] = $mTime;
 
@@ -640,9 +624,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		if (!$sourceCacheEntry) {
 			$sourceCacheEntry = $sourceCache->get($sourceInternalPath);
 		}
-		if (!$sourceCacheEntry) {
-			return false;
-		}
 
 		$this->copyObjects($sourceStorage, $sourceCache, $sourceCacheEntry);
 		if ($sourceStorage->instanceOfStorage(ObjectStoreStorage::class)) {
@@ -731,7 +712,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 			if ($cache->inCache($to)) {
 				$cache->remove($to);
 			}
-			$this->mkdir($to);
+			$this->mkdir($to, false, ['size' => $sourceEntry->getSize()]);
 
 			foreach ($sourceCache->getFolderContentsById($sourceEntry->getId()) as $child) {
 				$this->copyInner($sourceCache, $child, $to . '/' . $child->getName());
@@ -747,7 +728,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		$sourceUrn = $this->getURN($sourceEntry->getId());
 
 		if (!$cache instanceof Cache) {
-			throw new \Exception("Invalid source cache for object store copy");
+			throw new \Exception('Invalid source cache for object store copy');
 		}
 
 		$targetId = $cache->copyFromCache($cache, $sourceEntry, $to);
@@ -793,7 +774,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		$cacheEntry = $this->getCache()->get($targetPath);
 		$urn = $this->getURN($cacheEntry->getId());
 
-		$result = $this->objectStore->uploadMultipartPart($urn, $writeToken, (int)$chunkId, $data, $size);
+		$result = $this->objectStore->uploadMultipartPart($urn, $writeToken, (int) $chunkId, $data, $size);
 
 		$parts[$chunkId] = [
 			'PartNumber' => $chunkId,

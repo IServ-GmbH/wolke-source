@@ -2,8 +2,6 @@ OC.L10N.register(
     "files_external",
     {
     "Grant access" : "Conceder acesso",
-    "Error configuring OAuth1" : "Erro ao configurar OAuth1",
-    "Please provide a valid app key and secret." : "Por favor, indique um código e segredo de app válidos.",
     "Error configuring OAuth2" : "Erro ao configurar OAuth2",
     "Generate keys" : "Gerar chaves",
     "Error generating key pair" : "Erro ao gerar chave par",
@@ -22,9 +20,6 @@ OC.L10N.register(
     "Secret key" : "Código secreto",
     "Builtin" : "Integrado",
     "None" : "Nenhum",
-    "OAuth1" : "OAuth1",
-    "App key" : "Chave da App",
-    "App secret" : "Segredo da app",
     "OAuth2" : "OAuth2",
     "Client ID" : "Id. de Cliente",
     "Client secret" : "Segredo de cliente",
@@ -90,7 +85,7 @@ OC.L10N.register(
     "Admin defined" : "Administrador definido",
     "Delete storage?" : "Apagar armazenamento?",
     "Saved" : "Guardado",
-    "Saving …" : "A guardar...",
+    "Saving …" : "A guardar ...",
     "Save" : "Guardar",
     "Open documentation" : "Abrir documentação",
     "Folder name" : "Nome da pasta",
@@ -98,6 +93,12 @@ OC.L10N.register(
     "Configuration" : "Configuração",
     "Available for" : "Disponível para ",
     "Add storage" : "Adicionar armazenamento",
-    "Advanced settings" : "Definições avançadas"
+    "Advanced settings" : "Definições avançadas",
+    "Error configuring OAuth1" : "Erro ao configurar OAuth1",
+    "Please provide a valid app key and secret." : "Por favor, indique um código e segredo de app válidos.",
+    "OAuth1" : "OAuth1",
+    "App key" : "Chave da App",
+    "App secret" : "Segredo da app",
+    "Saving …" : "A guardar..."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

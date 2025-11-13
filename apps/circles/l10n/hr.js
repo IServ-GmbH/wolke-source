@@ -59,7 +59,6 @@ OC.L10N.register(
     "Nextcloud Group" : "Nextcloud grupa",
     "Email address" : "Adresa e-pošte",
     "Contact" : "Kontakt",
-    "Circle" : "Krug",
     "Nextcloud App" : "Nextcloud aplikacija",
     "Member" : "Član",
     "Moderator" : "Moderator",
@@ -100,16 +99,15 @@ OC.L10N.register(
     "%s" : "%s",
     "%s owned by %s" : "%s u vlasništvu %s",
     "%s shared a file with you." : "%s dijeli datoteku s vama.",
+    "Open %s" : "Otvori %s",
     "Bring cloud-users closer together." : "Približite korisnike oblaka.",
+    "Loading…" : "Učitavanje…",
     "No files in here" : "Nema datoteka",
     "No entries found in this folder" : "U ovoj mapi nisu pronađeni nikakvi zapisi",
     "Name" : "Naziv",
     "Size" : "Veličina",
     "Modified" : "Promijenjeno",
     "Shared to Circles" : "Dijeljeno u krugovima",
-    "You are now a member of the Circle \"%2$s\"" : "Postali ste član kruga „%2$s”",
-    "You have been invited by %1$s into the Circle \"%2$s\"" : "%1$s vas je pozvao u krug „%2$s”",
-    "%1$s sent a request to be a member of the Circle \"%2$s\"" : "%1$s je poslao zahtjev za učlanjenje u krug „%2$s”",
-    "Leave the circle" : "Napusti krug"
+    "Circle" : "Krug"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

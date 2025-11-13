@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
  *
@@ -28,42 +30,37 @@ use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
 class Section implements IIconSection {
-	private IL10N $l;
-	private IURLGenerator $url;
-
 	public function __construct(
-		IL10N $l,
-		IURLGenerator $url
+		protected readonly IL10N $l,
+		protected readonly IURLGenerator $url
 	) {
-		$this->l = $l;
-		$this->url = $url;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getID() {
+	public function getID(): string {
 		return 'support';
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getName() {
+	public function getName(): string {
 		return $this->l->t('Support');
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 1;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getIcon() {
+	public function getIcon(): string {
 		return $this->url->imagePath('support', 'section.svg');
 	}
 }
