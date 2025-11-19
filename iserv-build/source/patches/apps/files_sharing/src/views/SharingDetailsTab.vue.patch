@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing/src/views/SharingDetailsTab.vue
-index c563aa0..80e454d 100644
+index c563aa0..c3a5b4e 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
 @@ -36,6 +36,7 @@
@@ -10,6 +10,15 @@ index c563aa0..80e454d 100644
  						data-cy-files-sharing-share-permissions-bundle="upload-edit"
  						:checked.sync="sharingPermission"
  						:value="allPermissions"
+@@ -149,7 +150,7 @@
+ 						:placeholder="t('files_sharing', 'Expiration date')"
+ 						type="date"
+ 						@input="onExpirationChange" />
+-					<NcCheckboxRadioSwitch v-if="isPublicShare"
++					<NcCheckboxRadioSwitch v-if="isPublicShare && !downloadDisabled"
+ 						:disabled="canChangeHideDownload"
+ 						:checked.sync="share.hideDownload"
+ 						@update:checked="queueUpdate('hideDownload')">
 @@ -191,7 +192,7 @@
  							data-cy-files-sharing-share-permissions-checkbox="create">
  							{{ t('files_sharing', 'Create') }}
@@ -19,7 +28,7 @@ index c563aa0..80e454d 100644
  							:checked.sync="canEdit"
  							data-cy-files-sharing-share-permissions-checkbox="update">
  							{{ t('files_sharing', 'Edit') }}
-@@ -345,6 +346,36 @@ export default {
+@@ -345,6 +346,39 @@ export default {
  	},
  
  	computed: {
@@ -53,10 +62,13 @@ index c563aa0..80e454d 100644
 +			];
 +			return this.isFolder || supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
 +		},
++		downloadDisabled() {
++			return OC.appConfig.core.disableFileDownloads === true;
++		},
  		title() {
  			switch (this.share.type) {
  			case ShareType.User:
-@@ -383,7 +414,7 @@ export default {
+@@ -383,7 +417,7 @@ export default {
  		 */
  		canEdit: {
  			get() {
@@ -65,3 +77,12 @@ index c563aa0..80e454d 100644
  			},
  			set(checked) {
  				this.updateAtomicPermissions({ isEditChecked: checked })
+@@ -427,7 +461,7 @@ export default {
+ 		 */
+ 		canDownload: {
+ 			get() {
+-				return this.share.attributes.find(attr => attr.key === 'download')?.value || false
++				return !this.downloadDisabled && (this.share.attributes.find(attr => attr.key === 'download')?.value || false);
+ 			},
+ 			set(checked) {
+ 				this.setShareAttribute('permissions', 'download', checked)

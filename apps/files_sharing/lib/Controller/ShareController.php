@@ -302,6 +302,9 @@ class ShareController extends AuthPublicShareController {
 			throw new NotFoundException($this->l10n->t('This share does not exist or is no longer available'));
 		}
 
+		if ($this->config->getSystemValue('iserv_disable_file_downloads', true)) {
+			$share->setHideDownload(true);
+		}
 		$shareNode = $share->getNode();
 
 		try {
