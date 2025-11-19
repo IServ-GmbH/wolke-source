@@ -25,6 +25,7 @@ These binary patches will be applied to the production code in the second build 
 * The image will be saved as `./data/image.tar.xz`.  
 * You can then transfer the image to your IServ VM and run `iservchk cloudfiles` to restart the container with the new image.
 
+---- MAYBE-NOT-AN-ERROR-ANYMORE TODO: Check if this error persists after switching from Image IDS to tags ----
 If you are on an architecture other than linux/x86_64, the image ID comparison in iservchk will fail because Docker generates a different one:  
 - Make sure you have the newest tarball in the data folder, then update the image:  
 - `iservchk cloudfiles`  
@@ -34,6 +35,7 @@ If you are on an architecture other than linux/x86_64, the image ID comparison i
   - Retrieve the image ID that the target architecture references  
 - Put this ID into [image.id](../../data/image.id)  
 - Now iservchk will no longer complain
+---- END OF MAYBE-NOT-AN-ERROR-ANYMORE ----
 
 ### In CI
 
@@ -106,7 +108,7 @@ If for some reason you need to manually restart the container with a new image, 
 - Test your changes.
 
 ### 5. Committing  
-- Do not commit the Docker image tarball `./data/image.tar.xz` or the image ID `./data/image.id` to git.  
+- Do not commit the Docker image tarball `./data/image.tar.xz` or the image ID `./data/image.tag` to git.  
 - Commit patches:  
   - `./source/added/`  
   - `./source/patches/`.

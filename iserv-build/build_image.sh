@@ -7,6 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env"
 DATA_DIR="$SCRIPT_DIR/../../data"
+PROJECT_SCRIPTS_DIR="$SCRIPT_DIR/../../lib/docker-cloudfiles"
 
 # Load version
 # shellcheck disable=SC1090
@@ -30,8 +31,11 @@ if [ -n "${CI:-}" ]; then
     docker image save "$IMAGE_NAME" | xz -T0 > "$DATA_DIR/image.tar.xz"
 fi
 
-echo ">>> Saving image ID"
-docker image inspect "$IMAGE_NAME" --format '{{ .Id }}' > "$DATA_DIR/image.id"
+echo ">>> Saving image tag"
+echo "$IMAGE_NAME" > "$DATA_DIR/image.tag"
+
+"$PROJECT_SCRIPTS_DIR"/cleanup-image-container
+docker image tag "${IMAGE_NAME}" "iserv/cloudfiles:latest"
 
 echo ">>> Done. Image and metadata available in $DATA_DIR"
 echo ">>> Version: $VERSION"
