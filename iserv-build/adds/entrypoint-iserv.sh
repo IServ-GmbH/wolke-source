@@ -7,32 +7,6 @@ set -e
 # We circumvent that by copying the source code ourselves if the update script doesn't in the exitpoint-iserv.sh.
 # This behavior also leads to us copying version.php
 
-# --- Memory-based MaxRequestWorkers ---
-MEM_LIMIT_BYTES=$(cat /sys/fs/cgroup/memory.max)
-
-if [ "$MEM_LIMIT_BYTES" = "max" ] || [ "$MEM_LIMIT_BYTES" -gt 1000000000000 ]; then
-    # container is unlimited, fallback to host memory
-    MEM_TOTAL_MB=$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo)
-else
-    MEM_TOTAL_MB=$((MEM_LIMIT_BYTES / 1024 / 1024))
-fi
-
-if [ "$MEM_TOTAL_MB" -le 4096 ]; then
-    WORKERS=8
-elif [ "$MEM_TOTAL_MB" -le 8192 ]; then
-    WORKERS=12
-else
-    WORKERS=25
-fi
-
-echo "Configuring Apache: Detected ${MEM_TOTAL_MB}MB RAM → MaxRequestWorkers=${WORKERS}"
-
-# bc www-data user does not have write access to /etc/apache2/mods-enabled/ we utilize the symlink alredy created in the Dockerfile
-sed "s/{{MAX_REQUEST_WORKERS}}/${WORKERS}/g" \
-    /etc/apache2/mods-enabled/mpm_prefork.conf.template \
-    > /tmp/mpm_prefork.conf
-# --------------------------------------
-
 # on first start our version.php does not exist, so skip
 if [ -f /version/version.php ]; then
   echo "Copy version.php to facilitate nextcloud upgrades"

@@ -42,8 +42,12 @@ If you are on an architecture other than linux/x86_64, the image ID comparison i
 * Run `download_image.sh` to download the image tagged with the current commit SHA from the IServ Docker registry.
 * You can also pass a specific tag to `download_image.sh` to download a particular image version (e.g., `latest`).
 
-_To download images from the registry, you must be logged into the `git.iserv.eu` Docker registry._
-To log in, create an [Access Token](https://git.iserv.eu/-/user_settings/personal_access_tokens) with the `read_registry` and `write_registry` scope and run `docker login git.iserv.eu:443 -u <your.username>`  
+_To download images from the registry, you must be logged into the `git.iserv.eu:443` and the `registry.git.iserv.eu` Docker registries._
+To log in, create an [Access Token](https://git.iserv.eu/-/user_settings/personal_access_tokens) with the `read_registry` and `write_registry` scope and run 
+```
+docker login git.iserv.eu:443 -u <your.username>
+docker login registry.git.iserv.eu -u <your.username>
+```  
 Enter the token as the password.
 (Caution: Do not log in on your VM if others might have access to your session.)
 
@@ -158,14 +162,21 @@ To access the Nextcloud admin page for development, follow these steps:
 1. Logout from IServ or if on cloudfiles.domain logout from cloudfiles
 
 2. copy the password from
-```bash
-cat /var/lib/iserv/docker-cloudfiles/pwd/admin.pwd
-```
+   ```bash
+   cat /var/lib/iserv/docker-cloudfiles/pwd/admin.pwd
+   ```
 
 3. Go to https://cloudfiles.mein-iserv.dev/index.php/login?direct=1
-- user: 00_admin
-- password: from the file
+   - user: 00_admin
+   - password: from the file
 
-Because of [#53856](https://redmine.iserv.eu/issues/53856) we had to rename the default admin user to 00_admin.
+   Because of [#53856](https://redmine.iserv.eu/issues/53856) we had to rename the default admin user to 00_admin.
 
 4. Go to Account Settings Bubble -> Administratoreinstellungen
+
+## Misc
+
+```bash
+# See live NC config:
+docker exec -it cloudfiles php occ config:list system
+```

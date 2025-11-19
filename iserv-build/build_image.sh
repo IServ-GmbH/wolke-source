@@ -25,8 +25,10 @@ docker build \
   --build-arg VERSION="$VERSION" \
   "$SCRIPT_DIR"
 
-echo ">>> Exporting image to tar.xz"
-docker image save "$IMAGE_NAME" | xz -T0 > "$DATA_DIR/image.tar.xz"
+if [ -n "${CI:-}" ]; then
+    echo ">>> Exporting image to tar.xz"
+    docker image save "$IMAGE_NAME" | xz -T0 > "$DATA_DIR/image.tar.xz"
+fi
 
 echo ">>> Saving image ID"
 docker image inspect "$IMAGE_NAME" --format '{{ .Id }}' > "$DATA_DIR/image.id"

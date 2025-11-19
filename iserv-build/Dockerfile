@@ -20,23 +20,17 @@ RUN /source/create_combined_patches.sh /nextcloud-server /
 
 # TODO: Here we could execute the tests. #73704
 
-FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-apache
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-fpm
 ARG VERSION
 
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
-# Limit Apache MaxRequestWorkers to 25 to prevent out of memory
-COPY apache/mpm_prefork.conf.template /etc/apache2/mods-enabled/mpm_prefork.conf.template
-
-# install a symlink, bc entrypoint running as www-data cannot write into mods-enabled
-RUN ln -sf /tmp/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
-
 # Install git for binary patches
 RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    git vim nano \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        git vim nano \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Include required third-party apps in the image to avoid dependency on external network during runtime
 # https://apps.nextcloud.com/apps/user_saml
@@ -82,6 +76,13 @@ RUN cd /usr/src/nextcloud && git apply --verbose --allow-empty /main.patch \
     && cd /iserv-apps/files_linkeditor && git apply --verbose --allow-empty /apps_files_linkeditor.patch \
     && rm /*.patch
 
+# Pipe Access Logging from FPM to /dev/null, bc its the same as the nginx logs
+RUN echo '[www] \n\
+access.log = /dev/null' > /usr/local/etc/php-fpm.d/zz-iserv.conf
+
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart
 # This makes config updates easier
 ENTRYPOINT ["/entrypoint-iserv.sh"]
+
+EXPOSE 9000
+CMD ["php-fpm"]

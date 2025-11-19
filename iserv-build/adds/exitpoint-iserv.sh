@@ -78,6 +78,5 @@ echo "Disabling config editing"
 # disable config editing again since the update is done
 php /var/www/html/occ config:system:set config_is_read_only --value="true" --type=boolean
 
-echo "Done! Starting apache..."
-# start apache2 and begin servicing requests (taken from original Dockerfile)
-apache2-foreground
+echo "Done! Starting PHP-FPM..."
+exec php-fpm -F
