@@ -190,6 +190,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 
 			$dispatcher = new MiddlewareDispatcher();
 
+			// execute early before everything
+			$dispatcher->registerMiddleware(
+				$c->get(\OC\Core\Middleware\BlockClientMiddleware::class)
+			);
+
 			$dispatcher->registerMiddleware(
 				$c->get(OC\AppFramework\Middleware\CompressionMiddleware::class)
 			);

@@ -1,0 +1,61 @@
+diff --git apps/files_sharing/src/mixins/SharesMixin.js apps/files_sharing/src/mixins/SharesMixin.js
+index 0c92124..b15aa4b 100644
+--- apps/files_sharing/src/mixins/SharesMixin.js
++++ apps/files_sharing/src/mixins/SharesMixin.js
+@@ -55,6 +55,9 @@ export default {
+ 			saving: false,
+ 			open: false,
+ 
++			/** @type {boolean | undefined} */
++			passwordProtectedState: undefined,
++
+ 			// concurrency management queue
+ 			// we want one queue per share
+ 			updateQueue: new PQueue({ concurrency: 1 }),
+@@ -164,15 +167,21 @@ export default {
+ 		 */
+ 		isPasswordProtected: {
+ 			get() {
+-				return this.config.enforcePasswordForPublicLink
+-						|| this.share.password !== ''
+-						|| this.share.newPassword !== undefined
++				if (this.config.enforcePasswordForPublicLink) {
++					return true
++				}
++				if (this.passwordProtectedState !== undefined) {
++					return this.passwordProtectedState
++				}
++				return this.share.newPassword !== undefined
++					|| this.share.password !== undefined
+ 			},
+ 			async set(enabled) {
+ 				if (enabled) {
++					this.passwordProtectedState = true
+ 					this.$set(this.share, 'newPassword', await GeneratePassword(true))
+ 				} else {
+-					this.share.password = ''
++					this.passwordProtectedState = false
+ 					this.$delete(this.share, 'newPassword')
+ 				}
+ 			},
+@@ -208,6 +217,11 @@ export default {
+ 					return false
+ 				}
+ 			}
++			if (share.newPassword) {
++				if (typeof share.newPassword !== 'string') {
++					return false
++				}
++			}
+ 			if (share.expirationDate) {
+ 				const date = share.expirationDate
+ 				if (!date.isValid()) {
+@@ -394,7 +408,7 @@ export default {
+ 		 * @param {string} message the error message
+ 		 */
+ 		onSyncError(property, message) {
+-			if (property === 'password' && this.share.newPassword) {
++			if (property === 'password' && this.share.newPassword !== undefined) {
+ 				if (this.share.newPassword === this.share.password) {
+ 					this.share.password = ''
+ 				}

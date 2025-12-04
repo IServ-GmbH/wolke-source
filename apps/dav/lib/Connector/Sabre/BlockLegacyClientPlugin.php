@@ -53,5 +53,32 @@ class BlockLegacyClientPlugin extends ServerPlugin {
 			version_compare($versionMatches[1], $minimumSupportedDesktopVersion) === -1) {
 			throw new \Sabre\DAV\Exception\Forbidden('Unsupported client version.');
 		}
+
+		if (!$this->config->getSystemValue('iserv_disable_external_clients', false)) {
+			//early return if we shouldn't block
+			return;
+		}
+
+		// Now block all CalDav requests
+		// we block here and in the BlockClientMiddleware as well, bc if the user somehow got behind the login flow
+		//     e.g. the user was already logged in, when the blockade was activated
+
+		// List of regexes for all clients that get blocked
+		$blockedClientRegexes = [
+			IRequest::USER_AGENT_CLIENT_ANDROID,
+			IRequest::USER_AGENT_CLIENT_IOS,
+			IRequest::USER_AGENT_TALK_DESKTOP,
+			IRequest::USER_AGENT_TALK_IOS,
+			IRequest::USER_AGENT_OUTLOOK_ADDON,
+			IRequest::USER_AGENT_THUNDERBIRD_ADDON,
+			IRequest::USER_AGENT_CLIENT_DESKTOP // block desktop client here as well
+		];
+
+		foreach ($blockedClientRegexes as $regex) {
+			if (preg_match($regex, $userAgent)) {
+				$app = $this->config->getSystemValue('iserv_app_name', 'Wolke');
+				throw new \Sabre\DAV\Exception\Forbidden("Access to $app via an external client is forbidden. Please visit $app in a browser or the IServ app.");
+			}
+		}
 	}
 }

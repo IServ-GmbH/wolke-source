@@ -20,6 +20,7 @@ php /var/www/html/occ app:disable notifications
 # Disables photos app for cloudsafe
 if [ "$INSTANCE_NAME" = "cloudsafe" ]; then
   php /var/www/html/occ app:disable photos
+  php /var/www/html/occ app:disable files_downloadlimit
 fi
 
 # password_policy seems to be incompatible with LDAP or SAML

@@ -30,10 +30,14 @@ make -C "$REPO_PATH" build-js-production
 
 echo "Creating main.patch..."
 git -C "$REPO_PATH" add -N . # required to include newly added files
+
 # --binary is required for the "compiled" JavaScript files
-# Vue files are not part of the release tarball, thus we skip them when creating the patch.
+
+# Vue files are not part of the release final image, thus we skip them when creating the patch.
+# mixin.js files are also not part of the final image. So skip the containing src folder aswell
+
 # The non-core-repo-apps in apps/ are ignored automatically because they're part of .gitignore.
-git -C "$REPO_PATH" diff --binary ':!*.vue' > "$PATCH_DESTINATION/main.patch"
+git -C "$REPO_PATH" diff --binary ':!*.vue' ':!apps/files_sharing/src/*' > "$PATCH_DESTINATION/main.patch"
 
 echo "Creating apps_activity.patch..."
 git -C "$REPO_PATH/apps/activity" add -N .
