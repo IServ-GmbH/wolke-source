@@ -4,7 +4,6 @@ namespace Rubix\ML\Tests\Datasets;
 
 use Rubix\ML\Report;
 use Rubix\ML\DataType;
-use Rubix\ML\Encoding;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Extractors\NDJSON;
@@ -12,7 +11,6 @@ use Rubix\ML\Datasets\Unlabeled;
 use PHPUnit\Framework\TestCase;
 use IteratorAggregate;
 use ArrayAccess;
-use Stringable;
 use Countable;
 
 use function Rubix\ML\array_transpose;
@@ -60,6 +58,8 @@ class LabeledTest extends TestCase
      */
     protected function setUp() : void
     {
+        ini_set('precision', '14');
+
         $this->dataset = new Labeled(self::SAMPLES, self::LABELS, false);
 
         srand(self::RANDOM_SEED);
@@ -75,7 +75,6 @@ class LabeledTest extends TestCase
         $this->assertInstanceOf(Countable::class, $this->dataset);
         $this->assertInstanceOf(ArrayAccess::class, $this->dataset);
         $this->assertInstanceOf(IteratorAggregate::class, $this->dataset);
-        $this->assertInstanceOf(Stringable::class, $this->dataset);
     }
 
     /**
@@ -103,8 +102,8 @@ class LabeledTest extends TestCase
 
         $this->assertInstanceOf(Labeled::class, $dataset);
 
-        $this->assertEquals(3, $dataset->numRows());
-        $this->assertEquals(1, $dataset->numColumns());
+        $this->assertEquals(3, $dataset->numSamples());
+        $this->assertEquals(1, $dataset->numFeatures());
     }
 
     /**
@@ -127,44 +126,63 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function numRows() : void
+    public function numSamples() : void
     {
-        $this->assertEquals(6, $this->dataset->numRows());
+        $this->assertEquals(6, $this->dataset->numSamples());
     }
 
     /**
      * @test
      */
-    public function column() : void
+    public function feature() : void
     {
         $expected = array_column(self::SAMPLES, 2);
 
-        $this->assertEquals($expected, $this->dataset->column(2));
+        $this->assertEquals($expected, $this->dataset->feature(2));
     }
 
     /**
      * @test
      */
-    public function numColumns() : void
+    public function dropFeature() : void
     {
-        $this->assertEquals(4, $this->dataset->numColumns());
+        $expected = [
+            ['nice', 'friendly', 4.0],
+            ['mean', 'loner', -1.5],
+            ['nice', 'friendly', 2.6],
+            ['mean', 'friendly', -1.0],
+            ['nice', 'friendly', 2.9],
+            ['nice', 'loner', -5.0],
+        ];
+
+        $this->dataset->dropFeature(1);
+
+        $this->assertEquals($expected, $this->dataset->samples());
     }
 
     /**
      * @test
      */
-    public function columnType() : void
+    public function numFeatures() : void
     {
-        $this->assertEquals(DataType::categorical(), $this->dataset->columnType(0));
-        $this->assertEquals(DataType::categorical(), $this->dataset->columnType(1));
-        $this->assertEquals(DataType::categorical(), $this->dataset->columnType(2));
-        $this->assertEquals(DataType::continuous(), $this->dataset->columnType(3));
+        $this->assertEquals(4, $this->dataset->numFeatures());
     }
 
     /**
      * @test
      */
-    public function columnTypes() : void
+    public function featureType() : void
+    {
+        $this->assertEquals(DataType::categorical(), $this->dataset->featureType(0));
+        $this->assertEquals(DataType::categorical(), $this->dataset->featureType(1));
+        $this->assertEquals(DataType::categorical(), $this->dataset->featureType(2));
+        $this->assertEquals(DataType::continuous(), $this->dataset->featureType(3));
+    }
+
+    /**
+     * @test
+     */
+    public function featureTypes() : void
     {
         $expected = [
             DataType::categorical(),
@@ -173,7 +191,7 @@ class LabeledTest extends TestCase
             DataType::continuous(),
         ];
 
-        $this->assertEquals($expected, $this->dataset->columnTypes());
+        $this->assertEquals($expected, $this->dataset->featureTypes());
     }
 
     /**
@@ -211,33 +229,37 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function columns() : void
+    public function features() : void
     {
         $expected = array_transpose(self::SAMPLES);
 
-        $this->assertEquals($expected, $this->dataset->columns());
+        $this->assertEquals($expected, $this->dataset->features());
     }
 
     /**
      * @test
      */
-    public function transformColumn() : void
+    public function types() : void
     {
-        $dataset = $this->dataset->transformColumn(3, 'abs');
+        $expected = [
+            DataType::categorical(),
+            DataType::categorical(),
+            DataType::categorical(),
+            DataType::continuous(),
+            DataType::categorical(),
+        ];
 
-        $expected = [4.0, 1.5, 2.6, 1.0, 2.9, 5.0];
-
-        $this->assertEquals($expected, $dataset->column(3));
+        $this->assertEquals($expected, $this->dataset->types());
     }
 
     /**
      * @test
      */
-    public function columnsByType() : void
+    public function featuresByType() : void
     {
         $expected = array_slice(array_transpose(self::SAMPLES), 0, 3);
 
-        $columns = $this->dataset->columnsByType(DataType::categorical());
+        $columns = $this->dataset->featuresByType(DataType::categorical());
 
         $this->assertEquals($expected, $columns);
     }
@@ -321,13 +343,13 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function filterByColumn() : void
+    public function filter() : void
     {
-        $isFriendly = function ($value) {
-            return $value === 'friendly';
+        $isFriendly = function ($record) {
+            return $record[2] === 'friendly';
         };
 
-        $filtered = $this->dataset->filterByColumn(2, $isFriendly);
+        $filtered = $this->dataset->filter($isFriendly);
 
         $samples = [
             ['nice', 'furry', 'friendly', 4.0],
@@ -340,63 +362,6 @@ class LabeledTest extends TestCase
 
         $this->assertEquals($samples, $filtered->samples());
         $this->assertEquals($labels, $filtered->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function filterByLabel() : void
-    {
-        $notMonster = function ($label) {
-            return $label === 'not monster';
-        };
-
-        $filtered = $this->dataset->filterByLabel($notMonster);
-
-        $samples = [
-            ['nice', 'furry', 'friendly', 4.0],
-            ['nice', 'rough', 'friendly', 2.6],
-            ['nice', 'rough', 'friendly', 2.9],
-            ['nice', 'furry', 'loner', -5.0],
-        ];
-
-        $labels = ['not monster', 'not monster', 'not monster', 'not monster'];
-
-        $this->assertEquals($samples, $filtered->samples());
-        $this->assertEquals($labels, $filtered->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function sortByColumn() : void
-    {
-        $this->dataset->sortByColumn(1);
-
-        $sorted = array_column(self::SAMPLES, 1);
-
-        $labels = self::LABELS;
-
-        array_multisort($sorted, $labels, SORT_ASC);
-
-        $this->assertEquals($sorted, $this->dataset->column(1));
-        $this->assertEquals($labels, $this->dataset->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function sortByLabel() : void
-    {
-        $this->dataset->sortByLabel();
-
-        $samples = self::SAMPLES;
-        $labels = self::LABELS;
-
-        array_multisort($labels, $samples, SORT_ASC);
-
-        $this->assertEquals($samples, $this->dataset->samples());
-        $this->assertEquals($labels, $this->dataset->labels());
     }
 
     /**
@@ -524,9 +489,9 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function stratify() : void
+    public function stratifyByLabel() : void
     {
-        $strata = $this->dataset->stratify();
+        $strata = $this->dataset->stratifyByLabel();
 
         $this->assertCount(2, $strata['monster']);
         $this->assertCount(4, $strata['not monster']);
@@ -550,7 +515,7 @@ class LabeledTest extends TestCase
      */
     public function partition() : void
     {
-        [$left, $right] = $this->dataset->splitByColumn(1, 'rough');
+        [$left, $right] = $this->dataset->splitByFeature(1, 'rough');
 
         $this->assertInstanceOf(Labeled::class, $left);
         $this->assertInstanceOf(Labeled::class, $right);
@@ -611,7 +576,7 @@ class LabeledTest extends TestCase
      */
     public function join() : void
     {
-        $this->assertEquals(count(current(self::SAMPLES)), $this->dataset->numColumns());
+        $this->assertEquals(count(current(self::SAMPLES)), $this->dataset->numFeatures());
 
         $dataset = new Unlabeled([
             [1],
@@ -624,7 +589,7 @@ class LabeledTest extends TestCase
 
         $joined = $this->dataset->join($dataset);
 
-        $this->assertEquals(count(current(self::SAMPLES)) + 1, $joined->numColumns());
+        $this->assertEquals(count(current(self::SAMPLES)) + 1, $joined->numFeatures());
 
         $this->assertEquals(['mean', 'furry', 'loner', -1.5, 2], $joined->sample(1));
         $this->assertEquals(['nice', 'rough', 'friendly', 2.6, 3], $joined->sample(2));
@@ -634,96 +599,22 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function dropRow() : void
+    public function sort() : void
     {
-        $dataset = $this->dataset->dropRow(1);
+        $dataset = $this->dataset->sort(function ($recordA, $recordB) {
+            return $recordA[3] > $recordB[3];
+        });
 
-        $samples = [
-            ['nice', 'furry', 'friendly', 4.0],
-            ['nice', 'rough', 'friendly', 2.6],
-            ['mean', 'rough', 'friendly', -1.0],
-            ['nice', 'rough', 'friendly', 2.9],
+        $expected = [
             ['nice', 'furry', 'loner', -5.0],
-        ];
-
-        $labels = ['not monster', 'not monster', 'monster', 'not monster', 'not monster'];
-
-        $this->assertInstanceOf(Labeled::class, $dataset);
-        $this->assertEquals($samples, $dataset->samples());
-        $this->assertEquals($labels, $dataset->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function dropRows() : void
-    {
-        $dataset = $this->dataset->dropRows([1, 5]);
-
-        $samples = [
-            ['nice', 'furry', 'friendly', 4.0],
-            ['nice', 'rough', 'friendly', 2.6],
+            ['mean', 'furry', 'loner', -1.5],
             ['mean', 'rough', 'friendly', -1.0],
+            ['nice', 'rough', 'friendly', 2.6],
             ['nice', 'rough', 'friendly', 2.9],
+            ['nice', 'furry', 'friendly', 4.0],
         ];
 
-        $labels = ['not monster', 'not monster', 'monster', 'not monster'];
-
-        $this->assertInstanceOf(Labeled::class, $dataset);
-        $this->assertEquals($samples, $dataset->samples());
-        $this->assertEquals($labels, $dataset->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function dropColumn() : void
-    {
-        $dataset = $this->dataset->dropColumn(2);
-
-        $samples = [
-            ['nice', 'furry', 4.0],
-            ['mean', 'furry', -1.5],
-            ['nice', 'rough', 2.6],
-            ['mean', 'rough', -1.0],
-            ['nice', 'rough', 2.9],
-            ['nice', 'furry', -5.0],
-        ];
-
-        $labels = [
-            'not monster', 'monster', 'not monster',
-            'monster', 'not monster', 'not monster',
-        ];
-
-        $this->assertInstanceOf(Labeled::class, $dataset);
-        $this->assertEquals($samples, $dataset->samples());
-        $this->assertEquals($labels, $dataset->labels());
-    }
-
-    /**
-     * @test
-     */
-    public function dropColumns() : void
-    {
-        $dataset = $this->dataset->dropColumns([0, 2]);
-
-        $samples = [
-            ['furry', 4.0],
-            ['furry', -1.5],
-            ['rough', 2.6],
-            ['rough', -1.0],
-            ['rough', 2.9],
-            ['furry', -5.0],
-        ];
-
-        $labels = [
-            'not monster', 'monster', 'not monster',
-            'monster', 'not monster', 'not monster',
-        ];
-
-        $this->assertInstanceOf(Labeled::class, $dataset);
-        $this->assertEquals($samples, $dataset->samples());
-        $this->assertEquals($labels, $dataset->labels());
+        $this->assertEquals($expected, $dataset->samples());
     }
 
     /**
@@ -733,45 +624,55 @@ class LabeledTest extends TestCase
     {
         $expected = [
             [
-                'column' => 0,
+                'offset' => 0,
                 'type' => 'categorical',
-                'num_categories' => 2,
+                'num categories' => 2,
                 'probabilities' => [
                     'nice' => 0.6666666666666666,
                     'mean' => 0.3333333333333333,
                 ],
             ],
             [
-                'column' => 1,
+                'offset' => 1,
                 'type' => 'categorical',
-                'num_categories' => 2,
+                'num categories' => 2,
                 'probabilities' => [
                     'furry' => 0.5,
                     'rough' => 0.5,
                 ],
             ],
             [
-                'column' => 2,
+                'offset' => 2,
                 'type' => 'categorical',
-                'num_categories' => 2,
+                'num categories' => 2,
                 'probabilities' => [
                     'friendly' => 0.6666666666666666,
                     'loner' => 0.3333333333333333,
                 ],
             ],
             [
-                'column' => 3,
+                'offset' => 3,
                 'type' => 'continuous',
                 'mean' => 0.3333333333333333,
                 'variance' => 9.792222222222222,
-                'std_dev' => 3.129252661934191,
+                'standard deviation' => 3.129252661934191,
                 'skewness' => -0.4481030843690633,
                 'kurtosis' => -1.1330702741786107,
+                'range' => 9.0,
                 'min' => -5.0,
                 '25%' => -1.375,
                 'median' => 0.8,
                 '75%' => 2.825,
                 'max' => 4.0,
+            ],
+            [
+                'offset' => 4,
+                'type' => 'categorical',
+                'num categories' => 2,
+                'probabilities' => [
+                    'not monster' => 0.6666666666666666,
+                    'monster' => 0.3333333333333333,
+                ],
             ],
         ];
 
@@ -789,86 +690,104 @@ class LabeledTest extends TestCase
         $expected = [
             'not monster' => [
                 [
-                    'column' => 0,
+                    'offset' => 0,
                     'type' => 'categorical',
-                    'num_categories' => 1,
+                    'num categories' => 1,
                     'probabilities' => [
                         'nice' => 1,
                     ],
                 ],
                 [
-                    'column' => 1,
+                    'offset' => 1,
                     'type' => 'categorical',
-                    'num_categories' => 2,
+                    'num categories' => 2,
                     'probabilities' => [
                         'furry' => 0.5,
                         'rough' => 0.5,
                     ],
                 ],
                 [
-                    'column' => 2,
+                    'offset' => 2,
                     'type' => 'categorical',
-                    'num_categories' => 2,
+                    'num categories' => 2,
                     'probabilities' => [
                         'friendly' => 0.75,
                         'loner' => 0.25,
                     ],
                 ],
                 [
-                    'column' => 3,
+                    'offset' => 3,
                     'type' => 'continuous',
                     'mean' => 1.125,
                     'variance' => 12.776875,
-                    'std_dev' => 3.574475485997911,
+                    'standard deviation' => 3.574475485997911,
                     'skewness' => -1.0795676577113944,
                     'kurtosis' => -0.7175867765792474,
+                    'range' => 9.0,
                     'min' => -5.0,
                     '25%' => 0.6999999999999993,
                     'median' => 2.75,
                     '75%' => 3.175,
                     'max' => 4.0,
                 ],
+                [
+                    'offset' => 4,
+                    'type' => 'categorical',
+                    'num categories' => 1,
+                    'probabilities' => [
+                        'not monster' => 1.0,
+                    ],
+                ],
             ],
             'monster' => [
                 [
-                    'column' => 0,
+                    'offset' => 0,
                     'type' => 'categorical',
-                    'num_categories' => 1,
+                    'num categories' => 1,
                     'probabilities' => [
                         'mean' => 1,
                     ],
                 ],
                 [
-                    'column' => 1,
+                    'offset' => 1,
                     'type' => 'categorical',
-                    'num_categories' => 2,
+                    'num categories' => 2,
                     'probabilities' => [
                         'furry' => 0.5,
                         'rough' => 0.5,
                     ],
                 ],
                 [
-                    'column' => 2,
+                    'offset' => 2,
                     'type' => 'categorical',
-                    'num_categories' => 2,
+                    'num categories' => 2,
                     'probabilities' => [
                         'friendly' => 0.5,
                         'loner' => 0.5,
                     ],
                 ],
                 [
-                    'column' => 3,
+                    'offset' => 3,
                     'type' => 'continuous',
                     'mean' => -1.25,
                     'variance' => 0.0625,
-                    'std_dev' => 0.25,
+                    'standard deviation' => 0.25,
                     'skewness' => 0.0,
                     'kurtosis' => -2.0,
+                    'range' => 0.5,
                     'min' => -1.5,
                     '25%' => -1.375,
                     'median' => -1.25,
                     '75%' => -1.125,
                     'max' => -1.0,
+                ],
+                [
+                    'offset' => 4,
+                    'type' => 'categorical',
+                    'num categories' => 1,
+                    'probabilities' => [
+                        'monster' => 1.0,
+                    ],
                 ],
             ],
         ];
@@ -882,100 +801,11 @@ class LabeledTest extends TestCase
     /**
      * @test
      */
-    public function describeLabels() : void
-    {
-        $expected = [
-            'type' => 'categorical',
-            'num_categories' => 2,
-            'probabilities' => [
-                'monster' => 0.3333333333333333,
-                'not monster' => 0.6666666666666666,
-            ],
-        ];
-
-        $results = $this->dataset->describeLabels();
-
-        $this->assertInstanceOf(Report::class, $results);
-        $this->assertEquals($expected, $results->toArray());
-    }
-
-    /**
-     * @test
-     */
     public function deduplicate() : void
     {
         $dataset = $this->dataset->deduplicate();
 
         $this->assertCount(6, $dataset);
-    }
-
-    /**
-     * @test
-     */
-    public function toArray() : void
-    {
-        $expected = [
-            ['nice', 'furry', 'friendly', 4.0, 'not monster'],
-            ['mean', 'furry', 'loner', -1.5, 'monster'],
-            ['nice', 'rough', 'friendly', 2.6, 'not monster'],
-            ['mean', 'rough', 'friendly', -1.0, 'monster'],
-            ['nice', 'rough', 'friendly', 2.9, 'not monster'],
-            ['nice', 'furry', 'loner', -5.0, 'not monster'],
-        ];
-
-        $this->assertEquals($expected, $this->dataset->toArray());
-    }
-
-    /**
-     * @test
-     */
-    public function toJson() : void
-    {
-        $expected = '[["nice","furry","friendly",4,"not monster"],["mean","furry","loner",-1.5,"monster"],["nice","rough","friendly",2.6,"not monster"],["mean","rough","friendly",-1,"monster"],["nice","rough","friendly",2.9,"not monster"],["nice","furry","loner",-5,"not monster"]]';
-
-        $encoding = $this->dataset->toJSON();
-
-        $this->assertInstanceOf(Encoding::class, $encoding);
-        $this->assertEquals($expected, $encoding);
-    }
-
-    /**
-     * @test
-     */
-    public function toNdjson() : void
-    {
-        $expected = '["nice","furry","friendly",4,"not monster"]' . PHP_EOL
-        . '["mean","furry","loner",-1.5,"monster"]' . PHP_EOL
-        . '["nice","rough","friendly",2.6,"not monster"]' . PHP_EOL
-        . '["mean","rough","friendly",-1,"monster"]' . PHP_EOL
-        . '["nice","rough","friendly",2.9,"not monster"]' . PHP_EOL
-        . '["nice","furry","loner",-5,"not monster"]' . PHP_EOL;
-
-        $encoding = $this->dataset->toNDJSON();
-
-        $this->assertInstanceOf(Encoding::class, $encoding);
-        $this->assertEquals($expected, $encoding);
-    }
-
-    /**
-     * @test
-     */
-    public function toCSV() : void
-    {
-        $expected = 'temperament,texture,sociability,rating,class' . PHP_EOL
-            . 'nice,furry,friendly,4,not monster' . PHP_EOL
-            . 'mean,furry,loner,-1.5,monster' . PHP_EOL
-            . 'nice,rough,friendly,2.6,not monster' . PHP_EOL
-            . 'mean,rough,friendly,-1,monster' . PHP_EOL
-            . 'nice,rough,friendly,2.9,not monster' . PHP_EOL
-            . 'nice,furry,loner,-5,not monster' . PHP_EOL;
-
-        $encoding = $this->dataset->toCSV([
-            'temperament', 'texture', 'sociability', 'rating', 'class',
-        ]);
-
-        $this->assertInstanceOf(Encoding::class, $encoding);
-        $this->assertEquals($expected, $encoding);
     }
 
     /**

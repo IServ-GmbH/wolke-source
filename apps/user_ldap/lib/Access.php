@@ -15,10 +15,13 @@ use OCA\User_LDAP\Exceptions\NoMoreResults;
 use OCA\User_LDAP\Mapping\AbstractMapping;
 use OCA\User_LDAP\User\Manager;
 use OCA\User_LDAP\User\OfflineUser;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IUserManager;
+use OCP\User\Events\UserIdAssignedEvent;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 use function strlen;
 use function substr;
@@ -42,6 +45,7 @@ class Access extends LDAPUtility {
 
 	/** @var ?AbstractMapping */
 	protected $groupMapper;
+
 	private string $lastCookie = '';
 
 	public function __construct(
@@ -53,15 +57,10 @@ class Access extends LDAPUtility {
 		private IUserManager $ncUserManager,
 		private LoggerInterface $logger,
 		private IAppConfig $appConfig,
+		private IEventDispatcher $dispatcher,
 	) {
 		parent::__construct($ldap);
-		$this->connection = $connection;
-		$this->userManager = $userManager;
 		$this->userManager->setLdapAccess($this);
-		$this->helper = $helper;
-		$this->config = $config;
-		$this->ncUserManager = $ncUserManager;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -262,7 +261,7 @@ class Access extends LDAPUtility {
 			return false;
 		}
 		//LDAP attributes are not case sensitive
-		$result = \OCP\Util::mb_array_change_key_case(
+		$result = Util::mb_array_change_key_case(
 			$this->invokeLDAPMethod('getAttributes', $er), MB_CASE_LOWER, 'UTF-8');
 
 		return $result;
@@ -308,8 +307,8 @@ class Access extends LDAPUtility {
 	public function extractRangeData(array $result, string $attribute): array {
 		$keys = array_keys($result);
 		foreach ($keys as $key) {
-			if ($key !== $attribute && str_starts_with((string) $key, $attribute)) {
-				$queryData = explode(';', (string) $key);
+			if ($key !== $attribute && str_starts_with((string)$key, $attribute)) {
+				$queryData = explode(';', (string)$key);
 				if (isset($queryData[1]) && str_starts_with($queryData[1], 'range=')) {
 					$high = substr($queryData[1], 1 + strpos($queryData[1], '-'));
 					return [
@@ -334,7 +333,7 @@ class Access extends LDAPUtility {
 	 * @throws \Exception
 	 */
 	public function setPassword($userDN, $password) {
-		if ((int) $this->connection->turnOnPasswordChange !== 1) {
+		if ((int)$this->connection->turnOnPasswordChange !== 1) {
 			throw new \Exception('LDAP password changes are disabled.');
 		}
 		$cr = $this->connection->getConnectionResource();
@@ -343,7 +342,7 @@ class Access extends LDAPUtility {
 			return @$this->invokeLDAPMethod('exopPasswd', $userDN, '', $password) ||
 				@$this->invokeLDAPMethod('modReplace', $userDN, $password);
 		} catch (ConstraintViolationException $e) {
-			throw new HintException('Password change rejected.', \OCP\Util::getL10N('user_ldap')->t('Password change rejected. Hint: %s', $e->getMessage()), (int) $e->getCode());
+			throw new HintException('Password change rejected.', Util::getL10N('user_ldap')->t('Password change rejected. Hint: %s', $e->getMessage()), (int)$e->getCode());
 		}
 	}
 
@@ -633,13 +632,16 @@ class Access extends LDAPUtility {
 		string $fdn,
 		string $name,
 		string $uuid,
-		bool $isUser
+		bool $isUser,
 	): bool {
 		if ($mapper->map($fdn, $name, $uuid)) {
-			if ($this->ncUserManager instanceof PublicEmitter && $isUser) {
+			if ($isUser) {
 				$this->cacheUserExists($name);
-				$this->ncUserManager->emit('\OC\User', 'assignedUserId', [$name]);
-			} elseif (!$isUser) {
+				$this->dispatcher->dispatchTyped(new UserIdAssignedEvent($name));
+				if ($this->ncUserManager instanceof PublicEmitter) {
+					$this->ncUserManager->emit('\OC\User', 'assignedUserId', [$name]);
+				}
+			} else {
 				$this->cacheGroupExists($name);
 			}
 			return true;
@@ -816,9 +818,9 @@ class Access extends LDAPUtility {
 		} else {
 			natsort($usedNames);
 			$lastName = array_pop($usedNames);
-			$lastNo = (int) substr($lastName, strrpos($lastName, '_') + 1);
+			$lastNo = (int)substr($lastName, strrpos($lastName, '_') + 1);
 		}
-		$altName = $name . '_' . (string) ($lastNo + 1);
+		$altName = $name . '_' . (string)($lastNo + 1);
 		unset($usedNames);
 
 		$attempts = 1;
@@ -920,7 +922,7 @@ class Access extends LDAPUtility {
 	 * @throws \Exception
 	 */
 	public function batchApplyUserAttributes(array $ldapRecords): void {
-		$displayNameAttribute = strtolower((string) $this->connection->ldapUserDisplayName);
+		$displayNameAttribute = strtolower((string)$this->connection->ldapUserDisplayName);
 		foreach ($ldapRecords as $userRecord) {
 			if (!isset($userRecord[$displayNameAttribute])) {
 				// displayName is obligatory
@@ -947,29 +949,13 @@ class Access extends LDAPUtility {
 	 * @return array[]
 	 */
 	public function fetchListOfGroups(string $filter, array $attr, ?int $limit = null, ?int $offset = null): array {
-		$cacheKey = 'fetchListOfGroups_' . $filter . '_' . implode('-', $attr) . '_' . (string) $limit . '_' . (string) $offset;
+		$cacheKey = 'fetchListOfGroups_' . $filter . '_' . implode('-', $attr) . '_' . (string)$limit . '_' . (string)$offset;
 		$listOfGroups = $this->connection->getFromCache($cacheKey);
 		if (!is_null($listOfGroups)) {
 			return $listOfGroups;
 		}
 		$groupRecords = $this->searchGroups($filter, $attr, $limit, $offset);
 
-		$listOfDNs = array_reduce($groupRecords, function ($listOfDNs, $entry) {
-			$listOfDNs[] = $entry['dn'][0];
-			return $listOfDNs;
-		}, []);
-		$idsByDn = $this->getGroupMapper()->getListOfIdsByDn($listOfDNs);
-
-		array_walk($groupRecords, function (array $record) use ($idsByDn) {
-			$newlyMapped = false;
-			$gid = $idsByDn[$record['dn'][0]] ?? null;
-			if ($gid === null) {
-				$gid = $this->dn2ocname($record['dn'][0], null, false, $newlyMapped, $record);
-			}
-			if (!$newlyMapped && is_string($gid)) {
-				$this->cacheGroupExists($gid);
-			}
-		});
 		$listOfGroups = $this->fetchList($groupRecords, $this->manyAttributes($attr));
 		$this->connection->writeToCache($cacheKey, $listOfGroups);
 		return $listOfGroups;
@@ -1008,7 +994,7 @@ class Access extends LDAPUtility {
 		$result = false;
 		foreach ($this->connection->ldapBaseUsers as $base) {
 			$count = $this->count($filter, [$base], $attr, $limit ?? 0, $offset ?? 0);
-			$result = is_int($count) ? (int) $result + $count : $result;
+			$result = is_int($count) ? (int)$result + $count : $result;
 		}
 		return $result;
 	}
@@ -1039,7 +1025,7 @@ class Access extends LDAPUtility {
 		$result = false;
 		foreach ($this->connection->ldapBaseGroups as $base) {
 			$count = $this->count($filter, [$base], $attr, $limit ?? 0, $offset ?? 0);
-			$result = is_int($count) ? (int) $result + $count : $result;
+			$result = is_int($count) ? (int)$result + $count : $result;
 		}
 		return $result;
 	}
@@ -1054,7 +1040,7 @@ class Access extends LDAPUtility {
 		$result = false;
 		foreach ($this->connection->ldapBase as $base) {
 			$count = $this->count('objectclass=*', [$base], ['dn'], $limit ?? 0, $offset ?? 0);
-			$result = is_int($count) ? (int) $result + $count : $result;
+			$result = is_int($count) ? (int)$result + $count : $result;
 		}
 		return $result;
 	}
@@ -1124,14 +1110,14 @@ class Access extends LDAPUtility {
 		string $base,
 		?array &$attr,
 		?int $pageSize,
-		?int $offset
+		?int $offset,
 	) {
 		// See if we have a resource, in case not cancel with message
 		$cr = $this->connection->getConnectionResource();
 
 		//check whether paged search should be attempted
 		try {
-			[$pagedSearchOK, $pageSize, $cookie] = $this->initPagedSearch($filter, $base, $attr, (int) $pageSize, (int) $offset);
+			[$pagedSearchOK, $pageSize, $cookie] = $this->initPagedSearch($filter, $base, $attr, (int)$pageSize, (int)$offset);
 		} catch (NoMoreResults $e) {
 			// beyond last results page
 			return false;
@@ -1164,7 +1150,7 @@ class Access extends LDAPUtility {
 		int $foundItems,
 		int $limit,
 		bool $pagedSearchOK,
-		bool $skipHandling
+		bool $skipHandling,
 	): bool {
 		$cookie = '';
 		if ($pagedSearchOK) {
@@ -1178,13 +1164,13 @@ class Access extends LDAPUtility {
 				return false;
 			}
 			// if count is bigger, then the server does not support
-			// paged search. Instead, he did a normal search. We set a
+			// paged search. Instead, they did a normal search. We set a
 			// flag here, so the callee knows how to deal with it.
 			if ($foundItems <= $limit) {
 				$this->pagedSearchedSuccessful = true;
 			}
 		} else {
-			if ((int) $this->connection->ldapPagingSize !== 0) {
+			if ((int)$this->connection->ldapPagingSize !== 0) {
 				$this->logger->debug(
 					'Paged search was not available',
 					['app' => 'user_ldap']
@@ -1219,14 +1205,14 @@ class Access extends LDAPUtility {
 		?array $attr = null,
 		int $limit = 0,
 		int $offset = 0,
-		bool $skipHandling = false
+		bool $skipHandling = false,
 	) {
 		$this->logger->debug('Count filter: {filter}', [
 			'app' => 'user_ldap',
 			'filter' => $filter
 		]);
 
-		$limitPerPage = (int) $this->connection->ldapPagingSize;
+		$limitPerPage = (int)$this->connection->ldapPagingSize;
 		if ($limit < $limitPerPage && $limit > 0) {
 			$limitPerPage = $limit;
 		}
@@ -1268,7 +1254,7 @@ class Access extends LDAPUtility {
 	 * @throws ServerNotAvailableException
 	 */
 	private function countEntriesInSearchResults($sr): int {
-		return (int) $this->invokeLDAPMethod('countEntries', $sr);
+		return (int)$this->invokeLDAPMethod('countEntries', $sr);
 	}
 
 	/**
@@ -1284,9 +1270,9 @@ class Access extends LDAPUtility {
 		?array $attr = null,
 		?int $limit = null,
 		?int $offset = null,
-		bool $skipHandling = false
+		bool $skipHandling = false,
 	): array {
-		$limitPerPage = (int) $this->connection->ldapPagingSize;
+		$limitPerPage = (int)$this->connection->ldapPagingSize;
 		if (!is_null($limit) && $limit < $limitPerPage && $limit > 0) {
 			$limitPerPage = $limit;
 		}
@@ -1335,7 +1321,7 @@ class Access extends LDAPUtility {
 				if (!is_array($item)) {
 					continue;
 				}
-				$item = \OCP\Util::mb_array_change_key_case($item, MB_CASE_LOWER, 'UTF-8');
+				$item = Util::mb_array_change_key_case($item, MB_CASE_LOWER, 'UTF-8');
 				foreach ($attr as $key) {
 					if (isset($item[$key])) {
 						if (is_array($item[$key]) && isset($item[$key]['count'])) {
@@ -1989,7 +1975,7 @@ class Access extends LDAPUtility {
 		string $base,
 		?array $attr,
 		int $pageSize,
-		int $offset
+		int $offset,
 	): array {
 		$pagedSearchOK = false;
 		if ($pageSize !== 0) {
@@ -2009,7 +1995,7 @@ class Access extends LDAPUtility {
 				// no cookie known from a potential previous search. We need
 				// to start from 0 to come to the desired page. cookie value
 				// of '0' is valid, because 389ds
-				$defaultPageSize = (int) $this->connection->ldapPagingSize;
+				$defaultPageSize = (int)$this->connection->ldapPagingSize;
 				if ($offset < $defaultPageSize) {
 					/* Make a search with offset as page size and dismiss the result, to init the cookie */
 					$this->search($filter, $base, $attr, $offset, 0, true);
@@ -2043,7 +2029,7 @@ class Access extends LDAPUtility {
 			$this->abandonPagedSearch();
 			// in case someone set it to 0 … use 500, otherwise no results will
 			// be returned.
-			$pageSize = (int) $this->connection->ldapPagingSize > 0 ? (int) $this->connection->ldapPagingSize : 500;
+			$pageSize = (int)$this->connection->ldapPagingSize > 0 ? (int)$this->connection->ldapPagingSize : 500;
 			return [true, $pageSize, $this->lastCookie];
 		}
 

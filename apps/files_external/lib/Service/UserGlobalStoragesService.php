@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -10,6 +9,7 @@ namespace OCA\Files_External\Service;
 use OCA\Files_External\Lib\StorageConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Config\IUserMountCache;
+use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -21,28 +21,17 @@ use OCP\IUserSession;
 class UserGlobalStoragesService extends GlobalStoragesService {
 	use UserTrait;
 
-	/** @var IGroupManager */
-	protected $groupManager;
-
-	/**
-	 * @param BackendService $backendService
-	 * @param DBConfigService $dbConfig
-	 * @param IUserSession $userSession
-	 * @param IGroupManager $groupManager
-	 * @param IUserMountCache $userMountCache
-	 * @param IEventDispatcher $eventDispatcher
-	 */
 	public function __construct(
 		BackendService $backendService,
 		DBConfigService $dbConfig,
 		IUserSession $userSession,
-		IGroupManager $groupManager,
+		protected IGroupManager $groupManager,
 		IUserMountCache $userMountCache,
-		IEventDispatcher $eventDispatcher
+		IEventDispatcher $eventDispatcher,
+		IAppConfig $appConfig,
 	) {
-		parent::__construct($backendService, $dbConfig, $userMountCache, $eventDispatcher);
+		parent::__construct($backendService, $dbConfig, $userMountCache, $eventDispatcher, $appConfig);
 		$this->userSession = $userSession;
-		$this->groupManager = $groupManager;
 	}
 
 	/**

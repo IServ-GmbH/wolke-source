@@ -3,6 +3,8 @@
 namespace Rubix\ML\Kernels\SVM;
 
 use Rubix\ML\Specifications\ExtensionIsLoaded;
+use Rubix\ML\Specifications\SpecificationChain;
+use Rubix\ML\Specifications\ExtensionMinimumVersion;
 use svm;
 
 /**
@@ -21,14 +23,17 @@ class RBF implements Kernel
      *
      * @var float|null
      */
-    protected $gamma;
+    protected ?float $gamma;
 
     /**
      * @param float|null $gamma
      */
     public function __construct(?float $gamma = null)
     {
-        ExtensionIsLoaded::with('svm')->check();
+        SpecificationChain::with([
+            new ExtensionIsLoaded('svm'),
+            new ExtensionMinimumVersion('svm', '0.2.0'),
+        ])->check();
 
         $this->gamma = $gamma;
     }
@@ -50,6 +55,8 @@ class RBF implements Kernel
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -33,6 +33,15 @@ abstract class TimedJob extends Job {
 	}
 
 	/**
+	 * Get the interval [seconds] for the job
+	 *
+	 * @since 32.0.0
+	 */
+	public function getInterval(): int {
+		return $this->interval;
+	}
+
+	/**
 	 * Whether the background job is time sensitive and needs to run soon after
 	 * the scheduled interval, of if it is okay to be delayed until a later time.
 	 *
@@ -69,7 +78,7 @@ abstract class TimedJob extends Job {
 	 * @param ILogger|null $logger
 	 *
 	 * @since 15.0.0
-	 * @deprecated since 25.0.0 Use start() instead
+	 * @deprecated 25.0.0 Use start() instead
 	 */
 	final public function execute(IJobList $jobList, ?ILogger $logger = null) {
 		$this->start($jobList);

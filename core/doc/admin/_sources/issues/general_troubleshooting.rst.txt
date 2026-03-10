@@ -31,7 +31,7 @@ configuration report with the :ref:`occ config command
 
 .. _the Nextcloud Forums: https://help.nextcloud.com
 .. _FAQ page: https://help.nextcloud.com/t/how-to-faq-wiki
-.. _bugtracker: https://docs.nextcloud.com/server/latest/developer_manual/prologue/bugtracker/index.html
+.. _bugtracker: https://docs.nextcloud.com/server/31/developer_manual/prologue/bugtracker/index.html
 
 .. TODO ON RELEASE: Update version number above on release
 
@@ -215,9 +215,7 @@ these modules:
 * mod_security
 * mod_reqtimeout
 * mod_deflate
-* libapache2-mod-php*filter (use libapache2-mod-php8.3 instead)
-* mod_spdy together with libapache2-mod-php5 / mod_php (use fcgi or php-fpm
-  instead)
+* mod_spdy
 * mod_dav
 * mod_xsendfile / X-Sendfile (causing broken downloads if not configured
   correctly)
@@ -230,6 +228,7 @@ these modules:
 
 3. PHP
 
+* Tideways
 * eAccelerator
 
 .. _trouble-webdav-label:
@@ -433,7 +432,7 @@ does not match the actual data stored in the user's ``data/$userId/files`` direc
 .. note::
 
    Metadata, versions, trashbin and encryption keys are not counted in the used space above.
-   Please refer to the `quota documentation <https://docs.nextcloud.com/server/latest/user_manual/en/files/quota.html>`_ for details.
+   Please refer to the `quota documentation <https://docs.nextcloud.com/server/31/user_manual/en/files/quota.html>`_ for details.
 
 .. TODO ON RELEASE: Update version number above on release
 

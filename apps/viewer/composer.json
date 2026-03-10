@@ -17,9 +17,9 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
-		"nextcloud/coding-standard": "^1.2.1",
+		"nextcloud/coding-standard": "^1.2.0",
 		"phpunit/phpunit": "^9",
-		"vimeo/psalm": "^5.15.0",
-		"nextcloud/ocp": "dev-stable30"
+		"vimeo/psalm": "^5.25.0",
+		"nextcloud/ocp": "dev-stable31"
 	}
 }

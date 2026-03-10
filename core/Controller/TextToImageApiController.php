@@ -77,6 +77,9 @@ class TextToImageApiController extends \OCP\AppFramework\OCSController {
 	#[UserRateLimit(limit: 20, period: 120)]
 	#[ApiRoute(verb: 'POST', url: '/schedule', root: '/text2image')]
 	public function schedule(string $input, string $appId, string $identifier = '', int $numberOfImages = 8): DataResponse {
+		if (strlen($input) > 64_000) {
+			return new DataResponse(['message' => $this->l->t('Input text is too long')], Http::STATUS_PRECONDITION_FAILED);
+		}
 		$task = new Task($input, $appId, $numberOfImages, $this->userId, $identifier);
 		try {
 			try {
@@ -153,7 +156,7 @@ class TextToImageApiController extends \OCP\AppFramework\OCSController {
 				$res->throttle(['action' => 'text2image']);
 				return $res;
 			}
-			$file = $folder->getFolder((string) $task->getId())->getFile((string) $index);
+			$file = $folder->getFolder((string)$task->getId())->getFile((string)$index);
 			$info = getimagesizefromstring($file->getContent());
 
 			return new FileDisplayResponse($file, Http::STATUS_OK, ['Content-Type' => image_type_to_mime_type($info[2])]);
@@ -210,9 +213,9 @@ class TextToImageApiController extends \OCP\AppFramework\OCSController {
 	 *
 	 * @param string $appId ID of the app
 	 * @param string|null $identifier An arbitrary identifier for the task
-	 * @return DataResponse<Http::STATUS_OK, array{tasks: CoreTextToImageTask[]}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{tasks: list<CoreTextToImageTask>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
 	 *
-	 *  200: Task list returned
+	 * 200: Task list returned
 	 */
 	#[NoAdminRequired]
 	#[AnonRateLimit(limit: 5, period: 120)]
@@ -220,10 +223,9 @@ class TextToImageApiController extends \OCP\AppFramework\OCSController {
 	public function listTasksByApp(string $appId, ?string $identifier = null): DataResponse {
 		try {
 			$tasks = $this->textToImageManager->getUserTasksByApp($this->userId, $appId, $identifier);
-			/** @var CoreTextToImageTask[] $json */
-			$json = array_map(static function (Task $task) {
+			$json = array_values(array_map(static function (Task $task) {
 				return $task->jsonSerialize();
-			}, $tasks);
+			}, $tasks));
 
 			return new DataResponse([
 				'tasks' => $json,

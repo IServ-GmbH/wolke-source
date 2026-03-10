@@ -6,8 +6,10 @@ use Tensor\Matrix;
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\ExtensionIsLoaded;
+use Rubix\ML\Specifications\SpecificationChain;
+use Rubix\ML\Specifications\ExtensionMinimumVersion;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -40,21 +42,21 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
      *
      * @var int
      */
-    protected $dimensions;
+    protected int $dimensions;
 
     /**
      * The transposed right singular vectors of the decomposition.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $components;
+    protected ?\Tensor\Matrix $components = null;
 
     /**
      * The proportion of information lost due to the transformation.
      *
      * @var float|null
      */
-    protected $lossiness;
+    protected ?float $lossiness = null;
 
     /**
      * @param int $dimensions
@@ -62,7 +64,10 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
      */
     public function __construct(int $dimensions)
     {
-        ExtensionIsLoaded::with('tensor')->check();
+        SpecificationChain::with([
+            new ExtensionIsLoaded('tensor'),
+            new ExtensionMinimumVersion('tensor', '2.2.0'),
+        ])->check();
 
         if ($dimensions < 1) {
             throw new InvalidArgumentException('Dimensions must be'
@@ -131,8 +136,8 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
         $noiseStdDev = $totalStdDev - array_sum($singularValues);
         $lossiness = $noiseStdDev / ($totalStdDev ?: EPSILON);
 
-        $this->lossiness = $lossiness;
         $this->components = $components;
+        $this->lossiness = $lossiness;
     }
 
     /**
@@ -154,6 +159,8 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

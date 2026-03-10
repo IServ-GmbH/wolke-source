@@ -2,25 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2018 Morris Jobke <hey@morrisjobke.de>
- *
- * @author Morris Jobke <hey@morrisjobke.de>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Support\Service;
@@ -66,18 +49,18 @@ class SubscriptionService {
 		protected readonly IMailer $mailer,
 		protected readonly IFactory $l10nFactory,
 		protected readonly ICacheFactory $cacheFactory,
-		protected readonly IAppConfig $appConfig
+		protected readonly IAppConfig $appConfig,
 	) {
 	}
 
 	public function setSubscriptionKey(string $subscriptionKey): void {
 		if (!preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)) {
-			$this->config->setAppValue('support', 'last_error', self::ERROR_INVALID_SUBSCRIPTION_KEY);
+			$this->appConfig->setValueInt('support', 'last_error', self::ERROR_INVALID_SUBSCRIPTION_KEY);
 			return;
 		}
 
-		$this->config->setAppValue('support', 'potential_subscription_key', $subscriptionKey);
-		$this->config->deleteAppValue('support', 'last_error');
+		$this->appConfig->setValueString('support', 'potential_subscription_key', $subscriptionKey);
+		$this->appConfig->deleteKey('support', 'last_error');
 
 		$this->renewSubscriptionInfo(true);
 	}
@@ -135,15 +118,15 @@ class SubscriptionService {
 		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
 
 		if (!$hasInternetConnection) {
-			$this->config->setAppValue('support', 'last_error', self::ERROR_NO_INTERNET_CONNECTION);
+			$this->appConfig->setValueInt('support', 'last_error', self::ERROR_NO_INTERNET_CONNECTION);
 			return;
 		}
 
-		$subscriptionKey = $this->config->getAppValue('support', 'potential_subscription_key', '');
+		$subscriptionKey = $this->appConfig->getValueString('support', 'potential_subscription_key');
 
 		if (!preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)) {
 			// fallback to normal subscription key
-			$subscriptionKey = $this->config->getAppValue('support', 'subscription_key', '');
+			$subscriptionKey = $this->appConfig->getValueString('support', 'subscription_key');
 			if (!preg_match('!^[a-zA-Z0-9-]{10,250}$!', $subscriptionKey)) {
 				return;
 			}
@@ -175,13 +158,13 @@ class SubscriptionService {
 
 			if ($response->getStatusCode() === 200 && is_array($body)) {
 				$this->log->info('Subscription info successfully fetched');
-				$this->config->setAppValue('support', 'subscription_key', $subscriptionKey);
-				$this->config->setAppValue('support', 'last_check', time());
+				$this->appConfig->setValueString('support', 'subscription_key', $subscriptionKey);
+				$this->appConfig->setValueInt('support', 'last_check', time());
 				$this->appConfig->setValueArray('support', 'last_response', $body, lazy: true);
 				$this->appConfig->setValueString('support', 'end_date', $body['endDate'] ?? '');
 				$this->appConfig->setValueBool('support', 'extended_support', $body['extendedSupport'] ?? false);
 
-				$this->config->deleteAppValue('support', 'last_error');
+				$this->appConfig->deleteKey('support', 'last_error');
 
 				$currentUpdaterServer = $this->config->getSystemValue('updater.server.url', 'https://updates.nextcloud.com/updater_server/');
 				$newUpdaterServer = 'https://updates.nextcloud.com/customers/' . $subscriptionKey . '/';
@@ -227,7 +210,7 @@ class SubscriptionService {
 
 			if ($response !== null && $response->getStatusCode() === 403) {
 				$this->log->info('Subscription key invalid');
-				$this->config->deleteAppValue('support', 'potential_subscription_key');
+				$this->appConfig->deleteKey('support', 'potential_subscription_key');
 				$error = self::ERROR_FAILED_INVALID;
 			} else {
 				$this->log->info('Renew of subscription info failed. URL: ' . $backendURL, ['app' => 'support', 'exception' => $e]);
@@ -238,7 +221,7 @@ class SubscriptionService {
 			$error = self::ERROR_FAILED_RETRY;
 		}
 
-		$this->config->setAppValue('support', 'last_error', $error);
+		$this->appConfig->setValueInt('support', 'last_error', $error);
 	}
 
 	public function getSubscriptionInfo(): array {
@@ -331,14 +314,14 @@ class SubscriptionService {
 
 	private function handleNoSubscription(string $instanceSize): void {
 		$currentTime = time();
-		$installTime = (int)$this->config->getAppValue('core', 'installedat', $currentTime);
+		$installTime = $this->appConfig->getValueInt('core', 'installedat', $currentTime);
 
 		// skip if installed within the last 30 days
 		if (($installTime + 30 * 24 * 3600) > $currentTime) {
 			return;
 		}
 
-		$lastNotificationTime = (int)$this->config->getAppValue('support', 'last_notification', 0);
+		$lastNotificationTime = $this->appConfig->getValueInt('support', 'last_notification');
 
 		// skip if last notification was within the last 30 days
 		if (($lastNotificationTime + 30 * 24 * 3600) > $currentTime) {
@@ -383,14 +366,14 @@ class SubscriptionService {
 		}
 
 		if ($updateLastNotificationTime) {
-			$this->config->setAppValue('support', 'last_notification', $currentTime);
+			$this->appConfig->setValueInt('support', 'last_notification', $currentTime);
 		}
 	}
 
 	private function handleOverLimit(string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		$currentTime = time();
 
-		$lastNotificationTime = (int)$this->config->getAppValue('support', 'last_over_limit_notification', 0);
+		$lastNotificationTime = $this->appConfig->getValueInt('support', 'last_over_limit_notification');
 
 		// skip if last notification was within the last 5 days
 		if (($lastNotificationTime + 5 * 24 * 3600) > $currentTime) {
@@ -440,14 +423,14 @@ class SubscriptionService {
 		}
 
 		if ($updateLastNotificationTime) {
-			$this->config->setAppValue('support', 'last_over_limit_notification', $currentTime);
+			$this->appConfig->setValueInt('support', 'last_over_limit_notification', $currentTime);
 		}
 	}
 
 	private function handleExpired(string $accountManager, string $accountManagerEmail, string $accountManagerPhone): void {
 		$currentTime = time();
 
-		$lastNotificationTime = (int)$this->config->getAppValue('support', 'last_expired_notification', 0);
+		$lastNotificationTime = $this->appConfig->getValueInt('support', 'last_expired_notification');
 
 		// skip if last notification was within the last 5 days
 		if (($lastNotificationTime + 5 * 24 * 3600) > $currentTime) {
@@ -497,7 +480,7 @@ class SubscriptionService {
 		}
 
 		if ($updateLastNotificationTime) {
-			$this->config->setAppValue('support', 'last_expired_notification', $currentTime);
+			$this->appConfig->setValueInt('support', 'last_expired_notification', $currentTime);
 		}
 	}
 

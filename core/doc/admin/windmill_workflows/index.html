@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Windmill Workflows &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Database configuration" href="../configuration_database/index.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -59,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -71,6 +77,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Windmill Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#selecting-the-right-workspace">Selecting the right Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-correct-nextcloud-url">Setting up the Correct Nextcloud URL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#building-a-workflow">Building a workflow</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#the-magic-listener-script">The magic listener script</a></li>
 </ul>
@@ -92,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -127,7 +135,7 @@
 <div><ul class="simple">
 <li><p>Install Windmill</p>
 <ul>
-<li><p>Either as a standalone install or via the External App “Flow” in Nextcloud (see <a class="reference internal" href="../ai/app_api_and_external_apps.html#ai-app-api"><span class="std std-ref">External Apps</span></a>)</p></li>
+<li><p>Either as a standalone install or via the External App “Flow” in Nextcloud (see <a class="reference internal" href="../exapps_management/AppAPIAndExternalApps.html#ai-app-api"><span class="std std-ref">External Apps</span></a>)</p></li>
 </ul>
 </li>
 <li><p>Enable the <code class="docutils literal notranslate"><span class="pre">webhook_listeners</span></code> app that comes with Nextcloud</p></li>
@@ -148,13 +156,19 @@ If the wrong workspace is selected on the first run, it is always possible to sw
 <p>If you wish to change to a different workspace at a later time, you can do so via the workspace selector in the left sidebar of Windmill.</p>
 <img alt="Screenshot of the workspace selector when a workspace is already opened" src="../_images/windmill_later_workspace_selection.png" />
 </section>
+<section id="setting-up-the-correct-nextcloud-url">
+<h2>Setting up the Correct Nextcloud URL<a class="headerlink" href="#setting-up-the-correct-nextcloud-url" title="Link to this heading"></a></h2>
+<p>During the initial installation, the ExApp Flow will create a <strong>Nextcloud Authentication Resource</strong> for AppAPI.</p>
+<p>This resource includes a <strong>baseUrl</strong> field, which specifies the URL that Windmill scripts/apps use to reach the Nextcloud instance. In most cases, this URL will be configured correctly. However, certain configurations and network topologies may result in an incorrect URL, which you will need to adjust manually.</p>
+<p>To set the correct URL, navigate to the Windmill interface, go to the <strong>Resources</strong> tab, locate the resource labeled <code class="docutils literal notranslate"><span class="pre">u/admin/exapp_resource</span></code>, click the three dots on the right, and select the “Edit” button.</p>
+</section>
 <section id="building-a-workflow">
 <h2>Building a workflow<a class="headerlink" href="#building-a-workflow" title="Link to this heading"></a></h2>
 <p>Each workflow in Windmill is a listener to a Nextcloud Webhook Event.
 If you are using the ExApp-packaged Windmill, it will automatically register webhooks for the workflows you build using the following mechanism.
 If you are not using the ExApp-packaged windmill install then you will have to register
 webhooks for your workflows manually via the webhook_listeners API:
-see <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
+see <a class="reference external" href="https://docs.nextcloud.com/server/31/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/31/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
 <section id="the-magic-listener-script">
 <h3>The magic listener script<a class="headerlink" href="#the-magic-listener-script" title="Link to this heading"></a></h3>
 <p>The first script (after the “Input” block) in any workflow you build that should listen to a Nextcloud webhook must be <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code>. It must be an empty script with two parameters that you should fill statically: <code class="docutils literal notranslate"><span class="pre">events</span></code>, which is a list of event IDs to listen to and <code class="docutils literal notranslate"><span class="pre">filters</span></code> a filter condition that allows more fine grained filtering for which events should be used. The filter condition as well as the available events with their payloads is documented in <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">the webhook_listeners documentation</span></a>.</p>
@@ -237,7 +251,7 @@ Your custom scripts can make requests to any endpoint of the
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -273,6 +287,14 @@ Your custom scripts can make requests to any endpoint of the
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

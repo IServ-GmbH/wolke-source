@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,6 +7,7 @@
 namespace OCA\Files_Trashbin;
 
 use OC\Files\FileInfo;
+use OC\Files\View;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 
@@ -26,7 +26,7 @@ class Helper {
 		$result = [];
 		$timestamp = null;
 
-		$view = new \OC\Files\View('/' . $user . '/files_trashbin/files');
+		$view = new View('/' . $user . '/files_trashbin/files');
 
 		if (ltrim($dir, '/') !== '' && !$view->is_dir($dir)) {
 			throw new \Exception('Directory does not exists');
@@ -37,7 +37,7 @@ class Helper {
 		$absoluteDir = $view->getAbsolutePath($dir);
 		$internalPath = $mount->getInternalPath($absoluteDir);
 
-		$extraData = \OCA\Files_Trashbin\Trashbin::getExtraData($user);
+		$extraData = Trashbin::getExtraData($user);
 		$dirContent = $storage->getCache()->getFolderContents($mount->getInternalPath($view->getAbsolutePath($dir)));
 		foreach ($dirContent as $entry) {
 			$entryName = $entry->getName();
@@ -99,7 +99,7 @@ class Helper {
 			$entry = \OCA\Files\Helper::formatFileInfo($i);
 			$entry['id'] = $i->getId();
 			$entry['etag'] = $entry['mtime']; // add fake etag, it is only needed to identify the preview image
-			$entry['permissions'] = \OCP\Constants::PERMISSION_READ;
+			$entry['permissions'] = Constants::PERMISSION_READ;
 			$files[] = $entry;
 		}
 		return $files;

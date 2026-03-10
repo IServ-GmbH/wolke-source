@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -70,7 +69,7 @@ class TrashItem implements ITrashItem {
 		return $this->fileInfo->getPath();
 	}
 
-	public function getMimetype() {
+	public function getMimetype(): string {
 		return $this->fileInfo->getMimetype();
 	}
 

@@ -4,11 +4,11 @@ namespace Rubix\ML\Clusterers;
 
 use Rubix\ML\Estimator;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Graph\Trees\Spatial;
 use Rubix\ML\Graph\Trees\BallTree;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -54,26 +54,26 @@ class DBSCAN implements Estimator
     public const NOISE = -1;
 
     /**
-     * The maximum distance between two points to be considered neighbors. The
-     * smaller the value, the tighter the clusters will be.
+     * The maximum distance between two points to be considered neighbors. The smaller the value,
+     * the tighter the clusters will be.
      *
      * @var float
      */
-    protected $radius;
+    protected float $radius;
 
     /**
      * The minimum number of points to from a dense region or cluster.
      *
      * @var int
      */
-    protected $minDensity;
+    protected int $minDensity;
 
     /**
      * The spatial tree used to run range searches.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
      * @param float $radius
@@ -127,7 +127,7 @@ class DBSCAN implements Estimator
     {
         return [
             'radius' => $this->radius,
-            'min_density' => $this->minDensity,
+            'min density' => $this->minDensity,
             'tree' => $this->tree,
         ];
     }
@@ -145,7 +145,7 @@ class DBSCAN implements Estimator
             new SamplesAreCompatibleWithEstimator($dataset, $this),
         ])->check();
 
-        $labels = range(0, $dataset->numRows() - 1);
+        $labels = range(0, $dataset->numSamples() - 1);
 
         $dataset = Labeled::quick($dataset->samples(), $labels);
 
@@ -171,7 +171,7 @@ class DBSCAN implements Estimator
             $predictions[$i] = $cluster;
 
             while ($indices) {
-                $index = array_pop($indices);
+                $index = (int) array_pop($indices);
 
                 if (isset($predictions[$index])) {
                     if ($predictions[$index] === self::NOISE) {
@@ -202,6 +202,8 @@ class DBSCAN implements Estimator
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

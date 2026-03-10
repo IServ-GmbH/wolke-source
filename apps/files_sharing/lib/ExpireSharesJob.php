@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -20,16 +19,11 @@ use OCP\Share\IShare;
  */
 class ExpireSharesJob extends TimedJob {
 
-	/** @var IManager */
-	private $shareManager;
-
-	/** @var IDBConnection */
-	private $db;
-
-	public function __construct(ITimeFactory $time, IManager $shareManager, IDBConnection $db) {
-		$this->shareManager = $shareManager;
-		$this->db = $db;
-
+	public function __construct(
+		ITimeFactory $time,
+		private IManager $shareManager,
+		private IDBConnection $db,
+	) {
 		parent::__construct($time);
 
 		// Run once a day
@@ -64,9 +58,9 @@ class ExpireSharesJob extends TimedJob {
 
 		$shares = $qb->executeQuery();
 		while ($share = $shares->fetch()) {
-			if ((int) $share['share_type'] === IShare::TYPE_LINK) {
+			if ((int)$share['share_type'] === IShare::TYPE_LINK) {
 				$id = 'ocinternal';
-			} elseif ((int) $share['share_type'] === IShare::TYPE_EMAIL) {
+			} elseif ((int)$share['share_type'] === IShare::TYPE_EMAIL) {
 				$id = 'ocMailShare';
 			}
 

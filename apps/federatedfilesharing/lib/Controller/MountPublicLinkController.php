@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -37,7 +36,6 @@ use Psr\Log\LoggerInterface;
  *
  * @package OCA\FederatedFileSharing\Controller
  */
-#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 class MountPublicLinkController extends Controller {
 	/**
 	 * MountPublicLinkController constructor.
@@ -65,12 +63,14 @@ class MountPublicLinkController extends Controller {
 	 * @param string $token Token of the share
 	 * @param string $password Password of the share
 	 * @return JSONResponse<Http::STATUS_OK, array{remoteUrl: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
-	 *                                                                                                                                                  200: Remote URL returned
-	 *                                                                                                                                                  400: Creating share is not possible
+	 *
+	 * 200: Remote URL returned
+	 * 400: Creating share is not possible
 	 */
 	#[NoCSRFRequired]
 	#[PublicPage]
 	#[BruteForceProtection(action: 'publicLink2FederatedShare')]
+	#[OpenAPI(scope: OpenAPI::SCOPE_FEDERATION)]
 	public function createFederatedShare($shareWith, $token, $password = '') {
 		if (!$this->federatedShareProvider->isOutgoingServer2serverShareEnabled()) {
 			return new JSONResponse(
@@ -89,9 +89,15 @@ class MountPublicLinkController extends Controller {
 		}
 
 		// make sure that user is authenticated in case of a password protected link
+		$allowedShareIds = $this->session->get(PublicAuth::DAV_AUTHENTICATED);
+		if (!is_array($allowedShareIds)) {
+			$allowedShareIds = [];
+		}
+
+		$authenticated = in_array($share->getId(), $allowedShareIds)
+			|| $this->shareManager->checkPassword($share, $password);
+
 		$storedPassword = $share->getPassword();
-		$authenticated = $this->session->get(PublicAuth::DAV_AUTHENTICATED) === $share->getId() ||
-			$this->shareManager->checkPassword($share, $password);
 		if (!empty($storedPassword) && !$authenticated) {
 			$response = new JSONResponse(
 				['message' => 'No permission to access the share'],

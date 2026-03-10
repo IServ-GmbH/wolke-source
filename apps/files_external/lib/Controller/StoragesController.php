@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -11,6 +10,7 @@ use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Backend\Backend;
 use OCA\Files_External\Lib\InsufficientDataForMeaningfulAnswerException;
 use OCA\Files_External\Lib\StorageConfig;
+use OCA\Files_External\MountConfig;
 use OCA\Files_External\NotFoundException;
 use OCA\Files_External\Service\StoragesService;
 use OCP\AppFramework\Controller;
@@ -46,7 +46,7 @@ abstract class StoragesController extends Controller {
 		protected LoggerInterface $logger,
 		protected IUserSession $userSession,
 		protected IGroupManager $groupManager,
-		protected IConfig $config
+		protected IConfig $config,
 	) {
 		parent::__construct($AppName, $request);
 	}
@@ -73,7 +73,7 @@ abstract class StoragesController extends Controller {
 		$mountOptions = null,
 		$applicableUsers = null,
 		$applicableGroups = null,
-		$priority = null
+		$priority = null,
 	) {
 		$canCreateNewLocalStorage = $this->config->getSystemValue('files_external_allow_create_new_local', true);
 		if (!$canCreateNewLocalStorage && $backend === 'local') {
@@ -222,7 +222,7 @@ abstract class StoragesController extends Controller {
 			$backend = $storage->getBackend();
 			// update status (can be time-consuming)
 			$storage->setStatus(
-				\OCA\Files_External\MountConfig::getBackendStatus(
+				MountConfig::getBackendStatus(
 					$backend->getStorageClass(),
 					$storage->getBackendOptions(),
 					false,
@@ -230,14 +230,14 @@ abstract class StoragesController extends Controller {
 				)
 			);
 		} catch (InsufficientDataForMeaningfulAnswerException $e) {
-			$status = $e->getCode() ? $e->getCode() : StorageNotAvailableException::STATUS_INDETERMINATE;
+			$status = $e->getCode() ?: StorageNotAvailableException::STATUS_INDETERMINATE;
 			$storage->setStatus(
-				(int) $status,
+				(int)$status,
 				$this->l10n->t('Insufficient data: %s', [$e->getMessage()])
 			);
 		} catch (StorageNotAvailableException $e) {
 			$storage->setStatus(
-				(int) $e->getCode(),
+				(int)$e->getCode(),
 				$this->l10n->t('%s', [$e->getMessage()])
 			);
 		} catch (\Exception $e) {

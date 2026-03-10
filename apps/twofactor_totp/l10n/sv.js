@@ -11,6 +11,7 @@ OC.L10N.register(
     "A two-factor authentication provider for TOTP (RFC 6238)" : "En leverantör av två-faktorsautentisering för TOTP (RFC 6238)",
     "Could not enable TOTP" : "Kunde inte aktivera TOTP",
     "Could not verify your key. Please try again" : "Kunde ej verifiera din nyckel. Vänligen försök igen",
+    "Could not confirm TOTP" : "Kunde inte bekräfta TOTP",
     "Enable TOTP" : "Aktivera TOTP",
     "Your new TOTP secret is:" : "Din nya TOTP-hemlighet är:",
     "For quick setup, scan this QR code with your TOTP app:" : "För snabb installation, skanna den här QR-koden med din TOTP-app:",
@@ -18,9 +19,6 @@ OC.L10N.register(
     "Authentication code" : "Autentiseringskod",
     "Verify" : "Verifiera",
     "Get the authentication code from the two-factor authentication app on your device." : "Skriv in autentiseringskoden från tvåfaktorsautentiseringsappen på din enhet.",
-    "Submit" : "Skicka",
-    "TOTP two-factor authentication disabled by an admin" : "TOTP två-faktor autentisering inaktiverad av en admin",
-    "TOTP two-factor provider" : "TOTP-leverantör av tvåfaktorsautentisering",
-    "A Two-Factor-Auth Provider for TOTP (RFC 6238)" : "En leverantör av tvåfaktorsautentisering för TOTP (RFC 6238)"
+    "Submit" : "Skicka"
 },
 "nplurals=2; plural=(n != 1);");

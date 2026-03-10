@@ -28,14 +28,14 @@ class RidgeTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -71,13 +71,18 @@ class RidgeTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->generator = new Hyperplane([1, 5.5, -7, 0.01], 35.0);
+        $this->generator = new Hyperplane([1.0, 5.5, -7, 0.01], 0.0, 1.0);
 
         $this->estimator = new Ridge(1.0);
 
         $this->metric = new RSquared();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -95,7 +100,7 @@ class RidgeTest extends TestCase
     /**
      * @test
      */
-    public function badAlpha() : void
+    public function badL2Penalty() : void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -146,7 +151,6 @@ class RidgeTest extends TestCase
         $this->assertIsArray($importances);
         $this->assertCount(4, $importances);
         $this->assertContainsOnly('float', $importances);
-        $this->assertEqualsWithDelta(1.0, array_sum($importances), 1e-8);
 
         $predictions = $this->estimator->predict($testing);
 
@@ -173,10 +177,5 @@ class RidgeTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

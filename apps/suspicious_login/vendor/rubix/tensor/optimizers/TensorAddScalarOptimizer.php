@@ -13,10 +13,10 @@ class TensorAddScalarOptimizer extends OptimizerAbstract
 {
     /**
      * @param mixed[] $expression
-     * @param \Zephir\Call $call
-     * @param \Zephir\CompilationContext $context
-     * @throws \Zephir\Exception\CompilerException
-     * @return \Zephir\CompiledExpression|bool
+     * @param Call $call
+     * @param CompilationContext $context
+     * @throws CompilerException
+     * @return CompiledExpression|bool
      */
     public function optimize(array $expression, Call $call, CompilationContext $context)
     {
@@ -34,6 +34,10 @@ class TensorAddScalarOptimizer extends OptimizerAbstract
         $call->processExpectedReturn($context);
 
         $symbolVariable = $call->getSymbolVariable();
+
+        if (empty($symbolVariable)) {
+            throw new CompilerException('Missing symbol variable.');
+        }
 
         if ($symbolVariable->getType() !== 'variable') {
             throw new CompilerException(

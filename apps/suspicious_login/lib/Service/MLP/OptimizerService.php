@@ -72,20 +72,20 @@ class OptimizerService {
 		TrainingResult ...$results): float {
 		$costs = array_map(function (TrainingResult $result) use ($output) {
 			$output->writeln(sprintf("  Training result: f1=%f, p(n)=%f, r(n)=%f, f1(n)=%f, p(y)=%f, r(y)=%f, f1(y)=%f, PSR=%d/%d/%d",
-				$result->getReport()['overall']['f1_score'],
+				$result->getReport()['overall']['f1 score'],
 				$result->getReport()['classes']['n']['precision'],
 				$result->getReport()['classes']['n']['recall'],
-				$result->getReport()['classes']['n']['f1_score'],
+				$result->getReport()['classes']['n']['f1 score'],
 				$result->getReport()['classes']['y']['precision'],
 				$result->getReport()['classes']['y']['recall'],
-				$result->getReport()['classes']['y']['f1_score'],
+				$result->getReport()['classes']['y']['f1 score'],
 				$result->getModel()->getSamplesPositive(),
 				$result->getModel()->getSamplesShuffled(),
 				$result->getModel()->getSamplesRandom()
 			));
 			return (
-				$result->getReport()['classes']['n']['f1_score'] +
-				$result->getReport()['overall']['f1_score']
+				$result->getReport()['classes']['n']['f1 score'] +
+				$result->getReport()['overall']['f1 score']
 			) / 2;
 		}, $results);
 
@@ -177,7 +177,7 @@ class OptimizerService {
 		$output->writeln("");
 
 		$this->printConfig($epochs, $stepWidth, $config, $output);
-		$tasks = array_map(function () use ($config, $collectedData, $strategy) {
+		$tasks = array_map(function ($index) use ($config, $collectedData, $strategy) {
 			return new TrainTask($config, $collectedData, $strategy);
 		}, range(1, $parallelism));
 		$best = $this->getAverageCost(
@@ -198,7 +198,7 @@ class OptimizerService {
 			$cost = $this->getAverageCost(
 				$output,
 				...Promise\wait(
-					Promise\all(array_map(function () use ($newConfig, $collectedData, $strategy) {
+					Promise\all(array_map(function ($index) use ($newConfig, $collectedData, $strategy) {
 						return enqueue(new TrainTask($newConfig, $collectedData, $strategy));
 					}, range(1, $parallelism)))
 				)

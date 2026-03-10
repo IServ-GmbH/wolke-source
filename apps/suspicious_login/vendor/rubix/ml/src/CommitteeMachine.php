@@ -2,17 +2,15 @@
 
 namespace Rubix\ML;
 
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Traits\Multiprocessing;
 use Rubix\ML\Backends\Tasks\Predict;
-use Rubix\ML\Other\Traits\LoggerAware;
-use Rubix\ML\Other\Traits\PredictsSingle;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Backends\Tasks\TrainLearner;
-use Rubix\ML\Other\Traits\Multiprocessing;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -40,9 +38,9 @@ use function in_array;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persistable
+class CommitteeMachine implements Estimator, Learner, Parallel, Persistable
 {
-    use AutotrackRevisions, Multiprocessing, PredictsSingle, LoggerAware;
+    use AutotrackRevisions, Multiprocessing;
 
     /**
      * The integer-encoded estimator types this ensemble is compatible with.
@@ -60,28 +58,28 @@ class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persist
      *
      * @var list<\Rubix\ML\Learner>
      */
-    protected $experts;
+    protected array $experts;
 
     /**
      * The influence values of each expert in the committee.
      *
      * @var list<float>
      */
-    protected $influences;
+    protected array $influences;
 
     /**
      * The data types that the committee is compatible with.
      *
      * @var list<\Rubix\ML\DataType>
      */
-    protected $compatibility;
+    protected array $compatibility;
 
     /**
      * The zero vector of each possible discrete outcome.
      *
      * @var float[]
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
@@ -250,17 +248,12 @@ class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persist
 
         SpecificationChain::with($specifications)->check();
 
-        if ($this->logger) {
-            $this->logger->info("$this initialized");
-        }
-
         $this->backend->flush();
 
         foreach ($this->experts as $estimator) {
-            $this->backend->enqueue(
-                new TrainLearner($estimator, $dataset),
-                [$this, 'afterTrain']
-            );
+            $task = new TrainLearner($estimator, $dataset);
+
+            $this->backend->enqueue($task);
         }
 
         $this->experts = $this->backend->process();
@@ -277,29 +270,6 @@ class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persist
                 $this->classes = [0 => 0.0, 1 => 0.0];
 
                 break;
-        }
-
-        if ($this->logger) {
-            $this->logger->info('Training complete');
-        }
-    }
-
-    /**
-     * The callback that executes after the training task.
-     *
-     * @internal
-     *
-     * @param \Rubix\ML\Learner $estimator
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     */
-    public function afterTrain(Learner $estimator) : void
-    {
-        if (!$estimator->trained()) {
-            throw new RuntimeException("There was a problem training $estimator.");
-        }
-
-        if ($this->logger) {
-            $this->logger->info("$estimator finished training");
         }
     }
 
@@ -318,7 +288,9 @@ class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persist
         $this->backend->flush();
 
         foreach ($this->experts as $estimator) {
-            $this->backend->enqueue(new Predict($estimator, $dataset));
+            $task = new Predict($estimator, $dataset);
+
+            $this->backend->enqueue($task);
         }
 
         $aggregate = array_transpose($this->backend->process());
@@ -363,6 +335,8 @@ class CommitteeMachine implements Estimator, Learner, Parallel, Verbose, Persist
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

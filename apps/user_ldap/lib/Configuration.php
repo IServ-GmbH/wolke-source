@@ -7,6 +7,7 @@
  */
 namespace OCA\User_LDAP;
 
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -80,6 +81,8 @@ use Psr\Log\LoggerInterface;
  * @property string $ldapAttributeHeadline
  * @property string $ldapAttributeBiography
  * @property string $ldapAdminGroup
+ * @property string $ldapAttributeBirthDate
+ * @property string $ldapAttributePronouns
  */
 class Configuration {
 	public const AVATAR_PREFIX_DEFAULT = 'default';
@@ -89,11 +92,6 @@ class Configuration {
 	public const LDAP_SERVER_FEATURE_UNKNOWN = 'unknown';
 	public const LDAP_SERVER_FEATURE_AVAILABLE = 'available';
 	public const LDAP_SERVER_FEATURE_UNAVAILABLE = 'unavailable';
-
-	/**
-	 * @var string
-	 */
-	protected $configPrefix;
 	/**
 	 * @var bool
 	 */
@@ -179,10 +177,13 @@ class Configuration {
 		'ldapAdminGroup' => '',
 		'ldapAttributeBirthDate' => null,
 		'ldapAttributeAnniversaryDate' => null,
+		'ldapAttributePronouns' => null,
 	];
 
-	public function __construct(string $configPrefix, bool $autoRead = true) {
-		$this->configPrefix = $configPrefix;
+	public function __construct(
+		protected string $configPrefix,
+		bool $autoRead = true,
+	) {
 		if ($autoRead) {
 			$this->readConfiguration();
 		}
@@ -238,7 +239,7 @@ class Configuration {
 				case 'homeFolderNamingRule':
 					$trimmedVal = trim($val);
 					if ($trimmedVal !== '' && !str_contains($val, 'attr:')) {
-						$val = 'attr:'.$trimmedVal;
+						$val = 'attr:' . $trimmedVal;
 					}
 					break;
 				case 'ldapBase':
@@ -315,6 +316,7 @@ class Configuration {
 					case 'ldapAttributeBiography':
 					case 'ldapAttributeBirthDate':
 					case 'ldapAttributeAnniversaryDate':
+					case 'ldapAttributePronouns':
 						$readMethod = 'getLcValue';
 						break;
 					case 'ldapUserDisplayName':
@@ -370,7 +372,7 @@ class Configuration {
 			$this->saveValue($cta[$key], $value);
 		}
 		if ($changed) {
-			$this->saveValue('_lastChange', (string) time());
+			$this->saveValue('_lastChange', (string)time());
 		}
 		$this->unsavedChanges = [];
 	}
@@ -446,7 +448,7 @@ class Configuration {
 			$defaults = $this->getDefaults();
 		}
 		return \OC::$server->getConfig()->getAppValue('user_ldap',
-			$this->configPrefix.$varName,
+			$this->configPrefix . $varName,
 			$defaults[$varName]);
 	}
 
@@ -476,7 +478,7 @@ class Configuration {
 	protected function saveValue(string $varName, string $value): bool {
 		\OC::$server->getConfig()->setAppValue(
 			'user_ldap',
-			$this->configPrefix.$varName,
+			$this->configPrefix . $varName,
 			$value
 		);
 		return true;
@@ -559,6 +561,7 @@ class Configuration {
 			'ldap_admin_group' => '',
 			'ldap_attr_birthdate' => '',
 			'ldap_attr_anniversarydate' => '',
+			'ldap_attr_pronouns' => '',
 		];
 	}
 
@@ -638,6 +641,7 @@ class Configuration {
 			'ldap_admin_group' => 'ldapAdminGroup',
 			'ldap_attr_birthdate' => 'ldapAttributeBirthDate',
 			'ldap_attr_anniversarydate' => 'ldapAttributeAnniversaryDate',
+			'ldap_attr_pronouns' => 'ldapAttributePronouns',
 		];
 		return $array;
 	}
@@ -667,7 +671,7 @@ class Configuration {
 			return [strtolower($attribute)];
 		}
 		if ($value !== self::AVATAR_PREFIX_DEFAULT) {
-			\OCP\Server::get(LoggerInterface::class)->warning('Invalid config value to ldapUserAvatarRule; falling back to default.');
+			Server::get(LoggerInterface::class)->warning('Invalid config value to ldapUserAvatarRule; falling back to default.');
 		}
 		return $defaultAttributes;
 	}

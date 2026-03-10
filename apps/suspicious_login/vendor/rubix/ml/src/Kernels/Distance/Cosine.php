@@ -4,8 +4,6 @@ namespace Rubix\ML\Kernels\Distance;
 
 use Rubix\ML\DataType;
 
-use const Rubix\ML\EPSILON;
-
 /**
  * Cosine
  *
@@ -17,8 +15,6 @@ use const Rubix\ML\EPSILON;
  * distance kernel, we subtract the Cosine Similarity from 1 in order to
  * satisfy the positive semi-definite condition, therefore the Cosine distance
  * is a number between 0 and 2.
- *
- * > **Note:** This distance kernel is optimized for sparse (mainly zeros) coordinate vectors.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
@@ -56,20 +52,10 @@ class Cosine implements Distance
         foreach ($a as $i => $valueA) {
             $valueB = $b[$i];
 
-            if ($valueA != 0 and $valueB != 0) {
-                $sigma += $valueA * $valueB;
+            $sigma += $valueA * $valueB;
 
-                $ssA += $valueA ** 2;
-                $ssB += $valueB ** 2;
-            } else {
-                if ($valueA != 0) {
-                    $ssA += $valueA ** 2;
-                }
-
-                if ($valueB != 0) {
-                    $ssB += $valueB ** 2;
-                }
-            }
+            $ssA += $valueA ** 2;
+            $ssB += $valueB ** 2;
         }
 
         if ($ssA === 0.0 and $ssB === 0.0) {
@@ -80,11 +66,13 @@ class Cosine implements Distance
             return 2.0;
         }
 
-        return 1.0 - ($sigma / (sqrt($ssA * $ssB) ?: EPSILON));
+        return 1.0 - ($sigma / sqrt($ssA * $ssB));
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

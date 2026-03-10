@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,7 +7,9 @@
 namespace OCA\DAV\Connector\Sabre;
 
 use OC\KnownUser\KnownUserService;
+use OCA\Circles\Api\v1\Circles;
 use OCA\Circles\Exceptions\CircleNotFoundException;
+use OCA\Circles\Model\Circle;
 use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\Traits\PrincipalProxyTrait;
 use OCP\Accounts\IAccountManager;
@@ -31,24 +32,6 @@ use Sabre\DAVACL\PrincipalBackend\BackendInterface;
 
 class Principal implements BackendInterface {
 
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var IGroupManager */
-	private $groupManager;
-
-	/** @var IAccountManager */
-	private $accountManager;
-
-	/** @var IShareManager */
-	private $shareManager;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	/** @var IAppManager */
-	private $appManager;
-
 	/** @var string */
 	private $principalPrefix;
 
@@ -64,34 +47,23 @@ class Principal implements BackendInterface {
 	/** @var KnownUserService */
 	private $knownUserService;
 
-	/** @var IConfig */
-	private $config;
-	/** @var IFactory */
-	private $languageFactory;
-
-	public function __construct(IUserManager $userManager,
-		IGroupManager $groupManager,
-		IAccountManager $accountManager,
-		IShareManager $shareManager,
-		IUserSession $userSession,
-		IAppManager $appManager,
+	public function __construct(
+		private IUserManager $userManager,
+		private IGroupManager $groupManager,
+		private IAccountManager $accountManager,
+		private IShareManager $shareManager,
+		private IUserSession $userSession,
+		private IAppManager $appManager,
 		ProxyMapper $proxyMapper,
 		KnownUserService $knownUserService,
-		IConfig $config,
-		IFactory $languageFactory,
-		string $principalPrefix = 'principals/users/') {
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->accountManager = $accountManager;
-		$this->shareManager = $shareManager;
-		$this->userSession = $userSession;
-		$this->appManager = $appManager;
+		private IConfig $config,
+		private IFactory $languageFactory,
+		string $principalPrefix = 'principals/users/',
+	) {
 		$this->principalPrefix = trim($principalPrefix, '/');
 		$this->hasGroups = $this->hasCircles = ($principalPrefix === 'principals/users/');
 		$this->proxyMapper = $proxyMapper;
 		$this->knownUserService = $knownUserService;
-		$this->config = $config;
-		$this->languageFactory = $languageFactory;
 	}
 
 	use PrincipalProxyTrait {
@@ -534,7 +506,7 @@ class Principal implements BackendInterface {
 		}
 
 		try {
-			$circle = \OCA\Circles\Api\v1\Circles::detailsCircle($circleUniqueId, true);
+			$circle = Circles::detailsCircle($circleUniqueId, true);
 		} catch (QueryException $ex) {
 			return null;
 		} catch (CircleNotFoundException $ex) {
@@ -559,7 +531,7 @@ class Principal implements BackendInterface {
 	 * @param string $principal
 	 * @return array
 	 * @throws Exception
-	 * @throws \OCP\AppFramework\QueryException
+	 * @throws QueryException
 	 * @suppress PhanUndeclaredClassMethod
 	 */
 	public function getCircleMembership($principal):array {
@@ -574,10 +546,10 @@ class Principal implements BackendInterface {
 				throw new Exception('Principal not found');
 			}
 
-			$circles = \OCA\Circles\Api\v1\Circles::joinedCircles($name, true);
+			$circles = Circles::joinedCircles($name, true);
 
 			$circles = array_map(function ($circle) {
-				/** @var \OCA\Circles\Model\Circle $circle */
+				/** @var Circle $circle */
 				return 'principals/circles/' . urlencode($circle->getSingleId());
 			}, $circles);
 

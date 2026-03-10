@@ -20,13 +20,10 @@ use OCP\User\Events\UserCreatedEvent;
  * @template-implements IEventListener<Event|UserCreatedEvent>
  */
 class UserCreatedListener implements IEventListener {
-	private SettingsMapper $settingsMapper;
-	private IConfig $config;
-
-
-	public function __construct(SettingsMapper $settingsMapper, IConfig $config) {
-		$this->settingsMapper = $settingsMapper;
-		$this->config = $config;
+	public function __construct(
+		private SettingsMapper $settingsMapper,
+		private IConfig $config,
+	) {
 	}
 
 	public function handle(Event $event): void {
@@ -39,7 +36,7 @@ class UserCreatedListener implements IEventListener {
 
 		$defaultSoundNotification = $this->config->getAppValue(Application::APP_ID, 'sound_notification') === 'yes' ? 'yes' : 'no';
 		$defaultSoundTalk = $this->config->getAppValue(Application::APP_ID, 'sound_talk') === 'yes' ? 'yes' : 'no';
-		$defaultBatchtime = (int) $this->config->getAppValue(Application::APP_ID, 'setting_batchtime');
+		$defaultBatchtime = (int)$this->config->getAppValue(Application::APP_ID, 'setting_batchtime');
 
 		if ($defaultBatchtime !== Settings::EMAIL_SEND_WEEKLY
 			&& $defaultBatchtime !== Settings::EMAIL_SEND_DAILY

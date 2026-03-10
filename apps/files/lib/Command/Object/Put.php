@@ -37,7 +37,7 @@ class Put extends Command {
 
 	public function execute(InputInterface $input, OutputInterface $output): int {
 		$object = $input->getArgument('object');
-		$inputName = (string) $input->getArgument('input');
+		$inputName = (string)$input->getArgument('input');
 		$objectStore = $this->objectUtils->getObjectStore($input->getOption('bucket'), $output);
 		if (!$objectStore) {
 			return -1;

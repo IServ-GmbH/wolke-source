@@ -1,0 +1,13 @@
+{
+	"config": {
+		"platform": {
+			"php": "8.1"
+		}
+	},
+	"require-dev": {
+		"nextcloud/ocp": "dev-stable31",
+		"psalm/phar": "~6.4.0",
+		"symfony/console": "v6",
+		"sabre/dav": "^4.4.0"
+	}
+}

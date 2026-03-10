@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -18,15 +17,10 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 class BulkUploadPlugin extends ServerPlugin {
-	private Folder $userFolder;
-	private LoggerInterface $logger;
-
 	public function __construct(
-		Folder $userFolder,
-		LoggerInterface $logger
+		private Folder $userFolder,
+		private LoggerInterface $logger,
 	) {
-		$this->userFolder = $userFolder;
-		$this->logger = $logger;
 	}
 
 	/**

@@ -28,14 +28,16 @@ use Sabre\VObject\Reader;
 use Sabre\VObject\Recur\RRuleIterator;
 
 class UserStatusAutomation extends TimedJob {
-	public function __construct(private ITimeFactory $timeFactory,
+	public function __construct(
+		private ITimeFactory $timeFactory,
 		private IDBConnection $connection,
 		private IJobList $jobList,
 		private LoggerInterface $logger,
 		private IManager $manager,
 		private IConfig $config,
 		private IAvailabilityCoordinator $coordinator,
-		private IUserManager $userManager) {
+		private IUserManager $userManager,
+	) {
 		parent::__construct($timeFactory);
 
 		// interval = 0 might look odd, but it's intentional. last_run is set to
@@ -151,7 +153,7 @@ class UserStatusAutomation extends TimedJob {
 					$effectiveEnd = \DateTime::createFromImmutable($originalEnd)->sub(new \DateInterval('P7D'));
 
 					try {
-						$it = new RRuleIterator((string) $available->RRULE, $effectiveStart);
+						$it = new RRuleIterator((string)$available->RRULE, $effectiveStart);
 						$it->fastForward($lastMidnight);
 
 						$startToday = $it->current();

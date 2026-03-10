@@ -69,7 +69,7 @@ class LinkReferenceProvider implements IReferenceProvider, IPublicReferenceProvi
 			return false;
 		}
 
-		return (bool) preg_match(IURLGenerator::URL_REGEX, $referenceText);
+		return (bool)preg_match(IURLGenerator::URL_REGEX, $referenceText);
 	}
 
 	/**
@@ -114,14 +114,14 @@ class LinkReferenceProvider implements IReferenceProvider, IPublicReferenceProvi
 
 		$client = $this->clientService->newClient();
 		try {
-			$headResponse = $client->head($reference->getId(), [ 'timeout' => 10 ]);
+			$headResponse = $client->head($reference->getId(), [ 'timeout' => 3 ]);
 		} catch (\Exception $e) {
 			$this->logger->debug('Failed to perform HEAD request to get target metadata', ['exception' => $e]);
 			return;
 		}
 
 		$linkContentLength = $headResponse->getHeader('Content-Length');
-		if (is_numeric($linkContentLength) && (int) $linkContentLength > self::MAX_CONTENT_LENGTH) {
+		if (is_numeric($linkContentLength) && (int)$linkContentLength > self::MAX_CONTENT_LENGTH) {
 			$this->logger->debug('[Head] Skip resolving links pointing to content length > 5 MiB');
 			return;
 		}
@@ -136,7 +136,7 @@ class LinkReferenceProvider implements IReferenceProvider, IPublicReferenceProvi
 		}
 
 		try {
-			$response = $client->get($reference->getId(), [ 'timeout' => 10, 'stream' => true ]);
+			$response = $client->get($reference->getId(), [ 'timeout' => 3, 'stream' => true ]);
 		} catch (\Exception $e) {
 			$this->logger->debug('Failed to fetch link for obtaining open graph data', ['exception' => $e]);
 			return;
@@ -184,15 +184,21 @@ class LinkReferenceProvider implements IReferenceProvider, IPublicReferenceProvi
 					$folder = $appData->newFolder('opengraph');
 				}
 
-				$response = $client->get($object->images[0]->url, ['timeout' => 10]);
+				$response = $client->get($object->images[0]->url, ['timeout' => 3]);
 				$contentType = $response->getHeader('Content-Type');
 				$contentLength = $response->getHeader('Content-Length');
 
 				if (in_array($contentType, self::ALLOWED_CONTENT_TYPES, true) && $contentLength < self::MAX_CONTENT_LENGTH) {
 					$stream = Utils::streamFor($response->getBody());
 					$bodyStream = new LimitStream($stream, self::MAX_CONTENT_LENGTH, 0);
+					$content = $bodyStream->getContents();
+
+					if ($contentType === 'image/svg+xml' && stripos(html_entity_decode($content, ENT_XML1), 'XSL/Transform') !== false) {
+						return;
+					}
+
 					$reference->setImageContentType($contentType);
-					$folder->newFile(md5($reference->getId()), $bodyStream->getContents());
+					$folder->newFile(md5($reference->getId()), $content);
 					$reference->setImageUrl($this->urlGenerator->linkToRouteAbsolute('core.Reference.preview', ['referenceId' => md5($reference->getId())]));
 				}
 			} catch (\Exception $e) {

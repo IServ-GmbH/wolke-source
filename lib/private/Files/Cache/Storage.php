@@ -53,14 +53,14 @@ class Storage {
 		$this->storageId = self::adjustStorageId($this->storageId);
 
 		if ($row = self::getStorageById($this->storageId)) {
-			$this->numericId = (int) $row['numeric_id'];
+			$this->numericId = (int)$row['numeric_id'];
 		} else {
 			$available = $isAvailable ? 1 : 0;
 			if ($connection->insertIfNotExist('*PREFIX*storages', ['id' => $this->storageId, 'available' => $available])) {
 				$this->numericId = $connection->lastInsertId('*PREFIX*storages');
 			} else {
 				if ($row = self::getStorageById($this->storageId)) {
-					$this->numericId = (int) $row['numeric_id'];
+					$this->numericId = (int)$row['numeric_id'];
 				} else {
 					throw new \RuntimeException('Storage could neither be inserted nor be selected from the database: ' . $this->storageId);
 				}
@@ -119,19 +119,19 @@ class Storage {
 		$storageId = self::adjustStorageId($storageId);
 
 		if ($row = self::getStorageById($storageId)) {
-			return (int) $row['numeric_id'];
+			return (int)$row['numeric_id'];
 		} else {
 			return null;
 		}
 	}
 
 	/**
-	 * @return array [ available, last_checked ]
+	 * @return array{available: bool, last_checked: int}
 	 */
 	public function getAvailability() {
 		if ($row = self::getStorageById($this->storageId)) {
 			return [
-				'available' => (int) $row['available'] === 1,
+				'available' => (int)$row['available'] === 1,
 				'last_checked' => $row['last_checked']
 			];
 		} else {
@@ -149,7 +149,7 @@ class Storage {
 	public function setAvailability($isAvailable, int $delay = 0) {
 		$available = $isAvailable ? 1 : 0;
 		if (!$isAvailable) {
-			\OC::$server->get(LoggerInterface::class)->info('Storage with ' . $this->storageId . ' marked as unavailable', ['app' => 'lib']);
+			\OCP\Server::get(LoggerInterface::class)->info('Storage with ' . $this->storageId . ' marked as unavailable', ['app' => 'lib']);
 		}
 
 		$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
@@ -157,7 +157,7 @@ class Storage {
 			->set('available', $query->createNamedParameter($available))
 			->set('last_checked', $query->createNamedParameter(time() + $delay))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->storageId)));
-		$query->execute();
+		$query->executeStatement();
 	}
 
 	/**
@@ -182,13 +182,13 @@ class Storage {
 		$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
 		$query->delete('storages')
 			->where($query->expr()->eq('id', $query->createNamedParameter($storageId)));
-		$query->execute();
+		$query->executeStatement();
 
 		if (!is_null($numericId)) {
 			$query = \OC::$server->getDatabaseConnection()->getQueryBuilder();
 			$query->delete('filecache')
 				->where($query->expr()->eq('storage', $query->createNamedParameter($numericId)));
-			$query->execute();
+			$query->executeStatement();
 		}
 	}
 

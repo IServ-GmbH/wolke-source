@@ -13,8 +13,11 @@ OC.L10N.register(
     "Favorite" : "Дуртай",
     "Go back" : "Буцах",
     "Home" : "Нүүр",
+    "General" : "ерөнхий",
     "Remove from favorites" : "Remove from favorites",
     "Details" : "Дэлгэрэнгүй",
+    "Cancel" : "Cancel",
+    "Confirm" : "Батлах",
     "Add" : "нэмэх"
 },
 "nplurals=2; plural=(n != 1);");

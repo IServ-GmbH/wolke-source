@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -16,9 +15,6 @@ class Expiration {
 	// how long do we keep files a version if no other value is defined in the config file (unit: days)
 	public const NO_OBLIGATION = -1;
 
-	/** @var ITimeFactory */
-	private $timeFactory;
-
 	/** @var string */
 	private $retentionObligation;
 
@@ -31,12 +27,11 @@ class Expiration {
 	/** @var bool */
 	private $canPurgeToSaveSpace;
 
-	/** @var LoggerInterface */
-	private $logger;
-
-	public function __construct(IConfig $config, ITimeFactory $timeFactory, LoggerInterface $logger) {
-		$this->timeFactory = $timeFactory;
-		$this->logger = $logger;
+	public function __construct(
+		IConfig $config,
+		private ITimeFactory $timeFactory,
+		private LoggerInterface $logger,
+	) {
 		$this->retentionObligation = $config->getSystemValue('versions_retention_obligation', 'auto');
 
 		if ($this->retentionObligation !== 'disabled') {
@@ -180,13 +175,13 @@ class Expiration {
 			$this->canPurgeToSaveSpace = true;
 		} elseif ($minValue !== 'auto' && $maxValue === 'auto') {
 			// Keep for X days but delete anytime if space needed
-			$this->minAge = (int) $minValue;
+			$this->minAge = (int)$minValue;
 			$this->maxAge = self::NO_OBLIGATION;
 			$this->canPurgeToSaveSpace = true;
 		} elseif ($minValue === 'auto' && $maxValue !== 'auto') {
 			// Delete anytime if space needed, Delete all older than max automatically
 			$this->minAge = self::NO_OBLIGATION;
-			$this->maxAge = (int) $maxValue;
+			$this->maxAge = (int)$maxValue;
 			$this->canPurgeToSaveSpace = true;
 		} elseif ($minValue !== 'auto' && $maxValue !== 'auto') {
 			// Delete all older than max OR older than min if space needed
@@ -196,8 +191,8 @@ class Expiration {
 				$maxValue = $minValue;
 			}
 
-			$this->minAge = (int) $minValue;
-			$this->maxAge = (int) $maxValue;
+			$this->minAge = (int)$minValue;
+			$this->maxAge = (int)$maxValue;
 			$this->canPurgeToSaveSpace = false;
 		}
 	}

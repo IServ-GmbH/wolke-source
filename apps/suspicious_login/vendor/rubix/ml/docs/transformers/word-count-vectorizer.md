@@ -10,17 +10,17 @@ The Word Count Vectorizer builds a vocabulary from the training samples and tran
 ## Parameters
 | # | Name | Default | Type | Description |
 |---|---|---|---|---|
-| 1 | maxVocabulary | PHP_INT_MAX | int | The maximum number of words to encode into each document vector. |
-| 2 | minDocumentFrequency | 1 | int | The minimum number of documents a word must appear in to be added to the vocabulary. |
-| 3 | maxDocumentFrequency | PHP_INT_MAX | int | The maximum number of documents a word can appear in to be added to the vocabulary. |
-| 4 | tokenizer | Word | Tokenizer | The tokenizer used to extract tokens from blobs of text. |
+| 1 | maxVocabularySize | PHP_INT_MAX | int | The maximum number of unique tokens to embed into each document vector. |
+| 2 | minDocumentCount | 1 | float | The minimum number of documents a word must appear in to be added to the vocabulary. |
+| 3 | maxDocumentRatio | 0.8 | float | The maximum ratio of documents a word can appear in to be added to the vocabulary. |
+| 4 | tokenizer | Word | Tokenizer | The tokenizer used to extract features from blobs of text. |
 
 ## Example
 ```php
 use Rubix\ML\Transformers\WordCountVectorizer;
-use Rubix\ML\Other\Tokenizers\NGram;
+use Rubix\ML\Tokenizers\NGram;
 
-$transformer = new WordCountVectorizer(10000, 3, 500, new NGram(1, 2));
+$transformer = new WordCountVectorizer(10000, 5, 0.5, new NGram(1, 2));
 ```
 
 ## Additional Methods

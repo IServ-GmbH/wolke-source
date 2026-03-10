@@ -2,20 +2,15 @@
 
 namespace Rubix\ML;
 
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Transformers\Elastic;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\Transformers\Stateful;
 use Rubix\ML\Transformers\Transformer;
-use Rubix\ML\Other\Traits\ProbaSingle;
-use Rubix\ML\Other\Traits\LoggerAware;
 use Rubix\ML\AnomalyDetectors\Scoring;
-use Rubix\ML\Other\Traits\RanksSingle;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
-use Psr\Log\LoggerInterface;
 
 /**
  * Pipeline
@@ -30,16 +25,16 @@ use Psr\Log\LoggerInterface;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verbose, Persistable
+class Pipeline implements Online, Probabilistic, Scoring, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, ProbaSingle, RanksSingle, LoggerAware;
+    use AutotrackRevisions;
 
     /**
      * A list of transformers to be applied in series.
      *
      * @var list<\Rubix\ML\Transformers\Transformer>
      */
-    protected $transformers = [
+    protected array $transformers = [
         //
     ];
 
@@ -48,21 +43,14 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
      *
      * @var \Rubix\ML\Estimator
      */
-    protected $base;
+    protected \Rubix\ML\Estimator $base;
 
     /**
      * Should we update the elastic transformers during partial train?
      *
      * @var bool
      */
-    protected $elastic;
-
-    /**
-     * The PSR-3 logger instance.
-     *
-     * @var \Psr\Log\LoggerInterface|null
-     */
-    protected $logger;
+    protected bool $elastic;
 
     /**
      * @param \Rubix\ML\Transformers\Transformer[] $transformers
@@ -125,20 +113,6 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
     }
 
     /**
-     * Sets a logger instance on the object.
-     *
-     * @param \Psr\Log\LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger) : void
-    {
-        if ($this->base instanceof Verbose) {
-            $this->base->setLogger($logger);
-        }
-
-        $this->logger = $logger;
-    }
-
-    /**
      * Has the learner been trained?
      *
      * @return bool
@@ -171,10 +145,6 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
         foreach ($this->transformers as $transformer) {
             if ($transformer instanceof Stateful) {
                 $transformer->fit($dataset);
-
-                if ($this->logger) {
-                    $this->logger->info("Fitted $transformer");
-                }
             }
 
             $dataset->apply($transformer);
@@ -196,10 +166,6 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
             foreach ($this->transformers as $transformer) {
                 if ($transformer instanceof Elastic) {
                     $transformer->update($dataset);
-
-                    if ($this->logger) {
-                        $this->logger->info("Updated $transformer");
-                    }
                 }
 
                 $dataset->apply($transformer);
@@ -217,10 +183,15 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
      * Preprocess the dataset and return predictions from the estimator.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return mixed[]
      */
     public function predict(Dataset $dataset) : array
     {
+        if (!$this->trained()) {
+            throw new RuntimeException('Estimator has not been trained.');
+        }
+
         $this->preprocess($dataset);
 
         return $this->base->predict($dataset);
@@ -231,10 +202,14 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return array[]
+     * @return list<float[]>
      */
     public function proba(Dataset $dataset) : array
     {
+        if (!$this->trained()) {
+            throw new RuntimeException('Estimator has not been trained.');
+        }
+
         $this->preprocess($dataset);
 
         if (!$this->base instanceof Probabilistic) {
@@ -258,25 +233,10 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
 
         if (!$this->base instanceof Scoring) {
             throw new RuntimeException('Base Estimator must'
-                . ' implement the Ranking interface.');
+                . ' implement the Scoring interface.');
         }
 
         return $this->base->score($dataset);
-    }
-
-    /**
-     * Return the anomaly scores assigned to the samples in a dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return float[]
-     */
-    public function rank(Dataset $dataset) : array
-    {
-        warn_deprecated('Rank() is deprecated, use score() instead.');
-
-        return $this->score($dataset);
     }
 
     /**
@@ -311,6 +271,8 @@ class Pipeline implements Online, Wrapper, Probabilistic, Scoring, Ranking, Verb
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -31,6 +31,7 @@
     "Need help? ↗" : "نیاز به راهنمایی دارید؟ ↗",
     "Calendar and contacts ↗" : "تقویم و مخاطبین",
     "Welcome to {cloudName}!" : "Welcome to {cloudName}!",
+    "Skip" : "پرش.",
     "Privacy" : "محرمانگی",
     "Community" : "انجمن",
     "Share via email" : "Share via email",
@@ -38,10 +39,7 @@
     "Server address" : "آدرس سرور",
     "Use this link to connect your apps and desktop client to this server:" : "برای اتصال برنامه ها و مشتری دسک تاپ خود به این سرور از این لینک استفاده کنید:",
     "What's new?" : "What's new?",
-    "Read more" : "بیشتر بخوانید",
     "Share on social media" : "Share on social media",
-    "App recommendation: Nextcloud Calendar" : "توصیه برنامه: تقویم نکست‌کلود",
-    "App recommendation: Nextcloud Contacts" : "توصیه برنامه: مخاطبین Nextcloud",
-    "App recommendation: Nextcloud Mail" : "توصیه برنامه: ایمیل Nextcloud"
+    "Read more" : "بیشتر بخوانید"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

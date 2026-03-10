@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -49,7 +48,7 @@ class CloudFederationShare implements ICloudFederationShare {
 		$sharedByDisplayName = '',
 		$shareType = '',
 		$resourceType = '',
-		$sharedSecret = ''
+		$sharedSecret = '',
 	) {
 		$this->setShareWith($shareWith);
 		$this->setResourceName($name);

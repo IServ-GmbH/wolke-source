@@ -2,7 +2,7 @@
 
 namespace Rubix\ML\CrossValidation\Metrics;
 
-use Rubix\ML\Estimator;
+use Rubix\ML\Tuple;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 
@@ -30,7 +30,7 @@ class VMeasure implements Metric
      *
      * @var float
      */
-    protected $beta;
+    protected float $beta;
 
     /**
      * @param float $beta
@@ -49,11 +49,11 @@ class VMeasure implements Metric
     /**
      * Return a tuple of the min and max output value for this metric.
      *
-     * @return array{float,float}
+     * @return \Rubix\ML\Tuple{float,float}
      */
-    public function range() : array
+    public function range() : Tuple
     {
-        return [0.0, 1.0];
+        return new Tuple(0.0, 1.0);
     }
 
     /**
@@ -88,6 +88,8 @@ class VMeasure implements Metric
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

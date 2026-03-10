@@ -50,7 +50,6 @@ class Propagator implements IPropagator {
 		$this->clock = Server::get(ClockInterface::class);
 	}
 
-
 	/**
 	 * @param string $internalPath
 	 * @param int $time
@@ -64,7 +63,7 @@ class Propagator implements IPropagator {
 			}
 		}
 
-		$time = min((int) $time, $this->clock->now()->getTimestamp());
+		$time = min((int)$time, $this->clock->now()->getTimestamp());
 
 		$storageId = $this->storage->getStorageCache()->getNumericId();
 
@@ -188,7 +187,7 @@ class Propagator implements IPropagator {
 		$this->connection->beginTransaction();
 
 		$query = $this->connection->getQueryBuilder();
-		$storageId = (int) $this->storage->getStorageCache()->getNumericId();
+		$storageId = (int)$this->storage->getStorageCache()->getNumericId();
 
 		$query->update('filecache')
 			->set('mtime', $query->func()->greatest('mtime', $query->createParameter('time')))
@@ -207,13 +206,13 @@ class Propagator implements IPropagator {
 			$query->setParameter('time', $item['time'], IQueryBuilder::PARAM_INT);
 			$query->setParameter('hash', $item['hash']);
 
-			$query->execute();
+			$query->executeStatement();
 
 			if ($item['size']) {
 				$sizeQuery->setParameter('size', $item['size'], IQueryBuilder::PARAM_INT);
 				$sizeQuery->setParameter('hash', $item['hash']);
 
-				$sizeQuery->execute();
+				$sizeQuery->executeStatement();
 			}
 		}
 

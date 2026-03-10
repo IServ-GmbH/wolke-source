@@ -40,21 +40,21 @@ class BallTree implements BinaryTree, Spatial
      *
      * @var int
      */
-    protected $maxLeafSize;
+    protected int $maxLeafSize;
 
     /**
      * The distance function to use when computing the distances.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * The root node of the tree.
      *
      * @var \Rubix\ML\Graph\Nodes\Ball|null
      */
-    protected $root;
+    protected ?\Rubix\ML\Graph\Nodes\Ball $root = null;
 
     /**
      * @param int $maxLeafSize
@@ -138,11 +138,11 @@ class BallTree implements BinaryTree, Spatial
         $stack = [$this->root];
 
         while ($current = array_pop($stack)) {
-            [$left, $right] = $current->groups();
+            [$left, $right] = $current->subsets();
 
             $current->cleanup();
 
-            if ($left->numRows() > $this->maxLeafSize) {
+            if ($left->numSamples() > $this->maxLeafSize) {
                 $node = Ball::split($left, $this->kernel);
 
                 $current->attachLeft($node);
@@ -152,7 +152,7 @@ class BallTree implements BinaryTree, Spatial
                 $current->attachLeft(Clique::terminate($left, $this->kernel));
             }
 
-            if ($right->numRows() > $this->maxLeafSize) {
+            if ($right->numSamples() > $this->maxLeafSize) {
                 $node = Ball::split($right, $this->kernel);
 
                 if ($node->isPoint()) {
@@ -176,7 +176,7 @@ class BallTree implements BinaryTree, Spatial
      * @param list<string|int|float> $sample
      * @param int $k
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return array{array[],mixed[],float[]}
+     * @return array{list<list<mixed>>,list<mixed>,list<float>}
      */
     public function nearest(array $sample, int $k = 1) : array
     {
@@ -245,7 +245,7 @@ class BallTree implements BinaryTree, Spatial
      * @param float $radius
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return array{array[],mixed[],float[]}
+     * @return array{list<list<mixed>>,list<mixed>,list<float>}
      */
     public function range(array $sample, float $radius) : array
     {
@@ -351,10 +351,12 @@ class BallTree implements BinaryTree, Spatial
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Ball Tree (max_leaf_size: {$this->maxLeafSize}, kernel: {$this->kernel})";
+        return "Ball Tree (max leaf size: {$this->maxLeafSize}, kernel: {$this->kernel})";
     }
 }

@@ -55,6 +55,7 @@ OC.L10N.register(
     "Update" : "Atnaujinti",
     "Delete" : "Ištrinti",
     "Reset" : "Atstatyti",
+    "Loading …" : "Įkeliama …",
     "Failed to apply tags changes" : "Nepavyko pritaikyti žymų pakeitimų",
     "Manage tags" : "Tvarkyti žymas",
     "Applying tags changes…" : "Taikomi pakeitimai žymoms…",
@@ -75,7 +76,7 @@ OC.L10N.register(
     "Failed to load tags for file" : "Nepavyko įkelti failo žymų",
     "Collaborative tags …" : "Bendradarbiavimo žymos…",
     "Loading …" : "Įkeliama…",
-    "Loading collaborative tags …" : "Įkeliamos bendradarbiavimo žymos…",
-    "Apply changes" : "Taikyti pakeitimus"
+    "Apply changes" : "Taikyti pakeitimus",
+    "Loading collaborative tags …" : "Įkeliamos bendradarbiavimo žymos…"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

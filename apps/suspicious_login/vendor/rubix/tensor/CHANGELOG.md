@@ -1,3 +1,30 @@
+- 3.0.5
+    - Upgraded Zephir dependency to 0.17
+
+- 3.0.4
+    - Fixed bug in Vector less equal operation
+
+- 3.0.3
+    - Added PHP 8.2 extension compatibility
+
+- 3.0.2
+    - Added PHP 8.1 extension compatibility
+
+- 3.0.1
+    - Add positive semi-definite typehinting
+
+- 3.0.0
+    - No changes
+
+- 3.0.0-beta
+    - Add support for PHP 8.0 in the extension
+    - Drop extension support for PHP 7.2 and 7.3
+    - Tensors only compute floating point operations
+    - Remove dependency on JAMA library
+    - Remove previously deprecated items
+    - Matrix returns vector on row access
+    - Added Algebraic and Special function interfaces
+
 - 2.2.3
     - Remove dependency on pthreads
 

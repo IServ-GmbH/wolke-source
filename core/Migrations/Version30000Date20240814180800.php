@@ -10,11 +10,9 @@ namespace OC\Core\Migrations;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
-use OCP\Migration\Attributes\ModifyColumn;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-#[ModifyColumn(table: 'webauthn', name: 'public_key_credential_id', description: 'Increase column length to 512 bytes to support more WebAuthN devices')]
 class Version30000Date20240814180800 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
 		/** @var ISchemaWrapper $schema */

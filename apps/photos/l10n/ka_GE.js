@@ -14,8 +14,11 @@ OC.L10N.register(
     "Go back" : "უკან დაბრუნება",
     "Dates" : "თარიღები",
     "Home" : "სახლი",
+    "General" : "ზოგადი",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Details" : "დეტალები",
+    "Cancel" : "Cancel",
+    "Confirm" : "დადასტურება",
     "Add" : "დამატება"
 },
 "nplurals=2; plural=(n!=1);");

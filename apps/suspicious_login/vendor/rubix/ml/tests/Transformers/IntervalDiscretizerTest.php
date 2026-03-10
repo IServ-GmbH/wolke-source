@@ -6,8 +6,8 @@ use Rubix\ML\Transformers\Stateful;
 use Rubix\ML\Transformers\Transformer;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Transformers\IntervalDiscretizer;
-use PHPUnit\Framework\TestCase;
 use Rubix\ML\Exceptions\RuntimeException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group Transformers
@@ -32,7 +32,7 @@ class IntervalDiscretizerTest extends TestCase
     {
         $this->generator = new Blob([0.0, 4.0, 0.0, -1.5], [1.0, 5.0, 0.01, 10.0]);
 
-        $this->transformer = new IntervalDiscretizer(5);
+        $this->transformer = new IntervalDiscretizer(5, false);
     }
 
     /**
@@ -50,17 +50,11 @@ class IntervalDiscretizerTest extends TestCase
      */
     public function fitTransform() : void
     {
-        $outcomes = ['a', 'b', 'c', 'd', 'e'];
+        $outcomes = ['0', '1', '2', '3', '4'];
 
         $this->transformer->fit($this->generator->generate(30));
 
         $this->assertTrue($this->transformer->fitted());
-
-        $categories = $this->transformer->categories();
-
-        $this->assertIsArray($categories);
-        $this->assertCount(5, $categories);
-        $this->assertContainsOnly('string', $categories);
 
         $intervals = $this->transformer->intervals();
 

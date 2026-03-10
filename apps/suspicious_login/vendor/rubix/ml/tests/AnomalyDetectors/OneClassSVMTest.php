@@ -29,14 +29,14 @@ class OneClassSVMTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -73,8 +73,8 @@ class OneClassSVMTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            0 => new Blob([0.0, 0.0], 0.5),
-            1 => new Circle(0.0, 0.0, 8.0, 0.1),
+            0 => new Blob([0.0, 0.0], 2.0),
+            1 => new Circle(0.0, 0.0, 8.0, 1.0),
         ], [0.9, 0.1]);
 
         $this->estimator = new OneClassSVM(0.01, new Polynomial(4, 1e-3), true, 1e-4);
@@ -82,6 +82,11 @@ class OneClassSVMTest extends TestCase
         $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -124,7 +129,7 @@ class OneClassSVMTest extends TestCase
             'kernel' => new Polynomial(4, 1e-3),
             'shrinking' => true,
             'tolerance' => 0.0001,
-            'cache_size' => 100.0,
+            'cache size' => 100.0,
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -167,10 +172,5 @@ class OneClassSVMTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick([[1.5]]));
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Table of contents &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
-        <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f4332903"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="_static/js/theme.js"></script>
+    <script src="_static/js/versions.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Introduction" href="index.html" /> 
@@ -44,6 +44,10 @@
             
               <img src="_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -58,7 +62,9 @@
 <li class="toctree-l1"><a class="reference internal" href="release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file_workflows/index.html">Flow</a></li>
@@ -73,6 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -144,7 +151,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_server/index.html">Nextcloud configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/security_setup_warnings.html">Warnings on admin page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="configuration_server/occ_command.html">Using the occ command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html">Configuration Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/activity_configuration.html">Activity app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
@@ -165,12 +171,59 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/theming.html">Theming</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="occ_command.html">Using the occ command</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#occ-command-directory">occ command Directory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#run-occ-as-your-http-user">Run occ as your HTTP user</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#enabling-autocompletion">Enabling autocompletion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#run-commands-in-maintenance-mode">Run commands in maintenance mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#apps-commands">Apps commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#background-jobs-selector">Background jobs selector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#config-commands">Config commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#dav-commands">Dav commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#database-conversion">Database conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#add-missing-indices">Add missing indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#encryption">Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#federation-sync">Federation sync</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#file-operations">File operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#files-sharing">Files Sharing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#files-external">Files external</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#integrity-check">Integrity check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#l10n-create-javascript-translation-files-for-apps">l10n, create JavaScript translation files for apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#ldap-commands">LDAP commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#logging-commands">Logging commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#maintenance-commands">Maintenance commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#security">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#status">Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#trashbin">Trashbin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#user-commands">User commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#group-commands">Group commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#versions">Versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#command-line-installation">Command line installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#command-line-upgrade">Command line upgrade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#two-factor-authentication">Two-factor authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#disable-users">Disable users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#system-tags">System Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#antivirus">Antivirus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#setupchecks">Setupchecks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#debugging">Debugging</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="apps_management.html">Apps management</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="apps_management.html#apps">Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apps_management.html#managing-apps">Managing apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apps_management.html#enabling-apps-via-occ-command">Enabling apps via occ command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apps_management.html#using-private-api">Using private API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apps_management.html#using-custom-app-directories">Using custom app directories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apps_management.html#using-a-self-hosted-apps-store">Using a self hosted apps store</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exapps_management/index.html">ExApps management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/AppAPIAndExternalApps.html">AppAPI and External Apps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/DeployConfigurations.html">Deployment configurations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/ManagingDeployDaemons.html">Managing Deploy Daemons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/TestDeploy.html">Test Deploy Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/ManagingExApps.html">Managing ExApps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exapps_management/AdvancedDeployOptions.html">Advanced Deploy Options</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="configuration_user/index.html">User management</a><ul>
@@ -202,6 +255,7 @@
 <li class="toctree-l2"><a class="reference internal" href="configuration_files/previews_configuration.html">Previews configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_files/file_versioning.html">Controlling file versions and aging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_files/trashbin_configuration.html">Deleted Items (trash bin)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration_files/file_conversion.html">File conversion</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="file_workflows/index.html">Flow</a><ul>
@@ -237,11 +291,13 @@
 <li class="toctree-l2"><a class="reference internal" href="ai/app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai/app_text2image_stablediffusion2.html">App: Local Image Generation (text2image_stablediffusion2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai/app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="ai/app_api_and_external_apps.html">AppAPI and External Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai/ai_as_a_service.html">AI as a Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai/insight_and_debugging.html">Insight and debugging</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="webhook_listeners/index.html">Webhook Listeners</a><ul>
@@ -253,6 +309,7 @@
 <li class="toctree-l1"><a class="reference internal" href="windmill_workflows/index.html">Windmill Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#selecting-the-right-workspace">Selecting the right Workspace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#setting-up-the-correct-nextcloud-url">Setting up the Correct Nextcloud URL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#building-a-workflow">Building a workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#nextcloud-scripts">Nextcloud Scripts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#faq">FAQ</a></li>
@@ -294,6 +351,10 @@
 <li class="toctree-l2"><a class="reference internal" href="gdpr/cookies.html">Cookies</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="declarations/index.html">Declarations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="declarations/energy_consumption.html">Energy consumption</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -308,7 +369,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -344,6 +405,14 @@
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

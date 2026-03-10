@@ -16,7 +16,7 @@ $ composer require rubix/ml
 ```
 
 ### Requirements
-- [PHP](https://php.net/manual/en/install.php) 7.2 or above
+- [PHP](https://php.net/manual/en/install.php) 7.4 or above
 
 #### Recommended
 - [Tensor extension](https://github.com/RubixML/Tensor) for fast Matrix/Vector computing
@@ -24,10 +24,11 @@ $ composer require rubix/ml
 #### Optional
 
 - [Extras Package](https://github.com/RubixML/Extras) for experimental features
-- [GD extension](https://php.net/manual/en/book.image.php) for image manipulation
+- [GD extension](https://php.net/manual/en/book.image.php) for image support
 - [Mbstring extension](https://www.php.net/manual/en/book.mbstring.php) for fast multibyte string manipulation
 - [SVM extension](https://php.net/manual/en/book.svm.php) for Support Vector Machine engine (libsvm)
-- [Redis extension](https://github.com/phpredis/phpredis) for persisting to a Redis DB
+- [PDO extension](https://www.php.net/manual/en/book.pdo.php) for relational database support
+- [GraphViz](https://graphviz.org/) for graph visualization
 
 ## Documentation
 Read the latest docs [here](https://docs.rubixml.com).
@@ -44,7 +45,9 @@ Check out these example projects using the Rubix ML library. Many come with inst
 - [CIFAR-10 Image Recognizer](https://github.com/RubixML/CIFAR-10)
 - [Color Clusterer](https://github.com/RubixML/Colors)
 - [Credit Default Risk Predictor](https://github.com/RubixML/Credit)
+- [Customer Churn Predictor](https://github.com/RubixML/Churn)
 - [Divorce Predictor](https://github.com/RubixML/Divorce)
+- [DNA Taxonomer](https://github.com/RubixML/DNA)
 - [Dota 2 Game Outcome Predictor](https://github.com/RubixML/Dota2)
 - [Human Activity Recognizer](https://github.com/RubixML/HAR)
 - [Housing Price Predictor](https://github.com/RubixML/Housing)
@@ -55,14 +58,6 @@ Check out these example projects using the Rubix ML library. Many come with inst
 ## Interact With The Community
 
 - [Join Our Telegram Channel](https://t.me/RubixML)
-- [Receive Our Newsletter](https://rubixml.com/#get-notified)
-- [Meet on LinkedIn](https://www.linkedin.com/company/76327971)
-- [Interact on Twitter](https://twitter.com/RubixML)
-
-## Funding
-Rubix ML is funded by donations from the community. You can become a sponsor by making a contribution to one of our funding sources below.
-
-- [Github Sponsors](https://github.com/sponsors/RubixML)
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.

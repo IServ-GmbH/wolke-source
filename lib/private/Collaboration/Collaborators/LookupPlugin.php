@@ -1,11 +1,11 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OC\Collaboration\Collaborators;
 
+use OCA\Federation\TrustedServers;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -26,6 +26,7 @@ class LookupPlugin implements ISearchPlugin {
 		IUserSession $userSession,
 		private ICloudIdManager $cloudIdManager,
 		private LoggerInterface $logger,
+		private ?TrustedServers $trustedServers,
 	) {
 		$currentUserCloudId = $userSession->getUser()->getCloudId();
 		$this->currentUserRemote = $cloudIdManager->resolveCloudId($currentUserCloudId)->getRemote();
@@ -66,7 +67,7 @@ class LookupPlugin implements ISearchPlugin {
 				try {
 					$remote = $this->cloudIdManager->resolveCloudId($lookup['federationId'])->getRemote();
 				} catch (\Exception $e) {
-					$this->logger->error('Can not parse federated cloud ID "' .  $lookup['federationId'] . '"', [
+					$this->logger->error('Can not parse federated cloud ID "' . $lookup['federationId'] . '"', [
 						'exception' => $e,
 					]);
 					continue;
@@ -82,6 +83,8 @@ class LookupPlugin implements ISearchPlugin {
 						'shareType' => IShare::TYPE_REMOTE,
 						'globalScale' => $isGlobalScaleEnabled,
 						'shareWith' => $lookup['federationId'],
+						'server' => $remote,
+						'isTrustedServer' => $this->trustedServers?->isTrustedServer($remote) ?? false,
 					],
 					'extra' => $lookup,
 				];

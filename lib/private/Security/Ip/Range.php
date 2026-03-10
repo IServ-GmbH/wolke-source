@@ -31,7 +31,7 @@ class Range implements IRange {
 	}
 
 	public function contains(IAddress $address): bool {
-		return $this->range->contains(Factory::parseAddressString((string) $address, ParseStringFlag::MAY_INCLUDE_ZONEID));
+		return $this->range->contains(Factory::parseAddressString((string)$address, ParseStringFlag::MAY_INCLUDE_ZONEID));
 	}
 
 	public function __toString(): string {

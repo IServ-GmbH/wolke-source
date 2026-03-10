@@ -98,7 +98,7 @@ class RepairShareOwnership extends Command {
 
 		foreach ($brokenShares as $share) {
 			$found[] = [
-				'shareId' => (int) $share['id'],
+				'shareId' => (int)$share['id'],
 				'fileTarget' => $share['file_target'],
 				'initiator' => $share['uid_initiator'],
 				'receiver' => $share['share_with'],
@@ -132,7 +132,7 @@ class RepairShareOwnership extends Command {
 
 		foreach ($brokenShares as $share) {
 			$found[] = [
-				'shareId' => (int) $share['id'],
+				'shareId' => (int)$share['id'],
 				'fileTarget' => $share['file_target'],
 				'initiator' => $share['uid_initiator'],
 				'receiver' => $share['share_with'],

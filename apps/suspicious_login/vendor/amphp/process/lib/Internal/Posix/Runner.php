@@ -78,7 +78,7 @@ final class Runner implements ProcessRunner
     }
 
     /** @inheritdoc */
-    public function start(string $command, string $cwd = null, array $env = [], array $options = []): ProcessHandle
+    public function start(string $command, ?string $cwd = null, array $env = [], array $options = []): ProcessHandle
     {
         $command = \sprintf(
             '{ (%s) <&3 3<&- 3>/dev/null & } 3<&0; trap "" INT TERM QUIT HUP;' .
@@ -194,7 +194,7 @@ final class Runner implements ProcessRunner
                 return;
             }
             // ignore errors because process not always detached
-            @\posix_kill($pid, 9);
+            self::tryPosixKill($pid, 9);
         });
 
         if ($handle->status < ProcessStatus::ENDED) {
@@ -213,8 +213,15 @@ final class Runner implements ProcessRunner
                 return;
             }
 
-            @\posix_kill($pid, $signo);
+            self::tryPosixKill($pid, $signo);
         });
+    }
+
+    private static function tryPosixKill($pid, int $signo)
+    {
+        if ($pid !== null) {
+            @\posix_kill($pid, $signo);
+        }
     }
 
     /** @inheritdoc */

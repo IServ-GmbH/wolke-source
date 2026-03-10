@@ -48,11 +48,11 @@ class HuberLossTest extends TestCase
     {
         $loss = $this->costFn->compute($output, $target);
 
-        $this->assertEquals($expected, $loss);
+        $this->assertEqualsWithDelta($expected, $loss, 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function computeProvider() : Generator
     {
@@ -101,17 +101,17 @@ class HuberLossTest extends TestCase
      *
      * @param \Tensor\Matrix $output
      * @param \Tensor\Matrix $target
-     * @param array[] $expected
+     * @param list<list<float>> $expected
      */
     public function differentiate(Matrix $output, Matrix $target, array $expected) : void
     {
         $gradient = $this->costFn->differentiate($output, $target)->asArray();
 
-        $this->assertEquals($expected, $gradient);
+        $this->assertEqualsWithDelta($expected, $gradient, 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function differentiateProvider() : Generator
     {

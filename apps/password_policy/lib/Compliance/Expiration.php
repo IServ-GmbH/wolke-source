@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace OCA\Password_Policy\Compliance;
 
-use OC\HintException;
 use OCA\Password_Policy\PasswordPolicyConfig;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\HintException;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IUser;
@@ -35,7 +35,7 @@ class Expiration implements IUpdatable, IEntryControl {
 		PasswordPolicyConfig $policyConfig,
 		IUserManager $userManager,
 		IEventDispatcher $eventDispatcher,
-		IL10N $l
+		IL10N $l,
 	) {
 		$this->config = $config;
 		$this->policyConfig = $policyConfig;
@@ -63,7 +63,7 @@ class Expiration implements IUpdatable, IEntryControl {
 			$user->getUID(),
 			'password_policy',
 			'pwd_last_updated',
-			time()
+			(string)time()
 		);
 	}
 
@@ -78,7 +78,7 @@ class Expiration implements IUpdatable, IEntryControl {
 		}
 	}
 
-	protected function isPasswordExpired(IUser $user) {
+	protected function isPasswordExpired(IUser $user): bool {
 		$updatedAt = (int)$this->config->getUserValue(
 			$user->getUID(),
 			'password_policy',
@@ -97,7 +97,7 @@ class Expiration implements IUpdatable, IEntryControl {
 		return $expiresIn <= time();
 	}
 
-	protected function isLocalUser(IUser $user) {
+	protected function isLocalUser(IUser $user): bool {
 		$localBackends = ['Database', 'Guests'];
 		return in_array($user->getBackendClassName(), $localBackends);
 	}

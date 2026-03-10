@@ -167,7 +167,7 @@ class FtpConnection {
 			'name' => $name,
 			'modify' => $formattedDate,
 			'perm' => $this->normalizePermissions($permissions),
-			'size' => (int) $size,
+			'size' => (int)$size,
 		];
 	}
 
@@ -216,7 +216,7 @@ class FtpConnection {
 			'name' => $name,
 			'modify' => $formattedDate,
 			'perm' => ($type === 'file') ? 'adfrw' : 'flcdmpe',
-			'size' => (int) $size,
+			'size' => (int)$size,
 		];
 	}
 }

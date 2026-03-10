@@ -5,6 +5,7 @@ OC.L10N.register(
     "Not supported!" : "Дэмжигдэхгүй",
     "Press ⌘-C to copy." : "Хуулахын тулд ⌘-C дарна уу.",
     "Press Ctrl-C to copy." : "Хуулахын тулд Ctrl-C дарна уу.",
+    "Unknown" : "Үл танигдах зүйл",
     "System" : "сисмем",
     "Monitoring" : "Хяналт",
     "Size:" : "Хэмжээ:",
@@ -14,6 +15,7 @@ OC.L10N.register(
     "Users:" : "Хэрэглэгчид:",
     "PHP" : "PHP",
     "Version:" : "Хувилбар:",
+    "seconds" : "секунд",
     "Database" : "Өгөгдлийн сан",
     "Type:" : "Төрөл:",
     "Copy" : "Хуулах"

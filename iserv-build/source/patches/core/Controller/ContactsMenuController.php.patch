@@ -1,8 +1,8 @@
 diff --git core/Controller/ContactsMenuController.php core/Controller/ContactsMenuController.php
-index d90ee8a..1d9aed5 100644
+index f4ded1e..45f8a17 100644
 --- core/Controller/ContactsMenuController.php
 +++ core/Controller/ContactsMenuController.php
-@@ -8,6 +8,7 @@ namespace OC\Core\Controller;
+@@ -7,6 +7,7 @@ namespace OC\Core\Controller;
  
  use Exception;
  use OC\Contacts\ContactsMenu\Manager;
@@ -10,7 +10,7 @@ index d90ee8a..1d9aed5 100644
  use OCP\AppFramework\Controller;
  use OCP\AppFramework\Http;
  use OCP\AppFramework\Http\Attribute\FrontpageRoute;
-@@ -21,6 +22,7 @@ class ContactsMenuController extends Controller {
+@@ -20,6 +21,7 @@ class ContactsMenuController extends Controller {
  		IRequest $request,
  		private IUserSession $userSession,
  		private Manager $manager,
@@ -18,7 +18,7 @@ index d90ee8a..1d9aed5 100644
  	) {
  		parent::__construct('core', $request);
  	}
-@@ -32,7 +34,13 @@ class ContactsMenuController extends Controller {
+@@ -31,7 +33,13 @@ class ContactsMenuController extends Controller {
  	#[NoAdminRequired]
  	#[FrontpageRoute(verb: 'POST', url: '/contactsmenu/contacts')]
  	public function index(?string $filter = null): array {
@@ -33,7 +33,7 @@ index d90ee8a..1d9aed5 100644
  	}
  
  	/**
-@@ -42,11 +50,6 @@ class ContactsMenuController extends Controller {
+@@ -41,11 +49,6 @@ class ContactsMenuController extends Controller {
  	#[NoAdminRequired]
  	#[FrontpageRoute(verb: 'POST', url: '/contactsmenu/findOne')]
  	public function findOne(int $shareType, string $shareWith) {

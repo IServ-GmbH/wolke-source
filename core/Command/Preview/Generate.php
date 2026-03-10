@@ -100,13 +100,13 @@ class Generate extends Command {
 
 	private function getFile(string $fileInput): ?Node {
 		if (is_numeric($fileInput)) {
-			$mounts = $this->userMountCache->getMountsForFileId((int) $fileInput);
+			$mounts = $this->userMountCache->getMountsForFileId((int)$fileInput);
 			if (!$mounts) {
 				return null;
 			}
 			$mount = $mounts[0];
 			$userFolder = $this->rootFolder->getUserFolder($mount->getUser()->getUID());
-			return $userFolder->getFirstNodeById((int) $fileInput);
+			return $userFolder->getFirstNodeById((int)$fileInput);
 		} else {
 			try {
 				return $this->rootFolder->get($fileInput);

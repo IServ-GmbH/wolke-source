@@ -1,5 +1,5 @@
 diff --git apps/federation/lib/Controller/OCSAuthAPIController.php apps/federation/lib/Controller/OCSAuthAPIController.php
-index 8412868..24034a3 100644
+index ff99687..c55897f 100644
 --- apps/federation/lib/Controller/OCSAuthAPIController.php
 +++ apps/federation/lib/Controller/OCSAuthAPIController.php
 @@ -7,6 +7,7 @@
@@ -10,7 +10,7 @@ index 8412868..24034a3 100644
  use OCA\Federation\DbHandler;
  use OCA\Federation\TrustedServers;
  use OCP\AppFramework\Http;
-@@ -129,14 +130,23 @@ class OCSAuthAPIController extends OCSController {
+@@ -113,14 +114,23 @@ class OCSAuthAPIController extends OCSController {
  			throw new OCSForbiddenException();
  		}
  
@@ -42,7 +42,7 @@ index 8412868..24034a3 100644
  
  		return new DataResponse();
  	}
-@@ -162,7 +172,8 @@ class OCSAuthAPIController extends OCSController {
+@@ -146,7 +156,8 @@ class OCSAuthAPIController extends OCSController {
  		}
  
  		if ($this->isValidToken($url, $token) === false) {
@@ -51,4 +51,4 @@ index 8412868..24034a3 100644
 +			// $this->throttler->registerAttempt('federationSharedSecret', $this->request->getRemoteAddress());
  			$expectedToken = $this->dbHandler->getToken($url);
  			$this->logger->error(
- 				'remote server (' . $url . ') didn\'t send a valid token (got "' . $token . '" but expected "'. $expectedToken . '") while getting shared secret',
+ 				'remote server (' . $url . ') didn\'t send a valid token (got "' . $token . '" but expected "' . $expectedToken . '") while getting shared secret',

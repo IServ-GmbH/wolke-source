@@ -2,7 +2,7 @@
 # TLDR: No skipping major releases. Only upgrade major release if on the last minor release.
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
-ARG VERSION
+ARG VERSION=dummy
 
 FROM git.iserv.eu:443/iserv/dependency_proxy/containers/node:22-alpine AS patchstage
 ARG VERSION
@@ -23,6 +23,8 @@ RUN /source/create_combined_patches.sh /nextcloud-server /
 FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-fpm
 ARG VERSION
 
+RUN test "$VERSION" != "dummy"
+
 ENV NEXTCLOUD_CONFIG_DIR=/var/www/html/config/
 
 # Install git for binary patches
@@ -37,7 +39,7 @@ RUN apt-get update \
 # TODO: Have a central place to keep the app versions #76427
 # remember to keep version for files_linkeditor in sync with version number in clone_and_apply_patches.sh
 RUN mkdir /iserv-apps \
-    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v1.19.1/files_retention-v1.19.1.tar.gz" \
+    && curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v2.0.1/files_retention-v2.0.1.tar.gz" \
     && tar -xf files_retention.tar.gz \
     && mv files_retention /iserv-apps \
     && rm files_retention.tar.gz \
@@ -45,15 +47,15 @@ RUN mkdir /iserv-apps \
     && tar -xf files_linkeditor.tar.gz \
     && mv files_linkeditor /iserv-apps \
     && rm files_linkeditor.tar.gz \
-    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v18.1.8/groupfolders-v18.1.8.tar.gz" \
+    && curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v19.1.17/groupfolders-v19.1.17.tar.gz" \
     && tar -xf groupfolders.tar.gz \
     && mv groupfolders /iserv-apps \
     && rm groupfolders.tar.gz \
-    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v7.0.0/user_saml-v7.0.0.tar.gz" \
+    && curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v7.1.3/user_saml-v7.1.3.tar.gz" \
     && tar -xf user_saml.tar.gz \
     && mv user_saml /iserv-apps \
     && rm user_saml.tar.gz \
-    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.5.12/richdocuments-v8.5.12.tar.gz" \
+    && curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v8.7.8/richdocuments-v8.7.8.tar.gz" \
     && tar -xf richdocuments.tar.gz \
     && mv richdocuments /iserv-apps \
     && rm richdocuments.tar.gz

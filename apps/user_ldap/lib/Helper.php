@@ -13,15 +13,13 @@ use OCP\IConfig;
 use OCP\IDBConnection;
 
 class Helper {
-	private IConfig $config;
-	private IDBConnection $connection;
 	/** @var CappedMemoryCache<string> */
 	protected CappedMemoryCache $sanitizeDnCache;
 
-	public function __construct(IConfig $config,
-		IDBConnection $connection) {
-		$this->config = $config;
-		$this->connection = $connection;
+	public function __construct(
+		private IConfig $config,
+		private IDBConnection $connection,
+	) {
 		$this->sanitizeDnCache = new CappedMemoryCache(10000);
 	}
 
@@ -101,8 +99,8 @@ class Helper {
 
 		sort($serverConnections);
 		$lastKey = array_pop($serverConnections);
-		$lastNumber = (int) str_replace('s', '', $lastKey);
-		return 's' . str_pad((string) ($lastNumber + 1), 2, '0', STR_PAD_LEFT);
+		$lastNumber = (int)str_replace('s', '', $lastKey);
+		return 's' . str_pad((string)($lastNumber + 1), 2, '0', STR_PAD_LEFT);
 	}
 
 	private function getServersConfig(string $value): array {
@@ -133,7 +131,7 @@ class Helper {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('appconfig')
 			->where($query->expr()->eq('appid', $query->createNamedParameter('user_ldap')))
-			->andWhere($query->expr()->like('configkey', $query->createNamedParameter((string) $prefix . '%')))
+			->andWhere($query->expr()->like('configkey', $query->createNamedParameter((string)$prefix . '%')))
 			->andWhere($query->expr()->notIn('configkey', $query->createNamedParameter([
 				'enabled',
 				'installed_version',

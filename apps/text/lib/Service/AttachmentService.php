@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Text\Service;
 
 use OC\User\NoUserException;
+use OCA\DAV\Connector\Sabre\PublicAuth;
 use OCA\Files_Sharing\SharedStorage;
 use OCA\Text\Controller\AttachmentController;
 use OCA\Text\Db\Session;
@@ -24,6 +25,7 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IPreview;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\Lock\LockedException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -32,12 +34,15 @@ use OCP\Share\IShare;
 use OCP\Util;
 
 class AttachmentService {
-	public function __construct(private IRootFolder $rootFolder,
+	public function __construct(
+		private IRootFolder $rootFolder,
 		private ShareManager $shareManager,
 		private IPreview $previewManager,
 		private IMimeTypeDetector $mimeTypeDetector,
 		private IURLGenerator $urlGenerator,
-		private IFilenameValidator $filenameValidator) {
+		private IFilenameValidator $filenameValidator,
+		private ISession $session,
+	) {
 	}
 
 	/**
@@ -101,7 +106,7 @@ class AttachmentService {
 	 * @throws NotPermittedException
 	 * @throws NoUserException
 	 */
-	public function getMediaFile(int $documentId, string $mediaFileName, string $userId): File|null {
+	public function getMediaFile(int $documentId, string $mediaFileName, string $userId): ?File {
 		$textFile = $this->getTextFile($documentId, $userId);
 		return $this->getMediaFullFile($mediaFileName, $textFile);
 	}
@@ -114,7 +119,7 @@ class AttachmentService {
 	 * @throws InvalidPathException
 	 * @throws NoUserException
 	 */
-	public function getMediaFilePublic(int $documentId, string $mediaFileName, string $shareToken): File|null {
+	public function getMediaFilePublic(int $documentId, string $mediaFileName, string $shareToken): ?File {
 		$textFile = $this->getTextFilePublic($documentId, $shareToken);
 		return $this->getMediaFullFile($mediaFileName, $textFile);
 	}
@@ -251,10 +256,10 @@ class AttachmentService {
 	/**
 	 * Save an uploaded file in the attachment folder
 	 *
-	 * @param int      $documentId
-	 * @param string   $newFileName
+	 * @param int $documentId
+	 * @param string $newFileName
 	 * @param resource $newFileResource
-	 * @param string   $userId
+	 * @param string $userId
 	 *
 	 * @return array
 	 * @throws InvalidPathException
@@ -294,9 +299,33 @@ class AttachmentService {
 	 * @throws NoUserException
 	 */
 	public function uploadAttachmentPublic(?int $documentId, string $newFileName, $newFileResource, string $shareToken): array {
-		if (!$this->hasUpdatePermissions($shareToken)) {
+		try {
+			$share = $this->shareManager->getShareByToken($shareToken);
+		} catch (ShareNotFound) {
+			throw new NotFoundException('Share not found');
+		}
+
+		if (!$this->hasUpdatePermissions($share)) {
 			throw new NotPermittedException('No write permissions');
 		}
+
+		if ($share->getPassword() !== null) {
+			$key = PublicAuth::DAV_AUTHENTICATED;
+
+			if (!$this->session->exists($key)) {
+				throw new NotPermittedException('Share not authenticated');
+			}
+
+			$allowedShareIds = $this->session->get($key);
+			if (!is_array($allowedShareIds)) {
+				throw new NotPermittedException('Share not authenticated');
+			}
+
+			if (!in_array($share->getId(), $allowedShareIds, true)) {
+				throw new NotPermittedException('Share not authenticated');
+			}
+		}
+
 		$textFile = $this->getTextFilePublic($documentId, $shareToken);
 		$saveDir = $this->getAttachmentDirectoryForFile($textFile, true);
 		$fileName = self::getUniqueFileName($saveDir, $newFileName);
@@ -370,12 +399,12 @@ class AttachmentService {
 		if ($extension !== '') {
 			while ($dir->nodeExists($uniqueFileName)) {
 				$counter++;
-				$uniqueFileName = preg_replace('/\.' . $extension . '$/', ' (' . $counter . ').' . $extension, $fileName);
+				$uniqueFileName = (string)preg_replace('/\.' . $extension . '$/', ' (' . $counter . ').' . $extension, $fileName);
 			}
 		} else {
 			while ($dir->nodeExists($uniqueFileName)) {
 				$counter++;
-				$uniqueFileName = preg_replace('/$/', ' (' . $counter . ')', $fileName);
+				$uniqueFileName = (string)preg_replace('/$/', ' (' . $counter . ')', $fileName);
 			}
 		}
 		return $uniqueFileName;
@@ -383,25 +412,16 @@ class AttachmentService {
 
 	/**
 	 * Check if the shared access has write permissions
-	 *
-	 * @param string $shareToken
-	 *
-	 * @return bool
 	 */
-	private function hasUpdatePermissions(string $shareToken): bool {
-		try {
-			$share = $this->shareManager->getShareByToken($shareToken);
-			return (
-				in_array(
-					$share->getShareType(),
-					[IShare::TYPE_LINK, IShare::TYPE_EMAIL, IShare::TYPE_ROOM],
-					true
-				)
-				&& $share->getPermissions() & Constants::PERMISSION_UPDATE
-				&& $share->getNode()->getPermissions() & Constants::PERMISSION_UPDATE);
-		} catch (ShareNotFound|NotFoundException $e) {
-			return false;
-		}
+	private function hasUpdatePermissions(IShare $share): bool {
+		return (
+			in_array(
+				$share->getShareType(),
+				[IShare::TYPE_LINK, IShare::TYPE_EMAIL, IShare::TYPE_ROOM],
+				true
+			)
+			&& $share->getPermissions() & Constants::PERMISSION_UPDATE
+			&& $share->getNode()->getPermissions() & Constants::PERMISSION_UPDATE);
 	}
 
 	/**
@@ -479,7 +499,7 @@ class AttachmentService {
 	/**
 	 * Get a user file from file ID
 	 *
-	 * @param int    $documentId
+	 * @param int $documentId
 	 * @param string $userId
 	 *
 	 * @return File
@@ -606,7 +626,7 @@ class AttachmentService {
 	 * Get attachment file names listed in the markdown file content
 	 *
 	 * @param string $content
-	 * @param int    $fileId
+	 * @param int $fileId
 	 *
 	 * @return array
 	 */

@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>General troubleshooting &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Patching Nextcloud" href="applying_patch.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -59,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -117,6 +123,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -169,8 +176,8 @@ note that Nextcloud GmbH offers commercial support options.</p>
 <li><p>Search for a solution (see the options above)</p></li>
 <li><p>Double-check your configuration</p></li>
 </ul>
-<p>If you can’t find a solution, please use our <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
-configuration report with the <a class="reference internal" href="../configuration_server/occ_command.html#config-commands-label"><span class="std std-ref">occ config command</span></a>, with passwords automatically obscured.</p>
+<p>If you can’t find a solution, please use our <a class="reference external" href="https://docs.nextcloud.com/server/31/developer_manual/prologue/bugtracker/index.html">bugtracker</a>. You can generate a
+configuration report with the <a class="reference internal" href="../occ_command.html#config-commands-label"><span class="std std-ref">occ config command</span></a>, with passwords automatically obscured.</p>
 </section>
 <section id="id1">
 <h2>General troubleshooting<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
@@ -181,7 +188,7 @@ supported browser versions.</p>
 <h3>Disable 3rdparty / non-shipped apps<a class="headerlink" href="#disable-3rdparty-non-shipped-apps" title="Link to this heading"></a></h3>
 <p>It might be possible that 3rd party / non-shipped apps are causing various
 different issues. Always disable 3rd party apps before upgrades, and for
-troubleshooting. Please refer to the <a class="reference internal" href="../configuration_server/occ_command.html#apps-commands-label"><span class="std std-ref">Apps commands</span></a> on how
+troubleshooting. Please refer to the <a class="reference internal" href="../occ_command.html#apps-commands-label"><span class="std std-ref">Apps commands</span></a> on how
 to disable an app from command line.</p>
 </section>
 <section id="internal-server-errors">
@@ -339,9 +346,7 @@ these modules:</p>
 <li><p>mod_security</p></li>
 <li><p>mod_reqtimeout</p></li>
 <li><p>mod_deflate</p></li>
-<li><p>libapache2-mod-php*filter (use libapache2-mod-php8.3 instead)</p></li>
-<li><p>mod_spdy together with libapache2-mod-php5 / mod_php (use fcgi or php-fpm
-instead)</p></li>
+<li><p>mod_spdy</p></li>
 <li><p>mod_dav</p></li>
 <li><p>mod_xsendfile / X-Sendfile (causing broken downloads if not configured
 correctly)</p></li>
@@ -358,6 +363,7 @@ correctly)</p></li>
 <li><p>PHP</p></li>
 </ol>
 <ul class="simple">
+<li><p>Tideways</p></li>
 <li><p>eAccelerator</p></li>
 </ul>
 </section>
@@ -460,12 +466,12 @@ the <a class="reference external" href="http://sabre.io/dav/service-discovery/">
 <span id="trouble-file-encoding-ext-storages"></span><h2>Troubleshooting file encoding on external storages<a class="headerlink" href="#troubleshooting-file-encoding-on-external-storages" title="Link to this heading"></a></h2>
 <p>When using external storage, it can happen that some files with special characters will not
 appear in the file listing, or they will appear and not be accessible.</p>
-<p>When this happens, please run the <a class="reference internal" href="../configuration_server/occ_command.html#occ-files-scan-label"><span class="std std-ref">files scanner</span></a>, for example with:</p>
+<p>When this happens, please run the <a class="reference internal" href="../occ_command.html#occ-files-scan-label"><span class="std std-ref">files scanner</span></a>, for example with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">--</span><span class="nb">all</span>
 </pre></div>
 </div>
 <p>If the scanner tells about an encoding issue on the affected file, please enable Mac encoding compatibility in the <a class="reference internal" href="../configuration_files/external_storage_configuration_gui.html#external-storage-mount-options-label"><span class="std std-ref">mount options</span></a>
-and then <a class="reference internal" href="../configuration_server/occ_command.html#occ-files-scan-label"><span class="std std-ref">rescan the external storage</span></a>.</p>
+and then <a class="reference internal" href="../occ_command.html#occ-files-scan-label"><span class="std std-ref">rescan the external storage</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This mode comes with a performance impact because Nextcloud will always try both encodings when detecting files
@@ -537,7 +543,7 @@ does not match the actual data stored in the user’s <code class="docutils lite
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Metadata, versions, trashbin and encryption keys are not counted in the used space above.
-Please refer to the <a class="reference external" href="https://docs.nextcloud.com/server/latest/user_manual/en/files/quota.html">quota documentation</a> for details.</p>
+Please refer to the <a class="reference external" href="https://docs.nextcloud.com/server/31/user_manual/en/files/quota.html">quota documentation</a> for details.</p>
 </div>
 <p>Running the following command can help fix the sizes and quota for a given user:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">files</span><span class="p">:</span><span class="n">scan</span> <span class="o">-</span><span class="n">vvv</span> <span class="o">&lt;</span><span class="n">user</span><span class="o">-</span><span class="nb">id</span><span class="o">&gt;</span>
@@ -627,7 +633,7 @@ first.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -663,6 +669,14 @@ first.</p>
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

@@ -55,7 +55,7 @@ class Throttler implements IThrottler {
 		}
 
 		$ipAddress = new IpAddress($ip);
-		if ($this->isBypassListed((string) $ipAddress)) {
+		if ($this->isBypassListed((string)$ipAddress)) {
 			return;
 		}
 
@@ -71,7 +71,7 @@ class Throttler implements IThrottler {
 		);
 
 		$this->backend->registerAttempt(
-			(string) $ipAddress,
+			(string)$ipAddress,
 			$ipAddress->getSubnet(),
 			$this->timeFactory->getTime(),
 			$action,
@@ -109,11 +109,11 @@ class Throttler implements IThrottler {
 		}
 
 		$ipAddress = new IpAddress($ip);
-		if ($this->isBypassListed((string) $ipAddress)) {
+		if ($this->isBypassListed((string)$ipAddress)) {
 			return 0;
 		}
 
-		$maxAgeTimestamp = (int) ($this->timeFactory->getTime() - 3600 * $maxAgeHours);
+		$maxAgeTimestamp = (int)($this->timeFactory->getTime() - 3600 * $maxAgeHours);
 
 		return $this->backend->getAttempts(
 			$ipAddress->getSubnet(),
@@ -132,7 +132,7 @@ class Throttler implements IThrottler {
 		}
 
 		$firstDelay = 0.1;
-		if ($attempts > self::MAX_ATTEMPTS) {
+		if ($attempts > $this->config->getSystemValueInt('auth.bruteforce.max-attempts', self::MAX_ATTEMPTS)) {
 			// Don't ever overflow. Just assume the maxDelay time:s
 			return self::MAX_DELAY_MS;
 		}
@@ -141,7 +141,7 @@ class Throttler implements IThrottler {
 		if ($delay > self::MAX_DELAY) {
 			return self::MAX_DELAY_MS;
 		}
-		return (int) \ceil($delay * 1000);
+		return (int)\ceil($delay * 1000);
 	}
 
 	/**
@@ -154,7 +154,7 @@ class Throttler implements IThrottler {
 		}
 
 		$ipAddress = new IpAddress($ip);
-		if ($this->isBypassListed((string) $ipAddress)) {
+		if ($this->isBypassListed((string)$ipAddress)) {
 			return;
 		}
 
@@ -177,7 +177,7 @@ class Throttler implements IThrottler {
 		}
 
 		$ipAddress = new IpAddress($ip);
-		if ($this->isBypassListed((string) $ipAddress)) {
+		if ($this->isBypassListed((string)$ipAddress)) {
 			return;
 		}
 
@@ -200,7 +200,7 @@ class Throttler implements IThrottler {
 	 */
 	public function sleepDelayOrThrowOnMax(string $ip, string $action = ''): int {
 		$delay = $this->getDelay($ip, $action);
-		if (($delay === self::MAX_DELAY_MS) && $this->getAttempts($ip, $action, 0.5) > self::MAX_ATTEMPTS) {
+		if (($delay === self::MAX_DELAY_MS) && $this->getAttempts($ip, $action, 0.5) > $this->config->getSystemValueInt('auth.bruteforce.max-attempts', self::MAX_ATTEMPTS)) {
 			$this->logger->info('IP address blocked because it reached the maximum failed attempts in the last 30 minutes [action: {action}, ip: {ip}]', [
 				'action' => $action,
 				'ip' => $ip,

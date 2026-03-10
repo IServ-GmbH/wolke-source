@@ -15,6 +15,8 @@ use OCP\Defaults;
 use OCP\IAppConfig;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
+use OCP\Mail\Provider\Address;
+use OCP\Mail\Provider\Attachment;
 use OCP\Mail\Provider\IManager as IMailManager;
 use OCP\Mail\Provider\IMessageSend;
 use OCP\Util;
@@ -43,42 +45,26 @@ use Sabre\VObject\Reader;
  * @license http://sabre.io/license/ Modified BSD License
  */
 class IMipPlugin extends SabreIMipPlugin {
-	private IUserSession $userSession;
-	private IAppConfig $config;
-	private IMailer $mailer;
-	private LoggerInterface $logger;
-	private ITimeFactory $timeFactory;
-	private Defaults $defaults;
+	
 	private ?VCalendar $vCalendar = null;
-	private IMipService $imipService;
 	public const MAX_DATE = '2038-01-01';
 	public const METHOD_REQUEST = 'request';
 	public const METHOD_REPLY = 'reply';
 	public const METHOD_CANCEL = 'cancel';
-	public const IMIP_INDENT = 15; // Enough for the length of all body bullet items, in all languages
-	private EventComparisonService $eventComparisonService;
-	private IMailManager $mailManager;
+	public const IMIP_INDENT = 15;
 
 	public function __construct(
-		IAppConfig $config,
-		IMailer $mailer,
-		LoggerInterface $logger,
-		ITimeFactory $timeFactory,
-		Defaults $defaults,
-		IUserSession $userSession,
-		IMipService $imipService,
-		EventComparisonService $eventComparisonService,
-		IMailManager $mailManager) {
+		private IAppConfig $config,
+		private IMailer $mailer,
+		private LoggerInterface $logger,
+		private ITimeFactory $timeFactory,
+		private Defaults $defaults,
+		private IUserSession $userSession,
+		private IMipService $imipService,
+		private EventComparisonService $eventComparisonService,
+		private IMailManager $mailManager,
+	) {
 		parent::__construct('');
-		$this->userSession = $userSession;
-		$this->config = $config;
-		$this->mailer = $mailer;
-		$this->logger = $logger;
-		$this->timeFactory = $timeFactory;
-		$this->defaults = $defaults;
-		$this->imipService = $imipService;
-		$this->eventComparisonService = $eventComparisonService;
-		$this->mailManager = $mailManager;
 	}
 
 	public function initialize(DAV\Server $server): void {
@@ -138,7 +124,19 @@ class IMipPlugin extends SabreIMipPlugin {
 			$iTipMessage->scheduleStatus = '5.0; EMail delivery failed';
 			return;
 		}
-		$recipientName = $iTipMessage->recipientName ? (string) $iTipMessage->recipientName : null;
+
+		// Check if external attendees are disabled
+		$externalAttendeesDisabled = $this->config->getValueBool('dav', 'caldav_external_attendees_disabled', false);
+		if ($externalAttendeesDisabled && !$this->imipService->isSystemUser($recipient)) {
+			$this->logger->debug('Invitation not sent to external attendee (external attendees disabled)', [
+				'uid' => $iTipMessage->uid,
+				'attendee' => $recipient,
+			]);
+			$iTipMessage->scheduleStatus = '5.0; External attendees are disabled';
+			return;
+		}
+
+		$recipientName = $iTipMessage->recipientName ? (string)$iTipMessage->recipientName : null;
 
 		$newEvents = $iTipMessage->message;
 		$oldEvents = $this->getVCalendar();
@@ -179,7 +177,7 @@ class IMipPlugin extends SabreIMipPlugin {
 			$iTipMessage->scheduleStatus = '1.0;We got the message, but it\'s not significant enough to warrant an email';
 			return;
 		}
-		$this->imipService->setL10n($attendee);
+		$this->imipService->setL10nFromAttendee($attendee);
 
 		// Build the sender name.
 		// Due to a bug in sabre, the senderName property for an iTIP message can actually also be a VObject Property
@@ -285,17 +283,17 @@ class IMipPlugin extends SabreIMipPlugin {
 				// construct mail message and set required parameters
 				$message = $mailService->initiateMessage();
 				$message->setFrom(
-					(new \OCP\Mail\Provider\Address($sender, $fromName))
+					(new Address($sender, $fromName))
 				);
 				$message->setTo(
-					(new \OCP\Mail\Provider\Address($recipient, $recipientName))
+					(new Address($recipient, $recipientName))
 				);
 				$message->setSubject($template->renderSubject());
 				$message->setBodyPlain($template->renderText());
 				$message->setBodyHtml($template->renderHtml());
 				// Adding name=event.ics is a trick to make the invitation also appear
 				// as a file attachment in mail clients like Thunderbird or Evolution.
-				$message->setAttachments((new \OCP\Mail\Provider\Attachment(
+				$message->setAttachments((new Attachment(
 					$itip_msg,
 					null,
 					$contentType . '; name=event.ics',

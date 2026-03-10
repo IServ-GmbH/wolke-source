@@ -158,8 +158,7 @@ abstract class AuthPublicShareController extends PublicShareController {
 		$this->session->regenerateId(true, true);
 		$response = $this->getRedirect();
 
-		$this->session->set('public_link_authenticated_token', $this->getToken());
-		$this->session->set('public_link_authenticated_password_hash', $this->getPasswordHash());
+		$this->storeTokenSession($this->getToken(), $this->getPasswordHash());
 
 		$this->authSucceeded();
 
@@ -192,7 +191,7 @@ abstract class AuthPublicShareController extends PublicShareController {
 		if (str_ends_with($class, 'Controller')) {
 			$class = substr($class, 0, -10);
 		}
-		return $app .'.'. $class .'.'. $function;
+		return $app . '.' . $class . '.' . $function;
 	}
 
 	/**

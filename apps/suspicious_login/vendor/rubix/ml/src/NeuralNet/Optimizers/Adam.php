@@ -5,6 +5,7 @@ namespace Rubix\ML\NeuralNet\Optimizers;
 use Tensor\Tensor;
 use Rubix\ML\NeuralNet\Parameter;
 use Rubix\ML\Exceptions\InvalidArgumentException;
+use Rubix\ML\Exceptions\RuntimeException;
 
 use function get_class;
 
@@ -30,62 +31,34 @@ use const Rubix\ML\EPSILON;
 class Adam implements Optimizer, Adaptive
 {
     /**
-     * The number of initial steps to perform bias correction.
-     *
-     * @var int
-     */
-    protected const WARM_UP_STEPS = 50;
-
-    /**
      * The learning rate that controls the global step size.
      *
      * @var float
      */
-    protected $rate;
+    protected float $rate;
 
     /**
      * The momentum decay rate.
      *
      * @var float
      */
-    protected $momentumDecay;
+    protected float $momentumDecay;
 
     /**
      * The decay rate of the previous norms.
      *
      * @var float
      */
-    protected $normDecay;
-
-    /**
-     * The opposite of the momentum decay.
-     *
-     * @var float
-     */
-    protected $beta1;
-
-    /**
-     * The opposite of the norm decay.
-     *
-     * @var float
-     */
-    protected $beta2;
+    protected float $normDecay;
 
     /**
      * The parameter cache of running velocity and squared gradients.
      *
-     * @var array[]
+     * @var array<\Tensor\Tensor[]>
      */
-    protected $cache = [
+    protected array $cache = [
         //
     ];
-
-    /**
-     * The number of steps taken since initialization.
-     *
-     * @var int
-     */
-    protected $t = 0;
 
     /**
      * @param float $rate
@@ -113,8 +86,6 @@ class Adam implements Optimizer, Adaptive
         $this->rate = $rate;
         $this->momentumDecay = $momentumDecay;
         $this->normDecay = $normDecay;
-        $this->beta1 = 1.0 - $momentumDecay;
-        $this->beta2 = 1.0 - $normDecay;
     }
 
     /**
@@ -123,10 +94,15 @@ class Adam implements Optimizer, Adaptive
      * @internal
      *
      * @param \Rubix\ML\NeuralNet\Parameter $param
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      */
     public function warm(Parameter $param) : void
     {
         $class = get_class($param->param());
+
+        if ($class === false) {
+            throw new RuntimeException('Could not locate parameter class.');
+        }
 
         $zeros = $class::zeros(...$param->param()->shape());
 
@@ -146,34 +122,33 @@ class Adam implements Optimizer, Adaptive
     {
         [$velocity, $norm] = $this->cache[$param->id()];
 
-        $velocity = $velocity->multiply($this->beta1)
-            ->add($gradient->multiply($this->momentumDecay));
+        $vHat = $gradient->subtract($velocity)
+            ->multiply($this->momentumDecay);
 
-        $norm = $norm->multiply($this->beta2)
-            ->add($gradient->square()->multiply($this->normDecay));
+        $velocity = $velocity->add($vHat);
+
+        $nHat = $gradient->square()->subtract($norm)
+            ->multiply($this->normDecay);
+
+        $norm = $norm->add($nHat);
 
         $this->cache[$param->id()] = [$velocity, $norm];
 
-        if ($this->t < self::WARM_UP_STEPS) {
-            ++$this->t;
+        $norm = $norm->sqrt()->clipLower(EPSILON);
 
-            $velocity = $velocity->divide(1.0 - $this->beta1 ** $this->t);
-
-            $norm = $norm->divide(1.0 - $this->beta2 ** $this->t);
-        }
-
-        return $velocity->multiply($this->rate)
-            ->divide($norm->clipLower(EPSILON)->sqrt());
+        return $velocity->multiply($this->rate)->divide($norm);
     }
 
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Adam (rate: {$this->rate}, momentum_decay: {$this->momentumDecay},"
-            . " norm_decay: {$this->normDecay})";
+        return "Adam (rate: {$this->rate}, momentum decay: {$this->momentumDecay},"
+            . " norm decay: {$this->normDecay})";
     }
 }

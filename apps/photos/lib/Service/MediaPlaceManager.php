@@ -44,6 +44,6 @@ class MediaPlaceManager {
 			return null;
 		}
 
-		return $this->rgcService->getPlaceForCoordinates((float) $latitude, (float) $longitude);
+		return $this->rgcService->getPlaceForCoordinates((float)$latitude, (float)$longitude);
 	}
 }

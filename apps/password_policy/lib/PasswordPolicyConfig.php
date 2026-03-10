@@ -6,10 +6,12 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 namespace OCA\Password_Policy;
 
+use OCA\Password_Policy\AppInfo\Application;
+use OCP\IAppConfig;
 use OCP\IConfig;
+use OCP\Security\PasswordContext;
 
 /**
  * Class Config
@@ -20,141 +22,131 @@ use OCP\IConfig;
  */
 class PasswordPolicyConfig {
 
-	/** @var IConfig */
-	private $config;
+	/**
+	 * PasswordContext that are supported by the app.
+	 * This does not mean all of those have been setup by the admin!
+	 * @since 3.0.0
+	 */
+	protected const SUPPORTED_CONTEXTS = [PasswordContext::ACCOUNT, PasswordContext::SHARING];
 
 	/**
 	 * Config constructor.
-	 *
-	 * @param IConfig $config
 	 */
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+		private IAppConfig $appConfig,
+	) {
 	}
 
 	/**
 	 * get the enforced minimum length of passwords
-	 *
-	 * @return int
+	 * @return non-negative-int
 	 */
-	public function getMinLength(): int {
-		return (int)$this->config->getAppValue('password_policy', 'minLength', '10');
+	public function getMinLength(?PasswordContext $context = null): int {
+		$key = $this->getScopedAppConfig('minLength', $context);
+		return max(0, $this->appConfig->getValueInt(Application::APP_ID, $key, 10));
 	}
 
 	/**
 	 * Whether non-common passwords should be enforced
-	 *
-	 * @return bool
 	 */
-	public function getEnforceNonCommonPassword(): bool {
-		$enforceNonCommonPasswords = $this->config->getAppValue(
-			'password_policy',
-			'enforceNonCommonPassword',
-			'1'
+	public function getEnforceNonCommonPassword(?PasswordContext $context = null): bool {
+		$key = $this->getScopedAppConfig('enforceNonCommonPassword', $context);
+		return $this->appConfig->getValueBool(
+			Application::APP_ID,
+			$key,
+			true
 		);
-		return $enforceNonCommonPasswords === '1';
 	}
 
 	/**
 	 * does the password need to contain upper and lower case characters
-	 *
-	 * @return bool
 	 */
-	public function getEnforceUpperLowerCase(): bool {
-		$enforceUpperLowerCase = $this->config->getAppValue(
-			'password_policy',
-			'enforceUpperLowerCase',
-			'0'
+	public function getEnforceUpperLowerCase(?PasswordContext $context = null): bool {
+		return $this->appConfig->getValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceUpperLowerCase', $context),
 		);
-
-		return $enforceUpperLowerCase === '1';
 	}
 
 	/**
 	 * does the password need to contain numeric characters
-	 *
-	 * @return bool
 	 */
-	public function getEnforceNumericCharacters(): bool {
-		$enforceNumericCharacters = $this->config->getAppValue(
-			'password_policy',
-			'enforceNumericCharacters',
-			'0'
+	public function getEnforceNumericCharacters(?PasswordContext $context = null): bool {
+		return $this->appConfig->getValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceNumericCharacters', $context),
 		);
-
-		return $enforceNumericCharacters === '1';
 	}
 
 	/**
 	 * does the password need to contain special characters
-	 *
-	 * @return bool
 	 */
-	public function getEnforceSpecialCharacters(): bool {
-		$enforceSpecialCharacters = $this->config->getAppValue(
-			'password_policy',
-			'enforceSpecialCharacters',
-			'0'
+	public function getEnforceSpecialCharacters(?PasswordContext $context = null): bool {
+		return $this->appConfig->getValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceSpecialCharacters', $context),
 		);
-
-		return $enforceSpecialCharacters === '1';
 	}
 
 	/**
 	 * set minimal length of passwords
-	 *
-	 * @param int $minLength
 	 */
-	public function setMinLength(int $minLength) {
-		$this->config->setAppValue('password_policy', 'minLength', $minLength);
+	public function setMinLength(int $minLength, ?PasswordContext $context = null): void {
+		$this->appConfig->setValueInt(
+			Application::APP_ID,
+			$this->getScopedAppConfig('minLength', $context),
+			$minLength,
+		);
 	}
 
 	/**
 	 * enforce upper and lower case characters
-	 *
-	 * @param bool $enforceUpperLowerCase
 	 */
-	public function setEnforceUpperLowerCase(bool $enforceUpperLowerCase) {
-		$value = $enforceUpperLowerCase === true ? '1' : '0';
-		$this->config->setAppValue('password_policy', 'enforceUpperLowerCase', $value);
+	public function setEnforceUpperLowerCase(bool $enforceUpperLowerCase, ?PasswordContext $context = null): void {
+		$this->appConfig->setValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceUpperLowerCase', $context),
+			$enforceUpperLowerCase,
+		);
 	}
 
 	/**
 	 * enforce numeric characters
-	 *
-	 * @param bool $enforceNumericCharacters
 	 */
-	public function setEnforceNumericCharacters(bool $enforceNumericCharacters) {
-		$value = $enforceNumericCharacters === true ? '1' : '0';
-		$this->config->setAppValue('password_policy', 'enforceNumericCharacters', $value);
+	public function setEnforceNumericCharacters(bool $enforceNumericCharacters, ?PasswordContext $context = null): void {
+		$this->appConfig->setValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceNumericCharacters', $context),
+			$enforceNumericCharacters,
+		);
 	}
 
 	/**
 	 * enforce special characters
-	 *
-	 * @param bool $enforceSpecialCharacters
 	 */
-	public function setEnforceSpecialCharacters(bool $enforceSpecialCharacters) {
-		$value = $enforceSpecialCharacters === true ? '1' : '0';
-		$this->config->setAppValue('password_policy', 'enforceSpecialCharacters', $value);
+	public function setEnforceSpecialCharacters(bool $enforceSpecialCharacters, ?PasswordContext $context = null): void {
+		$this->appConfig->setValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceSpecialCharacters', $context),
+			$enforceSpecialCharacters,
+		);
 	}
 
 	/**
 	 * Do we check against the HaveIBeenPwned passwords
-	 *
-	 * @return bool
 	 */
-	public function getEnforceHaveIBeenPwned(): bool {
-		$hasInternetConnection = $this->config->getSystemValue('has_internet_connection', true);
+	public function getEnforceHaveIBeenPwned(?PasswordContext $context = null): bool {
+		$hasInternetConnection = $this->config->getSystemValueBool('has_internet_connection', true);
 		if (!$hasInternetConnection) {
 			return false;
 		}
 
-		return $this->config->getAppValue(
-			'password_policy',
-			'enforceHaveIBeenPwned',
-			'1'
-		) === '1';
+		return $this->appConfig->getValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceHaveIBeenPwned', $context),
+			true,
+		);
 	}
 
 	/**
@@ -162,23 +154,25 @@ class PasswordPolicyConfig {
 	 *
 	 * @param bool $enforceHaveIBeenPwned
 	 */
-	public function setEnforceHaveIBeenPwned(bool $enforceHaveIBeenPwned) {
-		$this->config->setAppValue('password_policy', 'enforceHaveIBeenPwned', $enforceHaveIBeenPwned ? '1' : '0');
+	public function setEnforceHaveIBeenPwned(bool $enforceHaveIBeenPwned, ?PasswordContext $context = null): void {
+		$this->appConfig->setValueBool(
+			Application::APP_ID,
+			$this->getScopedAppConfig('enforceHaveIBeenPwned', $context),
+			$enforceHaveIBeenPwned,
+		);
 	}
 
 	public function getHistorySize(): int {
-		return (int)$this->config->getAppValue(
-			'password_policy',
+		return $this->appConfig->getValueInt(
+			Application::APP_ID,
 			'historySize',
-			0
 		);
 	}
 
 	public function getExpiryInDays(): int {
-		return (int)$this->config->getAppValue(
-			'password_policy',
+		return $this->appConfig->getValueInt(
+			Application::APP_ID,
 			'expiration',
-			0
 		);
 	}
 
@@ -186,10 +180,57 @@ class PasswordPolicyConfig {
 	 * @return int if 0 then there is no limit
 	 */
 	public function getMaximumLoginAttempts(): int {
-		return (int)$this->config->getAppValue(
-			'password_policy',
+		return $this->appConfig->getValueInt(
+			Application::APP_ID,
 			'maximumLoginAttempts',
-			0
 		);
+	}
+
+	/**
+	 * Format a \OCP\Security\PasswordContext to a human readable string
+	 * @since 3.0.0
+	 */
+	public static function passwordContextToString(PasswordContext $context): string {
+		return match ($context) {
+			PasswordContext::ACCOUNT => 'account',
+			PasswordContext::SHARING => 'sharing',
+			default => throw new \InvalidArgumentException('Unsupported password context'),
+		};
+	}
+
+	/**
+	 * Get all password contexts for which a policy was setup
+	 * @return PasswordContext[]
+	 * @since 3.0.0
+	 */
+	public function getAvailableConfigs(): array {
+		return array_filter(self::SUPPORTED_CONTEXTS, $this->hasConfigurationContext(...));
+	}
+
+	/**
+	 * Check if a configuration for this password context is available
+	 * @param PasswordContext $context
+	 * @return bool
+	 * @since 3.0.0
+	 */
+	private function hasConfigurationContext(?PasswordContext $context = null): bool {
+		$available = $this->appConfig->getValueArray(Application::APP_ID, 'passwordContexts', ['account']);
+		return match ($context) {
+			PasswordContext::ACCOUNT => true,
+			PasswordContext::SHARING => in_array('sharing', $available),
+			default => false,
+		};
+	}
+
+	private function getScopedAppConfig(string $key, ?PasswordContext $context): string {
+		if ($context === null || $this->hasConfigurationContext($context) === false) {
+			$context = PasswordContext::ACCOUNT;
+		}
+ 
+		if ($context === PasswordContext::ACCOUNT) {
+			return $key;
+		}
+
+		return $key . '_' . self::passwordContextToString($context);
 	}
 }

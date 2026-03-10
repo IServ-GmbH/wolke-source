@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,11 +15,9 @@ use OCP\AppFramework\Middleware;
 use OCP\Share\IManager;
 
 class ShareInfoMiddleware extends Middleware {
-	/** @var IManager */
-	private $shareManager;
-
-	public function __construct(IManager $shareManager) {
-		$this->shareManager = $shareManager;
+	public function __construct(
+		private IManager $shareManager,
+	) {
 	}
 
 	/**

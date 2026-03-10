@@ -160,7 +160,7 @@ class SetConfig extends Base {
 				$sensitive = $sensitive ?? false;
 			}
 
-			$value = (string) $input->getOption('value');
+			$value = (string)$input->getOption('value');
 
 			switch ($type) {
 				case IAppConfig::VALUE_MIXED:
@@ -172,17 +172,17 @@ class SetConfig extends Base {
 					break;
 
 				case IAppConfig::VALUE_INT:
-					if ($value !== ((string) ((int) $value))) {
+					if ($value !== ((string)((int)$value))) {
 						throw new AppConfigIncorrectTypeException('Value is not an integer');
 					}
-					$updated = $this->appConfig->setValueInt($appName, $configName, (int) $value, $lazy, $sensitive);
+					$updated = $this->appConfig->setValueInt($appName, $configName, (int)$value, $lazy, $sensitive);
 					break;
 
 				case IAppConfig::VALUE_FLOAT:
-					if ($value !== ((string) ((float) $value))) {
+					if ($value !== ((string)((float)$value))) {
 						throw new AppConfigIncorrectTypeException('Value is not a float');
 					}
-					$updated = $this->appConfig->setValueFloat($appName, $configName, (float) $value, $lazy, $sensitive);
+					$updated = $this->appConfig->setValueFloat($appName, $configName, (float)$value, $lazy, $sensitive);
 					break;
 
 				case IAppConfig::VALUE_BOOL:
@@ -211,7 +211,7 @@ class SetConfig extends Base {
 					"<info>Config value '%s' for app '%s' is now set to '%s', stored as %s in %s</info>",
 					$configName,
 					$appName,
-					$current['value'],
+					$current['sensitive'] ? '<sensitive>' : $current['value'],
 					$current['typeString'],
 					$current['lazy'] ? 'lazy cache' : 'fast cache'
 				)
@@ -237,7 +237,7 @@ class SetConfig extends Base {
 		$output->writeln('');
 		$output->writeln('<comment>This might break thing, affect performance on your instance or its security!</comment>');
 
-		$result = (strtolower((string) $helper->ask(
+		$result = (strtolower((string)$helper->ask(
 			$input,
 			$output,
 			new Question('<comment>Confirm this action by typing \'yes\'</comment>: '))) === 'yes');

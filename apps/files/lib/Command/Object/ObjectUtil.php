@@ -79,7 +79,7 @@ class ObjectUtil {
 			return false;
 		}
 
-		$fileId = (int) substr($object, strlen('urn:oid:'));
+		$fileId = (int)substr($object, strlen('urn:oid:'));
 		$query = $this->connection->getQueryBuilder();
 		$query->select('fileid')
 			->from('filecache')

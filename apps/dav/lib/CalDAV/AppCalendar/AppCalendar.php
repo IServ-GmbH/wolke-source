@@ -24,12 +24,14 @@ use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Reader;
 
 class AppCalendar extends ExternalCalendar {
-	protected string $principal;
 	protected ICalendar $calendar;
 
-	public function __construct(string $appId, ICalendar $calendar, string $principal) {
+	public function __construct(
+		string $appId,
+		ICalendar $calendar,
+		protected string $principal,
+	) {
 		parent::__construct($appId, $calendar->getUri());
-		$this->principal = $principal;
 		$this->calendar = $calendar;
 	}
 
@@ -174,7 +176,7 @@ class AppCalendar extends ExternalCalendar {
 		// We need to group by UID (actually by filename but we do not have that information)
 		$result = [];
 		foreach ($objects as $object) {
-			$uid = (string) $object['UID'] ?: uniqid();
+			$uid = (string)$object['UID'] ?: uniqid();
 			if (!isset($result[$uid])) {
 				$result[$uid] = [];
 			}

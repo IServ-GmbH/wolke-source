@@ -5,6 +5,8 @@
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
+use OCP\IDateTimeFormatter;
 use OCP\Util;
 
 function p($string) {
@@ -20,12 +22,12 @@ function p($string) {
 function emit_css_tag($href, $opts = '') {
 	$s = '<link rel="stylesheet"';
 	if (!empty($href)) {
-		$s .= ' href="' . $href .'"';
+		$s .= ' href="' . $href . '"';
 	}
 	if (!empty($opts)) {
-		$s .= ' '.$opts;
+		$s .= ' ' . $opts;
 	}
-	print_unescaped($s.">\n");
+	print_unescaped($s . ">\n");
 }
 
 /**
@@ -56,16 +58,16 @@ function emit_script_tag(string $src, string $script_content = '', string $conte
 	$s = '<script nonce="' . $nonceManager->getNonce() . '"';
 	if (!empty($src)) {
 		// emit script tag for deferred loading from $src
-		$s .= $defer_str.' src="' . $src .'"' . $type . '>';
+		$s .= $defer_str . ' src="' . $src . '"' . $type . '>';
 	} elseif ($script_content !== '') {
 		// emit script tag for inline script from $script_content without defer (see MDN)
-		$s .= ">\n".$script_content."\n";
+		$s .= ">\n" . $script_content . "\n";
 	} else {
 		// no $src nor $src_content, really useless empty tag
 		$s .= '>';
 	}
 	$s .= '</script>';
-	print_unescaped($s."\n");
+	print_unescaped($s . "\n");
 }
 
 /**
@@ -269,7 +271,7 @@ function human_file_size($bytes) {
 function strip_time($timestamp) {
 	$date = new \DateTime("@{$timestamp}");
 	$date->setTime(0, 0, 0);
-	return (int) $date->format('U');
+	return (int)$date->format('U');
 }
 
 /**
@@ -280,9 +282,8 @@ function strip_time($timestamp) {
  * @param bool|null $dateOnly whether to strip time information
  * @return string timestamp
  */
-function relative_modified_date($timestamp, $fromTime = null, $dateOnly = false) {
-	/** @var \OC\DateTimeFormatter $formatter */
-	$formatter = \OCP\Server::get('DateTimeFormatter');
+function relative_modified_date($timestamp, $fromTime = null, $dateOnly = false): string {
+	$formatter = \OCP\Server::get(IDateTimeFormatter::class);
 
 	if ($dateOnly) {
 		return $formatter->formatDateSpan($timestamp, $fromTime);
@@ -313,7 +314,7 @@ function html_select_options($options, $selected, $params = []) {
 			$label = $label[$label_name];
 		}
 		$select = in_array($value, $selected) ? ' selected="selected"' : '';
-		$html .= '<option value="' . \OCP\Util::sanitizeHTML($value) . '"' . $select . '>' . \OCP\Util::sanitizeHTML($label) . '</option>'."\n";
+		$html .= '<option value="' . \OCP\Util::sanitizeHTML($value) . '"' . $select . '>' . \OCP\Util::sanitizeHTML($label) . '</option>' . "\n";
 	}
 	return $html;
 }

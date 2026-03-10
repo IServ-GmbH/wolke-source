@@ -18,56 +18,47 @@ use Tensor\Matrix;
 class Sigmoid implements ActivationFunction
 {
     /**
-     * Compute the output value.
+     * Compute the activation.
      *
      * @internal
      *
-     * @param \Tensor\Matrix $z
+     * @param \Tensor\Matrix $input
      * @return \Tensor\Matrix
      */
-    public function compute(Matrix $z) : Matrix
+    public function activate(Matrix $input) : Matrix
     {
-        return $z->map([$this, '_compute']);
+        return $input->map('Rubix\ML\sigmoid');
     }
 
     /**
-     * Calculate the derivative of the activation function at a given output.
+     * Calculate the derivative of the activation.
      *
      * @internal
      *
-     * @param \Tensor\Matrix $z
-     * @param \Tensor\Matrix $computed
+     * @param \Tensor\Matrix $input
+     * @param \Tensor\Matrix $output
      * @return \Tensor\Matrix
      */
-    public function differentiate(Matrix $z, Matrix $computed) : Matrix
+    public function differentiate(Matrix $input, Matrix $output) : Matrix
     {
-        return $computed->map([$this, '_differentiate']);
+        return $output->map([$this, '_differentiate']);
     }
 
     /**
      * @internal
      *
-     * @param float $z
+     * @param float $output
      * @return float
      */
-    public function _compute(float $z) : float
+    public function _differentiate(float $output) : float
     {
-        return 1.0 / (1.0 + exp(-$z));
-    }
-
-    /**
-     * @internal
-     *
-     * @param float $computed
-     * @return float
-     */
-    public function _differentiate(float $computed) : float
-    {
-        return $computed * (1.0 - $computed);
+        return $output * (1.0 - $output);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

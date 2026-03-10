@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,13 +14,12 @@ use Sabre\DAV\PropPatch;
 class AppleProvisioningNode implements INode, IProperties {
 	public const FILENAME = 'apple-provisioning.mobileconfig';
 
-	protected $timeFactory;
-
 	/**
 	 * @param ITimeFactory $timeFactory
 	 */
-	public function __construct(ITimeFactory $timeFactory) {
-		$this->timeFactory = $timeFactory;
+	public function __construct(
+		protected ITimeFactory $timeFactory,
+	) {
 	}
 
 	/**

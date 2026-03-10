@@ -169,7 +169,7 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 	 */
 	public function handleGetProperties(
 		PropFind $propFind,
-		\Sabre\DAV\INode $sabreNode
+		\Sabre\DAV\INode $sabreNode,
 	) {
 		if (!($sabreNode instanceof DavNode)) {
 			return;
@@ -249,6 +249,14 @@ class SharesPlugin extends \Sabre\DAV\ServerPlugin {
 				if ($targetShare->getId() === $sourceShare->getId()) {
 					return true;
 				}
+			}
+
+			// if the share recipient is allow to delete from the share, they are allowed to move the file out of the share
+			// the user moving the file out of the share to their home storage would give them share permissions and allow moving into the share
+			//
+			// since the 2-step move is allowed, we also allow both steps at once
+			if ($sourceNode->isDeletable()) {
+				return true;
 			}
 		}
 

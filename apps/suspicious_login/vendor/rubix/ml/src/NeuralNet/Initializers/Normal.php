@@ -22,7 +22,7 @@ class Normal implements Initializer
      *
      * @var float
      */
-    protected $stdDev;
+    protected float $stdDev;
 
     /**
      * @param float $stdDev
@@ -43,17 +43,20 @@ class Normal implements Initializer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @param int $fanOut
+     * @param int<0,max> $fanIn
+     * @param int<0,max> $fanOut
      * @return \Tensor\Matrix
      */
     public function initialize(int $fanIn, int $fanOut) : Matrix
     {
-        return Matrix::gaussian($fanOut, $fanIn)->multiply($this->stdDev);
+        return Matrix::gaussian($fanOut, $fanIn)
+            ->multiply($this->stdDev);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

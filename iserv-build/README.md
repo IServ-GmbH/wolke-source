@@ -19,23 +19,13 @@ These binary patches will be applied to the production code in the second build 
 
 ## Build the image
 
+The [build_image.sh](build_image.sh) script builds the image from the original nextcloud-server repo and applies the patches. Be aware - it can take up to 20 minutes.
+
 ### Locally
 
-* Run [`docker/cloudfiles/build_image.sh`](docker/cloudfiles/build_image.sh) to build the image.  
-* The image will be saved as `./data/image.tar.xz`.  
+* Run `CI=1 docker/cloudfiles/build_image.sh` to build the image.
+* The image will be saved as `./data/image.tar.xz`.
 * You can then transfer the image to your IServ VM and run `iservchk cloudfiles` to restart the container with the new image.
-
----- MAYBE-NOT-AN-ERROR-ANYMORE TODO: Check if this error persists after switching from Image IDS to tags ----
-If you are on an architecture other than linux/x86_64, the image ID comparison in iservchk will fail because Docker generates a different one:  
-- Make sure you have the newest tarball in the data folder, then update the image:  
-- `iservchk cloudfiles`  
-  - It will report a failure when updating and importing the image (due to the ID mismatch that can't be repaired)  
-  - It should still start the container regardless  
-- Run `docker inspect --format='{{.Id}}' registry.git.iserv.eu/iserv/docker-cloudfiles:latest`  
-  - Retrieve the image ID that the target architecture references  
-- Put this ID into [image.id](../../data/image.id)  
-- Now iservchk will no longer complain
----- END OF MAYBE-NOT-AN-ERROR-ANYMORE ----
 
 ### In CI
 
@@ -84,7 +74,7 @@ If for some reason you need to manually restart the container with a new image, 
 
 ### 1. Clone Nextcloud and apply existing patches  
 - `rm -rf ~/nextcloud-server`
-- `./docker/cloudfiles/source/clone_and_apply_patches.sh 30.0.17 ~/nextcloud-server`  
+- `./docker/cloudfiles/source/clone_and_apply_patches.sh 31.0.14 ~/nextcloud-server`  
   - arg1: Nextcloud version currently used for the image  
     - You can find the current version in the [.env](.env) file.  
   - arg2: destination path for the repo that gets temporarily checked out.
@@ -127,7 +117,7 @@ If patches need to be applied to an app that has not been patched yet, make sure
 ## Handling failed patches
 
 1. Move the affected patch file out of `./source/patches`.
-2. Run `clone_and_apply_patches.sh 30.0.17 ~/nextcloud-server` again.  
+2. Run `clone_and_apply_patches.sh 31.0.14 ~/nextcloud-server` again.  
 3. Repeat steps 1 and 2 until all remaining patches have been applied successfully.
 4. Manually apply the changes of the moved patch files to the affected files in the working copy `~/nextcloud-server`.  
 5. Check if (non-)core apps need to be upgraded.

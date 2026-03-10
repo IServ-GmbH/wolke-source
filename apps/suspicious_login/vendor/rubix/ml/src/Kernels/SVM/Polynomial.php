@@ -3,6 +3,8 @@
 namespace Rubix\ML\Kernels\SVM;
 
 use Rubix\ML\Specifications\ExtensionIsLoaded;
+use Rubix\ML\Specifications\SpecificationChain;
+use Rubix\ML\Specifications\ExtensionMinimumVersion;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use svm;
 
@@ -22,21 +24,21 @@ class Polynomial implements Kernel
      *
      * @var int
      */
-    protected $degree;
+    protected int $degree;
 
     /**
      * The kernel coefficient.
      *
      * @var float|null
      */
-    protected $gamma;
+    protected ?float $gamma;
 
     /**
      * The independent term.
      *
      * @var float
      */
-    protected $coef0;
+    protected float $coef0;
 
     /**
      * @param int $degree
@@ -46,7 +48,10 @@ class Polynomial implements Kernel
      */
     public function __construct(int $degree = 3, ?float $gamma = null, float $coef0 = 0.0)
     {
-        ExtensionIsLoaded::with('svm')->check();
+        SpecificationChain::with([
+            new ExtensionIsLoaded('svm'),
+            new ExtensionMinimumVersion('svm', '0.2.0'),
+        ])->check();
 
         if ($degree < 1) {
             throw new InvalidArgumentException('Degree must be greater than 0,'
@@ -77,6 +82,8 @@ class Polynomial implements Kernel
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

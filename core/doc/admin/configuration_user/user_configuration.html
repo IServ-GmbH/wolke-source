@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User management &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Resetting a lost admin password" href="reset_admin_password.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -59,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">User management</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">User management</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-new-user">Creating a new user</a></li>
@@ -97,6 +103,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -142,18 +149,19 @@
 </ul>
 <p>The default view displays basic information about your users.</p>
 <figure class="align-default">
-<img alt="../_images/users-config.png" src="../_images/users-config.png" />
+<img alt="../_images/user-config.png" src="../_images/user-config.png" />
 </figure>
 <p>The Group filters on the left sidebar lets you quickly filter users by their
 group memberships, and create new groups.</p>
 <figure class="align-default">
-<img alt="../_images/users-config-1.png" src="../_images/users-config-1.png" />
+<img alt="../_images/user-config-groups.png" src="../_images/user-config-groups.png" />
 </figure>
 <p>Click the gear icon on the lower left sidebar to set a default storage quota,
 and to display additional fields: <strong>Show storage location, Show last log in,
 Show user backend, Send email to new users,</strong> and <strong>Show email address</strong>.</p>
 <figure class="align-default">
-<img alt="../_images/users-config-2.png" src="../_images/users-config-2.png" />
+<a class="reference internal image-reference" href="../_images/user-config-settings.png"><img alt="../_images/user-config-settings.png" src="../_images/user-config-settings.png" style="width: 444.0px; height: 622.5px;" />
+</a>
 </figure>
 <p>User accounts have the following properties:</p>
 <dl class="simple">
@@ -165,6 +173,11 @@ the Full Name is not set it defaults to the login name.</p>
 </dd>
 <dt><em>Password</em></dt><dd><p>The admin sets the new user’s first password. Both the user and the admin can
 change the user’s password at anytime.</p>
+</dd>
+<dt><em>Email address</em></dt><dd><p>You can set an email address for a user.
+This address can be used when you first set-up an account
+so the user receive a mail asking them to create a password if none is provided.
+This address can be used for password reset request.</p>
 </dd>
 <dt><em>Groups</em></dt><dd><p>You may create groups, and assign group memberships to users. By default new
 users are not assigned to any groups.</p>
@@ -193,7 +206,7 @@ authorization level of the user or their manager.</p>
 <li><p>Click the <strong>Create</strong> button</p></li>
 </ul>
 <figure class="align-default">
-<img alt="../_images/users-create.png" src="../_images/users-create.png" />
+<img alt="../_images/user-config-new-user.png" src="../_images/user-config-new-user.png" />
 </figure>
 <p>Login names may contain letters (a-z, A-Z), numbers (0-9), dashes (-),
 underscores (_), periods (.), spaces ( ) and at signs (&#64;). After creating the user, you
@@ -241,7 +254,7 @@ system settings, or add or modify users in the groups that they are not <strong>
 Administrators</strong> for. Use the dropdown menus in the <strong>Group Admin</strong> column to
 assign group admin privileges.</p>
 <figure class="align-default">
-<img alt="../_images/users-groups.png" src="../_images/users-groups.png" />
+<img alt="../_images/user-config-group-admin.png" src="../_images/user-config-group-admin.png" />
 </figure>
 <p><strong>Super Administrators</strong> have full rights on your Nextcloud server, and can
 access and modify all settings. To assign the <strong>Super Administrators</strong> role to
@@ -296,7 +309,7 @@ files count against that user’s quota.</p>
 <section id="disable-and-enable-users">
 <h2>Disable and enable users<a class="headerlink" href="#disable-and-enable-users" title="Link to this heading"></a></h2>
 <figure class="align-default">
-<img alt="../_images/users-actions.png" src="../_images/users-actions.png" />
+<img alt="../_images/user-config-actions.png" src="../_images/user-config-actions.png" />
 </figure>
 <p>Sometimes you may want to disable a user without permanently deleting their
 settings and files. The user can be activated any time again, without data-loss.</p>
@@ -317,7 +330,7 @@ select <strong>Enable</strong>.</p>
 <section id="deleting-users">
 <h2>Deleting users<a class="headerlink" href="#deleting-users" title="Link to this heading"></a></h2>
 <figure class="align-default">
-<img alt="../_images/users-actions.png" src="../_images/users-actions.png" />
+<img alt="../_images/user-config-actions.png" src="../_images/user-config-actions.png" />
 </figure>
 <p>Deleting a user is easy: hover your cursor over their name on the <strong>Users</strong> page
 until the “…”-menu icon appears at the far right. After clicking on it, you will
@@ -344,7 +357,7 @@ persistent file shares that survive user deletions.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -380,6 +393,14 @@ persistent file shares that survive user deletions.</p>
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

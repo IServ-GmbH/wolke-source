@@ -13,11 +13,14 @@ OC.L10N.register(
     "Favorite" : "I/E Preferuar",
     "Go back" : "Shko prapa",
     "Home" : "Kryefaqja",
-    "View" : "Shiko",
+    "General" : "Të përgjithshme",
     "Remove from favorites" : "Remove from favorites",
     "Loading folders…" : "Duke ngarkuar dosjet…",
     "Details" : "Detajet",
+    "Cancel" : "Cancel",
+    "Confirm" : "Konfirmo",
     "Group" : "Grup",
+    "View" : "Shiko",
     "Add" : "Shto"
 },
 "nplurals=2; plural=(n != 1);");

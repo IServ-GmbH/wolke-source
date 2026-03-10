@@ -46,7 +46,7 @@ class AdamTest extends TestCase
      *
      * @param \Rubix\ML\NeuralNet\Parameter $param
      * @param \Tensor\Tensor<int|float> $gradient
-     * @param array[] $expected
+     * @param list<list<float>> $expected
      */
     public function step(Parameter $param, Tensor $gradient, array $expected) : void
     {
@@ -54,11 +54,11 @@ class AdamTest extends TestCase
 
         $step = $this->optimizer->step($param, $gradient);
 
-        $this->assertEquals($expected, $step->asArray());
+        $this->assertEqualsWithDelta($expected, $step->asArray(), 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function stepProvider() : Generator
     {
@@ -74,9 +74,9 @@ class AdamTest extends TestCase
                 [0.04, -0.01, -0.5],
             ]),
             [
-                [0.0010000000000000007, 0.0010000000000000009, -0.0010000000000000007],
-                [-0.0010000000000000007, 0.0010000000000000007, 0.0010000000000000007],
-                [0.0010000000000000007, -0.0010000000000000007, -0.0010000000000000007],
+                [0.003162277660168379, 0.00316227766016838, -0.003162277660168379],
+                [-0.003162277660168379, 0.003162277660168379, 0.0031622776601683794],
+                [0.003162277660168379, -0.003162277660168379, -0.00316227766016838],
             ],
         ];
     }

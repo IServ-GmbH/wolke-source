@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,25 +14,16 @@ use OCP\IUserSession;
 
 class ThemeInjectionService {
 
-	private IURLGenerator $urlGenerator;
-	private ThemesService $themesService;
-	private DefaultTheme $defaultTheme;
-	private Util $util;
-	private IConfig $config;
 	private ?string $userId;
 
-	public function __construct(IURLGenerator $urlGenerator,
-		ThemesService $themesService,
-		DefaultTheme $defaultTheme,
-		Util $util,
-		IConfig $config,
-		IUserSession $userSession) {
-		$this->urlGenerator = $urlGenerator;
-		$this->themesService = $themesService;
-		$this->defaultTheme = $defaultTheme;
-		$this->util = $util;
-		$this->config = $config;
-
+	public function __construct(
+		private IURLGenerator $urlGenerator,
+		private ThemesService $themesService,
+		private DefaultTheme $defaultTheme,
+		private Util $util,
+		private IConfig $config,
+		IUserSession $userSession,
+	) {
 		if ($userSession->getUser() !== null) {
 			$this->userId = $userSession->getUser()->getUID();
 		} else {
@@ -46,7 +36,7 @@ class ThemeInjectionService {
 		$defaultTheme = $themes[$this->defaultTheme->getId()];
 		$mediaThemes = array_filter($themes, function ($theme) {
 			// Check if the theme provides a media query
-			return (bool) $theme->getMediaQuery();
+			return (bool)$theme->getMediaQuery();
 		});
 
 		// Default theme fallback

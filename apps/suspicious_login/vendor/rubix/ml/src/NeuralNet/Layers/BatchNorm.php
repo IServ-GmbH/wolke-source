@@ -5,9 +5,9 @@ namespace Rubix\ML\NeuralNet\Layers;
 use Tensor\Matrix;
 use Rubix\ML\Deferred;
 use Tensor\ColumnVector;
+use Rubix\ML\NeuralNet\Parameter;
 use Rubix\ML\NeuralNet\Optimizers\Optimizer;
 use Rubix\ML\NeuralNet\Initializers\Constant;
-use Rubix\ML\NeuralNet\Parameter;
 use Rubix\ML\NeuralNet\Initializers\Initializer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -34,75 +34,74 @@ use const Rubix\ML\EPSILON;
 class BatchNorm implements Hidden, Parametric
 {
     /**
-     * The decay rate of the previous running averages of the global mean
-     * and variance.
+     * The decay rate of the previous running averages of the global mean and variance.
      *
      * @var float
      */
-    protected $decay;
+    protected float $decay;
 
     /**
      * The initializer for the beta parameter.
      *
      * @var \Rubix\ML\NeuralNet\Initializers\Initializer
      */
-    protected $betaInitializer;
+    protected \Rubix\ML\NeuralNet\Initializers\Initializer $betaInitializer;
 
     /**
      * The initializer for the gamma parameter.
      *
      * @var \Rubix\ML\NeuralNet\Initializers\Initializer
      */
-    protected $gammaInitializer;
+    protected \Rubix\ML\NeuralNet\Initializers\Initializer $gammaInitializer;
 
     /**
      * The width of the layer. i.e. the number of neurons.
      *
-     * @var int|null
+     * @var positive-int|null
      */
-    protected $width;
+    protected ?int $width = null;
 
     /**
      * The learnable centering parameter.
      *
      * @var \Rubix\ML\NeuralNet\Parameter|null
      */
-    protected $beta;
+    protected ?\Rubix\ML\NeuralNet\Parameter $beta = null;
 
     /**
      * The learnable scaling parameter.
      *
      * @var \Rubix\ML\NeuralNet\Parameter|null
      */
-    protected $gamma;
+    protected ?\Rubix\ML\NeuralNet\Parameter $gamma = null;
 
     /**
      * The running mean of each input dimension.
      *
      * @var \Tensor\Vector|null
      */
-    protected $mean;
+    protected ?\Tensor\Vector $mean = null;
 
     /**
      * The running variance of each input dimension.
      *
      * @var \Tensor\Vector|null
      */
-    protected $variance;
+    protected ?\Tensor\Vector $variance = null;
 
     /**
      * A cache of inverse standard deviations calculated during the forward pass.
      *
      * @var \Tensor\Vector|null
      */
-    protected $stdInv;
+    protected ?\Tensor\Vector $stdInv = null;
 
     /**
      * A cache of normalized inputs to the layer.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $xHat;
+    protected ?\Tensor\Matrix $xHat = null;
 
     /**
      * @param float $decay
@@ -131,11 +130,11 @@ class BatchNorm implements Hidden, Parametric
      * @internal
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
-        if (!$this->width) {
+        if ($this->width === null) {
             throw new RuntimeException('Layer has not been initialized.');
         }
 
@@ -148,8 +147,8 @@ class BatchNorm implements Hidden, Parametric
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -255,8 +254,8 @@ class BatchNorm implements Hidden, Parametric
 
         $gamma = $this->gamma->param();
 
-        $this->beta->update($optimizer->step($this->beta, $dBeta));
-        $this->gamma->update($optimizer->step($this->gamma, $dGamma));
+        $this->beta->update($dBeta, $optimizer);
+        $this->gamma->update($dGamma, $optimizer);
 
         $stdInv = $this->stdInv;
         $xHat = $this->xHat;
@@ -328,11 +327,13 @@ class BatchNorm implements Hidden, Parametric
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Batch Norm (decay: {$this->decay}, beta_initializer: {$this->betaInitializer},"
-            . " gamma_initializer: {$this->gammaInitializer})";
+        return "Batch Norm (decay: {$this->decay}, beta initializer: {$this->betaInitializer},"
+            . " gamma initializer: {$this->gammaInitializer})";
     }
 }

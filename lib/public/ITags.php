@@ -76,9 +76,9 @@ interface ITags {
 	 * ]
 	 * ```
 	 *
-	 * @param array $objIds item ids
-	 * @return array|false with object id as key and an array
-	 *                     of tag names as value or false if an error occurred
+	 * @param list<int> $objIds item ids
+	 * @return array<int, list<string>>|false with object id as key and an array
+	 *                                        of tag names as value or false if an error occurred
 	 * @since 8.0.0
 	 */
 	public function getTagsForObjects(array $objIds);
@@ -104,7 +104,7 @@ interface ITags {
 
 	/**
 	 * Checks whether a tag is saved for the given user,
-	 * disregarding the ones shared with him or her.
+	 * disregarding the ones shared with them.
 	 *
 	 * @param string $name The tag name to check for.
 	 * @param string $user The user whose tags are to be checked.
@@ -184,20 +184,26 @@ interface ITags {
 	 *
 	 * @param int $objid The id of the object
 	 * @param string $tag The id or name of the tag
+	 * @param string $path The optional path of the node. Used when dispatching the favorite change event.
 	 * @return boolean Returns false on database error.
 	 * @since 6.0.0
+	 * @since 31.0.0 Added the $path argument.
+	 * @since 33.0.0 Change $path default value from '' to null.
 	 */
-	public function tagAs($objid, $tag);
+	public function tagAs($objid, $tag, ?string $path = null);
 
 	/**
 	 * Delete single tag/object relation from the db
 	 *
 	 * @param int $objid The id of the object
 	 * @param string $tag The id or name of the tag
+	 * @param string $path The optional path of the node. Used when dispatching the favorite change event.
 	 * @return boolean
 	 * @since 6.0.0
+	 * @since 31.0.0 Added the $path argument.
+	 * @since 33.0.0 Change $path default value from '' to null.
 	 */
-	public function unTag($objid, $tag);
+	public function unTag($objid, $tag, ?string $path = null);
 
 	/**
 	 * Delete tags from the database

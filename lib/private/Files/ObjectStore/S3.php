@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,7 +15,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 	use S3ConnectionTrait;
 	use S3ObjectTrait;
 
-	public function __construct($parameters) {
+	public function __construct(array $parameters) {
 		$parameters['primary_storage'] = true;
 		$this->parseParams($parameters);
 	}
@@ -38,7 +37,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 		if ($uploadId === null) {
 			throw new Exception('No upload id returned');
 		}
-		return (string) $uploadId;
+		return (string)$uploadId;
 	}
 
 	public function uploadMultipartPart(string $urn, string $uploadId, int $partId, $stream, $size): Result {
@@ -84,7 +83,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 			'Bucket' => $this->bucket,
 			'Key' => $urn,
 		] + $this->getSSECParameters());
-		return (int) $stat->get('ContentLength');
+		return (int)$stat->get('ContentLength');
 	}
 
 	public function abortMultipartUpload($urn, $uploadId): void {
@@ -103,7 +102,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 		return [
 			'mtime' => $object['LastModified'],
 			'etag' => trim($object['ETag'], '"'),
-			'size' => (int) ($object['Size'] ?? $object['ContentLength']),
+			'size' => (int)($object['Size'] ?? $object['ContentLength']),
 		];
 	}
 
@@ -121,7 +120,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 						'metadata' => [
 							'mtime' => $object['LastModified'],
 							'etag' => trim($object['ETag'], '"'),
-							'size' => (int) ($object['Size'] ?? $object['ContentLength']),
+							'size' => (int)($object['Size'] ?? $object['ContentLength']),
 						],
 					];
 				}

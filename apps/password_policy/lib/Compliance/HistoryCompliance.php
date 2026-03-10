@@ -8,47 +8,26 @@ declare(strict_types=1);
 
 namespace OCA\Password_Policy\Compliance;
 
-use OC\HintException;
 use OCA\Password_Policy\PasswordPolicyConfig;
+use OCP\HintException;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\PreConditionNotMetException;
 use OCP\Security\IHasher;
+use Psr\Log\LoggerInterface;
 
 class HistoryCompliance implements IAuditor, IUpdatable {
-	/** @var string */
-	protected $uid;
-
-	/** @var PasswordPolicyConfig */
-	private $policyConfig;
-	/** @var IConfig */
-	private $config;
-	/** @var IUserSession */
-	private $session;
-	/** @var IHasher */
-	private $hasher;
-	/** @var IL10N */
-	private $l;
-	/** @var ILogger */
-	private $logger;
 
 	public function __construct(
-		PasswordPolicyConfig $policyConfig,
-		IConfig $config,
-		IUserSession $session,
-		IHasher $hasher,
-		IL10N $l,
-		ILogger $logger
+		protected PasswordPolicyConfig $policyConfig,
+		protected IConfig $config,
+		protected IUserSession $session,
+		protected IHasher $hasher,
+		protected IL10N $l,
+		protected LoggerInterface $logger,
 	) {
-		$this->policyConfig = $policyConfig;
-		$this->config = $config;
-		$this->session = $session;
-		$this->hasher = $hasher;
-		$this->l = $l;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -94,6 +73,9 @@ class HistoryCompliance implements IAuditor, IUpdatable {
 		);
 	}
 
+	/**
+	 * @return list<string> List of previously used passwords (hashed)
+	 */
 	protected function getHistory(IUser $user): array {
 		$history = $this->config->getUserValue(
 			$user->getUID(),
@@ -101,6 +83,7 @@ class HistoryCompliance implements IAuditor, IUpdatable {
 			'passwordHistory',
 			'[]'
 		);
+		/** @var string[]|string */
 		$history = \json_decode($history, true);
 		if (!is_array($history)) {
 			$this->logger->warning(
@@ -111,6 +94,6 @@ class HistoryCompliance implements IAuditor, IUpdatable {
 		}
 		$history = \array_slice($history, 0, $this->policyConfig->getHistorySize());
 
-		return $history;
+		return \array_values($history);
 	}
 }

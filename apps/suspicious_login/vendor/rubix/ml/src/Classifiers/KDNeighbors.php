@@ -7,11 +7,11 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Graph\Trees\KDTree;
 use Rubix\ML\Graph\Trees\Spatial;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -46,28 +46,28 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @var int
      */
-    protected $k;
+    protected int $k;
 
     /**
      * Should we consider the distances of our nearest neighbors when making predictions?
      *
      * @var bool
      */
-    protected $weighted;
+    protected bool $weighted;
 
     /**
      * The spatial tree used to run nearest neighbor searches.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
      * The zero vector for the possible class outcomes.
      *
      * @var float[]
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
@@ -76,7 +76,7 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @var int|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param int $k
@@ -84,7 +84,7 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
      * @param \Rubix\ML\Graph\Trees\Spatial|null $tree
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(int $k = 5, bool $weighted = true, ?Spatial $tree = null)
+    public function __construct(int $k = 5, bool $weighted = false, ?Spatial $tree = null)
     {
         if ($k < 1) {
             throw new InvalidArgumentException('At least 1 neighbor'
@@ -172,7 +172,7 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
 
         $this->classes = array_fill_keys($dataset->possibleOutcomes(), 0.0);
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
 
         $this->tree->grow($dataset);
     }
@@ -217,6 +217,7 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
             $weights = array_count_values($labels);
         }
 
+        /** @var array<string,float|int> $weights */
         return argmax($weights);
     }
 
@@ -225,7 +226,7 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -273,6 +274,8 @@ class KDNeighbors implements Estimator, Learner, Probabilistic, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,7 +12,7 @@ class SearchOrder implements ISearchOrder {
 	public function __construct(
 		private string $direction,
 		private string $field,
-		private string $extra = ''
+		private string $extra = '',
 	) {
 	}
 

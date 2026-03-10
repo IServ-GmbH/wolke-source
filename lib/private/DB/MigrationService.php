@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2017 ownCloud GmbH
@@ -195,8 +194,8 @@ class MigrationService {
 		preg_match('/(\d+)Date(\d+)/', basename($a), $matchA);
 		preg_match('/(\d+)Date(\d+)/', basename($b), $matchB);
 		if (!empty($matchA) && !empty($matchB)) {
-			$versionA = (int) $matchA[1];
-			$versionB = (int) $matchB[1];
+			$versionA = (int)$matchA[1];
+			$versionB = (int)$matchB[1];
 			if ($versionA !== $versionB) {
 				return ($versionA < $versionB) ? -1 : 1;
 			}
@@ -229,7 +228,7 @@ class MigrationService {
 
 		foreach ($files as $file) {
 			$className = basename($file, '.php');
-			$version = (string) substr($className, 7);
+			$version = (string)substr($className, 7);
 			if ($version === '0') {
 				throw new \InvalidArgumentException(
 					"Cannot load a migrations with the name '$version' because it is a reserved number"
@@ -346,7 +345,7 @@ class MigrationService {
 			return null;
 		}
 
-		return (string) $versions[$offset + $delta];
+		return (string)$versions[$offset + $delta];
 	}
 
 	private function getCurrentVersion(): string {
@@ -397,7 +396,7 @@ class MigrationService {
 			} catch (\Exception $e) {
 				// The exception itself does not contain the name of the migration,
 				// so we wrap it here, to make debugging easier.
-				throw new \Exception('Database error when running migration ' . $version . ' for app ' . $this->getApp() . PHP_EOL. $e->getMessage(), 0, $e);
+				throw new \Exception('Database error when running migration ' . $version . ' for app ' . $this->getApp() . PHP_EOL . $e->getMessage(), 0, $e);
 			}
 		}
 	}

@@ -73,7 +73,7 @@ class QueryBuilder implements IQueryBuilder {
 	 * @since 8.2.0
 	 */
 	public function automaticTablePrefix($enabled) {
-		$this->automaticTablePrefix = (bool) $enabled;
+		$this->automaticTablePrefix = (bool)$enabled;
 	}
 
 	/**
@@ -423,7 +423,7 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 */
 	public function setFirstResult($firstResult) {
-		$this->queryBuilder->setFirstResult((int) $firstResult);
+		$this->queryBuilder->setFirstResult((int)$firstResult);
 
 		return $this;
 	}
@@ -453,7 +453,7 @@ class QueryBuilder implements IQueryBuilder {
 		if ($maxResults === null) {
 			$this->queryBuilder->setMaxResults($maxResults);
 		} else {
-			$this->queryBuilder->setMaxResults((int) $maxResults);
+			$this->queryBuilder->setMaxResults((int)$maxResults);
 		}
 
 		return $this;
@@ -1020,7 +1020,7 @@ class QueryBuilder implements IQueryBuilder {
 	public function setValue($column, $value) {
 		$this->queryBuilder->setValue(
 			$this->helper->quoteColumnName($column),
-			(string) $value
+			(string)$value
 		);
 
 		return $this;
@@ -1117,6 +1117,10 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 */
 	public function orderBy($sort, $order = null) {
+		if ($order !== null && !in_array(strtoupper((string)$order), ['ASC', 'DESC'], true)) {
+			$order = null;
+		}
+
 		$this->queryBuilder->orderBy(
 			$this->helper->quoteColumnName($sort),
 			$order
@@ -1134,6 +1138,10 @@ class QueryBuilder implements IQueryBuilder {
 	 * @return $this This QueryBuilder instance.
 	 */
 	public function addOrderBy($sort, $order = null) {
+		if ($order !== null && !in_array(strtoupper((string)$order), ['ASC', 'DESC'], true)) {
+			$order = null;
+		}
+
 		$this->queryBuilder->addOrderBy(
 			$this->helper->quoteColumnName($sort),
 			$order
@@ -1329,7 +1337,7 @@ class QueryBuilder implements IQueryBuilder {
 	 */
 	public function getTableName($table) {
 		if ($table instanceof IQueryFunction) {
-			return (string) $table;
+			return (string)$table;
 		}
 
 		$table = $this->prefixTableName($table);
@@ -1377,6 +1385,10 @@ class QueryBuilder implements IQueryBuilder {
 		}
 
 		return $this->helper->quoteColumnName($alias);
+	}
+
+	public function escapeLikeParameter(string $parameter): string {
+		return $this->connection->escapeLikeParameter($parameter);
 	}
 
 	public function hintShardKey(string $column, mixed $value, bool $overwrite = false): self {

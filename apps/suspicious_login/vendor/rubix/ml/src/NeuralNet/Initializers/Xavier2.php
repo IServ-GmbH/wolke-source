@@ -27,18 +27,22 @@ class Xavier2 implements Initializer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @param int $fanOut
+     * @param int<0,max> $fanIn
+     * @param int<0,max> $fanOut
      * @return \Tensor\Matrix
      */
     public function initialize(int $fanIn, int $fanOut) : Matrix
     {
+        $scale = (6.0 / ($fanOut + $fanIn)) ** 0.25;
+
         return Matrix::uniform($fanOut, $fanIn)
-            ->multiply((6.0 / ($fanOut + $fanIn)) ** 0.25);
+            ->multiply($scale);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

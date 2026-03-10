@@ -14,15 +14,10 @@ use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
 class PersonalSection implements IIconSection {
-	/** @var IL10N */
-	private $l;
-
-	/** @var IURLGenerator */
-	private $url;
-
-	public function __construct(IURLGenerator $url, IL10N $l) {
-		$this->url = $url;
-		$this->l = $l;
+	public function __construct(
+		protected IURLGenerator $url,
+		protected IL10N $l,
+	) {
 	}
 
 	/**
@@ -60,8 +55,8 @@ class PersonalSection implements IIconSection {
 
 	/**
 	 * @return int whether the form should be rather on the top or bottom of
-	 * the settings navigation. The sections are arranged in ascending order of
-	 * the priority values. It is required to return a value between 0 and 99.
+	 *             the settings navigation. The sections are arranged in ascending order of
+	 *             the priority values. It is required to return a value between 0 and 99.
 	 *
 	 * E.g.: 70
 	 * @since 9.1

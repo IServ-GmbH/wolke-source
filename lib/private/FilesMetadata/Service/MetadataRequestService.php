@@ -24,7 +24,7 @@ class MetadataRequestService {
 
 	public function __construct(
 		private IDBConnection $dbConnection,
-		private LoggerInterface $logger
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -63,7 +63,7 @@ class MetadataRequestService {
 			->setValue('file_id', $qb->createNamedParameter($filesMetadata->getFileId(), IQueryBuilder::PARAM_INT))
 			->setValue('json', $qb->createNamedParameter(json_encode($filesMetadata->jsonSerialize())))
 			->setValue('sync_token', $qb->createNamedParameter($this->generateSyncToken()))
-			->setValue('last_update', (string) $qb->createFunction('NOW()'));
+			->setValue('last_update', (string)$qb->createFunction('NOW()'));
 		$qb->executeStatement();
 	}
 
@@ -114,7 +114,7 @@ class MetadataRequestService {
 		$list = [];
 		$result = $qb->executeQuery();
 		while ($data = $result->fetch()) {
-			$fileId = (int) $data['file_id'];
+			$fileId = (int)$data['file_id'];
 			$metadata = new FilesMetadata($fileId);
 			try {
 				$metadata->importFromDatabase($data);

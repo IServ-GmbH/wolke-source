@@ -47,8 +47,8 @@ OC.L10N.register(
     "Download For Windows, Mac OS and Linux." : "Namestitvene datoteke za okolja Windows, Mac OS in Linux.",
     "Calendar and contacts ↗" : "Koledar in stiki ↗",
     "Connect your calendar and contacts with your devices." : "Povezovanje koledarja in stikov z različnimi napravami.",
-    "Introducing Nextcloud Hub {version}" : "Predstavljamo vam Nextcloud Hub {version}",
     "Welcome to {cloudName}!" : "Dobrodošli v oblaku {cloudName}!",
+    "Skip" : "Preskoči",
     "A collaboration platform that puts you in control" : "Sodelovalno okolje, v katerem imate vi nadzor",
     "Privacy" : "Zasebnost",
     "Host your data and files where you decide." : "Shranjujte podatke in datoteke, kjer sami želite",
@@ -73,15 +73,9 @@ OC.L10N.register(
     "What's new?" : "Kaj je novega?",
     "Nextcloud on all your devices" : "Oblak Nextcloud na vseh vaših napravah",
     "Nextcloud Hub {version}" : "Nextcloud Hub {version}",
-    "Read more" : "Več o tem",
     "Share on social media" : "Objava na družbenem omrežju",
     "Get started!" : "Začnite!",
-    "App recommendation: Nextcloud Calendar" : "Priporočilo programa: Koledar Nextcloud",
-    "App recommendation: Nextcloud Contacts" : "Priporočilo programa: Stiki Nextcloud",
-    "App recommendation: Nextcloud Mail" : "Priporočilo programa: Pošta Nextcloud",
-    "Nextcloud Whiteboard" : "Tabla Nextcloud",
-    "Safer and swifter mail" : "Varnejša in hitrejša pošta",
-    "Office and PDF templates" : "Pisarniške predloge in PDF",
-    "Get to know the new features of Hub 9" : "Spoznajte zmožnosti okolja Hub 9"
+    "Introducing Nextcloud Hub {version}" : "Predstavljamo vam Nextcloud Hub {version}",
+    "Read more" : "Več o tem"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

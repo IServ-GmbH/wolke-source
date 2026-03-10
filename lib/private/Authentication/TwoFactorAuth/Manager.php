@@ -249,7 +249,7 @@ class Manager {
 			$sessionId = $this->session->getId();
 			$token = $this->tokenProvider->getToken($sessionId);
 			$tokenId = $token->getId();
-			$this->config->deleteUserValue($user->getUID(), 'login_token_2fa', (string) $tokenId);
+			$this->config->deleteUserValue($user->getUID(), 'login_token_2fa', (string)$tokenId);
 
 			$this->dispatcher->dispatchTyped(new TwoFactorProviderForUserEnabled($user, $provider));
 			$this->dispatcher->dispatchTyped(new TwoFactorProviderChallengePassed($user, $provider));
@@ -323,7 +323,7 @@ class Manager {
 				$tokenId = $token->getId();
 				$tokensNeeding2FA = $this->config->getUserKeys($user->getUID(), 'login_token_2fa');
 
-				if (!\in_array((string) $tokenId, $tokensNeeding2FA, true)) {
+				if (!\in_array((string)$tokenId, $tokensNeeding2FA, true)) {
 					$this->session->set(self::SESSION_UID_DONE, $user->getUID());
 					return false;
 				}
@@ -360,7 +360,7 @@ class Manager {
 
 		$id = $this->session->getId();
 		$token = $this->tokenProvider->getToken($id);
-		$this->config->setUserValue($user->getUID(), 'login_token_2fa', (string) $token->getId(), (string) $this->timeFactory->getTime());
+		$this->config->setUserValue($user->getUID(), 'login_token_2fa', (string)$token->getId(), (string)$this->timeFactory->getTime());
 	}
 
 	public function clearTwoFactorPending(string $userId) {
@@ -370,7 +370,7 @@ class Manager {
 			$this->config->deleteUserValue($userId, 'login_token_2fa', $tokenId);
 
 			try {
-				$this->tokenProvider->invalidateTokenById($userId, (int) $tokenId);
+				$this->tokenProvider->invalidateTokenById($userId, (int)$tokenId);
 			} catch (DoesNotExistException $e) {
 			}
 		}

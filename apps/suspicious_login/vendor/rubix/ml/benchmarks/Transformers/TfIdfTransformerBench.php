@@ -35,12 +35,12 @@ class TfIdfTransformerBench
 
         $this->dataset = Unlabeled::quick($samples);
 
-        $this->transformer = new TfIdfTransformer(1.0);
+        $this->transformer = new TfIdfTransformer();
     }
 
     /**
      * @Subject
-     * @Iterations(3)
+     * @Iterations(5)
      * @OutputTimeUnit("milliseconds", precision=3)
      */
     public function apply() : void

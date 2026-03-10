@@ -1,5 +1,5 @@
 diff --git apps/settings/lib/Controller/AuthSettingsController.php apps/settings/lib/Controller/AuthSettingsController.php
-index 4b126e8..8234556 100644
+index 8652a49..a07cbfd 100644
 --- apps/settings/lib/Controller/AuthSettingsController.php
 +++ apps/settings/lib/Controller/AuthSettingsController.php
 @@ -25,6 +25,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;
@@ -17,26 +17,34 @@ index 4b126e8..8234556 100644
 +	/** @var IConfig */
 +	private $config;
 +
- 	/** @var ISession */
- 	private $session;
+ 	/** @var RemoteWipe */
+ 	private $remoteWipe;
  
-@@ -71,6 +75,7 @@ class AuthSettingsController extends Controller {
- 	public function __construct(string $appName,
+@@ -42,6 +46,7 @@ class AuthSettingsController extends Controller {
+ 	 * @param string $appName
+ 	 * @param IRequest $request
+ 	 * @param IProvider $tokenProvider
++	 * @param IConfig $config
+ 	 * @param ISession $session
+ 	 * @param ISecureRandom $random
+ 	 * @param string|null $userId
+@@ -54,6 +59,7 @@ class AuthSettingsController extends Controller {
+ 		string $appName,
  		IRequest $request,
  		IProvider $tokenProvider,
 +		IConfig $config,
- 		ISession $session,
- 		ISecureRandom $random,
- 		?string $userId,
-@@ -80,6 +85,7 @@ class AuthSettingsController extends Controller {
- 		LoggerInterface $logger) {
+ 		private ISession $session,
+ 		private ISecureRandom $random,
+ 		private ?string $userId,
+@@ -64,6 +70,7 @@ class AuthSettingsController extends Controller {
+ 	) {
  		parent::__construct($appName, $request);
  		$this->tokenProvider = $tokenProvider;
 +		$this->config = $config;
- 		$this->uid = $userId;
- 		$this->userSession = $userSession;
- 		$this->session = $session;
-@@ -98,6 +104,12 @@ class AuthSettingsController extends Controller {
+ 		$this->remoteWipe = $remoteWipe;
+ 	}
+ 
+@@ -76,6 +83,12 @@ class AuthSettingsController extends Controller {
  	#[NoAdminRequired]
  	#[PasswordConfirmationRequired]
  	public function create($name) {

@@ -9,9 +9,9 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -23,7 +23,10 @@ use Rubix\ML\Exceptions\RuntimeException;
 
 use function Rubix\ML\argmax;
 use function Rubix\ML\logsumexp;
+use function array_count_values;
+use function array_sum;
 use function count;
+use function log;
 
 use const Rubix\ML\LOG_EPSILON;
 
@@ -47,67 +50,60 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
     use AutotrackRevisions;
 
     /**
-     * The amount of (Laplace) smoothing added to the probabilities.
-     *
-     * @var float
-     */
-    protected $smoothing;
-
-    /**
      * The class prior log probabilities.
      *
-     * @var float[]|null
+     * @var array<string,float>|null
      */
-    protected $logPriors;
+    protected ?array $logPriors = null;
 
     /**
      * Should we compute the prior probabilities from the training set?
      *
      * @var bool
      */
-    protected $fitPriors;
+    protected bool $fitPriors;
+
+    /**
+     * The amount of Laplace smoothing added to the probabilities.
+     *
+     * @var float
+     */
+    protected float $smoothing;
 
     /**
      * The weight of each class as a proportion of the entire training set.
      *
-     * @var float[]
+     * @var array<string,int>
      */
-    protected $weights = [
+    protected array $classCounts = [
         //
     ];
 
     /**
-     * The count of each feature from the training set used for online probability
-     * calculation.
+     * The count of each category from the training set on a class basis.
      *
-     * @var array[]
+     * @var array<string,list<array<int<0,max>>>>
      */
-    protected $counts = [
+    protected array $counts = [
         //
     ];
 
     /**
-     * The precomputed negative log likelihoods of each feature conditioned on a
-     * particular class label.
+     * The precomputed negative log likelihoods of each feature conditioned on a particular class label.
      *
-     * @var array[]
+     * @var array<string,list<float[]>>
      */
-    protected $probs = [
+    protected array $probs = [
         //
     ];
 
     /**
+     * @param float[]|null $priors
      * @param float $smoothing
-     * @param (int|float)[]|null $priors
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(float $smoothing = 1.0, ?array $priors = null)
+    public function __construct(?array $priors = null, float $smoothing = 1.0)
     {
-        if ($smoothing <= 0.0) {
-            throw new InvalidArgumentException('Smoothing must be'
-                . " greater than 0, $smoothing given.");
-        }
-
         $logPriors = [];
 
         if ($priors) {
@@ -128,9 +124,14 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
             }
         }
 
-        $this->smoothing = $smoothing;
+        if ($smoothing <= 0.0) {
+            throw new InvalidArgumentException('Smoothing must be'
+                . " greater than 0, $smoothing given.");
+        }
+
         $this->logPriors = $logPriors;
         $this->fitPriors = is_null($priors);
+        $this->smoothing = $smoothing;
     }
 
     /**
@@ -169,8 +170,8 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
     public function params() : array
     {
         return [
-            'smoothing' => $this->smoothing,
             'priors' => $this->fitPriors ? null : $this->priors(),
+            'smoothing' => $this->smoothing,
         ];
     }
 
@@ -181,7 +182,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
      */
     public function trained() : bool
     {
-        return $this->weights and $this->counts and $this->probs;
+        return $this->classCounts and $this->counts and $this->probs;
     }
 
     /**
@@ -197,7 +198,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
     /**
      * Return the counts for each category on a per class basis.
      *
-     * @return array[]|null
+     * @return array<list<array<int<0,max>>>>>|null
      */
     public function counts() : ?array
     {
@@ -211,7 +212,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
      */
     public function train(Dataset $dataset) : void
     {
-        $this->weights = $this->counts = $this->probs = [];
+        $this->classCounts = $this->counts = $this->probs = [];
 
         $this->partial($dataset);
     }
@@ -230,17 +231,17 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        foreach ($dataset->stratify() as $class => $stratum) {
+        foreach ($dataset->stratifyByLabel() as $class => $stratum) {
             if (isset($this->counts[$class])) {
                 $classCounts = $this->counts[$class];
                 $classProbs = $this->probs[$class];
             } else {
-                $classCounts = $classProbs = array_fill(0, $stratum->numColumns(), []);
+                $classCounts = $classProbs = array_fill(0, $stratum->numFeatures(), []);
 
-                $this->weights[$class] = 0;
+                $this->classCounts[$class] = 0;
             }
 
-            foreach ($stratum->columns() as $column => $values) {
+            foreach ($stratum->features() as $column => $values) {
                 $columnCounts = $classCounts[$column];
 
                 $counts = array_count_values($values);
@@ -253,7 +254,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
                     }
                 }
 
-                $total = array_sum($columnCounts) + (count($columnCounts) * $this->smoothing);
+                $total = array_sum($columnCounts) + $this->smoothing * count($columnCounts);
 
                 $probs = [];
 
@@ -268,16 +269,14 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
             $this->counts[$class] = $classCounts;
             $this->probs[$class] = $classProbs;
 
-            $this->weights[$class] += $stratum->numRows();
+            $this->classCounts[$class] += $stratum->numSamples();
         }
 
         if ($this->fitPriors) {
-            $total = array_sum($this->weights) + (count($this->weights) * $this->smoothing);
+            $total = array_sum($this->classCounts);
 
-            $this->logPriors = [];
-
-            foreach ($this->weights as $class => $weight) {
-                $this->logPriors[$class] = log(($weight + $this->smoothing) / $total);
+            foreach ($this->classCounts as $class => $weight) {
+                $this->logPriors[$class] = log($weight / $total);
             }
         }
     }
@@ -291,7 +290,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
      */
     public function predict(Dataset $dataset) : array
     {
-        if (!$this->weights or !$this->probs) {
+        if (!$this->classCounts or !$this->probs) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
@@ -318,11 +317,11 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
-        if (!$this->weights or !$this->probs) {
+        if (!$this->classCounts or !$this->probs) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
@@ -358,7 +357,7 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
      * Calculate the joint log likelihood of a sample being a member of each class.
      *
      * @param list<string> $sample
-     * @return float[]
+     * @return array<string,float>
      */
     protected function jointLogLikelihood(array $sample) : array
     {
@@ -379,6 +378,8 @@ class NaiveBayes implements Estimator, Learner, Online, Probabilistic, Persistab
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

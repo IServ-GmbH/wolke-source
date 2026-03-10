@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -15,15 +14,11 @@ class Expire implements ICommand {
 	use FileAccess;
 
 	/**
-	 * @var string
-	 */
-	private $user;
-
-	/**
 	 * @param string $user
 	 */
-	public function __construct($user) {
-		$this->user = $user;
+	public function __construct(
+		private $user,
+	) {
 	}
 
 	public function handle() {

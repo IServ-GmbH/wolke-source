@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -59,7 +58,7 @@ interface ILDAPUserPlugin {
 	public function setDisplayName($uid, $displayName);
 
 	/**
-	 * checks whether the user is allowed to change his avatar in Nextcloud
+	 * checks whether the user is allowed to change their avatar in Nextcloud
 	 * @param string $uid the Nextcloud user name
 	 * @return boolean either the user can or cannot
 	 */

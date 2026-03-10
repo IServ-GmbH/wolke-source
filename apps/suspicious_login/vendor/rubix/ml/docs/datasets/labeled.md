@@ -42,9 +42,27 @@ Return a single label at the given row offset:
 public label(int $offset) : mixed
 ```
 
+Return all of the possible outcomes i.e. the unique labels in an array:
+```php
+public possibleOutcomes() : array
+```
+
+```php
+print_r($dataset->possibleOutcomes());
+```
+
+```php
+Array
+(
+    [0] => female
+    [1] => male
+)
+```
+
+### Data Types
 Return the data type of the label:
 ```php
-public labelType() : DataType
+public labelType() : Rubix\ML\DataType
 ```
 
 ```php
@@ -55,30 +73,14 @@ echo $dataset->labelType();
 continuous
 ```
 
-Return all of the possible outcomes i.e. the unique labels in an array:
-```php
-public possibleOutcomes() : array
-```
-
-```php
-var_dump($dataset->possibleOutcomes());
-```
-
-```sh
-array(2) {
-	[0]=> string(5) "female"
-	[1]=> string(4) "male"
-}
-```
-
 ### Stratification
 Group samples by their class label and return them in their own dataset:
 ```php
-public stratify() : array
+public stratifyByLabel() : array
 ```
 
 ```php
-$strata = $dataset->stratify();
+$strata = $dataset->stratifyByLabel();
 ```
 
 Split the dataset into left and right subsets such that the proportions of class labels remain intact:
@@ -111,52 +113,15 @@ public transformLabels(callable $fn) : self
 ```php
 $dataset->transformLabels('intval');
 
-$dataset->transformLabels('floatval');
-
-$dataset->transformLabels(function ($label) {
-	switch ($label) {
-		case 0:
-			return 'disagree';
-
-		case 1:
-            return 'neutral';
-            
-        case 2:
-            return 'agree';
-            
-        default:
-            return '?';
-	}
-});
+//
 
 $dataset->transformLabels(function ($label) {
 	return $label > 0.5 ? 'yes' : 'no';
 });
 ```
 
-### Filter
-Filter the dataset by label:
-```php
-public filterByLabel(callable $fn) : self
-```
-
-!!! note
-    The callback function is given a label as its only argument and should return true if the row should be kept or false if the row should be filtered out of the result.
-
-```php
-$filtered = $dataset->filterByLabel(function ($label)) {
-	return $label <= 10000;;
-});
-```
-
-### Sorting
-Sort the dataset by label and return self for method chaining:
-```php
-public sortByLabel(bool $descending = false) : self
-```
-
 ### Describe by Label
-Describe the features of the dataset broken down by label:
+Describe the features of the dataset broken down by categorical label:
 ```php
 public describeByLabel() : Report
 ```
@@ -170,7 +135,7 @@ echo $dataset->describeByLabel();
     "not monster": [
         {
             "type": "categorical",
-            "num_categories": 2,
+            "num categories": 2,
             "probabilities": {
                 "friendly": 0.75,
                 "loner": 0.25
@@ -180,7 +145,7 @@ echo $dataset->describeByLabel();
             "type": "continuous",
             "mean": 1.125,
             "variance": 12.776875,
-            "std_dev": 3.574475485997911,
+            "standard deviation": 3.574475485997911,
             "skewness": -1.0795676577113944,
             "kurtosis": -0.7175867765792474,
             "min": -5,
@@ -193,7 +158,7 @@ echo $dataset->describeByLabel();
     "monster": [
         {
             "type": "categorical",
-            "num_categories": 2,
+            "num categories": 2,
             "probabilities": {
                 "loner": 0.5,
                 "friendly": 0.5
@@ -202,8 +167,7 @@ echo $dataset->describeByLabel();
         {
             "type": "continuous",
             "mean": -1.25,
-            "variance": 0.0625,
-            "std_dev": 0.25,
+            "standard deviation": 0.25,
             "skewness": 0,
             "kurtosis": -2,
             "min": -1.5,
@@ -213,26 +177,5 @@ echo $dataset->describeByLabel();
             "max": -1
         }
     ]
-}
-```
-
-### Describe the Labels
-Return an array of descriptive statistics about the labels in the dataset:
-```php
-public describeLabels() : Report
-```
-
-```php
-echo $dataset->describeLabels();
-```
-
-```json
-{
-    "type": "categorical",
-    "num_categories": 2,
-    "probabilities": {
-        "not monster": 0.6666666666666666,
-        "monster": 0.3333333333333333
-    }
 }
 ```

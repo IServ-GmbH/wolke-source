@@ -75,7 +75,7 @@ class FilesMetadataManager implements IFilesMetadataManager {
 	public function refreshMetadata(
 		Node $node,
 		int $process = self::PROCESS_LIVE,
-		string $namedEvent = ''
+		string $namedEvent = '',
 	): IFilesMetadata {
 		$storageId = $node->getStorage()->getCache()->getNumericStorageId();
 		try {
@@ -227,7 +227,7 @@ class FilesMetadataManager implements IFilesMetadataManager {
 	public function getMetadataQuery(
 		IQueryBuilder $qb,
 		string $fileTableAlias,
-		string $fileIdField
+		string $fileIdField,
 	): IMetadataQuery {
 		return new MetadataQuery($qb, $this, $fileTableAlias, $fileIdField);
 	}
@@ -276,7 +276,7 @@ class FilesMetadataManager implements IFilesMetadataManager {
 		string $key,
 		string $type,
 		bool $indexed = false,
-		int $editPermission = IMetadataValueWrapper::EDIT_FORBIDDEN
+		int $editPermission = IMetadataValueWrapper::EDIT_FORBIDDEN,
 	): void {
 		$current = $this->getKnownMetadata();
 		try {

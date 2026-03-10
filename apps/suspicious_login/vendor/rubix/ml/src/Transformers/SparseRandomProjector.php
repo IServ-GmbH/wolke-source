@@ -4,7 +4,7 @@ namespace Rubix\ML\Transformers;
 
 use Tensor\Matrix;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 
@@ -42,7 +42,7 @@ class SparseRandomProjector extends GaussianRandomProjector
      *
      * @var float|null
      */
-    protected $sparsity;
+    protected ?float $sparsity;
 
     /**
      * @param int $dimensions
@@ -71,7 +71,7 @@ class SparseRandomProjector extends GaussianRandomProjector
     {
         SamplesAreCompatibleWithTransformer::with($dataset, $this)->check();
 
-        $n = $dataset->numColumns();
+        $n = $dataset->numFeatures();
 
         if (is_null($this->sparsity)) {
             $density = 1.0 / (1.0 + sqrt($n));
@@ -116,6 +116,8 @@ class SparseRandomProjector extends GaussianRandomProjector
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -7,30 +7,38 @@ use Rubix\ML\Verbose;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\CPU;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Clusterers\Seeders\Seeder;
 use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Clusterers\Seeders\PlusPlus;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function Rubix\ML\argmax;
 use function Rubix\ML\logsumexp;
 use function Rubix\ML\array_transpose;
+use function array_column;
+use function array_sum;
 use function is_nan;
+use function max;
+use function abs;
+use function log;
+use function exp;
+use function get_object_vars;
 
 use const Rubix\ML\TWO_PI;
-use const Rubix\ML\EPSILON;
 
 /**
  * Gaussian Mixture
@@ -57,58 +65,64 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     use AutotrackRevisions, LoggerAware;
 
     /**
-     * The number of gaussian components to fit to the training set i.e. the
-     * target number of clusters.
+     * The number of gaussian components to fit to the training set i.e. the target number of clusters.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $k;
+    protected int $k;
+
+    /**
+     * The amount of epsilon smoothing added to the variance of each feature.
+     *
+     * @var float
+     */
+    protected float $smoothing;
 
     /**
      * The maximum number of iterations to run until the algorithm terminates.
      *
      * @var int
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum shift in the components necessary to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
      * The cluster centroid seeder.
      *
      * @var \Rubix\ML\Clusterers\Seeders\Seeder
      */
-    protected $seeder;
+    protected \Rubix\ML\Clusterers\Seeders\Seeder $seeder;
 
     /**
      * The precomputed log prior probabilities of each cluster.
      *
      * @var float[]
      */
-    protected $logPriors = [
+    protected array $logPriors = [
         //
     ];
 
     /**
      * The computed means of each feature column for each gaussian.
      *
-     * @var array[]
+     * @var list<list<float>>
      */
-    protected $means = [
+    protected array $means = [
         //
     ];
 
     /**
      * The computed variances of each feature column for each gaussian.
      *
-     * @var array[]
+     * @var list<list<float>>
      */
-    protected $variances = [
+    protected array $variances = [
         //
     ];
 
@@ -117,10 +131,11 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * @param int $k
+     * @param float $smoothing
      * @param int $epochs
      * @param float $minChange
      * @param \Rubix\ML\Clusterers\Seeders\Seeder|null $seeder
@@ -128,6 +143,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
      */
     public function __construct(
         int $k,
+        float $smoothing = 1e-9,
         int $epochs = 100,
         float $minChange = 1e-3,
         ?Seeder $seeder = null
@@ -137,7 +153,12 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
                 . " than 0, $k given.");
         }
 
-        if ($epochs < 1) {
+        if ($smoothing <= 0.0) {
+            throw new InvalidArgumentException('Smoothing must be'
+                . " greater than 0, $smoothing given.");
+        }
+
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -148,6 +169,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
         }
 
         $this->k = $k;
+        $this->smoothing = $smoothing;
         $this->epochs = $epochs;
         $this->minChange = $minChange;
         $this->seeder = $seeder ?? new PlusPlus();
@@ -184,8 +206,9 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     {
         return [
             'k' => $this->k,
+            'smoothing' => $this->smoothing,
             'epochs' => $this->epochs,
-            'min_change' => $this->minChange,
+            'min change' => $this->minChange,
             'seeder' => $this->seeder,
         ];
     }
@@ -213,7 +236,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     /**
      * Return the mean vectors of each component.
      *
-     * @return array[]
+     * @return list<list<float>>
      */
     public function means() : array
     {
@@ -223,7 +246,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     /**
      * Return the multivariate variance of each component.
      *
-     * @return array[]
+     * @return list<list<float>>
      */
     public function variances() : array
     {
@@ -231,13 +254,32 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     }
 
     /**
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
+    }
+
+    /**
      * Return the loss at each epoch of training from the last training session.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -253,25 +295,24 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
-        $n = $dataset->numRows();
+        $this->initialize($dataset);
 
         $samples = $dataset->samples();
-        $columns = $dataset->columns();
+        $features = $dataset->features();
 
-        $this->logPriors = array_fill(0, $this->k, log(1.0 / $this->k));
+        $n = $dataset->numSamples();
 
-        [$this->means, $this->variances] = $this->initialize($dataset);
-
-        $this->steps = [];
-
+        $minEpsilon = CPU::epsilon();
         $prevLoss = INF;
 
+        $this->losses = [];
+
         for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
+            $loss = $maxVariance = 0.0;
             $memberships = [];
-            $loss = 0.0;
 
             foreach ($samples as $sample) {
                 $jll = $this->jointLogLikelihood($sample);
@@ -291,45 +332,39 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
 
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
             }
 
-            $loss /= $n;
-
-            $this->steps[] = $loss;
-
-            if ($this->logger) {
-                $this->logger->info("Epoch $epoch - loss: $loss");
-            }
-
             for ($cluster = 0; $cluster < $this->k; ++$cluster) {
-                $mHat = array_column($memberships, $cluster);
+                $affinities = array_column($memberships, $cluster);
 
-                $total = array_sum($mHat);
+                $total = array_sum($affinities);
 
                 $means = $variances = [];
 
-                foreach ($columns as $column) {
+                foreach ($features as $column) {
                     $sigma = $ssd = 0.0;
 
                     foreach ($column as $i => $value) {
-                        $sigma += $mHat[$i] * $value;
+                        $sigma += $affinities[$i] * $value;
                     }
 
                     $mean = $sigma / $total;
 
                     foreach ($column as $i => $value) {
-                        $ssd += $mHat[$i] * ($value - $mean) ** 2;
+                        $ssd += $affinities[$i] * ($value - $mean) ** 2;
                     }
 
                     $variance = $ssd / $total;
 
                     $means[] = $mean;
-                    $variances[] = $variance ?: EPSILON;
+                    $variances[] = $variance;
                 }
+
+                $maxVariance = max($maxVariance, ...$variances);
 
                 $logPrior = log($total / $n);
 
@@ -338,11 +373,35 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
                 $this->logPriors[$cluster] = $logPrior;
             }
 
+            $epsilon = max($this->smoothing * $maxVariance, $minEpsilon);
+
+            foreach ($this->variances as &$variances) {
+                foreach ($variances as &$variance) {
+                    $variance += $epsilon;
+                }
+            }
+
+            $loss /= $n;
+
+            $lossChange = abs($loss - $prevLoss);
+
+            $this->losses[$epoch] = $loss;
+
+            if ($this->logger) {
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "Loss: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}";
+
+                $this->logger->info($message);
+            }
+
             if ($loss <= 0.0) {
                 break;
             }
 
-            if (abs($loss - $prevLoss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
@@ -363,7 +422,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
      */
     public function predict(Dataset $dataset) : array
     {
-        if (empty($this->logPriors)) {
+        if (empty($this->means) or empty($this->variances)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
@@ -394,7 +453,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
      */
     public function proba(Dataset $dataset) : array
     {
-        if (empty($this->logPriors)) {
+        if (empty($this->means) or empty($this->variances)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
@@ -429,7 +488,7 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
      * of each of the gaussian components.
      *
      * @param list<int|float> $sample
-     * @return float[]
+     * @return array<int,float>
      */
     protected function jointLogLikelihood(array $sample) : array
     {
@@ -458,15 +517,19 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
     }
 
     /**
-     * Initialize the gaussian components by calculating the means and
-     * variances of k initial cluster centroids generated by the seeder.
+     * Initialize the gaussian components by calculating the means and variances of k initial cluster centroids generated by the seeder.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return array[]
      */
-    protected function initialize(Dataset $dataset) : array
+    protected function initialize(Dataset $dataset) : void
     {
+        $this->logPriors = $this->means = $this->variances = [];
+
         $kernel = new Euclidean();
+
+        $n = $dataset->numSamples();
+
+        $maxVariance = 0.0;
 
         /** @var list<list<int|float>> $centroids */
         $centroids = $this->seeder->seed($dataset, $this->k);
@@ -489,29 +552,54 @@ class GaussianMixture implements Estimator, Learner, Probabilistic, Verbose, Per
             $clusters[$bestCluster][] = $sample;
         }
 
-        $means = $variances = [];
-
         foreach ($clusters as $cluster => $samples) {
-            $mHat = $vHat = [];
+            $means = $variances = [];
 
-            $columns = array_transpose($samples);
+            $features = array_transpose($samples);
 
-            foreach ($columns as $values) {
+            foreach ($features as $values) {
                 [$mean, $variance] = Stats::meanVar($values);
 
-                $mHat[] = $mean;
-                $vHat[] = $variance ?: EPSILON;
+                $means[] = $mean;
+                $variances[] = $variance;
             }
 
-            $means[$cluster] = $mHat;
-            $variances[$cluster] = $vHat;
+            $maxVariance = max($maxVariance, ...$variances);
+
+            $logPrior = log(count($samples) / $n);
+
+            $this->means[$cluster] = $means;
+            $this->variances[$cluster] = $variances;
+            $this->logPriors[$cluster] = $logPrior;
         }
 
-        return [$means, $variances];
+        $epsilon = max($this->smoothing * $maxVariance, CPU::epsilon());
+
+        foreach ($this->variances as &$variances) {
+            foreach ($variances as &$variance) {
+                $variance += $epsilon;
+            }
+        }
+    }
+
+    /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

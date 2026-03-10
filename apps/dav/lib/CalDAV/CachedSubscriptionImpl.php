@@ -10,22 +10,18 @@ namespace OCA\DAV\CalDAV;
 
 use OCP\Calendar\ICalendar;
 use OCP\Calendar\ICalendarIsEnabled;
+use OCP\Calendar\ICalendarIsShared;
+use OCP\Calendar\ICalendarIsWritable;
 use OCP\Constants;
 
-class CachedSubscriptionImpl implements ICalendar, ICalendarIsEnabled {
-	private CalDavBackend $backend;
-	private CachedSubscription $calendar;
-	/** @var array<string, mixed> */
-	private array $calendarInfo;
+class CachedSubscriptionImpl implements ICalendar, ICalendarIsEnabled, ICalendarIsShared, ICalendarIsWritable {
 
 	public function __construct(
-		CachedSubscription $calendar,
-		array $calendarInfo,
-		CalDavBackend $backend
+		private CachedSubscription $calendar,
+		/** @var array<string, mixed> */
+		private array $calendarInfo,
+		private CalDavBackend $backend,
 	) {
-		$this->calendar = $calendar;
-		$this->calendarInfo = $calendarInfo;
-		$this->backend = $backend;
 	}
 
 	/**
@@ -33,7 +29,7 @@ class CachedSubscriptionImpl implements ICalendar, ICalendarIsEnabled {
 	 * @since 13.0.0
 	 */
 	public function getKey(): string {
-		return (string) $this->calendarInfo['id'];
+		return (string)$this->calendarInfo['id'];
 	}
 
 	/**
@@ -92,14 +88,22 @@ class CachedSubscriptionImpl implements ICalendar, ICalendarIsEnabled {
 	}
 
 	/**
-	 * @since 30.0.12
+	 * @since 31.0.6
 	 */
 	public function isEnabled(): bool {
 		return $this->calendarInfo['{http://owncloud.org/ns}calendar-enabled'] ?? true;
 	}
 
+	public function isWritable(): bool {
+		return false;
+	}
+
 	public function isDeleted(): bool {
 		return false;
+	}
+
+	public function isShared(): bool {
+		return true;
 	}
 
 	public function getSource(): string {

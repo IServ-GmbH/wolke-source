@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -26,12 +25,6 @@ class DefinitionParameter implements \JsonSerializable {
 	public const FLAG_USER_PROVIDED = 2;
 	public const FLAG_HIDDEN = 4;
 
-	/** @var string name of parameter */
-	private string $name;
-
-	/** @var string human-readable parameter text */
-	private string $text;
-
 	/** @var string human-readable parameter tooltip */
 	private string $tooltip = '';
 
@@ -41,18 +34,16 @@ class DefinitionParameter implements \JsonSerializable {
 	/** @var int flags, see self::FLAG_* constants */
 	private int $flags = self::FLAG_NONE;
 
-	/** @var mixed */
-	private $defaultValue;
-
 	/**
 	 * @param string $name parameter name
 	 * @param string $text parameter description
 	 * @param mixed $defaultValue default value
 	 */
-	public function __construct(string $name, string $text, $defaultValue = null) {
-		$this->name = $name;
-		$this->text = $text;
-		$this->defaultValue = $defaultValue;
+	public function __construct(
+		private string $name,
+		private string $text,
+		private $defaultValue = null,
+	) {
 	}
 
 	/**
@@ -151,7 +142,7 @@ class DefinitionParameter implements \JsonSerializable {
 	 * @return bool
 	 */
 	public function isFlagSet(int $flag): bool {
-		return (bool) ($this->flags & $flag);
+		return (bool)($this->flags & $flag);
 	}
 
 	/**

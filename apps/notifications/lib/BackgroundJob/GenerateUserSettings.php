@@ -18,24 +18,13 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class GenerateUserSettings extends TimedJob {
-	/** @var IDBConnection */
-	private $connection;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var SettingsMapper */
-	private $settingsMapper;
-
 	public function __construct(
 		ITimeFactory $time,
-		IDBConnection $connection,
-		IUserManager $userManager,
-		SettingsMapper $settingsMapper
+		private IDBConnection $connection,
+		private IUserManager $userManager,
+		private SettingsMapper $settingsMapper,
 	) {
 		parent::__construct($time);
-
-		$this->connection = $connection;
-		$this->userManager = $userManager;
-		$this->settingsMapper = $settingsMapper;
 
 		// run every day
 		$this->setInterval(24 * 60 * 60);
@@ -49,17 +38,17 @@ class GenerateUserSettings extends TimedJob {
 			->setMaxResults(1);
 
 		$result = $query->executeQuery();
-		$maxId = (int) $result->fetchOne();
+		$maxId = (int)$result->fetchOne();
 		$result->closeCursor();
 
-		$this->userManager->callForSeenUsers(function (IUser $user) use ($maxId) {
+		$this->userManager->callForSeenUsers(function (IUser $user) use ($maxId): void {
 			if ($user->isEnabled()) {
 				return;
 			}
 
 			try {
 				$this->settingsMapper->getSettingsByUser($user->getUID());
-			} catch (DoesNotExistException $e) {
+			} catch (DoesNotExistException) {
 				$settings = new Settings();
 				$settings->setUserId($user->getUID());
 				$settings->setNextSendTime(1);

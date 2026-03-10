@@ -1,5 +1,5 @@
 diff --git apps/federation/composer/composer/autoload_classmap.php apps/federation/composer/composer/autoload_classmap.php
-index 1be343a..d8a858f 100644
+index d648b64..3110b65 100644
 --- apps/federation/composer/composer/autoload_classmap.php
 +++ apps/federation/composer/composer/autoload_classmap.php
 @@ -10,6 +10,10 @@ return array(
@@ -13,7 +13,7 @@ index 1be343a..d8a858f 100644
      'OCA\\Federation\\Command\\SyncFederationAddressBooks' => $baseDir . '/../lib/Command/SyncFederationAddressBooks.php',
      'OCA\\Federation\\Controller\\OCSAuthAPIController' => $baseDir . '/../lib/Controller/OCSAuthAPIController.php',
      'OCA\\Federation\\Controller\\SettingsController' => $baseDir . '/../lib/Controller/SettingsController.php',
-@@ -21,5 +25,6 @@ return array(
+@@ -20,5 +24,6 @@ return array(
      'OCA\\Federation\\Settings\\Admin' => $baseDir . '/../lib/Settings/Admin.php',
      'OCA\\Federation\\SyncFederationAddressBooks' => $baseDir . '/../lib/SyncFederationAddressBooks.php',
      'OCA\\Federation\\SyncJob' => $baseDir . '/../lib/SyncJob.php',

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\Photos\Controller;
 
-use OCA\Files_Sharing\SharedStorage;
 use OCA\Photos\Album\AlbumMapper;
 use OCA\Photos\AppInfo\Application;
 use OCP\AppFramework\Controller;
@@ -20,6 +19,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\Files\Storage\ISharedStorage;
 use OCP\IGroupManager;
 use OCP\IPreview;
 use OCP\IRequest;
@@ -40,7 +40,7 @@ class PreviewController extends Controller {
 		IRootFolder $rootFolder,
 		AlbumMapper $albumMapper,
 		IPreview $preview,
-		IGroupManager $groupManager
+		IGroupManager $groupManager,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 
@@ -61,7 +61,7 @@ class PreviewController extends Controller {
 	public function index(
 		int $fileId = -1,
 		int $x = 32,
-		int $y = 32
+		int $y = 32,
 	) {
 		if ($fileId === -1 || $x === 0 || $y === 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -78,11 +78,11 @@ class PreviewController extends Controller {
 			$nodes,
 			function ($node) {
 				$storage = $node->getStorage();
-				if (!$storage->instanceOfStorage(SharedStorage::class)) {
+				if (!$storage->instanceOfStorage(ISharedStorage::class)) {
 					return true;
 				}
 
-				/** @var SharedStorage $storage */
+				/** @var ISharedStorage $storage */
 				$share = $storage->getShare();
 				$attributes = $share->getAttributes();
 
@@ -148,7 +148,7 @@ class PreviewController extends Controller {
 	protected function fetchPreview(
 		Node $node,
 		int $x,
-		int $y
+		int $y,
 	) : Http\Response {
 		if (!($node instanceof File) || !$this->preview->isAvailable($node)) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

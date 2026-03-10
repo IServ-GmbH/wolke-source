@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -47,13 +46,13 @@ class SameSiteCookieMiddleware extends Middleware {
 
 	public function afterException($controller, $methodName, \Exception $exception) {
 		if ($exception instanceof LaxSameSiteCookieFailedException) {
-			$respone = new Response();
-			$respone->setStatus(Http::STATUS_FOUND);
-			$respone->addHeader('Location', $this->request->getRequestUri());
+			$response = new Response();
+			$response->setStatus(Http::STATUS_FOUND);
+			$response->addHeader('Location', $this->request->getRequestUri());
 
 			$this->setSameSiteCookie();
 
-			return $respone;
+			return $response;
 		}
 
 		throw $exception;

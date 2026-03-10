@@ -39,21 +39,21 @@ class KDTree implements BinaryTree, Spatial
      *
      * @var int
      */
-    protected $maxLeafSize;
+    protected int $maxLeafSize;
 
     /**
      * The distance function to use when computing the distances.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * The root node of the tree.
      *
      * @var \Rubix\ML\Graph\Nodes\Box|null
      */
-    protected $root;
+    protected ?\Rubix\ML\Graph\Nodes\Box $root = null;
 
     /**
      * @param int $maxLeafSize
@@ -89,9 +89,9 @@ class KDTree implements BinaryTree, Spatial
     }
 
     /**
-     * Return the balance factor of the tree. A balanced tree will have
-     * a factor of 0 whereas an imbalanced tree will either be positive
-     * or negative indicating the direction and degree of the imbalance.
+     * Return the balance factor of the tree. A balanced tree will have  a factor of 0 whereas
+     * an imbalanced tree will either be positive or negative indicating the direction and
+     * degree of the imbalance.
      *
      * @internal
      *
@@ -136,7 +136,7 @@ class KDTree implements BinaryTree, Spatial
      */
     public function grow(Labeled $dataset) : void
     {
-        if ($dataset->columnType(0) != DataType::continuous() or !$dataset->homogeneous()) {
+        if ($dataset->featureType(0) != DataType::continuous() or !$dataset->homogeneous()) {
             throw new InvalidArgumentException('KD Tree only works with continuous features.');
         }
 
@@ -145,11 +145,11 @@ class KDTree implements BinaryTree, Spatial
         $stack = [$this->root];
 
         while ($current = array_pop($stack)) {
-            [$left, $right] = $current->groups();
+            [$left, $right] = $current->subsets();
 
             $current->cleanup();
 
-            if ($left->numRows() > $this->maxLeafSize) {
+            if ($left->numSamples() > $this->maxLeafSize) {
                 $node = Box::split($left);
 
                 if ($node->isPoint()) {
@@ -163,7 +163,7 @@ class KDTree implements BinaryTree, Spatial
                 $current->attachLeft(Neighborhood::terminate($left));
             }
 
-            if ($right->numRows() > $this->maxLeafSize) {
+            if ($right->numSamples() > $this->maxLeafSize) {
                 $node = Box::split($right);
 
                 $current->attachRight($node);
@@ -183,7 +183,7 @@ class KDTree implements BinaryTree, Spatial
      * @param list<int|float> $sample
      * @param int $k
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return array{array[],mixed[],float[]}
+     * @return array{list<list<mixed>>,list<mixed>,list<float>}
      */
     public function nearest(array $sample, int $k = 1) : array
     {
@@ -253,7 +253,7 @@ class KDTree implements BinaryTree, Spatial
      * @param list<int|float> $sample
      * @param float $radius
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return array{array[],mixed[],float[]}
+     * @return array{list<list<mixed>>,list<mixed>,list<float>}
      */
     public function range(array $sample, float $radius) : array
     {
@@ -313,7 +313,7 @@ class KDTree implements BinaryTree, Spatial
      * Return the path of a sample taken from the root node to a leaf node in an array.
      *
      * @param list<int|float> $sample
-     * @return list<\Rubix\ML\Graph\Nodes\BinaryNode|null>
+     * @return list<\Rubix\ML\Graph\Nodes\Node|null>
      */
     protected function path(array $sample) : array
     {
@@ -339,10 +339,12 @@ class KDTree implements BinaryTree, Spatial
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "K-d Tree (max_leaf_size: {$this->maxLeafSize}, kernel: {$this->kernel})";
+        return "K-d Tree (max leaf size: {$this->maxLeafSize}, kernel: {$this->kernel})";
     }
 }

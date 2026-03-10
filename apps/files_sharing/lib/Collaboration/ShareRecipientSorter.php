@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,14 +13,11 @@ use OCP\Share\IManager;
 
 class ShareRecipientSorter implements ISorter {
 
-	private IManager $shareManager;
-	private IRootFolder $rootFolder;
-	private IUserSession $userSession;
-
-	public function __construct(IManager $shareManager, IRootFolder $rootFolder, IUserSession $userSession) {
-		$this->shareManager = $shareManager;
-		$this->rootFolder = $rootFolder;
-		$this->userSession = $userSession;
+	public function __construct(
+		private IManager $shareManager,
+		private IRootFolder $rootFolder,
+		private IUserSession $userSession,
+	) {
 	}
 
 	public function getId(): string {
@@ -39,7 +35,7 @@ class ShareRecipientSorter implements ISorter {
 		}
 		$userFolder = $this->rootFolder->getUserFolder($user->getUID());
 		/** @var Node[] $nodes */
-		$node = $userFolder->getFirstNodeById((int) $context['itemId']);
+		$node = $userFolder->getFirstNodeById((int)$context['itemId']);
 		if (!$node) {
 			return;
 		}
@@ -80,8 +76,8 @@ class ShareRecipientSorter implements ISorter {
 		$a = $a['value']['shareWith'];
 		$b = $b['value']['shareWith'];
 
-		$valueA = (int) in_array($a, $al, true);
-		$valueB = (int) in_array($b, $al, true);
+		$valueA = (int)in_array($a, $al, true);
+		$valueB = (int)in_array($b, $al, true);
 
 		return $valueB - $valueA;
 	}

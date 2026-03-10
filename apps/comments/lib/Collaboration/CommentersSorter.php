@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -27,6 +26,10 @@ class CommentersSorter implements ISorter {
 	 * @param array $context
 	 */
 	public function sort(array &$sortArray, array $context): void {
+		if (!isset($context['itemType'], $context['itemId'])) {
+			return;
+		}
+
 		$commenters = $this->retrieveCommentsInformation($context['itemType'], $context['itemId']);
 		if (count($commenters) === 0) {
 			return;

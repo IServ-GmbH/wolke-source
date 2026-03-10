@@ -3,7 +3,7 @@
 namespace Rubix\ML\Extractors;
 
 use Rubix\ML\Exceptions\RuntimeException;
-use Generator;
+use Traversable;
 
 /**
  * Column Picker
@@ -22,25 +22,25 @@ class ColumnPicker implements Extractor
     /**
      * The base iterator.
      *
-     * @var iterable<array>
+     * @var iterable<mixed[]>
      */
-    protected $iterator;
+    protected iterable $iterator;
 
     /**
-     * The string and/or integer keys of the columns to iterate over.
+     * The string and/or integer keys of the columns to pick and reorder from the table.
      *
-     * @var (string|int)[]
+     * @var list<string|int>
      */
-    protected $keys;
+    protected array $columns;
 
     /**
      * @param iterable<mixed[]> $iterator
-     * @param (string|int)[] $keys
+     * @param (string|int)[] $columns
      */
-    public function __construct(iterable $iterator, array $keys)
+    public function __construct(iterable $iterator, array $columns)
     {
         $this->iterator = $iterator;
-        $this->keys = $keys;
+        $this->columns = array_values($columns);
     }
 
     /**
@@ -48,21 +48,21 @@ class ColumnPicker implements Extractor
      *
      * @return \Generator<mixed[]>
      */
-    public function getIterator() : Generator
+    public function getIterator() : Traversable
     {
         foreach ($this->iterator as $i => $record) {
-            $row = [];
+            $picked = [];
 
-            foreach ($this->keys as $key) {
-                if (!isset($record[$key])) {
-                    throw new RuntimeException("Column '$key' not found"
+            foreach ($this->columns as $column) {
+                if (!isset($record[$column])) {
+                    throw new RuntimeException("Column '$column' not found"
                         . " at row offset $i.");
                 }
 
-                $row[$key] = $record[$key];
+                $picked[$column] = $record[$column];
             }
 
-            yield $row;
+            yield $picked;
         }
     }
 }

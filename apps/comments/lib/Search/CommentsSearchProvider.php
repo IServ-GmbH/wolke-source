@@ -64,7 +64,7 @@ class CommentsSearchProvider implements IProvider {
 					'',
 					true
 				);
-				$searchResultEntry->addAttribute('fileId', (string) $result->fileId);
+				$searchResultEntry->addAttribute('fileId', (string)$result->fileId);
 				$searchResultEntry->addAttribute('path', $path);
 				return $searchResultEntry;
 			}, $this->legacyProvider->search($query->getTerm()))

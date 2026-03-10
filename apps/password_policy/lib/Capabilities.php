@@ -13,36 +13,72 @@ use OCP\Capabilities\ICapability;
 use OCP\IURLGenerator;
 
 class Capabilities implements ICapability {
-
-	/** @var PasswordPolicyConfig */
-	private $config;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-	public function __construct(PasswordPolicyConfig $config, IURLGenerator $urlGenerator) {
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
+	public function __construct(
+		private PasswordPolicyConfig $config,
+		private IURLGenerator $urlGenerator,
+	) {
 	}
 
 	/**
-	 * Function an app uses to return the capabilities
-	 *
-	 * @return array Array containing the apps capabilities
+	 * @return array{
+	 *   password_policy: array{
+	 *     api: array{
+	 *       generate: string,
+	 *       validate: string,
+	 *     },
+	 *     policies: array<string, array{
+	 *       minLength: non-negative-int,
+	 *       enforceHaveIBeenPwned: bool,
+	 *       enforceNonCommonPassword: bool,
+	 *       enforceNumericCharacters: bool,
+	 *       enforceSpecialCharacters: bool,
+	 *       enforceUpperLowerCase: bool,
+	 *     }>,
+	 *     minLength: non-negative-int,
+	 *     enforceNonCommonPassword: bool,
+	 *     enforceNumericCharacters: bool,
+	 *     enforceSpecialCharacters: bool,
+	 *     enforceUpperLowerCase: bool,
+	 *   }
+	 * } Array containing the app's capabilities
 	 * @since 12.0.0
+	 * @since 31.0.0 new policies per context
 	 */
 	public function getCapabilities(): array {
+		/* Get an array [['context' => [policies]], ...] */
+		$policies = [];
+		foreach ($this->config->getAvailableConfigs() as $context) {
+			$contextName = $this->config->passwordContextToString($context);
+			$policies[$contextName] = [
+				'minLength' => $this->config->getMinLength($context),
+				'enforceHaveIBeenPwned' => $this->config->getEnforceHaveIBeenPwned($context),
+				'enforceNonCommonPassword' => $this->config->getEnforceNonCommonPassword($context),
+				'enforceNumericCharacters' => $this->config->getEnforceNumericCharacters($context),
+				'enforceSpecialCharacters' => $this->config->getEnforceSpecialCharacters($context),
+				'enforceUpperLowerCase' => $this->config->getEnforceUpperLowerCase($context),
+			];
+		}
+
 		return [
 			'password_policy' =>
 				[
-					'minLength' => $this->config->getMinLength(),
-					'enforceNonCommonPassword' => $this->config->getEnforceNonCommonPassword(),
-					'enforceNumericCharacters' => $this->config->getEnforceNumericCharacters(),
-					'enforceSpecialCharacters' => $this->config->getEnforceSpecialCharacters(),
-					'enforceUpperLowerCase' => $this->config->getEnforceUpperLowerCase(),
 					'api' => [
 						'generate' => $this->urlGenerator->linkToOCSRouteAbsolute('password_policy.API.generate'),
 						'validate' => $this->urlGenerator->linkToOCSRouteAbsolute('password_policy.API.validate'),
-					]
+					],
+
+					'policies' => $policies,
+
+					/** @deprecated 3.0.0 */
+					'minLength' => $this->config->getMinLength(),
+					/** @deprecated 3.0.0 */
+					'enforceNonCommonPassword' => $this->config->getEnforceNonCommonPassword(),
+					/** @deprecated 3.0.0 */
+					'enforceNumericCharacters' => $this->config->getEnforceNumericCharacters(),
+					/** @deprecated 3.0.0 */
+					'enforceSpecialCharacters' => $this->config->getEnforceSpecialCharacters(),
+					/** @deprecated 3.0.0 */
+					'enforceUpperLowerCase' => $this->config->getEnforceUpperLowerCase(),
 				]
 		];
 	}

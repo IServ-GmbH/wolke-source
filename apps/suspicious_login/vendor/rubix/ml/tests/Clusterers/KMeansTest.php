@@ -11,8 +11,8 @@ use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\Clusterers\KMeans;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Clusterers\Seeders\PlusPlus;
@@ -33,14 +33,14 @@ class KMeansTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 400;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -77,16 +77,21 @@ class KMeansTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 32, 0], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([0, 32, 255], 20.0),
-        ], [2, 3, 4]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
-        $this->estimator = new KMeans(3, 100, 300, 1e-4, 5, new Euclidean(), new PlusPlus());
+        $this->estimator = new KMeans(3, 128, 300, 1e-4, 5, new Euclidean(), new PlusPlus());
 
         $this->metric = new VMeasure();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -140,9 +145,9 @@ class KMeansTest extends TestCase
     {
         $expected = [
             'k' => 3,
-            'batch_size' => 100,
+            'batch size' => 128,
             'epochs' => 300,
-            'min_change' => 1e-4,
+            'min change' => 1e-4,
             'window' => 5,
             'kernel' => new Euclidean(),
             'seeder' => new PlusPlus(),
@@ -181,7 +186,7 @@ class KMeansTest extends TestCase
         $this->assertCount(3, $sizes);
         $this->assertContainsOnly('int', $sizes);
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -211,10 +216,5 @@ class KMeansTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick([[1.0]]));
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

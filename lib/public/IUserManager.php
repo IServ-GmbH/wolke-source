@@ -103,6 +103,7 @@ interface IUserManager {
 	 * @param int $offset
 	 * @return \OCP\IUser[]
 	 * @since 8.0.0
+	 * @deprecated 27.0.0, use searchDisplayName instead
 	 */
 	public function search($pattern, $limit = null, $offset = null);
 
@@ -162,6 +163,16 @@ interface IUserManager {
 	 * @since 8.0.0
 	 */
 	public function countUsers();
+
+	/**
+	 * Get how many users exists in total, whithin limit
+	 *
+	 * @param int $limit Limit the count to avoid resource waste. 0 to disable
+	 * @param bool $onlyMappedUsers Count mapped users instead of all users for compatible backends
+	 *
+	 * @since 31.0.0
+	 */
+	public function countUsersTotal(int $limit = 0, bool $onlyMappedUsers = false): int|false;
 
 	/**
 	 * @param \Closure $callback

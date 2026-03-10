@@ -3,20 +3,16 @@
 namespace Rubix\ML\AnomalyDetectors;
 
 use Tensor\Matrix;
-use Tensor\Vector;
 use Rubix\ML\Online;
 use Rubix\ML\Learner;
-use Rubix\ML\Ranking;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\RanksSingle;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
@@ -24,7 +20,16 @@ use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 
-use function Rubix\ML\warn_deprecated;
+use function Rubix\ML\linspace;
+use function count;
+use function is_null;
+use function array_slice;
+use function array_fill;
+use function round;
+use function min;
+use function max;
+use function log;
+use function sqrt;
 
 use const Rubix\ML\LOG_EPSILON;
 
@@ -44,9 +49,9 @@ use const Rubix\ML\LOG_EPSILON;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
+class Loda implements Estimator, Learner, Online, Scoring, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, RanksSingle;
+    use AutotrackRevisions;
 
     /**
      * The minimum number of histogram bins.
@@ -63,47 +68,46 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
     protected const MIN_SPARSE_DIMENSIONS = 3;
 
     /**
+     * The proportion of outliers that are assumed to be present in the training set.
+     *
+     * @var float
+     */
+    protected float $contamination;
+
+    /**
      * The number of projection/histogram pairs in the ensemble.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $estimators;
+    protected int $estimators;
 
     /**
      * The number of bins in each equi-width histogram.
      *
      * @var int|null
      */
-    protected $bins;
+    protected ?int $bins = null;
 
     /**
      * Should we calculate the equi-width bin count on the fly?
      *
      * @var bool
      */
-    protected $fitBins;
-
-    /**
-     * The proportion of outliers that are assumed to be present in the
-     * training set.
-     *
-     * @var float
-     */
-    protected $contamination;
+    protected bool $fitBins;
 
     /**
      * The sparse random projection matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $r;
+    protected ?\Tensor\Matrix $r = null;
 
     /**
      * The edges and bin counts of each histogram.
      *
-     * @var array[]
+     * @var array{list<float>,list<int<0,max>>}|mixed[]
      */
-    protected $histograms = [
+    protected array $histograms = [
         //
     ];
 
@@ -112,34 +116,28 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
      *
      * @var float|null
      */
-    protected $threshold;
+    protected ?float $threshold;
 
     /**
      * The number of samples that have been learned so far.
      *
      * @var int
      */
-    protected $n = 0;
+    protected int $n = 0;
 
     /**
-     * Estimate the number of bins from the number of samples in a dataset.
-     *
-     * @param int $n
-     * @return int
-     */
-    public static function estimateBins(int $n) : int
-    {
-        return (int) round(log($n, 2)) + 1;
-    }
-
-    /**
+     * @param float $contamination
      * @param int $estimators
      * @param int|null $bins
-     * @param float $contamination
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(int $estimators = 100, ?int $bins = null, float $contamination = 0.1)
+    public function __construct(float $contamination = 0.1, int $estimators = 100, ?int $bins = null)
     {
+        if ($contamination < 0.0 or $contamination > 0.5) {
+            throw new InvalidArgumentException('Contamination must be'
+                . " between 0 and 0.5, $contamination given.");
+        }
+
         if ($estimators < 1) {
             throw new InvalidArgumentException('Number of estimators'
                 . " must be greater than 0, $estimators given.");
@@ -150,15 +148,10 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
                 . ' than ' . self::MIN_BINS . ", $bins given.");
         }
 
-        if ($contamination < 0.0 or $contamination > 0.5) {
-            throw new InvalidArgumentException('Contamination must be'
-                . " between 0 and 0.5, $contamination given.");
-        }
-
+        $this->contamination = $contamination;
         $this->estimators = $estimators;
         $this->bins = $bins;
         $this->fitBins = is_null($bins);
-        $this->contamination = $contamination;
     }
 
     /**
@@ -197,9 +190,9 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
     public function params() : array
     {
         return [
+            'contamination' => $this->contamination,
             'estimators' => $this->estimators,
             'bins' => $this->bins,
-            'contamination' => $this->contamination,
         ];
     }
 
@@ -228,7 +221,7 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
         [$m, $n] = $dataset->shape();
 
         if ($this->fitBins) {
-            $this->bins = max(self::estimateBins($m), self::MIN_BINS);
+            $this->bins = max(self::MIN_BINS, (int) round(log($m, 2.0)) + 1);
         }
 
         $this->r = Matrix::gaussian($n, $this->estimators);
@@ -242,10 +235,18 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
 
         $projections = Matrix::quick($dataset->samples())
             ->matmul($this->r)
-            ->transpose();
+            ->transpose()
+            ->asArray();
 
-        foreach ($projections->asArray() as $values) {
-            $edges = Vector::linspace(min($values), max($values), $this->bins - 1)->asArray();
+        foreach ($projections as $values) {
+            $min = (float) min($values);
+            $max = (float) max($values);
+
+            $edges = linspace($min, $max, $this->bins + 1);
+
+            $edges = array_slice($edges, 1, -1);
+
+            $edges[] = INF;
 
             $counts = array_fill(0, count($edges), 0);
 
@@ -290,9 +291,10 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
 
         $projections = Matrix::quick($dataset->samples())
             ->matmul($this->r)
-            ->transpose();
+            ->transpose()
+            ->asArray();
 
-        foreach ($projections->asArray() as $i => $values) {
+        foreach ($projections as $i => $values) {
             [$edges, $counts] = $this->histograms[$i];
 
             foreach ($values as $value) {
@@ -308,7 +310,7 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
             $this->histograms[$i] = [$edges, $counts];
         }
 
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
         $this->n += $n;
 
@@ -316,9 +318,9 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
 
         $threshold = Stats::quantile($densities, 1.0 - $this->contamination);
 
-        $weight = $n / $this->n;
+        $beta = $n / $this->n;
 
-        $this->threshold = (1.0 - $weight) * $this->threshold + $weight * $threshold;
+        $this->threshold = (1.0 - $beta) * $this->threshold + $beta * $threshold;
     }
 
     /**
@@ -349,38 +351,26 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
 
         $projections = Matrix::quick($dataset->samples())
             ->matmul($this->r)
-            ->transpose();
+            ->transpose()
+            ->asArray();
 
         return $this->densities($projections);
     }
 
     /**
-     * Return the anomaly scores assigned to the samples in a dataset.
+     * Estimate the probability density function of each 1-dimensional projection using the histograms
+     * created during training.
      *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param list<list<float>> $projections
      * @return list<float>
      */
-    public function rank(Dataset $dataset) : array
+    protected function densities(array $projections) : array
     {
-        warn_deprecated('Rank() is deprecated, use score() instead.');
+        $n = count(current($projections) ?: []);
 
-        return $this->score($dataset);
-    }
+        $densities = array_fill(0, $n, 0.0);
 
-    /**
-     * Estimate the probability density function of each 1-dimensional projection
-     * using the histograms generated during training.
-     *
-     * @param \Tensor\Matrix $projections
-     * @return list<float>
-     */
-    protected function densities(Matrix $projections) : array
-    {
-        $densities = array_fill(0, $projections->n(), 0.0);
-
-        foreach ($projections->asArray() as $i => $values) {
+        foreach ($projections as $i => $values) {
             [$edges, $counts] = $this->histograms[$i];
 
             foreach ($values as $j => $value) {
@@ -418,6 +408,8 @@ class Loda implements Estimator, Learner, Online, Scoring, Ranking, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

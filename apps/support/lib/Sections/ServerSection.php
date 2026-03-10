@@ -2,30 +2,12 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2017 Julius Härtl <jus@bitgrid.net>
- *
- * @author Julius Härtl <jus@bitgrid.net>
- *
- * @license GNU AGPL version 3 or any later version
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Affero General Public License as
- *  published by the Free Software Foundation, either version 3 of the
- *  License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Affero General Public License for more details.
- *
- *  You should have received a copy of the GNU Affero General Public License
- *  along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Support\Sections;
 
-use OC\DB\Exceptions\DbalException;
 use OC\IntegrityCheck\Checker;
 use OC\SystemConfig;
 use OCA\Files_External\Lib\StorageConfig;
@@ -34,14 +16,15 @@ use OCA\Support\IDetail;
 use OCA\Support\Section;
 use OCA\Support\Service\SubscriptionService;
 use OCA\Support\Subscription\SubscriptionAdapter;
-use OCA\User_LDAP\Configuration;
-use OCA\User_LDAP\Helper;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Http\Client\IClientService;
+use OCP\DB\Exception;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUserManager;
+use OCP\Server;
+use OCP\ServerVersion;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -52,10 +35,11 @@ class ServerSection extends Section {
 		protected readonly Checker $checker,
 		protected readonly IAppManager $appManager,
 		protected readonly IDBConnection $connection,
-		protected readonly IClientService $clientService,
 		protected readonly IUserManager $userManager,
 		protected readonly LoggerInterface $logger,
 		protected readonly SystemConfig $systemConfig,
+		protected readonly IAppConfig $appConfig,
+		protected readonly ServerVersion $serverVersion,
 		protected readonly SubscriptionAdapter $adapter,
 		protected readonly ITimeFactory $timeFactory,
 	) {
@@ -74,7 +58,7 @@ class ServerSection extends Section {
 		$this->createDetail('List of activated apps', $this->renderAppList(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
 		$this->createDetail('Configuration (config/config.php)', print_r(json_encode($this->getConfig(), JSON_PRETTY_PRINT), true), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
-		$this->createDetail('Cron Configuration', print_r($this->getCronConfig(), true));
+		$this->createDetail('Cron Configuration', $this->getCronConfig());
 
 		$externalStorageEnabled = $this->appManager->isEnabledForUser('files_external');
 		$this->createDetail('External storages', $externalStorageEnabled ? 'yes' : 'files_external is disabled');
@@ -86,13 +70,6 @@ class ServerSection extends Section {
 		$this->createDetail('User-backends', $this->getUserBackendInfo());
 		$this->createDetail('Subscription', $this->getSubscriptionInfo());
 
-		if ($this->isLDAPEnabled()) {
-			$this->createDetail('LDAP configuration', $this->getLDAPInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
-		}
-		if ($this->isTalkEnabled()) {
-			$this->createDetail('Talk configuration', $this->getTalkInfo());
-		}
-
 		$this->createDetail('Browser', $this->getBrowser());
 
 		return parent::getDetails();
@@ -103,7 +80,7 @@ class ServerSection extends Section {
 	}
 
 	private function getNextcloudVersion(): string {
-		return \OC_Util::getHumanVersion() . ' - ' . $this->config->getSystemValue('version');
+		return $this->serverVersion->getHumanVersion() . ' - ' . $this->config->getSystemValueString('version');
 	}
 	private function getOsVersion(): string {
 		return function_exists('php_uname') ? php_uname('s') . ' ' . php_uname('r') . ' ' . php_uname('v') . ' ' . php_uname('m') : PHP_OS;
@@ -113,7 +90,7 @@ class ServerSection extends Section {
 	}
 
 	protected function getDatabaseInfo(): string {
-		return $this->config->getSystemValue('dbtype') . ' ' . $this->getDatabaseVersion();
+		return $this->config->getSystemValueString('dbtype') . ' ' . $this->getDatabaseVersion();
 	}
 
 	/**
@@ -125,7 +102,7 @@ class ServerSection extends Section {
 	 * @license AGPL-3.0
 	 */
 	private function getDatabaseVersion(): string {
-		switch ($this->config->getSystemValue('dbtype')) {
+		switch ($this->config->getSystemValueString('dbtype')) {
 			case 'sqlite':
 			case 'sqlite3':
 				$sql = 'SELECT sqlite_version() AS version';
@@ -147,7 +124,7 @@ class ServerSection extends Section {
 			if ($version) {
 				return $this->cleanVersion($version);
 			}
-		} catch (DBALException $e) {
+		} catch (Exception $e) {
 			$this->logger->debug('Unable to determine database version', [
 				'exception' => $e
 			]);
@@ -175,14 +152,19 @@ class ServerSection extends Section {
 		return $version;
 	}
 
-	/**
-	 * @return array{backgroundjobs_mode: string, lastcron: string}
-	 */
-	private function getCronConfig(): array {
-		return [
-			'backgroundjobs_mode' => $this->config->getAppValue('core', 'backgroundjobs_mode', 'ajax'),
-			'lastcron' => $this->config->getAppValue('core', 'lastcron', 'never'),
-		];
+	private function getCronConfig(): string {
+		$mode = $this->appConfig->getValueString('core', 'backgroundjobs_mode', 'ajax');
+		$last = $this->appConfig->getValueInt('core', 'lastcron', 0);
+
+		if ($last === 0) {
+			$formattedLast = 'never';
+		} else {
+			$formattedLast = date('c', $last) . ' (' . (time() - $last) . ' seconds ago)';
+		}
+
+		return PHP_EOL . PHP_EOL
+			. 'Mode: ' . $mode . PHP_EOL
+			. 'Last: ' . $formattedLast . PHP_EOL;
 	}
 
 	private function getIntegrityResults(): string {
@@ -202,7 +184,16 @@ class ServerSection extends Section {
 
 	private function renderAppList(): string {
 		$apps = $this->getAppList();
-		$result = "Enabled:\n";
+
+		$result = '';
+		if (!empty($apps['supported'])) {
+			$result .= "Supported:\n";
+			foreach ($apps['supported'] as $name => $version) {
+				$result .= ' - ' . $name . ': ' . $version . "\n";
+			}
+		}
+
+		$result .= "Enabled:\n";
 		foreach ($apps['enabled'] as $name => $version) {
 			$result .= ' - ' . $name . ': ' . $version . "\n";
 		}
@@ -222,36 +213,59 @@ class ServerSection extends Section {
 	 * @return string[][]
 	 */
 	private function getAppList(): array {
-		$apps = \OC_App::getAllApps();
-		$enabledApps = $disabledApps = [];
+		$appClass = new \OC_App();
+		$apps = $appClass->listAllApps();
+		$supportedAppsIDs = $appClass->getSupportedApps();
+
+		$supportedApps = $enabledApps = $disabledApps = [];
 		$versions = \OC_App::getAppVersions();
 
-		//sort enabled apps above disabled apps
+		// sort enabled apps above disabled apps
 		foreach ($apps as $app) {
-			if ($this->appManager->isInstalled($app)) {
-				$enabledApps[] = $app;
-			} else {
-				$disabledApps[] = $app;
+			if ($this->appManager->isInstalled($app['id'])) {
+				if (in_array($app['id'], $supportedAppsIDs)) {
+					$supportedApps[] = $app['id'];
+					continue;
+				}
+
+				// enabled but not ours
+				$enabledApps[] = $app['id'];
+				continue;
 			}
+
+			$disabledApps[] = $app['id'];
 		}
-		$apps = ['enabled' => [], 'disabled' => []];
+
+		$apps = [
+			'supported' => [],
+			'enabled' => [],
+			'disabled' => []
+		];
+
+		sort($supportedApps);
+		foreach ($supportedApps as $app) {
+			$apps['supported'][$app] = $versions[$app] ?? true;
+		}
+
 		sort($enabledApps);
 		foreach ($enabledApps as $app) {
 			$apps['enabled'][$app] = $versions[$app] ?? true;
 		}
+
 		sort($disabledApps);
 		foreach ($disabledApps as $app) {
 			$apps['disabled'][$app] = $versions[$app] ?? false;
 		}
+
 		return $apps;
 	}
 
 	protected function getEncryptionInfo(): string {
-		return $this->config->getAppValue('core', 'encryption_enabled', 'no');
+		return $this->appConfig->getValueString('core', 'encryption_enabled', 'no');
 	}
 
 	protected function getExternalStorageInfo(): string {
-		$globalService = \OC::$server->query(GlobalStoragesService::class);
+		$globalService = Server::get(GlobalStoragesService::class);
 		$mounts = $globalService->getStorageForAllUsers();
 
 		// copy of OCA\Files_External\Command\ListCommand::listMounts
@@ -336,7 +350,7 @@ class ServerSection extends Section {
 		$keys = $this->systemConfig->getKeys();
 		$configs = [];
 		foreach ($keys as $key) {
-			$value = $this->systemConfig->getFilteredValue($key, serialize(null));
+			$value = $this->config->getFilteredSystemValue($key, serialize(null));
 			if ($value !== 'N;') {
 				$configs[$key] = $value;
 			}
@@ -359,165 +373,6 @@ class ServerSection extends Section {
 		return $output;
 	}
 
-	private function isLDAPEnabled(): bool {
-		$backends = $this->userManager->getBackends();
-
-		foreach ($backends as $backend) {
-			if ($backend instanceof \OCA\User_LDAP\User_Proxy) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function isTalkEnabled(): bool {
-		return $this->appManager->isEnabledForUser('spreed');
-	}
-
-	private function getTalkInfo(): string {
-		$output = PHP_EOL;
-
-		$config = $this->config->getAppValue('spreed', 'stun_servers');
-		$servers = json_decode($config, true);
-
-		$output .= PHP_EOL;
-		$output .= 'STUN servers' . PHP_EOL;
-		if (empty($servers)) {
-			$output .= ' * no custom server configured' . PHP_EOL;
-		} else {
-			foreach ($servers as $server) {
-				$output .= ' * ' . $server . PHP_EOL;
-			}
-		}
-
-		$config = $this->config->getAppValue('spreed', 'turn_servers');
-		$servers = json_decode($config, true);
-
-		$output .= PHP_EOL;
-		$output .= 'TURN servers' . PHP_EOL;
-		if (empty($servers)) {
-			$output .= ' * no custom server configured' . PHP_EOL;
-		} else {
-			foreach ($servers as $server) {
-				$output .= ' * ' . ($server['schemes'] ?? 'turn') . ':' . $server['server'] . ' - ' . $server['protocols'] . PHP_EOL;
-			}
-		}
-
-		$config = $this->config->getAppValue('spreed', 'signaling_mode', 'default');
-		$output .= PHP_EOL;
-		$output .= 'Signaling servers (mode: ' . $config . '):' . PHP_EOL;
-
-		if ($this->config->getAppValue('spreed', 'sip_bridge_shared_secret') !== '') {
-			$output .= ' * SIP dialin is enabled' . PHP_EOL;
-		} else {
-			$output .= ' * SIP dialin is disabled' . PHP_EOL;
-		}
-		if ($this->config->getAppValue('spreed', 'sip_dialout', 'no') !== 'no') {
-			$output .= ' * SIP dialout is enabled' . PHP_EOL;
-		} else {
-			$output .= ' * SIP dialout is disabled' . PHP_EOL;
-		}
-
-		$config = $this->config->getAppValue('spreed', 'signaling_servers');
-		$servers = json_decode($config, true);
-
-		if (empty($servers['servers'])) {
-			$output .= ' * no custom server configured' . PHP_EOL;
-		} else {
-			foreach ($servers['servers'] as $server) {
-				$output .= ' * ' . $server['server'] . ' - ' . $this->getTalkComponentVersion($server['server']) . PHP_EOL;
-			}
-		}
-
-		$output .= PHP_EOL;
-		$output .= 'Recording servers:' . PHP_EOL;
-		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
-			$output .= ' * Recording is disabled' . PHP_EOL;
-		} else {
-			$output .= ' * Recording is enabled' . PHP_EOL;
-		}
-		$output .= ' * Recording consent is set to "' . $this->config->getAppValue('spreed', 'recording_consent', 'default') . '"' . PHP_EOL;
-
-		$config = $this->config->getAppValue('spreed', 'recording_servers');
-		$servers = json_decode($config, true);
-
-		if (empty($servers['servers'])) {
-			$output .= ' * no recording server configured' . PHP_EOL;
-		} else {
-			foreach ($servers['servers'] as $server) {
-				$output .= ' * ' . $server['server'] . ' - ' . $this->getTalkComponentVersion($server['server']) . PHP_EOL;
-			}
-		}
-
-		return $output;
-	}
-
-	private function getTalkComponentVersion(string $url): string {
-		$url = rtrim($url, '/');
-
-		if (strpos($url, 'wss://') === 0) {
-			$url = 'https://' . substr($url, 6);
-		}
-
-		if (strpos($url, 'ws://') === 0) {
-			$url = 'http://' . substr($url, 5);
-		}
-
-		$client = $this->clientService->newClient();
-		try {
-			$response = $client->get($url . '/api/v1/welcome', [
-				'verify' => false,
-				'nextcloud' => [
-					'allow_local_address' => true,
-				],
-			]);
-
-			$body = $response->getBody();
-
-			$data = json_decode($body, true);
-			if (!is_array($data) || !isset($data['version'])) {
-				return 'error';
-			}
-
-			return (string) $data['version'];
-		} catch (\Exception $e) {
-			return 'error: ' . $e->getMessage();
-		}
-	}
-
-	private function getLDAPInfo(): string {
-		/** @var Helper $helper */
-		$helper = \OC::$server->query(Helper::class);
-
-		$output = new BufferedOutput();
-
-		// copy of OCA\User_LDAP\Command\ShowConfig::renderConfigs
-		$configIDs = $helper->getServerConfigurationPrefixes();
-		foreach ($configIDs as $id) {
-			$configHolder = new Configuration($id);
-			$configuration = $configHolder->getConfiguration();
-			ksort($configuration);
-
-			$table = new Table($output);
-			$table->setHeaders(['Configuration', $id]);
-			$rows = [];
-			foreach ($configuration as $key => $value) {
-				if ($key === 'ldapAgentPassword') {
-					$value = '***';
-				}
-				if (is_array($value)) {
-					$value = implode(';', $value);
-				}
-				$rows[] = [$key, $value];
-			}
-			$table->setRows($rows);
-			$table->render();
-		}
-
-		return $output->fetch();
-	}
-
 	private function getSubscriptionInfo(): string {
 		$output = PHP_EOL;
 
@@ -527,7 +382,7 @@ class ServerSection extends Section {
 			$output .= ' * No valid subscription key set' . PHP_EOL;
 		}
 
-		$lastError = (int)$this->config->getAppValue('support', 'last_error', 0);
+		$lastError = $this->appConfig->getValueInt('support', 'last_error');
 
 		if ($lastError > 0) {
 			switch ($lastError) {
@@ -553,7 +408,7 @@ class ServerSection extends Section {
 			$output .= ' * Reached user limit of subscription' . PHP_EOL;
 		}
 
-		$rateLimitReached = (int)$this->config->getAppValue('notifications', 'rate_limit_reached', '0');
+		$rateLimitReached = $this->appConfig->getValueInt('notifications', 'rate_limit_reached');
 		if ($rateLimitReached >= ($this->timeFactory->now()->getTimestamp() - 7 * 24 * 3600)) {
 			$output .= ' * Fair-use push notification limit reached' . PHP_EOL;
 		}

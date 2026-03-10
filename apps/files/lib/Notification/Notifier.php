@@ -25,36 +25,15 @@ use OCP\Notification\INotifier;
 use OCP\Notification\UnknownNotificationException;
 
 class Notifier implements INotifier, IDismissableNotifier {
-	/** @var IFactory */
-	protected $l10nFactory;
-
-	/** @var IURLGenerator */
-	protected $urlGenerator;
-	/** @var TransferOwnershipMapper */
-	private $mapper;
-	/** @var IManager */
-	private $notificationManager;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var ITimeFactory */
-	private $timeFactory;
-	/** @var IJobList */
-	private $jobList;
-
-	public function __construct(IFactory $l10nFactory,
-		IURLGenerator $urlGenerator,
-		TransferOwnershipMapper $mapper,
-		IManager $notificationManager,
-		IUserManager $userManager,
-		IJobList $jobList,
-		ITimeFactory $timeFactory) {
-		$this->l10nFactory = $l10nFactory;
-		$this->urlGenerator = $urlGenerator;
-		$this->jobList = $jobList;
-		$this->mapper = $mapper;
-		$this->notificationManager = $notificationManager;
-		$this->userManager = $userManager;
-		$this->timeFactory = $timeFactory;
+	public function __construct(
+		protected IFactory $l10nFactory,
+		protected IURLGenerator $urlGenerator,
+		private TransferOwnershipMapper $mapper,
+		private IManager $notificationManager,
+		private IUserManager $userManager,
+		private IJobList $jobList,
+		private ITimeFactory $timeFactory,
+	) {
 	}
 
 	public function getID(): string {
@@ -275,7 +254,7 @@ class Notifier implements INotifier, IDismissableNotifier {
 
 		// TODO: This should all be moved to a service that also the transferownershipController uses.
 		try {
-			$transferOwnership = $this->mapper->getById((int) $notification->getObjectId());
+			$transferOwnership = $this->mapper->getById((int)$notification->getObjectId());
 		} catch (DoesNotExistException $e) {
 			return;
 		}
@@ -295,7 +274,7 @@ class Notifier implements INotifier, IDismissableNotifier {
 				'targetUser' => $transferOwnership->getTargetUser(),
 				'nodeName' => $transferOwnership->getNodeName()
 			])
-			->setObject('transfer', (string) $transferOwnership->getId());
+			->setObject('transfer', (string)$transferOwnership->getId());
 		$this->notificationManager->notify($notification);
 
 		$this->mapper->delete($transferOwnership);

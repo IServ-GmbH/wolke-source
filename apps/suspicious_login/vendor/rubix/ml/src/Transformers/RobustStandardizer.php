@@ -4,16 +4,12 @@ namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\RuntimeException;
-
-use function is_null;
-
-use const Rubix\ML\EPSILON;
 
 /**
  * Robust Standardizer
@@ -30,7 +26,7 @@ use const Rubix\ML\EPSILON;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class RobustStandardizer implements Transformer, Stateful, Persistable
+class RobustStandardizer implements Transformer, Stateful, Reversible, Persistable
 {
     use AutotrackRevisions;
 
@@ -39,14 +35,14 @@ class RobustStandardizer implements Transformer, Stateful, Persistable
      *
      * @var bool
      */
-    protected $center;
+    protected bool $center;
 
     /**
      * The computed medians of the fitted data indexed by column.
      *
      * @var (int|float)[]|null
      */
-    protected $medians;
+    protected ?array $medians = null;
 
     /**
      * The computed median absolute deviations of the fitted data
@@ -54,7 +50,7 @@ class RobustStandardizer implements Transformer, Stateful, Persistable
      *
      * @var (int|float)[]|null
      */
-    protected $mads;
+    protected ?array $mads = null;
 
     /**
      * @param bool $center
@@ -117,14 +113,14 @@ class RobustStandardizer implements Transformer, Stateful, Persistable
 
         $this->medians = $this->mads = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isContinuous()) {
-                $values = $dataset->column($column);
+                $values = $dataset->feature($column);
 
                 [$median, $mad] = Stats::medianMad($values);
 
                 $this->medians[$column] = $median;
-                $this->mads[$column] = $mad ?: EPSILON;
+                $this->mads[$column] = $mad ?: 1.0;
             }
         }
     }
@@ -137,7 +133,7 @@ class RobustStandardizer implements Transformer, Stateful, Persistable
      */
     public function transform(array &$samples) : void
     {
-        if (is_null($this->mads) or is_null($this->medians)) {
+        if ($this->mads === null or $this->medians === null) {
             throw new RuntimeException('Transformer has not been fitted.');
         }
 
@@ -155,7 +151,34 @@ class RobustStandardizer implements Transformer, Stateful, Persistable
     }
 
     /**
+     * Perform the reverse transformation to the samples.
+     *
+     * @param list<list<mixed>> $samples
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     */
+    public function reverseTransform(array &$samples) : void
+    {
+        if ($this->mads === null or $this->medians === null) {
+            throw new RuntimeException('Transformer has not been fitted.');
+        }
+
+        foreach ($samples as &$sample) {
+            foreach ($this->mads as $column => $mad) {
+                $value = &$sample[$column];
+
+                $value *= $mad;
+
+                if ($this->center) {
+                    $value += $this->medians[$column];
+                }
+            }
+        }
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

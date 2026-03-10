@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -19,7 +18,8 @@ class AppFetcher extends Fetcher {
 	/** @var bool */
 	private $ignoreMaxVersion;
 
-	public function __construct(Factory $appDataFactory,
+	public function __construct(
+		Factory $appDataFactory,
 		IClientService $clientService,
 		ITimeFactory $timeFactory,
 		IConfig $config,
@@ -127,7 +127,7 @@ class AppFetcher extends Fetcher {
 			if (isset($versions[0])) {
 				$highestVersion = $versions[0];
 				foreach ($releases as $release) {
-					if ((string) $release['version'] === (string) $highestVersion) {
+					if ((string)$release['version'] === (string)$highestVersion) {
 						$response['data'][$dataKey]['releases'] = [$release];
 						break;
 					}

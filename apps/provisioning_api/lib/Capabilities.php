@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -12,11 +11,9 @@ use OCP\Capabilities\ICapability;
 
 class Capabilities implements ICapability {
 
-	/** @var IAppManager */
-	private $appManager;
-
-	public function __construct(IAppManager $appManager) {
-		$this->appManager = $appManager;
+	public function __construct(
+		private IAppManager $appManager,
+	) {
 	}
 
 	/**

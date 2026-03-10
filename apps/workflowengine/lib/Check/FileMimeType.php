@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,21 +21,17 @@ class FileMimeType extends AbstractStringCheck implements IFileCheck {
 	/** @var array */
 	protected $mimeType;
 
-	/** @var IRequest */
-	protected $request;
-
-	/** @var IMimeTypeDetector */
-	protected $mimeTypeDetector;
-
 	/**
 	 * @param IL10N $l
 	 * @param IRequest $request
 	 * @param IMimeTypeDetector $mimeTypeDetector
 	 */
-	public function __construct(IL10N $l, IRequest $request, IMimeTypeDetector $mimeTypeDetector) {
+	public function __construct(
+		IL10N $l,
+		protected IRequest $request,
+		protected IMimeTypeDetector $mimeTypeDetector,
+	) {
 		parent::__construct($l);
-		$this->request = $request;
-		$this->mimeTypeDetector = $mimeTypeDetector;
 	}
 
 	/**

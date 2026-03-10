@@ -30,14 +30,14 @@ class Noise implements Hidden
      *
      * @var float
      */
-    protected $stdDev;
+    protected float $stdDev;
 
     /**
      * The width of the layer.
      *
-     * @var int|null
+     * @var positive-int|null
      */
-    protected $width;
+    protected ?int $width = null;
 
     /**
      * @param float $stdDev
@@ -59,11 +59,11 @@ class Noise implements Hidden
      * @internal
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
-        if (!$this->width) {
+        if ($this->width === null) {
             throw new RuntimeException('Layer has not been initialized.');
         }
 
@@ -76,8 +76,8 @@ class Noise implements Hidden
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -101,7 +101,9 @@ class Noise implements Hidden
         $noise = Matrix::gaussian(...$input->shape())
             ->multiply($this->stdDev);
 
-        return $input->add($noise);
+        $output = $input->add($noise);
+
+        return $output;
     }
 
     /**
@@ -134,10 +136,12 @@ class Noise implements Hidden
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Noise (std_dev: {$this->stdDev})";
+        return "Noise (std dev: {$this->stdDev})";
     }
 }

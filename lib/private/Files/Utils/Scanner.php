@@ -29,6 +29,7 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\StorageNotAvailableException;
 use OCP\IDBConnection;
 use OCP\Lock\ILockingProvider;
+use OCP\Lock\LockedException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -108,6 +109,7 @@ class Scanner extends PublicEmitter {
 	 * @param \OC\Files\Mount\MountPoint $mount
 	 */
 	protected function attachListener($mount) {
+		/** @var \OC\Files\Cache\Scanner $scanner */
 		$scanner = $mount->getStorage()->getScanner();
 		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFile', function ($path) use ($mount) {
 			$this->emit('\OC\Files\Utils\Scanner', 'scanFile', [$mount->getMountPoint() . $path]);
@@ -259,7 +261,15 @@ class Scanner extends PublicEmitter {
 			try {
 				$propagator = $storage->getPropagator();
 				$propagator->beginBatch();
-				$scanner->scan($relativePath, $recursive, \OC\Files\Cache\Scanner::REUSE_ETAG | \OC\Files\Cache\Scanner::REUSE_SIZE);
+				try {
+					$scanner->scan($relativePath, $recursive, \OC\Files\Cache\Scanner::REUSE_ETAG | \OC\Files\Cache\Scanner::REUSE_SIZE);
+				} catch (LockedException $e) {
+					if (is_string($e->getReadablePath()) && str_starts_with($e->getReadablePath(), 'scanner::')) {
+						throw new LockedException("scanner::$dir", $e, $e->getExistingLock());
+					} else {
+						throw $e;
+					}
+				}
 				$cache = $storage->getCache();
 				if ($cache instanceof Cache) {
 					// only re-calculate for the root folder we scanned, anything below that is taken care of by the scanner

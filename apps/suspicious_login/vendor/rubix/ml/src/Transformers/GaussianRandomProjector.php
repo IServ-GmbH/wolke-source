@@ -6,7 +6,7 @@ use Tensor\Matrix;
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -32,16 +32,16 @@ class GaussianRandomProjector implements Transformer, Stateful, Persistable
     /**
      * The target number of dimensions.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $dimensions;
+    protected int $dimensions;
 
     /**
      * The random matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $r;
+    protected ?\Tensor\Matrix $r = null;
 
     /**
      * Estimate the minimum dimensionality needed to satisfy a *max distortion* constraint with *n*
@@ -117,7 +117,7 @@ class GaussianRandomProjector implements Transformer, Stateful, Persistable
     {
         SamplesAreCompatibleWithTransformer::with($dataset, $this)->check();
 
-        $this->r = Matrix::gaussian($dataset->numColumns(), $this->dimensions);
+        $this->r = Matrix::gaussian($dataset->numFeatures(), $this->dimensions);
     }
 
     /**
@@ -139,6 +139,8 @@ class GaussianRandomProjector implements Transformer, Stateful, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

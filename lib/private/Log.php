@@ -42,13 +42,9 @@ class Log implements ILogger, IDataLogger {
 	public function __construct(
 		private IWriter $logger,
 		private SystemConfig $config,
-		private ?Normalizer $normalizer = null,
-		private ?IRegistry $crashReporters = null
+		private Normalizer $normalizer = new Normalizer(),
+		private ?IRegistry $crashReporters = null,
 	) {
-		// FIXME: php8.1 allows "private Normalizer $normalizer = new Normalizer()," in initializer
-		if ($normalizer === null) {
-			$this->normalizer = new Normalizer();
-		}
 	}
 
 	public function setEventDispatcher(IEventDispatcher $eventDispatcher): void {
@@ -276,7 +272,7 @@ class Log implements ILogger, IDataLogger {
 			$configLogLevel = $this->config->getValue('loglevel', ILogger::WARN);
 			if (is_numeric($configLogLevel)) {
 				$this->nestingLevel--;
-				return min((int) $configLogLevel, ILogger::FATAL);
+				return min((int)$configLogLevel, ILogger::FATAL);
 			}
 
 			// Invalid configuration, warn the user and fall back to default level of WARN

@@ -1,3 +1,7 @@
+/**
+ * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 .community-support .columns {
 	grid-template-columns: 1fr 1fr;
 }
@@ -79,6 +83,12 @@
 
 .section {
 	text-align: center;
+}
+
+.section h2,
+.section p {
+	/* Override max-width set in server CSS for settings. */
+	max-width: 100% !important;
 }
 
 .section.system-information img {

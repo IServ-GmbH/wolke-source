@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -29,10 +28,6 @@ class Result extends BaseResult {
 	/**
 	 * @deprecated 20.0.0
 	 */
-	public string $authorName;
-	/**
-	 * @deprecated 20.0.0
-	 */
 	public $path;
 	/**
 	 * @deprecated 20.0.0
@@ -50,7 +45,10 @@ class Result extends BaseResult {
 	public function __construct(
 		string $search,
 		IComment $comment,
-		string $authorName,
+		/**
+		 * @deprecated 20.0.0
+		 */
+		public string $authorName,
 		string $path,
 		int $fileId,
 	) {
@@ -62,7 +60,6 @@ class Result extends BaseResult {
 
 		$this->comment = $this->getRelevantMessagePart($comment->getMessage(), $search);
 		$this->authorId = $comment->getActorId();
-		$this->authorName = $authorName;
 		$this->fileName = basename($path);
 		$this->path = $this->getVisiblePath($path);
 		$this->fileId = $fileId;

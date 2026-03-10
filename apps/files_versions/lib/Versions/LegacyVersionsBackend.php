@@ -15,6 +15,7 @@ use OCA\DAV\Connector\Sabre\Exception\Forbidden;
 use OCA\Files_Versions\Db\VersionEntity;
 use OCA\Files_Versions\Db\VersionsMapper;
 use OCA\Files_Versions\Storage;
+use OCP\Constants;
 use OCP\Files\File;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
@@ -49,6 +50,10 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 
 		if ($storage->instanceOfStorage(ISharedStorage::class)) {
 			$owner = $storage->getOwner('');
+			if ($owner === false) {
+				throw new NotFoundException('No owner for ' . $file->getPath());
+			}
+
 			$user = $this->userManager->get($owner);
 
 			$fileId = $file->getId();
@@ -83,7 +88,7 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 		}
 
 		$currentVersion = [
-			'version' => (string) $file->getMtime(),
+			'version' => (string)$file->getMtime(),
 			'size' => $file->getSize(),
 			'mimetype' => $file->getMimetype(),
 		];
@@ -113,8 +118,8 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 			if (empty($versions['db']) && !empty($versions['fs'])) {
 				$versions['db'] = new VersionEntity();
 				$versions['db']->setFileId($fileId);
-				$versions['db']->setTimestamp((int) $versions['fs']['version']);
-				$versions['db']->setSize((int) $versions['fs']['size']);
+				$versions['db']->setTimestamp((int)$versions['fs']['version']);
+				$versions['db']->setSize((int)$versions['fs']['size']);
 				$versions['db']->setMimetype($this->mimeTypeLoader->getId($versions['fs']['mimetype']));
 				$versions['db']->setMetadata([]);
 				$this->versionsMapper->insert($versions['db']);
@@ -158,7 +163,7 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 	}
 
 	public function rollback(IVersion $version) {
-		if (!$this->currentUserHasPermissions($version->getSourceFile(), \OCP\Constants::PERMISSION_UPDATE)) {
+		if (!$this->currentUserHasPermissions($version->getSourceFile(), Constants::PERMISSION_UPDATE)) {
 			throw new Forbidden('You cannot restore this version because you do not have update permissions on the source file.');
 		}
 
@@ -208,7 +213,7 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 	}
 
 	public function deleteVersion(IVersion $version): void {
-		if (!$this->currentUserHasPermissions($version->getSourceFile(), \OCP\Constants::PERMISSION_DELETE)) {
+		if (!$this->currentUserHasPermissions($version->getSourceFile(), Constants::PERMISSION_DELETE)) {
 			throw new Forbidden('You cannot delete this version because you do not have delete permissions on the source file.');
 		}
 
@@ -299,7 +304,7 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 	}
 
 	public function setMetadataValue(Node $node, int $revision, string $key, string $value): void {
-		if (!$this->currentUserHasPermissions($node, \OCP\Constants::PERMISSION_UPDATE)) {
+		if (!$this->currentUserHasPermissions($node, Constants::PERMISSION_UPDATE)) {
 			throw new Forbidden('You cannot update the version\'s metadata because you do not have update permissions on the source file.');
 		}
 
@@ -374,7 +379,7 @@ class LegacyVersionsBackend implements IVersionBackend, IDeletableVersionBackend
 
 		$versions = Storage::getVersions($userId, $relativePath);
 		foreach ($versions as $version) {
-			$versionFolder->get($version['path'] . '.v' . (int) $version['version'])->delete();
+			$versionFolder->get($version['path'] . '.v' . (int)$version['version'])->delete();
 		}
 
 		$this->versionsMapper->deleteAllVersionsForFileId($target->getId());

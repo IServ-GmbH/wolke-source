@@ -6,14 +6,15 @@ use Rubix\ML\Learner;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Kernels\SVM\RBF;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Kernels\SVM\Kernel;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\ExtensionIsLoaded;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
+use Rubix\ML\Specifications\ExtensionMinimumVersion;
 use Rubix\ML\Specifications\LabelsAreCompatibleWithLearner;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
@@ -49,21 +50,21 @@ class SVR implements Estimator, Learner
      *
      * @var \svm
      */
-    protected $svm;
+    protected \svm $svm;
 
     /**
      * The memoized hyper-parameters of the model.
      *
      * @var mixed[]
      */
-    protected $params;
+    protected array $params;
 
     /**
      * The trained model instance.
      *
      * @var \svmmodel|null
      */
-    protected $model;
+    protected ?\svmmodel $model = null;
 
     /**
      * @param float $c
@@ -82,7 +83,10 @@ class SVR implements Estimator, Learner
         float $tolerance = 1e-3,
         float $cacheSize = 100.0
     ) {
-        ExtensionIsLoaded::with('svm')->check();
+        SpecificationChain::with([
+            new ExtensionIsLoaded('svm'),
+            new ExtensionMinimumVersion('svm', '0.2.0'),
+        ])->check();
 
         if ($c < 0.0) {
             throw new InvalidArgumentException('C must be greater'
@@ -129,7 +133,7 @@ class SVR implements Estimator, Learner
             'kernel' => $kernel,
             'shrinking' => $shrinking,
             'tolerance' => $tolerance,
-            'cache_size' => $cacheSize,
+            'cache size' => $cacheSize,
         ];
     }
 
@@ -263,6 +267,8 @@ class SVR implements Estimator, Learner
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

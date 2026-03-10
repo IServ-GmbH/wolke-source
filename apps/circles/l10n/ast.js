@@ -1,7 +1,6 @@
 OC.L10N.register(
     "circles",
     {
-    "Teams" : "Equipos",
     "You created the team {circle}" : "Creesti l'equipu «{circle}»",
     "{author} created the team {circle}" : "{author} creó l'equipu «{circle}»",
     "You deleted {circle}" : "Desaniciesti «{circle}»",
@@ -50,6 +49,7 @@ OC.L10N.register(
     "{member} sent a request to join {circle}" : "{member} unvióte una solicitú pa xunite a «{circle}»",
     "You are the new owner of {circle}" : "Yes el propietariu nuevu de: {circle}",
     "{member} is the new owner of {circle}" : "{member} ye'l propietariu nuevu de: {circle}",
+    "Teams" : "Equipos",
     "On events happening in a <strong>team</strong> of which you are a member" : "Sobre eventos que pasen nun <strong>equipu</strong> del que seyas miembru",
     "Any important event in a <strong>team</strong> you are moderating" : "Cualesquier eventu nun <strong>equipu</strong> que llendes",
     "On global events happening in any <strong>team</strong>" : "Sobre eventos globales que pasen en cualesquier <strong>equipu</strong>",
@@ -102,12 +102,10 @@ OC.L10N.register(
     "Circles App Initialization" : "Aniciu de l'aplicación Círculos",
     "Fresh installation status" : "Estáu de la instalación nueva",
     "Building Local Database" : "Creando la base de datos llocal",
-    "Testing Basic Circle Creation" : "Probando la creación d'un círculu básicu",
     "Adding local users and moderators" : "Amestando usuarios y moderadores llocales",
     "Show all teams" : "Amosar tolos equipos",
     "Create a new team" : "Crear un equipu",
     "Files" : "Ficheros",
-    "This feature is not available for personal circles" : "Esta función nun ta disponible pa los círculos personales",
     "The team is not federated" : "L'equipu nun ta federáu",
     "You cannot join this team" : "Nun pues xunite a esti equipu",
     "This member is not a moderator" : "Esti miembru nun ye llendador",
@@ -115,10 +113,6 @@ OC.L10N.register(
     "This member does not exist" : "Esti miembru nun esiste",
     "This member is the owner of the team" : "Esti miembru ye propietariu del equipu",
     "Level cannot be changed for this type of member" : "Nun se pue camudar el nivel d'esti tipu de miembru",
-    "You are already a member of this circle" : "Yá yes miembru d'esti círculu",
-    "You have been blocked from this circle" : "Bloquiáronte nesti círculu",
-    "The account is already a member of this circle" : "La cuenta yá ye miembru d'esti círculu",
-    "The account has already been invited into this circle" : "La cuenta yá recibió una invitación d'esti círculu",
     "%s (Team owned by %s)" : "%s (equipu propiedá de: %s)",
     "Accept" : "Aceptar",
     "Refuse" : "Refugar",
@@ -144,11 +138,6 @@ OC.L10N.register(
     "Name" : "Nome",
     "Size" : "Tamañu",
     "Modified" : "Modificóse",
-    "Teams' files" : "Ficheros d'Equipos",
-    "Select team to filter by" : "Seleiciona los equipos polos que quies peñerar",
-    "Please select teams to filter by" : "Seleiciona los equipos polos que quies peñerar",
-    "No files found for the selected teams" : "Nun s'atopó nengún ficheru pa los equipos seleicionaos",
-    "Shared to Circles" : "Compartióse en Círculos",
-    "Circle" : "Círculu"
+    "Shared to Circles" : "Compartióse en Círculos"
 },
 "nplurals=2; plural=(n != 1);");

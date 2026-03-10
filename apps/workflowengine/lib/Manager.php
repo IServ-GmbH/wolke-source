@@ -100,7 +100,7 @@ class Manager implements IManager {
 			->where($query->expr()->neq('events', $query->createNamedParameter('[]'), IQueryBuilder::PARAM_STR))
 			->groupBy('class', 'entity', $query->expr()->castColumn('events', IQueryBuilder::PARAM_STR));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$operations = [];
 		while ($row = $result->fetch()) {
 			$eventNames = \json_decode($row['events']);
@@ -146,13 +146,13 @@ class Manager implements IManager {
 			->where($query->expr()->eq('o.class', $query->createParameter('operationClass')));
 
 		$query->setParameters(['operationClass' => $operationClass]);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$scopesByOperation[$operationClass] = [];
 		while ($row = $result->fetch()) {
 			$scope = new ScopeContext($row['type'], $row['value']);
 
-			if (!$operation->isAvailableForScope((int) $row['type'])) {
+			if (!$operation->isAvailableForScope((int)$row['type'])) {
 				continue;
 			}
 
@@ -181,7 +181,7 @@ class Manager implements IManager {
 		}
 
 		$query->setParameters(['scope' => $scopeContext->getScope(), 'scopeId' => $scopeContext->getScopeId()]);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$this->operations[$scopeContext->getHash()] = [];
 		while ($row = $result->fetch()) {
@@ -192,7 +192,7 @@ class Manager implements IManager {
 				continue;
 			}
 
-			if (!$operation->isAvailableForScope((int) $row['scope_type'])) {
+			if (!$operation->isAvailableForScope((int)$row['scope_type'])) {
 				continue;
 			}
 
@@ -222,7 +222,7 @@ class Manager implements IManager {
 		$query->select('*')
 			->from('flow_operations')
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -239,7 +239,7 @@ class Manager implements IManager {
 		array $checkIds,
 		string $operation,
 		string $entity,
-		array $events
+		array $events,
 	): int {
 		$query = $this->connection->getQueryBuilder();
 		$query->insert('flow_operations')
@@ -251,7 +251,7 @@ class Manager implements IManager {
 				'entity' => $query->createNamedParameter($entity),
 				'events' => $query->createNamedParameter(json_encode($events))
 			]);
-		$query->execute();
+		$query->executeStatement();
 
 		$this->cacheFactory->createDistributed('flow')->remove('events');
 
@@ -265,7 +265,7 @@ class Manager implements IManager {
 	 * @param string $operation
 	 * @return array The added operation
 	 * @throws \UnexpectedValueException
-	 * @throw Exception
+	 * @throws Exception
 	 */
 	public function addOperation(
 		string $class,
@@ -274,7 +274,7 @@ class Manager implements IManager {
 		string $operation,
 		ScopeContext $scope,
 		string $entity,
-		array $events
+		array $events,
 	) {
 		$this->validateOperation($class, $name, $checks, $operation, $scope, $entity, $events);
 
@@ -314,11 +314,11 @@ class Manager implements IManager {
 		}
 
 		$qb->setParameters(['scope' => $scopeContext->getScope(), 'scopeId' => $scopeContext->getScopeId()]);
-		$result = $qb->execute();
+		$result = $qb->executeQuery();
 
 		$operations = [];
 		while (($opId = $result->fetchOne()) !== false) {
-			$operations[] = (int) $opId;
+			$operations[] = (int)$opId;
 		}
 		$this->operationsByScope[$scopeContext->getHash()] = $operations;
 		$result->closeCursor();
@@ -343,7 +343,7 @@ class Manager implements IManager {
 		string $operation,
 		ScopeContext $scopeContext,
 		string $entity,
-		array $events
+		array $events,
 	): array {
 		if (!$this->canModify($id, $scopeContext)) {
 			throw new \DomainException('Target operation not within scope');
@@ -392,14 +392,14 @@ class Manager implements IManager {
 		$query = $this->connection->getQueryBuilder();
 		try {
 			$this->connection->beginTransaction();
-			$result = (bool) $query->delete('flow_operations')
+			$result = (bool)$query->delete('flow_operations')
 				->where($query->expr()->eq('id', $query->createNamedParameter($id)))
-				->execute();
+				->executeStatement();
 			if ($result) {
 				$qb = $this->connection->getQueryBuilder();
-				$result &= (bool) $qb->delete('flow_operations_scope')
+				$result &= (bool)$qb->delete('flow_operations_scope')
 					->where($qb->expr()->eq('operation_id', $qb->createNamedParameter($id)))
-					->execute();
+					->executeStatement();
 			}
 			$this->connection->commit();
 		} catch (Exception $e) {
@@ -422,10 +422,6 @@ class Manager implements IManager {
 			$instance = $this->container->query($entity);
 		} catch (QueryException $e) {
 			throw new \UnexpectedValueException($this->l->t('Entity %s does not exist', [$entity]));
-		}
-
-		if (!$instance instanceof IEntity) {
-			throw new \UnexpectedValueException($this->l->t('Entity %s is invalid', [$entity]));
 		}
 
 		if (empty($events)) {
@@ -458,15 +454,21 @@ class Manager implements IManager {
 	 * @throws \UnexpectedValueException
 	 */
 	public function validateOperation($class, $name, array $checks, $operation, ScopeContext $scope, string $entity, array $events) {
+		if (strlen($operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
+			throw new \UnexpectedValueException($this->l->t('The provided operation data is too long'));
+		}
+
+		/** @psalm-suppress TaintedCallable newInstance is not called */
+		$reflection = new \ReflectionClass($class);
+		if ($class !== IOperation::class && !in_array(IOperation::class, $reflection->getInterfaceNames())) {
+			throw new \UnexpectedValueException($this->l->t('Operation %s is invalid', [$class]) . join(', ', $reflection->getInterfaceNames()));
+		}
+
 		try {
 			/** @var IOperation $instance */
 			$instance = $this->container->query($class);
 		} catch (QueryException $e) {
 			throw new \UnexpectedValueException($this->l->t('Operation %s does not exist', [$class]));
-		}
-
-		if (!($instance instanceof IOperation)) {
-			throw new \UnexpectedValueException($this->l->t('Operation %s is invalid', [$class]));
 		}
 
 		if (!$instance->isAvailableForScope($scope->getScope())) {
@@ -479,7 +481,7 @@ class Manager implements IManager {
 			throw new \UnexpectedValueException($this->l->t('At least one check needs to be provided'));
 		}
 
-		if (strlen((string) $operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
+		if (strlen((string)$operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
 			throw new \UnexpectedValueException($this->l->t('The provided operation data is too long'));
 		}
 
@@ -490,6 +492,15 @@ class Manager implements IManager {
 				throw new \UnexpectedValueException($this->l->t('Invalid check provided'));
 			}
 
+			if (strlen((string)$check['value']) > IManager::MAX_CHECK_VALUE_BYTES) {
+				throw new \UnexpectedValueException($this->l->t('The provided check value is too long'));
+			}
+
+			$reflection = new \ReflectionClass($check['class']);
+			if ($check['class'] !== ICheck::class && !in_array(ICheck::class, $reflection->getInterfaceNames())) {
+				throw new \UnexpectedValueException($this->l->t('Check %s is invalid', [$class]));
+			}
+
 			try {
 				/** @var ICheck $instance */
 				$instance = $this->container->query($check['class']);
@@ -497,18 +508,10 @@ class Manager implements IManager {
 				throw new \UnexpectedValueException($this->l->t('Check %s does not exist', [$class]));
 			}
 
-			if (!($instance instanceof ICheck)) {
-				throw new \UnexpectedValueException($this->l->t('Check %s is invalid', [$class]));
-			}
-
 			if (!empty($instance->supportedEntities())
 				&& !in_array($entity, $instance->supportedEntities())
 			) {
 				throw new \UnexpectedValueException($this->l->t('Check %s is not allowed with this entity', [$class]));
-			}
-
-			if (strlen((string) $check['value']) > IManager::MAX_CHECK_VALUE_BYTES) {
-				throw new \UnexpectedValueException($this->l->t('The provided check value is too long'));
 			}
 
 			$instance->validateCheck($check['operator'], $check['value']);
@@ -538,11 +541,11 @@ class Manager implements IManager {
 		$query->select('*')
 			->from('flow_checks')
 			->where($query->expr()->in('id', $query->createNamedParameter($checkIds, IQueryBuilder::PARAM_INT_ARRAY)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		while ($row = $result->fetch()) {
-			$this->checks[(int) $row['id']] = $row;
-			$checks[(int) $row['id']] = $row;
+			$this->checks[(int)$row['id']] = $row;
+			$checks[(int)$row['id']] = $row;
 		}
 		$result->closeCursor();
 
@@ -569,11 +572,11 @@ class Manager implements IManager {
 		$query->select('id')
 			->from('flow_checks')
 			->where($query->expr()->eq('hash', $query->createNamedParameter($hash)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		if ($row = $result->fetch()) {
 			$result->closeCursor();
-			return (int) $row['id'];
+			return (int)$row['id'];
 		}
 
 		$query = $this->connection->getQueryBuilder();
@@ -584,7 +587,7 @@ class Manager implements IManager {
 				'value' => $query->createNamedParameter($value),
 				'hash' => $query->createNamedParameter($hash),
 			]);
-		$query->execute();
+		$query->executeStatement();
 
 		return $query->getLastInsertId();
 	}
@@ -598,7 +601,7 @@ class Manager implements IManager {
 			'type' => $query->createNamedParameter($scope->getScope()),
 			'value' => $query->createNamedParameter($scope->getScopeId()),
 		]);
-		$insertQuery->execute();
+		$insertQuery->executeStatement();
 	}
 
 	public function formatOperation(array $operation): array {

@@ -15,10 +15,12 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\GenericFileException;
+use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\Template\BeforeGetTemplatesEvent;
+use OCP\Files\Template\Field;
 use OCP\Files\Template\FileCreatedFromTemplateEvent;
 use OCP\Files\Template\ICustomTemplateProvider;
 use OCP\Files\Template\ITemplateManager;
@@ -63,7 +65,8 @@ class TemplateManager implements ITemplateManager {
 		IPreview $previewManager,
 		IConfig $config,
 		IFactory $l10nFactory,
-		LoggerInterface $logger
+		LoggerInterface $logger,
+		private IFilenameValidator $filenameValidator,
 	) {
 		$this->serverContainer = $serverContainer;
 		$this->eventDispatcher = $eventDispatcher;
@@ -118,11 +121,24 @@ class TemplateManager implements ITemplateManager {
 	}
 
 	public function listTemplates(): array {
-		return array_map(function (TemplateFileCreator $entry) {
+		return array_values(array_map(function (TemplateFileCreator $entry) {
 			return array_merge($entry->jsonSerialize(), [
 				'templates' => $this->getTemplateFiles($entry)
 			]);
-		}, $this->listCreators());
+		}, $this->listCreators()));
+	}
+
+	public function listTemplateFields(int $fileId): array {
+		foreach ($this->listCreators() as $creator) {
+			$fields = $this->getTemplateFields($creator, $fileId);
+			if (empty($fields)) {
+				continue;
+			}
+
+			return $fields;
+		}
+
+		return [];
 	}
 
 	/**
@@ -157,7 +173,9 @@ class TemplateManager implements ITemplateManager {
 				}
 			}
 
-			$targetFile = $folder->newFile(basename($filePath), ($template instanceof File ? $template->fopen('rb') : null));
+			$filename = basename($filePath);
+			$this->filenameValidator->validateFilename($filename);
+			$targetFile = $folder->newFile($filename, ($template instanceof File ? $template->fopen('rb') : null));
 
 			$this->eventDispatcher->dispatchTyped(new FileCreatedFromTemplateEvent($template, $targetFile, $templateFields));
 			return $this->formatFile($userFolder->get($filePath));
@@ -183,20 +201,49 @@ class TemplateManager implements ITemplateManager {
 		throw new NotFoundException();
 	}
 
+	/**
+	 * @return list<Template>
+	 */
 	private function getTemplateFiles(TemplateFileCreator $type): array {
+		$templates = array_merge(
+			$this->getProviderTemplates($type),
+			$this->getUserTemplates($type)
+		);
+
+		$this->eventDispatcher->dispatchTyped(new BeforeGetTemplatesEvent($templates, false));
+
+		return $templates;
+	}
+
+	/**
+	 * @return list<Template>
+	 */
+	private function getProviderTemplates(TemplateFileCreator $type): array {
 		$templates = [];
 		foreach ($this->getRegisteredProviders() as $provider) {
 			foreach ($type->getMimetypes() as $mimetype) {
 				foreach ($provider->getCustomTemplates($mimetype) as $template) {
-					$templates[] = $template;
+					$templateId = $template->jsonSerialize()['templateId'];
+					$templates[$templateId] = $template;
 				}
 			}
 		}
+
+		return array_values($templates);
+	}
+
+	/**
+	 * @return list<Template>
+	 */
+	private function getUserTemplates(TemplateFileCreator $type): array {
+		$templates = [];
+
 		try {
 			$userTemplateFolder = $this->getTemplateFolder();
 		} catch (\Exception $e) {
 			return $templates;
 		}
+
 		foreach ($type->getMimetypes() as $mimetype) {
 			foreach ($userTemplateFolder->searchByMime($mimetype) as $templateFile) {
 				$template = new Template(
@@ -209,9 +256,31 @@ class TemplateManager implements ITemplateManager {
 			}
 		}
 
-		$this->eventDispatcher->dispatchTyped(new BeforeGetTemplatesEvent($templates));
-
 		return $templates;
+	}
+
+	/*
+	 * @return list<Field>
+	 */
+	private function getTemplateFields(TemplateFileCreator $type, int $fileId): array {
+		$providerTemplates = $this->getProviderTemplates($type);
+		$userTemplates = $this->getUserTemplates($type);
+
+		$matchedTemplates = array_filter(
+			array_merge($providerTemplates, $userTemplates),
+			function (Template $template) use ($fileId) {
+				return $template->jsonSerialize()['fileid'] === $fileId;
+			});
+
+		if (empty($matchedTemplates)) {
+			return [];
+		}
+
+		$this->eventDispatcher->dispatchTyped(new BeforeGetTemplatesEvent($matchedTemplates, true));
+
+		return array_values(array_map(function (Template $template) {
+			return $template->jsonSerialize()['fields'] ?? [];
+		}, $matchedTemplates));
 	}
 
 	/**

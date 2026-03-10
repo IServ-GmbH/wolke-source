@@ -80,7 +80,7 @@ OC.L10N.register(
     "Change tag color" : "Skift mærkefarve",
     "Create new tag" : "Opret nyt mærke",
     "Choose tags for the selected files" : "Vælg tags til de valgte filer",
-    "Cancel" : "Annuller",
+    "Cancel" : "Annullér",
     "Apply" : "Anvend",
     "Failed to load selected tags" : "Kunne ikke indlæse markerede mærker",
     "Failed to load tags" : "Kunne ikke indlæse tags.",
@@ -109,10 +109,10 @@ OC.L10N.register(
     "Failed to delete tag for file" : "Kunne ikke slette tag for fil",
     "Collaborative tags …" : "Samarbejds tags ...",
     "Loading …" : "Indlæser …",
-    "Loading collaborative tags …" : "Indlæser samarbejds tags ...",
     "File tags modification canceled" : "Ændring af fil tags annulleret",
     "Select or create tags to apply to all selected files" : "Vælg eller opret tags der skal gælde for alle markerede filer",
     "Select tags to apply to all selected files" : "Vælg tags der skal gælde for alle markerede filer",
-    "Apply changes" : "Anvend ændringer"
+    "Apply changes" : "Anvend ændringer",
+    "Loading collaborative tags …" : "Indlæser samarbejds tags ..."
 },
 "nplurals=2; plural=(n != 1);");

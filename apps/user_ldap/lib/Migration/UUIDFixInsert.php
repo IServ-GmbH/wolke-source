@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,23 +14,12 @@ use OCP\Migration\IRepairStep;
 
 class UUIDFixInsert implements IRepairStep {
 
-	/** @var IConfig */
-	protected $config;
-
-	/** @var UserMapping */
-	protected $userMapper;
-
-	/** @var GroupMapping */
-	protected $groupMapper;
-
-	/** @var IJobList */
-	protected $jobList;
-
-	public function __construct(IConfig $config, UserMapping $userMapper, GroupMapping $groupMapper, IJobList $jobList) {
-		$this->config = $config;
-		$this->userMapper = $userMapper;
-		$this->groupMapper = $groupMapper;
-		$this->jobList = $jobList;
+	public function __construct(
+		protected IConfig $config,
+		protected UserMapping $userMapper,
+		protected GroupMapping $groupMapper,
+		protected IJobList $jobList,
+	) {
 	}
 
 	/**
@@ -73,7 +61,7 @@ class UUIDFixInsert implements IRepairStep {
 					$offset += $batchSize;
 				} catch (\InvalidArgumentException $e) {
 					if (str_contains($e->getMessage(), 'Background job arguments can\'t exceed 4000')) {
-						$batchSize = (int) floor(count($records) * 0.8);
+						$batchSize = (int)floor(count($records) * 0.8);
 						$retry = true;
 					}
 				}

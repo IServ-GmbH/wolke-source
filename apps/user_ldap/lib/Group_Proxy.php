@@ -21,23 +21,16 @@ use OCP\IUserManager;
 /**
  * @template-extends Proxy<Group_LDAP>
  */
-class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend, IBatchMethodsBackend, IIsAdminBackend {
-	private GroupPluginManager $groupPluginManager;
-	private IConfig $config;
-	private IUserManager $ncUserManager;
-
+class Group_Proxy extends Proxy implements GroupInterface, IGroupLDAP, IGetDisplayNameBackend, INamedBackend, IDeleteGroupBackend, IBatchMethodsBackend, IIsAdminBackend {
 	public function __construct(
-		Helper $helper,
+		private Helper $helper,
 		ILDAPWrapper $ldap,
 		AccessFactory $accessFactory,
-		GroupPluginManager $groupPluginManager,
-		IConfig $config,
-		IUserManager $ncUserManager,
+		private GroupPluginManager $groupPluginManager,
+		private IConfig $config,
+		private IUserManager $ncUserManager,
 	) {
 		parent::__construct($helper, $ldap, $accessFactory);
-		$this->groupPluginManager = $groupPluginManager;
-		$this->config = $config;
-		$this->ncUserManager = $ncUserManager;
 	}
 
 
@@ -127,7 +120,7 @@ class Group_Proxy extends Proxy implements \OCP\GroupInterface, IGroupLDAP, IGet
 	 * Get all groups a user belongs to
 	 *
 	 * @param string $uid Name of the user
-	 * @return string[] with group names
+	 * @return list<string> with group names
 	 *
 	 * This function fetches all groups a user belongs to. It does not check
 	 * if the user exists at all.

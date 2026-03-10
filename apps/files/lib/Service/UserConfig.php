@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,6 +15,12 @@ class UserConfig {
 		[
 			// Whether to crop the files previews or not in the files list
 			'key' => 'crop_image_previews',
+			'default' => true,
+			'allowed' => [true, false],
+		],
+		[
+			// Whether to show the "confirm file extension change" warning
+			'key' => 'show_dialog_file_extension',
 			'default' => true,
 			'allowed' => [true, false],
 		],
@@ -50,12 +55,12 @@ class UserConfig {
 			'allowed' => [true, false],
 		],
 	];
-
-	protected IConfig $config;
 	protected ?IUser $user = null;
 
-	public function __construct(IConfig $config, IUserSession $userSession) {
-		$this->config = $config;
+	public function __construct(
+		protected IConfig $config,
+		IUserSession $userSession,
+	) {
 		$this->user = $userSession->getUser();
 	}
 

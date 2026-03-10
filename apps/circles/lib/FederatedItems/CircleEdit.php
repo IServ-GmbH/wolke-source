@@ -56,7 +56,7 @@ class CircleEdit implements IFederatedItem {
 		CircleRequest $circleRequest,
 		MemberRequest $memberRequest,
 		CircleService $circleService,
-		EventService $eventService
+		EventService $eventService,
 	) {
 		$this->circleRequest = $circleRequest;
 		$this->memberRequest = $memberRequest;
@@ -75,7 +75,7 @@ class CircleEdit implements IFederatedItem {
 		$circle = $event->getCircle();
 
 		$initiatorHelper = new MemberHelper($circle->getInitiator());
-		$initiatorHelper->mustBeOwner();
+		$initiatorHelper->mustBeAdmin();
 
 		$data = $event->getParams();
 		$new = clone $circle;

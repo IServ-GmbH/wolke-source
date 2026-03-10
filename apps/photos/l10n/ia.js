@@ -11,10 +11,13 @@ OC.L10N.register(
     "Favorite" : "Favorite",
     "Go back" : "Retornar",
     "Home" : "Initio",
-    "View" : "Vider",
+    "General" : "General",
     "Remove from favorites" : "Remove from favorites",
     "Details" : "Detalios",
+    "Cancel" : "Cancel",
+    "Confirm" : "Confirmar",
     "Group" : "Gruppo",
+    "View" : "Vider",
     "Add" : "Adder"
 },
 "nplurals=2; plural=(n != 1);");

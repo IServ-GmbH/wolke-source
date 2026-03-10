@@ -20,19 +20,17 @@ use OCP\BackgroundJob\TimedJob;
  */
 class ClearOldStatusesBackgroundJob extends TimedJob {
 
-	/** @var UserStatusMapper */
-	private $mapper;
-
 	/**
 	 * ClearOldStatusesBackgroundJob constructor.
 	 *
 	 * @param ITimeFactory $time
 	 * @param UserStatusMapper $mapper
 	 */
-	public function __construct(ITimeFactory $time,
-		UserStatusMapper $mapper) {
+	public function __construct(
+		ITimeFactory $time,
+		private UserStatusMapper $mapper,
+	) {
 		parent::__construct($time);
-		$this->mapper = $mapper;
 
 		$this->setInterval(60);
 	}

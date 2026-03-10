@@ -63,7 +63,7 @@ class Notifier implements INotifier {
 		$attemptId = $notification->getObjectId();
 
 		try {
-			$token = $this->tokenManager->getById((int) $attemptId);
+			$token = $this->tokenManager->getById((int)$attemptId);
 		} catch (DoesNotExistException|TokenExpireException) {
 			throw new AlreadyProcessedException();
 		}
@@ -99,6 +99,7 @@ class Notifier implements INotifier {
 
 		$notification->addParsedAction($approveAction)
 			->addParsedAction($disapproveAction)
+			->setPriorityNotification(true)
 			->setParsedSubject(str_replace('{ip}', $param['ip'], $l->t('Login attempt from IP address {ip}')))
 			->setRichSubject(
 				$l->t('Login attempt from IP address {ip}'),

@@ -13,7 +13,7 @@ use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Transformers\ZScaleStandardizer;
 use Rubix\ML\Datasets\Generators\Agglomerate;
-use Rubix\ML\CrossValidation\Metrics\Accuracy;
+use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -30,14 +30,14 @@ class SVCTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 200;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -64,7 +64,7 @@ class SVCTest extends TestCase
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var \Rubix\ML\CrossValidation\Metrics\FBeta
      */
     protected $metric;
 
@@ -74,15 +74,30 @@ class SVCTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'male' => new Blob([69.2, 195.7, 40.0], [1.0, 3.0, 0.3]),
-            'female' => new Blob([63.7, 168.5, 38.1], [0.8, 2.5, 0.4]),
+            'male' => new Blob([69.2, 195.7, 40.0], [2.0, 6.0, 0.6]),
+            'female' => new Blob([63.7, 168.5, 38.1], [1.6, 5.0, 0.8]),
         ], [0.45, 0.55]);
 
         $this->estimator = new SVC(1.0, new RBF(), true, 1e-3);
 
-        $this->metric = new Accuracy();
+        $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
+    }
+
+    /**
+     * @after
+     */
+    protected function tearDown() : void
+    {
+        if (file_exists('svc.model')) {
+            unlink('svc.model');
+        }
     }
 
     /**
@@ -125,7 +140,7 @@ class SVCTest extends TestCase
             'kernel' => new RBF(),
             'shrinking' => true,
             'tolerance' => 1e-3,
-            'cache_size' => 100.0,
+            'cache size' => 100.0,
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -134,7 +149,7 @@ class SVCTest extends TestCase
     /**
      * @test
      */
-    public function trainPredict() : void
+    public function trainSaveLoadPredict() : void
     {
         $dataset = $this->generator->generate(self::TRAIN_SIZE + self::TEST_SIZE);
 
@@ -145,6 +160,10 @@ class SVCTest extends TestCase
         $this->estimator->train($dataset);
 
         $this->assertTrue($this->estimator->trained());
+
+        $this->estimator->save('svc.model');
+
+        $this->estimator->load('svc.model');
 
         $predictions = $this->estimator->predict($testing);
 
@@ -171,10 +190,5 @@ class SVCTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick([[1.5]]));
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

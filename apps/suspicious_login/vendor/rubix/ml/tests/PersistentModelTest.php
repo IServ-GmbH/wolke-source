@@ -2,16 +2,16 @@
 
 namespace Rubix\ML\Tests;
 
-use Rubix\ML\AnomalyDetectors\Scoring;
 use Rubix\ML\Learner;
-use Rubix\ML\Wrapper;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\PersistentModel;
+use Rubix\ML\Serializers\RBX;
 use Rubix\ML\Persisters\Filesystem;
-use Rubix\ML\Classifiers\DummyClassifier;
+use Rubix\ML\AnomalyDetectors\Scoring;
+use Rubix\ML\Classifiers\GaussianNB;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -30,7 +30,7 @@ class PersistentModelTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->estimator = new PersistentModel(new DummyClassifier(), new Filesystem('test.model'));
+        $this->estimator = new PersistentModel(new GaussianNB(), new Filesystem('test.model'), new RBX());
     }
 
     /**
@@ -39,7 +39,6 @@ class PersistentModelTest extends TestCase
     public function build() : void
     {
         $this->assertInstanceOf(PersistentModel::class, $this->estimator);
-        $this->assertInstanceOf(Wrapper::class, $this->estimator);
         $this->assertInstanceOf(Probabilistic::class, $this->estimator);
         $this->assertInstanceOf(Scoring::class, $this->estimator);
         $this->assertInstanceOf(Learner::class, $this->estimator);
@@ -59,7 +58,7 @@ class PersistentModelTest extends TestCase
      */
     public function compatibility() : void
     {
-        $this->assertEquals(DataType::all(), $this->estimator->compatibility());
+        $this->assertEquals([DataType::continuous()], $this->estimator->compatibility());
     }
 
     /**
@@ -68,8 +67,9 @@ class PersistentModelTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'base' => new DummyClassifier(),
+            'base' => new GaussianNB(),
             'persister' => new Filesystem('test.model'),
+            'serializer' => new RBX(),
         ];
 
         $this->assertEquals($expected, $this->estimator->params());

@@ -185,7 +185,7 @@ class Manager implements IManager {
 				$task->setStatus(OCPTask::STATUS_RUNNING);
 				if ($provider instanceof IProviderWithExpectedRuntime) {
 					$completionExpectedAt = new \DateTime('now');
-					$completionExpectedAt->add(new \DateInterval('PT'.$provider->getExpectedRuntime().'S'));
+					$completionExpectedAt->add(new \DateInterval('PT' . $provider->getExpectedRuntime() . 'S'));
 					$task->setCompletionExpectedAt($completionExpectedAt);
 				}
 				if ($task->getId() === null) {
@@ -231,7 +231,7 @@ class Manager implements IManager {
 		[$provider,] = $providers;
 		if ($provider instanceof IProviderWithExpectedRuntime) {
 			$completionExpectedAt = new \DateTime('now');
-			$completionExpectedAt->add(new \DateInterval('PT'.$provider->getExpectedRuntime().'S'));
+			$completionExpectedAt->add(new \DateInterval('PT' . $provider->getExpectedRuntime() . 'S'));
 			$task->setCompletionExpectedAt($completionExpectedAt);
 		}
 		$taskEntity = DbTask::fromPublicTask($task);
@@ -250,7 +250,7 @@ class Manager implements IManager {
 			throw new PreConditionNotMetException('No LanguageModel provider is installed that can handle this task');
 		}
 		[$provider,] = $this->getPreferredProviders($task);
-		$maxExecutionTime = (int) ini_get('max_execution_time');
+		$maxExecutionTime = (int)ini_get('max_execution_time');
 		// Offload the task to a background job if the expected runtime of the likely provider is longer than 80% of our max execution time
 		// or if the provider doesn't provide a getExpectedRuntime() method
 		if (!$provider instanceof IProviderWithExpectedRuntime || $provider->getExpectedRuntime() > $maxExecutionTime * 0.8) {

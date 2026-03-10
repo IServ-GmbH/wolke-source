@@ -4,6 +4,10 @@ namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
 
+use function is_string;
+use function array_walk;
+use function call_user_func;
+
 /**
  * Text Normalizer
  *
@@ -15,6 +19,21 @@ use Rubix\ML\DataType;
  */
 class TextNormalizer implements Transformer
 {
+    /**
+     * The normalization function.
+     *
+     * @var callable-string
+     */
+    protected string $normalize;
+
+    /**
+     * @param bool $uppercase
+     */
+    public function __construct(bool $uppercase = false)
+    {
+        $this->normalize = $uppercase ? 'strtoupper' : 'strtolower';
+    }
+
     /**
      * Return the data types that this transformer is compatible with.
      *
@@ -30,21 +49,31 @@ class TextNormalizer implements Transformer
     /**
      * Transform the dataset in place.
      *
-     * @param list<list<mixed>> $samples
+     * @param array<mixed[]> $samples
      */
     public function transform(array &$samples) : void
     {
-        foreach ($samples as &$sample) {
-            foreach ($sample as &$value) {
-                if (is_string($value)) {
-                    $value = strtolower($value);
-                }
+        array_walk($samples, [$this, 'normalize']);
+    }
+
+    /**
+     * Normalize the text in a sample.
+     *
+     * @param list<mixed> $sample
+     */
+    public function normalize(array &$sample) : void
+    {
+        foreach ($sample as &$value) {
+            if (is_string($value)) {
+                $value = call_user_func($this->normalize, $value);
             }
         }
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

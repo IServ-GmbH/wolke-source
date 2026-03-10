@@ -17,23 +17,21 @@ use OCP\Activity\IEvent;
 class ProviderSubjectMember extends ProviderParser {
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseSubjectMemberJoin(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_join') {
 			return;
 		}
 
-		$this->parseSubjectMemberJoinOnInvite($event, $circle, $member);
+		$this->parseSubjectMemberJoinOnInvite($event, $params);
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member, $this->l10n->t('You joined {circle}'),
+			$event, $params, $this->l10n->t('You joined {circle}'),
 			$this->l10n->t('{member} joined {circle}')
 		);
 
@@ -42,22 +40,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberJoinOnInvite(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if (!$circle->isConfig(Circle::CFG_INVITE)) {
+		if ((($params['circle']['config'] ?? 0) & Circle::CFG_INVITE) === 0) {
 			return;
 		}
 
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You accepted the invitation to join {circle}'),
 			$this->l10n->t('{member} accepted the invitation to join {circle}')
 		);
@@ -68,24 +64,22 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseSubjectMemberAdd(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_added') {
 			return;
 		}
 
-		$this->parseSubjectMemberAddNotLocalMember($event, $circle, $member);
-		$this->parseSubjectMemberAddClosedCircle($event, $circle, $member);
+		$this->parseSubjectMemberAddNotLocalMember($event, $params);
+		$this->parseSubjectMemberAddClosedCircle($event, $params);
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You added {member} as member to {circle}'),
 			$this->l10n->t('You have been added as member to {circle} by {author}'),
 			$this->l10n->t('{member} has been added as member to {circle} by {author}')
@@ -96,22 +90,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberAddNotLocalMember(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if ($member->getUserType() === Member::TYPE_USER) {
+		if (($params['member']['type'] ?? Member::TYPE_USER) === Member::TYPE_USER) {
 			return;
 		}
 
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You added {external} to {circle}'),
 			$this->l10n->t('{external} has been added to {circle} by {author}')
 		);
@@ -122,22 +114,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberAddClosedCircle(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if (!$circle->isConfig(Circle::CFG_REQUEST)) {
+		if ((($params['circle']['config'] ?? 0) & Circle::CFG_REQUEST) === 0) {
 			return;
 		}
 
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t("You accepted {member}'s request to join {circle}"),
 			$this->l10n->t('Your request to join {circle} has been accepted by {author}'),
 			$this->l10n->t("{member}'s request to join {circle} has been accepted by {author}")
@@ -149,24 +139,22 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseSubjectMemberLeft(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_left') {
 			return;
 		}
 
-		$this->parseSubjectNonMemberLeftInvite($event, $circle, $member);
-		$this->parseSubjectNonMemberLeftRequest($event, $circle, $member);
+		$this->parseSubjectNonMemberLeftInvite($event, $params);
+		$this->parseSubjectNonMemberLeftRequest($event, $params);
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You left {circle}'),
 			$this->l10n->t('{member} left {circle}')
 		);
@@ -177,25 +165,23 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectNonMemberLeftInvite(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if (!$circle->isConfig(Circle::CFG_INVITE)
-			|| $member->getLevel() > Member::LEVEL_NONE) {
+		if (((($params['circle']['config'] ?? 0) & Circle::CFG_INVITE) === 0)
+			|| (($params['member']['level'] ?? 1) > Member::LEVEL_NONE)) {
 			return;
 		}
 
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
-			$this->l10n->t("You declined the invitation to join {circle}"),
-			$this->l10n->t("{member} declined an invitation to join {circle}")
+			$event, $params,
+			$this->l10n->t('You declined the invitation to join {circle}'),
+			$this->l10n->t('{member} declined an invitation to join {circle}')
 		);
 
 		throw new FakeException();
@@ -204,25 +190,23 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectNonMemberLeftRequest(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if (!$circle->isConfig(Circle::CFG_REQUEST)
-			|| $member->getLevel() > Member::LEVEL_NONE) {
+		if (((($params['circle']['config'] ?? 0) & Circle::CFG_REQUEST) === 0)
+			|| (($params['member']['level'] ?? 1) > Member::LEVEL_NONE)) {
 			return;
 		}
 
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
-			$this->l10n->t("You cancelled your request to join {circle}"),
-			$this->l10n->t("{member} cancelled a request to join {circle}")
+			$event, $params,
+			$this->l10n->t('You cancelled your request to join {circle}'),
+			$this->l10n->t('{member} cancelled a request to join {circle}')
 		);
 
 		throw new FakeException();
@@ -231,24 +215,22 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseSubjectMemberRemove(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_remove') {
 			return;
 		}
 
-		$this->parseSubjectMemberRemoveNotLocalMember($event, $circle, $member);
-		$this->parseSubjectMemberRemoveNotYetMember($event, $circle, $member);
+		$this->parseSubjectMemberRemoveNotLocalMember($event, $params);
+		$this->parseSubjectMemberRemoveNotYetMember($event, $params);
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You removed {member} from {circle}'),
 			$this->l10n->t('You have been removed from {circle} by {author}'),
 			$this->l10n->t('{member} has been removed from {circle} by {author}')
@@ -259,22 +241,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberRemoveNotLocalMember(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if ($member->getUserType() === Member::TYPE_USER) {
+		if (($params['member']['type'] ?? Member::TYPE_USER) === Member::TYPE_USER) {
 			return;
 		}
 
 		$this->parseCircleMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You removed {external} from {circle}'),
 			$this->l10n->t('{external} has been removed from {circle} by {author}')
 		);
@@ -285,24 +265,22 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberRemoveNotYetMember(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if (!$circle->isConfig(Circle::CFG_INVITE)
-			|| $member->getLevel() > Member::LEVEL_NONE) {
+		if (((($params['circle']['config'] ?? 0) & Circle::CFG_INVITE) === 0)
+			|| (($params['member']['level'] ?? 1) > Member::LEVEL_NONE)) {
 			return;
 		}
 
-		$this->parseSubjectMemberRemoveNotYetMemberRequesting($event, $circle, $member);
+		$this->parseSubjectMemberRemoveNotYetMemberRequesting($event, $params);
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t("You cancelled {member}'s invitation to join {circle}"),
 			$this->l10n->t('Your invitation to join {circle} has been cancelled by {author}'),
 			$this->l10n->t("{author} cancelled {member}'s invitation to join {circle}")
@@ -313,21 +291,19 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 * @throws FakeException
 	 */
 	private function parseSubjectMemberRemoveNotYetMemberRequesting(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
-		if ($member->getStatus() !== Member::STATUS_REQUEST) {
+		if (($params['member']['status'] ?? '') !== Member::STATUS_REQUEST) {
 			return;
 		}
 
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t("You dismissed {member}'s request to join {circle}"),
 			$this->l10n->t('Your request to join {circle} has been dismissed by {author}'),
 			$this->l10n->t("{member}'s request to join {circle} has been dismissed by {author}")
@@ -338,17 +314,17 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
+	 *
 	 * @throws FakeException
 	 */
-	public function parseMemberInvited(IEvent $event, Circle $circle, Member $member): void {
+	public function parseMemberInvited(IEvent $event, array $params): void {
 		if ($event->getSubject() !== 'member_invited') {
 			return;
 		}
 
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You invited {member} to join {circle}'),
 			$this->l10n->t('You have been invited to join {circle} by {author}'),
 			$this->l10n->t('{member} has been invited to join {circle} by {author}')
@@ -360,24 +336,22 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
-	 * @param int $level
+	 * @param array $params
+	 *
 	 * @throws FakeException
 	 */
 	public function parseMemberLevel(
 		IEvent $event,
-		Circle $circle,
-		Member $member,
-		int $level
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_level') {
 			return;
 		}
 
+		$level = $params['level'] ?? 0;
 		$levelString = $this->l10n->t(Member::$DEF_LEVEL[$level] ?? '');
 		$this->parseCircleMemberAdvancedEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You changed {member}\'s level in {circle} to %1$s', [$levelString]),
 			$this->l10n->t('{author} changed your level in {circle} to %1$s', [$levelString]),
 			$this->l10n->t('{author} changed {member}\'s level in {circle} to %1$s', [$levelString])
@@ -389,22 +363,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseMemberRequestInvitation(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_request_invitation') {
 			return;
 		}
 
 		$this->parseMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You sent a request to join {circle}'),
 			$this->l10n->t('{member} sent a request to join {circle}')
 		);
@@ -414,22 +386,20 @@ class ProviderSubjectMember extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
-	 * @param Member $member
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
 	public function parseMemberOwner(
 		IEvent $event,
-		Circle $circle,
-		Member $member
+		array $params,
 	): void {
 		if ($event->getSubject() !== 'member_owner') {
 			return;
 		}
 
 		$this->parseMemberEvent(
-			$event, $circle, $member,
+			$event, $params,
 			$this->l10n->t('You are the new owner of {circle}'),
 			$this->l10n->t('{member} is the new owner of {circle}')
 		);

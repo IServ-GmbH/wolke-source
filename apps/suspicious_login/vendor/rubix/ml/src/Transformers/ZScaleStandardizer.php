@@ -4,16 +4,14 @@ namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\RuntimeException;
 
-use function is_null;
-
-use const Rubix\ML\EPSILON;
+use function sqrt;
 
 /**
  * Z Scale Standardizer
@@ -34,7 +32,7 @@ use const Rubix\ML\EPSILON;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
+class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, Persistable
 {
     use AutotrackRevisions;
 
@@ -43,35 +41,28 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
      *
      * @var bool
      */
-    protected $center;
+    protected bool $center;
 
     /**
-     * The means of each feature column from the fitted data.
+     * The means of each continuous feature column of the fitted data.
      *
      * @var float[]|null
      */
-    protected $means;
+    protected ?array $means = null;
 
     /**
-     * The variances of each feature column from the fitted data.
+     * The variances of each continuous feature column of the fitted data.
      *
      * @var float[]|null
      */
-    protected $variances;
-
-    /**
-     * The precomputed standard deviations.
-     *
-     * @var float[]|null
-     */
-    protected $stdDevs;
+    protected ?array $variances = null;
 
     /**
      *  The number of samples that this transformer has fitted.
      *
-     * @var int|null
+     * @var int
      */
-    protected $n;
+    protected int $n = 0;
 
     /**
      * @param bool $center
@@ -104,7 +95,7 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
     }
 
     /**
-     * Return the means calculated by fitting the training set.
+     * Return the means of the fitted continuous features.
      *
      * @return float[]|null
      */
@@ -114,7 +105,7 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
     }
 
     /**
-     * Return the variances calculated by fitting the training set.
+     * Return the variances of the fitted continuous features.
      *
      * @return float[]|null
      */
@@ -124,13 +115,13 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
     }
 
     /**
-     * Return the standard deviations calculated during fitting.
+     * Return the standard deviations of the fitted continuous features.
      *
      * @return float[]|null
      */
-    public function stdDevs() : ?array
+    public function stddevs() : ?array
     {
-        return $this->stdDevs;
+        return isset($this->variances) ? array_map('sqrt', $this->variances) : null;
     }
 
     /**
@@ -142,21 +133,20 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
     {
         SamplesAreCompatibleWithTransformer::with($dataset, $this)->check();
 
-        $this->means = $this->variances = $this->stdDevs = [];
+        $this->means = $this->variances = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isContinuous()) {
-                $values = $dataset->column($column);
+                $values = $dataset->feature($column);
 
                 [$mean, $variance] = Stats::meanVar($values);
 
                 $this->means[$column] = $mean;
                 $this->variances[$column] = $variance;
-                $this->stdDevs[$column] = sqrt($variance ?: EPSILON);
             }
         }
 
-        $this->n = $dataset->numRows();
+        $this->n = $dataset->numSamples();
     }
 
     /**
@@ -172,25 +162,23 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
             return;
         }
 
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
         foreach ($this->means as $column => $oldMean) {
             $oldVariance = $this->variances[$column];
 
-            $values = $dataset->column($column);
+            $values = $dataset->feature($column);
 
             [$mean, $variance] = Stats::meanVar($values);
 
             $this->means[$column] = (($this->n * $oldMean)
                 + ($n * $mean)) / ($this->n + $n);
 
-            $vHat = ($this->n * $oldVariance + ($n * $variance)
+            $this->variances[$column] = ($this->n
+                * $oldVariance + ($n * $variance)
                 + ($this->n / ($n * ($this->n + $n)))
                 * ($n * $oldMean - $n * $mean) ** 2)
                 / ($this->n + $n);
-
-            $this->variances[$column] = $vHat;
-            $this->stdDevs[$column] = sqrt($vHat ?: EPSILON);
         }
 
         $this->n += $n;
@@ -204,25 +192,56 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Persistable
      */
     public function transform(array &$samples) : void
     {
-        if (is_null($this->means) or is_null($this->stdDevs)) {
+        if ($this->means === null or $this->variances === null) {
             throw new RuntimeException('Transformer has not been fitted.');
         }
 
         foreach ($samples as &$sample) {
-            foreach ($this->stdDevs as $column => $stdDev) {
+            foreach ($this->variances as $column => $variance) {
                 $value = &$sample[$column];
 
                 if ($this->center) {
                     $value -= $this->means[$column];
                 }
 
-                $value /= $stdDev;
+                if ($variance > 0.0) {
+                    $value /= sqrt($variance);
+                }
+            }
+        }
+    }
+
+    /**
+     * Perform the reverse transformation to the samples.
+     *
+     * @param list<list<mixed>> $samples
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     */
+    public function reverseTransform(array &$samples) : void
+    {
+        if ($this->means === null or $this->variances === null) {
+            throw new RuntimeException('Transformer has not been fitted.');
+        }
+
+        foreach ($samples as &$sample) {
+            foreach ($this->variances as $column => $variance) {
+                $value = &$sample[$column];
+
+                if ($variance > 0.0) {
+                    $value *= sqrt($variance);
+                }
+
+                if ($this->center) {
+                    $value += $this->means[$column];
+                }
             }
         }
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

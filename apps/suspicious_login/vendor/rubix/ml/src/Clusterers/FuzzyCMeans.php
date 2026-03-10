@@ -9,24 +9,26 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Clusterers\Seeders\Seeder;
 use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Clusterers\Seeders\PlusPlus;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function Rubix\ML\argmax;
 use function count;
 use function is_nan;
+use function get_object_vars;
 
 use const Rubix\ML\EPSILON;
 
@@ -55,56 +57,56 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
      *
      * @var int
      */
-    protected $c;
+    protected int $c;
 
     /**
      * This determines the bandwidth of the fuzzy area. i.e. The fuzz factor.
      *
      * @var float
      */
-    protected $fuzz;
+    protected float $fuzz;
 
     /**
      * The precomputed exponent of the membership calculation.
      *
      * @var float
      */
-    protected $rho;
+    protected float $rho;
 
     /**
      * The maximum number of iterations to run until the algorithm terminates.
      *
      * @var int
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum change in inertia to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
      * The distance kernel to use when computing the distances between samples.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * The cluster centroid seeder.
      *
      * @var \Rubix\ML\Clusterers\Seeders\Seeder
      */
-    protected $seeder;
+    protected \Rubix\ML\Clusterers\Seeders\Seeder $seeder;
 
     /**
      * The computed centroid vectors of the training data.
      *
-     * @var array[]
+     * @var list<list<int|float>>
      */
-    protected $centroids = [
+    protected array $centroids = [
         //
     ];
 
@@ -113,7 +115,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * @param int $c
@@ -142,7 +144,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
                 . " greater than 1, $fuzz given.");
         }
 
-        if ($epochs < 1) {
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -194,7 +196,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
             'c' => $this->c,
             'fuzz' => $this->fuzz,
             'epochs' => $this->epochs,
-            'min_change' => $this->minChange,
+            'min change' => $this->minChange,
             'kernel' => $this->kernel,
             'seeder' => $this->seeder,
         ];
@@ -213,7 +215,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Return the computed cluster centroids of the training data.
      *
-     * @return array[]
+     * @return list<list<int|float>>
      */
     public function centroids() : array
     {
@@ -221,13 +223,32 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     }
 
     /**
-     * Return the loss at each epoch from the last training session.
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
+    }
+
+    /**
+     * Return the loss for each epoch from the last training session.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -243,14 +264,17 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
-        $this->centroids = $this->seeder->seed($dataset, $this->c);
+        /** @var list<list<int|float>> $seeds */
+        $seeds = $this->seeder->seed($dataset, $this->c);
 
-        $this->steps = [];
+        $this->centroids = $seeds;
 
-        $columns = $dataset->columns();
+        $this->losses = [];
+
+        $features = $dataset->features();
 
         $prevLoss = INF;
 
@@ -259,26 +283,26 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
 
             $loss = $this->inertia($dataset->samples(), $memberships);
 
-            if (is_nan($loss)) {
-                if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
-                }
+            $loss /= $dataset->numSamples();
 
-                break;
-            }
+            $lossChange = abs($prevLoss - $loss);
 
-            $loss /= $dataset->numRows();
-
-            $this->steps[] = $loss;
+            $this->losses[$epoch] = $loss;
 
             if ($this->logger) {
-                $this->logger->info("Epoch $epoch - Inertia: $loss");
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "Inertia: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}";
+
+                $this->logger->info($message);
             }
 
             foreach ($this->centroids as $cluster => &$centroid) {
                 $means = [];
 
-                foreach ($columns as $column => $values) {
+                foreach ($features as $values) {
                     $sigma = $total = 0.0;
 
                     foreach ($memberships as $i => $probabilities) {
@@ -294,11 +318,19 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
                 $centroid = $means;
             }
 
+            if (is_nan($loss)) {
+                if ($this->logger) {
+                    $this->logger->warning('Numerical instability detected');
+                }
+
+                break;
+            }
+
             if ($loss <= 0.0) {
                 break;
             }
 
-            if (abs($prevLoss - $loss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
@@ -363,7 +395,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
      * Return the membership of a sample to each of the c centroids.
      *
      * @param list<int|float> $sample
-     * @return float[]
+     * @return array<int,float>
      */
     protected function probaSample(array $sample) : array
     {
@@ -389,8 +421,8 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Calculate the  sum of distances between all samples and their closest centroid.
      *
-     * @param array[] $samples
-     * @param array[] $memberships
+     * @param list<list<int|float>> $samples
+     * @param list<list<float>> $memberships
      * @return float
      */
     protected function inertia(array $samples, array $memberships) : float
@@ -409,7 +441,23 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     }
 
     /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -11,6 +11,7 @@ OC.L10N.register(
     "A two-factor authentication provider for TOTP (RFC 6238)" : "Poskytovatel dvouúřovňového ověřování pro TOTP (dle normy RFC 6238)",
     "Could not enable TOTP" : "TOTP se nepodařilo zapnout",
     "Could not verify your key. Please try again" : "Ověření vašeho klíče se nezdařilo. Zkuste to znovu.",
+    "Could not confirm TOTP" : "Nebylo možné potvrdit TOTP",
     "Enable TOTP" : "Zapnout TOTP",
     "Your new TOTP secret is:" : "Vaše nové TOTP tajemství je:",
     "For quick setup, scan this QR code with your TOTP app:" : "Pro rychlé nastavení naskenujte tento QR kód svou TOTP aplikací:",
@@ -18,9 +19,6 @@ OC.L10N.register(
     "Authentication code" : "Ověřovací kód",
     "Verify" : "Ověřit",
     "Get the authentication code from the two-factor authentication app on your device." : "Získat ověřovací kód z aplikace na vašem přístroji.",
-    "Submit" : "Odeslat",
-    "TOTP two-factor authentication disabled by an admin" : "TOTP dvoufázové přihlašování vypnuto správcem",
-    "TOTP two-factor provider" : "Poskytovatel dvoufázového TOTP",
-    "A Two-Factor-Auth Provider for TOTP (RFC 6238)" : "Poskytovatel dvouúřovňového ověřování pro TOTP (dle normy RFC 6238)"
+    "Submit" : "Odeslat"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

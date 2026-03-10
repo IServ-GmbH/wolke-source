@@ -11,10 +11,10 @@
 #include "kernel/globals.h"
 
 #define PHP_TENSOR_NAME        "tensor"
-#define PHP_TENSOR_VERSION     "2.2.3"
+#define PHP_TENSOR_VERSION     "3.0.5"
 #define PHP_TENSOR_EXTNAME     "tensor"
-#define PHP_TENSOR_AUTHOR      "Andrew DalPino"
-#define PHP_TENSOR_ZEPVERSION  "0.12.21-$Id$"
+#define PHP_TENSOR_AUTHOR      "The Rubix ML Community"
+#define PHP_TENSOR_ZEPVERSION  "0.17.0-$Id$"
 #define PHP_TENSOR_DESCRIPTION "A library and extension that provides objects for scientific computing in PHP."
 
 

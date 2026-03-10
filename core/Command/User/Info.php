@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -51,18 +50,29 @@ class Info extends Base {
 		$data = [
 			'user_id' => $user->getUID(),
 			'display_name' => $user->getDisplayName(),
-			'email' => (string) $user->getSystemEMailAddress(),
+			'email' => (string)$user->getSystemEMailAddress(),
 			'cloud_id' => $user->getCloudId(),
 			'enabled' => $user->isEnabled(),
 			'groups' => $groups,
 			'quota' => $user->getQuota(),
 			'storage' => $this->getStorageInfo($user),
-			'last_seen' => date(\DateTimeInterface::ATOM, $user->getLastLogin()), // ISO-8601
+			'first_seen' => $this->formatLoginDate($user->getFirstLogin()),
+			'last_seen' => $this->formatLoginDate($user->getLastLogin()),
 			'user_directory' => $user->getHome(),
 			'backend' => $user->getBackendClassName()
 		];
 		$this->writeArrayInOutputFormat($input, $output, $data);
 		return 0;
+	}
+
+	private function formatLoginDate(int $timestamp): string {
+		if ($timestamp < 0) {
+			return 'unknown';
+		} elseif ($timestamp === 0) {
+			return 'never';
+		} else {
+			return date(\DateTimeInterface::ATOM, $timestamp); // ISO-8601
+		}
 	}
 
 	/**

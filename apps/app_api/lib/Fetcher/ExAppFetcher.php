@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Fetcher;
 
 use InvalidArgumentException;
@@ -26,7 +31,7 @@ class ExAppFetcher extends AppAPIFetcher {
 		IConfig $config,
 		private CompareVersion $compareVersion,
 		LoggerInterface $logger,
-		protected IRegistry $registry
+		protected IRegistry $registry,
 	) {
 		parent::__construct(
 			$appDataFactory,
@@ -34,7 +39,7 @@ class ExAppFetcher extends AppAPIFetcher {
 			$timeFactory,
 			$config,
 			$logger,
-			$registry
+			$registry,
 		);
 
 		$this->fileName = 'appapi_apps.json';

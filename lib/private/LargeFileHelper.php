@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -32,7 +31,7 @@ class LargeFileHelper {
 	 *                           PHP platform.
 	 */
 	public function __construct() {
-		$pow_2_53 = (float) self::POW_2_53_MINUS_1 + 1.0;
+		$pow_2_53 = (float)self::POW_2_53_MINUS_1 + 1.0;
 		if ($this->formatUnsignedInteger($pow_2_53) !== self::POW_2_53) {
 			throw new \RuntimeException(
 				'This class assumes floats to be double precision or "better".'
@@ -154,7 +153,7 @@ class LargeFileHelper {
 			// For file sizes between 2 GiB and 4 GiB, filesize() will return a
 			// negative int, as the PHP data type int is signed. Interpret the
 			// returned int as an unsigned integer and put it into a float.
-			return (float) sprintf('%u', $result);
+			return (float)sprintf('%u', $result);
 		}
 		return $result;
 	}
@@ -172,7 +171,7 @@ class LargeFileHelper {
 			if (\OCP\Util::isFunctionEnabled('exec')) {
 				$os = strtolower(php_uname('s'));
 				if (str_contains($os, 'linux')) {
-					return (int) ($this->exec('stat -c %Y ' . escapeshellarg($fullPath)) ?? -1);
+					return (int)($this->exec('stat -c %Y ' . escapeshellarg($fullPath)) ?? -1);
 				}
 			}
 		}

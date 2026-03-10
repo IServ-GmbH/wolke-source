@@ -14,29 +14,18 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 
 class ContactsManager {
-	/** @var CardDavBackend */
-	private $backend;
-
-	/** @var IL10N */
-	private $l10n;
-
-	/** @var PropertyMapper */
-	private $propertyMapper;
-
-	/** @var IAppConfig */
-	private $appConfig;
-
 	/**
 	 * ContactsManager constructor.
 	 *
 	 * @param CardDavBackend $backend
 	 * @param IL10N $l10n
 	 */
-	public function __construct(CardDavBackend $backend, IL10N $l10n, PropertyMapper $propertyMapper, IAppConfig $appConfig) {
-		$this->backend = $backend;
-		$this->l10n = $l10n;
-		$this->propertyMapper = $propertyMapper;
-		$this->appConfig = $appConfig;
+	public function __construct(
+		private CardDavBackend $backend,
+		private IL10N $l10n,
+		private PropertyMapper $propertyMapper,
+		private IAppConfig $appConfig,
+	) {
 	}
 
 	/**
@@ -73,7 +62,7 @@ class ContactsManager {
 	 */
 	private function register(IManager $cm, $addressBooks, $urlGenerator, ?string $userId) {
 		foreach ($addressBooks as $addressBookInfo) {
-			$addressBook = new \OCA\DAV\CardDAV\AddressBook($this->backend, $addressBookInfo, $this->l10n);
+			$addressBook = new AddressBook($this->backend, $addressBookInfo, $this->l10n);
 			$cm->registerAddressBook(
 				new AddressBookImpl(
 					$addressBook,

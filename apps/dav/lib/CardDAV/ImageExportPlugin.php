@@ -7,6 +7,7 @@
  */
 namespace OCA\DAV\CardDAV;
 
+use OCP\AppFramework\Http;
 use OCP\Files\NotFoundException;
 use Sabre\CardDAV\Card;
 use Sabre\DAV\Server;
@@ -18,16 +19,15 @@ class ImageExportPlugin extends ServerPlugin {
 
 	/** @var Server */
 	protected $server;
-	/** @var PhotoCache */
-	private $cache;
 
 	/**
 	 * ImageExportPlugin constructor.
 	 *
 	 * @param PhotoCache $cache
 	 */
-	public function __construct(PhotoCache $cache) {
-		$this->cache = $cache;
+	public function __construct(
+		private PhotoCache $cache,
+	) {
 	}
 
 	/**
@@ -55,12 +55,12 @@ class ImageExportPlugin extends ServerPlugin {
 			return true;
 		}
 
-		$size = isset($queryParams['size']) ? (int) $queryParams['size'] : -1;
+		$size = isset($queryParams['size']) ? (int)$queryParams['size'] : -1;
 
 		$path = $request->getPath();
 		$node = $this->server->tree->getNodeForPath($path);
 
-		if (!($node instanceof Card)) {
+		if (!$node instanceof Card) {
 			return true;
 		}
 
@@ -87,11 +87,11 @@ class ImageExportPlugin extends ServerPlugin {
 			$response->setHeader('Content-Type', $file->getMimeType());
 			$fileName = $node->getName() . '.' . PhotoCache::ALLOWED_CONTENT_TYPES[$file->getMimeType()];
 			$response->setHeader('Content-Disposition', "attachment; filename=$fileName");
-			$response->setStatus(200);
+			$response->setStatus(Http::STATUS_OK);
 
 			$response->setBody($file->getContent());
 		} catch (NotFoundException $e) {
-			$response->setStatus(\OCP\AppFramework\Http::STATUS_NO_CONTENT);
+			$response->setStatus(Http::STATUS_NO_CONTENT);
 		}
 
 		return false;

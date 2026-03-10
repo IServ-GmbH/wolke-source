@@ -5,10 +5,12 @@ OC.L10N.register(
     "Not supported!" : "Heb ei gefnogi!",
     "Press ⌘-C to copy." : "Pwyswch ⌘-C i gopïo.",
     "Press Ctrl-C to copy." : "Pwyswch Ctrl-C i gopïo.",
+    "Unknown" : "Anhysbys",
     "System" : "System",
     "Monitoring" : "Monitro",
     "Size:" : "Maint:",
     "PHP" : "PHP",
+    "seconds" : "eiliad",
     "Database" : "Cronfa ddata",
     "Type:" : "Math:",
     "Copy" : "Copïo"

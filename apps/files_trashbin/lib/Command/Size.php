@@ -19,20 +19,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Size extends Base {
-	private $config;
-	private $userManager;
-	private $commandBus;
-
 	public function __construct(
-		IConfig $config,
-		IUserManager $userManager,
-		IBus $commandBus
+		private IConfig $config,
+		private IUserManager $userManager,
+		private IBus $commandBus,
 	) {
 		parent::__construct();
-
-		$this->config = $config;
-		$this->userManager = $userManager;
-		$this->commandBus = $commandBus;
 	}
 
 	protected function configure() {
@@ -59,10 +51,10 @@ class Size extends Base {
 				return -1;
 			}
 			if ($user) {
-				$this->config->setUserValue($user, 'files_trashbin', 'trashbin_size', (string) $parsedSize);
+				$this->config->setUserValue($user, 'files_trashbin', 'trashbin_size', (string)$parsedSize);
 				$this->commandBus->push(new Expire($user));
 			} else {
-				$this->config->setAppValue('files_trashbin', 'trashbin_size', (string) $parsedSize);
+				$this->config->setAppValue('files_trashbin', 'trashbin_size', (string)$parsedSize);
 				$output->writeln('<info>Warning: changing the default trashbin size will automatically trigger cleanup of existing trashbins,</info>');
 				$output->writeln('<info>a users trashbin can exceed the configured size until they move a new file to the trashbin.</info>');
 			}
@@ -74,7 +66,7 @@ class Size extends Base {
 	}
 
 	private function printTrashbinSize(InputInterface $input, OutputInterface $output, ?string $user) {
-		$globalSize = (int) $this->config->getAppValue('files_trashbin', 'trashbin_size', '-1');
+		$globalSize = (int)$this->config->getAppValue('files_trashbin', 'trashbin_size', '-1');
 		if ($globalSize < 0) {
 			$globalHumanSize = 'default (50% of available space)';
 		} else {
@@ -82,7 +74,7 @@ class Size extends Base {
 		}
 
 		if ($user) {
-			$userSize = (int) $this->config->getUserValue($user, 'files_trashbin', 'trashbin_size', '-1');
+			$userSize = (int)$this->config->getUserValue($user, 'files_trashbin', 'trashbin_size', '-1');
 
 			if ($userSize < 0) {
 				$userHumanSize = ($globalSize < 0) ? $globalHumanSize : "default($globalHumanSize)";
@@ -103,7 +95,7 @@ class Size extends Base {
 			}
 		} else {
 			$users = [];
-			$this->userManager->callForSeenUsers(function (IUser $user) use (&$users) {
+			$this->userManager->callForSeenUsers(function (IUser $user) use (&$users): void {
 				$users[] = $user->getUID();
 			});
 			$userValues = $this->config->getUserValueForUsers('files_trashbin', 'trashbin_size', $users);

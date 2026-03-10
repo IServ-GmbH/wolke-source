@@ -8,15 +8,20 @@
     "Places" : "Joylar",
     "Back" : "Orqaga",
     "Save" : "Saqlash",
+    "No recommendations. Start typing." : "Tavsiyalar yo'q. Yozishni boshlang.",
     "Copy public link" : "Umumiy havoladan nusxa oling",
     "Favorite" : "Favorite",
     "Add to {destination}" : " {destination}ni qo`shish",
     "Home" : "Home",
-    "View" : "Ko'rish",
+    "General" : "Umumiy",
     "Remove from favorites" : "Sevimlilardan olib tashlang",
     "Last week" : "O`tgan yil",
     "Details" : "Details",
+    "Cancel" : "Bekor qilish",
+    "Confirm" : "Tasdiqlash",
+    "Group" : "Guruh",
     "Back to {folder}" : "{folder}ga qaytish",
+    "View" : "Ko'rish",
     "Add" : "Add"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

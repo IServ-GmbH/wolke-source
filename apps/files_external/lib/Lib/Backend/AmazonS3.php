@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -21,7 +20,7 @@ class AmazonS3 extends Backend {
 			->setIdentifier('amazons3')
 			->addIdentifierAlias('\OC\Files\Storage\AmazonS3') // legacy compat
 			->setStorageClass('\OCA\Files_External\Lib\Storage\AmazonS3')
-			->setText($l->t('Amazon S3'))
+			->setText($l->t('S3 Storage'))
 			->addParameters([
 				new DefinitionParameter('bucket', $l->t('Bucket')),
 				(new DefinitionParameter('hostname', $l->t('Hostname')))
@@ -42,6 +41,9 @@ class AmazonS3 extends Backend {
 				(new DefinitionParameter('useMultipartCopy', $l->t('Enable multipart copy')))
 					->setType(DefinitionParameter::VALUE_BOOLEAN)
 					->setDefaultValue(true),
+				(new DefinitionParameter('sse_c_key', $l->t('SSE-C encryption key')))
+					->setType(DefinitionParameter::VALUE_PASSWORD)
+					->setFlag(DefinitionParameter::FLAG_OPTIONAL),
 			])
 			->addAuthScheme(AccessKey::SCHEME_AMAZONS3_ACCESSKEY)
 			->addAuthScheme(AuthMechanism::SCHEME_NULL)

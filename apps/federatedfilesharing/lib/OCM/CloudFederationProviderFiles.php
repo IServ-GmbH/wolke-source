@@ -1,26 +1,28 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\FederatedFileSharing\OCM;
 
+use NCU\Federation\ISignedCloudFederationProvider;
 use OC\AppFramework\Http;
 use OC\Files\Filesystem;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\FederatedShareProvider;
+use OCA\Federation\TrustedServers;
 use OCA\Files_Sharing\Activity\Providers\RemoteShares;
 use OCA\Files_Sharing\External\Manager;
+use OCA\GlobalSiteSelector\Service\SlaveService;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\App\IAppManager;
+use OCP\AppFramework\QueryException;
 use OCP\Constants;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
 use OCP\Federation\Exceptions\AuthenticationFailedException;
 use OCP\Federation\Exceptions\BadRequestException;
 use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationFactory;
-use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
 use OCP\Federation\ICloudIdManager;
@@ -36,11 +38,13 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
+use OCP\Share\IProviderFactory;
 use OCP\Share\IShare;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
-class CloudFederationProviderFiles implements ICloudFederationProvider {
+class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 	/**
 	 * CloudFederationProvider constructor.
 	 */
@@ -62,6 +66,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		private Manager $externalShareManager,
 		private LoggerInterface $logger,
 		private IFilenameValidator $filenameValidator,
+		private readonly IProviderFactory $shareProviderFactory,
 	) {
 	}
 
@@ -79,7 +84,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 	 * @return string provider specific unique ID of the share
 	 *
 	 * @throws ProviderCouldNotAddShareException
-	 * @throws \OCP\AppFramework\QueryException
+	 * @throws QueryException
 	 * @throws HintException
 	 * @since 14.0.0
 	 */
@@ -150,6 +155,17 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 				// get DisplayName about the owner of the share
 				$ownerDisplayName = $this->getUserDisplayName($ownerFederatedId);
 
+				$trustedServers = null;
+				if ($this->appManager->isInstalled('federation')
+					&& class_exists(TrustedServers::class)) {
+					try {
+						$trustedServers = Server::get(TrustedServers::class);
+					} catch (\Throwable $e) {
+						$this->logger->debug('Failed to create TrustedServers', ['exception' => $e]);
+					}
+				}
+
+
 				if ($shareType === IShare::TYPE_USER) {
 					$event = $this->activityManager->generateEvent();
 					$event->setApp('files_sharing')
@@ -159,6 +175,11 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 						->setObject('remote_share', $shareId, $name);
 					\OC::$server->getActivityManager()->publish($event);
 					$this->notifyAboutNewShare($shareWith, $shareId, $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
+
+					// If auto-accept is enabled, accept the share
+					if ($this->federatedShareProvider->isFederatedTrustedShareAutoAccept() && $trustedServers?->isTrustedServer($remote) === true) {
+						$this->externalShareManager->acceptShare($shareId, $shareWith);
+					}
 				} else {
 					$groupMembers = $this->groupManager->get($shareWith)->getUsers();
 					foreach ($groupMembers as $user) {
@@ -170,8 +191,14 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 							->setObject('remote_share', $shareId, $name);
 						\OC::$server->getActivityManager()->publish($event);
 						$this->notifyAboutNewShare($user->getUID(), $shareId, $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
+
+						// If auto-accept is enabled, accept the share
+						if ($this->federatedShareProvider->isFederatedTrustedShareAutoAccept() && $trustedServers?->isTrustedServer($remote) === true) {
+							$this->externalShareManager->acceptShare($shareId, $user->getUID());
+						}
 					}
 				}
+
 				return $shareId;
 			} catch (\Exception $e) {
 				$this->logger->error('Server can not add remote share.', [
@@ -310,7 +337,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 	 */
 	protected function executeAcceptShare(IShare $share) {
 		try {
-			$fileId = (int) $share->getNode()->getId();
+			$fileId = (int)$share->getNode()->getId();
 			[$file, $link] = $this->getFile($this->getCorrectUid($share), $fileId);
 		} catch (\Exception $e) {
 			throw new ShareNotFound();
@@ -386,7 +413,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		$this->federatedShareProvider->removeShareFromTable($share);
 
 		try {
-			$fileId = (int) $share->getNode()->getId();
+			$fileId = (int)$share->getNode()->getId();
 			[$file, $link] = $this->getFile($this->getCorrectUid($share), $fileId);
 		} catch (\Exception $e) {
 			throw new ShareNotFound();
@@ -453,7 +480,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 				)
 			);
 
-		$result = $qb->execute();
+		$result = $qb->executeQuery();
 		$share = $result->fetch();
 		$result->closeCursor();
 
@@ -473,17 +500,17 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 					)
 				);
 
-			$qb->execute();
+			$qb->executeStatement();
 
 			// delete all child in case of a group share
 			$qb = $this->connection->getQueryBuilder();
 			$qb->delete('share_external')
-				->where($qb->expr()->eq('parent', $qb->createNamedParameter((int) $share['id'])));
-			$qb->execute();
+				->where($qb->expr()->eq('parent', $qb->createNamedParameter((int)$share['id'])));
+			$qb->executeStatement();
 
 			$ownerDisplayName = $this->getUserDisplayName($owner->getId());
 
-			if ((int) $share['share_type'] === IShare::TYPE_USER) {
+			if ((int)$share['share_type'] === IShare::TYPE_USER) {
 				if ($share['accepted']) {
 					$path = trim($mountpoint, '/');
 				} else {
@@ -492,7 +519,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 				$notification = $this->notificationManager->createNotification();
 				$notification->setApp('files_sharing')
 					->setUser($share['user'])
-					->setObject('remote_share', (int) $share['id']);
+					->setObject('remote_share', (string)$share['id']);
 				$this->notificationManager->markProcessed($notification);
 
 				$event = $this->activityManager->generateEvent();
@@ -500,7 +527,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 					->setType('remote_share')
 					->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_UNSHARED, [$owner->getId(), $path, $ownerDisplayName])
 					->setAffectedUser($user)
-					->setObject('remote_share', (int) $share['id'], $path);
+					->setObject('remote_share', (int)$share['id'], $path);
 				\OC::$server->getActivityManager()->publish($event);
 			}
 		}
@@ -544,7 +571,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		$share = $this->federatedShareProvider->getShareById($id);
 
 		// We have to respect the default share permissions
-		$permissions = $share->getPermissions() & (int) $this->config->getAppValue('core', 'shareapi_default_permissions', (string) Constants::PERMISSION_ALL);
+		$permissions = $share->getPermissions() & (int)$this->config->getAppValue('core', 'shareapi_default_permissions', (string)Constants::PERMISSION_ALL);
 		$share->setPermissions($permissions);
 
 		// don't allow to share a file back to the owner
@@ -567,7 +594,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 			$share->setSharedBy($share->getSharedWith());
 			$share->setSharedWith($shareWith);
 			$result = $this->federatedShareProvider->create($share);
-			$this->federatedShareProvider->storeRemoteId((int) $result->getId(), $senderId);
+			$this->federatedShareProvider->storeRemoteId((int)$result->getId(), $senderId);
 			return ['token' => $result->getToken(), 'providerId' => $result->getId()];
 		} else {
 			throw new ProviderCouldNotAddShareException('resharing not allowed for share: ' . $id);
@@ -627,7 +654,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		$query->update('share')
 			->where($query->expr()->eq('id', $query->createNamedParameter($share->getId())))
 			->set('permissions', $query->createNamedParameter($permissions))
-			->execute();
+			->executeStatement();
 	}
 
 
@@ -738,7 +765,7 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		}
 
 		try {
-			$slaveService = Server::get(\OCA\GlobalSiteSelector\Service\SlaveService::class);
+			$slaveService = Server::get(SlaveService::class);
 		} catch (\Throwable $e) {
 			Server::get(LoggerInterface::class)->error(
 				$e->getMessage(),
@@ -748,5 +775,39 @@ class CloudFederationProviderFiles implements ICloudFederationProvider {
 		}
 
 		return $slaveService->getUserDisplayName($this->cloudIdManager->removeProtocolFromUrl($userId), false);
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @param string $sharedSecret
+	 * @param array $payload
+	 * @return string
+	 */
+	public function getFederationIdFromSharedSecret(
+		#[SensitiveParameter]
+		string $sharedSecret,
+		array $payload,
+	): string {
+		$provider = $this->shareProviderFactory->getProviderForType(IShare::TYPE_REMOTE);
+		try {
+			$share = $provider->getShareByToken($sharedSecret);
+		} catch (ShareNotFound) {
+			// Maybe we're dealing with a share federated from another server
+			$share = $this->externalShareManager->getShareByToken($sharedSecret);
+			if ($share === false) {
+				return '';
+			}
+
+			return $share['user'] . '@' . $share['remote'];
+		}
+
+		// if uid_owner is a local account, the request comes from the recipient
+		// if not, request comes from the instance that owns the share and recipient is the re-sharer
+		if ($this->userManager->get($share->getShareOwner()) !== null) {
+			return $share->getSharedWith();
+		} else {
+			return $share->getShareOwner();
+		}
 	}
 }

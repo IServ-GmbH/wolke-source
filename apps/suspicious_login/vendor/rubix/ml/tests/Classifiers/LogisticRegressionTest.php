@@ -12,14 +12,14 @@ use Rubix\ML\Probabilistic;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
 use Rubix\ML\Classifiers\LogisticRegression;
 use Rubix\ML\Datasets\Generators\Agglomerate;
 use Rubix\ML\Transformers\ZScaleStandardizer;
-use Rubix\ML\CrossValidation\Metrics\Accuracy;
+use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\NeuralNet\CostFunctions\CrossEntropy;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -36,14 +36,14 @@ class LogisticRegressionTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -70,7 +70,7 @@ class LogisticRegressionTest extends TestCase
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var \Rubix\ML\CrossValidation\Metrics\FBeta
      */
     protected $metric;
 
@@ -80,15 +80,20 @@ class LogisticRegressionTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'male' => new Blob([69.2, 195.7, 40.0], [1.0, 3.0, 0.3]),
-            'female' => new Blob([63.7, 168.5, 38.1], [0.8, 2.5, 0.4]),
+            'male' => new Blob([69.2, 195.7, 40.0], [2.0, 6.0, 0.6]),
+            'female' => new Blob([63.7, 168.5, 38.1], [1.6, 5.0, 0.8]),
         ], [0.45, 0.55]);
 
         $this->estimator = new LogisticRegression(100, new Adam(0.01), 1e-4, 300, 1e-4, 5, new CrossEntropy());
 
-        $this->metric = new Accuracy();
+        $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -142,14 +147,13 @@ class LogisticRegressionTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'batch_size' => 100,
+            'batch size' => 100,
             'optimizer' => new Adam(0.01),
-            'alpha' => 1e-4,
+            'l2 penalty' => 1e-4,
             'epochs' => 300,
-            'min_change' => 1e-4,
+            'min change' => 1e-4,
             'window' => 5,
-            'cost_fn' => new CrossEntropy(),
-
+            'cost fn' => new CrossEntropy(),
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -176,7 +180,7 @@ class LogisticRegressionTest extends TestCase
 
         $this->assertTrue($this->estimator->trained());
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -186,13 +190,14 @@ class LogisticRegressionTest extends TestCase
         $this->assertIsArray($importances);
         $this->assertCount(3, $importances);
         $this->assertContainsOnly('float', $importances);
-        $this->assertEquals(1.0, array_sum($importances));
 
         $predictions = $this->estimator->predict($testing);
 
         $score = $this->metric->score($predictions, $testing->labels());
 
         $this->assertGreaterThanOrEqual(self::MIN_SCORE, $score);
+
+        $this->assertEquals('58a6bb3c', $this->estimator->revision());
     }
 
     /**
@@ -213,10 +218,5 @@ class LogisticRegressionTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

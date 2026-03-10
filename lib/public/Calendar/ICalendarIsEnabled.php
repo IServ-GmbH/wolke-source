@@ -10,14 +10,14 @@ namespace OCP\Calendar;
 /**
  * ICalendar Interface Extension
  *
- * @since 30.0.12
+ * @since 31.0.6
  */
 interface ICalendarIsEnabled {
 	
 	/**
 	 * Indicates whether the calendar is enabled
 	 *
-	 * @since 30.0.12
+	 * @since 31.0.6
 	 */
 	public function isEnabled(): bool;
 

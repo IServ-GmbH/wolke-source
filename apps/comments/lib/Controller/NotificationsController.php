@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -34,7 +33,7 @@ class NotificationsController extends Controller {
 		protected IRootFolder $rootFolder,
 		protected IURLGenerator $urlGenerator,
 		protected IManager $notificationManager,
-		protected IUserSession $userSession
+		protected IUserSession $userSession,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -70,7 +69,7 @@ class NotificationsController extends Controller {
 				return new NotFoundResponse();
 			}
 			$userFolder = $this->rootFolder->getUserFolder($currentUser->getUID());
-			$files = $userFolder->getById((int) $comment->getObjectId());
+			$files = $userFolder->getById((int)$comment->getObjectId());
 
 			$this->markProcessed($comment, $currentUser);
 

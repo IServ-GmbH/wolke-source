@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 return [
 	'routes' => [
 		// AppAPI admin settings
@@ -33,6 +38,7 @@ return [
 		['name' => 'ExAppsPage#enableApp', 'url' => '/apps/enable/{appId}', 'verb' => 'POST' , 'root' => ''],
 		['name' => 'ExAppsPage#getAppStatus', 'url' => '/apps/status/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#getAppLogs', 'url' => '/apps/logs/{appId}', 'verb' => 'GET' , 'root' => ''],
+		['name' => 'ExAppsPage#getAppDeployOptions', 'url' => '/apps/deploy-options/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#disableApp', 'url' => '/apps/disable/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#updateApp', 'url' => '/apps/update/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#uninstallApp', 'url' => '/apps/uninstall/{appId}', 'verb' => 'GET' , 'root' => ''],
@@ -61,6 +67,7 @@ return [
 		['name' => 'OCSApi#setAppInitProgressDeprecated', 'url' => '/apps/status/{appId}', 'verb' => 'PUT'],
 		['name' => 'OCSApi#setAppInitProgress', 'url' => '/ex-app/status', 'verb' => 'PUT'],
 		['name' => 'OCSApi#getEnabledState', 'url' => '/ex-app/state', 'verb' => 'GET'],
+		['name' => 'OCSApi#getNextcloudAbsoluteUrl', 'url' => '/api/v1/info/nextcloud_url/absolute', 'verb' => 'GET'],
 
 		// ExApps
 		['name' => 'OCSExApp#getNextcloudUrl', 'url' => '/api/v1/info/nextcloud_url', 'verb' => 'GET'],

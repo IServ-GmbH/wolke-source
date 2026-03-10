@@ -2,16 +2,20 @@
 
 namespace Rubix\ML\Datasets;
 
-use Rubix\ML\Other\Helpers\Console;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Exceptions\InvalidArgumentException;
-use Generator;
+use Traversable;
 
-use function Rubix\ML\warn_deprecated;
 use function count;
 use function array_slice;
-
-use const Rubix\ML\PHI;
+use function array_sum;
+use function array_map;
+use function array_chunk;
+use function array_rand;
+use function round;
+use function sqrt;
+use function getrandmax;
+use function rand;
 
 /**
  * Unlabeled
@@ -29,7 +33,7 @@ class Unlabeled extends Dataset
     /**
      * Build a new unlabeled dataset with validation.
      *
-     * @param array[] $samples
+     * @param array<mixed[]> $samples
      * @return self
      */
     public static function build(array $samples = []) : self
@@ -40,7 +44,7 @@ class Unlabeled extends Dataset
     /**
      * Build a new unlabeled dataset foregoing validation.
      *
-     * @param array[] $samples
+     * @param array<mixed[]> $samples
      * @return self
      */
     public static function quick(array $samples = []) : self
@@ -51,7 +55,7 @@ class Unlabeled extends Dataset
     /**
      * Build a dataset with the rows from an iterable data table.
      *
-     * @param iterable<array> $iterator
+     * @param iterable<mixed[]> $iterator
      * @return self
      */
     public static function fromIterator(iterable $iterator) : self
@@ -62,32 +66,35 @@ class Unlabeled extends Dataset
     }
 
     /**
-     * Stack a number of datasets on top of each other to form a single
-     * dataset.
+     * Stack a number of datasets on top of each other to form a single dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset[] $datasets
+     * @param iterable<\Rubix\ML\Datasets\Dataset> $datasets
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      * @return self
      */
-    public static function stack(array $datasets) : self
+    public static function stack(iterable $datasets) : self
     {
-        $n = $datasets[array_key_first($datasets)]->numColumns();
-
         $samples = [];
 
-        foreach ($datasets as $dataset) {
+        foreach ($datasets as $i => $dataset) {
             if (!$dataset instanceof Dataset) {
                 throw new InvalidArgumentException('Dataset must implement'
                     . ' the Dataset interface.');
             }
 
-            if ($dataset->numColumns() !== $n) {
-                throw new InvalidArgumentException('Dataset must have'
-                    . " the same number of columns, $n expected but"
-                    . " {$dataset->numColumns()} given.");
+            if ($dataset->empty()) {
+                continue;
+            }
+
+            if (isset($lastNumFeatures) and $dataset->numFeatures() !== $lastNumFeatures) {
+                throw new InvalidArgumentException("Dataset $i must have"
+                    . " the same number of features, $lastNumFeatures"
+                    . " expected but {$dataset->numFeatures()} given.");
             }
 
             $samples[] = $dataset->samples();
+
+            $lastNumFeatures = $dataset->numFeatures();
         }
 
         return self::quick(array_merge(...$samples));
@@ -124,7 +131,7 @@ class Unlabeled extends Dataset
                 . " cannot be less than 1, $n given.");
         }
 
-        return $this->slice(-$n, $this->numRows());
+        return $this->slice(-$n, $this->numSamples());
     }
 
     /**
@@ -158,7 +165,7 @@ class Unlabeled extends Dataset
                 . " cannot be less than 1, $n given.");
         }
 
-        return $this->splice($n, $this->numRows());
+        return $this->splice($n, $this->numSamples());
     }
 
     /**
@@ -196,10 +203,10 @@ class Unlabeled extends Dataset
     public function merge(Dataset $dataset) : self
     {
         if (!$dataset->empty() and !$this->empty()) {
-            if ($dataset->numColumns() !== $this->numColumns()) {
+            if ($dataset->numFeatures() !== $this->numFeatures()) {
                 throw new InvalidArgumentException('Datasets must have'
-                    . " the same dimensionality, {$this->numColumns()}"
-                    . " expected, but {$dataset->numColumns()} given.");
+                    . " the same dimensionality, {$this->numFeatures()}"
+                    . " expected, but {$dataset->numFeatures()} given.");
             }
         }
 
@@ -215,10 +222,10 @@ class Unlabeled extends Dataset
      */
     public function join(Dataset $dataset) : self
     {
-        if ($dataset->numRows() !== $this->numRows()) {
+        if ($dataset->numSamples() !== $this->numSamples()) {
             throw new InvalidArgumentException('Datasets must have'
-                . " the same number of rows, {$this->numRows()}"
-                . " expected, but {$dataset->numRows()} given.");
+                . " the same number of rows, {$this->numSamples()}"
+                . " expected, but {$dataset->numSamples()} given.");
         }
 
         $samples = [];
@@ -231,50 +238,6 @@ class Unlabeled extends Dataset
     }
 
     /**
-     * Merge the columns of this dataset with another dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return self
-     */
-    public function augment(Dataset $dataset) : self
-    {
-        warn_deprecated('Augment() is deprecated, use join() instead.');
-
-        return $this->join($dataset);
-    }
-
-    /**
-     * Drop the row at the given offset.
-     *
-     * @param int $offset
-     * @return self
-     */
-    public function dropRow(int $offset) : self
-    {
-        return $this->dropRows([$offset]);
-    }
-
-    /**
-     * Drop the rows at the given indices.
-     *
-     * @param int[] $offsets
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public function dropRows(array $offsets) : self
-    {
-        foreach ($offsets as $offset) {
-            unset($this->samples[$offset]);
-        }
-
-        $this->samples = array_values($this->samples);
-
-        return $this;
-    }
-
-    /**
      * Randomize the dataset in place and return self for chaining.
      *
      * @return self
@@ -282,43 +245,6 @@ class Unlabeled extends Dataset
     public function randomize() : self
     {
         shuffle($this->samples);
-
-        return $this;
-    }
-
-    /**
-     * Filter the rows of the dataset using the values of a feature column as the
-     * argument to a callback.
-     *
-     * @param int $offset
-     * @param callable $callback
-     * @return self
-     */
-    public function filterByColumn(int $offset, callable $callback) : self
-    {
-        $samples = [];
-
-        foreach ($this->samples as $sample) {
-            if ($callback($sample[$offset])) {
-                $samples[] = $sample;
-            }
-        }
-
-        return self::quick($samples);
-    }
-
-    /**
-     * Sort the dataset in place by a column in the sample matrix.
-     *
-     * @param int $offset
-     * @param bool $descending
-     * @return self
-     */
-    public function sortByColumn(int $offset, bool $descending = false) : self
-    {
-        $column = $this->column($offset);
-
-        array_multisort($column, $this->samples, $descending ? SORT_DESC : SORT_ASC);
 
         return $this;
     }
@@ -337,12 +263,12 @@ class Unlabeled extends Dataset
                 . " between 0 and 1, $ratio given.");
         }
 
-        $n = (int) floor($ratio * $this->numRows());
+        $n = (int) floor($ratio * $this->numSamples());
 
-        return [
-            self::quick(array_slice($this->samples, 0, $n)),
-            self::quick(array_slice($this->samples, $n)),
-        ];
+        $left = self::quick(array_slice($this->samples, 0, $n));
+        $right = self::quick(array_slice($this->samples, $n));
+
+        return [$left, $right];
     }
 
     /**
@@ -377,7 +303,7 @@ class Unlabeled extends Dataset
      * not enough samples to fill an entire batch, then the dataset will contain
      * as many samples as possible.
      *
-     * @param int $n
+     * @param positive-int $n
      * @return list<self>
      */
     public function batch(int $n = 50) : array
@@ -395,11 +321,11 @@ class Unlabeled extends Dataset
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      * @return array{self,self}
      */
-    public function splitByColumn(int $column, $value) : array
+    public function splitByFeature(int $column, $value) : array
     {
         $left = $right = [];
 
-        if ($this->columnType($column)->isContinuous()) {
+        if ($this->featureType($column)->isContinuous()) {
             foreach ($this->samples as $sample) {
                 if ($sample[$column] <= $value) {
                     $left[] = $sample;
@@ -462,9 +388,9 @@ class Unlabeled extends Dataset
                 . " subset of less than 1 sample, $n given.");
         }
 
-        if ($n > $this->numRows()) {
+        if ($n > $this->numSamples()) {
             throw new InvalidArgumentException('Cannot generate subset'
-                . " of more than {$this->numRows()}, $n given.");
+                . " of more than {$this->numSamples()}, $n given.");
         }
 
         $offsets = array_rand($this->samples, $n);
@@ -494,7 +420,7 @@ class Unlabeled extends Dataset
                 . " less than 1 sample, $n given.");
         }
 
-        $maxOffset = $this->numRows() - 1;
+        $maxOffset = $this->numSamples() - 1;
 
         $samples = [];
 
@@ -527,18 +453,21 @@ class Unlabeled extends Dataset
                 . ' but ' . count($weights) . ' given.');
         }
 
+        /** @var positive-int $numLevels */
         $numLevels = (int) round(sqrt(count($weights)));
 
         $levels = array_chunk($weights, $numLevels, true);
         $levelTotals = array_map('array_sum', $levels);
 
         $total = array_sum($levelTotals);
-        $max = (int) round($total * PHI);
+
+        $phi = getrandmax() / $total;
+        $max = (int) round($total * $phi);
 
         $samples = [];
 
         while (count($samples) < $n) {
-            $delta = rand(0, $max) / PHI;
+            $delta = rand(0, $max) / $phi;
 
             foreach ($levels as $i => $level) {
                 $levelTotal = $levelTotals[$i];
@@ -555,7 +484,7 @@ class Unlabeled extends Dataset
                     if ($delta <= 0.0) {
                         $samples[] = $this->samples[$offset];
 
-                        break;
+                        break 2;
                     }
                 }
             }
@@ -565,34 +494,13 @@ class Unlabeled extends Dataset
     }
 
     /**
-     * Remove duplicate rows from the dataset.
-     *
-     * @return self
-     */
-    public function deduplicate() : self
-    {
-        $this->samples = array_values(array_unique($this->samples, SORT_REGULAR));
-
-        return $this;
-    }
-
-    /**
-     * Return the dataset object as a data table array.
-     *
-     * @return array[]
-     */
-    public function toArray() : array
-    {
-        return $this->samples;
-    }
-
-    /**
      * Return a row from the dataset at the given offset.
      *
      * @param int $offset
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return array[]
+     * @return mixed[]
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset) : array
     {
         if (isset($this->samples[$offset])) {
@@ -605,43 +513,10 @@ class Unlabeled extends Dataset
     /**
      * Get an iterator for the samples in the dataset.
      *
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
-    public function getIterator() : Generator
+    public function getIterator() : Traversable
     {
         yield from $this->samples;
-    }
-
-    /**
-     * Return a string representation of the first few rows of the dataset.
-     *
-     * @return string
-     */
-    public function __toString() : string
-    {
-        [$tRows, $tCols] = Console::size();
-
-        $m = (int) floor($tRows / 2) + 2;
-        $n = (int) floor($tCols / (3 + Console::TABLE_CELL_WIDTH));
-
-        $m = min($this->numRows(), $m);
-        $n = min($this->numColumns(), $n);
-
-        $header = [];
-
-        for ($column = 0; $column < $n; ++$column) {
-            $header[] = "Column $column";
-        }
-
-        $table = array_slice($this->samples, 0, $m);
-
-        foreach ($table as $i => &$row) {
-            $row = array_slice($row, 0, $n);
-        }
-
-        array_unshift($table, $header);
-        $columnWidth = (int) floor($tCols) / count($table[0]);
-
-        return Console::table($table, $columnWidth);
     }
 }

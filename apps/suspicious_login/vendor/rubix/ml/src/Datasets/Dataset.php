@@ -2,27 +2,25 @@
 
 namespace Rubix\ML\Datasets;
 
-use Rubix\ML\Other\Helpers\JSON;
 use Rubix\ML\Report;
 use Rubix\ML\DataType;
-use Rubix\ML\Encoding;
-use Rubix\ML\Other\Helpers\Stats;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Extractors\Exporter;
+use Rubix\ML\Transformers\Reversible;
 use Rubix\ML\Transformers\Stateful;
 use Rubix\ML\Transformers\Transformer;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Exceptions\InvalidArgumentException;
-use IteratorAggregate;
-use JsonSerializable;
 use Rubix\ML\Exceptions\RuntimeException;
+use IteratorAggregate;
 use ArrayAccess;
-use Stringable;
 use Countable;
 
+use function Rubix\ML\iterator_first;
+use function Rubix\ML\iterator_filter;
 use function Rubix\ML\array_transpose;
 use function count;
 use function is_array;
-
-use const Rubix\ML\EPSILON;
 
 /**
  * Dataset
@@ -43,15 +41,15 @@ use const Rubix\ML\EPSILON;
  * @implements ArrayAccess<int, array>
  * @implements IteratorAggregate<int, array>
  */
-abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializable, Countable, Stringable
+abstract class Dataset implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
      * The rows of samples and columns of features that make up the
      * data table i.e. the fixed-length feature vectors.
      *
-     * @var array[]
+     * @var list<list<mixed>>
      */
-    protected $samples;
+    protected array $samples;
 
     /**
      * @param mixed[] $samples
@@ -97,35 +95,66 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     /**
      * Build a dataset with the rows from an iterable data table.
      *
-     * @param iterable<array> $iterator
-     * @return self
+     * @param iterable<mixed[]> $iterator
+     * @return static
      */
-    abstract public static function fromIterator(iterable $iterator);
+    abstract public static function fromIterator(iterable $iterator) : self;
 
     /**
-     * Stack a number of datasets on top of each other to form a single
-     * dataset.
+     * Stack a number of datasets on top of each other to form a single dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset[] $datasets
-     * @return self
+     * @param iterable<\Rubix\ML\Datasets\Dataset> $datasets
+     * @return static
      */
-    abstract public static function stack(array $datasets);
+    abstract public static function stack(iterable $datasets) : self;
 
     /**
-     * Return the sample matrix.
+     * Return a 2-tuple containing the shape of the sample matrix i.e the number of rows and columns.
      *
-     * @return array[]
+     * @return array{int<0,max>,int<0,max>}
      */
-    public function samples() : array
+    public function shape() : array
     {
-        return $this->samples;
+        return [$this->numSamples(), $this->numFeatures()];
+    }
+
+    /**
+     * Return the number of feature values in the dataset.
+     *
+     * @return int<0,max>
+     */
+    public function size() : int
+    {
+        return $this->numSamples() * $this->numFeatures();
+    }
+
+    /**
+     * Return the high-level data types of each column in the data table.
+     *
+     * @return list<\Rubix\ML\DataType>
+     */
+    public function types() : array
+    {
+        $firstRow = iterator_first($this);
+
+        return array_map([DataType::class, 'detect'], $firstRow);
+    }
+
+    /**
+     * Return the number of rows in the datasets.
+     *
+     * @return int<0,max>
+     */
+    public function numSamples() : int
+    {
+        return count($this->samples);
     }
 
     /**
      * Return the sample at the given row offset.
      *
      * @param int $offset
-     * @return mixed[]
+     * @return list<mixed>
      */
     public function sample(int $offset) : array
     {
@@ -137,13 +166,23 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     }
 
     /**
-     * Return the number of rows in the datasets.
+     * Return the sample matrix.
      *
-     * @return int
+     * @return list<list<mixed>>
      */
-    public function numRows() : int
+    public function samples() : array
     {
-        return count($this->samples);
+        return $this->samples;
+    }
+
+    /**
+     * Return the number of feature columns in the dataset.
+     *
+     * @return int<0,max>
+     */
+    public function numFeatures() : int
+    {
+        return isset($this->samples[0]) ? count($this->samples[0]) : 0;
     }
 
     /**
@@ -152,120 +191,49 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      * @param int $offset
      * @return mixed[]
      */
-    public function column(int $offset) : array
+    public function feature(int $offset) : array
     {
         return array_column($this->samples, $offset);
     }
 
     /**
-     * Return the number of feature columns in the dataset.
-     *
-     * @return int
-     */
-    public function numColumns() : int
-    {
-        return isset($this->samples[0]) ? count($this->samples[0]) : 0;
-    }
-
-    /**
-     * Return an array of feature column data types autodectected using the first
-     * sample in the dataset.
-     *
-     * @return list<\Rubix\ML\DataType>
-     */
-    public function columnTypes() : array
-    {
-        return array_map([DataType::class, 'detect'], $this->samples[0] ?? []);
-    }
-
-    /**
-     * Return the unique data types.
-     *
-     * @return list<\Rubix\ML\DataType>
-     */
-    public function uniqueTypes() : array
-    {
-        return array_unique($this->columnTypes());
-    }
-
-    /**
-     * Does the dataset consist of data of a single type?
-     *
-     * @return bool
-     */
-    public function homogeneous() : bool
-    {
-        return count($this->uniqueTypes()) === 1;
-    }
-
-    /**
-     * Get the datatype for a feature column at the given offset.
+     * Drop a feature column at a given offset from the dataset.
      *
      * @param int $offset
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Rubix\ML\DataType
+     * @return self
      */
-    public function columnType(int $offset) : DataType
+    public function dropFeature(int $offset) : self
     {
-        if (empty($this->samples)) {
-            throw new RuntimeException('Cannot determine data type'
-                . ' of an empty dataset.');
+        foreach ($this->samples as &$sample) {
+            array_splice($sample, $offset, 1);
         }
 
-        if (!isset($this->samples[0][$offset])) {
-            throw new InvalidArgumentException('Column at offset'
-                . " $offset does not exist.");
-        }
-
-        return DataType::detect($this->samples[0][$offset]);
+        return $this;
     }
 
     /**
-     * Return a 2-tuple containing the shape of the dataset i.e the number of
-     * rows and columns.
+     * Rotate the sample matrix so that the values of each feature become rows.
      *
-     * @return int[]
+     * @return mixed[]
      */
-    public function shape() : array
-    {
-        return [$this->numRows(), $this->numColumns()];
-    }
-
-    /**
-     * Return the number of elements in the dataset.
-     *
-     * @return int
-     */
-    public function size() : int
-    {
-        return $this->numRows() * $this->numColumns();
-    }
-
-    /**
-     * Rotate the dataset and return it in an array. i.e. rows become
-     * columns and columns become rows.
-     *
-     * @return array[]
-     */
-    public function columns() : array
+    public function features() : array
     {
         return array_transpose($this->samples);
     }
 
     /**
-     * Return the columns that match a given data type.
+     * Return the feature columns that match a given data type.
      *
      * @param \Rubix\ML\DataType $type
-     * @return array[]
+     * @return mixed[]
      */
-    public function columnsByType(DataType $type) : array
+    public function featuresByType(DataType $type) : array
     {
         $columns = [];
 
-        foreach ($this->columnTypes() as $offset => $columnType) {
-            if ($columnType == $type) {
-                $columns[$offset] = $this->column($offset);
+        foreach ($this->featureTypes() as $offset => $featureType) {
+            if ($featureType == $type) {
+                $columns[$offset] = $this->feature($offset);
             }
         }
 
@@ -273,63 +241,61 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     }
 
     /**
-     * Transform a feature column with a callback function.
+     * Get the data type for a feature column at the given offset.
      *
      * @param int $offset
-     * @param callable $callback
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return self
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @return \Rubix\ML\DataType
      */
-    public function transformColumn(int $offset, callable $callback) : self
+    public function featureType(int $offset) : DataType
     {
-        if ($offset < 0 or $offset >= $this->numColumns()) {
-            throw new InvalidArgumentException('Column offset must'
-                . " be between 0 and {$this->numColumns()}, $offset"
-                . ' given.');
+        if (empty($this->samples)) {
+            throw new RuntimeException('Cannot determine data type of empty dataset.');
         }
 
-        foreach ($this->samples as &$sample) {
-            $value = &$sample[$offset];
+        $prototype = $this->samples[0];
 
-            $value = $callback($value);
+        if (!isset($prototype[$offset])) {
+            throw new InvalidArgumentException('Column at offset'
+                . " $offset does not exist.");
         }
 
-        return $this;
+        return DataType::detect($prototype[$offset]);
     }
 
     /**
-     * Drop the column at the given offset.
+     * Return an array of feature column data types autodetected using the first sample in the dataset.
      *
-     * @param int $offset
-     * @return self
+     * @return list<\Rubix\ML\DataType>
      */
-    public function dropColumn(int $offset) : self
+    public function featureTypes() : array
     {
-        return $this->dropColumns([$offset]);
+        if (empty($this->samples)) {
+            throw new RuntimeException('Cannot determine data types of empty dataset.');
+        }
+
+        return array_map([DataType::class, 'detect'], $this->samples[0] ?? []);
     }
 
     /**
-     * Drop the columns at the given offsets.
+     * Return the unique feature types.
      *
-     * @param int[] $offsets
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return self
+     * @return list<\Rubix\ML\DataType>
      */
-    public function dropColumns(array $offsets) : self
+    public function uniqueTypes() : array
     {
-        if (empty($offsets)) {
-            return $this;
-        }
+        return array_unique($this->featureTypes());
+    }
 
-        foreach ($this->samples as &$sample) {
-            foreach ($offsets as $offset) {
-                unset($sample[$offset]);
-            }
-
-            $sample = array_values($sample);
-        }
-
-        return $this;
+    /**
+     * Do the samples consist of values of a single data type?
+     *
+     * @return bool
+     */
+    public function homogeneous() : bool
+    {
+        return count($this->uniqueTypes()) === 1;
     }
 
     /**
@@ -352,101 +318,34 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     }
 
     /**
-     * Return a JSON representation of the dataset.
+     * Reverse a transformation that was applied to the dataset.
      *
-     * @param bool $pretty
-     * @return \Rubix\ML\Encoding
+     * @param \Rubix\ML\Transformers\Reversible $transformer
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @return static
      */
-    public function toJSON(bool $pretty = false) : Encoding
+    public function reverseApply(Reversible $transformer) : self
     {
-        return new Encoding(JSON::encode($this, $pretty ? JSON_PRETTY_PRINT : 0) ?: '');
+        if ($transformer instanceof Stateful) {
+            if (!$transformer->fitted()) {
+                throw new RuntimeException('Stateful transformer has not been fitted.');
+            }
+        }
+
+        $transformer->reverseTransform($this->samples);
+
+        return $this;
     }
 
     /**
-     * Return a newline delimited JSON representation of the dataset.
+     * Filter the records of the dataset using a callback function to determine if a row should be included in the return dataset.
      *
-     * @param string[]|null $header
-     * @return \Rubix\ML\Encoding
+     * @param callable $callback
+     * @return static
      */
-    public function toNDJSON(?array $header = null) : Encoding
+    public function filter(callable $callback) : self
     {
-        if ($header) {
-            $cols = $this->numColumns()
-                + ($this instanceof Labeled ? 1 : 0);
-
-            if (count($header) !== $cols) {
-                throw new InvalidArgumentException('Header must have'
-                    . " $cols columns, " . count($header) . ' given.');
-            }
-        }
-
-        $ndjson = '';
-
-        foreach ($this as $row) {
-            if ($header) {
-                $row = array_combine($header, $row);
-            }
-
-            $ndjson .= JSON::encode($row) . PHP_EOL;
-        }
-
-        return new Encoding($ndjson);
-    }
-
-    /**
-     * Return the dataset as comma-separated values (CSV) string.
-     *
-     * @param string[]|null $header
-     * @param string $delimiter
-     * @param string $enclosure
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return \Rubix\ML\Encoding
-     */
-    public function toCSV(?array $header = null, string $delimiter = ',', string $enclosure = '"') : Encoding
-    {
-        if ($header) {
-            $cols = $this->numColumns()
-                + ($this instanceof Labeled ? 1 : 0);
-
-            if (count($header) !== $cols) {
-                throw new InvalidArgumentException('Header must have'
-                    . " $cols columns, " . count($header) . ' given.');
-            }
-        }
-
-        if (empty($delimiter)) {
-            throw new InvalidArgumentException('Delimiter must be'
-                . ' at least 1 character.');
-        }
-
-        if (strlen($enclosure) !== 1) {
-            throw new InvalidArgumentException('Enclosure must be'
-                . ' a single character.');
-        }
-
-        $csv = '';
-
-        if ($header) {
-            foreach ($header as $title) {
-                if (str_contains($title, $delimiter)) {
-                    $title = $enclosure . $title . $enclosure;
-                }
-            }
-
-            $csv .= implode($delimiter, $header) . PHP_EOL;
-        }
-
-        foreach ($this as $row) {
-            foreach ($row as &$value) {
-                if (str_contains($value, $delimiter)) {
-                    $value = $enclosure . $value . $enclosure;
-                }
-            }
-
-            $csv .= implode($delimiter, $row) . PHP_EOL;
-        }
-
-        return new Encoding($csv);
+        return static::fromIterator(iterator_filter($this, $callback));
     }
 
     /**
@@ -454,46 +353,52 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      * and shape of each continuous feature column and the joint probabilities
      * of every categorical feature column.
      *
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return \Rubix\ML\Report
      */
     public function describe() : Report
     {
+        if ($this->empty()) {
+            throw new RuntimeException('Cannot describe an empty dataset.');
+        }
+
+        $columns = array_transpose(iterator_to_array($this));
+
         $stats = [];
 
-        foreach ($this->columnTypes() as $offset => $type) {
-            $desc = [
-                'column' => $offset,
+        foreach ($this->types() as $offset => $type) {
+            $description = [
+                'offset' => $offset,
                 'type' => (string) $type,
             ];
 
+            $values = $columns[$offset];
+
             switch ($type->code()) {
                 case DataType::CONTINUOUS:
-                    $values = $this->column($offset);
-
                     [$mean, $variance] = Stats::meanVar($values);
 
-                    $quartiles = Stats::quantiles($values, [
+                    [$min, $p25, $median, $p75, $max] = Stats::quantiles($values, [
                         0.0, 0.25, 0.5, 0.75, 1.0,
                     ]);
 
-                    $desc += [
+                    $description += [
                         'mean' => $mean,
                         'variance' => $variance,
-                        'std_dev' => sqrt($variance ?: EPSILON),
+                        'standard deviation' => sqrt($variance),
                         'skewness' => Stats::skewness($values, $mean),
                         'kurtosis' => Stats::kurtosis($values, $mean),
-                        'min' => $quartiles[0],
-                        '25%' => $quartiles[1],
-                        'median' => $quartiles[2],
-                        '75%' => $quartiles[3],
-                        'max' => $quartiles[4],
+                        'min' => $min,
+                        '25%' => $p25,
+                        'median' => $median,
+                        '75%' => $p75,
+                        'max' => $max,
+                        'range' => $max - $min,
                     ];
 
                     break;
 
                 case DataType::CATEGORICAL:
-                    $values = $this->column($offset);
-
                     $counts = array_count_values($values);
 
                     $total = count($values);
@@ -506,18 +411,74 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
 
                     arsort($probabilities);
 
-                    $desc += [
-                        'num_categories' => count($probabilities),
+                    $description += [
+                        'num categories' => count($probabilities),
                         'probabilities' => $probabilities,
                     ];
 
                     break;
             }
 
-            $stats[] = $desc;
+            $stats[] = $description;
         }
 
         return new Report($stats);
+    }
+
+    /**
+     * Sort the records in the dataset using a callback for comparisons between samples. The callback function
+     * accepts two records to be compared and should return `true` if the records should be swapped.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function sort(callable $callback) : self
+    {
+        $records = iterator_to_array($this);
+
+        $nHat = count($records) - 1;
+
+        for ($i = 0; $i < $nHat; ++$i) {
+            $swapped = false;
+
+            for ($j = 0; $j < $nHat - $i; ++$j) {
+                $recordA = $records[$j];
+                $recordB = $records[$j + 1];
+
+                if ($callback($recordA, $recordB)) {
+                    $records[$j] = $recordB;
+                    $records[$j + 1] = $recordA;
+
+                    $swapped = true;
+                }
+            }
+
+            if (!$swapped) {
+                break;
+            }
+        }
+
+        return static::fromIterator($records);
+    }
+
+    /**
+     * Remove duplicate rows from the dataset.
+     *
+     * @return self
+     */
+    public function deduplicate() : self
+    {
+        return static::fromIterator(array_unique(iterator_to_array($this), SORT_REGULAR));
+    }
+
+    /**
+     * Write the dataset to the location and format given by a writable extractor.
+     *
+     * @param \Rubix\ML\Extractors\Exporter $extractor
+     */
+    public function exportTo(Exporter $extractor) : void
+    {
+        $extractor->export($this);
     }
 
     /**
@@ -534,42 +495,42 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      * Return a dataset containing only the first n samples.
      *
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function head(int $n = 10);
+    abstract public function head(int $n = 10) : self;
 
     /**
      * Return a dataset containing only the last n samples.
      *
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function tail(int $n = 10);
+    abstract public function tail(int $n = 10) : self;
 
     /**
      * Take n samples from the dataset and return them in a new dataset.
      *
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function take(int $n = 1);
+    abstract public function take(int $n = 1) : self;
 
     /**
      * Leave n samples on the dataset and return the rest in a new dataset.
      *
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function leave(int $n = 1);
+    abstract public function leave(int $n = 1) : self;
 
     /**
      * Return an n size portion of the dataset in a new dataset.
      *
      * @param int $offset
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function slice(int $offset, int $n);
+    abstract public function slice(int $offset, int $n) : self;
 
     /**
      * Remove a size n chunk of the dataset starting at offset and return it in
@@ -577,77 +538,25 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      *
      * @param int $offset
      * @param int $n
-     * @return self
+     * @return static
      */
-    abstract public function splice(int $offset, int $n);
+    abstract public function splice(int $offset, int $n) : self;
 
     /**
      * Merge another dataset with this dataset.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return \Rubix\ML\Datasets\Dataset
+     * @return static
      */
-    abstract public function merge(Dataset $dataset);
+    abstract public function merge(Dataset $dataset) : self;
 
     /**
      * Join the columns of this dataset with another dataset.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return \Rubix\ML\Datasets\Dataset
+     * @return static
      */
-    abstract public function join(Dataset $dataset);
-
-    /**
-     * Merge the columns of this dataset with another dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return \Rubix\ML\Datasets\Dataset
-     */
-    abstract public function augment(Dataset $dataset);
-
-    /**
-     * Drop the row at the given offset.
-     *
-     * @param int $offset
-     * @return self
-     */
-    abstract public function dropRow(int $offset);
-
-    /**
-     * Drop the rows at the given indices.
-     *
-     * @param int[] $indices
-     * @return self
-     */
-    abstract public function dropRows(array $indices);
-
-    /**
-     * Randomize the dataset.
-     *
-     * @return self
-     */
-    abstract public function randomize();
-
-    /**
-     * Filter the rows of the dataset using the values of a feature column as the
-     * argument to a callback.
-     *
-     * @param int $offset
-     * @param callable $fn
-     * @return self
-     */
-    abstract public function filterByColumn(int $offset, callable $fn);
-
-    /**
-     * Sort the dataset by a column in the sample matrix.
-     *
-     * @param int $offset
-     * @param bool $descending
-     * @return self
-     */
-    abstract public function sortByColumn(int $offset, bool $descending = false);
+    abstract public function join(Dataset $dataset) : self;
 
     /**
      * Split the dataset into two subsets with a given ratio of samples.
@@ -684,7 +593,7 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      * @param mixed $value
      * @return array{self,self}
      */
-    abstract public function splitByColumn(int $offset, $value) : array;
+    abstract public function splitByFeature(int $offset, $value) : array;
 
     /**
      * Partition the dataset into left and right subsets based on the samples' distances from two centroids.
@@ -697,6 +606,13 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
      * @return array{self,self}
      */
     abstract public function spatialSplit(array $leftCentroid, array $rightCentroid, Distance $kernel);
+
+    /**
+     * Randomize the dataset.
+     *
+     * @return static
+     */
+    abstract public function randomize() : self;
 
     /**
      * Generate a random subset without replacement.
@@ -724,35 +640,13 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     abstract public function randomWeightedSubsetWithReplacement(int $n, array $weights);
 
     /**
-     * Remove duplicate rows from the dataset.
-     *
-     * @return self
-     */
-    abstract public function deduplicate();
-
-    /**
-     * Return the dataset object as a data table array.
-     *
-     * @return array[]
-     */
-    abstract public function toArray() : array;
-
-    /**
-     * @return array[]
-     */
-    public function jsonSerialize() : array
-    {
-        return $this->toArray();
-    }
-
-    /**
      * Return the number of rows in the dataset.
      *
      * @return int
      */
     public function count() : int
     {
-        return $this->numRows();
+        return $this->numSamples();
     }
 
     /**
@@ -784,11 +678,4 @@ abstract class Dataset implements ArrayAccess, IteratorAggregate, JsonSerializab
     {
         throw new RuntimeException('Datasets cannot be mutated directly.');
     }
-
-    /**
-     * Return a string representation of the first few rows of the dataset.
-     *
-     * @return string
-     */
-    abstract public function __toString() : string;
 }

@@ -53,7 +53,7 @@ class ListCalendarShares extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$user = (string) $input->getArgument('uid');
+		$user = (string)$input->getArgument('uid');
 		if (!$this->userManager->userExists($user)) {
 			throw new \InvalidArgumentException("User $user is unknown");
 		}
@@ -73,7 +73,7 @@ class ListCalendarShares extends Command {
 
 		$calendarId = $input->getOption('calendar-id');
 		if ($calendarId !== null) {
-			$shares = array_filter($shares, fn ($share) => $share['resourceid'] === (int) $calendarId);
+			$shares = array_filter($shares, fn ($share) => $share['resourceid'] === (int)$calendarId);
 		}
 
 		$rows = array_map(fn ($share) => $this->formatCalendarShare($share), $shares);

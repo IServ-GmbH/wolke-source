@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -21,32 +20,19 @@ use OCP\IUserSession;
  */
 class Capabilities implements IPublicCapability {
 
-	/** @var ThemingDefaults */
-	protected $theming;
-
-	/** @var Util */
-	protected $util;
-
-	/** @var IURLGenerator */
-	protected $url;
-
-	/** @var IConfig */
-	protected $config;
-
-	protected IUserSession $userSession;
-
 	/**
 	 * @param ThemingDefaults $theming
 	 * @param Util $util
 	 * @param IURLGenerator $url
 	 * @param IConfig $config
 	 */
-	public function __construct(ThemingDefaults $theming, Util $util, IURLGenerator $url, IConfig $config, IUserSession $userSession) {
-		$this->theming = $theming;
-		$this->util = $util;
-		$this->url = $url;
-		$this->config = $config;
-		$this->userSession = $userSession;
+	public function __construct(
+		protected ThemingDefaults $theming,
+		protected Util $util,
+		protected IURLGenerator $url,
+		protected IConfig $config,
+		protected IUserSession $userSession,
+	) {
 	}
 
 	/**
@@ -55,6 +41,7 @@ class Capabilities implements IPublicCapability {
 	 * @return array{
 	 *     theming: array{
 	 *         name: string,
+	 *         productName: string,
 	 *         url: string,
 	 *         slogan: string,
 	 *         color: string,
@@ -108,6 +95,7 @@ class Capabilities implements IPublicCapability {
 		return [
 			'theming' => [
 				'name' => $this->theming->getName(),
+				'productName' => $this->theming->getProductName(),
 				'url' => $this->theming->getBaseUrl(),
 				'slogan' => $this->theming->getSlogan(),
 				'color' => $color,

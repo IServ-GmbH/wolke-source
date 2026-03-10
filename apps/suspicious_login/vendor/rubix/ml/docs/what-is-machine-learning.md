@@ -8,7 +8,7 @@ Supervised learning is a type of machine learning that incorporates a training s
 For classification problems, a learner is trained to differentiate samples among a set of *k* possible discrete classes. In this type of problem, the training labels are the classes that each sample belongs to. Examples of class labels include `cat`, `dog`, `human`, or any other categorical label. Classification problems include [image recognition](https://github.com/RubixML/CIFAR-10), [text sentiment analysis](https://github.com/RubixML/Sentiment), and [Iris flower classification](https://github.com/RubixML/Iris).
 
 ### Regression
-Regression is a learning problem that aims to predict a continuous-valued outcome. In this case, the training labels are continuous data types such as integers and floating point numbers. Regression problems include estimating the [sale price of a home](https://github.com/RubixML/Housing), credit scoring, and determining the steering angle of a self-driving vehicle.
+Regression is a learning problem that aims to predict a continuous-valued outcome. In this case, the training labels are continuous data types such as integers and floating point numbers. Regression problems include estimating [house prices](https://github.com/RubixML/Housing), credit scoring, and the steering angle of an autonomous vehicle.
 
 ## Unsupervised Learning
 A form of learning that does *not* require labeled data is called Unsupervised learning. Unsupervised learners focus on digesting patterns within just the samples. There are three types of unsupervised learning offered in Rubix ML.
@@ -32,7 +32,10 @@ Automated Machine Learning (AutoML) is the application of automated tools when d
 Although the supervised and unsupervised learning framework covers a substantial number of problems, there are other types of machine learning that the library does *not* support out of the box.
 
 ### Reinforcement Learning
-Reinforcement Learning (RL) is a type of machine learning that aims to learn the optimal control of an agent within an environment through cumulative reward. The data used to train an RL learner are the states obtained by performing some action and then observing the response. If supervised learning is learning by example then reinforcement learning is learning *from mistakes*. Reinforcement learning is used to train AIs to play games such as Go, Chess, and Starcraft 2, as well as in robotics for learning movements such as walking or grasping.
+Reinforcement Learning (RL) is a type of machine learning that aims to learn the optimal control of an agent within an environment through cumulative reward. The data used to train an RL learner are the states obtained by performing some action and then observing the response. If supervised learning is learning by example then reinforcement learning is learning *from mistakes*. Reinforcement learning is used to train AIs to play games such as Go, Chess, and Starcraft 2, and in robotics for [movement planning](https://github.com/andrewdalpino/TankRobot).
 
 ### Sequence Learning
 Sequence Learning is a type of ML that aims to predict the next value in a sequence such as the next word in a sentence or a future stock price. It differs from learning from *sets* of data in that the order of the samples matter. Time-series analysis is a special case of sequence learning where the sequences are ordered by time. Sequence-to-sequence Learning is used to denote when the output is not just the next value but the next sequence of values.
+
+### Self-supervised Learning
+A hybrid approach to learning is Self-supervised learning in which a learner is trained to predict the parts of a sample that were partially omitted during training. As such, supervised methods can be employed on unlabeled data to learn representations. Self-supervised learning is used in language models such as GPT-3 to generate sequences of text or in autonomous robots to learn from ancillary sensor feedback.

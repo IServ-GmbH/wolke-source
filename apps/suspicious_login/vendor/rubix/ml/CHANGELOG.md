@@ -1,5 +1,220 @@
-- 0.4.2
-    - Fix Missing Extension exception class filename
+- 2.3.3
+    - Optimize Adam and AdaMax Optimizers
+
+- 2.3.2
+    - Update PHP Stemmer to version 3
+
+- 2.3.1
+    - Fix PSR-3 log version compatibility issue
+    - Check for correct version of RBX format
+
+- 2.3.0
+    - Added BM25 Transformer
+    - Add `dropFeature()` method to the dataset object API
+    - Add neural network architecture visualization via GraphViz
+    
+- 2.2.2
+    - Fix Grid Search best model selection
+
+- 2.2.1
+    - Fix Extra Tree divide by zero when split finding
+
+- 2.2.0
+    - Added Image Rotator transformer
+    - Added One Vs Rest ensemble classifier
+    - Add variance and range to the Dataset `describe()` report
+    - Added Gower distance kernel
+    - Added `types()` method to Dataset
+    - Concatenator now accepts an iterator of iterators
+
+- 2.1.1
+    - Do not consider unset properties when determining revision
+
+- 2.1.0
+    - Added Probabilistic Metric interface
+    - Added Probabilistic and Top K Accuracy
+    - Added Brier Score Probabilistic Metric
+    - Export Decision Tree-based models in Graphviz "dot" format
+    - Added Graphviz helper class
+    - Graph subsystem memory and storage optimizations
+    
+- 2.0.2
+    - Fix Decision Tree max height terminating condition
+
+- 2.0.1
+    - Compensate for PHP 8.1 backward compatibility issues
+
+- 2.0.0
+    - Gradient Boost now uses gradient-based subsampling
+    - Allow Token Hashing Vectorizer custom hash functions
+    - Gradient Boost base estimator no longer configurable
+    - Move dummy estimators to the Extras package
+    - Increase default MLP window from 3 to 5
+    - Decrease default Gradient Boost window from 10 to 5
+    - Rename alpha regularization parameter to L2 penalty
+    - Added RBX serializer class property type change detection
+    - Rename boosting `estimators` param to `epochs`
+    - Neural net-based learners can now train for 0 epochs
+    - Rename Labeled `stratify()` to `stratifyByLabel()`
+    - Added Sparse Cosine distance kernel
+    - Cosine distance now optimized for dense and sparse vectors
+    - Word Count Vectorizer now uses min count and max ratio DFs
+    - Numeric String Converter now handles NAN and INFs
+    - Numeric String Converter is now Reversible
+    - Removed Numeric String Converter NAN_PLACEHOLDER constant
+    - Added MurmurHash3 and FNV1a 32-bit hashing functions to Token Hashing Vectorizer
+    - Changed Token Hashing Vectorizer max dimensions to 2,147,483,647
+    - Increase SQL Table Extractor batch size from 100 to 256
+    - Ranks Features interface no longer extends Stringable
+    - Verbose Learners now log change in loss
+    - Numerical instability logged as warning instead of info
+    - Added `header()` method to CSV and SQL Table Extractors
+    - `Argmax()` now throws exception when undefined
+    - MLP Learners recover from numerical instability with snapshot
+    - Rename Gzip serializer to Gzip Native
+    - Change RBX serializer constructor argument from base to level
+    - Rename Writeable extractor interface to Exporter
+    
+- 1.3.4
+    - Fix Decision Tree max height terminating condition
+
+- 1.3.3
+    - Forego unnecessary logistic computation in Logit Boost
+
+- 1.3.2
+    - Optimize Binary output layer
+
+- 1.3.1
+    - Update to Ok Bloomer 1.0 stable
+
+- 1.3.0
+    - Switch back to original fork of Tensor
+    - Added `maxBins` hyper-parameter to CART-based learners
+    - Added stream Deduplicator extractor
+    - Added the SiLU activation function
+    - Added Swish activation layer
+    
+- 1.2.4
+    - Refactor neural network parameter updates
+    - Allow set null logger
+
+- 1.2.3
+    - Fix Multiclass layer cross entropy gradient optimization
+
+- 1.2.2
+    - Allow empty dataset objects in `stack()`
+
+- 1.2.1
+    - Refactor stratified methods on Labeled dataset
+    - Narrower typehints
+
+- 1.2.0
+    - Added Logit Boost classifier
+    - Interval Discretizer variable or equi-depth binning
+    - Text Normalizers now lower or upper case
+
+- 1.1.3
+    - Min Max Normalizer compensate for 0 variance features
+
+- 1.1.2
+    - Improved random floating point number precision
+    - Deduplicate Preset seeder centroids
+    - Fix Gradient Boost learning rate upper bound
+    - Fix Loda histogram edge alignment
+
+- 1.1.1
+    - Fix Gradient Boost subsampling and importance scores
+    
+- 1.1.0
+    - Update to Scienide Tensor 3.0
+    - Added Nesterov's lookahead to Momentum Optimizer
+    - Added Reversible transformer interface
+    - MaxAbs, Z Score, and Robust scalers are now Reversible
+    - Min Max Normalizer now implements Reversible
+    - TF-IDF Transformer is now Reversible
+    - Added Preset cluster seeder
+    - Added Concatenator extractor
+
+- 1.0.3
+    - Do not remove `groups` property from symbol table
+
+- 1.0.2
+    - Fix KNN and Hot Deck imputer reset donor samples
+
+- 1.0.1
+    - Fix AdaMax optimizer when tensor extension loaded
+    - Prevent certain specification false negatives
+    - Add extension minimum version specification
+
+- 1.0.0
+    - No changes
+
+- 1.0.0-rc1
+    - Added Token Hashing Vectorizer transformer
+    - Added Word Stemmer tokenizer from Extras
+    - Remove HTML Stripper and Whitespace Remover transformers
+    - Rename steps() method to losses()
+    - Steps() now returns iterable progress table w/ header
+    - Remove rules() method on CART
+    - Removed results() and best() methods from Grid Search
+    - Change string representation of NAN to match PHP
+    - Added extra whitespace pattern to Regex Filter
+
+- 1.0.0-beta2
+    - Interval Discretizer now uses variable width histograms
+    - Added TF-IDF sublinear TF scaling and document length normalization
+    - Dataset filterByColumn() is now filter()
+    - Added Lambda Function transformer from Extras
+    - Rename Dataset column methods to feature
+    - Added Dataset general sort() using callback
+    - Confusion Matrix classes no longer selectable
+    - Remove Recursive Feature Eliminator transformer
+    - Metric range() now returns a Tuple object
+
+- 1.0.0-beta1
+    - Added variance smoothing to Gaussian NB, Mixture, and MLE
+    - Added MAD smoothing to Robust Z Score
+    - Added Writable extractor interface
+    - NDJSON and CSV extractors are now Writable
+    - Added SQL Table dataset extractor
+    - Changed Word Count Vectorizer DF constraints to proportions
+    - Change order of Naive Bayes hyper-parameters
+    - Persisters use RBX serializer by default
+    - Removed previously deprecated portions of the API
+    - Removed Embedder interface and namespace
+    - Change Robust Z Score alpha parameter name to beta
+    - Hold Out validator does not randomize by default
+    - Move Redis DB persister to extras package
+    - Remove Loda estimate bins static method
+    - Change Grid Search base estimator param name to class
+    - Remove Dataset cast to string preview
+    - Add Error Analysis error standard deviation and drop midrange
+    - Naive Bayes Laplace smoothing no longer effects priors
+    - Nearest Neighbors distance weighting off by default
+    - Promoted the Other namespace
+    - Moved Flysystem persister to the Extras package
+    - Change order of Loda hyper-parameters
+    - Persistent Model now accepts an optional serializer
+    - Persisters no longer interact directly with Persistables
+    - Remove Wrapper interface
+    - RBX serializer now accepts base Gzip parameter
+    - Gzip serializer no longer accepts base serializer
+    - Changed Gzip default compression level from 1 to 6
+    - Changed RBX default compression level from 9 to 6
+    - Do not persist training progress information
+    - Change underscores in Report property names to spaces
+    - Add saveTo() method to Encoding object
+    - Add Dataset exportTo() method
+    - Pipeline and Committee Machine are no longer Verbose
+    - Remove K Best feature selector (special case of RFE)
+    - Changed Error Analysis metrics
+    - Remove threat score from Multiclass Breakdown
+    - Rename Labels Are Missing exception
+    - Feature importances are no longer normalized
+    - Optimized CART binary categorical node splitting
+    - Interval Discretizer outputs numeric string categories
+    - Renamed Random Hot Deck Imputer
+    - Changed order of decision tree hyper-parameters
 
 - 0.4.1
     - Optimized CART node splitting for low variance continuous features
@@ -63,7 +278,7 @@
 - 0.2.0
     - Add Recursive Feature Eliminator feature selector
     - Can now disable holdout validation in MLP learners
-    - TF-IDF Transformer additive (Laplace) smoothing now variable
+    - TF-IDF Transformer additive Laplace smoothing now variable
     - Added instability detection to gradient-based learners
     - Gradient Boost validation set holdout can now be 0
     - Specifications now extend base class
@@ -158,7 +373,7 @@
     - Renamed Dataset partition method to partitionByColumn
     - Decreased default neural net learner batch size to 128
     - Increased default K Means batch size to 128
-    - Renamed Dataset types method to columnTypes
+    - Renamed Dataset types method to featureTypes
     - Efficient serialization of Word Count Vectorizer
     - Decoupled Persistable interface from Learner
     - Moved Gower Distance kernel to Extras package

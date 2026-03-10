@@ -1,5 +1,5 @@
 diff --git lib/private/Federation/CloudIdManager.php lib/private/Federation/CloudIdManager.php
-index f68eeed..2c73e2c 100644
+index b07679a..ce8a81d 100644
 --- lib/private/Federation/CloudIdManager.php
 +++ lib/private/Federation/CloudIdManager.php
 @@ -78,7 +78,7 @@ class CloudIdManager implements ICloudIdManager {

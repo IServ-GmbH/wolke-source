@@ -2,28 +2,15 @@
 
 declare(strict_types=1);
 
-/**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * Two-factor TOTP
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+/*
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\TwoFactorTOTP\Provider;
 
 use OCA\TwoFactorTOTP\AppInfo\Application;
+use OCA\TwoFactorTOTP\Exception\NoTotpSecretFoundException;
 use OCA\TwoFactorTOTP\Service\ITotp;
 use OCA\TwoFactorTOTP\Settings\Personal;
 use OCP\AppFramework\IAppContainer;
@@ -102,7 +89,12 @@ class TotpProvider implements IProvider, IProvidesIcons, IProvidesPersonalSettin
 	 */
 	public function verifyChallenge(IUser $user, string $challenge): bool {
 		$challenge = preg_replace('/[^0-9]/', '', $challenge);
-		return $this->totp->validateSecret($user, $challenge);
+		try {
+			$secret = $this->totp->getSecret($user);
+		} catch (NoTotpSecretFoundException $e) {
+			return false;
+		}
+		return $this->totp->validateSecret($secret, $challenge);
 	}
 
 	/**

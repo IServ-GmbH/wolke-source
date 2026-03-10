@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -19,19 +18,9 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
+use Psr\Log\LoggerInterface;
 
 class MailSettingsController extends Controller {
-
-	/** @var IL10N */
-	private $l10n;
-	/** @var IConfig */
-	private $config;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var IMailer */
-	private $mailer;
-	/** @var IURLGenerator */
-	private $urlGenerator;
 
 	/**
 	 * @param string $appName
@@ -42,51 +31,52 @@ class MailSettingsController extends Controller {
 	 * @param IURLGenerator $urlGenerator,
 	 * @param IMailer $mailer
 	 */
-	public function __construct($appName,
+	public function __construct(
+		$appName,
 		IRequest $request,
-		IL10N $l10n,
-		IConfig $config,
-		IUserSession $userSession,
-		IURLGenerator $urlGenerator,
-		IMailer $mailer) {
+		private IL10N $l10n,
+		private IConfig $config,
+		private IUserSession $userSession,
+		private IURLGenerator $urlGenerator,
+		private IMailer $mailer,
+		private LoggerInterface $logger,
+	) {
 		parent::__construct($appName, $request);
-		$this->l10n = $l10n;
-		$this->config = $config;
-		$this->userSession = $userSession;
-		$this->urlGenerator = $urlGenerator;
-		$this->mailer = $mailer;
 	}
 
 	/**
 	 * Sets the email settings
-	 *
-	 * @param string $mail_domain
-	 * @param string $mail_from_address
-	 * @param string $mail_smtpmode
-	 * @param string $mail_smtpsecure
-	 * @param string $mail_smtphost
-	 * @param int $mail_smtpauth
-	 * @param string $mail_smtpport
-	 * @return DataResponse
 	 */
 	#[AuthorizedAdminSetting(settings: Overview::class)]
 	#[PasswordConfirmationRequired]
-	public function setMailSettings($mail_domain,
-		$mail_from_address,
-		$mail_smtpmode,
-		$mail_smtpsecure,
-		$mail_smtphost,
-		$mail_smtpauth,
-		$mail_smtpport,
-		$mail_sendmailmode) {
-		$params = get_defined_vars();
-		$configs = [];
-		foreach ($params as $key => $value) {
+	public function setMailSettings(
+		string $mail_domain,
+		string $mail_from_address,
+		string $mail_smtpmode,
+		string $mail_smtpsecure,
+		string $mail_smtphost,
+		?string $mail_smtpauth,
+		string $mail_smtpport,
+		string $mail_sendmailmode,
+	): DataResponse {
+		$mail_smtpauth = $mail_smtpauth == '1';
+
+		$configs = [
+			'mail_domain' => $mail_domain,
+			'mail_from_address' => $mail_from_address,
+			'mail_smtpmode' => $mail_smtpmode,
+			'mail_smtpsecure' => $mail_smtpsecure,
+			'mail_smtphost' => $mail_smtphost,
+			'mail_smtpauth' => $mail_smtpauth,
+			'mail_smtpport' => $mail_smtpport,
+			'mail_sendmailmode' => $mail_sendmailmode,
+		];
+		foreach ($configs as $key => $value) {
 			$configs[$key] = empty($value) ? null : $value;
 		}
 
 		// Delete passwords from config in case no auth is specified
-		if ($params['mail_smtpauth'] !== 1) {
+		if (!$mail_smtpauth) {
 			$configs['mail_smtpname'] = null;
 			$configs['mail_smtppassword'] = null;
 		}
@@ -156,11 +146,13 @@ class MailSettingsController extends Controller {
 				return new DataResponse();
 			} catch (\Exception $e) {
 				$this->config->setAppValue('core', 'emailTestSuccessful', '0');
+				$this->logger->error('Failed sending test email: ' . $e->getMessage(), ['exception' => $e]);
 				return new DataResponse($this->l10n->t('A problem occurred while sending the email. Please revise your settings. (Error: %s)', [$e->getMessage()]), Http::STATUS_BAD_REQUEST);
 			}
 		}
 
 		$this->config->setAppValue('core', 'emailTestSuccessful', '0');
+		$this->logger->error('Failed sending test email: User ' . $this->userSession->getUser()->getUID() . ' has no email address configured in their account settings');
 		return new DataResponse($this->l10n->t('You need to set your account email before being able to send test emails. Go to %s for that.', [$this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index')]), Http::STATUS_BAD_REQUEST);
 	}
 }

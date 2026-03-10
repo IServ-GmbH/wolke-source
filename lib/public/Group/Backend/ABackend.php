@@ -46,7 +46,7 @@ abstract class ABackend implements GroupInterface, IBatchMethodsBackend {
 			$implements |= GroupInterface::REMOVE_FROM_GOUP;
 		}
 
-		return (bool) ($actions & $implements);
+		return (bool)($actions & $implements);
 	}
 
 	/**

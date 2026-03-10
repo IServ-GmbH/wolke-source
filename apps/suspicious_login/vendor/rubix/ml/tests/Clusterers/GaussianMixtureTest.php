@@ -9,8 +9,8 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Clusterers\Seeders\KMC2;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Clusterers\GaussianMixture;
@@ -31,14 +31,14 @@ class GaussianMixtureTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -75,16 +75,21 @@ class GaussianMixtureTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 32, 0], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([0, 32, 255], 20.0),
-        ], [2, 3, 4]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
-        $this->estimator = new GaussianMixture(3, 100, 1e-3, new KMC2(50));
+        $this->estimator = new GaussianMixture(3, 1e-9, 100, 1e-3, new KMC2(50));
 
         $this->metric = new VMeasure();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -137,8 +142,9 @@ class GaussianMixtureTest extends TestCase
     {
         $expected = [
             'k' => 3,
+            'smoothing' => 1e-9,
             'epochs' => 100,
-            'min_change' => 1e-3,
+            'min change' => 1e-3,
             'seeder' => new KMC2(50),
         ];
 
@@ -177,7 +183,7 @@ class GaussianMixtureTest extends TestCase
         $this->assertCount(3, $variances);
         $this->assertContainsOnly('array', $variances);
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -207,10 +213,5 @@ class GaussianMixtureTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

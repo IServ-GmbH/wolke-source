@@ -22,34 +22,20 @@ use OCP\IStreamImage;
 use OCP\Preview\BeforePreviewFetchedEvent;
 use OCP\Preview\IProviderV2;
 use OCP\Preview\IVersionedPreviewFile;
+use Psr\Log\LoggerInterface;
 
 class Generator {
 	public const SEMAPHORE_ID_ALL = 0x0a11;
 	public const SEMAPHORE_ID_NEW = 0x07ea;
 
-	/** @var IPreview */
-	private $previewManager;
-	/** @var IConfig */
-	private $config;
-	/** @var IAppData */
-	private $appData;
-	/** @var GeneratorHelper */
-	private $helper;
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-
 	public function __construct(
-		IConfig $config,
-		IPreview $previewManager,
-		IAppData $appData,
-		GeneratorHelper $helper,
-		IEventDispatcher $eventDispatcher
+		private IConfig $config,
+		private IPreview $previewManager,
+		private IAppData $appData,
+		private GeneratorHelper $helper,
+		private IEventDispatcher $eventDispatcher,
+		private LoggerInterface $logger,
 	) {
-		$this->config = $config;
-		$this->previewManager = $previewManager;
-		$this->appData = $appData;
-		$this->helper = $helper;
-		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
@@ -84,7 +70,18 @@ class Generator {
 			$height,
 			$crop,
 			$mode,
+			$mimeType,
 		));
+
+		$this->logger->debug('Requesting preview for {path} with width={width}, height={height}, crop={crop}, mode={mode}, mimeType={mimeType}', [
+			'path' => $file->getPath(),
+			'width' => $width,
+			'height' => $height,
+			'crop' => $crop,
+			'mode' => $mode,
+			'mimeType' => $mimeType,
+		]);
+
 
 		// since we only ask for one preview, and the generate method return the last one it created, it returns the one we want
 		return $this->generatePreviews($file, [$specification], $mimeType, $cacheResult);
@@ -99,6 +96,7 @@ class Generator {
 	public function generatePreviews(File $file, array $specifications, ?string $mimeType = null, bool $cacheResult = true): ISimpleFile {
 		//Make sure that we can read the file
 		if (!$file->isReadable()) {
+			$this->logger->warning('Cannot read file: {path}, skipping preview generation.', ['path' => $file->getPath()]);
 			throw new NotFoundException('Cannot read file');
 		}
 
@@ -120,6 +118,7 @@ class Generator {
 		$maxPreviewImage = null; // only load the image when we need it
 		if ($maxPreview->getSize() === 0) {
 			$maxPreview->delete();
+			$this->logger->error('Max preview generated for file {path} has size 0, deleting and throwing exception.', ['path' => $file->getPath()]);
 			throw new NotFoundException('Max preview size 0, invalid!');
 		}
 
@@ -166,6 +165,7 @@ class Generator {
 						$maxPreviewImage = $this->helper->getImage($maxPreview);
 					}
 
+					$this->logger->debug('Cached preview not found for file {path}, generating a new preview.', ['path' => $file->getPath()]);
 					$preview = $this->generatePreview($previewFolder, $maxPreviewImage, $width, $height, $crop, $maxWidth, $maxHeight, $previewVersion, $cacheResult);
 					// New file, augment our array
 					$previewFiles[] = $preview;
@@ -334,6 +334,11 @@ class Generator {
 				$previewConcurrency = $this->getNumConcurrentPreviews('preview_concurrency_new');
 				$sem = self::guardWithSemaphore(self::SEMAPHORE_ID_NEW, $previewConcurrency);
 				try {
+					$this->logger->debug('Calling preview provider for {mimeType} with width={width}, height={height}', [
+						'mimeType' => $mimeType,
+						'width' => $width,
+						'height' => $height,
+					]);
 					$preview = $this->helper->getThumbnail($provider, $file, $width, $height);
 				} finally {
 					self::unguardWithSemaphore($sem);
@@ -368,7 +373,7 @@ class Generator {
 	 */
 	private function getPreviewSize(ISimpleFile $file, string $prefix = '') {
 		$size = explode('-', substr($file->getName(), strlen($prefix)));
-		return [(int) $size[0], (int) $size[1]];
+		return [(int)$size[0], (int)$size[1]];
 	}
 
 	/**
@@ -381,7 +386,7 @@ class Generator {
 	 * @return string
 	 */
 	private function generatePath($width, $height, $crop, $max, $mimeType, $prefix) {
-		$path = $prefix . (string) $width . '-' . (string) $height;
+		$path = $prefix . (string)$width . '-' . (string)$height;
 		if ($crop) {
 			$path .= '-crop';
 		}
@@ -479,7 +484,7 @@ class Generator {
 			$height /= $ratio;
 		}
 
-		return [(int) round($width), (int) round($height)];
+		return [(int)round($width), (int)round($height)];
 	}
 
 	/**
@@ -518,10 +523,10 @@ class Generator {
 						$scaleH = $maxHeight / $widthR;
 						$scaleW = $width;
 					}
-					$preview = $preview->preciseResizeCopy((int) round($scaleW), (int) round($scaleH));
+					$preview = $preview->preciseResizeCopy((int)round($scaleW), (int)round($scaleH));
 				}
-				$cropX = (int) floor(abs($width - $preview->width()) * 0.5);
-				$cropY = (int) floor(abs($height - $preview->height()) * 0.5);
+				$cropX = (int)floor(abs($width - $preview->width()) * 0.5);
+				$cropY = (int)floor(abs($height - $preview->height()) * 0.5);
 				$preview = $preview->cropCopy($cropX, $cropY, $width, $height);
 			} else {
 				$preview = $maxPreview->resizeCopy(max($width, $height));
@@ -559,6 +564,7 @@ class Generator {
 		$path = $this->generatePath($width, $height, $crop, false, $mimeType, $prefix);
 		foreach ($files as $file) {
 			if ($file->getName() === $path) {
+				$this->logger->debug('Found cached preview: {path}', ['path' => $path]);
 				return $file;
 			}
 		}
@@ -577,7 +583,7 @@ class Generator {
 	 */
 	private function getPreviewFolder(File $file) {
 		// Obtain file id outside of try catch block to prevent the creation of an existing folder
-		$fileId = (string) $file->getId();
+		$fileId = (string)$file->getId();
 
 		try {
 			$folder = $this->appData->getFolder($fileId);

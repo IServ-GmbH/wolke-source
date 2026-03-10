@@ -20,7 +20,7 @@ use OCP\IDBConnection;
  *
  * @method Settings mapRowToEntity(array $row)
  * @method Settings findEntity(IQueryBuilder $query)
- * @method Settings[] findEntities(IQueryBuilder $query)
+ * @method list<Settings> findEntities(IQueryBuilder $query)
  */
 class SettingsMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
@@ -60,7 +60,7 @@ class SettingsMapper extends QBMapper {
 	public function setBatchSettingForUser(string $userId, int $batchSetting): void {
 		try {
 			$settings = $this->getSettingsByUser($userId);
-		} catch (DoesNotExistException $e) {
+		} catch (DoesNotExistException) {
 			$settings = new Settings();
 			$settings->setUserId($userId);
 			/** @var Settings $settings */
@@ -113,10 +113,10 @@ class SettingsMapper extends QBMapper {
 	public function createSettingsFromRow(array $row): Settings {
 		return $this->mapRowToEntity([
 			'id' => $row['id'],
-			'user_id' => (string) $row['user_id'],
-			'batch_time' => (int) $row['batch_time'],
-			'last_send_id' => (int) $row['last_send_id'],
-			'next_send_time' => (int) $row['next_send_time'],
+			'user_id' => (string)$row['user_id'],
+			'batch_time' => (int)$row['batch_time'],
+			'last_send_id' => (int)$row['last_send_id'],
+			'next_send_time' => (int)$row['next_send_time'],
 		]);
 	}
 }

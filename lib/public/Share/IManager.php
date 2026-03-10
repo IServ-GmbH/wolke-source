@@ -13,6 +13,7 @@ use OCP\Files\Node;
 use OCP\IUser;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\Exceptions\ShareTokenException;
 
 /**
  * This interface allows to manage sharing files between users and groups.
@@ -41,11 +42,12 @@ interface IManager {
 	 * The state can't be changed this way: use acceptShare
 	 *
 	 * @param IShare $share
+	 * @param bool $onlyValid Only updates valid shares, invalid shares will be deleted automatically and are not updated
 	 * @return IShare The share object
 	 * @throws \InvalidArgumentException
 	 * @since 9.0.0
 	 */
-	public function updateShare(IShare $share);
+	public function updateShare(IShare $share, bool $onlyValid = true);
 
 	/**
 	 * Accept a share.
@@ -127,10 +129,11 @@ interface IManager {
 	 * @param bool $reshares
 	 * @param int $limit The maximum number of returned results, -1 for all results
 	 * @param int $offset
+	 * @param bool $onlyValid Only returns valid shares, invalid shares will be deleted automatically and are not returned
 	 * @return IShare[]
 	 * @since 9.0.0
 	 */
-	public function getSharesBy($userId, $shareType, $path = null, $reshares = false, $limit = 50, $offset = 0);
+	public function getSharesBy($userId, $shareType, $path = null, $reshares = false, $limit = 50, $offset = 0, bool $onlyValid = true);
 
 	/**
 	 * Get shares shared with $user.
@@ -168,11 +171,12 @@ interface IManager {
 	 *
 	 * @param string $id
 	 * @param string|null $recipient userID of the recipient
+	 * @param bool $onlyValid Only returns valid shares, invalid shares will be deleted automatically and are not returned
 	 * @return IShare
 	 * @throws ShareNotFound
 	 * @since 9.0.0
 	 */
-	public function getShareById($id, $recipient = null);
+	public function getShareById($id, $recipient = null, bool $onlyValid = true);
 
 	/**
 	 * Get the share by token possible with password
@@ -437,7 +441,8 @@ interface IManager {
 	public function limitEnumerationToPhone(): bool;
 
 	/**
-	 * Check if user enumeration is allowed to return on full match
+	 * Check if user enumeration is allowed to return also on full match
+	 * and ignore limitations to phonebook or groups.
 	 *
 	 * @return bool
 	 * @since 21.0.1
@@ -445,7 +450,8 @@ interface IManager {
 	public function allowEnumerationFullMatch(): bool;
 
 	/**
-	 * Check if the search should match the email
+	 * When `allowEnumerationFullMatch` is enabled and `matchEmail` is set,
+	 * then also return results for full email matches.
 	 *
 	 * @return bool
 	 * @since 25.0.0
@@ -453,12 +459,21 @@ interface IManager {
 	public function matchEmail(): bool;
 
 	/**
-	 * Check if the search should ignore the second in parentheses display name if there is any
+	 * When `allowEnumerationFullMatch` is enabled and `ignoreSecondDisplayName` is set,
+	 * then the search should ignore matches on the second displayname and only use the first.
 	 *
 	 * @return bool
 	 * @since 25.0.0
 	 */
 	public function ignoreSecondDisplayName(): bool;
+
+
+	/**
+	 * Check if custom tokens are allowed
+	 *
+	 * @since 31.0.0
+	 */
+	public function allowCustomTokens(): bool;
 
 	/**
 	 * Check if the current user can enumerate the target user
@@ -519,4 +534,12 @@ interface IManager {
 	 * @since 18.0.0
 	 */
 	public function getAllShares(): iterable;
+
+	/**
+	 * Generate a unique share token
+	 *
+	 * @throws ShareTokenException Failed to generate a unique token
+	 * @since 31.0.0
+	 */
+	public function generateToken(): string;
 }

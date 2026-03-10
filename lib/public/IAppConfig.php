@@ -45,12 +45,15 @@ interface IAppConfig {
 	/** @since 29.0.0 */
 	public const VALUE_ARRAY = 64;
 
+	/** @since 31.0.0 */
+	public const FLAG_SENSITIVE = 1;   // value is sensitive
+
 	/**
 	 * Get list of all apps that have at least one config value stored in database
 	 *
 	 * **WARNING:** ignore lazy filtering, all config values are loaded from database
 	 *
-	 * @return string[] list of app ids
+	 * @return list<string> list of app ids
 	 * @since 7.0.0
 	 */
 	public function getApps(): array;
@@ -62,8 +65,8 @@ interface IAppConfig {
 	 * **WARNING:** ignore lazy filtering, all config values are loaded from database
 	 *
 	 * @param string $app id of the app
+	 * @return list<string> list of stored config keys
 	 *
-	 * @return string[] list of stored config keys
 	 * @since 29.0.0
 	 */
 	public function getKeys(string $app): array;

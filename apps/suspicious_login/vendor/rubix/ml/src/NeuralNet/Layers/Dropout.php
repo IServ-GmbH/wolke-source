@@ -31,28 +31,28 @@ class Dropout implements Hidden
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * The scaling coefficient.
      *
      * @var float
      */
-    protected $scale;
+    protected float $scale;
 
     /**
      * The width of the layer.
      *
-     * @var int|null
+     * @var positive-int|null
      */
-    protected $width;
+    protected ?int $width = null;
 
     /**
      * The memoized dropout mask.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $mask;
+    protected ?\Tensor\Matrix $mask = null;
 
     /**
      * @param float $ratio
@@ -75,11 +75,11 @@ class Dropout implements Hidden
      * @internal
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
-        if (!$this->width) {
+        if ($this->width === null) {
             throw new RuntimeException('Layer has not been initialized.');
         }
 
@@ -92,8 +92,8 @@ class Dropout implements Hidden
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -114,11 +114,15 @@ class Dropout implements Hidden
      */
     public function forward(Matrix $input) : Matrix
     {
-        $this->mask = Matrix::rand(...$input->shape())
+        $mask = Matrix::rand(...$input->shape())
             ->greater($this->ratio)
             ->multiply($this->scale);
 
-        return $this->mask->multiply($input);
+        $output = $input->multiply($mask);
+
+        $this->mask = $mask;
+
+        return $output;
     }
 
     /**
@@ -173,6 +177,8 @@ class Dropout implements Hidden
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

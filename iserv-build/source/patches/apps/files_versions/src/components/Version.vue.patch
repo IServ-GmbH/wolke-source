@@ -1,8 +1,8 @@
 diff --git apps/files_versions/src/components/Version.vue apps/files_versions/src/components/Version.vue
-index 7c4a2e7..7e86ef1 100644
+index a126f2a..5bc1e68 100644
 --- apps/files_versions/src/components/Version.vue
 +++ apps/files_versions/src/components/Version.vue
-@@ -264,6 +264,11 @@ export default defineComponent({
+@@ -272,6 +272,11 @@ export default defineComponent({
  		},
  
  		isDownloadable(): boolean {
@@ -14,7 +14,7 @@ index 7c4a2e7..7e86ef1 100644
  			if ((this.fileInfo.permissions & Permission.READ) === 0) {
  				return false
  			}
-@@ -301,7 +306,11 @@ export default defineComponent({
+@@ -309,7 +314,11 @@ export default defineComponent({
  
  		click() {
  			if (!this.canView) {

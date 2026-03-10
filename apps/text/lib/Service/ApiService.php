@@ -174,18 +174,15 @@ class ApiService {
 	/**
 	 * @throws NotFoundException
 	 */
-	public function push(Session $session, Document $document, int $version, array $steps, string $awareness, ?string $token = null): DataResponse {
+	public function push(Session $session, Document $document, int $version, array $steps, string $awareness, ?int $recoveryAttempt, ?string $token = null): DataResponse {
 		try {
 			$session = $this->sessionService->updateSessionAwareness($session, $awareness);
 		} catch (DoesNotExistException $e) {
 			// Session was removed in the meantime. #3875
 			return new DataResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
 		}
-		if (empty($steps)) {
-			return new DataResponse([]);
-		}
 		try {
-			$result = $this->documentService->addStep($document, $session, $steps, $version, $token);
+			$result = $this->documentService->addStep($document, $session, $steps, $version, $recoveryAttempt, $token);
 			$this->addToPushQueue($document, [$awareness, ...array_values($steps)]);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_UNPROCESSABLE_ENTITY);

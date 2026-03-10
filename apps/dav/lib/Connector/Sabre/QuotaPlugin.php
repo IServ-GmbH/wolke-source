@@ -8,11 +8,12 @@
  */
 namespace OCA\DAV\Connector\Sabre;
 
-use OCA\DAV\Upload\FutureFile;
+use OC\Files\View;
 use OCA\DAV\Upload\UploadFolder;
 use OCP\Files\StorageNotAvailableException;
 use Sabre\DAV\Exception\InsufficientStorage;
 use Sabre\DAV\Exception\ServiceUnavailable;
+use Sabre\DAV\IFile;
 use Sabre\DAV\INode;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
@@ -25,9 +26,6 @@ use Sabre\HTTP\ResponseInterface;
  * @license http://code.google.com/p/sabredav/wiki/License Modified BSD License
  */
 class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
-	/** @var \OC\Files\View */
-	private $view;
-
 	/**
 	 * Reference to main server object
 	 *
@@ -36,10 +34,11 @@ class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
 	private $server;
 
 	/**
-	 * @param \OC\Files\View $view
+	 * @param View $view
 	 */
-	public function __construct($view) {
-		$this->view = $view;
+	public function __construct(
+		private $view,
+	) {
 	}
 
 	/**
@@ -81,7 +80,7 @@ class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
 			$destinationPath = $this->server->calculateUri($request->getHeader('Destination'));
 			$quotaPath = $this->getPathForDestination($destinationPath);
 			if ($quotaPath && is_numeric($length)) {
-				return $this->checkQuota($quotaPath, (int) $length);
+				return $this->checkQuota($quotaPath, (int)$length);
 			}
 		}
 
@@ -139,7 +138,7 @@ class QuotaPlugin extends \Sabre\DAV\ServerPlugin {
 	 */
 	public function beforeMove(string $sourcePath, string $destinationPath): bool {
 		$sourceNode = $this->server->tree->getNodeForPath($sourcePath);
-		if (!$sourceNode instanceof FutureFile) {
+		if (!$sourceNode instanceof IFile) {
 			return true;
 		}
 

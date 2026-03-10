@@ -54,7 +54,7 @@ class ContactInteractionListener implements IEventListener {
 			return;
 		}
 
-		$this->atomic(function () use ($event) {
+		$this->atomic(function () use ($event): void {
 			$uid = $event->getUid();
 			$email = $event->getEmail();
 			$federatedCloudId = $event->getFederatedCloudId();
@@ -117,7 +117,8 @@ class ContactInteractionListener implements IEventListener {
 		$props = [
 			'URI' => UUIDUtil::getUUID(),
 			'FN' => $this->getDisplayName($contact->getUid()) ?? $contact->getEmail() ?? $contact->getFederatedCloudId(),
-			'CATEGORIES' => $this->l10n->t('Recently contacted'),
+			// Recently contacted not translated on purpose: https://github.com/nextcloud/contacts/issues/4663
+			'CATEGORIES' => 'Recently contacted',
 		];
 
 		if ($contact->getEmail() !== null) {

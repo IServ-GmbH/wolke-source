@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -39,9 +38,9 @@ use OCP\Files\IAppData;
 use OCP\Group\ISubAdmin;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IGroupManager;
 use OCP\IInitialStateService;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\INavigationManager;
 use OCP\IRequest;
 use OCP\IServerContainer;
@@ -89,11 +88,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 		$this->server->registerAppContainer($appName, $this);
 
 		// aliases
-		/** @deprecated inject $appName */
+		/** @deprecated 26.0.0 inject $appName */
 		$this->registerAlias('AppName', 'appName');
-		/** @deprecated inject $webRoot*/
+		/** @deprecated 26.0.0 inject $webRoot*/
 		$this->registerAlias('WebRoot', 'webRoot');
-		/** @deprecated inject $userId */
+		/** @deprecated 26.0.0 inject $userId */
 		$this->registerAlias('UserId', 'userId');
 
 		/**
@@ -121,9 +120,6 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				$c->get(PsrLoggerAdapter::class),
 				$c->get('AppName')
 			);
-		});
-		$this->registerService(ILogger::class, function (ContainerInterface $c) {
-			return new OC\AppFramework\Logger($this->server->query(ILogger::class), $c->get('AppName'));
 		});
 
 		$this->registerService(IServerContainer::class, function () {
@@ -236,8 +232,8 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				$server->get(LoggerInterface::class),
 				$c->get('AppName'),
 				$server->getUserSession()->isLoggedIn(),
-				$this->getUserId() !== null && $server->getGroupManager()->isAdmin($this->getUserId()),
-				$server->getUserSession()->getUser() !== null && $server->query(ISubAdmin::class)->isSubAdmin($server->getUserSession()->getUser()),
+				$c->get(IGroupManager::class),
+				$c->get(ISubAdmin::class),
 				$server->getAppManager(),
 				$server->getL10N('lib'),
 				$c->get(AuthorizedGroupMapper::class),
@@ -249,7 +245,6 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 				new OC\AppFramework\Middleware\Security\CSPMiddleware(
 					$server->query(OC\Security\CSP\ContentSecurityPolicyManager::class),
 					$server->query(OC\Security\CSP\ContentSecurityPolicyNonceManager::class),
-					$server->query(OC\Security\CSRF\CsrfTokenManager::class)
 				)
 			);
 			$dispatcher->registerMiddleware(
@@ -365,7 +360,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	}
 
 	/**
-	 * @deprecated use IUserSession->isLoggedIn()
+	 * @deprecated 12.0.0 use IUserSession->isLoggedIn()
 	 * @return boolean
 	 */
 	public function isLoggedIn() {
@@ -373,7 +368,7 @@ class DIContainer extends SimpleContainer implements IAppContainer {
 	}
 
 	/**
-	 * @deprecated use IGroupManager->isAdmin($userId)
+	 * @deprecated 12.0.0 use IGroupManager->isAdmin($userId)
 	 * @return boolean
 	 */
 	public function isAdminUser() {

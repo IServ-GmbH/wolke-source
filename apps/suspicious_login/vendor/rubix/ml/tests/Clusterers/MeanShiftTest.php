@@ -9,10 +9,10 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Clusterers\MeanShift;
 use Rubix\ML\Graph\Trees\BallTree;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Clusterers\Seeders\Random;
 use Rubix\ML\Datasets\Generators\Agglomerate;
@@ -32,14 +32,14 @@ class MeanShiftTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -76,16 +76,21 @@ class MeanShiftTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 32, 0], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([0, 32, 255], 20.0),
-        ], [2, 3, 4]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
         $this->estimator = new MeanShift(66, 0.1, 100, 1e-4, new BallTree(), new Random());
 
         $this->metric = new VMeasure();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -140,7 +145,7 @@ class MeanShiftTest extends TestCase
             'radius' => 66.0,
             'ratio' => 0.1,
             'epochs' => 100,
-            'min_shift' => 1e-4,
+            'min shift' => 1e-4,
             'tree' => new BallTree(),
             'seeder' => new Random(),
         ];
@@ -179,7 +184,7 @@ class MeanShiftTest extends TestCase
         $this->assertIsArray($centroids);
         $this->assertContainsOnly('array', $centroids);
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -209,10 +214,5 @@ class MeanShiftTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

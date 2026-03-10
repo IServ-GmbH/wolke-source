@@ -11,7 +11,9 @@ use OC\Tagging\TagMapper;
 use OCP\Db\Exception as DBException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Files\IRootFolder;
 use OCP\IDBConnection;
 use OCP\ITagManager;
 use OCP\ITags;
@@ -23,16 +25,15 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<UserDeletedEvent>
  */
 class TagManager implements ITagManager, IEventListener {
-	private TagMapper $mapper;
-	private IUserSession $userSession;
-	private IDBConnection $connection;
-	private LoggerInterface $logger;
 
-	public function __construct(TagMapper $mapper, IUserSession $userSession, IDBConnection $connection, LoggerInterface $logger) {
-		$this->mapper = $mapper;
-		$this->userSession = $userSession;
-		$this->connection = $connection;
-		$this->logger = $logger;
+	public function __construct(
+		private TagMapper $mapper,
+		private IUserSession $userSession,
+		private IDBConnection $connection,
+		private LoggerInterface $logger,
+		private IEventDispatcher $dispatcher,
+		private IRootFolder $rootFolder,
+	) {
 	}
 
 	/**
@@ -57,7 +58,8 @@ class TagManager implements ITagManager, IEventListener {
 			}
 			$userId = $this->userSession->getUser()->getUId();
 		}
-		return new Tags($this->mapper, $userId, $type, $this->logger, $this->connection, $defaultTags);
+		$userFolder = $this->rootFolder->getUserFolder($userId);
+		return new Tags($this->mapper, $userId, $type, $this->logger, $this->connection, $this->dispatcher, $this->userSession, $userFolder, $defaultTags);
 	}
 
 	/**
@@ -104,7 +106,7 @@ class TagManager implements ITagManager, IEventListener {
 			return;
 		}
 
-		$tagsIds = array_map(fn (array $row) => (int) $row['id'], $result->fetchAll());
+		$tagsIds = array_map(fn (array $row) => (int)$row['id'], $result->fetchAll());
 		$result->closeCursor();
 
 		if (count($tagsIds) === 0) {

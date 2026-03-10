@@ -1,5 +1,5 @@
 diff --git apps/settings/appinfo/info.xml apps/settings/appinfo/info.xml
-index 2674b97..2b0e95c 100644
+index d91c4ff..0c39276 100644
 --- apps/settings/appinfo/info.xml
 +++ apps/settings/appinfo/info.xml
 @@ -24,6 +24,7 @@

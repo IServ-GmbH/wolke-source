@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -19,7 +18,11 @@ class Team implements \JsonSerializable {
 	/**
 	 * @since 29.0.0
 	 */
-	public function __construct(private string $teamId, private string $displayName, private ?string $link) {
+	public function __construct(
+		private string $teamId,
+		private string $displayName,
+		private ?string $link,
+	) {
 	}
 
 	/**
@@ -46,6 +49,12 @@ class Team implements \JsonSerializable {
 	}
 
 	/**
+	 * @return array{
+	 *     teamId: string,
+	 *     displayName: string,
+	 *     link: ?string,
+	 * }
+	 *
 	 * @since 29.0.0
 	 */
 	public function jsonSerialize(): array {

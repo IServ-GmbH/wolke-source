@@ -9,16 +9,14 @@ use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\Backends\Tasks\Proba;
+use Rubix\ML\Traits\Multiprocessing;
 use Rubix\ML\Backends\Tasks\Predict;
-use Rubix\ML\Other\Traits\ProbaSingle;
-use Rubix\ML\Other\Traits\PredictsSingle;
 use Rubix\ML\Backends\Tasks\TrainLearner;
-use Rubix\ML\Other\Traits\Multiprocessing;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -30,6 +28,7 @@ use Rubix\ML\Exceptions\RuntimeException;
 
 use function Rubix\ML\argmax;
 use function Rubix\ML\array_transpose;
+use function array_count_values;
 use function get_class;
 use function in_array;
 
@@ -50,7 +49,7 @@ use function in_array;
  */
 class RandomForest implements Estimator, Learner, Probabilistic, Parallel, RanksFeatures, Persistable
 {
-    use AutotrackRevisions, Multiprocessing, PredictsSingle, ProbaSingle;
+    use AutotrackRevisions, Multiprocessing;
 
     /**
      * The class names of the learners that are compatible with the ensemble.
@@ -74,49 +73,49 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
      *
      * @var \Rubix\ML\Learner
      */
-    protected $base;
+    protected \Rubix\ML\Learner $base;
 
     /**
      * The number of learners to train in the ensemble.
      *
      * @var int
      */
-    protected $estimators;
+    protected int $estimators;
 
     /**
      * The ratio of samples from the training set to randomly subsample to train each base learner.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * Should we sample the bootstrap set to compensate for imbalanced class labels?
      *
      * @var bool
      */
-    protected $balanced;
+    protected bool $balanced;
 
     /**
      * The decision trees that make up the forest.
      *
      * @var list<ClassificationTree|ExtraTreeClassifier>|null
      */
-    protected $trees;
+    protected ?array $trees = null;
 
     /**
      * The zero vector for the possible class outcomes.
      *
      * @var float[]|null
      */
-    protected $classes;
+    protected ?array $classes = null;
 
     /**
      * The dimensionality of the training set.
      *
-     * @var int|null
+     * @var int<0,max>|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param \Rubix\ML\Learner|null $base
@@ -218,7 +217,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        $p = max(self::MIN_SUBSAMPLE, (int) ceil($this->ratio * $dataset->numRows()));
+        $p = max(self::MIN_SUBSAMPLE, (int) ceil($this->ratio * $dataset->numSamples()));
 
         if ($this->balanced) {
             $counts = array_count_values($dataset->labels());
@@ -250,7 +249,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
 
         $this->classes = array_fill_keys($dataset->possibleOutcomes(), 0.0);
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
     }
 
     /**
@@ -279,7 +278,10 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
         $predictions = [];
 
         foreach ($aggregate as $votes) {
-            $predictions[] = argmax(array_count_values($votes));
+            /** @var array<string,int> $counts */
+            $counts = array_count_values($votes);
+
+            $predictions[] = argmax($counts);
         }
 
         return $predictions;
@@ -290,7 +292,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -300,7 +302,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
 
         DatasetHasDimensionality::with($dataset, $this->featureCount)->check();
 
-        $probabilities = array_fill(0, $dataset->numRows(), $this->classes);
+        $probabilities = array_fill(0, $dataset->numSamples(), $this->classes);
 
         $this->backend->flush();
 
@@ -329,7 +331,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     }
 
     /**
-     * Return the normalized importance scores of each feature column of the training set.
+     * Return the importance scores of each feature column of the training set.
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return float[]
@@ -357,6 +359,8 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

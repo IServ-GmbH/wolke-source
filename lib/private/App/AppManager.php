@@ -7,7 +7,6 @@
  */
 namespace OC\App;
 
-use InvalidArgumentException;
 use OC\AppConfig;
 use OC\AppFramework\Bootstrap\Coordinator;
 use OC\ServerNotAvailableException;
@@ -25,9 +24,11 @@ use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\ServerVersion;
 use OCP\Settings\IManager as ISettingsManager;
 use Psr\Log\LoggerInterface;
 
@@ -68,6 +69,7 @@ class AppManager implements IAppManager {
 
 	private ?AppConfig $appConfig = null;
 	private ?IURLGenerator $urlGenerator = null;
+	private ?INavigationManager $navigationManager = null;
 
 	/**
 	 * Be extremely careful when injecting classes here. The AppManager is used by the installer,
@@ -80,7 +82,15 @@ class AppManager implements IAppManager {
 		private ICacheFactory $memCacheFactory,
 		private IEventDispatcher $dispatcher,
 		private LoggerInterface $logger,
+		private ServerVersion $serverVersion,
 	) {
+	}
+
+	private function getNavigationManager(): INavigationManager {
+		if ($this->navigationManager === null) {
+			$this->navigationManager = \OCP\Server::get(INavigationManager::class);
+		}
+		return $this->navigationManager;
 	}
 
 	public function getAppIcon(string $appId, bool $dark = false): ?string {
@@ -149,10 +159,41 @@ class AppManager implements IAppManager {
 	}
 
 	/**
+	 * Get a list of all apps in the apps folder
+	 *
+	 * @return list<string> an array of app names (string IDs)
+	 */
+	public function getAllAppsInAppsFolders(): array {
+		$apps = [];
+
+		foreach (\OC::$APPSROOTS as $apps_dir) {
+			if (!is_readable($apps_dir['path'])) {
+				$this->logger->warning('unable to read app folder : ' . $apps_dir['path'], ['app' => 'core']);
+				continue;
+			}
+			$dh = opendir($apps_dir['path']);
+
+			if (is_resource($dh)) {
+				while (($file = readdir($dh)) !== false) {
+					if (
+						$file[0] != '.'
+						&& is_dir($apps_dir['path'] . '/' . $file)
+						&& is_file($apps_dir['path'] . '/' . $file . '/appinfo/info.xml')
+					) {
+						$apps[] = $file;
+					}
+				}
+			}
+		}
+
+		return array_values(array_unique($apps));
+	}
+
+	/**
 	 * List all apps enabled for a user
 	 *
 	 * @param \OCP\IUser $user
-	 * @return string[]
+	 * @return list<string>
 	 */
 	public function getEnabledAppsForUser(IUser $user) {
 		$apps = $this->getInstalledAppsValues();
@@ -162,10 +203,6 @@ class AppManager implements IAppManager {
 		return array_keys($appsForUser);
 	}
 
-	/**
-	 * @param IGroup $group
-	 * @return array
-	 */
 	public function getEnabledAppsForGroup(IGroup $group): array {
 		$apps = $this->getInstalledAppsValues();
 		$appsForGroups = array_filter($apps, function ($enabled) use ($group) {
@@ -266,10 +303,6 @@ class AppManager implements IAppManager {
 		return $this->autoDisabledApps;
 	}
 
-	/**
-	 * @param string $appId
-	 * @return array
-	 */
 	public function getAppRestriction(string $appId): array {
 		$values = $this->getInstalledAppsValues();
 
@@ -282,7 +315,6 @@ class AppManager implements IAppManager {
 		}
 		return json_decode($values[$appId], true);
 	}
-
 
 	/**
 	 * Check if an app is enabled for user
@@ -372,12 +404,25 @@ class AppManager implements IAppManager {
 		return isset($installedApps[$appId]);
 	}
 
-	public function ignoreNextcloudRequirementForApp(string $appId): void {
+	/**
+	 * Overwrite the `max-version` requirement for this app.
+	 */
+	public function overwriteNextcloudRequirement(string $appId): void {
 		$ignoreMaxApps = $this->config->getSystemValue('app_install_overwrite', []);
 		if (!in_array($appId, $ignoreMaxApps, true)) {
 			$ignoreMaxApps[] = $appId;
-			$this->config->setSystemValue('app_install_overwrite', $ignoreMaxApps);
 		}
+		$this->config->setSystemValue('app_install_overwrite', $ignoreMaxApps);
+	}
+
+	/**
+	 * Remove the `max-version` overwrite for this app.
+	 * This means this app now again can not be enabled if the `max-version` is smaller than the current Nextcloud version.
+	 */
+	public function removeOverwriteNextcloudRequirement(string $appId): void {
+		$ignoreMaxApps = $this->config->getSystemValue('app_install_overwrite', []);
+		$ignoreMaxApps = array_filter($ignoreMaxApps, fn (string $id) => $id !== $appId);
+		$this->config->setSystemValue('app_install_overwrite', $ignoreMaxApps);
 	}
 
 	public function loadApp(string $app): void {
@@ -481,8 +526,8 @@ class AppManager implements IAppManager {
 
 		if (!empty($info['collaboration']['plugins'])) {
 			// deal with one or many plugin entries
-			$plugins = isset($info['collaboration']['plugins']['plugin']['@value']) ?
-				[$info['collaboration']['plugins']['plugin']] : $info['collaboration']['plugins']['plugin'];
+			$plugins = isset($info['collaboration']['plugins']['plugin']['@value'])
+				? [$info['collaboration']['plugins']['plugin']] : $info['collaboration']['plugins']['plugin'];
 			$collaboratorSearch = null;
 			$autoCompleteManager = null;
 			foreach ($plugins as $plugin) {
@@ -535,7 +580,7 @@ class AppManager implements IAppManager {
 		$this->getAppPath($appId);
 
 		if ($forceEnable) {
-			$this->ignoreNextcloudRequirementForApp($appId);
+			$this->overwriteNextcloudRequirement($appId);
 		}
 
 		$this->installedAppsCache[$appId] = 'yes';
@@ -581,7 +626,7 @@ class AppManager implements IAppManager {
 		}
 
 		if ($forceEnable) {
-			$this->ignoreNextcloudRequirementForApp($appId);
+			$this->overwriteNextcloudRequirement($appId);
 		}
 
 		/** @var string[] $groupIds */
@@ -608,7 +653,7 @@ class AppManager implements IAppManager {
 	 * @param bool $automaticDisabled
 	 * @throws \Exception if app can't be disabled
 	 */
-	public function disableApp($appId, $automaticDisabled = false) {
+	public function disableApp($appId, $automaticDisabled = false): void {
 		if ($this->isAlwaysEnabled($appId)) {
 			throw new \Exception("$appId can't be disabled.");
 		}
@@ -640,11 +685,9 @@ class AppManager implements IAppManager {
 	/**
 	 * Get the directory for the given app.
 	 *
-	 * @param string $appId
-	 * @return string
 	 * @throws AppPathNotFoundException if app folder can't be found
 	 */
-	public function getAppPath($appId) {
+	public function getAppPath(string $appId): string {
 		$appPath = \OC_App::getAppPath($appId);
 		if ($appPath === false) {
 			throw new AppPathNotFoundException('Could not find path for ' . $appId);
@@ -670,7 +713,7 @@ class AppManager implements IAppManager {
 	/**
 	 * Clear the cached list of apps when enabling/disabling an app
 	 */
-	public function clearAppsCache() {
+	public function clearAppsCache(): void {
 		$this->appInfos = [];
 	}
 
@@ -708,25 +751,19 @@ class AppManager implements IAppManager {
 	 */
 	public function getAppInfo(string $appId, bool $path = false, $lang = null) {
 		if ($path) {
-			$file = $appId;
-		} else {
-			if ($lang === null && isset($this->appInfos[$appId])) {
-				return $this->appInfos[$appId];
-			}
-			try {
-				$appPath = $this->getAppPath($appId);
-			} catch (AppPathNotFoundException $e) {
-				return null;
-			}
-			$file = $appPath . '/appinfo/info.xml';
+			throw new \InvalidArgumentException('Calling IAppManager::getAppInfo() with a path is no longer supported. Please call IAppManager::getAppInfoByPath() instead and verify that the path is good before calling.');
 		}
-
-		$parser = new InfoParser($this->memCacheFactory->createLocal('core.appinfo'));
-		$data = $parser->parse($file);
-
-		if (is_array($data)) {
-			$data = \OC_App::parseAppInfo($data, $lang);
+		if ($lang === null && isset($this->appInfos[$appId])) {
+			return $this->appInfos[$appId];
 		}
+		try {
+			$appPath = $this->getAppPath($appId);
+		} catch (AppPathNotFoundException) {
+			return null;
+		}
+		$file = $appPath . '/appinfo/info.xml';
+
+		$data = $this->getAppInfoByPath($file, $lang);
 
 		if ($lang === null) {
 			$this->appInfos[$appId] = $data;
@@ -735,10 +772,25 @@ class AppManager implements IAppManager {
 		return $data;
 	}
 
+	public function getAppInfoByPath(string $path, ?string $lang = null): ?array {
+		if (!str_ends_with($path, '/appinfo/info.xml')) {
+			return null;
+		}
+
+		$parser = new InfoParser($this->memCacheFactory->createLocal('core.appinfo'));
+		$data = $parser->parse($path);
+
+		if (is_array($data)) {
+			$data = \OC_App::parseAppInfo($data, $lang);
+		}
+
+		return $data;
+	}
+
 	public function getAppVersion(string $appId, bool $useCache = true): string {
 		if (!$useCache || !isset($this->appVersions[$appId])) {
 			if ($appId === 'core') {
-				$this->appVersions[$appId] = \OC_Util::getVersionString();
+				$this->appVersions[$appId] = $this->serverVersion->getVersionString();
 			} else {
 				$appInfo = $this->getAppInfo($appId);
 				$this->appVersions[$appId] = ($appInfo !== null && isset($appInfo['version'])) ? $appInfo['version'] : '0';
@@ -825,60 +877,42 @@ class AppManager implements IAppManager {
 		return $this->defaultEnabled;
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function getDefaultAppForUser(?IUser $user = null, bool $withFallbacks = true): string {
-		// Set fallback to always-enabled files app
-		$appId = $withFallbacks ? 'files' : '';
-		$defaultApps = explode(',', $this->config->getSystemValueString('defaultapp', ''));
-		$defaultApps = array_filter($defaultApps);
+		$id = $this->getNavigationManager()->getDefaultEntryIdForUser($user, $withFallbacks);
+		$entry = $this->getNavigationManager()->get($id);
+		return (string)$entry['app'];
+	}
 
-		$user ??= $this->userSession->getUser();
+	/**
+	 * @inheritdoc
+	 */
+	public function getDefaultApps(): array {
+		$ids = $this->getNavigationManager()->getDefaultEntryIds();
 
-		if ($user !== null) {
-			$userDefaultApps = explode(',', $this->config->getUserValue($user->getUID(), 'core', 'defaultapp'));
-			$defaultApps = array_filter(array_merge($userDefaultApps, $defaultApps));
-			if (empty($defaultApps) && $withFallbacks) {
-				/* Fallback on user defined apporder */
-				$customOrders = json_decode($this->config->getUserValue($user->getUID(), 'core', 'apporder', '[]'), true, flags:JSON_THROW_ON_ERROR);
-				if (!empty($customOrders)) {
-					// filter only entries with app key (when added using closures or NavigationManager::add the app is not guranteed to be set)
-					$customOrders = array_filter($customOrders, fn ($entry) => isset($entry['app']));
-					// sort apps by order
-					usort($customOrders, fn ($a, $b) => $a['order'] - $b['order']);
-					// set default apps to sorted apps
-					$defaultApps = array_map(fn ($entry) => $entry['app'], $customOrders);
+		return array_values(array_unique(array_map(function (string $id) {
+			$entry = $this->getNavigationManager()->get($id);
+			return (string)$entry['app'];
+		}, $ids)));
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function setDefaultApps(array $defaultApps): void {
+		$entries = $this->getNavigationManager()->getAll();
+		$ids = [];
+		foreach ($defaultApps as $defaultApp) {
+			foreach ($entries as $entry) {
+				if ((string)$entry['app'] === $defaultApp) {
+					$ids[] = (string)$entry['id'];
+					break;
 				}
 			}
 		}
-
-		if (empty($defaultApps) && $withFallbacks) {
-			$defaultApps = ['dashboard','files'];
-		}
-
-		// Find the first app that is enabled for the current user
-		foreach ($defaultApps as $defaultApp) {
-			$defaultApp = \OC_App::cleanAppId(strip_tags($defaultApp));
-			if ($this->isEnabledForUser($defaultApp, $user)) {
-				$appId = $defaultApp;
-				break;
-			}
-		}
-
-		return $appId;
-	}
-
-	public function getDefaultApps(): array {
-		return explode(',', $this->config->getSystemValueString('defaultapp', 'dashboard,files'));
-	}
-
-	public function setDefaultApps(array $defaultApps): void {
-		foreach ($defaultApps as $app) {
-			if (!$this->isInstalled($app)) {
-				$this->logger->debug('Can not set not installed app as default app', ['missing_app' => $app]);
-				throw new InvalidArgumentException('App is not installed');
-			}
-		}
-
-		$this->config->setSystemValue('defaultapp', join(',', $defaultApps));
+		$this->getNavigationManager()->setDefaultEntryIds($ids);
 	}
 
 	public function isBackendRequired(string $backend): bool {
@@ -893,5 +927,25 @@ class AppManager implements IAppManager {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Clean the appId from forbidden characters
+	 *
+	 * @psalm-taint-escape callable
+	 * @psalm-taint-escape cookie
+	 * @psalm-taint-escape file
+	 * @psalm-taint-escape has_quotes
+	 * @psalm-taint-escape header
+	 * @psalm-taint-escape html
+	 * @psalm-taint-escape include
+	 * @psalm-taint-escape ldap
+	 * @psalm-taint-escape shell
+	 * @psalm-taint-escape sql
+	 * @psalm-taint-escape unserialize
+	 */
+	public function cleanAppId(string $app): string {
+		/* Only lowercase alphanumeric is allowed */
+		return preg_replace('/(^[0-9_-]+|[^a-z0-9_-]+|[_-]+$)/', '', $app);
 	}
 }

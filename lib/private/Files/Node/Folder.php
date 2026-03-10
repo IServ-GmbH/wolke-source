@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -104,26 +103,15 @@ class Folder extends Node implements \OCP\Files\Folder {
 		}
 	}
 
-	/**
-	 * Get the node at $path
-	 *
-	 * @param string $path
-	 * @return \OC\Files\Node\Node
-	 * @throws \OCP\Files\NotFoundException
-	 */
 	public function get($path) {
 		return $this->root->get($this->getFullPath($path));
 	}
 
-	/**
-	 * @param string $path
-	 * @return bool
-	 */
 	public function nodeExists($path) {
 		try {
 			$this->get($path);
 			return true;
-		} catch (NotFoundException $e) {
+		} catch (NotFoundException|NotPermittedException) {
 			return false;
 		}
 	}
@@ -267,7 +255,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 
 		$owner = null;
 		$ownerId = $storage->getOwner($cacheEntry['internalPath']);
-		if (!empty($ownerId)) {
+		if ($ownerId !== false) {
 			// Cache the user manager (for performance)
 			if ($this->userManager === null) {
 				$this->userManager = \OCP\Server::get(IUserManager::class);
@@ -322,7 +310,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 	 * @return \OCP\Files\Node[]
 	 */
 	public function getById($id) {
-		return $this->root->getByIdInPath((int) $id, $this->getPath());
+		return $this->root->getByIdInPath((int)$id, $this->getPath());
 	}
 
 	public function getFirstNodeById(int $id): ?\OCP\Files\Node {

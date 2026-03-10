@@ -1,11 +1,12 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 namespace OCA\DAV\Connector\Sabre;
 
+use OCP\AppFramework\Http;
+use OCP\Defaults;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\ISession;
@@ -15,25 +16,15 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 class BearerAuth extends AbstractBearer {
-	private IUserSession $userSession;
-	private ISession $session;
-	private IRequest $request;
-	private IConfig $config;
-	private string $principalPrefix;
-
-	public function __construct(IUserSession $userSession,
-		ISession $session,
-		IRequest $request,
-		IConfig $config,
-		$principalPrefix = 'principals/users/') {
-		$this->userSession = $userSession;
-		$this->session = $session;
-		$this->request = $request;
-		$this->config = $config;
-		$this->principalPrefix = $principalPrefix;
-
+	public function __construct(
+		private IUserSession $userSession,
+		private ISession $session,
+		private IRequest $request,
+		private IConfig $config,
+		private string $principalPrefix = 'principals/users/',
+	) {
 		// setup realm
-		$defaults = new \OCP\Defaults();
+		$defaults = new Defaults();
 		$this->realm = $defaults->getName() ?: 'Nextcloud';
 	}
 
@@ -76,6 +67,6 @@ class BearerAuth extends AbstractBearer {
 			return;
 		}
 
-		$response->setStatus(401);
+		$response->setStatus(Http::STATUS_UNAUTHORIZED);
 	}
 }

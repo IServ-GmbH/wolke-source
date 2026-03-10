@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reverse proxy &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Text app" href="text_configuration.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -60,7 +64,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
-<li class="toctree-l2"><a class="reference internal" href="occ_command.html">Using the occ command</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
@@ -98,7 +101,9 @@
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -113,6 +118,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -219,10 +225,10 @@ reverse proxy. The recommended solution is that your reverse proxy does the redi
 <section id="traefik-2">
 <h3>Traefik 2<a class="headerlink" href="#traefik-2" title="Link to this heading"></a></h3>
 <p>Using Docker labels:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">traefik</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">routers</span><span class="o">.</span><span class="n">nextcloud</span><span class="o">.</span><span class="n">middlewares</span><span class="p">:</span> <span class="s1">&#39;nextcloud_redirectregex&#39;</span>
-<span class="n">traefik</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">middlewares</span><span class="o">.</span><span class="n">nextcloud_redirectregex</span><span class="o">.</span><span class="n">redirectregex</span><span class="o">.</span><span class="n">permanent</span><span class="p">:</span> <span class="n">true</span>
-<span class="n">traefik</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">middlewares</span><span class="o">.</span><span class="n">nextcloud_redirectregex</span><span class="o">.</span><span class="n">redirectregex</span><span class="o">.</span><span class="n">regex</span><span class="p">:</span> <span class="s1">&#39;https://(.*)/.well-known/(?:card|cal)dav&#39;</span>
-<span class="n">traefik</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">middlewares</span><span class="o">.</span><span class="n">nextcloud_redirectregex</span><span class="o">.</span><span class="n">redirectregex</span><span class="o">.</span><span class="n">replacement</span><span class="p">:</span> <span class="s1">&#39;https://$$</span><span class="si">{1}</span><span class="s1">/remote.php/dav&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="s2">&quot;traefik.http.routers.nextcloud.middlewares=nextcloud_redirectregex@docker&quot;</span>
+<span class="o">-</span> <span class="s2">&quot;traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent=true&quot;</span>
+<span class="o">-</span> <span class="s2">&quot;traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex=https://(.*)/.well-known/(?:card|cal)dav&quot;</span>
+<span class="o">-</span> <span class="s2">&quot;traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement=https://$$</span><span class="si">{1}</span><span class="s2">/remote.php/dav&quot;</span>
 </pre></div>
 </div>
 <p>Using a TOML file:</p>
@@ -243,6 +249,7 @@ reverse proxy. The recommended solution is that your reverse proxy does the redi
 </section>
 <section id="nginx">
 <h3>NGINX<a class="headerlink" href="#nginx" title="Link to this heading"></a></h3>
+<p>If using nginx as Nextcloud’s webserver from behind another nginx reverse proxy, put this only in the reverse proxy’s configuration.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>location /.well-known/carddav {
     return 301 $scheme://$host/remote.php/dav;
 }
@@ -250,13 +257,14 @@ reverse proxy. The recommended solution is that your reverse proxy does the redi
 location /.well-known/caldav {
     return 301 $scheme://$host/remote.php/dav;
 }
+
+location ^~ /.well-known {
+    return 301 $scheme://$host/index.php$uri;
+}
 </pre></div>
 </div>
-<p>or</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>rewrite ^/\.well-known/carddav https://$server_name/remote.php/dav/ redirect;
-rewrite ^/\.well-known/caldav https://$server_name/remote.php/dav/ redirect;
-</pre></div>
-</div>
+<p>When using NGINX Proxy Manager, the entry <code class="docutils literal notranslate"><span class="pre">proxy_hide_header</span> <span class="pre">Upgrade;</span></code> must be added in the <em>“Advanced Settings”</em>
+of the proxy host under <em>“Custom Nginx Configuration”</em>, otherwise mobile devices (iPad, iPhone etc.) will simply receive the Error Message “Connection Closed”.</p>
 </section>
 <section id="caddy">
 <h3>Caddy<a class="headerlink" href="#caddy" title="Link to this heading"></a></h3>
@@ -285,7 +293,7 @@ $CONFIG = array (
   &#39;overwriteprotocol&#39; =&gt; &#39;https&#39;,
   &#39;overwritewebroot&#39;  =&gt; &#39;/domain.tld/nextcloud&#39;,
   &#39;overwritecondaddr&#39; =&gt; &#39;^10\.0\.0\.1$&#39;,
-  &#39;overwrite.cli.url&#39; =&gt; &#39;https://domain.tld/,
+  &#39;overwrite.cli.url&#39; =&gt; &#39;https://domain.tld/&#39;,
 );
 </pre></div>
 </div>
@@ -310,7 +318,7 @@ create the <code class="file docutils literal notranslate"><span class="pre">con
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -346,6 +354,14 @@ create the <code class="file docutils literal notranslate"><span class="pre">con
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

@@ -6,25 +6,25 @@ use Rubix\ML\Online;
 use Rubix\ML\Learner;
 use Rubix\ML\Verbose;
 use Rubix\ML\DataType;
+use Rubix\ML\Encoding;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
+use Rubix\ML\Traits\LoggerAware;
 use Rubix\ML\NeuralNet\Snapshot;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\NeuralNet\FeedForward;
 use Rubix\ML\NeuralNet\Layers\Dense;
 use Rubix\ML\NeuralNet\Layers\Hidden;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
-use Rubix\ML\Other\Traits\PredictsSingle;
 use Rubix\ML\NeuralNet\Layers\Continuous;
 use Rubix\ML\CrossValidation\Metrics\RMSE;
 use Rubix\ML\NeuralNet\Layers\Placeholder1D;
 use Rubix\ML\NeuralNet\Optimizers\Optimizer;
 use Rubix\ML\NeuralNet\Initializers\Xavier2;
 use Rubix\ML\CrossValidation\Metrics\Metric;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -36,9 +36,11 @@ use Rubix\ML\Specifications\EstimatorIsCompatibleWithMetric;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function is_nan;
 use function count;
+use function get_object_vars;
 
 /**
  * MLP Regressor
@@ -58,111 +60,106 @@ use function count;
  */
 class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, LoggerAware;
+    use AutotrackRevisions, LoggerAware;
 
     /**
      * An array composing the user-specified hidden layers of the network in order.
      *
      * @var \Rubix\ML\NeuralNet\Layers\Hidden[]
      */
-    protected $hiddenLayers = [
+    protected array $hiddenLayers = [
         //
     ];
 
     /**
      * The number of training samples to process at a time.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $batchSize;
+    protected int $batchSize;
 
     /**
      * The gradient descent optimizer used to update the network parameters.
      *
      * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
      */
-    protected $optimizer;
+    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
 
     /**
      * The amount of L2 regularization applied to the weights of the output layer.
      *
      * @var float
      */
-    protected $alpha;
+    protected float $l2Penalty;
 
     /**
-     * The maximum number of training epochs. i.e. the number of times to iterate
-     * over the entire training set before terminating.
+     * The maximum number of training epochs. i.e. the number of times to iterate before terminating.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum change in the training loss necessary to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
-     * The number of epochs without improvement in the validation score to wait
-     * before considering an early stop.
+     * The number of epochs without improvement in the validation score to wait before considering an early stop.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $window;
+    protected int $window;
 
     /**
-     * The proportion of training samples to use for validation and progress
-     * monitoring.
+     * The proportion of training samples to use for validation and progress monitoring.
      *
      * @var float
      */
-    protected $holdOut;
+    protected float $holdOut;
 
     /**
-     * The function that computes the loss associated with an erroneous
-     * activation during training.
+     * The function that computes the loss associated with an erroneous activation during training.
      *
      * @var \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss
      */
-    protected $costFn;
+    protected \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss $costFn;
 
     /**
-     * The metric used to score the generalization performance of the model
-     * during training.
+     * The metric used to score the generalization performance of the model during training.
      *
      * @var \Rubix\ML\CrossValidation\Metrics\Metric
      */
-    protected $metric;
+    protected \Rubix\ML\CrossValidation\Metrics\Metric $metric;
 
     /**
      * The underlying neural network instance.
      *
      * @var \Rubix\ML\NeuralNet\FeedForward|null
      */
-    protected $network;
+    protected ?\Rubix\ML\NeuralNet\FeedForward $network = null;
 
     /**
      * The validation scores at each epoch from the last training session.
      *
      * @var float[]|null
      */
-    protected $scores;
+    protected ?array $scores = null;
 
     /**
      * The loss at each epoch from the last training session.
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * @param \Rubix\ML\NeuralNet\Layers\Hidden[] $hiddenLayers
      * @param int $batchSize
      * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer|null $optimizer
-     * @param float $alpha
+     * @param float $l2Penalty
      * @param int $epochs
      * @param float $minChange
      * @param int $window
@@ -175,10 +172,10 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
         array $hiddenLayers = [],
         int $batchSize = 128,
         ?Optimizer $optimizer = null,
-        float $alpha = 1e-4,
+        float $l2Penalty = 1e-4,
         int $epochs = 1000,
         float $minChange = 1e-4,
-        int $window = 3,
+        int $window = 5,
         float $holdOut = 0.1,
         ?RegressionLoss $costFn = null,
         ?Metric $metric = null
@@ -195,12 +192,12 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
                 . " greater than 0, $batchSize given.");
         }
 
-        if ($alpha < 0.0) {
-            throw new InvalidArgumentException('Alpha must be'
-                . " greater than 0, $alpha given.");
+        if ($l2Penalty < 0.0) {
+            throw new InvalidArgumentException('L2 Penalty must be'
+                . " greater than 0, $l2Penalty given.");
         }
 
-        if ($epochs < 1) {
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -227,7 +224,7 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
         $this->hiddenLayers = $hiddenLayers;
         $this->batchSize = $batchSize;
         $this->optimizer = $optimizer ?? new Adam();
-        $this->alpha = $alpha;
+        $this->l2Penalty = $l2Penalty;
         $this->epochs = $epochs;
         $this->minChange = $minChange;
         $this->window = $window;
@@ -272,15 +269,15 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     public function params() : array
     {
         return [
-            'hidden_layers' => $this->hiddenLayers,
-            'batch_size' => $this->batchSize,
+            'hidden layers' => $this->hiddenLayers,
+            'batch size' => $this->batchSize,
             'optimizer' => $this->optimizer,
-            'alpha' => $this->alpha,
+            'l2 penalty' => $this->l2Penalty,
             'epochs' => $this->epochs,
-            'min_change' => $this->minChange,
+            'min change' => $this->minChange,
             'window' => $this->window,
-            'hold_out' => $this->holdOut,
-            'cost_fn' => $this->costFn,
+            'hold out' => $this->holdOut,
+            'cost fn' => $this->costFn,
             'metric' => $this->metric,
         ];
     }
@@ -293,6 +290,26 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     public function trained() : bool
     {
         return isset($this->network);
+    }
+
+    /**
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'score' => $this->scores[$epoch] ?? null,
+                'loss' => $loss,
+            ];
+        }
     }
 
     /**
@@ -310,9 +327,9 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -336,10 +353,10 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
 
         $hiddenLayers = $this->hiddenLayers;
 
-        $hiddenLayers[] = new Dense(1, $this->alpha, true, new Xavier2());
+        $hiddenLayers[] = new Dense(1, $this->l2Penalty, true, new Xavier2());
 
         $this->network = new FeedForward(
-            new Placeholder1D($dataset->numColumns()),
+            new Placeholder1D($dataset->numFeatures()),
             $hiddenLayers,
             new Continuous($this->costFn),
             $this->optimizer
@@ -373,57 +390,65 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
         [$testing, $training] = $dataset->randomize()->split($this->holdOut);
 
-        [$min, $max] = $this->metric->range();
+        [$minScore, $maxScore] = $this->metric->range()->list();
 
-        $bestScore = $min;
-        $bestEpoch = $delta = 0;
-        $snapshot = null;
+        $bestScore = $minScore;
+        $bestEpoch = $numWorseEpochs = 0;
+        $loss = 0.0;
+        $score = $snapshot = null;
         $prevLoss = INF;
 
-        $this->scores = $this->steps = [];
+        $this->scores = $this->losses = [];
 
         for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
             $batches = $training->randomize()->batch($this->batchSize);
 
             $loss = 0.0;
-            $score = null;
 
             foreach ($batches as $batch) {
                 $loss += $this->network->roundtrip($batch);
             }
 
+            $loss /= count($batches);
+
+            $lossChange = abs($prevLoss - $loss);
+
+            $this->losses[$epoch] = $loss;
+
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
             }
-
-            $loss /= count($batches);
-
-            $this->steps[] = $loss;
 
             if (!$testing->empty()) {
                 $predictions = $this->predict($testing);
 
                 $score = $this->metric->score($predictions, $testing->labels());
 
-                $this->scores[] = $score;
+                $this->scores[$epoch] = $score;
             }
 
             if ($this->logger) {
-                $this->logger->info("Epoch $epoch - {$this->metric}: "
-                    . ($score ?? 'n/a') . ", {$this->costFn}: $loss");
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "{$this->costFn}: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}, "
+                    . "{$this->metric}: " . ($score ?? 'N/A');
+
+                $this->logger->info($message);
             }
 
             if (isset($score)) {
-                if ($score >= $max) {
+                if ($score >= $maxScore) {
                     break;
                 }
 
@@ -433,32 +458,28 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
 
                     $snapshot = Snapshot::take($this->network);
 
-                    $delta = 0;
+                    $numWorseEpochs = 0;
                 } else {
-                    ++$delta;
+                    ++$numWorseEpochs;
                 }
 
-                if ($delta >= $this->window) {
+                if ($numWorseEpochs >= $this->window) {
                     break;
                 }
             }
 
-            if ($loss <= 0.0) {
-                break;
-            }
-
-            if (abs($prevLoss - $loss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
             $prevLoss = $loss;
         }
 
-        if ($snapshot and end($this->scores) < $bestScore) {
+        if ($snapshot and (end($this->scores) < $bestScore or is_nan($loss))) {
             $snapshot->restore();
 
             if ($this->logger) {
-                $this->logger->info("Network restored from snapshot at epoch $bestEpoch");
+                $this->logger->info("Model state restored to epoch $bestEpoch");
             }
         }
 
@@ -483,11 +504,46 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
 
         DatasetHasDimensionality::with($dataset, $this->network->input()->width())->check();
 
-        return $this->network->infer($dataset)->column(0);
+        $activations = $this->network->infer($dataset);
+
+        $activations = array_column($activations->asArray(), 0);
+
+        return $activations;
+    }
+
+    /**
+     * Export the network architecture as a graph in dot format.
+     *
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @return \Rubix\ML\Encoding
+     */
+    public function exportGraphviz() : Encoding
+    {
+        if (!$this->network) {
+            throw new RuntimeException('Must train network first.');
+        }
+
+        return $this->network->exportGraphviz();
+    }
+
+    /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses'], $properties['scores']);
+
+        return $properties;
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -11,27 +11,26 @@ SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
 SPDX-FileCopyrightText: Morris Jobke
 SPDX-FileCopyrightText: GitHub Inc.
 SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (https://cure53.de/)
-SPDX-FileCopyrightText: Christoph Wurst
 
 
 This file is generated from multiple sources. Included packages:
 - semver
-	- version: 7.6.3
+	- version: 7.7.3
 	- license: ISC
 - @nextcloud/event-bus
-	- version: 3.3.2
+	- version: 3.3.3
 	- license: GPL-3.0-or-later
 - @nextcloud/l10n
-	- version: 3.4.0
+	- version: 3.4.1
 	- license: GPL-3.0-or-later
 - @nextcloud/router
-	- version: 3.0.1
+	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - css-loader
-	- version: 7.1.2
+	- version: 7.1.3
 	- license: MIT
 - dompurify
-	- version: 3.2.6
+	- version: 3.3.1
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
@@ -52,7 +51,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - webpack
-	- version: 5.102.1
+	- version: 5.105.0
 	- license: MIT
 - nextcloud
 	- version: 1.0.0

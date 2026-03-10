@@ -38,13 +38,13 @@ use Psr\Log\LoggerInterface;
  */
 class TextProcessingApiController extends \OCP\AppFramework\OCSController {
 	public function __construct(
-		string                     $appName,
-		IRequest                   $request,
-		private IManager           $textProcessingManager,
-		private IL10N              $l,
-		private ?string            $userId,
+		string $appName,
+		IRequest $request,
+		private IManager $textProcessingManager,
+		private IL10N $l,
+		private ?string $userId,
 		private ContainerInterface $container,
-		private LoggerInterface    $logger,
+		private LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -52,7 +52,7 @@ class TextProcessingApiController extends \OCP\AppFramework\OCSController {
 	/**
 	 * This endpoint returns all available LanguageModel task types
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{types: array{id: string, name: string, description: string}[]}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{types: list<array{id: string, name: string, description: string}>}, array{}>
 	 *
 	 * 200: Task types returned
 	 */
@@ -101,6 +101,9 @@ class TextProcessingApiController extends \OCP\AppFramework\OCSController {
 	#[AnonRateLimit(limit: 5, period: 120)]
 	#[ApiRoute(verb: 'POST', url: '/schedule', root: '/textprocessing')]
 	public function schedule(string $input, string $type, string $appId, string $identifier = ''): DataResponse {
+		if (strlen($input) > 64_000) {
+			return new DataResponse(['message' => $this->l->t('Input text is too long')], Http::STATUS_BAD_REQUEST);
+		}
 		try {
 			$task = new Task($type, $input, $appId, $this->userId, $identifier);
 		} catch (InvalidArgumentException) {
@@ -191,19 +194,18 @@ class TextProcessingApiController extends \OCP\AppFramework\OCSController {
 	 *
 	 * @param string $appId ID of the app
 	 * @param string|null $identifier An arbitrary identifier for the task
-	 * @return DataResponse<Http::STATUS_OK, array{tasks: CoreTextProcessingTask[]}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{tasks: list<CoreTextProcessingTask>}, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR, array{message: string}, array{}>
 	 *
-	 *  200: Task list returned
+	 * 200: Task list returned
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'GET', url: '/tasks/app/{appId}', root: '/textprocessing')]
 	public function listTasksByApp(string $appId, ?string $identifier = null): DataResponse {
 		try {
 			$tasks = $this->textProcessingManager->getUserTasksByApp($this->userId, $appId, $identifier);
-			/** @var CoreTextProcessingTask[] $json */
-			$json = array_map(static function (Task $task) {
+			$json = array_values(array_map(static function (Task $task) {
 				return $task->jsonSerialize();
-			}, $tasks);
+			}, $tasks));
 
 			return new DataResponse([
 				'tasks' => $json,

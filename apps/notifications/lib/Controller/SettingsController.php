@@ -36,7 +36,7 @@ class SettingsController extends OCSController {
 	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)
 	 * @param string $soundNotification Enable sound for notifications ('yes' or 'no')
 	 * @param string $soundTalk Enable sound for Talk notifications ('yes' or 'no')
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 *
 	 * 200: Personal settings updated
 	 */
@@ -57,13 +57,13 @@ class SettingsController extends OCSController {
 	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)
 	 * @param string $soundNotification Enable sound for notifications ('yes' or 'no')
 	 * @param string $soundTalk Enable sound for Talk notifications ('yes' or 'no')
-	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
 	 *
 	 * 200: Admin settings updated
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
 	public function admin(int $batchSetting, string $soundNotification, string $soundTalk): DataResponse {
-		$this->config->setAppValue(Application::APP_ID, 'setting_batchtime', (string) $batchSetting);
+		$this->config->setAppValue(Application::APP_ID, 'setting_batchtime', (string)$batchSetting);
 		$this->config->setAppValue(Application::APP_ID, 'sound_notification', $soundNotification !== 'no' ? 'yes' : 'no');
 		$this->config->setAppValue(Application::APP_ID, 'sound_talk', $soundTalk !== 'no' ? 'yes' : 'no');
 

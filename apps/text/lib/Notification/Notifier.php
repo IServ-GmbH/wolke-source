@@ -8,31 +8,32 @@ declare(strict_types=1);
 
 namespace OCA\Text\Notification;
 
-use InvalidArgumentException;
 use OC\User\NoUserException;
+use OCA\Text\Event\MentionEvent;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 
 class Notifier implements INotifier {
 	public const TYPE_MENTIONED = 'mentioned';
 	public const SUBJECT_MENTIONED_SOURCE_USER = 'sourceUser';
 	public const SUBJECT_MENTIONED_TARGET_USER = 'targetUser';
 
-	private IFactory $factory;
-	private IURLGenerator $url;
-	private IUserManager $userManager;
-	private IRootFolder $rootFolder;
-
-	public function __construct(IFactory $factory, IUserManager $userManager, IURLGenerator $urlGenerator, IRootFolder $rootFolder) {
-		$this->factory = $factory;
-		$this->userManager = $userManager;
-		$this->url = $urlGenerator;
-		$this->rootFolder = $rootFolder;
+	public function __construct(
+		private IFactory $factory,
+		private IUserManager $userManager,
+		private IURLGenerator $urlGenerator,
+		private IRootFolder $rootFolder,
+		private IEventDispatcher $eventDispatcher,
+	) {
 	}
 
 	public function getID(): string {
@@ -45,11 +46,11 @@ class Notifier implements INotifier {
 
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'text') {
-			throw new InvalidArgumentException('Application should be text instead of ' . $notification->getApp());
+			throw new UnknownNotificationException('Application should be text instead of ' . $notification->getApp());
 		}
 
 		$l = $this->factory->get('text', $languageCode);
-
+		$notification->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('text', 'app-dark.svg')));
 		switch ($notification->getSubject()) {
 			case self::TYPE_MENTIONED:
 				$parameters = $notification->getSubjectParameters();
@@ -59,22 +60,23 @@ class Notifier implements INotifier {
 				$fileId = (int)$notification->getObjectId();
 
 				if ($sourceUserDisplayName === null) {
-					throw new InvalidArgumentException();
+					throw new UnknownNotificationException();
 				}
 
 				try {
 					$userFolder = $this->rootFolder->getUserFolder($targetUser);
 				} catch (NotPermittedException|NoUserException $e) {
-					throw new InvalidArgumentException();
+					throw new UnknownNotificationException();
 				}
 				$node = $userFolder->getFirstNodeById($fileId);
 
-				if ($node === null) {
-					throw new InvalidArgumentException();
+				if (!$node instanceof File) {
+					throw new AlreadyProcessedException();
 				}
 
-				$fileLink = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $node->getId()]);
+				$fileLink = $this->urlGenerator->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $node->getId()]);
 
+				$notification->setLink($fileLink);
 				$notification->setRichSubject($l->t('{user} has mentioned you in the text document {node}'), [
 					'user' => [
 						'type' => 'user',
@@ -83,18 +85,19 @@ class Notifier implements INotifier {
 					],
 					'node' => [
 						'type' => 'file',
-						'id' => $node->getId(),
+						'id' => (string)$node->getId(),
 						'name' => $node->getName(),
-						'path' => $userFolder->getRelativePath($node->getPath()),
+						'path' => $userFolder->getRelativePath($node->getPath()) ?? '',
 						'link' => $fileLink,
 					],
 				]);
+
+				$this->eventDispatcher->dispatchTyped(new MentionEvent($notification, $node));
 				break;
 			default:
-				throw new InvalidArgumentException();
+				throw new UnknownNotificationException();
 		}
-		$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('text', 'app-dark.svg')));
-		$notification->setLink($fileLink);
+
 		$this->setParsedSubjectFromRichSubject($notification);
 		return $notification;
 	}

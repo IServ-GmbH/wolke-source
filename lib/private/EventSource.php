@@ -33,7 +33,7 @@ class EventSource implements IEventSource {
 		header('X-Accel-Buffering: no');
 		$this->fallback = isset($_GET['fallback']) and $_GET['fallback'] == 'true';
 		if ($this->fallback) {
-			$this->fallBackId = (int) $_GET['fallback_id'];
+			$this->fallBackId = (int)$_GET['fallback_id'];
 			/**
 			 * FIXME: The default content-security-policy of ownCloud forbids inline
 			 * JavaScript for security reasons. IE starting on Windows 10 will
@@ -51,7 +51,7 @@ class EventSource implements IEventSource {
 			header('Content-Type: text/event-stream');
 		}
 		if (!$this->request->passesStrictCookieCheck()) {
-			header('Location: '.\OC::$WEBROOT);
+			header('Location: ' . \OC::$WEBROOT);
 			exit();
 		}
 		if (!$this->request->passesCSRFCheck()) {
@@ -74,7 +74,7 @@ class EventSource implements IEventSource {
 	 */
 	public function send($type, $data = null) {
 		if ($data and !preg_match('/^[A-Za-z0-9_]+$/', $type)) {
-			throw new \BadMethodCallException('Type needs to be alphanumeric ('. $type .')');
+			throw new \BadMethodCallException('Type needs to be alphanumeric (' . $type . ')');
 		}
 		$this->init();
 		if (is_null($data)) {

@@ -3,10 +3,13 @@
 namespace Rubix\ML\Graph\Nodes;
 
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
+use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildrenTrait;
+use Rubix\ML\Exceptions\RuntimeException;
 use Traversable;
 
 use function Rubix\ML\argmax;
+use function min;
+use function max;
 
 /**
  * Box
@@ -20,16 +23,16 @@ use function Rubix\ML\argmax;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Box implements BinaryNode, Hypercube
+class Box implements Hypercube, HasBinaryChildren
 {
-    use HasBinaryChildren;
+    use HasBinaryChildrenTrait;
 
     /**
      * The feature column (index) of the split value.
      *
      * @var int
      */
-    protected $column;
+    protected int $column;
 
     /**
      * The value that the node splits on.
@@ -39,25 +42,25 @@ class Box implements BinaryNode, Hypercube
     protected $value;
 
     /**
-     * The left and right splits of the training data.
+     * The left and right subsets of the training data.
      *
      * @var array{\Rubix\ML\Datasets\Labeled,\Rubix\ML\Datasets\Labeled}
      */
-    protected $groups;
+    protected array $subsets;
 
     /**
-     * The minimum vector containing all points.
+     * The minimum vector containing all the points.
      *
      * @var list<int|float>
      */
-    protected $min;
+    protected array $min;
 
     /**
-     * The maximum vector containing all points.
+     * The maximum vector containing all the points.
      *
      * @var list<int|float>
      */
-    protected $max;
+    protected array $max;
 
     /**
      * Factory method to build a coordinate node from a labeled dataset
@@ -70,7 +73,7 @@ class Box implements BinaryNode, Hypercube
     {
         $mins = $maxs = $ranges = [];
 
-        foreach ($dataset->columns() as $values) {
+        foreach ($dataset->features() as $values) {
             $mins[] = $min = min($values);
             $maxs[] = $max = max($values);
 
@@ -81,23 +84,23 @@ class Box implements BinaryNode, Hypercube
 
         $value = 0.5 * ($mins[$column] + $maxs[$column]);
 
-        $groups = $dataset->splitByColumn($column, $value);
+        $subsets = $dataset->splitByFeature($column, $value);
 
-        return new self($column, $value, $groups, $mins, $maxs);
+        return new self($column, $value, $subsets, $mins, $maxs);
     }
 
     /**
      * @param int $column
      * @param string|int|float $value
-     * @param array{Labeled,Labeled} $groups
+     * @param array{\Rubix\ML\Datasets\Labeled,\Rubix\ML\Datasets\Labeled} $subsets
      * @param list<int|float> $min
      * @param list<int|float> $max
      */
-    public function __construct(int $column, $value, array $groups, array $min, array $max)
+    public function __construct(int $column, $value, array $subsets, array $min, array $max)
     {
         $this->column = $column;
         $this->value = $value;
-        $this->groups = $groups;
+        $this->subsets = $subsets;
         $this->min = $min;
         $this->max = $max;
     }
@@ -123,13 +126,18 @@ class Box implements BinaryNode, Hypercube
     }
 
     /**
-     * Return the left and right splits of the training data.
+     * Return the left and right subsets of the training data.
      *
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return array{\Rubix\ML\Datasets\Labeled,\Rubix\ML\Datasets\Labeled}
      */
-    public function groups() : array
+    public function subsets() : array
     {
-        return $this->groups;
+        if (!isset($this->subsets)) {
+            throw new RuntimeException('Subsets property does not exist.');
+        }
+
+        return $this->subsets;
     }
 
     /**
@@ -154,10 +162,10 @@ class Box implements BinaryNode, Hypercube
     }
 
     /**
-     * Remove the left and right splits of the training data.
+     * Remove any variables carried over from the parent node.
      */
     public function cleanup() : void
     {
-        unset($this->groups);
+        unset($this->subsets);
     }
 }

@@ -12,7 +12,7 @@ OC.L10N.register(
     "Password policy" : "Salasõnade reeglid",
     "Allows admins to configure a password policy" : "Lubab peakasutajatel seadistada salasõnade reegleid",
     "Allow admin to define certain pre-conditions for password, e.g. enforce a minimum length" : "Luba peakasutajatel määrata teatud eelnõuded salasõnadele, nt. kehtestada miinimumpikkus.",
-    "General password policies" : "Üldised reeglid salasõnadele",
+    "General password policies" : "Üldised salasõnade reeglid",
     "Add policy set" : "Lisa reegel",
     "Login policies" : "Sisselogimise reeglid",
     "Password history size" : "Salasõnade ajaloo pikkus",
@@ -32,14 +32,6 @@ OC.L10N.register(
     "Check password against the list of breached passwords from haveibeenpwned.com" : "Kontrolli salasõna haveibeenpwned.com lekkinud salasõnade loendist",
     "This check creates a hash of the password and sends the first 5 characters of this hash to the haveibeenpwned.com API to retrieve a list of all hashes that start with those. Then it checks on the Nextcloud instance if the password hash is in the result set." : "See kontroll arvutab salasõna räsi, saadab selle 5 esimest sümbolit haveibeenpwned.com API-le ja saab vastu nimekirja sama algusega räsidest. Seejärel kontrollitakse Nextcloudi serveris, kas salasõna räsi on tulemuste hulgas.",
     "Account password policies" : "Kasutajakonto reeglid salasõnadele",
-    "Share password policies" : "Jaga reegleid salasõnadele",
-    "Unknown error" : "Tundmatu viga",
-    "Minimal length has to be a non negative number" : "Miinimumpikkus peab olema positiivne arv",
-    "History size has to be a non negative number" : "Ajaloo pikkus peab olema positiivne arv",
-    "Expiration days have to be a non negative number" : "Aegumise kestus peab olema positiivne arv",
-    "Maximum login attempts have to be a non negative number" : "Sisselogimiskatsete arv peab olema positiivne arv",
-    "Settings saved" : "Seadistused on salvestatud",
-    "Error while saving settings" : "Viga seadistuste salvestamisel",
-    "User password history" : "Kasutaja salasõna ajalugu"
+    "Share password policies" : "Jaga reegleid salasõnadele"
 },
 "nplurals=2; plural=(n != 1);");

@@ -74,7 +74,7 @@ class RemoteDownstreamService {
 		MemberRequest $memberRequest,
 		FederatedEventService $federatedEventService,
 		RemoteService $remoteService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->setup('app', 'circles');
 
@@ -127,7 +127,7 @@ class RemoteDownstreamService {
 		if ($event->isLimitedToInstanceWithMember()) {
 			$instances = $this->memberRequest->getMemberInstances($event->getCircle()->getSingleId());
 			if (!in_array($event->getSender(), $instances)) {
-				throw new FederatedEventException('Instance have no members in this Circle');
+				throw new FederatedEventException('Instance have no members in this Team');
 			}
 		}
 
@@ -202,7 +202,7 @@ class RemoteDownstreamService {
 			return;
 		}
 
-		throw new FederatedEventDSyncException('Could not verify Circle');
+		throw new FederatedEventDSyncException('Could not verify Team');
 	}
 
 	/**
@@ -227,7 +227,7 @@ class RemoteDownstreamService {
 		try {
 			$probe = new CircleProbe();
 			$probe->includeSystemCircles()
-				  ->includePersonalCircles();
+				->includePersonalCircles();
 			$localCircle = $this->circleRequest->getCircle($circle->getSingleId(), null, $probe);
 		} catch (CircleNotFoundException $e) {
 			try {
@@ -258,7 +258,7 @@ class RemoteDownstreamService {
 	/**
 	 * @param FederatedEvent $event
 	 * @param bool $full
-	 * // TODO: Check IFederatedItemMember*
+	 *                   // TODO: Check IFederatedItemMember*
 	 *
 	 * @throws FederatedEventDSyncException
 	 */

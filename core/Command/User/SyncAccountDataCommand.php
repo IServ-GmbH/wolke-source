@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,7 +21,7 @@ class SyncAccountDataCommand extends Base {
 
 	public function __construct(
 		IUserManager $userManager,
-		IAccountManager $accountManager
+		IAccountManager $accountManager,
 	) {
 		$this->userManager = $userManager;
 		$this->accountManager = $accountManager;
@@ -49,7 +48,7 @@ class SyncAccountDataCommand extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$users = $this->userManager->searchDisplayName('', (int) $input->getOption('limit'), (int) $input->getOption('offset'));
+		$users = $this->userManager->searchDisplayName('', (int)$input->getOption('limit'), (int)$input->getOption('offset'));
 
 		foreach ($users as $user) {
 			$this->updateUserAccount($user, $output);

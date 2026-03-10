@@ -35,7 +35,7 @@ class SettingsController extends Controller {
 		private IL10N $l,
 		private IAuthTokenProvider $tokenProvider,
 		private IUserManager $userManager,
-		private ICrypto $crypto
+		private ICrypto $crypto,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -69,7 +69,7 @@ class SettingsController extends Controller {
 	public function deleteClient(int $id): JSONResponse {
 		$client = $this->clientMapper->getByUid($id);
 
-		$this->userManager->callForAllUsers(function (IUser $user) use ($client) {
+		$this->userManager->callForSeenUsers(function (IUser $user) use ($client): void {
 			$this->tokenProvider->invalidateTokensOfUser($user->getUID(), $client->getName());
 		});
 

@@ -1,5 +1,5 @@
 diff --git apps/activity/appinfo/info.xml apps/activity/appinfo/info.xml
-index 55ff01c..f962fcc 100755
+index b898d2d..da55e98 100644
 --- apps/activity/appinfo/info.xml
 +++ apps/activity/appinfo/info.xml
 @@ -41,9 +41,7 @@

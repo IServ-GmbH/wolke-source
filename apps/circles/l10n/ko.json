@@ -78,18 +78,12 @@
     "Password to access files" : "파일에 접근하기 위한 암호",
     "%s shared multiple files with \"%s\"." : "%s님이 \"%s\"와(과) 여러 파일을 공유했습니다.",
     "%s shared multiple files with you." : "%s님이 여러 파일을 공유했습니다.",
-    "Testing Basic Circle Creation" : "기본 서클 생성 테스트 중",
     "Adding local users and moderators" : "로컬 사용자와 중재자 추가 중",
     "Files" : "파일",
-    "This feature is not available for personal circles" : "이 기능은 개인 서클에서 사용할 수 없음",
     "This member is not a moderator" : "이 회원은 중재자가 아님",
     "Insufficient privileges" : "권한이 부족함",
     "This member does not exist" : "이 회원이 존재하지 않음",
     "Level cannot be changed for this type of member" : "이 회원의 단계를 변경할 수 없음",
-    "You are already a member of this circle" : "이미 서클 회원임",
-    "You have been blocked from this circle" : "이 서클에서 차단됨",
-    "The account is already a member of this circle" : "이 계정은 이미 이 서클의 회원임",
-    "The account has already been invited into this circle" : "이 계정을 이미 이 서클에 초대함",
     "Accept" : "수락",
     "%s" : "%s",
     "%s owned by %s" : "%s이(가) 소유한 %s",
@@ -100,6 +94,7 @@
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s님이 공유한 것이 있습니다.\n함께 발송한 별도의 이메일에서 링크를 눌로 이 공유에 접근하십시오.",
     "Password to access content shared with you by %1$s" : "%1$s님의 공유에 접근하기 위한 암호",
     "Bring cloud-users closer together." : "클라우드 사용자를 더 가깝게 연결합니다.",
+    "https://…" : "https://…",
     "Try again" : "다시 시도",
     "Loading…" : "불러오는 중…",
     "No files in here" : "여기에 파일 없음",
@@ -107,7 +102,6 @@
     "Name" : "이름",
     "Size" : "크기",
     "Modified" : "수정한 날짜",
-    "Shared to Circles" : "서클에 공유됨",
-    "Circle" : "서클"
+    "Shared to Circles" : "서클에 공유됨"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

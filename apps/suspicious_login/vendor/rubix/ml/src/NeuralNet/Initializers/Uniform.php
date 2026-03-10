@@ -22,7 +22,7 @@ class Uniform implements Initializer
      *
      * @var float
      */
-    protected $beta;
+    protected float $beta;
 
     /**
      * @param float $beta
@@ -43,17 +43,20 @@ class Uniform implements Initializer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @param int $fanOut
+     * @param int<0,max> $fanIn
+     * @param int<0,max> $fanOut
      * @return \Tensor\Matrix
      */
     public function initialize(int $fanIn, int $fanOut) : Matrix
     {
-        return Matrix::uniform($fanOut, $fanIn)->multiply($this->beta);
+        return Matrix::uniform($fanOut, $fanIn)
+            ->multiply($this->beta);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

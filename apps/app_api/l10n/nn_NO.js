@@ -1,13 +1,10 @@
 OC.L10N.register(
     "app_api",
     {
-    "Cancel" : "Cancel",
     "Delete" : "Slett",
     "Edit" : "Rediger",
-    "Unlimited" : "Ubegrensa",
     "Name" : "Namn",
     "Host" : "Tenar",
-    "Disabled" : "Deaktivert",
     "Save" : "Lagre",
     "Visit website" : "Besøk nettstaden",
     "Report a bug" : "Rapporter feil",

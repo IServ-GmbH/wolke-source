@@ -1,10 +1,10 @@
 diff --git apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
-index c4e579b..205d7c5 100644
+index 44430b0..824869d 100644
 --- apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
 +++ apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
-@@ -53,5 +53,32 @@ class BlockLegacyClientPlugin extends ServerPlugin {
- 			version_compare($versionMatches[1], $minimumSupportedDesktopVersion) === -1) {
- 			throw new \Sabre\DAV\Exception\Forbidden('Unsupported client version.');
+@@ -70,5 +70,32 @@ class BlockLegacyClientPlugin extends ServerPlugin {
+ 
+ 			throw new \Sabre\DAV\Exception\Forbidden("This version of the client is unsupported. Downgrade to <a href=\"$customClientDesktopLink\">version $maximumSupportedDesktopVersion or earlier</a>.");
  		}
 +
 +		if (!$this->config->getSystemValue('iserv_disable_external_clients', false)) {

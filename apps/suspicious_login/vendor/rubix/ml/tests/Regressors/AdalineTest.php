@@ -11,9 +11,9 @@ use Rubix\ML\Persistable;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Regressors\Adaline;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
 use Rubix\ML\Datasets\Generators\Hyperplane;
 use Rubix\ML\CrossValidation\Metrics\RSquared;
@@ -33,14 +33,14 @@ class AdalineTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -76,13 +76,18 @@ class AdalineTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->generator = new Hyperplane([1, 5.5, -7, 0.01], 0.0);
+        $this->generator = new Hyperplane([1.0, 5.5, -7, 0.01], 0.0, 1.0);
 
-        $this->estimator = new Adaline(1, new Adam(0.01), 1e-4, 100, 1e-3, 5, new HuberLoss(1.0));
+        $this->estimator = new Adaline(32, new Adam(0.001), 1e-4, 100, 1e-4, 5, new HuberLoss(1.0));
 
         $this->metric = new RSquared();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -135,13 +140,13 @@ class AdalineTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'batch_size' => 1,
-            'optimizer' => new Adam(0.01),
-            'alpha' => 1e-4,
+            'batch size' => 32,
+            'optimizer' => new Adam(0.001),
+            'l2 penalty' => 1e-4,
             'epochs' => 100,
-            'min_change' => 1e-3,
+            'min change' => 1e-4,
             'window' => 5,
-            'cost_fn' => new HuberLoss(1.0),
+            'cost fn' => new HuberLoss(1.0),
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -161,7 +166,7 @@ class AdalineTest extends TestCase
 
         $this->assertTrue($this->estimator->trained());
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -171,7 +176,6 @@ class AdalineTest extends TestCase
         $this->assertIsArray($importances);
         $this->assertCount(4, $importances);
         $this->assertContainsOnly('float', $importances);
-        $this->assertEqualsWithDelta(1.0, array_sum($importances), 1e-8);
 
         $predictions = $this->estimator->predict($testing);
 
@@ -198,10 +202,5 @@ class AdalineTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

@@ -7,7 +7,7 @@ $$
 {\displaystyle z = {x - \mu \over \sigma }}
 $$
 
-**Interfaces:** [Transformer](api.md#transformer), [Stateful](api.md#stateful), [Elastic](api.md#elastic), [Persistable](../persistable.md)
+**Interfaces:** [Transformer](api.md#transformer), [Stateful](api.md#stateful), [Elastic](api.md#elastic), [Reversible](api.md#reversible), [Persistable](../persistable.md)
 
 **Data Type Compatibility:** Continuous
 
@@ -32,11 +32,6 @@ public means() : array
 Return the variances calculated during fitting:
 ```php
 public variances() : array
-```
-
-Return the standard deviations calculated during fitting:
-```php
-public stdDevs() : array
 ```
 
 ## References

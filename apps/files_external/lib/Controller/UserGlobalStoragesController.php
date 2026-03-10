@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -49,7 +48,7 @@ class UserGlobalStoragesController extends StoragesController {
 		LoggerInterface $logger,
 		IUserSession $userSession,
 		IGroupManager $groupManager,
-		IConfig $config
+		IConfig $config,
 	) {
 		parent::__construct(
 			$AppName,
@@ -142,7 +141,7 @@ class UserGlobalStoragesController extends StoragesController {
 	public function update(
 		$id,
 		$backendOptions,
-		$testOnly = true
+		$testOnly = true,
 	) {
 		try {
 			$storage = $this->service->getStorage($id);

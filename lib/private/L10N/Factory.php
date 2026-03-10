@@ -58,6 +58,18 @@ class Factory implements IFactory {
 		'pt_BR', 'pt_PT', 'da', 'fi_FI', 'nb_NO', 'sv', 'tr', 'zh_CN', 'ko'
 	];
 
+	/**
+	 * Keep in sync with `build/translation-checker.php`
+	 */
+	public const RTL_LANGUAGES = [
+		'ar', // Arabic
+		'fa', // Persian
+		'he', // Hebrew
+		'ps', // Pashto,
+		'ug', // 'Uyghurche / Uyghur
+		'ur_PK', // Urdu
+	];
+
 	private ICache $cache;
 
 	public function __construct(
@@ -81,12 +93,9 @@ class Factory implements IFactory {
 	 */
 	public function get($app, $lang = null, $locale = null) {
 		return new LazyL10N(function () use ($app, $lang, $locale) {
-			$app = \OC_App::cleanAppId($app);
-			if ($lang !== null) {
-				$lang = str_replace(['\0', '/', '\\', '..'], '', $lang);
-			}
-
-			$forceLang = $this->config->getSystemValue('force_language', false);
+			$app = $this->appManager->cleanAppId($app);
+			$lang = $this->cleanLanguage($lang);
+			$forceLang = $this->cleanLanguage($this->request->getParam('forceLanguage')) ?? $this->config->getSystemValue('force_language', false);
 			if (is_string($forceLang)) {
 				$lang = $forceLang;
 			}
@@ -119,6 +128,29 @@ class Factory implements IFactory {
 	}
 
 	/**
+	 * Remove some invalid characters before using a string as a language
+	 *
+	 * @psalm-taint-escape callable
+	 * @psalm-taint-escape cookie
+	 * @psalm-taint-escape file
+	 * @psalm-taint-escape has_quotes
+	 * @psalm-taint-escape header
+	 * @psalm-taint-escape html
+	 * @psalm-taint-escape include
+	 * @psalm-taint-escape ldap
+	 * @psalm-taint-escape shell
+	 * @psalm-taint-escape sql
+	 * @psalm-taint-escape unserialize
+	 */
+	private function cleanLanguage(?string $lang): ?string {
+		if ($lang === null) {
+			return null;
+		}
+		$lang = preg_replace('/[^a-zA-Z0-9.;,=-]/', '', $lang);
+		return str_replace('..', '', $lang);
+	}
+
+	/**
 	 * Find the best language
 	 *
 	 * @param string|null $appId App id or null for core
@@ -127,7 +159,7 @@ class Factory implements IFactory {
 	 */
 	public function findLanguage(?string $appId = null): string {
 		// Step 1: Forced language always has precedence over anything else
-		$forceLang = $this->config->getSystemValue('force_language', false);
+		$forceLang = $this->cleanLanguage($this->request->getParam('forceLanguage')) ?? $this->config->getSystemValue('force_language', false);
 		if (is_string($forceLang)) {
 			$this->requestLanguage = $forceLang;
 		}
@@ -184,7 +216,7 @@ class Factory implements IFactory {
 
 	public function findGenericLanguage(?string $appId = null): string {
 		// Step 1: Forced language always has precedence over anything else
-		$forcedLanguage = $this->config->getSystemValue('force_language', false);
+		$forcedLanguage = $this->cleanLanguage($this->request->getParam('forceLanguage')) ?? $this->config->getSystemValue('force_language', false);
 		if ($forcedLanguage !== false) {
 			return $forcedLanguage;
 		}
@@ -195,27 +227,7 @@ class Factory implements IFactory {
 			return $defaultLanguage;
 		}
 
-		// Step 3.1: Check if Nextcloud is already installed before we try to access user info
-		if (!$this->config->getSystemValueBool('installed', false)) {
-			return 'en';
-		}
-		// Step 3.2: Check the current user (if any) for their preferred language
-		$user = $this->userSession->getUser();
-		if ($user !== null) {
-			$userLang = $this->config->getUserValue($user->getUID(), 'core', 'lang', null);
-			if ($userLang !== null) {
-				return $userLang;
-			}
-		}
-
-		// Step 4: Check the request headers
-		try {
-			return $this->getLanguageFromRequest($appId);
-		} catch (LanguageNotFoundException $e) {
-			// Ignore and continue
-		}
-
-		// Step 5: fall back to English
+		// Step 3: fall back to English
 		return 'en';
 	}
 
@@ -364,6 +376,14 @@ class Factory implements IFactory {
 		return in_array($lang, $languages);
 	}
 
+	public function getLanguageDirection(string $language): string {
+		if (in_array($language, self::RTL_LANGUAGES, true)) {
+			return 'rtl';
+		}
+
+		return 'ltr';
+	}
+
 	public function getLanguageIterator(?IUser $user = null): ILanguageIterator {
 		$user = $user ?? $this->userSession->getUser();
 		if ($user === null) {
@@ -391,6 +411,11 @@ class Factory implements IFactory {
 				return $language;
 			}
 
+			$forcedLanguage = $this->cleanLanguage($this->request->getParam('forceLanguage'));
+			if ($forcedLanguage !== null) {
+				return $forcedLanguage;
+			}
+
 			// Use language from request
 			if ($this->userSession->getUser() instanceof IUser &&
 				$user->getUID() === $this->userSession->getUser()->getUID()) {
@@ -401,7 +426,7 @@ class Factory implements IFactory {
 			}
 		}
 
-		return $this->config->getSystemValueString('default_language', 'en');
+		return $this->cleanLanguage($this->request->getParam('forceLanguage')) ?? $this->config->getSystemValueString('default_language', 'en');
 	}
 
 	/**
@@ -427,7 +452,7 @@ class Factory implements IFactory {
 	 * @throws LanguageNotFoundException
 	 */
 	private function getLanguageFromRequest(?string $app = null): string {
-		$header = $this->request->getHeader('ACCEPT_LANGUAGE');
+		$header = $this->cleanLanguage($this->request->getHeader('ACCEPT_LANGUAGE'));
 		if ($header !== '') {
 			$available = $this->findAvailableLanguages($app);
 
@@ -444,14 +469,14 @@ class Factory implements IFactory {
 					if ($preferred_language === strtolower($available_language)) {
 						return $this->respectDefaultLanguage($app, $available_language);
 					}
-					if (strtolower($available_language) === $preferred_language_parts[0].'_'.end($preferred_language_parts)) {
+					if (strtolower($available_language) === $preferred_language_parts[0] . '_' . end($preferred_language_parts)) {
 						return $available_language;
 					}
 				}
 
 				// Fallback from de_De to de
 				foreach ($available as $available_language) {
-					if (substr($preferred_language, 0, 2) === $available_language) {
+					if ($preferred_language_parts[0] === $available_language) {
 						return $available_language;
 					}
 				}
@@ -608,7 +633,7 @@ class Factory implements IFactory {
 			// put appropriate languages into appropriate arrays, to print them sorted
 			// common languages -> divider -> other languages
 			if (in_array($lang, self::COMMON_LANGUAGE_CODES)) {
-				$commonLanguages[array_search($lang, self::COMMON_LANGUAGE_CODES)] = $ln;
+				$commonLanguages[array_search($lang, self::COMMON_LANGUAGE_CODES, true)] = $ln;
 			} else {
 				$otherLanguages[] = $ln;
 			}

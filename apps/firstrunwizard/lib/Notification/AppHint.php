@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -68,7 +69,7 @@ class AppHint {
 	public function dismissNotification(string $app) {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('firstrunwizard')
-			->setSubject('apphint-'. $app)
+			->setSubject('apphint-' . $app)
 			->setObject('app', $app);
 		$this->notificationManager->markProcessed($notification);
 	}
@@ -76,7 +77,7 @@ class AppHint {
 	protected function generateNotification(string $app, string $user) {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('firstrunwizard')
-			->setSubject('apphint-'. $app)
+			->setSubject('apphint-' . $app)
 			->setObject('app', $app)
 			->setUser($user);
 		return $notification;

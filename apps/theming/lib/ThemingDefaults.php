@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -102,15 +101,15 @@ class ThemingDefaults extends \OC_Defaults {
 	}
 
 	public function getImprintUrl() {
-		return (string) $this->config->getAppValue('theming', 'imprintUrl', '');
+		return (string)$this->config->getAppValue('theming', 'imprintUrl', '');
 	}
 
 	public function getPrivacyUrl() {
-		return (string) $this->config->getAppValue('theming', 'privacyUrl', '');
+		return (string)$this->config->getAppValue('theming', 'privacyUrl', '');
 	}
 
 	public function getDocBaseUrl() {
-		return (string) $this->config->getAppValue('theming', 'docBaseUrl', $this->docBaseUrl);
+		return (string)$this->config->getAppValue('theming', 'docBaseUrl', $this->docBaseUrl);
 	}
 
 	public function getShortFooter() {
@@ -124,7 +123,7 @@ class ThemingDefaults extends \OC_Defaults {
 				$footer = '<a href="' . $baseUrl . '" target="_blank"' .
 					' rel="noreferrer noopener" class="entity-name">' . $entity . '</a>';
 			} else {
-				$footer = '<span class="entity-name">' .$entity . '</span>';
+				$footer = '<span class="entity-name">' . $entity . '</span>';
 			}
 		}
 		$footer .= ($slogan !== '' ? ' – ' . $slogan : '');
@@ -132,11 +131,11 @@ class ThemingDefaults extends \OC_Defaults {
 		$links = [
 			[
 				'text' => $this->l->t('Legal notice'),
-				'url' => (string) $this->getImprintUrl()
+				'url' => (string)$this->getImprintUrl()
 			],
 			[
 				'text' => $this->l->t('Privacy policy'),
-				'url' => (string) $this->getPrivacyUrl()
+				'url' => (string)$this->getPrivacyUrl()
 			],
 		];
 
@@ -341,10 +340,10 @@ class ThemingDefaults extends \OC_Defaults {
 			'theming-favicon-mime' => "'" . $this->config->getAppValue('theming', 'faviconMime') . "'"
 		];
 
-		$variables['image-logo'] = "url('".$this->imageManager->getImageUrl('logo')."')";
-		$variables['image-logoheader'] = "url('".$this->imageManager->getImageUrl('logoheader')."')";
-		$variables['image-favicon'] = "url('".$this->imageManager->getImageUrl('favicon')."')";
-		$variables['image-login-background'] = "url('".$this->imageManager->getImageUrl('background')."')";
+		$variables['image-logo'] = "url('" . $this->imageManager->getImageUrl('logo') . "')";
+		$variables['image-logoheader'] = "url('" . $this->imageManager->getImageUrl('logoheader') . "')";
+		$variables['image-favicon'] = "url('" . $this->imageManager->getImageUrl('favicon') . "')";
+		$variables['image-login-background'] = "url('" . $this->imageManager->getImageUrl('background') . "')";
 		$variables['image-login-plain'] = 'false';
 
 		if ($this->appConfig->getValueString(Application::APP_ID, 'primary_color', '') !== '') {
@@ -420,8 +419,8 @@ class ThemingDefaults extends \OC_Defaults {
 	 * Increases the cache buster key
 	 */
 	public function increaseCacheBuster(): void {
-		$cacheBusterKey = (int) $this->config->getAppValue('theming', 'cachebuster', '0');
-		$this->config->setAppValue('theming', 'cachebuster', (string) ($cacheBusterKey + 1));
+		$cacheBusterKey = (int)$this->config->getAppValue('theming', 'cachebuster', '0');
+		$this->config->setAppValue('theming', 'cachebuster', (string)($cacheBusterKey + 1));
 		$this->cacheFactory->createDistributed('theming-')->clear();
 		$this->cacheFactory->createDistributed('imagePath')->clear();
 	}
@@ -433,7 +432,7 @@ class ThemingDefaults extends \OC_Defaults {
 	 * @param string $value
 	 */
 	public function set($setting, $value): void {
-		$this->config->setAppValue('theming', $setting, $value);
+		$this->appConfig->setValueString('theming', $setting, $value);
 		$this->increaseCacheBuster();
 	}
 

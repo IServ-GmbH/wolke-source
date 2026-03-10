@@ -51,14 +51,14 @@ class ContentSecurityPolicyManager implements IContentSecurityPolicyManager {
 		ContentSecurityPolicy $defaultPolicy,
 		EmptyContentSecurityPolicy $originalPolicy,
 	): ContentSecurityPolicy {
-		foreach ((object) (array) $originalPolicy as $name => $value) {
-			$setter = 'set'.ucfirst($name);
+		foreach ((object)(array)$originalPolicy as $name => $value) {
+			$setter = 'set' . ucfirst($name);
 			if (\is_array($value)) {
-				$getter = 'get'.ucfirst($name);
+				$getter = 'get' . ucfirst($name);
 				$currentValues = \is_array($defaultPolicy->$getter()) ? $defaultPolicy->$getter() : [];
 				$defaultPolicy->$setter(array_values(array_unique(array_merge($currentValues, $value))));
 			} elseif (\is_bool($value)) {
-				$getter = 'is'.ucfirst($name);
+				$getter = 'is' . ucfirst($name);
 				$currentValue = $defaultPolicy->$getter();
 				// true wins over false
 				if ($value > $currentValue) {

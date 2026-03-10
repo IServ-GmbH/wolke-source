@@ -10,10 +10,10 @@
         <email>support@andrewdalpino.com</email>
 		<active>yes</active>
 	</lead>
-	<date>2021-05-25</date>
+	<date>2024-03-13</date>
 	<version>
-		<release>2.2.3</release>
-		<api>2.2</api>
+		<release>3.0.5</release>
+		<api>3.0</api>
 	</version>
 	<stability>
 		<release>stable</release>
@@ -21,7 +21,7 @@
 	</stability>
 	<license uri="https://github.com/RubixML/Tensor/blob/master/LICENSE">MIT</license>
     <notes>
-        - Remove dependency on pthreads
+        - Update Zephir to 0.17
     </notes>
 	<contents>
         <dir name="/">
@@ -31,8 +31,6 @@
                     <file name="arithmetic.h" role="src" />
                     <file name="comparison.c" role="src" />
                     <file name="comparison.h" role="src" />
-                    <file name="indexing.c" role="src" />
-                    <file name="indexing.h" role="src" />
                     <file name="linear_algebra.c" role="src" />
                     <file name="linear_algebra.h" role="src" />
                     <file name="settings.c" role="src" />
@@ -109,6 +107,8 @@
                         <file name="rref.zep.c" role="src" />
                         <file name="rref.zep.h" role="src" />
                     </dir>
+                    <file name="algebraic.zep.c" role="src" />
+                    <file name="algebraic.zep.h" role="src" />
                     <file name="arithmetic.zep.c" role="src" />
                     <file name="arithmetic.zep.h" role="src" />
                     <file name="arraylike.zep.c" role="src" />
@@ -117,12 +117,12 @@
                     <file name="columnvector.zep.h" role="src" />
                     <file name="comparable.zep.c" role="src" />
                     <file name="comparable.zep.h" role="src" />
-                    <file name="functional.zep.c" role="src" />
-                    <file name="functional.zep.h" role="src" />
                     <file name="matrix.zep.c" role="src" />
                     <file name="matrix.zep.h" role="src" />
                     <file name="settings.zep.c" role="src" />
                     <file name="settings.zep.h" role="src" />
+                    <file name="special.zep.c" role="src" />
+                    <file name="special.zep.h" role="src" />
                     <file name="statistical.zep.c" role="src" />
                     <file name="statistical.zep.h" role="src" />
                     <file name="tensor.zep.c" role="src" />
@@ -151,8 +151,8 @@
 	<dependencies>
 		<required>
             <php>
-                <min>7.2.0</min>
-                <max>7.4.99</max>
+                <min>7.4.0</min>
+                <max>8.2.99</max>
             </php>
 			<pearinstaller>
 				<min>1.4.0</min>

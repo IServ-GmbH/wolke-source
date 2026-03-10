@@ -24,8 +24,10 @@ use OCP\L10N\IFactory;
 use OCP\Server;
 use OCP\Support\Subscription\IAssertion;
 use OCP\User\Backend\ICheckPasswordBackend;
+use OCP\User\Backend\ICountMappedUsersBackend;
 use OCP\User\Backend\ICountUsersBackend;
 use OCP\User\Backend\IGetRealUIDBackend;
+use OCP\User\Backend\ILimitAwareCountUsersBackend;
 use OCP\User\Backend\IProvideEnabledStateBackend;
 use OCP\User\Backend\ISearchKnownUsersBackend;
 use OCP\User\Events\BeforeUserCreatedEvent;
@@ -51,6 +53,9 @@ use Psr\Log\LoggerInterface;
  * @package OC\User
  */
 class Manager extends PublicEmitter implements IUserManager {
+	/** @see \OC\Config\UserConfig::USER_MAX_LENGTH */
+	public const MAX_USERID_LENGTH = 64;
+
 	/**
 	 * @var \OCP\UserInterface[] $backends
 	 */
@@ -129,6 +134,10 @@ class Manager extends PublicEmitter implements IUserManager {
 			return $this->cachedUsers[$uid];
 		}
 
+		if (strlen($uid) > self::MAX_USERID_LENGTH) {
+			return null;
+		}
+
 		$cachedBackend = $this->cache->get(sha1($uid));
 		if ($cachedBackend !== null && isset($this->backends[$cachedBackend])) {
 			// Cache has the info of the user backend already, so ask that one directly
@@ -188,6 +197,10 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @return bool
 	 */
 	public function userExists($uid) {
+		if (strlen($uid) > self::MAX_USERID_LENGTH) {
+			return false;
+		}
+
 		$user = $this->get($uid);
 		return ($user !== null);
 	}
@@ -203,7 +216,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		$result = $this->checkPasswordNoLogging($loginName, $password);
 
 		if ($result === false) {
-			$this->logger->warning('Login failed: \''. $loginName .'\' (Remote IP: \''. \OC::$server->getRequest()->getRemoteAddress(). '\')', ['app' => 'core']);
+			$this->logger->warning('Login failed: \'' . $loginName . '\' (Remote IP: \'' . \OC::$server->getRequest()->getRemoteAddress() . '\')', ['app' => 'core']);
 		}
 
 		return $result;
@@ -255,15 +268,6 @@ class Manager extends PublicEmitter implements IUserManager {
 		return false;
 	}
 
-	/**
-	 * Search by user id
-	 *
-	 * @param string $pattern
-	 * @param int $limit
-	 * @param int $offset
-	 * @return IUser[]
-	 * @deprecated since 27.0.0, use searchDisplayName instead
-	 */
 	public function search($pattern, $limit = null, $offset = null) {
 		$users = [];
 		foreach ($this->backends as $backend) {
@@ -488,6 +492,36 @@ class Manager extends PublicEmitter implements IUserManager {
 		return $userCountStatistics;
 	}
 
+	public function countUsersTotal(int $limit = 0, bool $onlyMappedUsers = false): int|false {
+		$userCount = false;
+
+		foreach ($this->backends as $backend) {
+			if ($onlyMappedUsers && $backend instanceof ICountMappedUsersBackend) {
+				$backendUsers = $backend->countMappedUsers();
+			} elseif ($backend instanceof ILimitAwareCountUsersBackend) {
+				$backendUsers = $backend->countUsers($limit);
+			} elseif ($backend instanceof ICountUsersBackend || $backend->implementsActions(Backend::COUNT_USERS)) {
+				/** @var ICountUsersBackend $backend */
+				$backendUsers = $backend->countUsers();
+			} else {
+				$this->logger->debug('Skip backend for user count: ' . get_class($backend));
+				continue;
+			}
+			if ($backendUsers !== false) {
+				$userCount = (int)$userCount + $backendUsers;
+				if ($limit > 0) {
+					if ($userCount >= $limit) {
+						break;
+					}
+					$limit -= $userCount;
+				}
+			} else {
+				$this->logger->warning('Can not determine user count for ' . get_class($backend));
+			}
+		}
+		return $userCount;
+	}
+
 	/**
 	 * returns how many users per backend exist in the requested groups (if supported by backend)
 	 *
@@ -567,7 +601,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int) $count;
+			$count = (int)$count;
 		} else {
 			$count = 0;
 		}
@@ -590,7 +624,7 @@ class Manager extends PublicEmitter implements IUserManager {
 
 		$query = $queryBuilder->execute();
 
-		$result = (int) $query->fetchOne();
+		$result = (int)$query->fetchOne();
 		$query->closeCursor();
 
 		return $result;
@@ -673,14 +707,14 @@ class Manager extends PublicEmitter implements IUserManager {
 	public function validateUserId(string $uid, bool $checkDataDirectory = false): void {
 		$l = Server::get(IFactory::class)->get('lib');
 
-		// Check the name for bad characters
+		// Check the ID for bad characters
 		// Allowed are: "a-z", "A-Z", "0-9", spaces and "_.@-'"
 		if (preg_match('/[^a-zA-Z0-9 _.@\-\']/', $uid)) {
 			throw new \InvalidArgumentException($l->t('Only the following characters are allowed in an Login:'
 				. ' "a-z", "A-Z", "0-9", spaces and "_.@-\'"'));
 		}
 
-		// No empty username
+		// No empty user ID
 		if (trim($uid) === '') {
 			throw new \InvalidArgumentException($l->t('A valid Login must be provided'));
 		}
@@ -690,9 +724,14 @@ class Manager extends PublicEmitter implements IUserManager {
 			throw new \InvalidArgumentException($l->t('Login contains whitespace at the beginning or at the end'));
 		}
 
-		// Username only consists of 1 or 2 dots (directory traversal)
+		// User ID only consists of 1 or 2 dots (directory traversal)
 		if ($uid === '.' || $uid === '..') {
 			throw new \InvalidArgumentException($l->t('Login must not consist of dots only'));
+		}
+
+		// User ID is too long
+		if (strlen($uid) > self::MAX_USERID_LENGTH) {
+			throw new \InvalidArgumentException($l->t('Login is too long'));
 		}
 
 		if (!$this->verifyUid($uid, $checkDataDirectory)) {

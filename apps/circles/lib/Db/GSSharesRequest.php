@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -31,12 +32,12 @@ class GSSharesRequest extends GSSharesRequestBuilder {
 		$hash = $this->token();
 		$qb = $this->getGSSharesInsertSql();
 		$qb->setValue('circle_id', $qb->createNamedParameter($gsShare->getCircleId()))
-		   ->setValue('owner', $qb->createNamedParameter($gsShare->getOwner()))
-		   ->setValue('instance', $qb->createNamedParameter($gsShare->getInstance()))
-		   ->setValue('token', $qb->createNamedParameter($gsShare->getToken()))
-		   ->setValue('parent', $qb->createNamedParameter($gsShare->getParent()))
-		   ->setValue('mountpoint', $qb->createNamedParameter($gsShare->getMountPoint()))
-		   ->setValue('mountpoint_hash', $qb->createNamedParameter($hash));
+			->setValue('owner', $qb->createNamedParameter($gsShare->getOwner()))
+			->setValue('instance', $qb->createNamedParameter($gsShare->getInstance()))
+			->setValue('token', $qb->createNamedParameter($gsShare->getToken()))
+			->setValue('parent', $qb->createNamedParameter($gsShare->getParent()))
+			->setValue('mountpoint', $qb->createNamedParameter($gsShare->getMountPoint()))
+			->setValue('mountpoint_hash', $qb->createNamedParameter($hash));
 		$qb->execute();
 	}
 
@@ -106,7 +107,7 @@ class GSSharesRequest extends GSSharesRequestBuilder {
 
 		/** @noinspection PhpMethodParametersCountMismatchInspection */
 		$qb->selectAlias('mp.mountPoint', 'gsshares_mountpoint')
-		   ->leftJoin($this->default_select_alias, DeprecatedRequestBuilder::TABLE_GSSHARES_MOUNTPOINT, 'mp', $on);
+			->leftJoin($this->default_select_alias, DeprecatedRequestBuilder::TABLE_GSSHARES_MOUNTPOINT, 'mp', $on);
 	}
 
 
@@ -169,9 +170,9 @@ class GSSharesRequest extends GSSharesRequestBuilder {
 		$hash = ($mountpoint->getMountPoint() === '-') ? '' : md5($mountpoint->getMountPoint());
 
 		$qb->setValue('user_id', $qb->createNamedParameter($mountpoint->getUserId()))
-		   ->setValue('share_id', $qb->createNamedParameter($mountpoint->getShareId()))
-		   ->setValue('mountpoint', $qb->createNamedParameter($mountpoint->getMountPoint()))
-		   ->setValue('mountpoint_hash', $qb->createNamedParameter($hash));
+			->setValue('share_id', $qb->createNamedParameter($mountpoint->getShareId()))
+			->setValue('mountpoint', $qb->createNamedParameter($mountpoint->getMountPoint()))
+			->setValue('mountpoint_hash', $qb->createNamedParameter($hash));
 		$qb->execute();
 	}
 
@@ -187,7 +188,7 @@ class GSSharesRequest extends GSSharesRequestBuilder {
 		$hash = ($mountpoint->getMountPoint() === '-') ? '' : md5($mountpoint->getMountPoint());
 
 		$qb->set('mountpoint', $qb->createNamedParameter($mountpoint->getMountPoint()))
-		   ->set('mountpoint_hash', $qb->createNamedParameter($hash));
+			->set('mountpoint_hash', $qb->createNamedParameter($hash));
 
 		$this->limitToShareId($qb, $mountpoint->getShareId());
 		$this->limitToUserId($qb, $mountpoint->getUserId());

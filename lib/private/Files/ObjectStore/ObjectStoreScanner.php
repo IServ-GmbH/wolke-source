@@ -13,11 +13,11 @@ use OCP\Files\FileInfo;
 
 class ObjectStoreScanner extends Scanner {
 	public function scanFile($file, $reuseExisting = 0, $parentId = -1, $cacheData = null, $lock = true, $data = null) {
-		return [];
+		return null;
 	}
 
 	public function scan($path, $recursive = self::SCAN_RECURSIVE, $reuse = -1, $lock = true) {
-		return [];
+		return null;
 	}
 
 	protected function scanChildren(string $path, $recursive, int $reuse, int $folderId, bool $lock, int|float $oldSize, &$etagChanged = false) {
@@ -74,6 +74,6 @@ class ObjectStoreScanner extends Scanner {
 		}
 
 		// Make sure Oracle does not continue with null for empty strings
-		return (string) $path;
+		return (string)$path;
 	}
 }

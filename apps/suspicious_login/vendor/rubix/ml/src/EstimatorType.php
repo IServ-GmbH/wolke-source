@@ -51,7 +51,7 @@ class EstimatorType implements Stringable
     /**
      * An array of human-readable string representations of the estimator types.
      *
-     * @var int
+     * @var string[]
      */
     protected const TYPE_STRINGS = [
         self::CLASSIFIER => 'classifier',
@@ -77,7 +77,7 @@ class EstimatorType implements Stringable
      *
      * @var int
      */
-    protected $code;
+    protected int $code;
 
     /**
      * Build a new estimator type object.

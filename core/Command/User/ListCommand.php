@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -59,12 +58,12 @@ class ListCommand extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		if ($input->getOption('disabled')) {
-			$users = $this->userManager->getDisabledUsers((int) $input->getOption('limit'), (int) $input->getOption('offset'));
+			$users = $this->userManager->getDisabledUsers((int)$input->getOption('limit'), (int)$input->getOption('offset'));
 		} else {
-			$users = $this->userManager->searchDisplayName('', (int) $input->getOption('limit'), (int) $input->getOption('offset'));
+			$users = $this->userManager->searchDisplayName('', (int)$input->getOption('limit'), (int)$input->getOption('offset'));
 		}
 
-		$this->writeArrayInOutputFormat($input, $output, $this->formatUsers($users, (bool) $input->getOption('info')));
+		$this->writeArrayInOutputFormat($input, $output, $this->formatUsers($users, (bool)$input->getOption('info')));
 		return 0;
 	}
 
@@ -79,12 +78,13 @@ class ListCommand extends Base {
 				$value = [
 					'user_id' => $user->getUID(),
 					'display_name' => $user->getDisplayName(),
-					'email' => (string) $user->getSystemEMailAddress(),
+					'email' => (string)$user->getSystemEMailAddress(),
 					'cloud_id' => $user->getCloudId(),
 					'enabled' => $user->isEnabled(),
 					'groups' => $groups,
 					'quota' => $user->getQuota(),
-					'last_seen' => date(\DateTimeInterface::ATOM, $user->getLastLogin()), // ISO-8601
+					'first_seen' => $this->formatLoginDate($user->getFirstLogin()),
+					'last_seen' => $this->formatLoginDate($user->getLastLogin()),
 					'user_directory' => $user->getHome(),
 					'backend' => $user->getBackendClassName()
 				];
@@ -92,6 +92,16 @@ class ListCommand extends Base {
 				$value = $user->getDisplayName();
 			}
 			yield $user->getUID() => $value;
+		}
+	}
+
+	private function formatLoginDate(int $timestamp): string {
+		if ($timestamp < 0) {
+			return 'unknown';
+		} elseif ($timestamp === 0) {
+			return 'never';
+		} else {
+			return date(\DateTimeInterface::ATOM, $timestamp); // ISO-8601
 		}
 	}
 }

@@ -15,7 +15,7 @@ use Rubix\ML\Classifiers\NaiveBayes;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Datasets\Generators\Agglomerate;
 use Rubix\ML\Transformers\IntervalDiscretizer;
-use Rubix\ML\CrossValidation\Metrics\Accuracy;
+use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -31,14 +31,14 @@ class NaiveBayesTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 200;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -65,7 +65,7 @@ class NaiveBayesTest extends TestCase
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var \Rubix\ML\CrossValidation\Metrics\FBeta
      */
     protected $metric;
 
@@ -75,16 +75,21 @@ class NaiveBayesTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 32, 0], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([0, 32, 255], 20.0),
-        ], [2, 3, 4]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
-        $this->estimator = new NaiveBayes(1.0, null);
+        $this->estimator = new NaiveBayes(null, 1.0);
 
-        $this->metric = new Accuracy();
+        $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -107,7 +112,7 @@ class NaiveBayesTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new NaiveBayes(-1.0);
+        new NaiveBayes(null, -1.0);
     }
 
     /**
@@ -136,8 +141,8 @@ class NaiveBayesTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'smoothing' => 1.0,
             'priors' => null,
+            'smoothing' => 1.0,
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -150,7 +155,7 @@ class NaiveBayesTest extends TestCase
     {
         $dataset = $this->generator->generate(self::TRAIN_SIZE + self::TEST_SIZE);
 
-        $transformer = new IntervalDiscretizer(6);
+        $transformer = new IntervalDiscretizer(5);
 
         $transformer->fit($dataset);
         $dataset->apply($transformer);
@@ -190,10 +195,5 @@ class NaiveBayesTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

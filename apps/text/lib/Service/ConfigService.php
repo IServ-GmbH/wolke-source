@@ -22,6 +22,10 @@ class ConfigService {
 		return $this->appConfig->getValueString(Application::APP_NAME, 'default_file_extension', 'md');
 	}
 
+	public function isOpenReadOnlyEnabled(): bool {
+		return $this->appConfig->getValueString(Application::APP_NAME, 'open_read_only_enabled', '0') === '1';
+	}
+
 	public function isRichEditingEnabled(): bool {
 		return ($this->appConfig->getValueString(Application::APP_NAME, 'rich_editing_enabled', '1') === '1');
 	}
@@ -43,5 +47,9 @@ class ConfigService {
 	public function isNotifyPushSyncEnabled(): bool {
 		return $this->appConfig->getValueBool(Application::APP_NAME, 'notify_push');
 
+	}
+
+	public function isFullWidthEditor(?string $userId): bool {
+		return $this->config->getUserValue($userId, Application::APP_NAME, 'is_full_width_editor', '0') === '1';
 	}
 }

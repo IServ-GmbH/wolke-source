@@ -21,11 +21,9 @@ use OCP\Migration\SimpleMigrationStep;
  * Recreate notifications_pushtoken(s) with a primary key for cluster support
  */
 class Version2010Date20210218082811 extends SimpleMigrationStep {
-	/** @var IDBConnection */
-	protected $connection;
-
-	public function __construct(IDBConnection $connection) {
-		$this->connection = $connection;
+	public function __construct(
+		protected IDBConnection $connection,
+	) {
 	}
 
 	/**
@@ -117,7 +115,7 @@ class Version2010Date20210218082811 extends SimpleMigrationStep {
 		while ($row = $result->fetch()) {
 			$insert
 				->setParameter('uid', $row['uid'])
-				->setParameter('token', (int) $row['token'], IQueryBuilder::PARAM_INT)
+				->setParameter('token', (int)$row['token'], IQueryBuilder::PARAM_INT)
 				->setParameter('deviceidentifier', $row['deviceidentifier'])
 				->setParameter('devicepublickey', $row['devicepublickey'])
 				->setParameter('devicepublickeyhash', $row['devicepublickeyhash'])

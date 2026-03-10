@@ -21,12 +21,12 @@ class GenerateMimetypeFileBuilder {
 			// Single digit extensions will be treated as integers
 			// Let's make sure they are strings
 			// https://github.com/nextcloud/server/issues/42902
-			$key = (string) $key;
+			$key = (string)$key;
 			return !($key === '' || $key[0] === '_');
 		}, ARRAY_FILTER_USE_KEY);
 
 		// Fetch all files
-		$dir = new \DirectoryIterator(\OC::$SERVERROOT.'/core/img/filetypes');
+		$dir = new \DirectoryIterator(\OC::$SERVERROOT . '/core/img/filetypes');
 
 		$files = [];
 		foreach ($dir as $fileInfo) {
@@ -42,7 +42,7 @@ class GenerateMimetypeFileBuilder {
 
 		// Fetch all themes!
 		$themes = [];
-		$dirs = new \DirectoryIterator(\OC::$SERVERROOT.'/themes/');
+		$dirs = new \DirectoryIterator(\OC::$SERVERROOT . '/themes/');
 		foreach ($dirs as $dir) {
 			//Valid theme dir
 			if ($dir->isFile() || $dir->isDot()) {

@@ -1,5 +1,4 @@
 { "translations": {
-    "Teams" : "Тимови",
     "You created the team {circle}" : "Направили сте тим {circle}",
     "{author} created the team {circle}" : "{author} је направио тим {circle}",
     "You deleted {circle}" : "Обрисали сте круг {circle}",
@@ -50,6 +49,7 @@
     "{member} sent a request to join {circle}" : "{member} је послао захтев да се придружи кругу {circle}",
     "You are the new owner of {circle}" : "Ви сте нови власник круга {circle}",
     "{member} is the new owner of {circle}" : "{member} је нови власник круга {circle}",
+    "Teams" : "Тимови",
     "On events happening in a <strong>team</strong> of which you are a member" : "На догађаје који се дешавају у <strong>тиму</strong> чији сте члан",
     "Any important event in a <strong>team</strong> you are moderating" : "Било који битан догађај у <strong>тиму</strong> који модеришете",
     "On global events happening in any <strong>team</strong>" : "На глобалне догађаје који се дешавају и било ком <strong>тиму</strong>",
@@ -104,12 +104,10 @@
     "Circles App Initialization" : "Иницијализација апликације Кругови",
     "Fresh installation status" : "Статус свеже инсталације",
     "Building Local Database" : "Изградња локалне базе података",
-    "Testing Basic Circle Creation" : "Тестирање креирања основног круга",
     "Adding local users and moderators" : "Додавање локалних корисника и модератора",
     "Show all teams" : "Прикажи све тимове",
     "Create a new team" : "Креирај нови тим",
     "Files" : "Фајлови",
-    "This feature is not available for personal circles" : "Ова функционалност није доступна за личне кругове",
     "The team is not federated" : "Круг није федерисан",
     "You cannot join this team" : "Не можете да се придружите овом тиму",
     "This member is not a moderator" : "Овај члан није модератор",
@@ -117,10 +115,6 @@
     "This member does not exist" : "Члан не постоји",
     "This member is the owner of the team" : "Овај члан је власник тима",
     "Level cannot be changed for this type of member" : "Ниво не може да се промени за овај тип члана",
-    "You are already a member of this circle" : "Већ сте члан овог круга",
-    "You have been blocked from this circle" : "Блокирани сте у овом кругу",
-    "The account is already a member of this circle" : "Овај налог је већ члан овог круга",
-    "The account has already been invited into this circle" : "Налог је већ раније позван у овај круг",
     "%s (Team owned by %s)" : "%s (Власник тима је %s)",
     "You are now a member of the Team \"%2$s\"" : "Сада сте члан тима „%2$s“",
     "You have been invited by %1$s into the Team \"%2$s\"" : "%1$s Вас је позвао/ла у Тим „%2$s“",
@@ -144,6 +138,7 @@
     "This item is already shared with this team" : "Ова ставка је већ подељена овом тиму",
     "Bring cloud-users closer together." : "Приближимо клауд кориснике.",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "Тимови омогућава људима да креирају своје сопствене групе људи/колега/пријатеља.\nБило која друга апликација затим може за дељење да користи те групе људи.",
+    "https://…" : "https://…",
     "Failed to load teams" : "Није успело учитавање тимова",
     "Try again" : "Покушајте поново",
     "No teams found" : "Није пронађен ниједан тим",
@@ -156,11 +151,6 @@
     "Name" : "Назив",
     "Size" : "Величина",
     "Modified" : "Измењен",
-    "Teams' files" : "Фајлови тимова",
-    "Select team to filter by" : "Изаберите тим по којем се филтрира",
-    "Please select teams to filter by" : "Молимо васд да изаберите тимове по којима се филтрира",
-    "No files found for the selected teams" : "Није пронађен ниједан фајл за изабране тимове",
-    "Shared to Circles" : "Дељено на Кругове",
-    "Circle" : "Круг"
+    "Shared to Circles" : "Дељено на Кругове"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

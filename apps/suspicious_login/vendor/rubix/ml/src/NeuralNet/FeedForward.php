@@ -3,16 +3,17 @@
 namespace Rubix\ML\NeuralNet;
 
 use Tensor\Matrix;
+use Rubix\ML\Encoding;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\NeuralNet\Layers\Layer;
 use Rubix\ML\NeuralNet\Layers\Input;
-use Rubix\ML\NeuralNet\Layers\Hidden;
 use Rubix\ML\NeuralNet\Layers\Output;
 use Rubix\ML\NeuralNet\Layers\Parametric;
 use Rubix\ML\NeuralNet\Optimizers\Adaptive;
 use Rubix\ML\NeuralNet\Optimizers\Optimizer;
 use Traversable;
+
+use function array_reverse;
 
 /**
  * Feed Forward
@@ -33,23 +34,23 @@ class FeedForward implements Network
      *
      * @var \Rubix\ML\NeuralNet\Layers\Input
      */
-    protected $input;
+    protected \Rubix\ML\NeuralNet\Layers\Input $input;
 
     /**
      * The hidden layers of the network.
      *
-     * @var \Rubix\ML\NeuralNet\Layers\Hidden[]
+     * @var list<\Rubix\ML\NeuralNet\Layers\Hidden>
      */
-    protected $hidden = [
+    protected array $hidden = [
         //
     ];
 
     /**
      * The pathing of the backward pass through the hidden layers.
      *
-     * @var \Rubix\ML\NeuralNet\Layers\Hidden[]
+     * @var list<\Rubix\ML\NeuralNet\Layers\Hidden>
      */
-    protected $backPass = [
+    protected array $backPass = [
         //
     ];
 
@@ -58,14 +59,14 @@ class FeedForward implements Network
      *
      * @var \Rubix\ML\NeuralNet\Layers\Output
      */
-    protected $output;
+    protected \Rubix\ML\NeuralNet\Layers\Output $output;
 
     /**
      * The gradient descent optimizer used to train the network.
      *
      * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
      */
-    protected $optimizer;
+    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
 
     /**
      * @param \Rubix\ML\NeuralNet\Layers\Input $input
@@ -75,11 +76,15 @@ class FeedForward implements Network
      */
     public function __construct(Input $input, array $hidden, Output $output, Optimizer $optimizer)
     {
+        $hidden = array_values($hidden);
+
+        $backPass = array_reverse($hidden);
+
         $this->input = $input;
         $this->hidden = $hidden;
         $this->output = $output;
-        $this->backPass = array_reverse($hidden);
         $this->optimizer = $optimizer;
+        $this->backPass = $backPass;
     }
 
     /**
@@ -95,7 +100,7 @@ class FeedForward implements Network
     /**
      * Return an array of hidden layers indexed left to right.
      *
-     * @return \Rubix\ML\NeuralNet\Layers\Hidden[]
+     * @return list<\Rubix\ML\NeuralNet\Layers\Hidden>
      */
     public function hidden() : array
     {
@@ -131,7 +136,7 @@ class FeedForward implements Network
      */
     public function initialize() : void
     {
-        $fanIn = 0;
+        $fanIn = 1;
 
         foreach ($this->layers() as $layer) {
             $fanIn = $layer->initialize($fanIn);
@@ -156,13 +161,13 @@ class FeedForward implements Network
      */
     public function infer(Dataset $dataset) : Matrix
     {
-        $x = Matrix::quick($dataset->samples())->transpose();
+        $input = Matrix::quick($dataset->samples())->transpose();
 
         foreach ($this->layers() as $layer) {
-            $x = $layer->infer($x);
+            $input = $layer->infer($input);
         }
 
-        return $x->transpose();
+        return $input->transpose();
     }
 
     /**
@@ -186,16 +191,16 @@ class FeedForward implements Network
     /**
      * Feed a batch through the network and return a matrix of activations at the output later.
      *
-     * @param \Tensor\Matrix $x
+     * @param \Tensor\Matrix $input
      * @return \Tensor\Matrix
      */
-    public function feed(Matrix $x) : Matrix
+    public function feed(Matrix $input) : Matrix
     {
         foreach ($this->layers() as $layer) {
-            $x = $layer->forward($x);
+            $input = $layer->forward($input);
         }
 
-        return $x;
+        return $input;
     }
 
     /**
@@ -213,5 +218,34 @@ class FeedForward implements Network
         }
 
         return $loss;
+    }
+
+    /**
+     * Export the network architecture as a graph in dot format.
+     *
+     * @return \Rubix\ML\Encoding
+     */
+    public function exportGraphviz() : Encoding
+    {
+        $dot = 'digraph Tree {' . PHP_EOL;
+        $dot .= '  node [shape=box, fontname=helvetica];' . PHP_EOL;
+
+        $layerNum = 0;
+
+        foreach ($this->layers() as $layer) {
+            ++$layerNum;
+
+            $dot .= "  N$layerNum [label=\"$layer\",style=\"rounded\"]" . PHP_EOL;
+
+            if ($layerNum > 1) {
+                $parentId = $layerNum - 1;
+
+                $dot .= "  N{$parentId} -> N{$layerNum};" . PHP_EOL;
+            }
+        }
+
+        $dot .= '}';
+
+        return new Encoding($dot);
     }
 }

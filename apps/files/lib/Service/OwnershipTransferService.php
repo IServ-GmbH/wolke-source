@@ -11,9 +11,10 @@ namespace OCA\Files\Service;
 
 use Closure;
 use Exception;
-use OC\Encryption\Manager as EncryptionManager;
 use OC\Files\Filesystem;
 use OC\Files\View;
+use OC\User\NoUserException;
+use OCA\Encryption\Util;
 use OCA\Files\Exception\TransferOwnershipException;
 use OCP\Encryption\IManager as IEncryptionManager;
 use OCP\Files\Config\IUserMountCache;
@@ -27,6 +28,7 @@ use OCP\Files\NotFoundException;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -41,10 +43,8 @@ use function rtrim;
 
 class OwnershipTransferService {
 
-	private IEncryptionManager|EncryptionManager $encryptionManager;
-
 	public function __construct(
-		IEncryptionManager $encryptionManager,
+		private IEncryptionManager $encryptionManager,
 		private IShareManager $shareManager,
 		private IMountManager $mountManager,
 		private IUserMountCache $userMountCache,
@@ -52,7 +52,6 @@ class OwnershipTransferService {
 		private IFactory $l10nFactory,
 		private IRootFolder $rootFolder,
 	) {
-		$this->encryptionManager = $encryptionManager;
 	}
 
 	/**
@@ -63,7 +62,7 @@ class OwnershipTransferService {
 	 * @param OutputInterface|null $output
 	 * @param bool $move
 	 * @throws TransferOwnershipException
-	 * @throws \OC\User\NoUserException
+	 * @throws NoUserException
 	 */
 	public function transfer(
 		IUser $sourceUser,
@@ -235,7 +234,7 @@ class OwnershipTransferService {
 		$progress->start();
 
 		if ($this->encryptionManager->isEnabled()) {
-			$masterKeyEnabled = \OCP\Server::get(\OCA\Encryption\Util::class)->isMasterKeyEnabled();
+			$masterKeyEnabled = Server::get(Util::class)->isMasterKeyEnabled();
 		} else {
 			$masterKeyEnabled = false;
 		}
@@ -315,7 +314,7 @@ class OwnershipTransferService {
 		foreach ($supportedShareTypes as $shareType) {
 			$offset = 0;
 			while (true) {
-				$sharePage = $this->shareManager->getSharesBy($sourceUid, $shareType, null, true, 50, $offset);
+				$sharePage = $this->shareManager->getSharesBy($sourceUid, $shareType, null, true, 50, $offset, onlyValid: false);
 				$progress->advance(count($sharePage));
 				if (empty($sharePage)) {
 					break;
@@ -485,7 +484,7 @@ class OwnershipTransferService {
 						}
 						$share->setNodeId($newNodeId);
 
-						$this->shareManager->updateShare($share);
+						$this->shareManager->updateShare($share, onlyValid: false);
 					}
 				}
 			} catch (NotFoundException $e) {

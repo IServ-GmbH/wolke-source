@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nextcloud Assistant &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="App: Local Machine translation 2 (translate2)" href="app_translate2.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -59,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -78,10 +84,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#text-processing">Text processing</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#text-to-image">Text-To-Image</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#context-chat">Context Chat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#context-agent">Context Agent</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#assistant-configuration">Assistant configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#task-processing">Task processing</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#image-storage">Image storage</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#chat-with-ai">Chat with AI</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#improve-ai-task-pickup-speed">Improve AI task pickup speed</a></li>
@@ -92,11 +100,13 @@
 <li class="toctree-l2"><a class="reference internal" href="app_translate2.html">App: Local Machine translation 2 (translate2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_llm2.html">App: Local large language model (llm2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_stt_whisper2.html">App: Local Whisper Speech-To-Text (stt_whisper2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_text2image_stablediffusion2.html">App: Local Image Generation (text2image_stablediffusion2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_recognize.html">App: Recognize</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_api_and_external_apps.html">AppAPI and External Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
@@ -106,6 +116,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -157,6 +168,7 @@
 <section id="related-apps">
 <h2>Related apps<a class="headerlink" href="#related-apps" title="Link to this heading"></a></h2>
 <p>Artificial intelligence at Nextcloud is built in a modular way, allowing you to choose from a variety of solutions for your needs. In order to make use of the various features of the Assistant you will need additional apps that act as backends to provide the actual implementation of the AI functionality. In the Nextcloud administration settings under “Artificial intelligence” you can select which AI backend app to use for which tasks. Note that some of the backend apps are only community maintained, while others are available for Customer support upon request.</p>
+<p>The AI admin settings will show all types of Assistant Tasks that are implemented by all your installed apps. Task types can be disabled in the AI admin settings so they are not available for the Assistant or other apps even if they are implemented. All implemented Task types are enabled by default.</p>
 <p><strong>Note</strong>: At Nextcloud we focus on creating on-premise AI apps that run fully self-hosted on your own servers in order to preserve your privacy and data sovereignty. However, you can also offload these resource-heavy tasks to an <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">“AI as a Service” provider</span></a>.</p>
 <p><strong>Note</strong>: When using our on-premise AI apps, make sure you have a GPU with enough VRAM that fits all the features you need. For each app documented here you will find its hardware requirements.</p>
 <section id="machine-translation">
@@ -198,7 +210,7 @@
 <h3>Text-To-Image<a class="headerlink" href="#text-to-image" title="Link to this heading"></a></h3>
 <p>In order to make use of Text-To-Image features, you will need an app that provides an image generation backend:</p>
 <ul class="simple">
-<li><p>text2image_stablediffusion (Customer support available upon request)</p></li>
+<li><p><a class="reference internal" href="app_text2image_stablediffusion2.html#ai-app-text2image-stablediffusion2"><span class="std std-ref">tex2image_stablediffusion2</span></a> (Customer support available upon request)</p></li>
 <li><p><em>integration_openai</em> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
 <li><p><em>integration_replicate</em> - Integrates with the replicate API to provide AI functionality from replicate servers (see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
 </ul>
@@ -210,6 +222,14 @@
 <li><p><a class="reference internal" href="app_context_chat.html#ai-app-context-chat"><span class="std std-ref">context_chat + context_chat_backend</span></a> -  (Customer support available upon request)</p></li>
 </ul>
 <p>You will also need a text processing provider as specified above (ie. llm2 or integration_openai).</p>
+</section>
+<section id="context-agent">
+<h3>Context Agent<a class="headerlink" href="#context-agent" title="Link to this heading"></a></h3>
+<p>In order to make use of our AI agent feature, offering the execution of actions on behalf of the user based on the AI chat, you will need the following apps:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="app_context_agent.html#ai-app-context-agent"><span class="std std-ref">context_agent</span></a> -  (Customer support available upon request)</p></li>
+</ul>
+<p>You will also need a text processing provider as specified above (ie. <em>llm2</em> or <em>integration_openai</em>).</p>
 </section>
 </section>
 <section id="configuration">
@@ -247,6 +267,37 @@ The occ commands to change the options are listed below.</p>
 </pre></div>
 </div>
 <p>To enable/disable the speech-to-text smart picker for all the users.</p>
+</section>
+<section id="task-processing">
+<h3>Task processing<a class="headerlink" href="#task-processing" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>List Tasks</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">task</span><span class="p">:</span><span class="nb">list</span>
+</pre></div>
+</div>
+<p>lists all task processing tasks.</p>
+<ol class="arabic simple" start="2">
+<li><p>Get Task</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>occ taskprocessing:task:get $TASK_ID
+</pre></div>
+</div>
+<p>shows all information for a specific task.</p>
+<ol class="arabic simple" start="3">
+<li><p>Enable or disable a Task type</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>occ taskprocessing:task-type:set-enabled $TASK_TYPE_ID 1
+</pre></div>
+</div>
+<p>Set 1 to enable and 0 to disable an implemented task type.</p>
+<ol class="arabic simple" start="4">
+<li><p>Get Task statistics</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">task</span><span class="p">:</span><span class="n">stats</span>
+</pre></div>
+</div>
+<p>shows statistics for all task processing Tasks.</p>
 </section>
 <section id="image-storage">
 <h3>Image storage<a class="headerlink" href="#image-storage" title="Link to this heading"></a></h3>
@@ -299,7 +350,7 @@ The AI text generation provider should ideally handle the max token limit case.<
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -335,6 +386,14 @@ The AI text generation provider should ideally handle the max token limit case.<
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

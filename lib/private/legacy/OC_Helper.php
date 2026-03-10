@@ -99,7 +99,7 @@ class OC_Helper {
 			'p' => 1024 * 1024 * 1024 * 1024 * 1024,
 		];
 
-		$bytes = (float) $str;
+		$bytes = (float)$str;
 
 		if (preg_match('#([kmgtp]?b?)$#si', $str, $matches) && isset($bytes_array[$matches[1]])) {
 			$bytes *= $bytes_array[$matches[1]];
@@ -206,7 +206,7 @@ class OC_Helper {
 		$exts = [''];
 		$check_fn = 'is_executable';
 		// Default check will be done with $path directories :
-		$dirs = explode(PATH_SEPARATOR, (string) $path);
+		$dirs = explode(PATH_SEPARATOR, (string)$path);
 		// WARNING : We have to check if open_basedir is enabled :
 		$obd = OC::$server->get(IniGetWrapper::class)->getString('open_basedir');
 		if ($obd != 'none') {
@@ -417,7 +417,7 @@ class OC_Helper {
 	/**
 	 * Checks if a function is available
 	 *
-	 * @deprecated Since 25.0.0 use \OCP\Util::isFunctionEnabled instead
+	 * @deprecated 25.0.0 use \OCP\Util::isFunctionEnabled instead
 	 */
 	public static function is_function_enabled(string $function_name): bool {
 		return \OCP\Util::isFunctionEnabled($function_name);
@@ -425,7 +425,7 @@ class OC_Helper {
 
 	/**
 	 * Try to find a program
-	 * @deprecated Since 25.0.0 Use \OC\BinaryFinder directly
+	 * @deprecated 25.0.0 Use \OC\BinaryFinder directly
 	 */
 	public static function findBinaryPath(string $program): ?string {
 		$result = \OCP\Server::get(IBinaryFinder::class)->findBinaryPath($program);
@@ -463,7 +463,7 @@ class OC_Helper {
 		}
 		$fullPath = Filesystem::normalizePath($view->getAbsolutePath($path));
 
-		$cacheKey = $fullPath. '::' . ($includeMountPoints ? 'include' : 'exclude');
+		$cacheKey = $fullPath . '::' . ($includeMountPoints ? 'include' : 'exclude');
 		if ($useCache) {
 			$cached = $memcache->get($cacheKey);
 			if ($cached) {
@@ -548,10 +548,9 @@ class OC_Helper {
 		$isRemoteShare = $storage->instanceOfStorage(\OCA\Files_Sharing\External\Storage::class);
 
 		$ownerId = $storage->getOwner($path);
-		$hasOwnerId = $ownerId !== false && $ownerId !== null;
 		$ownerDisplayName = '';
 
-		if ($isRemoteShare === false && $hasOwnerId) {
+		if ($isRemoteShare === false && $ownerId !== false) {
 			$ownerDisplayName = \OC::$server->getUserManager()->getDisplayName($ownerId) ?? '';
 		}
 
@@ -573,9 +572,9 @@ class OC_Helper {
 			'mountPoint' => trim($mountPoint, '/'),
 		];
 
-		if ($isRemoteShare === false && $hasOwnerId && $path === '/') {
+		if ($isRemoteShare === false && $ownerId !== false && $path === '/') {
 			// If path is root, store this as last known quota usage for this user
-			\OCP\Server::get(\OCP\IConfig::class)->setUserValue($ownerId, 'files', 'lastSeenQuotaUsage', (string) $relative);
+			\OCP\Server::get(\OCP\IConfig::class)->setUserValue($ownerId, 'files', 'lastSeenQuotaUsage', (string)$relative);
 		}
 
 		$memcache->set($cacheKey, $info, 5 * 60);

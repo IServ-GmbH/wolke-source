@@ -25,16 +25,12 @@ use OCP\IL10N;
  * @package OCA\Federation
  */
 class DbHandler {
-	private IDBConnection $connection;
-	private IL10N $IL10N;
 	private string $dbTable = 'trusted_servers';
 
 	public function __construct(
-		IDBConnection $connection,
-		IL10N $il10n
+		private IDBConnection $connection,
+		private IL10N $IL10N,
 	) {
-		$this->connection = $connection;
-		$this->IL10N = $il10n;
 	}
 
 	/**
@@ -196,7 +192,7 @@ class DbHandler {
 		$statement = $query->executeQuery();
 		$result = $statement->fetch();
 		$statement->closeCursor();
-		return (string) $result['shared_secret'];
+		return (string)$result['shared_secret'];
 	}
 
 	/**
@@ -227,7 +223,7 @@ class DbHandler {
 		$statement = $query->executeQuery();
 		$result = $statement->fetch();
 		$statement->closeCursor();
-		return (int) $result['status'];
+		return (int)$result['status'];
 	}
 
 	/**

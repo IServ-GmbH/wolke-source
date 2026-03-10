@@ -39,7 +39,7 @@ $score = $metric->score($predictions, $testing->labels());
 echo $score;
 ```
 
-```sh
+```
 0.85
 ```
 
@@ -78,6 +78,32 @@ Clustering metrics derive their scores from a contingency table which can be tho
 | [Rand Index](cross-validation/metrics/rand-index.md) | [-1, 1] | ${\frac {\left.\sum _{ij}{\binom {n_{ij}}{2}}-\left[\sum _{i}{\binom {a_{i}}{2}}\sum _{j}{\binom {b_{j}}{2}}\right]\right/{\binom {n}{2}}}{\left.{\frac {1}{2}}\left[\sum _{i}{\binom {a_{i}}{2}}+\sum _{j}{\binom {b_{j}}{2}}\right]-\left[\sum _{i}{\binom {a_{i}}{2}}\sum _{j}{\binom {b_{j}}{2}}\right]\right/{\binom {n}{2}}}}$ | |
 | [V Measure](cross-validation/metrics/v-measure.md) | [0, 1] | $\frac{(1+\beta)hc}{\beta h + c}$ | |
 
+## Probabilistic Metrics
+These metrics calculate validation scores from the estimated probabilities of a [Probabilistic](probabilistic.md) classifier instead of their class predictions.
+
+
+```php
+use Rubix\ML\CrossValidation\Metrics\TopKAccuracy;
+
+$probabilities = $estimator->proba($testing);
+
+$metric = new TopKAccuracy(5);
+
+$score = $metric->score($probabilities, $testing->labels());
+
+echo $score;
+```
+
+```
+0.95
+```
+
+| Name | Range | Formula | Notes |
+|---|---|---|---|
+| [Brier Score](cross-validation/metrics/brier-score.md) | [-2, 0] | $\frac{1}{n}\sum\limits _{i=1}^{n}\sum\limits _{j=1}^{c}(P_{ij}-{\hat {P_{ij}}})^2$ | |
+| [Probabilistic Accuracy](cross-validation/metrics/probabilistic-accuracy.md) | [0, 1] | $\frac{1}{n}\sum\limits _{i=1}^{n} P_{label}$ | |
+| [Top K Accuracy](cross-validation/metrics/top-k-accuracy.md) | [0, 1] | | |
+
 ## Reports
 Cross validation reports give you a deeper sense for how well a particular model performs with fine-grained information. The `generate()` method on the [Report Generator](cross-validation/reports/api.md#report-generators) interface takes a set of predictions and their corresponding ground-truth labels and returns a [Report](cross-validation/reports/api.md#report-objects) object filled with useful statistics that can be printed directly to the terminal or saved to a file.
 
@@ -108,39 +134,40 @@ echo $results;
 
 ```json
 {
-    "mean_absolute_error": 0.8,
-    "median_absolute_error": 1,
-    "mean_squared_error": 1,
-    "mean_absolute_percentage_error": 14.02077497665733,
-    "rms_error": 1,
-    "mean_squared_log_error": 0.019107097505647368,
-    "r_squared": 0.9958930551562692,
-    "error_mean": -0.2,
-    "error_midrange": -0.5,
-    "error_median": 0,
-    "error_variance": 0.9599999999999997,
-    "error_mad": 1,
-    "error_iqr": 2,
-    "error_skewness": -0.22963966338592326,
-    "error_kurtosis": -1.0520833333333324,
-    "error_min": -2,
-    "error_max": 1,
+    "mean absolute error": 0.8,
+    "median absolute error": 1,
+    "mean squared error": 1,
+    "mean absolute percentage error": 14.02077497665733,
+    "rms error": 1,
+    "mean squared log error": 0.019107097505647368,
+    "r squared": 0.9958930551562692,
+    "error mean": -0.2,
+    "error standard deviation": 0.9898464007663,
+    "error skewness": -0.22963966338592326,
+    "error kurtosis": -1.0520833333333324,
+    "error min": -2,
+    "error 25%": -1.0,
+    "error median": 0.0,
+    "error 75%": 0.75,
+    "error max": 1,
     "cardinality": 10
-}.
+}
 ```
 
 ### Accessing Report Attributes
 You can access individual report attributes by treating the report object as an associative array.
 
 ```php
-$mae = $results['mean_absolute_error'];
+$mae = $results['mean absolute error'];
 ```
 
 ### Saving a Report
-You may want to save the results of a report for later reference. To do so, you may call the `toJSON()` method on the report object and subsequently the `write()` method on the returned encoding to save the report to a file.
+Report objects can be cast to JSON encodings which are persistable using a [Persister](persisters/api.md) object. To save a report, call the `toJSON()` method on the report to return an encoding object and then pass a persister to its `saveTo()` method like in the example below.
 
 ```php
-$results->toJSON()->write('report.json');
+use Rubix\ML\Persisters\Filesystem;
+
+$results->toJSON()->saveTo(new Filesystem('error.report'));
 ```
 
 ## Validators
@@ -166,7 +193,7 @@ $score = $validator->test($estimator, $dataset, new FBeta());
 echo $score;
 ```
 
-```sh
+```
 0.9175
 ```
 
@@ -177,7 +204,7 @@ Poor generalization performance can be explained by one or more of these common 
 A poorly performing model can sometimes be explained as *underfitting* the training data - a condition in which the learner is unable to capture the underlying pattern or trend given the model constraints. The result of an underfit model is an estimator with high bias error. Underfitting usually occurs when a simple model is chosen to represent data that is complex and non-linear. Adding more features to the dataset can help, however if the problem is too severe, a more flexible learning algorithm can be chosen for the task instead.
 
 ### Overfitting
-When a model performs well on training data but poorly during cross-validation it could be that the model has *overfit* the training data. Overfitting occurs when the model conforms too closely to the training data and therefore fails to generalize well to new data or make predictions reliably. Flexible models are more prone to overfitting due to their ability to *memorize* individual samples. Most learners employ strategies such as regularization, early stopping, and/or tree pruning to control overfitting, however if overfitting is still a problem, adding more samples to the dataset can also help.
+When a model performs well on training data but poorly during cross-validation it could be that the model has *overfit* the training data. Overfitting occurs when the model conforms too closely to the training data and therefore fails to generalize well to new data or make predictions reliably. Flexible models are more prone to overfitting due to their ability to *memorize* individual samples. Most learners employ strategies such as regularization, early stopping, and/or tree pruning to control overfitting, however if overfitting is still a problem, adding more unique samples to the dataset can also help.
 
 ### Selection Bias
-When a model performs well on certain samples but poorly on others it could be that the learner was trained with a dataset that exhibits selection bias. Selection bias is the bias introduced when a population is disproportionally represented in a dataset. For example, if a learner is trained to classify pictures of cats and dogs but mostly (say 90%) cats are represented in the dataset, the model will likely have difficulty making real-world predictions where cats and dogs are more equally represented. To correct selection bias, either obtain more training samples or up-sample the class of the underrepresented type.
+When a model performs well on certain samples but poorly on others it could be that the learner was trained with a dataset that exhibits selection bias. Selection bias is the bias introduced when a population is disproportionally represented in a dataset. For example, if a learner is trained to classify pictures of cats and dogs but mostly (say 90%) cats are represented in the dataset, the model will likely have difficulty making real-world predictions where cats and dogs are more equally represented. To correct selection bias, either obtain more unique training samples or up-sample the class of the underrepresented type.

@@ -2,7 +2,6 @@ OC.L10N.register(
     "text",
     {
     "File not found" : "Файл олдсонгүй",
-    "Translate" : "Орчуулга",
     "Guest" : "Зочин",
     "you" : "та",
     "edit" : "Засварлах",
@@ -11,14 +10,14 @@ OC.L10N.register(
     "Undo" : "буцах",
     "Cancel" : "Цуцлах",
     "URL" : "URL",
+    "Save" : "Хадгалах",
+    "Translate" : "Орчуулга",
     "to" : "Дуусах нь",
     "Replace" : "Солих",
-    "Upload" : "байршуулах",
     "Edit" : "засварлах",
+    "Upload" : "байршуулах",
     "Source code" : "эх үүсвэр талын код",
     "Details" : "Дэлгэрэнгүй",
-    "Choose" : "Сонгох",
-    "Info" : "Info",
-    "Warning" : "Warning"
+    "Choose" : "Сонгох"
 },
 "nplurals=2; plural=(n != 1);");

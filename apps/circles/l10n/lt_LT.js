@@ -1,7 +1,6 @@
 OC.L10N.register(
     "circles",
     {
-    "Teams" : "Komandos",
     "You deleted {circle}" : "Jūs ištrynėte {circle}",
     "{author} deleted {circle}" : "{author} ištrynė {circle}",
     "You removed {member} from {circle}" : "Jūs pašalinote {member} iš {circle}",
@@ -42,6 +41,7 @@ OC.L10N.register(
     "{member} sent a request to join {circle}" : "{member} išsiuntė užklausą prisijungti prie {circle}",
     "You are the new owner of {circle}" : "Jūs esate rato {circle} savininkas",
     "{member} is the new owner of {circle}" : "{member} yra naujas rato {circle} savininkas",
+    "Teams" : "Komandos",
     "Personal" : "Asmeniniai",
     "System" : "Sistema",
     "Visible" : "Matoma",
@@ -70,17 +70,15 @@ OC.L10N.register(
     "Password to access files" : "Prieigos prie failų slaptažodis",
     "%s shared multiple files with you." : "%s bendrino kelis failus su Jumis.",
     "Files" : "Failai",
-    "This feature is not available for personal circles" : "Ši ypatybė nėra prieinama asmeniniams ratams",
     "This member is not a moderator" : "Šis narys nėra moderatorius",
     "Insufficient privileges" : "Nepakanka teisių",
     "This member does not exist" : "Šio nario nėra",
     "Level cannot be changed for this type of member" : "Šio tipo naudotojui negali būti pakeistas lygis.",
-    "You are already a member of this circle" : "Jūs jau esate šio rato narys",
-    "You have been blocked from this circle" : "Jūs buvote blokuotas šiame bendrinimo rate",
     "Accept" : "Priimti",
     "Refuse" : "Atsisakyti",
     "%s" : "%s",
     "Open %s" : "Atverti %s",
+    "https://…" : "https://…",
     "Try again" : "Bandyti dar kartą",
     "Loading…" : "Įkeliama…",
     "No files in here" : "Čia failų nėra",
@@ -88,7 +86,6 @@ OC.L10N.register(
     "Name" : "Vardas",
     "Size" : "Dydis",
     "Modified" : "Pakeistas",
-    "Shared to Circles" : "Bendrinama su  bendrystės ratu",
-    "Circle" : "Ratas"
+    "Shared to Circles" : "Bendrinama su  bendrystės ratu"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

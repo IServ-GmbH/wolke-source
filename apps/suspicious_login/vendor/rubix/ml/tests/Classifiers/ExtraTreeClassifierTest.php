@@ -13,7 +13,8 @@ use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Classifiers\ExtraTreeClassifier;
 use Rubix\ML\Datasets\Generators\Agglomerate;
-use Rubix\ML\CrossValidation\Metrics\Accuracy;
+use Rubix\ML\Transformers\IntervalDiscretizer;
+use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -29,14 +30,14 @@ class ExtraTreeClassifierTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -63,7 +64,7 @@ class ExtraTreeClassifierTest extends TestCase
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var \Rubix\ML\CrossValidation\Metrics\FBeta
      */
     protected $metric;
 
@@ -73,16 +74,21 @@ class ExtraTreeClassifierTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 32, 0], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([0, 32, 255], 20.0),
-        ], [2, 3, 4]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
-        $this->estimator = new ExtraTreeClassifier(10, 3, 3, 1e-7);
+        $this->estimator = new ExtraTreeClassifier(30, 16, 1e-7, 3);
 
-        $this->metric = new Accuracy();
+        $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -135,10 +141,10 @@ class ExtraTreeClassifierTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'max_height' => 10,
-            'max_leaf_size' => 3,
-            'max_features' => 3,
-            'min_purity_increase' => 1.0E-7,
+            'max height' => 30,
+            'max leaf size' => 16,
+            'min purity increase' => 1.0E-7,
+            'max features' => 3,
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -147,7 +153,7 @@ class ExtraTreeClassifierTest extends TestCase
     /**
      * @test
      */
-    public function trainPredictImportances() : void
+    public function trainPredictImportancesContinuous() : void
     {
         $training = $this->generator->generate(self::TRAIN_SIZE);
         $testing = $this->generator->generate(self::TEST_SIZE);
@@ -161,17 +167,33 @@ class ExtraTreeClassifierTest extends TestCase
         $this->assertIsArray($importances);
         $this->assertCount(3, $importances);
         $this->assertContainsOnly('float', $importances);
-        $this->assertEqualsWithDelta(1.0, array_sum($importances), 1e-8);
 
         $predictions = $this->estimator->predict($testing);
 
         $score = $this->metric->score($predictions, $testing->labels());
 
         $this->assertGreaterThanOrEqual(self::MIN_SCORE, $score);
+    }
 
-        $rules = $this->estimator->rules(['r', 'g', 'b']);
+    /**
+     * @test
+     */
+    public function trainPredictCategorical() : void
+    {
+        $training = $this->generator->generate(self::TRAIN_SIZE + self::TEST_SIZE)
+            ->apply(new IntervalDiscretizer(3));
 
-        $this->assertIsString($rules);
+        $testing = $training->randomize()->take(self::TEST_SIZE);
+
+        $this->estimator->train($training);
+
+        $this->assertTrue($this->estimator->trained());
+
+        $predictions = $this->estimator->predict($testing);
+
+        $score = $this->metric->score($predictions, $testing->labels());
+
+        $this->assertGreaterThanOrEqual(self::MIN_SCORE, $score);
     }
 
     /**
@@ -182,10 +204,5 @@ class ExtraTreeClassifierTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

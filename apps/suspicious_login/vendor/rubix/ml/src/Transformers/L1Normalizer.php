@@ -4,7 +4,9 @@ namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
 
-use const Rubix\ML\EPSILON;
+use function array_map;
+use function array_walk;
+use function array_sum;
 
 /**
  * L1 Normalizer
@@ -36,21 +38,35 @@ class L1Normalizer implements Transformer
     /**
      * Transform the dataset in place.
      *
-     * @param list<list<mixed>> $samples
+     * @param array<mixed[]> $samples
      */
     public function transform(array &$samples) : void
     {
-        foreach ($samples as &$sample) {
-            $norm = array_sum(array_map('abs', $sample)) ?: EPSILON;
+        array_walk($samples, [$this, 'normalize']);
+    }
 
-            foreach ($sample as &$value) {
-                $value /= $norm;
-            }
+    /**
+     * Normalize a sample by its L1 norm.
+     *
+     * @param list<int|float> $sample
+     */
+    protected function normalize(array &$sample) : void
+    {
+        $norm = array_sum(array_map('abs', $sample));
+
+        if ($norm == 0) {
+            return;
+        }
+
+        foreach ($sample as &$value) {
+            $value /= $norm;
         }
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Fetcher;
 
 use Exception;
@@ -15,6 +20,8 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\Server;
+use OCP\ServerVersion;
 use OCP\Support\Subscription\IRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -37,7 +44,7 @@ abstract class AppAPIFetcher {
 		protected ITimeFactory $timeFactory,
 		protected IConfig $config,
 		protected LoggerInterface $logger,
-		protected IRegistry $registry
+		protected IRegistry $registry,
 	) {
 		$this->appData = $appDataFactory->get('appstore');
 	}
@@ -188,7 +195,7 @@ abstract class AppAPIFetcher {
 	 */
 	protected function getChannel(): string {
 		if ($this->channel === null) {
-			$this->channel = \OC_Util::getChannel();
+			$this->channel = Server::get(ServerVersion::class)->getChannel();
 		}
 		return $this->channel;
 	}

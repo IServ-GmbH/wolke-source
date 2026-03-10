@@ -27,21 +27,21 @@ class Circle implements Generator
      *
      * @var \Tensor\Vector
      */
-    protected $center;
+    protected \Tensor\Vector $center;
 
     /**
      * The scaling factor of the circle.
      *
      * @var float
      */
-    protected $scale;
+    protected float $scale;
 
     /**
      * The factor of gaussian noise to add to the data points.
      *
      * @var float
      */
-    protected $noise;
+    protected float $noise;
 
     /**
      * @param float $x
@@ -76,7 +76,7 @@ class Circle implements Generator
      *
      * @internal
      *
-     * @return int
+     * @return int<0,max>
      */
     public function dimensions() : int
     {
@@ -86,7 +86,7 @@ class Circle implements Generator
     /**
      * Generate n data points.
      *
-     * @param int $n
+     * @param int<0,max> $n
      * @return \Rubix\ML\Datasets\Labeled
      */
     public function generate(int $n) : Labeled

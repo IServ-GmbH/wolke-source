@@ -11,6 +11,7 @@ use Doctrine\DBAL\Exception;
 use OCP\DB\IPreparedStatement;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -20,11 +21,6 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractMapping {
 	/**
-	 * @var \OCP\IDBConnection $dbc
-	 */
-	protected $dbc;
-
-	/**
 	 * returns the DB table name which holds the mappings
 	 *
 	 * @return string
@@ -32,10 +28,11 @@ abstract class AbstractMapping {
 	abstract protected function getTableName(bool $includePrefix = true);
 
 	/**
-	 * @param \OCP\IDBConnection $dbc
+	 * @param IDBConnection $dbc
 	 */
-	public function __construct(\OCP\IDBConnection $dbc) {
-		$this->dbc = $dbc;
+	public function __construct(
+		protected IDBConnection $dbc,
+	) {
 	}
 
 	/** @var array caches Names (value) by DN (key) */
@@ -116,7 +113,7 @@ abstract class AbstractMapping {
 	 * @return string|false
 	 */
 	public function getDNByName($name) {
-		$dn = array_search($name, $this->cache);
+		$dn = array_search($name, $this->cache, true);
 		if ($dn === false && ($dn = $this->getXbyY('ldap_dn', 'owncloud_name', $name)) !== false) {
 			$this->cache[$dn] = $name;
 		}
@@ -333,7 +330,7 @@ abstract class AbstractMapping {
 	 */
 	public function map($fdn, $name, $uuid) {
 		if (mb_strlen($fdn) > 4000) {
-			\OCP\Server::get(LoggerInterface::class)->error(
+			Server::get(LoggerInterface::class)->error(
 				'Cannot map, because the DN exceeds 4000 characters: {dn}',
 				[
 					'app' => 'user_ldap',
@@ -352,11 +349,11 @@ abstract class AbstractMapping {
 
 		try {
 			$result = $this->dbc->insertIfNotExist($this->getTableName(), $row);
-			if ((bool) $result === true) {
+			if ((bool)$result === true) {
 				$this->cache[$fdn] = $name;
 			}
 			// insertIfNotExist returns values as int
-			return (bool) $result;
+			return (bool)$result;
 		} catch (\Exception $e) {
 			return false;
 		}
@@ -373,7 +370,7 @@ abstract class AbstractMapping {
 			DELETE FROM `' . $this->getTableName() . '`
 			WHERE `owncloud_name` = ?');
 
-		$dn = array_search($name, $this->cache);
+		$dn = array_search($name, $this->cache, true);
 		if ($dn !== false) {
 			unset($this->cache[$dn]);
 		}
@@ -434,10 +431,10 @@ abstract class AbstractMapping {
 		$query = $this->dbc->getQueryBuilder();
 		$query->select($query->func()->count('ldap_dn_hash'))
 			->from($this->getTableName());
-		$res = $query->execute();
+		$res = $query->executeQuery();
 		$count = $res->fetchOne();
 		$res->closeCursor();
-		return (int) $count;
+		return (int)$count;
 	}
 
 	public function countInvalidated(): int {
@@ -445,9 +442,9 @@ abstract class AbstractMapping {
 		$query->select($query->func()->count('ldap_dn_hash'))
 			->from($this->getTableName())
 			->where($query->expr()->like('directory_uuid', $query->createNamedParameter('invalidated_%')));
-		$res = $query->execute();
+		$res = $query->executeQuery();
 		$count = $res->fetchOne();
 		$res->closeCursor();
-		return (int) $count;
+		return (int)$count;
 	}
 }

@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer as SymfonyMailer;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mailer\Transport\NullTransport;
 use Symfony\Component\Mailer\Transport\SendmailTransport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
@@ -61,13 +62,13 @@ class Mailer implements IMailer {
 	private ?MailerInterface $instance = null;
 
 	public function __construct(
-		private IConfig          $config,
-		private LoggerInterface  $logger,
-		private Defaults         $defaults,
-		private IURLGenerator    $urlGenerator,
-		private IL10N            $l10n,
+		private IConfig $config,
+		private LoggerInterface $logger,
+		private Defaults $defaults,
+		private IURLGenerator $urlGenerator,
+		private IL10N $l10n,
 		private IEventDispatcher $dispatcher,
-		private IFactory         $l10nFactory,
+		private IFactory $l10nFactory,
 	) {
 	}
 
@@ -106,8 +107,8 @@ class Mailer implements IMailer {
 		$logoDimensions = $this->config->getAppValue('theming', 'logoDimensions', self::DEFAULT_DIMENSIONS);
 		if (str_contains($logoDimensions, 'x')) {
 			[$width, $height] = explode('x', $logoDimensions);
-			$width = (int) $width;
-			$height = (int) $height;
+			$width = (int)$width;
+			$height = (int)$height;
 
 			if ($width > self::MAX_LOGO_SIZE || $height > self::MAX_LOGO_SIZE) {
 				if ($width === $height) {
@@ -115,9 +116,9 @@ class Mailer implements IMailer {
 					$logoHeight = self::MAX_LOGO_SIZE;
 				} elseif ($width > $height) {
 					$logoWidth = self::MAX_LOGO_SIZE;
-					$logoHeight = (int) (($height / $width) * self::MAX_LOGO_SIZE);
+					$logoHeight = (int)(($height / $width) * self::MAX_LOGO_SIZE);
 				} else {
-					$logoWidth = (int) (($width / $height) * self::MAX_LOGO_SIZE);
+					$logoWidth = (int)(($width / $height) * self::MAX_LOGO_SIZE);
 					$logoHeight = self::MAX_LOGO_SIZE;
 				}
 			} else {
@@ -206,7 +207,7 @@ class Mailer implements IMailer {
 			$mailer->send($message->getSymfonyEmail());
 		} catch (TransportExceptionInterface $e) {
 			$logMessage = sprintf('Sending mail to "%s" with subject "%s" failed', print_r($message->getTo(), true), $message->getSubject());
-			$this->logger->debug($logMessage, ['app' => 'core', 'exception' => $e]);
+			$this->logger->error($logMessage, ['app' => 'core', 'exception' => $e]);
 			if ($debugMode) {
 				$this->logger->debug($e->getDebug(), ['app' => 'core']);
 			}
@@ -256,9 +257,10 @@ class Mailer implements IMailer {
 			return $this->instance;
 		}
 
-		$transport = null;
-
 		switch ($this->config->getSystemValueString('mail_smtpmode', 'smtp')) {
+			case 'null':
+				$transport = new NullTransport();
+				break;
 			case 'sendmail':
 				$transport = $this->getSendMailInstance();
 				break;
@@ -268,7 +270,9 @@ class Mailer implements IMailer {
 				break;
 		}
 
-		return new SymfonyMailer($transport);
+		$this->instance = new SymfonyMailer($transport);
+
+		return $this->instance;
 	}
 
 	/**

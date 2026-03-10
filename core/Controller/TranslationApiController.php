@@ -36,7 +36,7 @@ class TranslationApiController extends \OCP\AppFramework\OCSController {
 	/**
 	 * Get the list of supported languages
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{languages: array{from: string, fromLabel: string, to: string, toLabel: string}[], languageDetection: bool}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{languages: list<array{from: string, fromLabel: string, to: string, toLabel: string}>, languageDetection: bool}, array{}>
 	 *
 	 * 200: Supported languages returned
 	 */
@@ -44,7 +44,7 @@ class TranslationApiController extends \OCP\AppFramework\OCSController {
 	#[ApiRoute(verb: 'GET', url: '/languages', root: '/translation')]
 	public function languages(): DataResponse {
 		return new DataResponse([
-			'languages' => array_map(fn ($lang) => $lang->jsonSerialize(), $this->translationManager->getLanguages()),
+			'languages' => array_values(array_map(fn ($lang) => $lang->jsonSerialize(), $this->translationManager->getLanguages())),
 			'languageDetection' => $this->translationManager->canDetectLanguage(),
 		]);
 	}
@@ -66,6 +66,9 @@ class TranslationApiController extends \OCP\AppFramework\OCSController {
 	#[AnonRateLimit(limit: 10, period: 120)]
 	#[ApiRoute(verb: 'POST', url: '/translate', root: '/translation')]
 	public function translate(string $text, ?string $fromLanguage, string $toLanguage): DataResponse {
+		if (strlen($text) > 64_000) {
+			return new DataResponse(['message' => $this->l10n->t('Input text is too long')], Http::STATUS_BAD_REQUEST);
+		}
 		try {
 			$translation = $this->translationManager->translate($text, $fromLanguage, $toLanguage);
 

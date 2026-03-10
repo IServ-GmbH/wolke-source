@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2020 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,16 +19,12 @@ class UpdateConfig extends Command {
 		'name', 'url', 'imprintUrl', 'privacyUrl', 'slogan', 'color', 'primary_color', 'disable-user-theming'
 	];
 
-	private $themingDefaults;
-	private $imageManager;
-	private $config;
-
-	public function __construct(ThemingDefaults $themingDefaults, ImageManager $imageManager, IConfig $config) {
+	public function __construct(
+		private ThemingDefaults $themingDefaults,
+		private ImageManager $imageManager,
+		private IConfig $config,
+	) {
 		parent::__construct();
-
-		$this->themingDefaults = $themingDefaults;
-		$this->imageManager = $imageManager;
-		$this->config = $config;
 	}
 
 	protected function configure() {

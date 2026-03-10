@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,7 +29,6 @@ use OCP\Federation\ICloudIdManager;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -37,6 +37,7 @@ use OCP\Mail\IMailer;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\IShare;
 use OCP\Util;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class FileSharingBroadcaster
@@ -65,7 +66,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 	/** @var Notifications */
 	private $federationNotifications;
 
-	/** @var ILogger */
+	/** @var LoggerInterface */
 	private $logger;
 
 	/** @var Defaults */
@@ -104,7 +105,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 		$this->rootFolder = OC::$server->getLazyRootFolder();
 		$this->userManager = OC::$server->getUserManager();
 		$this->federationCloudIdManager = OC::$server->getCloudIdManager();
-		$this->logger = OC::$server->getLogger();
+		$this->logger = \OCP\Server::get(LoggerInterface::class);
 		$this->urlGenerator = OC::$server->getURLGenerator();
 		try {
 			$this->defaults = OC::$server->query(Defaults::class);
@@ -114,7 +115,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 			$this->miscService = OC::$server->query(MiscService::class);
 		} catch (QueryException $e) {
 			OC::$server->getLogger()
-					   ->log(1, 'Circles: cannot init FileSharingBroadcaster - ' . $e->getMessage());
+				->log(1, 'Circles: cannot init FileSharingBroadcaster - ' . $e->getMessage());
 		}
 
 		try {
@@ -330,7 +331,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 	 *
 	 * @return bool
 	 */
-	public function sharedByFederated(DeprecatedCircle $circle, IShare $share, string $address, SharesToken $token
+	public function sharedByFederated(DeprecatedCircle $circle, IShare $share, string $address, SharesToken $token,
 	): bool {
 		try {
 			$cloudId = $this->federationCloudIdManager->resolveCloudId($address);
@@ -347,7 +348,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 				$token->getToken(),
 				$address,
 				$share->getNode()
-					  ->getName(),
+					->getName(),
 				$share->getId(),
 				$share->getShareOwner(),
 				$ownerCloudId->getId(),
@@ -356,12 +357,12 @@ class FileSharingBroadcaster implements IBroadcaster {
 				IShare::TYPE_USER
 			);
 		} catch (\Exception $e) {
-			$this->logger->logException(
-				$e, [
-					'message' => 'Failed to notify remote server of circles-federated share',
-					'level' => ILogger::ERROR,
+			$this->logger->error(
+				'Failed to notify remote server of circles-federated share',
+				[
 					'app' => 'circles',
-				]
+					'exception' => $e,
+				],
 			);
 		}
 
@@ -377,7 +378,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 	 * @param string $password
 	 */
 	private function sharedByMail(
-		DeprecatedCircle $circle, IShare $share, string $email, SharesToken $sharesToken, string $password
+		DeprecatedCircle $circle, IShare $share, string $email, SharesToken $sharesToken, string $password,
 	) {
 		// genelink
 		$link = $this->urlGenerator->linkToRouteAbsolute(
@@ -394,12 +395,12 @@ class FileSharingBroadcaster implements IBroadcaster {
 		try {
 			$this->sendMail(
 				$share->getNode()
-					  ->getName(), $link, $displayName, $circle->getName(), $email
+					->getName(), $link, $displayName, $circle->getName(), $email
 			);
 			$this->sendPasswordByMail($share, $displayName, $email, $password);
 		} catch (Exception $e) {
 			OC::$server->getLogger()
-					   ->log(1, 'Circles::sharedByMail - mail were not sent: ' . $e->getMessage());
+				->log(1, 'Circles::sharedByMail - mail were not sent: ' . $e->getMessage());
 		}
 	}
 
@@ -459,7 +460,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 		$this->logger->log(0, "Sending password mail to circle '" . $circleName . "': " . $email);
 
 		$filename = $share->getNode()
-						  ->getName();
+			->getName();
 		$initiator = $share->getSharedBy();
 		$shareWith = $share->getSharedWith();
 
@@ -532,7 +533,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 	 *
 	 * @return IEMailTemplate
 	 */
-	private function generateEmailTemplate($subject, $text, $fileName, $link, $author, $circleName
+	private function generateEmailTemplate($subject, $text, $fileName, $link, $author, $circleName,
 	) {
 		$emailTemplate = $this->mailer->createEMailTemplate(
 			'circles.ShareNotification', [
@@ -566,7 +567,7 @@ class FileSharingBroadcaster implements IBroadcaster {
 	 * @param string $recipient
 	 */
 	public function sendMailExitingShares(
-		DeprecatedCircle $circle, array $unknownShares, DeprecatedMember $author, DeprecatedMember $member, string $recipient
+		DeprecatedCircle $circle, array $unknownShares, DeprecatedMember $author, DeprecatedMember $member, string $recipient,
 	) {
 		$data = [];
 

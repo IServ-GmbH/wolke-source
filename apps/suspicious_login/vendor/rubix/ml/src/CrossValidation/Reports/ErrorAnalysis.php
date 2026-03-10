@@ -5,7 +5,7 @@ namespace Rubix\ML\CrossValidation\Reports;
 use Rubix\ML\Report;
 use Rubix\ML\Estimator;
 use Rubix\ML\EstimatorType;
-use Rubix\ML\Other\Helpers\Stats;
+use Rubix\ML\Helpers\Stats;
 use Rubix\ML\Specifications\PredictionAndLabelCountsAreEqual;
 
 use function count;
@@ -50,10 +50,9 @@ class ErrorAnalysis implements ReportGenerator
     {
         PredictionAndLabelCountsAreEqual::with($predictions, $labels)->check();
 
-        $muHat = Stats::mean($labels);
+        $mu = Stats::mean($labels);
 
         $errors = $l1 = $l2 = $are = $sle = [];
-
         $sse = $sst = 0.0;
 
         foreach ($predictions as $i => $prediction) {
@@ -67,35 +66,34 @@ class ErrorAnalysis implements ReportGenerator
             $sle[] = log((1.0 + $label) / ((1.0 + $prediction) ?: EPSILON)) ** 2;
 
             $sse += $se;
-            $sst += ($label - $muHat) ** 2;
+            $sst += ($label - $mu) ** 2;
         }
 
         $mse = Stats::mean($l2);
 
         [$mean, $variance] = Stats::meanVar($errors);
-        [$median, $mad] = Stats::medianMad($errors);
 
-        $min = min($errors);
-        $max = max($errors);
+        $quantiles = Stats::quantiles($errors, [
+            0.0, 0.25, 0.5, 0.75, 1.0,
+        ]);
 
         return new Report([
-            'mean_absolute_error' => Stats::mean($l1),
-            'median_absolute_error' => Stats::median($l1),
-            'mean_squared_error' => $mse,
-            'mean_absolute_percentage_error' => 100.0 * Stats::mean($are),
-            'rms_error' => sqrt($mse),
-            'mean_squared_log_error' => Stats::mean($sle),
-            'r_squared' => 1.0 - ($sse / ($sst ?: EPSILON)),
-            'error_mean' => $mean,
-            'error_midrange' => ($min + $max) / 2.0,
-            'error_median' => $median,
-            'error_variance' => $variance,
-            'error_mad' => $mad,
-            'error_iqr' => Stats::iqr($errors),
-            'error_skewness' => Stats::skewness($errors, $mean),
-            'error_kurtosis' => Stats::kurtosis($errors, $mean),
-            'error_min' => $min,
-            'error_max' => $max,
+            'mean absolute error' => Stats::mean($l1),
+            'median absolute error' => Stats::median($l1),
+            'mean squared error' => $mse,
+            'mean squared log error' => Stats::mean($sle),
+            'mean absolute percentage error' => 100.0 * Stats::mean($are),
+            'rms error' => sqrt($mse),
+            'r squared' => 1.0 - ($sse / ($sst ?: EPSILON)),
+            'error mean' => $mean,
+            'error standard deviation' => sqrt($variance),
+            'error skewness' => Stats::skewness($errors, $mean),
+            'error kurtosis' => Stats::kurtosis($errors, $mean),
+            'error min' => $quantiles[0],
+            'error 25%' => $quantiles[1],
+            'error median' => $quantiles[2],
+            'error 75%' => $quantiles[3],
+            'error max' => $quantiles[4],
             'cardinality' => count($predictions),
         ]);
     }

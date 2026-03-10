@@ -9,8 +9,9 @@ use OC\TemplateLayout;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\EventDispatcher\IEventDispatcher;
+use Psr\Log\LoggerInterface;
 
-require_once __DIR__.'/template/functions.php';
+require_once __DIR__ . '/template/functions.php';
 
 /**
  * This class provides the templates for ownCloud.
@@ -127,15 +128,15 @@ class OC_Template extends \OC\Template\Base {
 			// Add custom headers
 			$headers = '';
 			foreach (OC_Util::$headers as $header) {
-				$headers .= '<'.\OCP\Util::sanitizeHTML($header['tag']);
+				$headers .= '<' . \OCP\Util::sanitizeHTML($header['tag']);
 				if (strcasecmp($header['tag'], 'script') === 0 && in_array('src', array_map('strtolower', array_keys($header['attributes'])))) {
 					$headers .= ' defer';
 				}
 				foreach ($header['attributes'] as $name => $value) {
-					$headers .= ' '.\OCP\Util::sanitizeHTML($name).'="'.\OCP\Util::sanitizeHTML($value).'"';
+					$headers .= ' ' . \OCP\Util::sanitizeHTML($name) . '="' . \OCP\Util::sanitizeHTML($value) . '"';
 				}
 				if ($header['text'] !== null) {
-					$headers .= '>'.\OCP\Util::sanitizeHTML($header['text']).'</'.\OCP\Util::sanitizeHTML($header['tag']).'>';
+					$headers .= '>' . \OCP\Util::sanitizeHTML($header['text']) . '</' . \OCP\Util::sanitizeHTML($header['tag']) . '>';
 				} else {
 					$headers .= '/>';
 				}
@@ -161,7 +162,7 @@ class OC_Template extends \OC\Template\Base {
 	 * do this.
 	 */
 	public function inc($file, $additionalParams = null) {
-		return $this->load($this->path.$file.'.php', $additionalParams);
+		return $this->load($this->path . $file . '.php', $additionalParams);
 	}
 
 	/**
@@ -242,10 +243,10 @@ class OC_Template extends \OC\Template\Base {
 			\OC::$server->get(IEventDispatcher::class)->dispatchTyped($event);
 			print($response->render());
 		} catch (\Throwable $e1) {
-			$logger = \OC::$server->getLogger();
-			$logger->logException($e1, [
+			$logger = \OCP\Server::get(LoggerInterface::class);
+			$logger->error('Rendering themed error page failed. Falling back to un-themed error page.', [
 				'app' => 'core',
-				'message' => 'Rendering themed error page failed. Falling back to unthemed error page.'
+				'exception' => $e1,
 			]);
 
 			try {
@@ -256,9 +257,9 @@ class OC_Template extends \OC\Template\Base {
 			} catch (\Exception $e2) {
 				// If nothing else works, fall back to plain text error page
 				$logger->error("$error_msg $hint", ['app' => 'core']);
-				$logger->logException($e2, [
+				$logger->error('Rendering un-themed error page failed. Falling back to plain text error page.', [
 					'app' => 'core',
-					'message' => 'Rendering unthemed error page failed. Falling back to plain text error page.'
+					'exception' => $e2,
 				]);
 
 				header('Content-Type: text/plain; charset=utf-8');
@@ -296,9 +297,9 @@ class OC_Template extends \OC\Template\Base {
 			$content->printPage();
 		} catch (\Exception $e) {
 			try {
-				$logger = \OC::$server->getLogger();
-				$logger->logException($exception, ['app' => 'core']);
-				$logger->logException($e, ['app' => 'core']);
+				$logger = \OCP\Server::get(LoggerInterface::class);
+				$logger->error($exception->getMessage(), ['app' => 'core', 'exception' => $exception]);
+				$logger->error($e->getMessage(), ['app' => 'core', 'exception' => $e]);
 			} catch (Throwable $e) {
 				// no way to log it properly - but to avoid a white page of death we send some output
 				self::printPlainErrorPage($e, $debug);

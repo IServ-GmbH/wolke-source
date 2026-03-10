@@ -1,21 +1,13 @@
-
-/*
-  +------------------------------------------------------------------------+
-  | Zephir Language                                                        |
-  +------------------------------------------------------------------------+
-  | Copyright (c) 2011-2017 Phalcon Team (http://www.zephir-lang.com)       |
-  +------------------------------------------------------------------------+
-  | This source file is subject to the New BSD License that is bundled     |
-  | with this package in the file docs/LICENSE.txt.                        |
-  |                                                                        |
-  | If you did not receive a copy of the license and are unable to         |
-  | obtain it through the world-wide-web, please send an email             |
-  | to license@zephir-lang.com so we can send you a copy immediately.      |
-  +------------------------------------------------------------------------+
-  | Authors: Andres Gutierrez <andres@zephir-lang.com>                     |
-  |          Eduar Carvajal <eduar@zephir-lang.com>                        |
-  +------------------------------------------------------------------------+
-*/
+/**
+ * This file is part of the Zephir.
+ *
+ * (c) Phalcon Team <team@zephir-lang.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code. If you did not receive
+ * a copy of the license it is available through the world-wide-web at the
+ * following url: https://docs.zephir-lang.com/en/latest/license
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -187,36 +179,6 @@ void zephir_round(zval *return_value, zval *op1, zval *op2, zval *op3)
 			RETURN_FALSE;
 			break;
 	}
-}
-
-zend_long
-zephir_mt_rand(zend_long min, zend_long max)
-{
-	zend_long number;
-
-	if (max < min) {
-		php_error_docref(NULL, E_WARNING, "max(%ld) is smaller than min(%ld)", max, min);
-		return 0;
-	}
-
-	if (!BG(mt_rand_is_seeded)) {
-		php_mt_srand(GENERATE_SEED());
-	}
-
-	number = (zend_long) (php_mt_rand() >> 1);
-
-	/**
-	 * The RAND_RANGE() macro has been removed since PHP 7.3.
-	 * php_mt_rand_range() should be used instead.
-	 * However, php_mt_rand_range() has been present since PHP 7.1.
-	 */
-#if PHP_VERSION_ID < 70100
-	RAND_RANGE(number, min, max, PHP_MT_RAND_MAX);
-#else
-	number = php_mt_rand_range(min, max);
-#endif
-
-	return number;
 }
 
 double zephir_ldexp(zval *value, zval *expval)

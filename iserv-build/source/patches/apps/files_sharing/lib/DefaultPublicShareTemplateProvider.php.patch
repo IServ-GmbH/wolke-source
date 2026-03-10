@@ -1,25 +1,25 @@
 diff --git apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-index d45ba16..c964d1a 100644
+index b6644f1..8eff1c7 100644
 --- apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
 +++ apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-@@ -69,15 +69,11 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
- 
+@@ -68,15 +68,11 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider
+ 		// Only make the share owner public if they allowed to show their name
  		$owner = $this->userManager->get($share->getShareOwner());
  		if ($owner instanceof IUser) {
 -			$ownerAccount = $this->accountManager->getAccount($owner);
 -
--			$ownerName = $ownerAccount->getProperty(IAccountManager::PROPERTY_DISPLAYNAME);
--			if ($ownerName->getScope() === IAccountManager::SCOPE_PUBLISHED) {
--				$shareTmpl['owner'] = $owner->getUID();
--				$shareTmpl['shareOwner'] = $owner->getDisplayName();
--				$this->initialState->provideInitialState('owner', $shareTmpl['owner']);
--				$this->initialState->provideInitialState('ownerDisplayName', $shareTmpl['shareOwner']);
+-			$ownerNameProperty = $ownerAccount->getProperty(IAccountManager::PROPERTY_DISPLAYNAME);
+-			if ($ownerNameProperty->getScope() === IAccountManager::SCOPE_PUBLISHED) {
+-				$ownerId = $owner->getUID();
+-				$ownerName = $owner->getDisplayName();
+-				$this->initialState->provideInitialState('owner', $ownerId);
+-				$this->initialState->provideInitialState('ownerDisplayName', $ownerName);
 -			}
 +			// IServ: always show the share's owner
-+			$shareTmpl['owner'] = $owner->getUID();
-+			$shareTmpl['shareOwner'] = $owner->getDisplayName();
-+			$this->initialState->provideInitialState('owner', $shareTmpl['owner']);
-+			$this->initialState->provideInitialState('ownerDisplayName', $shareTmpl['shareOwner']);
++			$ownerId = $owner->getUID();
++			$ownerName = $owner->getDisplayName();
++			$this->initialState->provideInitialState('owner', $ownerId);
++			$this->initialState->provideInitialState('ownerDisplayName', $ownerName);
  		}
  
- 		// Provide initial state
+ 		$view = 'public-share';

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2023 FedericoHeichou <federicoheichou@gmail.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,7 +27,7 @@ class Welcome extends Base {
 	 */
 	public function __construct(
 		IUserManager $userManager,
-		NewUserMailHelper $newUserMailHelper
+		NewUserMailHelper $newUserMailHelper,
 	) {
 		parent::__construct();
 

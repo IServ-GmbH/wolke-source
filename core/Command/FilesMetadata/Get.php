@@ -69,7 +69,7 @@ class Get extends Command {
 	 * @throws NotFoundException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$fileId = (int) $input->getArgument('fileId');
+		$fileId = (int)$input->getArgument('fileId');
 
 		if ($input->getOption('reset')) {
 			$this->filesMetadataManager->deleteMetadata($fileId);

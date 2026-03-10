@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -734,6 +733,8 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			$table->addIndex(['systemtagid', 'objecttype'], 'systag_by_tagid');
 			// systag_by_objectid was added later and might be missing in older deployments
 			$table->addIndex(['objectid'], 'systag_by_objectid');
+			// systag_objecttype was added later and might be missing in older deployments
+			$table->addIndex(['objecttype'], 'systag_objecttype');
 		}
 
 		if (!$schema->hasTable('systemtag_group')) {
@@ -1017,9 +1018,9 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
 			preg_match('/(calendar)\/([A-z0-9-@_]+)\//', $row['propertypath'], $match);
-			$insert->setParameter('propertypath', (string) $row['propertypath'])
-				->setParameter('propertyname', (string) $row['propertyname'])
-				->setParameter('propertyvalue', (string) $row['propertyvalue'])
+			$insert->setParameter('propertypath', (string)$row['propertypath'])
+				->setParameter('propertyname', (string)$row['propertyname'])
+				->setParameter('propertyvalue', (string)$row['propertyvalue'])
 				->setParameter('userid', ($match[2] ?? ''));
 			$insert->execute();
 		}

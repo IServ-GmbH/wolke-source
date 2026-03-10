@@ -16,17 +16,23 @@ use OCP\IRequest;
 
 class SettingsController extends Controller {
 	public const ACCEPTED_KEYS = [
-		'workspace_enabled'
+		'workspace_enabled',
+		'is_full_width_editor'
 	];
 
-	public function __construct(string $appName, IRequest $request, private IConfig $config, private ?string $userId) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		private IConfig $config,
+		private ?string $userId,
+	) {
 		parent::__construct($appName, $request);
 	}
 
 	/**
 	 * @throws \OCP\PreConditionNotMetException
 	 *
-	 * @psalm-return DataResponse<200|400, array{workspace_enabled?: mixed, message?: 'Invalid config key'}, array<never, never>>
+	 * @psalm-return DataResponse<200|400, array{workspace_enabled?: mixed, is_full_width_editor?: mixed, message?: 'Invalid config key'}, array<never, never>>
 	 */
 	#[NoAdminRequired]
 	public function updateConfig(string $key, int|string $value): DataResponse {

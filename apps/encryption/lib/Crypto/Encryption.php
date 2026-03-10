@@ -10,6 +10,7 @@ namespace OCA\Encryption\Crypto;
 use OC\Encryption\Exceptions\DecryptionFailedException;
 use OC\Files\Cache\Scanner;
 use OC\Files\View;
+use OCA\Encryption\Exceptions\MultiKeyEncryptException;
 use OCA\Encryption\Exceptions\PublicKeyMissingException;
 use OCA\Encryption\KeyManager;
 use OCA\Encryption\Session;
@@ -131,7 +132,7 @@ class Encryption implements IEncryptionModule {
 		// always use the version from the original file, also part files
 		// need to have a correct version number if they get moved over to the
 		// final location
-		$this->version = (int) $this->keyManager->getVersion($this->stripPartFileExtension($path), new View());
+		$this->version = (int)$this->keyManager->getVersion($this->stripPartFileExtension($path), new View());
 
 		if (
 			$mode === 'w'
@@ -187,7 +188,7 @@ class Encryption implements IEncryptionModule {
 	 *                of a write operation
 	 * @throws PublicKeyMissingException
 	 * @throws \Exception
-	 * @throws \OCA\Encryption\Exceptions\MultiKeyEncryptException
+	 * @throws MultiKeyEncryptException
 	 */
 	public function end($path, $position = '0') {
 		$result = '';
@@ -285,7 +286,7 @@ class Encryption implements IEncryptionModule {
 				// Read the chunk from the start of $data
 				$chunk = substr($data, 0, $this->getUnencryptedBlockSize(true));
 
-				$encrypted .= $this->crypt->symmetricEncryptFileContent($chunk, $this->fileKey, $this->version + 1, (string) $position);
+				$encrypted .= $this->crypt->symmetricEncryptFileContent($chunk, $this->fileKey, $this->version + 1, (string)$position);
 
 				// Remove the chunk we just processed from
 				// $data, leaving only unprocessed data in $data
@@ -432,7 +433,7 @@ class Encryption implements IEncryptionModule {
 	 * e.g. if all encryption keys exists
 	 *
 	 * @param string $path
-	 * @param string $uid user for whom we want to check if he can read the file
+	 * @param string $uid user for whom we want to check if they can read the file
 	 * @return bool
 	 * @throws DecryptionFailedException
 	 */

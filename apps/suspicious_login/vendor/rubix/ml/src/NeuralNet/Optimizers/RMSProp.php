@@ -5,6 +5,7 @@ namespace Rubix\ML\NeuralNet\Optimizers;
 use Tensor\Tensor;
 use Rubix\ML\NeuralNet\Parameter;
 use Rubix\ML\Exceptions\InvalidArgumentException;
+use Rubix\ML\Exceptions\RuntimeException;
 
 use function get_class;
 
@@ -31,28 +32,28 @@ class RMSProp implements Optimizer, Adaptive
      *
      * @var float
      */
-    protected $rate;
+    protected float $rate;
 
     /**
      * The rms decay rate.
      *
      * @var float
      */
-    protected $decay;
+    protected float $decay;
 
     /**
      * The opposite of the rms decay rate.
      *
      * @var float
      */
-    protected $rho;
+    protected float $rho;
 
     /**
      * The cache of running squared gradients.
      *
      * @var \Tensor\Tensor[]
      */
-    protected $cache = [
+    protected array $cache = [
         //
     ];
 
@@ -84,10 +85,15 @@ class RMSProp implements Optimizer, Adaptive
      * @internal
      *
      * @param \Rubix\ML\NeuralNet\Parameter $param
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      */
     public function warm(Parameter $param) : void
     {
         $class = get_class($param->param());
+
+        if ($class === false) {
+            throw new RuntimeException('Could not locate parameter class.');
+        }
 
         $this->cache[$param->id()] = $class::zeros(...$param->param()->shape());
     }
@@ -116,6 +122,8 @@ class RMSProp implements Optimizer, Adaptive
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

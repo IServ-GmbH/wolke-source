@@ -2,10 +2,9 @@
 
 namespace Rubix\ML\Graph\Nodes;
 
+use Rubix\ML\Helpers\Stats;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Other\Helpers\Stats;
 use Rubix\ML\Kernels\Distance\Distance;
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
 
 use function Rubix\ML\argmax;
 
@@ -20,30 +19,28 @@ use function Rubix\ML\argmax;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Clique implements BinaryNode, Hypersphere
+class Clique implements Hypersphere, BinaryNode
 {
-    use HasBinaryChildren;
-
     /**
      * The dataset stored in the node.
      *
      * @var \Rubix\ML\Datasets\Labeled
      */
-    protected $dataset;
+    protected \Rubix\ML\Datasets\Labeled $dataset;
 
     /**
      * The centroid or multivariate mean of the cluster.
      *
      * @var list<string|int|float>
      */
-    protected $center;
+    protected array $center;
 
     /**
      * The radius of the cluster centroid.
      *
      * @var float
      */
-    protected $radius;
+    protected float $radius;
 
     /**
      * Terminate a branch with a dataset.
@@ -56,8 +53,8 @@ class Clique implements BinaryNode, Hypersphere
     {
         $center = [];
 
-        foreach ($dataset->columns() as $column => $values) {
-            if ($dataset->columnType($column)->isContinuous()) {
+        foreach ($dataset->features() as $column => $values) {
+            if ($dataset->featureType($column)->isContinuous()) {
                 $center[] = Stats::mean($values);
             } else {
                 $center[] = argmax(array_count_values($values));
@@ -125,5 +122,15 @@ class Clique implements BinaryNode, Hypersphere
     public function isPoint() : bool
     {
         return $this->radius === 0.0;
+    }
+
+    /**
+     * Return the height of the node in the tree.
+     *
+     * @return int
+     */
+    public function height() : int
+    {
+        return 1;
     }
 }

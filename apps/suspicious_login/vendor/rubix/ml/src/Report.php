@@ -2,20 +2,18 @@
 
 namespace Rubix\ML;
 
-use ArrayAccess;
-use Countable;
-use Generator;
-use IteratorAggregate;
-use JsonSerializable;
-use Stringable;
+use Rubix\ML\Helpers\JSON;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
-use Rubix\ML\Other\Helpers\JSON;
+use IteratorAggregate;
+use JsonSerializable;
+use ArrayAccess;
+use Traversable;
+use Stringable;
+use Countable;
 
 /**
  * Report
- *
- * The results of a cross-validation report.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
@@ -24,14 +22,14 @@ use Rubix\ML\Other\Helpers\JSON;
  * @implements ArrayAccess<int, array>
  * @implements IteratorAggregate<int, array>
  */
-class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, Stringable, Countable
+class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, Countable, Stringable
 {
     /**
      * The attributes that make up the report.
      *
      * @var mixed[]
      */
-    protected $attributes;
+    protected array $attributes;
 
     /**
      * @param mixed[] $attributes
@@ -42,16 +40,6 @@ class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, String
     }
 
     /**
-     * Return an array representation of the report.
-     *
-     * @return mixed[]
-     */
-    public function toArray() : array
-    {
-        return $this->attributes;
-    }
-
-    /**
      * Return a JSON representation of the report.
      *
      * @param bool $pretty
@@ -59,7 +47,19 @@ class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, String
      */
     public function toJSON(bool $pretty = true) : Encoding
     {
-        return new Encoding(JSON::encode($this, $pretty ? JSON_PRETTY_PRINT : 0) ?: '');
+        $options = $pretty ? JSON_PRETTY_PRINT : 0;
+
+        return new Encoding(JSON::encode($this, $options));
+    }
+
+    /**
+     * Return an array representation of the report.
+     *
+     * @return mixed[]
+     */
+    public function toArray() : array
+    {
+        return $this->attributes;
     }
 
     /**
@@ -90,6 +90,7 @@ class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, String
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         if (isset($this->attributes[$key])) {
@@ -109,19 +110,11 @@ class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, String
     }
 
     /**
-     * @return mixed[]
-     */
-    public function jsonSerialize() : array
-    {
-        return $this->toArray();
-    }
-
-    /**
      * Get an iterator for the attributes in the report.
      *
      * @return \Generator<mixed>
      */
-    public function getIterator() : Generator
+    public function getIterator() : Traversable
     {
         yield from $this->attributes;
     }
@@ -134,6 +127,14 @@ class Report implements ArrayAccess, JsonSerializable, IteratorAggregate, String
     public function count() : int
     {
         return count($this->attributes);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function jsonSerialize() : array
+    {
+        return $this->toArray();
     }
 
     /**

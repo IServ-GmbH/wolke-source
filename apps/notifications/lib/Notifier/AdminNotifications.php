@@ -63,7 +63,7 @@ class AdminNotifications implements INotifier {
 		switch ($notification->getSubject()) {
 			case 'dummy':
 				$subjectParams = $notification->getSubjectParameters();
-				$numActions = (int) $subjectParams[0];
+				$numActions = (int)$subjectParams[0];
 
 				$user = $this->userManager->get($notification->getUser());
 				assert($user instanceof IUser);
@@ -87,12 +87,12 @@ class AdminNotifications implements INotifier {
 				}
 
 				$path1 = rtrim($file1->getPath(), '/');
-				if (strpos($path1, '/' . $notification->getUser() . '/files/') === 0) {
+				if (str_starts_with($path1, '/' . $notification->getUser() . '/files/')) {
 					// Remove /user/files/...
 					[,,, $path1] = explode('/', $path1, 4);
 				}
 				$path2 = rtrim($file2->getPath(), '/');
-				if (strpos($path2, '/' . $notification->getUser() . '/files/') === 0) {
+				if (str_starts_with($path2, '/' . $notification->getUser() . '/files/')) {
 					// Remove /user/files/...
 					[,,, $path2] = explode('/', $path2, 4);
 				}
@@ -175,6 +175,7 @@ class AdminNotifications implements INotifier {
 				// Deal with known subjects
 			case 'cli':
 			case 'ocs':
+			case 'self':
 				$subjectParams = $notification->getSubjectParameters();
 				if (isset($subjectParams['subject'])) {
 					// Nextcloud 30+

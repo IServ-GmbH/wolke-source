@@ -1,15 +1,11 @@
 OC.L10N.register(
     "app_api",
     {
-    "Cancel" : "Cancel",
     "Delete" : "Borrar",
     "Edit" : "Editar",
-    "Unlimited" : "Ilimitado",
     "Name" : "Nombre",
     "Host" : "Servidor",
     "Enabled" : "Habilitado",
-    "Add" : "Guardar",
-    "Disabled" : "Deshabilitado",
     "Confirm" : "Confirmar",
     "Save" : "Guardar",
     "Register" : "Registrar",

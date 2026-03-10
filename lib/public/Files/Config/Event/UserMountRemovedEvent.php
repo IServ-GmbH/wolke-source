@@ -15,14 +15,9 @@ use OCP\Files\Config\ICachedMountInfo;
 /**
  * Event emitted when a user mount was removed.
  *
- * @since 31.0.6
+ * @since 30.0.12
  */
 class UserMountRemovedEvent extends Event {
-	/**
-	 * Creates a new @see UserMountRemovedEvent
-	 *
-	 * @since 31.0.6
-	 */
 	public function __construct(
 		public readonly ICachedMountInfo $mountPoint,
 	) {

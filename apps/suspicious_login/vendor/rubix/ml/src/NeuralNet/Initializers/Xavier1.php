@@ -4,6 +4,8 @@ namespace Rubix\ML\NeuralNet\Initializers;
 
 use Tensor\Matrix;
 
+use function sqrt;
+
 /**
  * Xavier 1
  *
@@ -27,18 +29,22 @@ class Xavier1 implements Initializer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @param int $fanOut
+     * @param int<0,max> $fanIn
+     * @param int<0,max> $fanOut
      * @return \Tensor\Matrix
      */
     public function initialize(int $fanIn, int $fanOut) : Matrix
     {
+        $scale = sqrt(6.0 / ($fanOut + $fanIn));
+
         return Matrix::uniform($fanOut, $fanIn)
-            ->multiply(sqrt(6.0 / ($fanOut + $fanIn)));
+            ->multiply($scale);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -1,4 +1,4 @@
-# Rubix: Machine Learning for PHP
+# Rubix ML
 
 A high-level machine learning and deep learning library for the [PHP](https://php.net) language.
 
@@ -19,7 +19,9 @@ Check out these example projects using the Rubix ML library. Many come with inst
 - [CIFAR-10 Image Recognizer](https://github.com/RubixML/CIFAR-10)
 - [Color Clusterer](https://github.com/RubixML/Colors)
 - [Credit Default Risk Predictor](https://github.com/RubixML/Credit)
+- [Customer Churn Predictor](https://github.com/RubixML/Churn)
 - [Divorce Predictor](https://github.com/RubixML/Divorce)
+- [DNA Taxonomer](https://github.com/RubixML/DNA)
 - [Dota 2 Game Outcome Predictor](https://github.com/RubixML/Dota2)
 - [Human Activity Recognizer](https://github.com/RubixML/HAR)
 - [Housing Price Predictor](https://github.com/RubixML/Housing)
@@ -30,14 +32,6 @@ Check out these example projects using the Rubix ML library. Many come with inst
 ## Interact With The Community
 
 - [Join Our Telegram Channel](https://t.me/RubixML)
-- [Receive Our Newsletter](https://rubixml.com/#get-notified)
-- [Meet on LinkedIn](https://www.linkedin.com/company/76327971)
-- [Interact on Twitter](https://twitter.com/RubixML)
-
-## Funding
-Rubix ML is funded by donations from the community. You can become a sponsor by making a contribution to one of our funding sources below.
-
-- [Github Sponsors](https://github.com/sponsors/RubixML)
 
 ## Contributing
 See [CONTRIBUTING.md](https://github.com/RubixML/ML/blob/master/CONTRIBUTING.md) for guidelines.

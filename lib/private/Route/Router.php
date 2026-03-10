@@ -74,6 +74,14 @@ class Router implements IRouter {
 		$this->root = $this->getCollection('root');
 	}
 
+	public function setContext(RequestContext $context): void {
+		$this->context = $context;
+	}
+
+	public function getRouteCollection() {
+		return $this->root;
+	}
+
 	/**
 	 * Get the files to load the routes from
 	 *
@@ -102,9 +110,9 @@ class Router implements IRouter {
 	 *
 	 * @param null|string $app
 	 */
-	public function loadRoutes($app = null) {
+	public function loadRoutes(?string $app = null, bool $skipLoadingCore = false): void {
 		if (is_string($app)) {
-			$app = \OC_App::cleanAppId($app);
+			$app = $this->appManager->cleanAppId($app);
 		}
 
 		$requestedApp = $app;
@@ -123,11 +131,15 @@ class Router implements IRouter {
 			if (isset($this->loadedApps[$app])) {
 				return;
 			}
-			$appPath = \OC_App::getAppPath($app);
-			$file = $appPath . '/appinfo/routes.php';
-			if ($appPath !== false && file_exists($file)) {
-				$routingFiles = [$app => $file];
-			} else {
+			try {
+				$appPath = $this->appManager->getAppPath($app);
+				$file = $appPath . '/appinfo/routes.php';
+				if (file_exists($file)) {
+					$routingFiles = [$app => $file];
+				} else {
+					$routingFiles = [];
+				}
+			} catch (AppPathNotFoundException) {
 				$routingFiles = [];
 			}
 
@@ -151,13 +163,13 @@ class Router implements IRouter {
 				$this->root->addCollection($collection);
 
 				// Also add the OCS collection
-				$collection = $this->getCollection($app.'.ocs');
+				$collection = $this->getCollection($app . '.ocs');
 				$collection->addPrefix('/ocsapp');
 				$this->root->addCollection($collection);
 			}
 		}
 
-		if (!isset($this->loadedApps['core'])) {
+		if (!$skipLoadingCore && !isset($this->loadedApps['core'])) {
 			$this->loadedApps['core'] = true;
 			$this->useCollection('root');
 			$this->setupRoutes($this->getAttributeRoutes('core'), 'core');
@@ -239,14 +251,14 @@ class Router implements IRouter {
 			// empty string / 'apps' / $app / rest of the route
 			[, , $app,] = explode('/', $url, 4);
 
-			$app = \OC_App::cleanAppId($app);
+			$app = $this->appManager->cleanAppId($app);
 			\OC::$REQUESTEDAPP = $app;
 			$this->loadRoutes($app);
 		} elseif (str_starts_with($url, '/ocsapp/apps/')) {
 			// empty string / 'ocsapp' / 'apps' / $app / rest of the route
 			[, , , $app,] = explode('/', $url, 5);
 
-			$app = \OC_App::cleanAppId($app);
+			$app = $this->appManager->cleanAppId($app);
 			\OC::$REQUESTEDAPP = $app;
 			$this->loadRoutes($app);
 		} elseif (str_starts_with($url, '/settings/')) {
@@ -404,6 +416,9 @@ class Router implements IRouter {
 		if ($routeName === 'cloud_federation_api.requesthandlercontroller.receivenotification') {
 			return 'cloud_federation_api.requesthandler.receivenotification';
 		}
+		if ($routeName === 'core.profilepage.index') {
+			return 'profile.profilepage.index';
+		}
 		return $routeName;
 	}
 
@@ -434,7 +449,11 @@ class Router implements IRouter {
 			$appControllerPath = __DIR__ . '/../../../core/Controller';
 			$appNameSpace = 'OC\\Core';
 		} else {
-			$appControllerPath = \OC_App::getAppPath($app) . '/lib/Controller';
+			try {
+				$appControllerPath = $this->appManager->getAppPath($app) . '/lib/Controller';
+			} catch (AppPathNotFoundException) {
+				return [];
+			}
 			$appNameSpace = App::buildAppNamespace($app);
 		}
 

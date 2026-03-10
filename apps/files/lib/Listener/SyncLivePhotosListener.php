@@ -166,12 +166,12 @@ class SyncLivePhotosListener implements IEventListener {
 		/** @var FilesMetadata $targetMetadata */
 		$targetMetadata = $this->filesMetadataManager->getMetadata($targetFile->getId(), true);
 		$targetMetadata->setStorageId($targetFile->getStorage()->getCache()->getNumericStorageId());
-		$targetMetadata->setString('files-live-photo', (string) $targetPeerFile->getId());
+		$targetMetadata->setString('files-live-photo', (string)$targetPeerFile->getId());
 		$this->filesMetadataManager->saveMetadata($targetMetadata);
 		/** @var FilesMetadata $peerMetadata */
 		$peerMetadata = $this->filesMetadataManager->getMetadata($targetPeerFile->getId(), true);
 		$peerMetadata->setStorageId($targetPeerFile->getStorage()->getCache()->getNumericStorageId());
-		$peerMetadata->setString('files-live-photo', (string) $targetFile->getId());
+		$peerMetadata->setString('files-live-photo', (string)$targetFile->getId());
 		$this->filesMetadataManager->saveMetadata($peerMetadata);
 	}
 

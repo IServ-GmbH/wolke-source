@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -9,6 +8,7 @@ namespace OCP\AppFramework\Http\Template;
 use InvalidArgumentException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IInitialStateService;
 
 /**
  * Class PublicTemplateResponse
@@ -21,6 +21,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 class PublicTemplateResponse extends TemplateResponse {
 	private $headerTitle = '';
 	private $headerDetails = '';
+	/** @var IMenuAction[] */
 	private $headerActions = [];
 	private $footerVisible = true;
 
@@ -34,9 +35,38 @@ class PublicTemplateResponse extends TemplateResponse {
 	 * @param H $headers
 	 * @since 14.0.0
 	 */
-	public function __construct(string $appName, string $templateName, array $params = [], $status = Http::STATUS_OK, array $headers = []) {
+	public function __construct(
+		string $appName,
+		string $templateName,
+		array $params = [],
+		$status = Http::STATUS_OK,
+		array $headers = [],
+	) {
 		parent::__construct($appName, $templateName, $params, 'public', $status, $headers);
-		\OC_Util::addScript('core', 'public/publicpage');
+		\OCP\Util::addScript('core', 'public-page-menu');
+
+		$state = \OCP\Server::get(IInitialStateService::class);
+		$state->provideLazyInitialState('core', 'public-page-menu', function () {
+			$response = [];
+			foreach ($this->headerActions as $action) {
+				// First try in it is a custom action that provides rendered HTML
+				$rendered = $action->render();
+				if ($rendered === '') {
+					// If simple action, add the response data
+					if ($action instanceof SimpleMenuAction) {
+						$response[] = $action->getData();
+					}
+				} else {
+					// custom action so add the rendered output
+					$response[] = [
+						'id' => $action->getId(),
+						'label' => $action->getLabel(),
+						'html' => $rendered,
+					];
+				}
+			}
+			return $response;
+		});
 	}
 
 	/**
@@ -139,6 +169,6 @@ class PublicTemplateResponse extends TemplateResponse {
 			'template' => $this,
 		]);
 		$this->setParams($params);
-		return  parent::render();
+		return parent::render();
 	}
 }

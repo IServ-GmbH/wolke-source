@@ -86,17 +86,11 @@ OC.L10N.register(
     "Circles App Initialization" : "Circles App Initialization",
     "Fresh installation status" : "Fresh installation status",
     "Building Local Database" : "Building Local Database",
-    "Testing Basic Circle Creation" : "Testing Basic Circle Creation",
     "Adding local users and moderators" : "Adding local users and moderators",
-    "This feature is not available for personal circles" : "This feature is not available for personal circles",
     "This member is not a moderator" : "This member is not a moderator",
     "Insufficient privileges" : "Insufficient privileges",
     "This member does not exist" : "This member does not exist",
     "Level cannot be changed for this type of member" : "Level cannot be changed for this type of member",
-    "You are already a member of this circle" : "You are already a member of this circle",
-    "You have been blocked from this circle" : "You have been blocked from this circle",
-    "The account is already a member of this circle" : "The account is already a member of this circle",
-    "The account has already been invited into this circle" : "The account has already been invited into this circle",
     "Accept" : "Accept",
     "Refuse" : "Refuse",
     "%s" : "%s",
@@ -115,7 +109,6 @@ OC.L10N.register(
     "Name" : "Name",
     "Size" : "Size",
     "Modified" : "Modified",
-    "Shared to Circles" : "Shared to Circles",
-    "Circle" : "Circle"
+    "Shared to Circles" : "Shared to Circles"
 },
 "nplurals=2; plural=(n!=1);");

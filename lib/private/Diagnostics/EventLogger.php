@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -42,8 +41,8 @@ class EventLogger implements IEventLogger {
 	}
 
 	public function isLoggingActivated(): bool {
-		$systemValue = (bool) $this->config->getValue('diagnostics.logging', false)
-			|| (bool) $this->config->getValue('profiler', false);
+		$systemValue = (bool)$this->config->getValue('diagnostics.logging', false)
+			|| (bool)$this->config->getValue('profiler', false);
 
 		if ($systemValue && $this->config->getValue('debug', false)) {
 			return true;
@@ -107,7 +106,7 @@ class EventLogger implements IEventLogger {
 			$duration = $event->getDuration();
 			$timeInMs = round($duration * 1000, 4);
 
-			$loggingMinimum = (int) $this->config->getValue('diagnostics.logging.threshold', 0);
+			$loggingMinimum = (int)$this->config->getValue('diagnostics.logging.threshold', 0);
 			if ($loggingMinimum === 0 || $timeInMs < $loggingMinimum) {
 				return;
 			}

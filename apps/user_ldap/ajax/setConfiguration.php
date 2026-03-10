@@ -1,5 +1,7 @@
 <?php
 
+use OCA\User_LDAP\LDAP;
+
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -10,7 +12,7 @@
 \OC_JSON::checkAppEnabled('user_ldap');
 \OC_JSON::callCheck();
 
-$prefix = (string) $_POST['ldap_serverconfig_chooser'];
+$prefix = (string)$_POST['ldap_serverconfig_chooser'];
 
 // Checkboxes are not submitted, when they are unchecked. Set them manually.
 // only legacy checkboxes (Advanced and Expert tab) need to be handled here,
@@ -23,7 +25,7 @@ foreach ($chkboxes as $boxid) {
 	}
 }
 
-$ldapWrapper = new OCA\User_LDAP\LDAP();
+$ldapWrapper = new LDAP();
 $connection = new \OCA\User_LDAP\Connection($ldapWrapper, $prefix);
 $connection->setConfiguration($_POST);
 $connection->saveConfiguration();

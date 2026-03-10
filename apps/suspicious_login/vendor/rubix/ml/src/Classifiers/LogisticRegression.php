@@ -11,16 +11,14 @@ use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Traits\LoggerAware;
 use Rubix\ML\NeuralNet\FeedForward;
 use Rubix\ML\NeuralNet\Layers\Dense;
 use Rubix\ML\NeuralNet\Layers\Binary;
-use Rubix\ML\Other\Traits\LoggerAware;
-use Rubix\ML\Other\Traits\ProbaSingle;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\NeuralNet\Layers\Placeholder1D;
 use Rubix\ML\NeuralNet\Optimizers\Optimizer;
 use Rubix\ML\NeuralNet\Initializers\Xavier1;
@@ -34,9 +32,11 @@ use Rubix\ML\Specifications\LabelsAreCompatibleWithLearner;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function is_nan;
 use function count;
+use function get_object_vars;
 
 /**
  * Logistic Regression
@@ -52,85 +52,83 @@ use function count;
  */
 class LogisticRegression implements Estimator, Learner, Online, Probabilistic, RanksFeatures, Verbose, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, ProbaSingle, LoggerAware;
+    use AutotrackRevisions, LoggerAware;
 
     /**
      * The number of training samples to process at a time.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $batchSize;
+    protected int $batchSize;
 
     /**
      * The gradient descent optimizer used to update the network parameters.
      *
      * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
      */
-    protected $optimizer;
+    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
 
     /**
      * The amount of L2 regularization applied to the weights of the output layer.
      *
      * @var float
      */
-    protected $alpha;
+    protected float $l2Penalty;
 
     /**
-     * The maximum number of training epochs. i.e. the number of times to iterate
-     * over the entire training set before terminating.
+     * The maximum number of training epochs. i.e. the number of times to iterate before terminating.
      *
      * @var int
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum change in the training loss necessary to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
-     * The number of epochs without improvement in the training loss to wait
-     * before considering an early stop.
+     * The number of epochs without improvement in the training loss to wait before considering an
+     * early stop.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $window;
+    protected int $window;
 
     /**
-     * The function that computes the loss associated with an erroneous
-     * activation during training.
+     * The function that computes the loss associated with an erroneous activation during training.
      *
      * @var \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss
      */
-    protected $costFn;
+    protected \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss $costFn;
 
     /**
      * The underlying neural network instance.
      *
      * @var \Rubix\ML\NeuralNet\FeedForward|null
      */
-    protected $network;
+    protected ?\Rubix\ML\NeuralNet\FeedForward $network = null;
 
     /**
      * The unique class labels.
      *
      * @var string[]|null
      */
-    protected $classes;
+    protected ?array $classes = null;
 
     /**
      * The loss at each epoch from the last training session.
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * @param int $batchSize
      * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer|null $optimizer
-     * @param float $alpha
+     * @param float $l2Penalty
      * @param int $epochs
      * @param float $minChange
      * @param int $window
@@ -140,7 +138,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     public function __construct(
         int $batchSize = 128,
         ?Optimizer $optimizer = null,
-        float $alpha = 1e-4,
+        float $l2Penalty = 1e-4,
         int $epochs = 1000,
         float $minChange = 1e-4,
         int $window = 5,
@@ -151,12 +149,12 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
                 . " greater than 0, $batchSize given.");
         }
 
-        if ($alpha < 0.0) {
-            throw new InvalidArgumentException('Alpha must be'
-                . " greater than 0, $alpha given.");
+        if ($l2Penalty < 0.0) {
+            throw new InvalidArgumentException('L2 Penalty must be'
+                . " greater than 0, $l2Penalty given.");
         }
 
-        if ($epochs < 1) {
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -173,7 +171,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
 
         $this->batchSize = $batchSize;
         $this->optimizer = $optimizer ?? new Adam();
-        $this->alpha = $alpha;
+        $this->l2Penalty = $l2Penalty;
         $this->epochs = $epochs;
         $this->minChange = $minChange;
         $this->window = $window;
@@ -216,13 +214,13 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     public function params() : array
     {
         return [
-            'batch_size' => $this->batchSize,
+            'batch size' => $this->batchSize,
             'optimizer' => $this->optimizer,
-            'alpha' => $this->alpha,
+            'l2 penalty' => $this->l2Penalty,
             'epochs' => $this->epochs,
-            'min_change' => $this->minChange,
+            'min change' => $this->minChange,
             'window' => $this->window,
-            'cost_fn' => $this->costFn,
+            'cost fn' => $this->costFn,
         ];
     }
 
@@ -237,13 +235,32 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     }
 
     /**
-     * Return the loss at each epoch from the last training session.
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
+    }
+
+    /**
+     * Return the loss for each epoch from the last training session.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -272,8 +289,8 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
         $classes = $dataset->possibleOutcomes();
 
         $this->network = new FeedForward(
-            new Placeholder1D($dataset->numColumns()),
-            [new Dense(1, $this->alpha, true, new Xavier1())],
+            new Placeholder1D($dataset->numFeatures()),
+            [new Dense(1, $this->l2Penalty, true, new Xavier1())],
             new Binary($classes, $this->costFn),
             $this->optimizer
         );
@@ -307,13 +324,13 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
         $prevLoss = $bestLoss = INF;
-        $delta = 0;
+        $numWorseEpochs = 0;
 
-        $this->steps = [];
+        $this->losses = [];
 
         for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
             $batches = $dataset->randomize()->batch($this->batchSize);
@@ -324,39 +341,47 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
                 $loss += $this->network->roundtrip($batch);
             }
 
+            $loss /= count($batches);
+
+            $lossChange = abs($prevLoss - $loss);
+
+            $this->losses[$epoch] = $loss;
+
+            if ($this->logger) {
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "{$this->costFn}: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}";
+
+                $this->logger->info($message);
+            }
+
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
-            }
-
-            $loss /= count($batches);
-
-            $this->steps[] = $loss;
-
-            if ($this->logger) {
-                $this->logger->info("Epoch $epoch - {$this->costFn}: $loss");
             }
 
             if ($loss <= 0.0) {
                 break;
             }
 
-            if (abs($prevLoss - $loss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
             if ($loss < $bestLoss) {
                 $bestLoss = $loss;
 
-                $delta = 0;
+                $numWorseEpochs = 0;
             } else {
-                ++$delta;
+                ++$numWorseEpochs;
             }
 
-            if ($delta >= $this->window) {
+            if ($numWorseEpochs >= $this->window) {
                 break;
             }
 
@@ -384,7 +409,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -398,9 +423,11 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
 
         $activations = $this->network->infer($dataset);
 
+        $activations = array_column($activations->asArray(), 0);
+
         $probabilities = [];
 
-        foreach ($activations->column(0) as $activation) {
+        foreach ($activations as $activation) {
             $probabilities[] = [
                 $classA => 1.0 - $activation,
                 $classB => $activation,
@@ -411,7 +438,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     }
 
     /**
-     * Return the normalized importance scores of each feature column of the training set.
+     * Return the importance scores of each feature column of the training set.
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return float[]
@@ -428,13 +455,30 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
             throw new RuntimeException('Weight layer not found.');
         }
 
-        $importances = $layer->weights()->rowAsVector(0)->abs();
+        return $layer->weights()
+            ->rowAsVector(0)
+            ->abs()
+            ->asArray();
+    }
 
-        return $importances->divide($importances->sum())->asArray();
+    /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

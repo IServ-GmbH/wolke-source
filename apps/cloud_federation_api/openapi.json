@@ -43,20 +43,39 @@
                     "ocm": {
                         "type": "object",
                         "required": [
-                            "enabled",
                             "apiVersion",
+                            "enabled",
                             "endPoint",
-                            "resourceTypes"
+                            "resourceTypes",
+                            "version"
                         ],
                         "properties": {
+                            "apiVersion": {
+                                "type": "string",
+                                "enum": [
+                                    "1.0-proposal1"
+                                ]
+                            },
                             "enabled": {
                                 "type": "boolean"
                             },
-                            "apiVersion": {
-                                "type": "string"
-                            },
                             "endPoint": {
                                 "type": "string"
+                            },
+                            "publicKey": {
+                                "type": "object",
+                                "required": [
+                                    "keyId",
+                                    "publicKeyPem"
+                                ],
+                                "properties": {
+                                    "keyId": {
+                                        "type": "string"
+                                    },
+                                    "publicKeyPem": {
+                                        "type": "string"
+                                    }
+                                }
                             },
                             "resourceTypes": {
                                 "type": "array",
@@ -85,6 +104,9 @@
                                         }
                                     }
                                 }
+                            },
+                            "version": {
+                                "type": "string"
                             }
                         }
                     }

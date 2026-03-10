@@ -1,5 +1,5 @@
 diff --git apps/theming/src/UserTheming.vue apps/theming/src/UserTheming.vue
-index 4766886..15c41b0 100644
+index d3c954c..4fc875b 100644
 --- apps/theming/src/UserTheming.vue
 +++ apps/theming/src/UserTheming.vue
 @@ -7,10 +7,6 @@

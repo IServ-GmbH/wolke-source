@@ -22,7 +22,7 @@ class Helper extends \OC\Share\Constants {
 		if ($defaultExpireDate === 'yes') {
 			$enforceExpireDate = $config->getAppValue('core', 'shareapi_enforce_expire_date', 'no');
 			$defaultExpireSettings['defaultExpireDateSet'] = true;
-			$defaultExpireSettings['expireAfterDays'] = (int) $config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
+			$defaultExpireSettings['expireAfterDays'] = (int)$config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
 			$defaultExpireSettings['enforceExpireDate'] = $enforceExpireDate === 'yes';
 		}
 
@@ -125,5 +125,14 @@ class Helper extends \OC\Share\Constants {
 		}
 
 		return false;
+	}
+
+	public static function getTokenLength(): int {
+		$config = \OCP\Server::get(\OCP\IAppConfig::class);
+		$tokenLength = $config->getValueInt('core', 'shareapi_token_length', self::DEFAULT_TOKEN_LENGTH);
+		$tokenLength = $tokenLength ?: self::DEFAULT_TOKEN_LENGTH;
+
+		// Token length should be within the defined min and max limits
+		return max(self::MIN_TOKEN_LENGTH, min($tokenLength, self::MAX_TOKEN_LENGTH));
 	}
 }

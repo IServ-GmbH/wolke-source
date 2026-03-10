@@ -29,54 +29,54 @@ class Cyclical implements Optimizer
      *
      * @var float
      */
-    protected $lower;
+    protected float $lower;
 
     /**
      * The upper bound on the learning rate.
      *
      * @var float
      */
-    protected $upper;
+    protected float $upper;
 
     /**
      * The range of the learning rate.
      *
      * @var float
      */
-    protected $range;
+    protected float $range;
 
     /**
      * The number of steps in every cycle.
      *
      * @var int
      */
-    protected $steps;
+    protected int $losses;
 
     /**
      * The exponential scaling factor applied to each step as decay.
      *
      * @var float
      */
-    protected $decay;
+    protected float $decay;
 
     /**
      * The number of steps taken so far.
      *
      * @var int
      */
-    protected $t = 0;
+    protected int $t = 0;
 
     /**
      * @param float $lower
      * @param float $upper
-     * @param int $steps
+     * @param int $losses
      * @param float $decay
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
     public function __construct(
         float $lower = 0.001,
         float $upper = 0.006,
-        int $steps = 2000,
+        int $losses = 2000,
         float $decay = 0.99994
     ) {
         if ($lower <= 0.0) {
@@ -89,9 +89,9 @@ class Cyclical implements Optimizer
                 . ' reater than the upper bound.');
         }
 
-        if ($steps < 1) {
+        if ($losses < 1) {
             throw new InvalidArgumentException('The number of steps per'
-                . " cycle must be greater than 0, $steps given.");
+                . " cycle must be greater than 0, $losses given.");
         }
 
         if ($decay <= 0.0 or $decay >= 1.0) {
@@ -102,7 +102,7 @@ class Cyclical implements Optimizer
         $this->lower = $lower;
         $this->upper = $upper;
         $this->range = $upper - $lower;
-        $this->steps = $steps;
+        $this->losses = $losses;
         $this->decay = $decay;
     }
 
@@ -117,9 +117,9 @@ class Cyclical implements Optimizer
      */
     public function step(Parameter $param, Tensor $gradient) : Tensor
     {
-        $cycle = floor(1 + $this->t / (2 * $this->steps));
+        $cycle = floor(1 + $this->t / (2 * $this->losses));
 
-        $x = abs($this->t / $this->steps - 2 * $cycle + 1);
+        $x = abs($this->t / $this->losses - 2 * $cycle + 1);
 
         $scale = $this->decay ** $this->t;
 
@@ -133,11 +133,13 @@ class Cyclical implements Optimizer
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
         return "Cyclical (lower: {$this->lower}, upper: {$this->upper},"
-            . " steps: {$this->steps}, decay: {$this->decay})";
+            . " steps: {$this->losses}, decay: {$this->decay})";
     }
 }

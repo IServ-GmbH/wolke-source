@@ -25,28 +25,28 @@ class Activation implements Hidden
      *
      * @var \Rubix\ML\NeuralNet\ActivationFunctions\ActivationFunction
      */
-    protected $activationFn;
+    protected \Rubix\ML\NeuralNet\ActivationFunctions\ActivationFunction $activationFn;
 
     /**
      * The width of the layer.
      *
-     * @var int|null
+     * @var positive-int|null
      */
-    protected $width;
+    protected ?int $width = null;
 
     /**
-     * The memoized input matrix.
+     * The memorized input matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $input;
+    protected ?\Tensor\Matrix $input = null;
 
     /**
-     * The memoized activation matrix.
+     * The memorized activation matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $computed;
+    protected ?\Tensor\Matrix $output = null;
 
     /**
      * @param \Rubix\ML\NeuralNet\ActivationFunctions\ActivationFunction $activationFn
@@ -62,11 +62,11 @@ class Activation implements Hidden
      * @internal
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
-        if (!$this->width) {
+        if ($this->width === null) {
             throw new RuntimeException('Layer has not been initialized.');
         }
 
@@ -79,8 +79,8 @@ class Activation implements Hidden
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -101,11 +101,12 @@ class Activation implements Hidden
      */
     public function forward(Matrix $input) : Matrix
     {
+        $output = $this->activationFn->activate($input);
+
         $this->input = $input;
+        $this->output = $output;
 
-        $this->computed = $this->activationFn->compute($input);
-
-        return $this->computed;
+        return $output;
     }
 
     /**
@@ -118,7 +119,7 @@ class Activation implements Hidden
      */
     public function infer(Matrix $input) : Matrix
     {
-        return $this->activationFn->compute($input);
+        return $this->activationFn->activate($input);
     }
 
     /**
@@ -133,19 +134,19 @@ class Activation implements Hidden
      */
     public function back(Deferred $prevGradient, Optimizer $optimizer) : Deferred
     {
-        if (!$this->input or !$this->computed) {
+        if (!$this->input or !$this->output) {
             throw new RuntimeException('Must perform forward pass before'
                 . ' backpropagating.');
         }
 
         $input = $this->input;
-        $computed = $this->computed;
+        $output = $this->output;
 
-        $this->input = $this->computed = null;
+        $this->input = $this->output = null;
 
         return new Deferred(
             [$this, 'gradient'],
-            [$input, $computed, $prevGradient]
+            [$input, $output, $prevGradient]
         );
     }
 
@@ -155,23 +156,25 @@ class Activation implements Hidden
      * @internal
      *
      * @param \Tensor\Matrix $input
-     * @param \Tensor\Matrix $computed
+     * @param \Tensor\Matrix $output
      * @param \Rubix\ML\Deferred $prevGradient
      * @return \Tensor\Matrix
      */
-    public function gradient(Matrix $input, Matrix $computed, Deferred $prevGradient) : Matrix
+    public function gradient(Matrix $input, Matrix $output, Deferred $prevGradient) : Matrix
     {
-        return $this->activationFn->differentiate($input, $computed)
+        return $this->activationFn->differentiate($input, $output)
             ->multiply($prevGradient());
     }
 
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Activation (activation_fn: {$this->activationFn})";
+        return "Activation (activation fn: {$this->activationFn})";
     }
 }

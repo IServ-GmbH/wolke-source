@@ -16,7 +16,7 @@ class ExtensionIsLoaded extends Specification
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Build a specification object with the given arguments.
@@ -40,7 +40,7 @@ class ExtensionIsLoaded extends Specification
     /**
      * Perform a check of the specification and throw an exception if invalid.
      *
-     * @throws \Rubix\ML\Exceptions\LabelsMissing
+     * @throws \Rubix\ML\Exceptions\MissingExtension
      */
     public function check() : void
     {

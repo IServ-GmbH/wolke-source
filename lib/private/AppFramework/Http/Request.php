@@ -484,7 +484,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 			$prefix = '__Host-';
 		}
 
-		return $prefix.$name;
+		return $prefix . $name;
 	}
 
 	/**
@@ -606,7 +606,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @return bool
 	 */
 	private function isOverwriteCondition(): bool {
-		$regex = '/' . $this->config->getSystemValueString('overwritecondaddr', '')  . '/';
+		$regex = '/' . $this->config->getSystemValueString('overwritecondaddr', '') . '/';
 		$remoteAddr = isset($this->server['REMOTE_ADDR']) ? $this->server['REMOTE_ADDR'] : '';
 		return $regex === '//' || preg_match($regex, $remoteAddr) === 1;
 	}
@@ -744,7 +744,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 	 * @return string the script name
 	 */
 	public function getScriptName(): string {
-		$name = $this->server['SCRIPT_NAME'];
+		$name = $this->server['SCRIPT_NAME'] ?? '';
 		$overwriteWebRoot = $this->config->getSystemValueString('overwritewebroot');
 		if ($overwriteWebRoot !== '' && $this->isOverwriteCondition()) {
 			// FIXME: This code is untestable due to __DIR__, also that hardcoded path is really dangerous
@@ -825,7 +825,7 @@ class Request implements \ArrayAccess, \Countable, IRequest {
 			return $host;
 		}
 
-		$trustedList = (array) $this->config->getSystemValue('trusted_domains', []);
+		$trustedList = (array)$this->config->getSystemValue('trusted_domains', []);
 		if (count($trustedList) > 0) {
 			return reset($trustedList);
 		}

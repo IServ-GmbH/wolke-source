@@ -3,7 +3,6 @@
 namespace Rubix\ML\Tests;
 
 use Rubix\ML\Learner;
-use Rubix\ML\Verbose;
 use Rubix\ML\Parallel;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
@@ -13,7 +12,6 @@ use Rubix\ML\Backends\Serial;
 use Rubix\ML\CommitteeMachine;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Classifiers\GaussianNB;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Datasets\Generators\Circle;
 use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\Classifiers\ClassificationTree;
@@ -29,9 +27,9 @@ use PHPUnit\Framework\TestCase;
  */
 class CommitteeMachineTest extends TestCase
 {
-    protected const TRAIN_SIZE = 350;
+    protected const TRAIN_SIZE = 512;
 
-    protected const TEST_SIZE = 10;
+    protected const TEST_SIZE = 256;
 
     protected const MIN_SCORE = 0.9;
 
@@ -74,6 +72,11 @@ class CommitteeMachineTest extends TestCase
         srand(self::RANDOM_SEED);
     }
 
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
+    }
+
     /**
      * @test
      */
@@ -83,7 +86,6 @@ class CommitteeMachineTest extends TestCase
         $this->assertInstanceOf(Learner::class, $this->estimator);
         $this->assertInstanceOf(Parallel::class, $this->estimator);
         $this->assertInstanceOf(Persistable::class, $this->estimator);
-        $this->assertInstanceOf(Verbose::class, $this->estimator);
         $this->assertInstanceOf(Estimator::class, $this->estimator);
     }
 
@@ -133,7 +135,6 @@ class CommitteeMachineTest extends TestCase
      */
     public function trainPredict() : void
     {
-        $this->estimator->setLogger(new BlackHole());
         $this->estimator->setBackend(new Serial());
 
         $training = $this->generator->generate(self::TRAIN_SIZE);
@@ -168,10 +169,5 @@ class CommitteeMachineTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

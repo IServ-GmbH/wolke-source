@@ -2,8 +2,6 @@
 
 namespace Rubix\ML\Graph\Nodes;
 
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
-
 /**
  * Average
  *
@@ -17,8 +15,6 @@ use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
  */
 class Average implements Outcome
 {
-    use HasBinaryChildren;
-
     /**
      * The average of the labels contained within.
      *
@@ -31,14 +27,14 @@ class Average implements Outcome
      *
      * @var float
      */
-    protected $impurity;
+    protected float $impurity;
 
     /**
      * The number of labels this node is responsible for.
      *
      * @var int
      */
-    protected $n;
+    protected int $n;
 
     /**
      * @param int|float $outcome
@@ -83,7 +79,19 @@ class Average implements Outcome
     }
 
     /**
+     * Return the height of the node in the tree.
+     *
+     * @return int
+     */
+    public function height() : int
+    {
+        return 1;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

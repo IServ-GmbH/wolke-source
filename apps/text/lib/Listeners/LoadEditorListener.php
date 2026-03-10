@@ -22,7 +22,7 @@ use OCP\Util;
 class LoadEditorListener implements \OCP\EventDispatcher\IEventListener {
 	public function __construct(
 		private InitialStateProvider $initialStateProvider,
-		private IEventDispatcher $eventDispatcher
+		private IEventDispatcher $eventDispatcher,
 	) {
 	}
 
@@ -34,7 +34,7 @@ class LoadEditorListener implements \OCP\EventDispatcher\IEventListener {
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$this->initialStateProvider->provideState();
-		Util::addScript('text', 'text-editors');
-		Util::addStyle('text', 'text-editors');
+		Util::addScript('text', 'text-editor');
+		Util::addStyle('text', 'text-editor');
 	}
 }

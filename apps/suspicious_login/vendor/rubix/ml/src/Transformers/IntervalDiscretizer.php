@@ -2,24 +2,25 @@
 
 namespace Rubix\ML\Transformers;
 
-use Tensor\Vector;
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\Stats;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 
-use function chr;
-use function ord;
-use function is_null;
+use function Rubix\ML\linspace;
+use function array_slice;
+use function min;
+use function max;
 
 /**
  * Interval Discretizer
  *
- * Assigns each continuous feature to a discrete category using equi-width histograms. Useful
- * for converting continuous data to categorical.
+ * Assigns continuous features to ordered categories using variable width per-feature histograms with a fixed
+ * user-specified number of bins.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
@@ -30,50 +31,40 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
     use AutotrackRevisions;
 
     /**
-     * The value of the starting category for each feature column.
-     *
-     * @var string
-     */
-    protected const START_CATEGORY = 'a';
-
-    /**
-     * The number of bins per feature column.
+     * The number of bins per histogram.
      *
      * @var int
      */
-    protected $bins;
+    protected int $bins;
 
     /**
-     * The categories available for each feature column.
+     * Should the bins be equal width?
      *
-     * @var string[]
+     * @var bool
      */
-    protected $categories;
+    protected bool $equiWidth;
 
     /**
      * The bin intervals of the fitted data.
      *
-     * @var array[]|null
+     * @var array<(int|float)[]>|null
      */
-    protected $intervals;
+    protected ?array $intervals = null;
 
     /**
      * @param int $bins
+     * @param bool $equiWidth
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(int $bins = 5)
+    public function __construct(int $bins = 5, bool $equiWidth = false)
     {
         if ($bins < 3) {
             throw new InvalidArgumentException('Number of bins must be'
                 . " greater than 3, $bins given.");
         }
 
-        $last = chr(ord(self::START_CATEGORY) + $bins - 1);
-
-        $categories = array_map('strval', range(self::START_CATEGORY, $last));
-
         $this->bins = $bins;
-        $this->categories = $categories;
+        $this->equiWidth = $equiWidth;
     }
 
     /**
@@ -99,19 +90,9 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
     }
 
     /**
-     * Return the list of possible category values for each discretized feature column.
+     * Return the bin intervals of the fitted data.
      *
-     * @return string[]
-     */
-    public function categories() : array
-    {
-        return $this->categories;
-    }
-
-    /**
-     * Return the intervals for each continuous feature column calculated during fitting.
-     *
-     * @return array[]|null
+     * @return array<(int|float)[]>|null
      */
     public function intervals() : ?array
     {
@@ -128,13 +109,28 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
     {
         SamplesAreCompatibleWithTransformer::with($dataset, $this)->check();
 
+        if (!$this->equiWidth) {
+            $q = linspace(0.0, 1.0, $this->bins + 1);
+
+            $q = array_slice($q, 1, -1);
+        }
+
         $this->intervals = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isContinuous()) {
-                $values = $dataset->column($column);
+                $values = $dataset->feature($column);
 
-                $edges = Vector::linspace(min($values), max($values), $this->bins - 1)->asArray();
+                if (isset($q)) {
+                    $edges = Stats::quantiles($values, $q);
+                } else {
+                    $min = min($values);
+                    $max = max($values);
+
+                    $edges = linspace($min, $max, $this->bins + 1);
+
+                    $edges = array_slice($edges, 1, -1);
+                }
 
                 $edges[] = INF;
 
@@ -151,7 +147,7 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
      */
     public function transform(array &$samples) : void
     {
-        if (is_null($this->intervals)) {
+        if ($this->intervals === null) {
             throw new RuntimeException('Transformer has not been fitted.');
         }
 
@@ -159,11 +155,11 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
             foreach ($this->intervals as $column => $interval) {
                 $value = &$sample[$column];
 
-                foreach ($interval as $k => $edge) {
+                foreach ($interval as $ordinal => $edge) {
                     if ($value <= $edge) {
-                        $value = $this->categories[$k];
+                        $value = "$ordinal";
 
-                        continue 2;
+                        break;
                     }
                 }
             }
@@ -172,6 +168,8 @@ class IntervalDiscretizer implements Transformer, Stateful, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

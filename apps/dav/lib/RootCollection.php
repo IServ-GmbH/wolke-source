@@ -23,6 +23,9 @@ use OCA\DAV\Connector\Sabre\Principal;
 use OCA\DAV\DAV\GroupPrincipalBackend;
 use OCA\DAV\DAV\SystemPrincipalBackend;
 use OCA\DAV\Provisioning\Apple\AppleProvisioningNode;
+use OCA\DAV\SystemTag\SystemTagsByIdCollection;
+use OCA\DAV\SystemTag\SystemTagsInUseCollection;
+use OCA\DAV\SystemTag\SystemTagsRelationsCollection;
 use OCA\DAV\Upload\CleanupService;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
@@ -30,6 +33,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\IConfig;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 use Sabre\DAV\SimpleCollection;
 
@@ -46,7 +50,7 @@ class RootCollection extends SimpleCollection {
 		$dispatcher = \OC::$server->get(IEventDispatcher::class);
 		$config = \OC::$server->get(IConfig::class);
 		$proxyMapper = \OC::$server->query(ProxyMapper::class);
-		$rootFolder = \OCP\Server::get(IRootFolder::class);
+		$rootFolder = Server::get(IRootFolder::class);
 
 		$userPrincipalBackend = new Principal(
 			$userManager,
@@ -101,12 +105,8 @@ class RootCollection extends SimpleCollection {
 
 		$publicCalendarRoot = new PublicCalendarRoot($caldavBackend, $l10n, $config, $logger);
 
-		$systemTagCollection = new SystemTag\SystemTagsByIdCollection(
-			\OC::$server->getSystemTagManager(),
-			\OC::$server->getUserSession(),
-			$groupManager
-		);
-		$systemTagRelationsCollection = new SystemTag\SystemTagsRelationsCollection(
+		$systemTagCollection = Server::get(SystemTagsByIdCollection::class);
+		$systemTagRelationsCollection = new SystemTagsRelationsCollection(
 			\OC::$server->getSystemTagManager(),
 			\OC::$server->getSystemTagObjectMapper(),
 			\OC::$server->getUserSession(),
@@ -114,7 +114,7 @@ class RootCollection extends SimpleCollection {
 			$dispatcher,
 			$rootFolder,
 		);
-		$systemTagInUseCollection = \OCP\Server::get(SystemTag\SystemTagsInUseCollection::class);
+		$systemTagInUseCollection = Server::get(SystemTagsInUseCollection::class);
 		$commentsCollection = new Comments\RootCollection(
 			\OC::$server->getCommentsManager(),
 			$userManager,
@@ -132,6 +132,7 @@ class RootCollection extends SimpleCollection {
 			$userManager,
 			$dispatcher,
 			$contactsSharingBackend,
+			$config
 		);
 		$usersAddressBookRoot = new AddressBookRoot($userPrincipalBackend, $usersCardDavBackend, $pluginManager, $userSession->getUser(), $groupManager, 'principals/users');
 		$usersAddressBookRoot->disableListing = $disableListing;
@@ -142,6 +143,7 @@ class RootCollection extends SimpleCollection {
 			$userManager,
 			$dispatcher,
 			$contactsSharingBackend,
+			$config
 		);
 		$systemAddressBookRoot = new AddressBookRoot(new SystemPrincipalBackend(), $systemCardDavBackend, $pluginManager, $userSession->getUser(), $groupManager, 'principals/system');
 		$systemAddressBookRoot->disableListing = $disableListing;
@@ -149,7 +151,7 @@ class RootCollection extends SimpleCollection {
 		$uploadCollection = new Upload\RootCollection(
 			$userPrincipalBackend,
 			'principals/users',
-			\OC::$server->get(CleanupService::class),
+			Server::get(CleanupService::class),
 			$rootFolder,
 			$userSession,
 		);

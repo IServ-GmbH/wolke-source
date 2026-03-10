@@ -23,6 +23,17 @@ $score = $metric->score($predictions, $testing->labels());
 echo $score;
 ```
 
+```
+-4.75
+```
+
+### Deterministic Training
+When the algorithm that trains a Learner is *stochastic* or randomized, it may be desirable for the sake of hyper-parameter tuning to isolate the effect of randomness on training. Fortunately, PHP makes it easy to seed the pseudo-random number generator (PRNG) with a known constant so your training sessions are repeatable. To seed the random number generator call the `srand()` function at the start of your training script passing any integer constant. After that point the PRNG will generate the same series of random numbers each time the training script is run.
+
+```php
+srand(42)
+```
+
 ## Hyper-parameter Optimization
 In distinction to manual tuning, Hyper-parameter optimization is an AutoML technique that employs search and meta-learning strategies to explore various algorithm configurations. In Rubix ML, hyper-parameter optimizers are implemented as meta-estimators that wrap a base learner whose hyper-parameters we wish to optimize.
 
@@ -46,34 +57,41 @@ $estimator = new GridSearch(KNearestNeighbors::class, $params);
 $estimator->train($dataset);
 ```
 
-Once training is complete, Grid Search automatically trains the base learner with the best hyper-parameters on the full dataset and can perform inference like a normal estimator. In addition, you can dump the results of the search for future reference using the `results()` method. In the example below, we'll just return the parameters that received the highest validation score using the `best()` method.
+Once training is complete, Grid Search automatically trains the base learner with the best hyper-parameters on the full dataset and can perform inference like a normal estimator.
 
 ```php
-var_dump($estimator->best());
+$predictions = $estimator->predict($dataset);
 ```
 
-```sh
-array(3) {
-  [0]=> int(3)
-  [1]=> bool(true)
-  [2]=> object(Rubix\ML\Kernels\Distance\Manhattan) {}
-}
+We can also dump the selected hyper-parameters by calling the `params()` method on the base learner. To return the base learner trained by Grid Search, call the `base()` method like in the example below.
+
+```php
+print_r($estimator->base()->params());
+```
+
+```php
+Array
+(
+    [k] => 3
+    [weighted] => true
+    [kernel] => Rubix\ML\Kernels\Distance\Euclidean Object ()
+)
 ```
 ### Grid Search vs. Random Search
-When the possible values of the continuous hyper-parameters are selected such that they are evenly spaced out in a grid, we call that *grid search*. You can use the static `grid()` method on the [Params](other/helpers/params.md) helper to generate an array of evenly-spaced values automatically.
+When the possible values of the continuous hyper-parameters are selected such that they are evenly spaced out in a grid, we call that *grid search*. You can use the static `grid()` method on the [Params](helpers/params.md) helper to generate an array of evenly-spaced values automatically.
 
 ```php
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Helpers\Params;
 
 $params = [
     Params::grid(1, 10, 4), [true, false], // ...
 ];
 ```
 
-When the list of possible continuous-valued hyper-parameters is randomly chosen from a distribution, we call that *random search*. In the absence of a good manual strategy, random search has the advantage of being able to search the hyper-parameter space more effectively by testing combinations of parameters that might not have been considered otherwise. To generate a list of random values from a uniform distribution you can use either the `ints()` or `floats()` method on the [Params](other/helpers/params.md) helper.
+When the list of possible continuous-valued hyper-parameters is randomly chosen from a distribution, we call that *random search*. In the absence of a good manual strategy, random search has the advantage of being able to search the hyper-parameter space more effectively by testing combinations of parameters that might not have been considered otherwise. To generate a list of random values from a uniform distribution you can use either the `ints()` or `floats()` method on the [Params](helpers/params.md) helper.
 
 ```php
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Helpers\Params;
 
 $params = [
     Params::ints(1, 10, 4), [true, false], // ...

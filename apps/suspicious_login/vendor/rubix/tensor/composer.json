@@ -25,21 +25,20 @@
         }
     ],
     "require": {
-        "php": ">=7.2"
+        "php": ">=7.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "2.18.*",
-        "phalcon/zephir": "^0.12.20",
-        "phpbench/phpbench": "0.16.*",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phalcon/zephir": "^0.17",
+        "phpbench/phpbench": "^1.0",
         "phpstan/extension-installer": "^1.0",
-        "phpstan/phpstan": "0.12.*",
-        "phpstan/phpstan-phpunit": "0.12.*",
-        "phpunit/phpunit": "8.5.*"
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
             "Tensor\\": "src/",
-            "JAMA\\": "lib/JAMA",
             "Zephir\\Optimizers\\FunctionCall\\": "optimizers/"
         },
         "files": [
@@ -64,20 +63,25 @@
         "benchmark": "phpbench run --report=env --report=aggregate",
         "check": [
             "@putenv PHP_CS_FIXER_IGNORE_ENV=1",
-            "php-cs-fixer fix --config=.php_cs.dist -v --dry-run --using-cache=no"
+            "php-cs-fixer fix --config=.php-cs-fixer.dist.php -v --dry-run --using-cache=no"
         ],
         "clean": "zephir fullclean",
         "compile": [
-            "zephir build --no-dev",
-            "@php build-ext"
+            "zephir generate",
+            "@php build-ext",
+            "zephir compile --no-dev",
+            "zephir install"
         ],
-        "fix": "php-cs-fixer fix --config=.php_cs.dist",
+        "fix": "php-cs-fixer fix --config=.php-cs-fixer.dist.php",
         "test": "phpunit"
     },
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "process-timeout": 3000
+        "process-timeout": 3000,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     },
     "support": {
         "issues": "https://github.com/RubixML/Tensor/issues",

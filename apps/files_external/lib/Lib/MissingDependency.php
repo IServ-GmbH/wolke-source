@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -11,6 +10,7 @@ namespace OCA\Files_External\Lib;
  * External storage backend dependency
  */
 class MissingDependency {
+
 	/** @var string|null Custom message */
 	private ?string $message = null;
 	private bool $optional = false;
@@ -19,7 +19,7 @@ class MissingDependency {
 	 * @param string $dependency
 	 */
 	public function __construct(
-		private string $dependency,
+		private readonly string $dependency,
 	) {
 	}
 

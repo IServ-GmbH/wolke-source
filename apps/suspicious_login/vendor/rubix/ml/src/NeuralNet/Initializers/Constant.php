@@ -21,7 +21,7 @@ class Constant implements Initializer
      *
      * @var float
      */
-    protected $value;
+    protected float $value;
 
     /**
      * @param float $value
@@ -42,8 +42,8 @@ class Constant implements Initializer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @param int $fanOut
+     * @param int<0,max> $fanIn
+     * @param int<0,max> $fanOut
      * @return \Tensor\Matrix
      */
     public function initialize(int $fanIn, int $fanOut) : Matrix
@@ -53,6 +53,8 @@ class Constant implements Initializer
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

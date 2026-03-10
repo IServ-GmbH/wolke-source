@@ -7,11 +7,11 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Graph\Trees\Spatial;
 use Rubix\ML\Graph\Trees\BallTree;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -46,35 +46,35 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @var float
      */
-    protected $radius;
+    protected float $radius;
 
     /**
      * Should we consider the distances of our nearest neighbors when making predictions?
      *
      * @var bool
      */
-    protected $weighted;
+    protected bool $weighted;
 
     /**
      * The spatial tree used to run range searches.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
      * The class label for any samples that have 0 neighbors within the specified radius.
      *
      * @var string
      */
-    protected $outlierClass;
+    protected string $outlierClass;
 
     /**
      * The zero vector for the possible class outcomes.
      *
      * @var float[]
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
@@ -83,7 +83,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @var int|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param float $radius
@@ -94,7 +94,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      */
     public function __construct(
         float $radius = 1.0,
-        bool $weighted = true,
+        bool $weighted = false,
         string $outlierClass = '?',
         ?Spatial $tree = null
     ) {
@@ -150,7 +150,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
         return [
             'radius' => $this->radius,
             'weighted' => $this->weighted,
-            'outlier_class' => $this->outlierClass,
+            'outlier class' => $this->outlierClass,
             'tree' => $this->tree,
         ];
     }
@@ -201,7 +201,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
 
         $this->classes = array_fill_keys($classes, 0.0);
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
 
         $this->tree->grow($dataset);
     }
@@ -250,6 +250,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
             $weights = array_count_values($labels);
         }
 
+        /** @var array<string,float|int> $weights */
         return argmax($weights);
     }
 
@@ -258,7 +259,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -312,6 +313,8 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

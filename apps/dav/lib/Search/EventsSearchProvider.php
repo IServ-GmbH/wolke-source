@@ -149,7 +149,7 @@ class EventsSearchProvider extends ACalendarSearchProvider implements IFiltering
 		}
 		$formattedResults = \array_map(function (array $eventRow) use ($calendarsById, $subscriptionsById): SearchResultEntry {
 			$component = $this->getPrimaryComponent($eventRow['calendardata'], self::$componentType);
-			$title = (string) ($component->SUMMARY ?? $this->l10n->t('Untitled event'));
+			$title = (string)($component->SUMMARY ?? $this->l10n->t('Untitled event'));
 			$subline = $this->generateSubline($component);
 
 			if ($eventRow['calendartype'] === CalDavBackend::CALENDAR_TYPE_CALENDAR) {
@@ -194,12 +194,12 @@ class EventsSearchProvider extends ACalendarSearchProvider implements IFiltering
 	protected function getDavUrlForCalendarObject(
 		string $principalUri,
 		string $calendarUri,
-		string $calendarObjectUri
+		string $calendarObjectUri,
 	): string {
 		[,, $principalId] = explode('/', $principalUri, 3);
 
 		return $this->urlGenerator->linkTo('', 'remote.php') . '/dav/calendars/'
-			. rawurlencode($principalId) . '/'
+			. str_replace(' ', '%20', $principalId) . '/'
 			. $calendarUri . '/'
 			. $calendarObjectUri;
 	}

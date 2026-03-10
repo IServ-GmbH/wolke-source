@@ -22,7 +22,6 @@ use OCP\BackgroundJob\Job;
  */
 class RetryJob extends Job {
 	private bool $retainJob = true;
-	private Notifications $notifications;
 
 	/** @var int max number of attempts to send the request */
 	private int $maxTry = 20;
@@ -30,10 +29,11 @@ class RetryJob extends Job {
 	/** @var int how much time should be between two tries (10 minutes) */
 	private int $interval = 600;
 
-	public function __construct(Notifications $notifications,
-		ITimeFactory $time) {
+	public function __construct(
+		private Notifications $notifications,
+		ITimeFactory $time,
+	) {
 		parent::__construct($time);
-		$this->notifications = $notifications;
 	}
 
 	/**
@@ -55,7 +55,7 @@ class RetryJob extends Job {
 		$token = $argument['token'];
 		$action = $argument['action'];
 		$data = json_decode($argument['data'], true);
-		$try = (int) $argument['try'] + 1;
+		$try = (int)$argument['try'] + 1;
 
 		$result = $this->notifications->sendUpdateToRemote($remote, $remoteId, $token, $action, $data, $try);
 
@@ -75,7 +75,7 @@ class RetryJob extends Job {
 				'token' => $argument['token'],
 				'data' => $argument['data'],
 				'action' => $argument['action'],
-				'try' => (int) $argument['try'] + 1,
+				'try' => (int)$argument['try'] + 1,
 				'lastRun' => $this->time->getTime()
 			]
 		);
@@ -85,7 +85,7 @@ class RetryJob extends Job {
 	 * Test if it is time for the next run
 	 */
 	protected function shouldRun(array $argument): bool {
-		$lastRun = (int) $argument['lastRun'];
+		$lastRun = (int)$argument['lastRun'];
 		return (($this->time->getTime() - $lastRun) > $this->interval);
 	}
 }

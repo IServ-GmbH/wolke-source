@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Calendar app &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=91d07486"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Using the Mail app" href="mail.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -75,6 +79,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#managing-events">Managing Events</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#create-a-new-event">Create a new event</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-talk-conversation">Add Talk conversation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#edit-duplicate-or-delete-an-event">Edit, duplicate or delete an event</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#invite-attendees-to-an-event">Invite attendees to an event</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#checking-attendees-busy-times">Checking attendees’ busy times</a></li>
@@ -111,6 +116,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../talk/index.html">Talk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../userpreferences.html">Setting your preferences</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../universal_access.html">Universal access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../user_2fa.html">Using two-factor authentication</a></li>
@@ -163,7 +169,8 @@ sync your Nextcloud calendars and events with.</p>
 <p>If you plan on setting up a new calendar without transferring any old data from your
 previous calendar, creating a new calendar is the way you should go.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_create_1.png"><img alt="../_images/calendar_create_1.png" src="../_images/calendar_create_1.png" style="width: 348.0px; height: 403.20000000000005px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_create_1.png"><img alt="../_images/calendar_create_1.png" src="../_images/calendar_create_1.png" style="width: 348.0px; height: 403.20000000000005px;" />
+</a>
 </figure>
 <ol class="arabic simple">
 <li><p>Click on <code class="docutils literal notranslate"><span class="pre">+</span> <span class="pre">New</span> <span class="pre">Calendar</span></code> in the left sidebar.</p></li>
@@ -173,7 +180,8 @@ synced across your devices, filled with new events and shared with your friends
 and colleagues.</p></li>
 </ol>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_create_2.png"><img alt="../_images/calendar_create_2.png" src="../_images/calendar_create_2.png" style="width: 362.40000000000003px; height: 393.6px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_create_2.png"><img alt="../_images/calendar_create_2.png" src="../_images/calendar_create_2.png" style="width: 362.40000000000003px; height: 393.6px;" />
+</a>
 </figure>
 </section>
 <section id="import-a-calendar">
@@ -181,7 +189,8 @@ and colleagues.</p></li>
 <p>If you want to transfer your calendar and their respective events to your Nextcloud
 instance, importing is the best way to do so.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_settings_sidebar.png"><img alt="../_images/calendar_settings_sidebar.png" src="../_images/calendar_settings_sidebar.png" style="width: 246.4px; height: 284.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_settings_sidebar.png"><img alt="../_images/calendar_settings_sidebar.png" src="../_images/calendar_settings_sidebar.png" style="width: 246.4px; height: 284.0px;" />
+</a>
 </figure>
 <ol class="arabic simple">
 <li><p>Click on the settings-icon labeled with <code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">&amp;</span> <span class="pre">Import</span></code> at the left-bottom.</p></li>
@@ -282,7 +291,7 @@ you can exchange your calendars with, including subscription links from calendar
 <section id="subscribe-to-a-holiday-calendar">
 <h3>Subscribe to a Holiday Calendar<a class="headerlink" href="#subscribe-to-a-holiday-calendar" title="Link to this heading"></a></h3>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 4.4.</span></p>
+<p><span class="versionmodified added">Added in version 4.4.</span></p>
 </div>
 <p>You can subscribe to a read-only holiday calendar provided by <a class="reference external" href="https://www.thunderbird.net/calendar/holidays/">Thunderbird</a>.</p>
 <ol class="arabic simple">
@@ -299,6 +308,7 @@ you can exchange your calendars with, including subscription links from calendar
 <p>Events can be created by clicking in the area when the event is scheduled.
 In the day- and week-view of the calendar you just click, pull and release your
 cursor over the area when the event is taking place.</p>
+<p>Clicking on the globe button brings up the timezone selector. You are able to choose different timezones for the start and end of your event. This is useful when travelling.</p>
 <figure class="align-default">
 <img alt="../_images/calendar_new-event_week.png" src="../_images/calendar_new-event_week.png" />
 </figure>
@@ -312,6 +322,13 @@ check and concretize the time span or set the event as an all-day event. Optiona
 you can specify a location and a description.</p>
 <p>If you want to edit advanced details such as the <strong>Attendees</strong> or <strong>Reminders</strong>, or if you
 want to set the event as a repeating event, click on the <code class="docutils literal notranslate"><span class="pre">More</span></code> button to open the advanced editor.</p>
+</section>
+<section id="add-talk-conversation">
+<h3>Add Talk conversation<a class="headerlink" href="#add-talk-conversation" title="Link to this heading"></a></h3>
+<p>You can include an existing Talk conversation in your event by clicking “Add Talk conversation”. To view the list of existing Talk conversations, ensure the Talk app is enabled. If you’d like to create a new Talk conversation, you can do so directly from the same modal.</p>
+<figure class="align-default">
+<img alt="../_images/add-talk-room.png" src="../_images/add-talk-room.png" />
+</figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you always want to open the advanced editor instead of the
@@ -344,7 +361,8 @@ advanced editor by clicking on <code class="docutils literal notranslate"><span 
 <p>You may add attendees to an event to let them know they’re invited. They will receive an email invitation and will be able to confirm or cancel their participation to the event.
 Attendees may be other users on your Nextcloud instances, contacts in your address books and direct email addresses. You may also change the level of participation per attendees, or disable the email information for a specific attendee.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_event_invitation_level.png"><img alt="../_images/calendar_event_invitation_level.png" src="../_images/calendar_event_invitation_level.png" style="width: 811.2px; height: 380.8px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_event_invitation_level.png"><img alt="../_images/calendar_event_invitation_level.png" src="../_images/calendar_event_invitation_level.png" style="width: 811.2px; height: 380.8px;" />
+</a>
 </figure>
 <div class="versionchanged">
 <p><span class="versionmodified changed">Changed in version 25: </span>Attendee email response links no longer offer inputs to add a comment or invite additional guests to the event.</p>
@@ -362,9 +380,10 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <h3>Checking attendees’ busy times<a class="headerlink" href="#checking-attendees-busy-times" title="Link to this heading"></a></h3>
 <p>After adding attendees to an event you can click on <code class="docutils literal notranslate"><span class="pre">Find</span> <span class="pre">a</span> <span class="pre">time</span></code> to bring up the “Free / Busy” modal. It allows you to see when each attendee has other events, and can help you decide on a time when everyone is free.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_free_busy_modal.png"><img alt="../_images/calendar_free_busy_modal.png" src="../_images/calendar_free_busy_modal.png" style="width: 987.2px; height: 800.8000000000001px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_free_busy_modal.png"><img alt="../_images/calendar_free_busy_modal.png" src="../_images/calendar_free_busy_modal.png" style="width: 987.2px; height: 800.8000000000001px;" />
+</a>
 </figure>
-<p>Your own busy blocks will be shown in the same color as your personal calendar, your out of office times will be shown in gray, and other attendees’ busy times will have the same color as their avatar shown in the sidebar.</p>
+<p>Your own busy blocks will be shown in the same color as your personal calendar, your out of office times will be shown in gray, and other attendees’ busy times will have the same color as their avatar shown in the advanced editor.</p>
 <p>You can select a time slot for the event directly on the calendar.</p>
 </section>
 <section id="assign-rooms-and-resources-to-an-event">
@@ -378,7 +397,7 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <section id="room-availability">
 <h3>Room availability<a class="headerlink" href="#room-availability" title="Link to this heading"></a></h3>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 5.0.</span></p>
+<p><span class="versionmodified added">Added in version 5.0.</span></p>
 </div>
 <p>If the “Calendar Rooms and Resources” app is installed on your instance, you can now find <code class="docutils literal notranslate"><span class="pre">Room</span> <span class="pre">availability</span></code>  the <code class="docutils literal notranslate"><span class="pre">Resources</span></code> section. It lists all the existing rooms. You can check the availability of each room in a manner similar to checking the free/busy status of event attendees.</p>
 <figure class="align-default">
@@ -389,7 +408,8 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <h3>Add attachments to events<a class="headerlink" href="#add-attachments-to-events" title="Link to this heading"></a></h3>
 <p>You can import attachments to your events either by uploading them or adding them from files</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_adding_attachments.png"><img alt="../_images/calendar_adding_attachments.png" src="../_images/calendar_adding_attachments.png" style="width: 790.4000000000001px; height: 382.40000000000003px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_adding_attachments.png"><img alt="../_images/calendar_adding_attachments.png" src="../_images/calendar_adding_attachments.png" style="width: 790.4000000000001px; height: 382.40000000000003px;" />
+</a>
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -398,7 +418,8 @@ Newly uploaded files will be saved in files by default in the calendar folder in
 </div>
 <p>You can change the attachment folder by going to <code class="docutils literal notranslate"><span class="pre">Calendar</span> <span class="pre">settings</span></code> in the bottom left corner and changing <code class="docutils literal notranslate"><span class="pre">default</span> <span class="pre">attachments</span> <span class="pre">location</span></code>.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_attachments_location.png"><img alt="../_images/calendar_attachments_location.png" src="../_images/calendar_attachments_location.png" style="width: 184.2px; height: 208.79999999999998px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_attachments_location.png"><img alt="../_images/calendar_attachments_location.png" src="../_images/calendar_attachments_location.png" style="width: 184.2px; height: 208.79999999999998px;" />
+</a>
 </figure>
 </section>
 <section id="set-up-reminders">
@@ -410,7 +431,8 @@ Newly uploaded files will be saved in files by default in the calendar folder in
 </ul>
 <p>You may set reminders at a time relative to the event or at a specific date.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_event_reminders.png"><img alt="../_images/calendar_event_reminders.png" src="../_images/calendar_event_reminders.png" style="width: 507.20000000000005px; height: 284.0px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_event_reminders.png"><img alt="../_images/calendar_event_reminders.png" src="../_images/calendar_event_reminders.png" style="width: 507.20000000000005px; height: 284.0px;" />
+</a>
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -427,7 +449,8 @@ clients, notifications may also show up there.</p>
 <p>An event may be set as “recurring”, so that it can happen every day, week, month or year. Specific rules can be added to set which day of the week the event happens or more complex rules, such as every fourth Wednesday of each month.</p>
 <p>You can also tell when the recurrence ends.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_event_repeat.png"><img alt="../_images/calendar_event_repeat.png" src="../_images/calendar_event_repeat.png" style="width: 519.2px; height: 557.6px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_event_repeat.png"><img alt="../_images/calendar_event_repeat.png" src="../_images/calendar_event_repeat.png" style="width: 519.2px; height: 557.6px;" />
+</a>
 </figure>
 </section>
 <section id="trash-bin">
@@ -453,11 +476,13 @@ Calendars that are transparent will be ignored.</p>
 <h2>Responding to invitations<a class="headerlink" href="#responding-to-invitations" title="Link to this heading"></a></h2>
 <p>You can directly respond to invitations inside the app. Click on the event and select your participation status. You can respond to an invitation by accepting, declining or accepting tentatively.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_accept_simple_editor.png"><img alt="../_images/calendar_accept_simple_editor.png" src="../_images/calendar_accept_simple_editor.png" style="width: 595.2px; height: 309.6px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_accept_simple_editor.png"><img alt="../_images/calendar_accept_simple_editor.png" src="../_images/calendar_accept_simple_editor.png" style="width: 595.2px; height: 309.6px;" />
+</a>
 </figure>
 <p>You can respond to an invitation from the advanced editor too.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/calendar_accept_advanced_editor.png"><img alt="../_images/calendar_accept_advanced_editor.png" src="../_images/calendar_accept_advanced_editor.png" style="width: 800.0px; height: 160.8px;" /></a>
+<a class="reference internal image-reference" href="../_images/calendar_accept_advanced_editor.png"><img alt="../_images/calendar_accept_advanced_editor.png" src="../_images/calendar_accept_advanced_editor.png" style="width: 800.0px; height: 160.8px;" />
+</a>
 </figure>
 </section>
 <section id="availability-working-hours">
@@ -529,11 +554,13 @@ or let them discover your public appointment via the profile page. You can also 
 For a selected day there will be a list with all the possible time slots. On days with no available slots,
 too many conflicts or a reached daily maximum limit of already booked appointments, the list might be empty.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/appointment_booking_1.png"><img alt="../_images/appointment_booking_1.png" src="../_images/appointment_booking_1.png" style="width: 673.6px; height: 450.40000000000003px;" /></a>
+<a class="reference internal image-reference" href="../_images/appointment_booking_1.png"><img alt="../_images/appointment_booking_1.png" src="../_images/appointment_booking_1.png" style="width: 673.6px; height: 450.40000000000003px;" />
+</a>
 </figure>
 <p>For the booking, attendees have to enter a name and an email address. Optionally they can also add a comment.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../_images/appointment_booking_2.png"><img alt="../_images/appointment_booking_2.png" src="../_images/appointment_booking_2.png" style="width: 588.0px; height: 358.40000000000003px;" /></a>
+<a class="reference internal image-reference" href="../_images/appointment_booking_2.png"><img alt="../_images/appointment_booking_2.png" src="../_images/appointment_booking_2.png" style="width: 588.0px; height: 358.40000000000003px;" />
+</a>
 </figure>
 <p>When the booking was successful, a confirmation dialogue will be shown to the attendee.</p>
 <figure class="align-default">
@@ -588,7 +615,7 @@ The system will detect the conflict and offer to pick a new time slot.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -639,6 +666,14 @@ The system will detect the conflict and offer to pick a new time slot.</p>
                
             >
               stable
+            </a>
+          </dd>
+        
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/30/user_manual"
+               
+            >
+              30
             </a>
           </dd>
         

@@ -3,8 +3,8 @@
 namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\Specifications\ExtensionIsLoaded;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -31,14 +31,14 @@ class ImageVectorizer implements Transformer, Stateful
      *
      * @var bool
      */
-    protected $grayscale;
+    protected bool $grayscale;
 
     /**
      * The fixed width and height of the images for each image feature column.
      *
-     * @var array[]|null
+     * @var array<int[]>|null
      */
-    protected $sizes;
+    protected ?array $sizes = null;
 
     /**
      * @param bool $grayscale
@@ -86,13 +86,13 @@ class ImageVectorizer implements Transformer, Stateful
 
         $this->sizes = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isImage()) {
                 $value = $sample[$column];
 
                 $this->sizes[$column] = [
-                    imagesx($value),
-                    imagesy($value),
+                    imagesx($value) ?: 0,
+                    imagesy($value) ?: 0,
                 ];
             }
         }
@@ -144,6 +144,8 @@ class ImageVectorizer implements Transformer, Stateful
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

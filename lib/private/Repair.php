@@ -62,6 +62,9 @@ use OCP\AppFramework\QueryException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IAppConfig;
+use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 use OCP\Notification\IManager as INotificationManager;
@@ -76,7 +79,7 @@ class Repair implements IOutput {
 
 	public function __construct(
 		private IEventDispatcher $dispatcher,
-		private LoggerInterface $logger
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -205,9 +208,13 @@ class Repair implements IOutput {
 	public static function getExpensiveRepairSteps() {
 		return [
 			new OldGroupMembershipShares(\OC::$server->getDatabaseConnection(), \OC::$server->getGroupManager()),
-			new RemoveBrokenProperties(\OC::$server->getDatabaseConnection()),
-			new RepairMimeTypes(\OC::$server->getConfig(), \OC::$server->getDatabaseConnection()),
-			\OC::$server->get(DeleteSchedulingObjects::class),
+			new RemoveBrokenProperties(\OCP\Server::get(IDBConnection::class)),
+			new RepairMimeTypes(
+				\OCP\Server::get(IConfig::class),
+				\OCP\Server::get(IAppConfig::class),
+				\OCP\Server::get(IDBConnection::class)
+			),
+			\OCP\Server::get(DeleteSchedulingObjects::class),
 			\OC::$server->get(RemoveObjectProperties::class),
 		];
 	}

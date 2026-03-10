@@ -2,20 +2,18 @@
 
 namespace Rubix\ML;
 
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Backends\Serial;
-use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Backends\Tasks\Task;
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Traits\LoggerAware;
 use Rubix\ML\CrossValidation\KFold;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\Multiprocessing;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\CrossValidation\Validator;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\Multiprocessing;
+use Rubix\ML\Backends\Tasks\CrossValidate;
 use Rubix\ML\CrossValidation\Metrics\RMSE;
 use Rubix\ML\CrossValidation\Metrics\FBeta;
 use Rubix\ML\CrossValidation\Metrics\Metric;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\CrossValidation\Metrics\Accuracy;
 use Rubix\ML\CrossValidation\Metrics\VMeasure;
@@ -25,8 +23,6 @@ use Rubix\ML\Specifications\LabelsAreCompatibleWithLearner;
 use Rubix\ML\Specifications\EstimatorIsCompatibleWithMetric;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
-
-use function count;
 
 /**
  * Grid Search
@@ -43,102 +39,104 @@ use function count;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Persistable
+class GridSearch implements Estimator, Learner, Parallel, Verbose, Persistable
 {
-    use AutotrackRevisions, Multiprocessing, PredictsSingle, LoggerAware;
+    use AutotrackRevisions, Multiprocessing, LoggerAware;
 
     /**
      * The class name of the base estimator.
      *
      * @var string
      */
-    protected $base;
+    protected string $class;
 
     /**
-     * An array of tuples containing the possible values for each of the base learner's constructor parameters.
+     * An array of lists containing the possible values for each of the base learner's constructor parameters.
      *
-     * @var array[]
+     * @var list<list<mixed>>
      */
-    protected $params;
+    protected array $params;
 
     /**
      * The validation metric used to score the estimator.
      *
      * @var \Rubix\ML\CrossValidation\Metrics\Metric
      */
-    protected $metric;
+    protected \Rubix\ML\CrossValidation\Metrics\Metric $metric;
 
     /**
      * The validator used to test the estimator.
      *
      * @var \Rubix\ML\CrossValidation\Validator
      */
-    protected $validator;
+    protected \Rubix\ML\CrossValidation\Validator $validator;
 
     /**
-     * The argument names for the base estimator's constructor.
-     *
-     * @var string[]
-     */
-    protected $args = [
-        //
-    ];
-
-    /**
-     * The results of the last hyper-parameter search.
-     *
-     * @var array[]|null
-     */
-    protected $results;
-
-    /**
-     * The instance of the estimator with the best parameters.
+     * The base estimator instance.
      *
      * @var \Rubix\ML\Learner
      */
-    protected $estimator;
+    protected \Rubix\ML\Learner $base;
 
     /**
-     * Cross validate a learner with a given dataset and return the score.
+     * The validation scores obtained from the last search.
      *
-     * @internal
-     *
-     * @param \Rubix\ML\Learner $estimator
-     * @param \Rubix\ML\Datasets\Labeled $dataset
-     * @param \Rubix\ML\CrossValidation\Validator $validator
-     * @param \Rubix\ML\CrossValidation\Metrics\Metric $metric
-     * @return mixed[]
+     * @var list<float>|null
      */
-    public static function score(Learner $estimator, Labeled $dataset, Validator $validator, Metric $metric) : array
-    {
-        $score = $validator->test($estimator, $dataset, $metric);
+    protected ?array $scores = null;
 
-        return [$score, $estimator->params()];
+    /**
+     * Return an array of all possible combinations of parameters. i.e their Cartesian product.
+     *
+     * @param list<list<mixed>> $params
+     * @return list<list<mixed>>
+     */
+    protected static function combine(array $params) : array
+    {
+        $combinations = [[]];
+
+        /** @var int<0,max> $i */
+        foreach ($params as $i => $params) {
+            $append = [];
+
+            foreach ($combinations as $product) {
+                foreach ($params as $param) {
+                    $product[$i] = $param;
+                    $append[] = $product;
+                }
+            }
+
+            $combinations = $append;
+        }
+
+        return $combinations;
     }
 
     /**
-     * @param class-string $base
-     * @param array[] $params
+     * @param class-string $class
+     * @param array<mixed[]> $params
      * @param \Rubix\ML\CrossValidation\Metrics\Metric|null $metric
      * @param \Rubix\ML\CrossValidation\Validator|null $validator
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
     public function __construct(
-        string $base,
+        string $class,
         array $params,
         ?Metric $metric = null,
         ?Validator $validator = null
     ) {
-        if (!class_exists($base)) {
-            throw new InvalidArgumentException("Class $base does not exist.");
+        if (!class_exists($class)) {
+            throw new InvalidArgumentException("Class $class does not exist.");
         }
 
-        $proxy = new $base(...array_map('current', $params));
+        $proxy = new $class(...array_map('current', $params));
 
         if (!$proxy instanceof Learner) {
             throw new InvalidArgumentException('Base class must'
                 . ' implement the Learner Interface.');
         }
+
+        $params = array_values($params);
 
         foreach ($params as &$tuple) {
             $tuple = empty($tuple) ? [null] : array_unique($tuple, SORT_REGULAR);
@@ -173,11 +171,11 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
             }
         }
 
-        $this->base = $base;
+        $this->class = $class;
         $this->params = $params;
         $this->metric = $metric;
         $this->validator = $validator ?? new KFold(3);
-        $this->estimator = $proxy;
+        $this->base = $proxy;
         $this->backend = new Serial();
     }
 
@@ -190,7 +188,7 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
      */
     public function type() : EstimatorType
     {
-        return $this->estimator->type();
+        return $this->base->type();
     }
 
     /**
@@ -203,7 +201,7 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
     public function compatibility() : array
     {
         return $this->trained()
-            ? $this->estimator->compatibility()
+            ? $this->base->compatibility()
             : DataType::all();
     }
 
@@ -217,7 +215,7 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
     public function params() : array
     {
         return [
-            'base' => $this->base,
+            'class' => $this->class,
             'params' => $this->params,
             'metric' => $this->metric,
             'validator' => $this->validator,
@@ -231,39 +229,17 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
      */
     public function trained() : bool
     {
-        return $this->estimator->trained();
+        return $this->base->trained();
     }
 
     /**
-     * Return an array containing the validation scores and hyper-parameters under test
-     * for each combination in a 2-tuple.
-     *
-     * @return array[]|null
-     */
-    public function results() : ?array
-    {
-        return $this->results;
-    }
-
-    /**
-     * Return an array containing the hyper-parameters with the highest validation score
-     * from the last search.
-     *
-     * @return mixed[]|null
-     */
-    public function best() : ?array
-    {
-        return $this->results ? $this->results[0][1] : null;
-    }
-
-    /**
-     * Return the base estimator instance.
+     * Return the base learner instance.
      *
      * @return \Rubix\ML\Estimator
      */
     public function base() : Estimator
     {
-        return $this->estimator;
+        return $this->base;
     }
 
     /**
@@ -281,41 +257,37 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        $combinations = $this->combinations();
-
         if ($this->logger) {
-            $this->logger->info("$this initialized");
-
-            $this->logger->info('Searching ' . count($combinations)
-                . ' combinations of hyper-parameters');
+            $this->logger->info("Training $this");
         }
+
+        $combinations = self::combine($this->params);
 
         $this->backend->flush();
 
         foreach ($combinations as $params) {
-            $estimator = new $this->base(...$params);
+            /** @var \Rubix\ML\Learner $estimator */
+            $estimator = new $this->class(...$params);
+
+            $task = new CrossValidate(
+                $estimator,
+                $dataset,
+                $this->validator,
+                $this->metric
+            );
 
             $this->backend->enqueue(
-                new Task(
-                    [self::class, 'score'],
-                    [
-                        $estimator,
-                        $dataset,
-                        $this->validator,
-                        $this->metric,
-                    ]
-                ),
-                [$this, 'afterScore']
+                $task,
+                [$this, 'afterScore'],
+                $estimator->params()
             );
         }
 
-        [$scores, $combinations] = array_transpose($this->backend->process());
+        $scores = $this->backend->process();
 
-        array_multisort($scores, $combinations, SORT_DESC);
+        array_multisort($scores, SORT_DESC, $combinations);
 
-        $this->results = array_transpose([$scores, $combinations]);
-
-        $best = reset($combinations);
+        $best = reset($combinations) ?: [];
 
         $estimator = new $this->base(...array_values($best));
 
@@ -325,7 +297,7 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
 
         $estimator->train($dataset);
 
-        $this->estimator = $estimator;
+        $this->base = $estimator;
 
         if ($this->logger) {
             $this->logger->info('Training complete');
@@ -341,51 +313,23 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
      */
     public function predict(Dataset $dataset) : array
     {
-        return $this->estimator->predict($dataset);
+        return $this->base->predict($dataset);
     }
 
     /**
-     * The callback that executes after the scoring task.
+     * The callback that executes after the cross validation task.
      *
      * @internal
      *
-     * @param mixed[] $result
+     * @param float $score
+     * @param mixed[] $params
      */
-    public function afterScore(array $result) : void
+    public function afterScore(float $score, array $params) : void
     {
         if ($this->logger) {
-            [$score, $params] = $result;
-
-            $this->logger->info(
-                "{$this->metric}: $score, params: [" . Params::stringify($params) . ']'
-            );
+            $this->logger->info("{$this->metric}: $score, "
+                . 'params: [' . Params::stringify($params) . ']');
         }
-    }
-
-    /**
-     * Return an array of all possible combinations of parameters. i.e the Cartesian product of
-     * the user-supplied parameter array.
-     *
-     * @return array[]
-     */
-    protected function combinations() : array
-    {
-        $combinations = [[]];
-
-        foreach ($this->params as $i => $params) {
-            $append = [];
-
-            foreach ($combinations as $product) {
-                foreach ($params as $param) {
-                    $product[$i] = $param;
-                    $append[] = $product;
-                }
-            }
-
-            $combinations = $append;
-        }
-
-        return $combinations;
     }
 
     /**
@@ -397,11 +341,13 @@ class GridSearch implements Estimator, Learner, Parallel, Verbose, Wrapper, Pers
      */
     public function __call(string $name, array $arguments)
     {
-        return $this->estimator->$name(...$arguments);
+        return $this->base->$name(...$arguments);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

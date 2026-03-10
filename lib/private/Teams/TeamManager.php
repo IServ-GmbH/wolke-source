@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -63,7 +62,7 @@ class TeamManager implements ITeamManager {
 			return $providers[$providerId];
 		}
 
-		throw new \RuntimeException('No provider found for id ' .$providerId);
+		throw new \RuntimeException('No provider found for id ' . $providerId);
 	}
 
 	public function getSharedWith(string $teamId, string $userId): array {
@@ -81,7 +80,26 @@ class TeamManager implements ITeamManager {
 			array_push($resources, ...$provider->getSharedWith($teamId));
 		}
 
-		return $resources;
+		return array_values($resources);
+	}
+
+	public function getSharedWithList(array $teams, string $userId): array {
+		if (!$this->hasTeamSupport()) {
+			return [];
+		}
+
+		$resources = [];
+		foreach ($this->getProviders() as $provider) {
+			if (method_exists($provider, 'getSharedWithList')) {
+				$resources[] = $provider->getSharedWithList($teams, $userId);
+			} else {
+				foreach ($teams as $team) {
+					$resources[] = [$team => $provider->getSharedWith($team)];
+				}
+			}
+		}
+
+		return array_merge_recursive(...$resources);
 	}
 
 	public function getTeamsForResource(string $providerId, string $resourceId, string $userId): array {
@@ -90,18 +108,13 @@ class TeamManager implements ITeamManager {
 		}
 
 		$provider = $this->getProvider($providerId);
-		return array_values(array_filter(array_map(function ($teamId) use ($userId) {
-			$team = $this->getTeam($teamId, $userId);
-			if ($team === null) {
-				return null;
-			}
-
+		return array_map(function (Circle $team) {
 			return new Team(
-				$teamId,
+				$team->getSingleId(),
 				$team->getDisplayName(),
-				$this->urlGenerator->linkToRouteAbsolute('contacts.contacts.directcircle', ['singleId' => $teamId]),
+				$this->urlGenerator->linkToRouteAbsolute('contacts.contacts.directcircle', ['singleId' => $team->getSingleId()]),
 			);
-		}, $provider->getTeamsForResource($resourceId))));
+		}, $this->getTeams($provider->getTeamsForResource($resourceId), $userId));
 	}
 
 	private function getTeam(string $teamId, string $userId): ?Circle {
@@ -116,5 +129,18 @@ class TeamManager implements ITeamManager {
 		} catch (CircleNotFoundException) {
 			return null;
 		}
+	}
+
+	/**
+	 * @return Circle[]
+	 */
+	private function getTeams(array $teams, string $userId): array {
+		if (!$this->hasTeamSupport()) {
+			return [];
+		}
+
+		$federatedUser = $this->circlesManager->getFederatedUser($userId, Member::TYPE_USER);
+		$this->circlesManager->startSession($federatedUser);
+		return $this->circlesManager->getCirclesByIds($teams);
 	}
 }

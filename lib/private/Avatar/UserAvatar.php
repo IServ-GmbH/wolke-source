@@ -152,7 +152,7 @@ class UserAvatar extends Avatar {
 		$avatars = $this->folder->getDirectoryListing();
 
 		$this->config->setUserValue($this->user->getUID(), 'avatar', 'version',
-			(string) ((int) $this->config->getUserValue($this->user->getUID(), 'avatar', 'version', '0') + 1));
+			(string)((int)$this->config->getUserValue($this->user->getUID(), 'avatar', 'version', '0') + 1));
 
 		foreach ($avatars as $avatar) {
 			$avatar->delete();
@@ -217,7 +217,7 @@ class UserAvatar extends Avatar {
 			if ($size === -1) {
 				$path = 'avatar' . ($darkTheme ? '-dark' : '') . '.' . $ext;
 			} else {
-				$path = 'avatar' . ($darkTheme ? '-dark' : '') . '.'  . $size . '.' . $ext;
+				$path = 'avatar' . ($darkTheme ? '-dark' : '') . '.' . $size . '.' . $ext;
 			}
 		} else {
 			if ($size === -1) {

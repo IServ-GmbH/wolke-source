@@ -37,10 +37,10 @@ class ProviderUserAssignmentDao {
 		$query = $qb->select('provider_id', 'enabled')
 			->from(self::TABLE_NAME)
 			->where($qb->expr()->eq('uid', $qb->createNamedParameter($uid)));
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$providers = [];
 		foreach ($result->fetchAll() as $row) {
-			$providers[(string) $row['provider_id']] = (int) $row['enabled'] === 1;
+			$providers[(string)$row['provider_id']] = (int)$row['enabled'] === 1;
 		}
 		$result->closeCursor();
 
@@ -93,9 +93,9 @@ class ProviderUserAssignmentDao {
 
 		return array_values(array_map(function (array $row) {
 			return [
-				'provider_id' => (string) $row['provider_id'],
-				'uid' => (string) $row['uid'],
-				'enabled' => ((int) $row['enabled']) === 1,
+				'provider_id' => (string)$row['provider_id'],
+				'uid' => (string)$row['uid'],
+				'enabled' => ((int)$row['enabled']) === 1,
 			];
 		}, $rows));
 	}
@@ -106,6 +106,6 @@ class ProviderUserAssignmentDao {
 		$deleteQuery = $qb->delete(self::TABLE_NAME)
 			->where($qb->expr()->eq('provider_id', $qb->createNamedParameter($providerId)));
 
-		$deleteQuery->execute();
+		$deleteQuery->executeStatement();
 	}
 }

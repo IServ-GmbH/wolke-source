@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 /**
- * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -24,7 +24,7 @@ class MigrateLazyAppConfig implements IRepairStep {
 
 	public function run(IOutput $output): void {
 		$this->appConfig->updateLazy('support', 'last_response', true);
-		
+
 		// Copy often used values to non-lazy (also done when fetching)
 		$data = $this->appConfig->getValueArray('support', 'last_response');
 		if (!empty($data)) {

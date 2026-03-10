@@ -143,10 +143,11 @@ class DocumentService {
 		$document->setLastSavedVersionTime($file->getMTime());
 		$document->setLastSavedVersionEtag($file->getEtag());
 		$document->setBaseVersionEtag(uniqid());
+		$document->setChecksum($this->computeCheckSum($file->getContent()));
 		try {
 			/** @var Document $document */
 			$document = $this->documentMapper->insert($document);
-			$this->cache->set('document-version-'.$document->getId(), 0);
+			$this->cache->set('document-version-' . $document->getId(), 0);
 		} catch (Exception $e) {
 			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				// Document might have been created in the meantime
@@ -204,13 +205,12 @@ class DocumentService {
 	 * @throws NotPermittedException
 	 * @throws DoesNotExistException
 	 */
-	public function addStep(Document $document, Session $session, array $steps, int $version, ?string $shareToken): array {
+	public function addStep(Document $document, Session $session, array $steps, int $version, ?int $recoveryAttempt, ?string $shareToken): array {
 		$documentId = $session->getDocumentId();
-		$readOnly = $this->isReadOnly($this->getFileForSession($session, $shareToken), $shareToken);
+		$readOnly = $this->isReadOnlyCached($session, $shareToken);
 		$stepsToInsert = [];
 		$stepsIncludeQuery = false;
 		$documentState = null;
-		$newVersion = $version;
 		foreach ($steps as $step) {
 			$message = YjsMessage::fromBase64($step);
 			if ($readOnly && $message->isUpdate()) {
@@ -227,22 +227,28 @@ class DocumentService {
 			if ($readOnly) {
 				throw new NotPermittedException('Read-only client tries to push steps with changes');
 			}
-			$newVersion = $this->insertSteps($document, $session, $stepsToInsert);
+			$this->insertSteps($document, $session, $stepsToInsert);
 		}
 
-		// By default send all steps the user has not received yet.
+		// By default, send all steps the user has not received yet.
 		$getStepsSinceVersion = $version;
 		if ($stepsIncludeQuery) {
+			if ($recoveryAttempt === 1) {
+				$this->logger->error('Recovery attempt #' . $recoveryAttempt . ' from ' . $session->getId() . ' for ' . $documentId);
+			} elseif ($recoveryAttempt > 1) {
+				$this->logger->debug('Recovery attempt #' . $recoveryAttempt . ' from ' . $session->getId() . ' for ' . $documentId);
+			}
 			$this->logger->debug('Loading document state for ' . $documentId);
 			try {
 				$stateFile = $this->getStateFile($documentId);
 				$documentState = $stateFile->getContent();
 				$this->logger->debug('Existing document, state file loaded ' . $documentId);
-				// If there were any queries in the steps send all steps since last save.
-				$getStepsSinceVersion = $document->getLastSavedVersion();
+				// If there were any queries in the steps, send all steps starting 200 steps before last save.
+				// Adding 200 previous steps to workaround race conditions where state with missing step got persisted in the document state. See #7692
+				$getStepsSinceVersion = $this->stepMapper->getBeforeVersion($documentId, $document->getLastSavedVersion(), 200);
 			} catch (NotFoundException $e) {
 				$this->logger->debug('Existing document, but no state file found for ' . $documentId);
-				// If there is no state file include all the steps.
+				// If there is no state file, include all the steps.
 				$getStepsSinceVersion = 0;
 			}
 		}
@@ -258,24 +264,22 @@ class DocumentService {
 
 		return [
 			'steps' => $stepsToReturn,
-			'version' => $newVersion,
+			'version' => isset($documentState) ? $document->getLastSavedVersion() : 0,
 			'documentState' => $documentState
 		];
 	}
 
 	/**
 	 * @param Document $document
-	 * @param Session  $session
-	 * @param Step[]   $steps
-	 *
-	 * @return int
+	 * @param Session $session
+	 * @param Step[] $steps
 	 *
 	 * @throws DoesNotExistException
 	 * @throws InvalidArgumentException
 	 *
 	 * @psalm-param non-empty-list<mixed> $steps
 	 */
-	private function insertSteps(Document $document, Session $session, array $steps): int {
+	private function insertSteps(Document $document, Session $session, array $steps): void {
 		$stepsVersion = null;
 		try {
 			$stepsJson = json_encode($steps, JSON_THROW_ON_ERROR);
@@ -288,10 +292,9 @@ class DocumentService {
 			$step->setTimestamp(time());
 			$step = $this->stepMapper->insert($step);
 			$newVersion = $step->getId();
-			$this->logger->debug("Adding steps to " . $document->getId() . ": bumping version from $stepsVersion to $newVersion");
+			$this->logger->debug('Adding steps to ' . $document->getId() . ": bumping version from $stepsVersion to $newVersion");
 			$this->cache->set('document-version-' . $document->getId(), $newVersion);
 			// TODO write steps to cache for quicker reading
-			return $newVersion;
 		} catch (\Throwable $e) {
 			if ($stepsVersion !== null) {
 				$this->logger->error('This should never happen. An error occurred when storing the version, trying to recover the last stable one', ['exception' => $e]);
@@ -310,6 +313,8 @@ class DocumentService {
 		return $this->stepMapper->find($documentId, $lastVersion);
 	}
 
+
+
 	/**
 	 * @throws DocumentSaveConflictException
 	 * @throws InvalidPathException
@@ -317,18 +322,39 @@ class DocumentService {
 	 */
 	public function assertNoOutsideConflict(Document $document, File $file, bool $force = false, ?string $shareToken = null): void {
 		$documentId = $document->getId();
-		$savedEtag = $file->getEtag();
 		$lastMTime = $document->getLastSavedVersionTime();
+		$lastEtag = $document->getLastSavedVersionEtag();
 
-		if ($lastMTime > 0
-			&& $force === false
-			&& !$this->isReadOnly($file, $shareToken)
-			&& $savedEtag !== $document->getLastSavedVersionEtag()
-			&& $lastMTime !== $file->getMtime()
-			&& !$this->cache->get('document-save-lock-' . $documentId)
-		) {
+		if ($lastMTime <= 0 || $force || $this->isReadOnly($file, $shareToken) || $this->cache->get('document-save-lock-' . $documentId)) {
+			return;
+		}
+
+		$fileMtime = $file->getMtime();
+		$fileEtag = $file->getEtag();
+
+		if ($lastEtag === $fileEtag && $lastMTime === $fileMtime) {
+			return;
+		}
+
+		$storedChecksum = $document->getChecksum();
+		$fileContent = $file->getContent();
+		$fileChecksum = $this->computeChecksum($fileContent);
+
+		if ($storedChecksum !== $fileChecksum) {
 			throw new DocumentSaveConflictException('File changed in the meantime from outside');
 		}
+
+		$document->setLastSavedVersionTime($fileMtime);
+		$document->setLastSavedVersionEtag($fileEtag);
+		$this->documentMapper->update($document);
+	}
+
+	/**
+	 * @param string $content
+	 * @return string
+	 */
+	private function computeCheckSum(string $content): string {
+		return hash('crc32', $content);
 	}
 
 	/**
@@ -391,7 +417,7 @@ class DocumentService {
 			if ($documentState !== null) {
 				$this->writeDocumentState($file->getId(), $documentState);
 			}
-			$document->setLastSavedVersion($stepsVersion);
+			$document->setLastSavedVersion($version);
 			$document->setLastSavedVersionTime($file->getMTime());
 			$document->setLastSavedVersionEtag($file->getEtag());
 			$this->documentMapper->update($document);
@@ -411,9 +437,10 @@ class DocumentService {
 					$this->writeDocumentState($file->getId(), $documentState);
 				}
 			});
-			$document->setLastSavedVersion($stepsVersion);
+			$document->setLastSavedVersion($version);
 			$document->setLastSavedVersionTime($file->getMTime());
 			$document->setLastSavedVersionEtag($file->getEtag());
+			$document->setChecksum($this->computeCheckSum($autoSaveDocument));
 			$this->documentMapper->update($document);
 		} catch (LockedException $e) {
 			// Ignore lock since it might occur when multiple people save at the same time
@@ -564,6 +591,18 @@ class DocumentService {
 		throw new \InvalidArgumentException('No proper share data');
 	}
 
+	public function isReadOnlyCached(Session $session, ?string $shareToken = null): bool {
+		$cacheKey = 'read-only-' . $session->getId();
+		$isReadOnly = $this->cache->get($cacheKey);
+		if ($isReadOnly === null) {
+			$file = $this->getFileForSession($session, $shareToken);
+			$isReadOnly = $this->isReadOnly($file, $shareToken);
+			$this->cache->set($cacheKey, $isReadOnly, 60 * 5);
+			return $isReadOnly;
+		}
+
+		return $isReadOnly;
+	}
 
 	public function isReadOnly(File $file, ?string $token): bool {
 		$readOnly = true;
@@ -651,7 +690,7 @@ class DocumentService {
 				ILock::TYPE_APP,
 				Application::APP_NAME
 			));
-		} catch (NoLockProviderException | PreConditionNotMetException | NotFoundException $e) {
+		} catch (NoLockProviderException|PreConditionNotMetException|NotFoundException $e) {
 		} catch (OwnerLockedException $e) {
 			return false;
 		}
@@ -670,7 +709,7 @@ class DocumentService {
 				ILock::TYPE_APP,
 				Application::APP_NAME
 			));
-		} catch (NoLockProviderException | PreConditionNotMetException | NotFoundException $e) {
+		} catch (NoLockProviderException|PreConditionNotMetException|NotFoundException $e) {
 		}
 	}
 

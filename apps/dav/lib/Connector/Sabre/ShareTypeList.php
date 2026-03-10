@@ -20,17 +20,14 @@ class ShareTypeList implements Element {
 	public const NS_OWNCLOUD = 'http://owncloud.org/ns';
 
 	/**
-	 * Share types
-	 *
-	 * @var int[]
-	 */
-	private $shareTypes;
-
-	/**
 	 * @param int[] $shareTypes
 	 */
-	public function __construct($shareTypes) {
-		$this->shareTypes = $shareTypes;
+	public function __construct(
+		/**
+		 * Share types
+		 */
+		private $shareTypes,
+	) {
 	}
 
 	/**
@@ -57,7 +54,7 @@ class ShareTypeList implements Element {
 		}
 		foreach ($tree as $elem) {
 			if ($elem['name'] === '{' . self::NS_OWNCLOUD . '}share-type') {
-				$shareTypes[] = (int) $elem['value'];
+				$shareTypes[] = (int)$elem['value'];
 			}
 		}
 		return new self($shareTypes);

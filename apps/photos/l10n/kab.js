@@ -15,9 +15,12 @@ OC.L10N.register(
     "All folders" : "Akk ikaramen",
     "Add folder" : "Rnu akaram",
     "Home" : "Asnubeg",
+    "General" : "Amatu",
     "Remove from favorites" : "Kkes-it seg ismal",
     "Save." : "Sekles.",
     "Details" : "Talqayt",
+    "Cancel" : "Semmet",
+    "Confirm" : "Sergeg",
     "Group" : "Agraw",
     "Back to {folder}" : "Uɣal ar {folder}",
     "Add" : "Rnu"

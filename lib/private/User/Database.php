@@ -17,11 +17,11 @@ use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
 use OCP\User\Backend\ABackend;
 use OCP\User\Backend\ICheckPasswordBackend;
-use OCP\User\Backend\ICountUsersBackend;
 use OCP\User\Backend\ICreateUserBackend;
 use OCP\User\Backend\IGetDisplayNameBackend;
 use OCP\User\Backend\IGetHomeBackend;
 use OCP\User\Backend\IGetRealUIDBackend;
+use OCP\User\Backend\ILimitAwareCountUsersBackend;
 use OCP\User\Backend\IPasswordHashBackend;
 use OCP\User\Backend\ISearchKnownUsersBackend;
 use OCP\User\Backend\ISetDisplayNameBackend;
@@ -37,7 +37,7 @@ class Database extends ABackend implements
 	IGetDisplayNameBackend,
 	ICheckPasswordBackend,
 	IGetHomeBackend,
-	ICountUsersBackend,
+	ILimitAwareCountUsersBackend,
 	ISearchKnownUsersBackend,
 	IGetRealUIDBackend,
 	IPasswordHashBackend {
@@ -64,7 +64,7 @@ class Database extends ABackend implements
 	public function __construct($eventDispatcher = null, $table = 'users') {
 		$this->cache = new CappedMemoryCache();
 		$this->table = $table;
-		$this->eventDispatcher = $eventDispatcher ? $eventDispatcher : \OCP\Server::get(IEventDispatcher::class);
+		$this->eventDispatcher = $eventDispatcher ?? \OCP\Server::get(IEventDispatcher::class);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Database extends ABackend implements
 				$qb->insert($this->table)
 					->values([
 						'uid' => $qb->createNamedParameter($uid),
-						'password' => $qb->createNamedParameter(\OC::$server->get(IHasher::class)->hash($password)),
+						'password' => $qb->createNamedParameter(\OCP\Server::get(IHasher::class)->hash($password)),
 						'uid_lower' => $qb->createNamedParameter(mb_strtolower($uid)),
 					]);
 
@@ -108,7 +108,7 @@ class Database extends ABackend implements
 				// Repopulate the cache
 				$this->loadUser($uid);
 
-				return (bool) $result;
+				return (bool)$result;
 			}, $this->dbConn);
 		}
 
@@ -130,7 +130,7 @@ class Database extends ABackend implements
 		$query = $this->dbConn->getQueryBuilder();
 		$query->delete($this->table)
 			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
-		$result = $query->execute();
+		$result = $query->executeStatement();
 
 		if (isset($this->cache[$uid])) {
 			unset($this->cache[$uid]);
@@ -144,7 +144,7 @@ class Database extends ABackend implements
 		$query->update($this->table)
 			->set('password', $query->createNamedParameter($passwordHash))
 			->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
-		$result = $query->execute();
+		$result = $query->executeStatement();
 
 		return $result ? true : false;
 	}
@@ -164,7 +164,7 @@ class Database extends ABackend implements
 		if ($this->userExists($uid)) {
 			$this->eventDispatcher->dispatchTyped(new ValidatePasswordPolicyEvent($password));
 
-			$hasher = \OC::$server->get(IHasher::class);
+			$hasher = \OCP\Server::get(IHasher::class);
 			$hashedPassword = $hasher->hash($password);
 
 			$return = $this->updatePassword($uid, $hashedPassword);
@@ -236,7 +236,7 @@ class Database extends ABackend implements
 			$query->update($this->table)
 				->set('displayname', $query->createNamedParameter($displayName))
 				->where($query->expr()->eq('uid_lower', $query->createNamedParameter(mb_strtolower($uid))));
-			$query->execute();
+			$query->executeStatement();
 
 			$this->cache[$uid]['displayname'] = $displayName;
 
@@ -253,7 +253,7 @@ class Database extends ABackend implements
 	 * @return string display name
 	 */
 	public function getDisplayName($uid): string {
-		$uid = (string) $uid;
+		$uid = (string)$uid;
 		$this->loadUser($uid);
 		return empty($this->cache[$uid]['displayname']) ? $uid : $this->cache[$uid]['displayname'];
 	}
@@ -292,7 +292,7 @@ class Database extends ABackend implements
 		$result = $query->executeQuery();
 		$displayNames = [];
 		while ($row = $result->fetch()) {
-			$displayNames[(string) $row['uid']] = (string) $row['displayname'];
+			$displayNames[(string)$row['uid']] = (string)$row['displayname'];
 		}
 
 		return $displayNames;
@@ -329,10 +329,10 @@ class Database extends ABackend implements
 			->setMaxResults($limit)
 			->setFirstResult($offset);
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$displayNames = [];
 		while ($row = $result->fetch()) {
-			$displayNames[(string) $row['uid']] = (string) $row['displayname'];
+			$displayNames[(string)$row['uid']] = (string)$row['displayname'];
 		}
 
 		return $displayNames;
@@ -354,11 +354,11 @@ class Database extends ABackend implements
 		if ($found && is_array($this->cache[$loginName])) {
 			$storedHash = $this->cache[$loginName]['password'];
 			$newHash = '';
-			if (\OC::$server->get(IHasher::class)->verify($password, $storedHash, $newHash)) {
+			if (\OCP\Server::get(IHasher::class)->verify($password, $storedHash, $newHash)) {
 				if (!empty($newHash)) {
 					$this->updatePassword($loginName, $newHash);
 				}
-				return (string) $this->cache[$loginName]['uid'];
+				return (string)$this->cache[$loginName]['uid'];
 			}
 		}
 
@@ -374,7 +374,7 @@ class Database extends ABackend implements
 	private function loadUser($uid) {
 		$this->fixDI();
 
-		$uid = (string) $uid;
+		$uid = (string)$uid;
 		if (!isset($this->cache[$uid])) {
 			//guests $uid could be NULL or ''
 			if ($uid === '') {
@@ -390,16 +390,16 @@ class Database extends ABackend implements
 						'uid_lower', $qb->createNamedParameter(mb_strtolower($uid))
 					)
 				);
-			$result = $qb->execute();
+			$result = $qb->executeQuery();
 			$row = $result->fetch();
 			$result->closeCursor();
 
 			// "uid" is primary key, so there can only be a single result
 			if ($row !== false) {
 				$this->cache[$uid] = [
-					'uid' => (string) $row['uid'],
-					'displayname' => (string) $row['displayname'],
-					'password' => (string) $row['password'],
+					'uid' => (string)$row['uid'],
+					'displayname' => (string)$row['displayname'],
+					'password' => (string)$row['password'],
 				];
 			} else {
 				$this->cache[$uid] = false;
@@ -423,7 +423,7 @@ class Database extends ABackend implements
 
 		$users = $this->getDisplayNames($search, $limit, $offset);
 		$userIds = array_map(function ($uid) {
-			return (string) $uid;
+			return (string)$uid;
 		}, array_keys($users));
 		sort($userIds, SORT_STRING | SORT_FLAG_CASE);
 		return $userIds;
@@ -463,18 +463,19 @@ class Database extends ABackend implements
 
 	/**
 	 * counts the users in the database
-	 *
-	 * @return int|false
 	 */
-	public function countUsers() {
+	public function countUsers(int $limit = 0): int|false {
 		$this->fixDI();
 
 		$query = $this->dbConn->getQueryBuilder();
 		$query->select($query->func()->count('uid'))
 			->from($this->table);
-		$result = $query->executeQuery();
+		$result = $query->executeQuery()->fetchOne();
+		if ($result === false) {
+			return false;
+		}
 
-		return $result->fetchOne();
+		return (int)$result;
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,6 +13,7 @@ use OC\Files\Storage\Wrapper\Jail;
 use OC\Files\View;
 use OCA\DAV\Connector\Sabre\CachingTree;
 use OCA\DAV\Connector\Sabre\Directory;
+use OCA\DAV\Connector\Sabre\File;
 use OCA\DAV\Connector\Sabre\FilesPlugin;
 use OCA\DAV\Connector\Sabre\Server;
 use OCA\DAV\Connector\Sabre\TagsPlugin;
@@ -210,9 +210,9 @@ class FileSearchBackend implements ISearchBackend {
 		/** @var SearchResult[] $nodes */
 		$nodes = array_map(function (Node $node) {
 			if ($node instanceof Folder) {
-				$davNode = new \OCA\DAV\Connector\Sabre\Directory($this->view, $node, $this->tree, $this->shareManager);
+				$davNode = new Directory($this->view, $node, $this->tree, $this->shareManager);
 			} else {
-				$davNode = new \OCA\DAV\Connector\Sabre\File($this->view, $node, $this->shareManager);
+				$davNode = new File($this->view, $node, $this->shareManager);
 			}
 			$path = $this->getHrefForNode($node);
 			$this->tree->cacheNode($davNode, $path);
@@ -358,7 +358,7 @@ class FileSearchBackend implements ISearchBackend {
 
 		return new SearchQuery(
 			$operators,
-			(int) $limit->maxResults,
+			(int)$limit->maxResults,
 			$offset,
 			$orders,
 			$this->user,
@@ -480,7 +480,7 @@ class FileSearchBackend implements ISearchBackend {
 				if (is_numeric($value)) {
 					return max(0, 0 + $value);
 				}
-				$date = \DateTime::createFromFormat(\DateTimeInterface::ATOM, (string) $value);
+				$date = \DateTime::createFromFormat(\DateTimeInterface::ATOM, (string)$value);
 				return ($date instanceof \DateTime && $date->getTimestamp() !== false) ? $date->getTimestamp() : 0;
 			default:
 				return $value;

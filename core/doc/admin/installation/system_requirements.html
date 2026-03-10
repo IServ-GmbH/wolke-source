@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>System requirements &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Deployment recommendations" href="deployment_recommendations.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -91,7 +95,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -106,6 +112,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -169,8 +176,8 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <li><p>MySQL 8.0 / <strong>8.4</strong> or MariaDB 10.6/ <strong>10.11</strong> (recommended) / 11.4</p></li>
 <li><p>Oracle Database 11g, 18, 21, 23
 (<em>only as part of an enterprise subscription</em>)</p></li>
-<li><p>PostgreSQL 12/13/14/15/16</p></li>
-<li><p>SQLite 3.16+ (<em>only recommended for testing and minimal-instances</em>)</p></li>
+<li><p>PostgreSQL 13/14/15/16/17</p></li>
+<li><p>SQLite 3.24+ (<em>only recommended for testing and minimal-instances</em>)</p></li>
 </ul>
 </td>
 </tr>
@@ -186,12 +193,14 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <li><p>8.1 (<em>deprecated</em>)</p></li>
 <li><p>8.2</p></li>
 <li><p><strong>8.3</strong> (<em>recommended</em>)</p></li>
+<li><p>8.4</p></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <p>See <a class="reference internal" href="source_installation.html"><span class="doc">Installation on Linux</span></a> for minimum PHP-modules and additional software for installing Nextcloud.</p>
+<p>To ensure the full functionality of your Nextcloud, please make sure that the server can reach the <a class="reference internal" href="harden_server.html#connections-to-remote-servers"><span class="std std-ref">required remote systems</span></a>.</p>
 <section id="cpu-architecture-and-os">
 <h3>CPU Architecture and OS<a class="headerlink" href="#cpu-architecture-and-os" title="Link to this heading"></a></h3>
 <p>A 64-bit CPU, OS and PHP is required for Nextcloud to run well.</p>
@@ -251,7 +260,8 @@ settings in order to function (or, in some cases, may need to be disabled outrig
 of our clients.</p>
 <ul class="simple">
 <li><p><strong>Windows</strong> 10+</p></li>
-<li><p><strong>macOS</strong> Lion (10.14)+ (64-bits only)</p></li>
+<li><p><strong>macOS</strong> Lion (10.14)+ (64-bits only)
+* Please note that your server may need to be Apple App Transport Security compliant in order for the desktop client to connect successfully. This may involve using a digital certificate that is adequately signed to the standards established by Apple. More information is provided by Apple in their developer documentation: <a class="reference external" href="https://developer.apple.com/documentation/security/preventing-insecure-network-connections">https://developer.apple.com/documentation/security/preventing-insecure-network-connections</a></p></li>
 <li><p><strong>Linux</strong> (64-bits only) Should run on any distribution newer than Ubuntu 18.04 with our official AppImage package</p></li>
 </ul>
 </section>
@@ -263,21 +273,17 @@ of our mobile apps.</p>
 <h3>Files App<a class="headerlink" href="#files-app" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>iOS</strong> 15.0+</p></li>
-<li><p><strong>Android</strong> 8.0+</p></li>
+<li><p><strong>Android</strong> 8.1+</p></li>
 </ul>
 </section>
 <section id="talk-app">
 <h3>Talk App<a class="headerlink" href="#talk-app" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>iOS</strong> 15.0+</p></li>
-<li><p><strong>Android</strong> 7.0+</p></li>
-<li><p><strong>Nextcloud Server</strong> 14.0+</p></li>
-<li><p><strong>Nextcloud Talk</strong> 4.0+</p></li>
+<li><p><strong>Android</strong> 8.0+</p></li>
+<li><p><strong>Nextcloud Server</strong> 19.0+</p></li>
+<li><p><strong>Nextcloud Talk</strong> 9.0+</p></li>
 </ul>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When using Nextcloud Talk 12.0+ please update the Android Talk App to the newest version (or at least to v12.1).</p>
-</div>
 </section>
 </section>
 <section id="web-browser">
@@ -310,7 +316,7 @@ screensharing.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -346,6 +352,14 @@ screensharing.</p>
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

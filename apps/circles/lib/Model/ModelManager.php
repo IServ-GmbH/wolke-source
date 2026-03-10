@@ -89,7 +89,7 @@ class ModelManager {
 		InterfaceService $interfaceService,
 		MembershipService $membershipService,
 		RemoteService $remoteService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->urlGenerator = $urlGenerator;
 		$this->appManager = $appManager;
@@ -334,7 +334,7 @@ class ModelManager {
 					$invitedBy = new FederatedUser();
 					$invitedBy->importFromCircle($invitedByCircle);
 					$member->setInvitedBy($invitedBy);
-				} catch (CircleNotFoundException | OwnerNotFoundException $e) {
+				} catch (CircleNotFoundException|OwnerNotFoundException $e) {
 				}
 				break;
 
@@ -369,7 +369,7 @@ class ModelManager {
 		FederatedUser $federatedUser,
 		array $data,
 		string $path,
-		string $prefix
+		string $prefix,
 	): void {
 		switch ($path) {
 			case CoreQueryBuilder::MEMBERSHIPS:
@@ -394,7 +394,7 @@ class ModelManager {
 		ShareWrapper $shareWrapper,
 		array $data,
 		string $path,
-		string $prefix
+		string $prefix,
 	): void {
 		switch ($path) {
 			case CoreQueryBuilder::CIRCLE:
@@ -455,7 +455,7 @@ class ModelManager {
 		Mount $mount,
 		array $data,
 		string $path,
-		string $prefix
+		string $prefix,
 	): void {
 		switch ($path) {
 			case CoreQueryBuilder::MEMBER:

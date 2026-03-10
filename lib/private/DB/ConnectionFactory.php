@@ -256,7 +256,7 @@ class ConnectionFactory {
 			// Host variable carries a port or socket.
 			$params['host'] = $matches[1];
 			if (is_numeric($matches[2])) {
-				$params['port'] = (int) $matches[2];
+				$params['port'] = (int)$matches[2];
 			} else {
 				$params['unix_socket'] = $matches[2];
 			}

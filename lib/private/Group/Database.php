@@ -44,15 +44,15 @@ class Database extends ABackend implements
 	INamedBackend {
 	/** @var array<string, array{gid: string, displayname: string}> */
 	private $groupCache = [];
-	private ?IDBConnection $dbConn;
 
 	/**
 	 * \OC\Group\Database constructor.
 	 *
 	 * @param IDBConnection|null $dbConn
 	 */
-	public function __construct(?IDBConnection $dbConn = null) {
-		$this->dbConn = $dbConn;
+	public function __construct(
+		private ?IDBConnection $dbConn = null,
+	) {
 	}
 
 	/**
@@ -102,19 +102,19 @@ class Database extends ABackend implements
 		$qb = $this->dbConn->getQueryBuilder();
 		$qb->delete('groups')
 			->where($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
-			->execute();
+			->executeStatement();
 
 		// Delete the group-user relation
 		$qb = $this->dbConn->getQueryBuilder();
 		$qb->delete('group_user')
 			->where($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
-			->execute();
+			->executeStatement();
 
 		// Delete the group-groupadmin relation
 		$qb = $this->dbConn->getQueryBuilder();
 		$qb->delete('group_admin')
 			->where($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
-			->execute();
+			->executeStatement();
 
 		// Delete from cache
 		unset($this->groupCache[$gid]);
@@ -139,7 +139,7 @@ class Database extends ABackend implements
 			->from('group_user')
 			->where($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
 			->andWhere($qb->expr()->eq('uid', $qb->createNamedParameter($uid)))
-			->execute();
+			->executeQuery();
 
 		$result = $cursor->fetch();
 		$cursor->closeCursor();
@@ -164,7 +164,7 @@ class Database extends ABackend implements
 			$qb->insert('group_user')
 				->setValue('uid', $qb->createNamedParameter($uid))
 				->setValue('gid', $qb->createNamedParameter($gid))
-				->execute();
+				->executeStatement();
 			return true;
 		} else {
 			return false;
@@ -186,7 +186,7 @@ class Database extends ABackend implements
 		$qb->delete('group_user')
 			->where($qb->expr()->eq('uid', $qb->createNamedParameter($uid)))
 			->andWhere($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
-			->execute();
+			->executeStatement();
 
 		return true;
 	}
@@ -194,7 +194,7 @@ class Database extends ABackend implements
 	/**
 	 * Get all groups a user belongs to
 	 * @param string $uid Name of the user
-	 * @return array an array of group names
+	 * @return list<string> an array of group names
 	 *
 	 * This function fetches all groups a user belongs to. It does not check
 	 * if the user exists at all.
@@ -213,7 +213,7 @@ class Database extends ABackend implements
 			->from('group_user', 'gu')
 			->leftJoin('gu', 'groups', 'g', $qb->expr()->eq('gu.gid', 'g.gid'))
 			->where($qb->expr()->eq('uid', $qb->createNamedParameter($uid)))
-			->execute();
+			->executeQuery();
 
 		$groups = [];
 		while ($row = $cursor->fetch()) {
@@ -260,7 +260,7 @@ class Database extends ABackend implements
 		if ($offset > 0) {
 			$query->setFirstResult($offset);
 		}
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$groups = [];
 		while ($row = $result->fetch()) {
@@ -292,7 +292,7 @@ class Database extends ABackend implements
 		$cursor = $qb->select('gid', 'displayname')
 			->from('groups')
 			->where($qb->expr()->eq('gid', $qb->createNamedParameter($gid)))
-			->execute();
+			->executeQuery();
 		$result = $cursor->fetch();
 		$cursor->closeCursor();
 
@@ -331,11 +331,11 @@ class Database extends ABackend implements
 			$qb->setParameter('ids', $chunk, IQueryBuilder::PARAM_STR_ARRAY);
 			$result = $qb->executeQuery();
 			while ($row = $result->fetch()) {
-				$this->groupCache[(string) $row['gid']] = [
-					'displayname' => (string) $row['displayname'],
-					'gid' => (string) $row['gid'],
+				$this->groupCache[(string)$row['gid']] = [
+					'displayname' => (string)$row['displayname'],
+					'gid' => (string)$row['gid'],
 				];
-				$existingGroups[] = (string) $row['gid'];
+				$existingGroups[] = (string)$row['gid'];
 			}
 			$result->closeCursor();
 		}
@@ -359,30 +359,43 @@ class Database extends ABackend implements
 		$this->fixDI();
 
 		$query = $this->dbConn->getQueryBuilder();
-		$query->select('g.uid', 'u.displayname');
+		$query->select('g.uid', 'dn.value AS displayname');
 
 		$query->from('group_user', 'g')
 			->where($query->expr()->eq('gid', $query->createNamedParameter($gid)))
 			->orderBy('g.uid', 'ASC');
 
-		$query->leftJoin('g', 'users', 'u', $query->expr()->eq('g.uid', 'u.uid'));
+		// Join displayname and email from oc_accounts_data
+		$query->leftJoin('g', 'accounts_data', 'dn',
+			$query->expr()->andX(
+				$query->expr()->eq('dn.uid', 'g.uid'),
+				$query->expr()->eq('dn.name', $query->expr()->literal('displayname'))
+			)
+		);
+
+		$query->leftJoin('g', 'accounts_data', 'em',
+			$query->expr()->andX(
+				$query->expr()->eq('em.uid', 'g.uid'),
+				$query->expr()->eq('em.name', $query->expr()->literal('email'))
+			)
+		);
 
 		if ($search !== '') {
-			$query->leftJoin('u', 'preferences', 'p', $query->expr()->andX(
-				$query->expr()->eq('p.userid', 'u.uid'),
-				$query->expr()->eq('p.appid', $query->expr()->literal('settings')),
-				$query->expr()->eq('p.configkey', $query->expr()->literal('email'))
-			))
-				// sqlite doesn't like re-using a single named parameter here
-				->andWhere(
-					$query->expr()->orX(
-						$query->expr()->ilike('g.uid', $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%')),
-						$query->expr()->ilike('u.displayname', $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%')),
-						$query->expr()->ilike('p.configvalue', $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%'))
-					)
+			// sqlite doesn't like re-using a single named parameter here
+			$searchParam1 = $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%');
+			$searchParam2 = $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%');
+			$searchParam3 = $query->createNamedParameter('%' . $this->dbConn->escapeLikeParameter($search) . '%');
+
+			$query->andWhere(
+				$query->expr()->orX(
+					$query->expr()->ilike('g.uid', $searchParam1),
+					$query->expr()->ilike('dn.value', $searchParam2),
+					$query->expr()->ilike('em.value', $searchParam3)
 				)
-				->orderBy('u.uid_lower', 'ASC');
+			)
+				->orderBy('g.uid', 'ASC');
 		}
+
 
 		if ($limit !== -1) {
 			$query->setMaxResults($limit);
@@ -423,12 +436,12 @@ class Database extends ABackend implements
 			)));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$count = $result->fetchOne();
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int) $count;
+			$count = (int)$count;
 		} else {
 			$count = 0;
 		}
@@ -455,12 +468,12 @@ class Database extends ABackend implements
 			->andWhere($query->expr()->eq('configvalue', $query->createNamedParameter('false'), IQueryBuilder::PARAM_STR))
 			->andWhere($query->expr()->eq('gid', $query->createNamedParameter($gid), IQueryBuilder::PARAM_STR));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$count = $result->fetchOne();
 		$result->closeCursor();
 
 		if ($count !== false) {
-			$count = (int) $count;
+			$count = (int)$count;
 		} else {
 			$count = 0;
 		}
@@ -484,11 +497,11 @@ class Database extends ABackend implements
 			->from('groups')
 			->where($query->expr()->eq('gid', $query->createNamedParameter($gid)));
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$displayName = $result->fetchOne();
 		$result->closeCursor();
 
-		return (string) $displayName;
+		return (string)$displayName;
 	}
 
 	public function getGroupDetails(string $gid): array {
@@ -527,10 +540,10 @@ class Database extends ABackend implements
 
 			$result = $query->executeQuery();
 			while ($row = $result->fetch()) {
-				$details[(string) $row['gid']] = ['displayName' => (string) $row['displayname']];
-				$this->groupCache[(string) $row['gid']] = [
-					'displayname' => (string) $row['displayname'],
-					'gid' => (string) $row['gid'],
+				$details[(string)$row['gid']] = ['displayName' => (string)$row['displayname']];
+				$this->groupCache[(string)$row['gid']] = [
+					'displayname' => (string)$row['displayname'],
+					'gid' => (string)$row['gid'],
 				];
 			}
 			$result->closeCursor();
@@ -555,7 +568,7 @@ class Database extends ABackend implements
 		$query->update('groups')
 			->set('displayname', $query->createNamedParameter($displayName))
 			->where($query->expr()->eq('gid', $query->createNamedParameter($gid)));
-		$query->execute();
+		$query->executeStatement();
 
 		return true;
 	}

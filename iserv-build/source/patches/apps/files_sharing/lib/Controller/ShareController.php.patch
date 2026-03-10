@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/lib/Controller/ShareController.php apps/files_sharing/lib/Controller/ShareController.php
-index 33600b6..e1045ad 100644
+index 46cba2e..619f196 100644
 --- apps/files_sharing/lib/Controller/ShareController.php
 +++ apps/files_sharing/lib/Controller/ShareController.php
-@@ -302,6 +302,9 @@ class ShareController extends AuthPublicShareController {
+@@ -310,6 +310,9 @@ class ShareController extends AuthPublicShareController {
  			throw new NotFoundException($this->l10n->t('This share does not exist or is no longer available'));
  		}
  

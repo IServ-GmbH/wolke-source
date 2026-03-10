@@ -11,6 +11,7 @@ OC.L10N.register(
     "A two-factor authentication provider for TOTP (RFC 6238)" : "TOTP-põhise kaheastmelise autentimise teenusepakkuja (RFC 6238)",
     "Could not enable TOTP" : "TOTP sisselülitamine ei õnnestunud",
     "Could not verify your key. Please try again" : "Sinu võtme verifitseerimine ei õnnestunud. Palun proovi uuesti.",
+    "Could not confirm TOTP" : "TOTP kinnitamine ei õnnestunud",
     "Enable TOTP" : "Lülita TOTP sisse",
     "Your new TOTP secret is:" : "Sinu uus TOTP saladus on:",
     "For quick setup, scan this QR code with your TOTP app:" : "Kiireks seadistamiseks skaneeri seda QR-koodi oma TOTP-põhist kaheastmelist autentimist toetava rakendusega",
@@ -18,9 +19,6 @@ OC.L10N.register(
     "Authentication code" : "Autentimiskood",
     "Verify" : "Kontrolli",
     "Get the authentication code from the two-factor authentication app on your device." : "Vaata autentimiskoodi TOTP-põhist kaheastmelist autentimist kasutavast rakendusest oma nutiseadmes või arvutis.",
-    "Submit" : "Saada",
-    "TOTP two-factor authentication disabled by an admin" : "TOTP-põhise kaheastmelise autentimise võimalus on peakasutaja poolt välja lülitatud",
-    "TOTP two-factor provider" : "TOTP-põhise kaheastmelise autentimise teenusepakkuja",
-    "A Two-Factor-Auth Provider for TOTP (RFC 6238)" : "TOTP-põhise kaheastmelise autentimise teenusepakkuja (RFC 6238)"
+    "Submit" : "Saada"
 },
 "nplurals=2; plural=(n != 1);");

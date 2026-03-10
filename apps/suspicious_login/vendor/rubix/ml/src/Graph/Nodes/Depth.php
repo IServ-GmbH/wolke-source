@@ -3,7 +3,6 @@
 namespace Rubix\ML\Graph\Nodes;
 
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
 
 /**
  * Depth
@@ -21,18 +20,15 @@ use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
  */
 class Depth implements BinaryNode
 {
-    use HasBinaryChildren;
-
     /**
      * The approximated depth of this node.
      *
      * @var float
      */
-    protected $depth;
+    protected float $depth;
 
     /**
-     * Estimate the average path length of an unsuccessful search given n unisolated
-     * samples.
+     * Estimate the average path length of an unsuccessful search given n unisolated samples.
      *
      * @param int $n
      * @return float
@@ -60,7 +56,7 @@ class Depth implements BinaryNode
      */
     public static function terminate(Dataset $dataset, int $depth) : self
     {
-        return new self($depth + self::c($dataset->numRows()) - 1.0);
+        return new self($depth + self::c($dataset->numSamples()) - 1.0);
     }
 
     /**
@@ -80,5 +76,15 @@ class Depth implements BinaryNode
     public function depth() : float
     {
         return $this->depth;
+    }
+
+    /**
+     * Return the height of the node in the tree.
+     *
+     * @return int
+     */
+    public function height() : int
+    {
+        return 1;
     }
 }

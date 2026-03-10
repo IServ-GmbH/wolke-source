@@ -27,21 +27,21 @@ class Hyperplane implements Generator
      *
      * @var \Tensor\Vector
      */
-    protected $coefficients;
+    protected \Tensor\Vector $coefficients;
 
     /**
      * The y intercept term.
      *
      * @var float
      */
-    protected $intercept;
+    protected float $intercept;
 
     /**
      * The factor of gaussian noise to add to the data points.
      *
      * @var float
      */
-    protected $noise;
+    protected float $noise;
 
     /**
      * @param (int|float)[] $coefficients
@@ -74,7 +74,7 @@ class Hyperplane implements Generator
      *
      * @internal
      *
-     * @return int
+     * @return int<0,max>
      */
     public function dimensions() : int
     {
@@ -84,7 +84,7 @@ class Hyperplane implements Generator
     /**
      * Generate n data points.
      *
-     * @param int $n
+     * @param int<0,max> $n
      * @return \Rubix\ML\Datasets\Labeled
      */
     public function generate(int $n) : Labeled

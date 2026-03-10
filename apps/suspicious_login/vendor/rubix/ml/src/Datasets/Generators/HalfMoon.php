@@ -26,28 +26,28 @@ class HalfMoon implements Generator
      *
      * @var \Tensor\Vector
      */
-    protected $center;
+    protected \Tensor\Vector $center;
 
     /**
      * The scaling factor of the half moon.
      *
      * @var float
      */
-    protected $scale;
+    protected float $scale;
 
     /**
      * The rotation on the half moon in degrees.
      *
      * @var float
      */
-    protected $rotation;
+    protected float $rotation;
 
     /**
      * The factor of Gaussian noise to add to the data points.
      *
      * @var float
      */
-    protected $noise;
+    protected float $noise;
 
     /**
      * @param float $x
@@ -90,7 +90,7 @@ class HalfMoon implements Generator
      *
      * @internal
      *
-     * @return int
+     * @return int<0,max>
      */
     public function dimensions() : int
     {
@@ -100,7 +100,7 @@ class HalfMoon implements Generator
     /**
      * Generate n data points.
      *
-     * @param int $n
+     * @param int<0,max> $n
      * @return \Rubix\ML\Datasets\Labeled
      */
     public function generate(int $n) : Labeled

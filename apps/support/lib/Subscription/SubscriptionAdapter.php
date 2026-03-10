@@ -3,23 +3,8 @@
 declare(strict_types=1);
 
 /**
- * @author Morris Jobke <hey@morrisjobke.de>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\Support\Subscription;
@@ -82,11 +67,11 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		$hasValidOnlyOfficeSubscription = $this->subscriptionNotExpired($subscriptionInfo['onlyoffice']['endDate'] ?? 'now');
 
 		$filesSubscription = [
-			'accessibility',
 			'activity',
 			'admin_audit',
 			'bruteforcesettings',
 			'circles',
+			'cloud_federation_api',
 			'comments',
 			'data_request',
 			'dav',
@@ -106,7 +91,6 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'files_sharing',
 			'files_trashbin',
 			'files_versions',
-			'files_videoplayer',
 			'firstrunwizard',
 			'fulltextsearch',
 			'fulltextsearch_elasticsearch',
@@ -123,6 +107,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'provisioning_api',
 			'recommendations',
 			'serverinfo',
+			'settings',
 			'sharebymail',
 			'sharepoint',
 			'socialsharing_diaspora',
@@ -130,6 +115,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'socialsharing_facebook',
 			'socialsharing_twitter',
 			'support',
+			'survey_client',
 			'suspicious_login',
 			'systemtags',
 			'terms_of_service',
@@ -137,7 +123,6 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'theming',
 			'twofactor_backupcodes',
 			'twofactor_totp',
-			'twofactor_u2f',
 			'updatenotification',
 			'user_ldap',
 			'user_oidc',
@@ -148,6 +133,38 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		];
 
 		$nextcloudVersion = \OCP\Util::getVersion()[0];
+
+		if ($nextcloudVersion >= 30) {
+			$filesSubscription[] = 'app_api';
+			$filesSubscription[] = 'twofactor_nextcloud_notification';
+			if (($subscriptionInfo['level'] ?? 'none') === 'ultimate') {
+				$filesSubscription[] = 'webhook_listeners';
+			}
+		}
+
+		if ($nextcloudVersion >= 29) {
+			$filesSubscription[] = 'files_downloadlimit';
+			$filesSubscription[] = 'files_reminders';
+		}
+
+		if ($nextcloudVersion >= 28) {
+			$filesSubscription[] = 'files_reminders';
+			$filesSubscription[] = 'security_guard';
+		} else {
+			// Removed in 28
+			$filesSubscription[] = 'files_rightclick';
+		}
+
+		if ($nextcloudVersion >= 26) {
+			$filesSubscription[] = 'files_confidential';
+		}
+
+		if ($nextcloudVersion >= 25) {
+			$filesSubscription[] = 'related_resources';
+		} else {
+			// Removed in 25
+			$filesSubscription[] = 'files_videoplayer';
+		}
 
 		if ($nextcloudVersion >= 24) {
 			$filesSubscription[] = 'files_lock';
@@ -168,6 +185,10 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 
 		if ($nextcloudVersion >= 19) {
 			$filesSubscription[] = 'contactsinteraction';
+		}
+
+		if ($nextcloudVersion >= 18) {
+			$filesSubscription[] = 'globalsiteselector';
 		}
 
 		$supportedApps = [];
@@ -228,7 +249,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			$subscriptionInfo
 		] = $this->subscriptionService->getSubscriptionInfo();
 
-		$configUserLimit = (int) $this->config->getAppValue('support', 'user-limit', '0');
+		$configUserLimit = (int)$this->config->getAppValue('support', 'user-limit', '0');
 		if (
 			!$isInvalidSubscription
 			&& $configUserLimit > 0

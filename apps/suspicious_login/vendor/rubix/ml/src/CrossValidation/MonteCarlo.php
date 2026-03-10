@@ -5,11 +5,11 @@ namespace Rubix\ML\CrossValidation;
 use Rubix\ML\Learner;
 use Rubix\ML\Parallel;
 use Rubix\ML\Estimator;
+use Rubix\ML\Helpers\Stats;
 use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Traits\Multiprocessing;
+use Rubix\ML\Traits\Multiprocessing;
 use Rubix\ML\CrossValidation\Metrics\Metric;
 use Rubix\ML\Backends\Tasks\TrainAndValidate;
 use Rubix\ML\Specifications\EstimatorIsCompatibleWithMetric;
@@ -39,14 +39,14 @@ class MonteCarlo implements Validator, Parallel
      *
      * @var int
      */
-    protected $simulations;
+    protected int $simulations;
 
     /**
      * The hold out ratio. i.e. the ratio of samples to use for testing.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * @param int $simulations
@@ -83,7 +83,7 @@ class MonteCarlo implements Validator, Parallel
     {
         EstimatorIsCompatibleWithMetric::with($estimator, $metric)->check();
 
-        if ($dataset->numRows() * $this->ratio < 1) {
+        if ($dataset->numSamples() * $this->ratio < 1) {
             throw new RuntimeException('Dataset does not contain'
                 . ' enough records to create a validation set with a'
                 . " hold out ratio of {$this->ratio}.");
@@ -112,6 +112,8 @@ class MonteCarlo implements Validator, Parallel
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

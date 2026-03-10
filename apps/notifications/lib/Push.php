@@ -39,98 +39,54 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Push {
-	/** @var IDBConnection */
-	protected $db;
-	/** @var INotificationManager */
-	protected $notificationManager;
-	/** @var IConfig */
-	protected $config;
-	/** @var IProvider */
-	protected $tokenProvider;
-	/** @var Manager */
-	private $keyManager;
-	/** @var IClientService */
-	protected $clientService;
-	/** @var ICache */
-	protected $cache;
-	/** @var IUserStatusManager */
-	protected $userStatusManager;
-	/** @var IFactory */
-	protected $l10nFactory;
-	/** @var LoggerInterface */
-	protected $log;
-	/** @var OutputInterface */
-	protected $output;
+	protected ICache $cache;
+	protected ?OutputInterface $output = null;
 	/**
-	 * @var array
 	 * @psalm-var array<string, list<string>>
 	 */
-	protected $payloadsToSend = [];
-
-	/** @var bool */
-	protected $deferPreparing = false;
-	/** @var bool */
-	protected $deferPayloads = false;
+	protected array $payloadsToSend = [];
+	protected bool $deferPreparing = false;
+	protected bool $deferPayloads = false;
 	/**
 	 * @var array[] $userId => $appId => $notificationIds
 	 * @psalm-var array<string|int, array<string, list<int>>>
 	 */
-	protected $deletesToPush = [];
+	protected array $deletesToPush = [];
 	/**
-	 * @var bool[] $userId => true
 	 * @psalm-var array<string|int, bool>
 	 */
-	protected $deleteAllsToPush = [];
+	protected array $deleteAllsToPush = [];
 	/** @var INotification[] */
-	protected $notificationsToPush = [];
+	protected array $notificationsToPush = [];
 
 	/**
-	 * @var ?IUserStatus[]
 	 * @psalm-var array<string, ?IUserStatus>
 	 */
-	protected $userStatuses = [];
+	protected array $userStatuses = [];
 	/**
-	 * @var array[]
 	 * @psalm-var array<string, list<array{id: int, uid: string, token: int, deviceidentifier: string, devicepublickey: string, devicepublickeyhash: string, pushtokenhash: string, proxyserver: string, apptype: string}>>
 	 */
-	protected $userDevices = [];
+	protected array $userDevices = [];
 	/** @var string[] */
-	protected $loadDevicesForUsers = [];
+	protected array $loadDevicesForUsers = [];
 	/** @var string[] */
-	protected $loadStatusForUsers = [];
-
-	/**
-	 * A very small and privileged list of apps that are allowed to push during DND.
-	 * @var bool[]
-	 */
-	protected $allowedDNDPushList = [
-		'twofactor_nextcloud_notification' => true,
-	];
+	protected array $loadStatusForUsers = [];
 
 	public function __construct(
-		IDBConnection $connection,
-		INotificationManager $notificationManager,
-		IConfig $config,
-		IProvider $tokenProvider,
-		Manager $keyManager,
-		IClientService $clientService,
+		protected IDBConnection $db,
+		protected INotificationManager $notificationManager,
+		protected IConfig $config,
+		protected IProvider $tokenProvider,
+		protected Manager $keyManager,
+		protected IClientService $clientService,
 		ICacheFactory $cacheFactory,
-		IUserStatusManager $userStatusManager,
-		IFactory $l10nFactory,
+		protected IUserStatusManager $userStatusManager,
+		protected IFactory $l10nFactory,
 		protected ITimeFactory $timeFactory,
 		protected ISecureRandom $random,
-		LoggerInterface $log,
+		protected LoggerInterface $log,
 	) {
-		$this->db = $connection;
-		$this->notificationManager = $notificationManager;
-		$this->config = $config;
-		$this->tokenProvider = $tokenProvider;
-		$this->keyManager = $keyManager;
-		$this->clientService = $clientService;
 		$this->cache = $cacheFactory->createDistributed('pushtokens');
-		$this->userStatusManager = $userStatusManager;
-		$this->l10nFactory = $l10nFactory;
-		$this->log = $log;
 	}
 
 	public function setOutput(OutputInterface $output): void {
@@ -184,7 +140,7 @@ class Push {
 
 		if (!empty($this->deleteAllsToPush)) {
 			foreach ($this->deleteAllsToPush as $userId => $bool) {
-				$this->pushDeleteToDevice((string) $userId, null);
+				$this->pushDeleteToDevice((string)$userId, null);
 			}
 			$this->deleteAllsToPush = [];
 		}
@@ -193,10 +149,10 @@ class Push {
 			foreach ($this->deletesToPush as $userId => $data) {
 				foreach ($data as $client => $notificationIds) {
 					if ($client === 'talk') {
-						$this->pushDeleteToDevice((string) $userId, $notificationIds, $client);
+						$this->pushDeleteToDevice((string)$userId, $notificationIds, $client);
 					} else {
 						foreach ($notificationIds as $notificationId) {
-							$this->pushDeleteToDevice((string) $userId, [$notificationId], $client);
+							$this->pushDeleteToDevice((string)$userId, [$notificationId], $client);
 						}
 					}
 				}
@@ -218,12 +174,8 @@ class Push {
 	public function filterDeviceList(array $devices, string $app): array {
 		$isTalkNotification = \in_array($app, ['spreed', 'talk', 'admin_notification_talk'], true);
 
-		$talkDevices = array_filter($devices, static function ($device) {
-			return $device['apptype'] === 'talk';
-		});
-		$otherDevices = array_filter($devices, static function ($device) {
-			return $device['apptype'] !== 'talk';
-		});
+		$talkDevices = array_filter($devices, static fn ($device) => $device['apptype'] === 'talk');
+		$otherDevices = array_filter($devices, static fn ($device) => $device['apptype'] !== 'talk');
 
 		$this->printInfo('Identified ' . count($talkDevices) . ' Talk devices and ' . count($otherDevices) . ' others.');
 
@@ -272,7 +224,7 @@ class Push {
 			$userStatus = $this->userStatuses[$notification->getUser()];
 			if ($userStatus instanceof IUserStatus
 				&& $userStatus->getStatus() === IUserStatus::DND
-				&& empty($this->allowedDNDPushList[$notification->getApp()])) {
+				&& !$notification->isPriorityNotification()) {
 				$this->printInfo('<error>User status is set to DND - no push notifications will be sent</error>');
 				return;
 			}
@@ -297,8 +249,9 @@ class Push {
 			try {
 				$this->notificationManager->setPreparingPushNotification(true);
 				$notification = $this->notificationManager->prepare($notification, $language);
-			} catch (AlreadyProcessedException|IncompleteParsedNotificationException|\InvalidArgumentException) {
+			} catch (AlreadyProcessedException|IncompleteParsedNotificationException|\InvalidArgumentException $e) {
 				// FIXME remove \InvalidArgumentException in Nextcloud 39
+				$this->printInfo('Error when preparing notification for push: ' . get_class($e));
 				return;
 			} finally {
 				$this->notificationManager->setPreparingPushNotification(false);
@@ -325,9 +278,9 @@ class Push {
 		$maxAge = time() - 60 * 24 * 60 * 60;
 
 		foreach ($devices as $device) {
-			$device['token'] = (int) $device['token'];
+			$device['token'] = (int)$device['token'];
 			$this->printInfo('');
-			$this->printInfo('Device token:' . $device['token']);
+			$this->printInfo('Device token: ' . $device['token']);
 
 			if (!$this->validateToken($device['token'], $maxAge)) {
 				// Token does not exist anymore
@@ -344,7 +297,7 @@ class Push {
 				$this->payloadsToSend[$proxyServer][] = $payload;
 			} catch (\JsonException $e) {
 				$this->log->error('JSON error while encoding push notification: ' . $e->getMessage(), ['exception' => $e]);
-			} catch (\InvalidArgumentException $e) {
+			} catch (\InvalidArgumentException) {
 				// Failed to encrypt message for device: public key is invalid
 				$this->deletePushToken($device['token']);
 			}
@@ -419,7 +372,7 @@ class Push {
 
 		$userKey = $this->keyManager->getKey($user);
 		foreach ($devices as $device) {
-			$device['token'] = (int) $device['token'];
+			$device['token'] = (int)$device['token'];
 			if (!$this->validateToken($device['token'], $maxAge)) {
 				// Token does not exist anymore
 				continue;
@@ -451,7 +404,7 @@ class Push {
 						}
 					}
 				}
-			} catch (\InvalidArgumentException $e) {
+			} catch (\InvalidArgumentException) {
 				// Failed to encrypt message for device: public key is invalid
 				$this->deletePushToken($device['token']);
 			}
@@ -504,10 +457,10 @@ class Push {
 
 				$response = $client->post($proxyServer . '/notifications', $requestData);
 				$status = $response->getStatusCode();
-				$body = (string) $response->getBody();
+				$body = (string)$response->getBody();
 				try {
 					$bodyData = json_decode($body, true);
-				} catch (\JsonException $e) {
+				} catch (\JsonException) {
 					$bodyData = null;
 				}
 			} catch (ClientException $e) {
@@ -517,7 +470,7 @@ class Push {
 				$body = $response->getBody()->getContents();
 				try {
 					$bodyData = json_decode($body, true);
-				} catch (\JsonException $e) {
+				} catch (\JsonException) {
 					$bodyData = null;
 				}
 			} catch (ServerException $e) {
@@ -540,7 +493,7 @@ class Push {
 				]);
 
 				$error = $e->getMessage() ?: 'no reason given';
-				$this->printInfo('<error>Could not send notification to push server [' . get_class($e) . ']: ' . $error . '</error>');
+				$this->printInfo('<error>Could not send notification to push server [' . $e::class . ']: ' . $error . '</error>');
 				continue;
 			}
 
@@ -548,8 +501,8 @@ class Push {
 				if (is_array($bodyData['unknown'])) {
 					// Proxy returns null when the array is empty
 					foreach ($bodyData['unknown'] as $unknownDevice) {
-						$this->printInfo('<comment>Deleting device because it is unknown by the push server: ' . $unknownDevice . '</comment>');
-						$this->deletePushTokenByDeviceIdentifier($unknownDevice);
+						$this->printInfo('<comment>Deleting device because it is unknown by the push server [' . $proxyServer . ']: ' . $unknownDevice . '</comment>');
+						$this->deletePushTokenByDeviceIdentifier($proxyServer, $unknownDevice);
 					}
 				}
 
@@ -560,7 +513,7 @@ class Push {
 				}
 			} elseif ($status !== Http::STATUS_OK) {
 				if ($status === Http::STATUS_TOO_MANY_REQUESTS) {
-					$this->config->setAppValue(Application::APP_ID, 'rate_limit_reached', (string) $this->timeFactory->getTime());
+					$this->config->setAppValue(Application::APP_ID, 'rate_limit_reached', (string)$this->timeFactory->getTime());
 				}
 				$error = $body && $bodyData === null ? $body : 'no reason given';
 				$this->printInfo('<error>Could not send notification to push server [' . $proxyServer . ']: ' . $error . '</error>');
@@ -816,10 +769,11 @@ class Push {
 	 * @param string $deviceIdentifier
 	 * @return bool
 	 */
-	protected function deletePushTokenByDeviceIdentifier(string $deviceIdentifier): bool {
+	protected function deletePushTokenByDeviceIdentifier(string $proxyServer, string $deviceIdentifier): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('notifications_pushhash')
-			->where($query->expr()->eq('deviceidentifier', $query->createNamedParameter($deviceIdentifier)));
+			->where($query->expr()->eq('proxyserver', $query->createNamedParameter($proxyServer)))
+			->andWhere($query->expr()->eq('deviceidentifier', $query->createNamedParameter($deviceIdentifier)));
 
 		return $query->executeStatement() !== 0;
 	}

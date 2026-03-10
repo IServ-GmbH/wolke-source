@@ -10,7 +10,7 @@
 	<name>WebDAV</name>
 	<summary>WebDAV endpoint</summary>
 	<description>WebDAV endpoint</description>
-	<version>1.31.1</version>
+	<version>1.33.0</version>
 	<licence>agpl</licence>
 	<author>owncloud.org</author>
 	<namespace>DAV</namespace>
@@ -20,7 +20,7 @@
 	<category>integration</category>
 	<bugs>https://github.com/nextcloud/server/issues</bugs>
 	<dependencies>
-		<nextcloud min-version="30" max-version="30"/>
+		<nextcloud min-version="31" max-version="31"/>
 	</dependencies>
 
 	<background-jobs>
@@ -59,14 +59,18 @@
 		<command>OCA\DAV\Command\ClearContactsPhotoCache</command>
 		<command>OCA\DAV\Command\CreateAddressBook</command>
 		<command>OCA\DAV\Command\CreateCalendar</command>
+		<command>OCA\DAV\Command\CreateSubscription</command>
 		<command>OCA\DAV\Command\DeleteCalendar</command>
 		<command>OCA\DAV\Command\FixCalendarSyncCommand</command>
+		<command>OCA\DAV\Command\GetAbsenceCommand</command>
+		<command>OCA\DAV\Command\ListAddressbooks</command>
 		<command>OCA\DAV\Command\ListCalendarShares</command>
 		<command>OCA\DAV\Command\ListCalendars</command>
 		<command>OCA\DAV\Command\MoveCalendar</command>
 		<command>OCA\DAV\Command\RemoveInvalidShares</command>
 		<command>OCA\DAV\Command\RetentionCleanupCommand</command>
 		<command>OCA\DAV\Command\SendEventReminders</command>
+		<command>OCA\DAV\Command\SetAbsenceCommand</command>
 		<command>OCA\DAV\Command\SyncBirthdayCalendar</command>
 		<command>OCA\DAV\Command\SyncSystemAddressBook</command>
 	</commands>

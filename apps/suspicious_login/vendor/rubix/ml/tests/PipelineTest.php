@@ -3,8 +3,6 @@
 namespace Rubix\ML\Tests;
 
 use Rubix\ML\Online;
-use Rubix\ML\Wrapper;
-use Rubix\ML\Verbose;
 use Rubix\ML\Pipeline;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
@@ -12,7 +10,6 @@ use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\Datasets\Unlabeled;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\AnomalyDetectors\Scoring;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Classifiers\SoftmaxClassifier;
@@ -29,9 +26,9 @@ use PHPUnit\Framework\TestCase;
  */
 class PipelineTest extends TestCase
 {
-    protected const TRAIN_SIZE = 300;
+    protected const TRAIN_SIZE = 512;
 
-    protected const TEST_SIZE = 10;
+    protected const TEST_SIZE = 256;
 
     protected const MIN_SCORE = 0.8;
 
@@ -58,10 +55,10 @@ class PipelineTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            'red' => new Blob([255, 0, 128], 30.0),
+            'red' => new Blob([255, 32, 0], 50.0),
             'green' => new Blob([0, 128, 0], 10.0),
-            'blue' => new Blob([64, 32, 255], 20.0),
-        ]);
+            'blue' => new Blob([0, 32, 255], 30.0),
+        ], [0.5, 0.2, 0.3]);
 
         $this->estimator = new Pipeline([
             new PolynomialExpander(2),
@@ -73,6 +70,11 @@ class PipelineTest extends TestCase
         srand(self::RANDOM_SEED);
     }
 
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
+    }
+
     /**
      * @test
      */
@@ -80,10 +82,8 @@ class PipelineTest extends TestCase
     {
         $this->assertInstanceOf(Pipeline::class, $this->estimator);
         $this->assertInstanceOf(Online::class, $this->estimator);
-        $this->assertInstanceOf(Wrapper::class, $this->estimator);
         $this->assertInstanceOf(Probabilistic::class, $this->estimator);
         $this->assertInstanceOf(Scoring::class, $this->estimator);
-        $this->assertInstanceOf(Verbose::class, $this->estimator);
         $this->assertInstanceOf(Persistable::class, $this->estimator);
         $this->assertInstanceOf(Estimator::class, $this->estimator);
     }
@@ -130,8 +130,6 @@ class PipelineTest extends TestCase
      */
     public function trainPartialPredict() : void
     {
-        $this->estimator->setLogger(new BlackHole());
-
         $training = $this->generator->generate(self::TRAIN_SIZE);
         $testing = $this->generator->generate(self::TEST_SIZE);
 
@@ -158,10 +156,5 @@ class PipelineTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

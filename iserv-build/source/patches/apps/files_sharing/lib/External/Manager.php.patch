@@ -1,45 +1,25 @@
 diff --git apps/files_sharing/lib/External/Manager.php apps/files_sharing/lib/External/Manager.php
-index ddc30d2..1079d9a 100644
+index ff7f2dd..a1c3b87 100644
 --- apps/files_sharing/lib/External/Manager.php
 +++ apps/files_sharing/lib/External/Manager.php
-@@ -12,6 +12,7 @@ use Doctrine\DBAL\Driver\Exception;
- use OC\Files\Filesystem;
- use OCA\FederatedFileSharing\Events\FederatedShareAddedEvent;
- use OCA\Files_Sharing\Helper;
+@@ -30,6 +30,7 @@ use OCP\OCS\IDiscoveryService;
+ use OCP\Share;
+ use OCP\Share\IShare;
+ use Psr\Log\LoggerInterface;
 +use OCP\Collaboration\Collaborators\ISearch;
- use OCP\DB\QueryBuilder\IQueryBuilder;
- use OCP\EventDispatcher\IEventDispatcher;
- use OCP\Federation\ICloudFederationFactory;
-@@ -72,6 +73,9 @@ class Manager {
- 	/** @var LoggerInterface */
- 	private $logger;
  
-+	/** @var ISearch */
-+	private $collaboratorSearch;
-+
- 	public function __construct(
- 		IDBConnection                   $connection,
- 		\OC\Files\Mount\Manager         $mountManager,
-@@ -85,7 +89,8 @@ class Manager {
- 		IUserManager                    $userManager,
- 		IUserSession                    $userSession,
- 		IEventDispatcher                $eventDispatcher,
--		LoggerInterface                 $logger
-+		LoggerInterface                 $logger,
-+		ISearch                         $collaboratorSearch
+ /**
+  * @psalm-import-type Files_SharingRemoteShare from ResponseDefinitions
+@@ -57,6 +58,7 @@ class Manager {
+ 		IUserSession $userSession,
+ 		private IEventDispatcher $eventDispatcher,
+ 		private LoggerInterface $logger,
++		private ISearch $collaboratorSearch
  	) {
  		$user = $userSession->getUser();
- 		$this->connection = $connection;
-@@ -101,6 +106,7 @@ class Manager {
- 		$this->userManager = $userManager;
- 		$this->eventDispatcher = $eventDispatcher;
- 		$this->logger = $logger;
-+		$this->collaboratorSearch = $collaboratorSearch;
- 	}
- 
- 	/**
-@@ -733,7 +739,7 @@ class Manager {
- 	 * @return array list of open server-to-server shares
+ 		$this->mountManager = $mountManager;
+@@ -767,7 +769,7 @@ class Manager {
+ 	 * @return list<Files_SharingRemoteShare> list of open server-to-server shares
  	 */
  	public function getOpenShares() {
 -		return $this->getShares(false);
@@ -47,7 +27,7 @@ index ddc30d2..1079d9a 100644
  	}
  
  	/**
-@@ -802,4 +808,24 @@ class Manager {
+@@ -838,4 +840,24 @@ class Manager {
  			return [];
  		}
  	}

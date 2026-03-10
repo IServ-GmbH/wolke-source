@@ -44,8 +44,8 @@ class RedisFactory {
 		$readTimeout = $config['read_timeout'] ?? 0.0;
 
 		$auth = null;
-		if (isset($config['password']) && (string) $config['password'] !== '') {
-			if (isset($config['user']) && (string) $config['user'] !== '') {
+		if (isset($config['password']) && (string)$config['password'] !== '') {
+			if (isset($config['user']) && (string)$config['user'] !== '') {
 				$auth = [$config['user'], $config['password']];
 			} else {
 				$auth = $config['password'];
@@ -77,7 +77,7 @@ class RedisFactory {
 			$this->instance = new \Redis();
 
 			$host = $config['host'] ?? '127.0.0.1';
-			$port = $config['port'] ?? ($host[0] !== '/' ? 6379 : null);
+			$port = $config['port'] ?? ($host[0] !== '/' ? 6379 : 0);
 
 			$this->eventLogger->start('connect:redis', 'Connect to redis and send AUTH, SELECT');
 			// Support for older phpredis versions not supporting connectionParameters

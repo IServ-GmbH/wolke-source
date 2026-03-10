@@ -59,7 +59,7 @@ class AddressBook extends ExternalAddressBook implements IACL {
 			return new Card(
 				$this->mapper->find(
 					$this->getUid(),
-					(int) $name
+					(int)$name
 				),
 				$this->principalUri,
 				$this->getACL()
@@ -92,7 +92,7 @@ class AddressBook extends ExternalAddressBook implements IACL {
 		try {
 			$this->mapper->find(
 				$this->getUid(),
-				(int) $name
+				(int)$name
 			);
 			return true;
 		} catch (DoesNotExistException $e) {

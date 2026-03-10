@@ -18,24 +18,6 @@ use Sabre\VObject\UUIDUtil;
 
 class AddressBookImpl implements IAddressBookEnabled {
 
-	/** @var CardDavBackend */
-	private $backend;
-
-	/** @var array */
-	private $addressBookInfo;
-
-	/** @var AddressBook */
-	private $addressBook;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-	/** @var PropertyMapper */
-	private $propertyMapper;
-
-	/** @var ?string */
-	private $userId;
-
 	/**
 	 * AddressBookImpl constructor.
 	 *
@@ -43,22 +25,15 @@ class AddressBookImpl implements IAddressBookEnabled {
 	 * @param array $addressBookInfo
 	 * @param CardDavBackend $backend
 	 * @param IUrlGenerator $urlGenerator
-	 * @param PropertyMapper $propertyMapper
-	 * @param ?string $userId
 	 */
 	public function __construct(
-		AddressBook $addressBook,
-		array $addressBookInfo,
-		CardDavBackend $backend,
-		IURLGenerator $urlGenerator,
-		PropertyMapper $propertyMapper,
-		?string $userId = null) {
-		$this->addressBook = $addressBook;
-		$this->addressBookInfo = $addressBookInfo;
-		$this->backend = $backend;
-		$this->urlGenerator = $urlGenerator;
-		$this->propertyMapper = $propertyMapper;
-		$this->userId = $userId;
+		private AddressBook $addressBook,
+		private array $addressBookInfo,
+		private CardDavBackend $backend,
+		private IURLGenerator $urlGenerator,
+		private PropertyMapper $propertyMapper,
+		private ?string $userId,
+	) {
 	}
 
 	/**
@@ -66,7 +41,7 @@ class AddressBookImpl implements IAddressBookEnabled {
 	 * @since 5.0.0
 	 */
 	public function getKey() {
-		return (string) $this->addressBookInfo['id'];
+		return (string)$this->addressBookInfo['id'];
 	}
 
 	/**
@@ -357,7 +332,7 @@ class AddressBookImpl implements IAddressBookEnabled {
 		$path = 'addressbooks/users/' . $user . '/' . $uri;
 		$properties = $this->propertyMapper->findPropertyByPathAndName($user, $path, '{http://owncloud.org/ns}enabled');
 		if (count($properties) > 0) {
-			return (bool) $properties[0]->getPropertyvalue();
+			return (bool)$properties[0]->getPropertyvalue();
 		}
 		return true;
 	}

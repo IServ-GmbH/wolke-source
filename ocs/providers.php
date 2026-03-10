@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -12,7 +11,7 @@ header('Content-type: application/xml');
 
 $request = \OC::$server->getRequest();
 
-$url = $request->getServerProtocol() . '://' . substr($request->getServerHost() . $request->getRequestUri(), 0, -17).'ocs/v1.php/';
+$url = $request->getServerProtocol() . '://' . substr($request->getServerHost() . $request->getRequestUri(), 0, -17) . 'ocs/v1.php/';
 
 $writer = new XMLWriter();
 $writer->openURI('php://output');

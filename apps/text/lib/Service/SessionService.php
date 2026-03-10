@@ -45,7 +45,7 @@ class SessionService {
 		IRequest $request,
 		IManager $directManager,
 		?string $userId,
-		ICacheFactory $cacheFactory
+		ICacheFactory $cacheFactory,
 	) {
 		$this->sessionMapper = $sessionMapper;
 		$this->secureRandom = $secureRandom;
@@ -137,6 +137,10 @@ class SessionService {
 	public function removeInactiveSessionsWithoutSteps(?int $documentId = null): int {
 		// No need to clear the cache here as we already set a TTL
 		return $this->sessionMapper->deleteInactiveWithoutSteps($documentId);
+	}
+
+	public function removeOldSessions(int $ageInSeconds = 7776000): int {
+		return $this->sessionMapper->deleteOldSessions($ageInSeconds);
 	}
 
 	public function getSession(int $documentId, int $sessionId, string $token): ?Session {

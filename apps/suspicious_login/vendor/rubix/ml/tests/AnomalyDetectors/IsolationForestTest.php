@@ -29,14 +29,14 @@ class IsolationForestTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 400;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -73,15 +73,20 @@ class IsolationForestTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            0 => new Blob([0.0, 0.0], 0.5),
-            1 => new Circle(0.0, 0.0, 8.0, 0.1),
+            0 => new Blob([0.0, 0.0], 2.0),
+            1 => new Circle(0.0, 0.0, 8.0, 1.0),
         ], [0.9, 0.1]);
 
-        $this->estimator = new IsolationForest(100, 0.2, 0.1);
+        $this->estimator = new IsolationForest(300, 0.2, 0.1);
 
         $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -133,7 +138,7 @@ class IsolationForestTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'estimators' => 100,
+            'estimators' => 300,
             'ratio' => 0.2,
             'contamination' => 0.1,
         ];
@@ -168,10 +173,5 @@ class IsolationForestTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

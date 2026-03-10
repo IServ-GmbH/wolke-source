@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -44,7 +43,7 @@ class Hooks implements IEventListener {
 			return;
 		}
 
-		if (isset($property) && $property->getValue() !== (string) $newValue) {
+		if (isset($property) && $property->getValue() !== (string)$newValue) {
 			$property->setValue($newValue);
 			$this->accountManager->updateAccount($account);
 		}

@@ -6,8 +6,8 @@ use Rubix\ML\Transformers\Stateful;
 use Rubix\ML\Transformers\Transformer;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\Transformers\SparseRandomProjector;
-use PHPUnit\Framework\TestCase;
 use Rubix\ML\Exceptions\RuntimeException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group Transformers
@@ -77,7 +77,7 @@ class SparseRandomProjectorTest extends TestCase
             ->sample(0);
 
         $this->assertCount(4, $sample);
-        $this->assertEquals($expected, $sample);
+        $this->assertEqualsWithDelta($expected, $sample, 1e-8);
     }
 
     /**

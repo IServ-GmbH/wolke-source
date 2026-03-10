@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -7,6 +6,7 @@
 namespace OCA\CloudFederationAPI;
 
 use OCP\Federation\ICloudFederationProviderManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class config
@@ -17,11 +17,10 @@ use OCP\Federation\ICloudFederationProviderManager;
  */
 class Config {
 
-	/** @var ICloudFederationProviderManager */
-	private $cloudFederationProviderManager;
-
-	public function __construct(ICloudFederationProviderManager $cloudFederationProviderManager) {
-		$this->cloudFederationProviderManager = $cloudFederationProviderManager;
+	public function __construct(
+		private ICloudFederationProviderManager $cloudFederationProviderManager,
+		private LoggerInterface $logger,
+	) {
 	}
 
 	/**
@@ -35,6 +34,7 @@ class Config {
 			$provider = $this->cloudFederationProviderManager->getCloudFederationProvider($resourceType);
 			return $provider->getSupportedShareTypes();
 		} catch (\Exception $e) {
+			$this->logger->error('Failed to create federation provider', ['exception' => $e]);
 			return [];
 		}
 	}

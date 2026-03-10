@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -66,7 +65,7 @@ class ListCommand extends Base {
 			$mounts = $this->globalService->getStorageForAllUsers();
 			$userId = self::ALL;
 		} else {
-			$userId = (string) $input->getArgument('user_id');
+			$userId = (string)$input->getArgument('user_id');
 			$storageService = $this->getStorageService($userId);
 			$mounts = $storageService->getAllStorages();
 		}

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -20,17 +19,6 @@ use OCP\IRequest;
 use OCP\IUserSession;
 
 class AjaxController extends Controller {
-	/** @var RSA */
-	private $rsaMechanism;
-	/** @var GlobalAuth */
-	private $globalAuth;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var IL10N */
-	private $l10n;
-
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
@@ -39,20 +27,16 @@ class AjaxController extends Controller {
 	 * @param IUserSession $userSession
 	 * @param IGroupManager $groupManager
 	 */
-	public function __construct($appName,
+	public function __construct(
+		$appName,
 		IRequest $request,
-		RSA $rsaMechanism,
-		GlobalAuth $globalAuth,
-		IUserSession $userSession,
-		IGroupManager $groupManager,
-		IL10N $l10n,
+		private RSA $rsaMechanism,
+		private GlobalAuth $globalAuth,
+		private IUserSession $userSession,
+		private IGroupManager $groupManager,
+		private IL10N $l10n,
 	) {
 		parent::__construct($appName, $request);
-		$this->rsaMechanism = $rsaMechanism;
-		$this->globalAuth = $globalAuth;
-		$this->userSession = $userSession;
-		$this->groupManager = $groupManager;
-		$this->l10n = $l10n;
 	}
 
 	/**

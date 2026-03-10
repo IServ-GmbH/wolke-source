@@ -50,6 +50,7 @@ OC.L10N.register(
     "Calendar and contacts ↗" : "Calendar and contacts ↗",
     "Connect your calendar and contacts with your devices." : "Connect your calendar and contacts with your devices.",
     "Welcome to {cloudName}!" : "Welcome to {cloudName}!",
+    "Skip" : "Skip",
     "A collaboration platform that puts you in control" : "A collaboration platform that puts you in control",
     "Privacy" : "Privacy",
     "Host your data and files where you decide." : "Host your data and files where you decide.",
@@ -64,11 +65,8 @@ OC.L10N.register(
     "Use this link to connect your apps and desktop client to this server:" : "Use this link to connect your apps and desktop client to this server:",
     "What's new?" : "What's new?",
     "Nextcloud on all your devices" : "Nextcloud on all your devices",
-    "Read more" : "Read more",
     "Share on social media" : "Share on social media",
     "Get started!" : "Get started!",
-    "App recommendation: Nextcloud Calendar" : "App recommendation: Nextcloud Calendar",
-    "App recommendation: Nextcloud Contacts" : "App recommendation: Nextcloud Contacts",
-    "App recommendation: Nextcloud Mail" : "App recommendation: Nextcloud Mail"
+    "Read more" : "Read more"
 },
 "nplurals=2; plural=(n!=1);");

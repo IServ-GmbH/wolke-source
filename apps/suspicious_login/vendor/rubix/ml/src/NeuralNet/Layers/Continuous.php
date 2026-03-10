@@ -28,14 +28,14 @@ class Continuous implements Output
      *
      * @var \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss
      */
-    protected $costFn;
+    protected \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss $costFn;
 
     /**
      * The memorized input matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $input;
+    protected ?\Tensor\Matrix $input = null;
 
     /**
      * @param \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss|null $costFn
@@ -48,7 +48,7 @@ class Continuous implements Output
     /**
      * Return the width of the layer.
      *
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
@@ -59,9 +59,9 @@ class Continuous implements Output
      * Initialize the layer with the fan in from the previous layer and return
      * the fan out for this layer.
      *
-     * @param int $fanIn
+     * @param positive-int $fanIn
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return int
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -136,5 +136,17 @@ class Continuous implements Output
     {
         return $this->costFn->differentiate($input, $expected)
             ->divide($input->n());
+    }
+
+    /**
+     * Return the string representation of the object.
+     *
+     * @internal
+     *
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return "Continuous (cost function: {$this->costFn})";
     }
 }

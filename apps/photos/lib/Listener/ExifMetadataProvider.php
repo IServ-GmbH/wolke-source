@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
  */
 class ExifMetadataProvider implements IEventListener {
 	public function __construct(
-		private LoggerInterface $logger
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -70,7 +70,7 @@ class ExifMetadataProvider implements IEventListener {
 			// We then revert the change after having read the exif data.
 			stream_set_chunk_size($fileDescriptor, $oldBufferSize);
 		} catch (\Exception $ex) {
-			$this->logger->info("Failed to extract metadata for " . $node->getId(), ['exception' => $ex]);
+			$this->logger->info('Failed to extract metadata for ' . $node->getId(), ['exception' => $ex]);
 		}
 
 		if ($rawExifData && array_key_exists('EXIF', $rawExifData)) {
@@ -82,21 +82,21 @@ class ExifMetadataProvider implements IEventListener {
 		}
 
 		if (
-			$rawExifData &&
-			array_key_exists('GPS', $rawExifData)
+			$rawExifData
+			&& array_key_exists('GPS', $rawExifData)
 		) {
 			$gps = [];
 
 			if (
-				array_key_exists('GPSLatitude', $rawExifData['GPS']) && array_key_exists('GPSLatitudeRef', $rawExifData['GPS']) &&
-				array_key_exists('GPSLongitude', $rawExifData['GPS']) && array_key_exists('GPSLongitudeRef', $rawExifData['GPS'])
+				array_key_exists('GPSLatitude', $rawExifData['GPS']) && array_key_exists('GPSLatitudeRef', $rawExifData['GPS'])
+				&& array_key_exists('GPSLongitude', $rawExifData['GPS']) && array_key_exists('GPSLongitudeRef', $rawExifData['GPS'])
 			) {
 				$gps['latitude'] = $this->gpsDegreesToDecimal($rawExifData['GPS']['GPSLatitude'], $rawExifData['GPS']['GPSLatitudeRef']);
 				$gps['longitude'] = $this->gpsDegreesToDecimal($rawExifData['GPS']['GPSLongitude'], $rawExifData['GPS']['GPSLongitudeRef']);
 			}
 
-			if (array_key_exists('GPSAltitude', $rawExifData['GPS']) && array_key_exists('GPSAltitudeRef', $rawExifData['GPS'])) {
-				$gps['altitude'] = ($rawExifData['GPS']['GPSAltitudeRef'] === "\u{0000}" ? 1 : -1) * $this->parseGPSData($rawExifData['GPS']['GPSAltitude']);
+			if (array_key_exists('GPSAltitude', $rawExifData['GPS']) && array_key_exists('GPSAltitudeRef', $rawExifData['GPS']) && is_string($rawExifData['GPS']['GPSAltitude'])) {
+				$gps['altitude'] = ($rawExifData['GPS']['GPSAltitudeRef'] === '1' || $rawExifData['GPS']['GPSAltitudeRef'] === "\u{0001}" ? -1 : 1) * $this->parseGPSData($rawExifData['GPS']['GPSAltitude']);
 			}
 
 			if (!empty($gps)) {
@@ -110,7 +110,7 @@ class ExifMetadataProvider implements IEventListener {
 	 */
 	private function gpsDegreesToDecimal($coordinates, ?string $hemisphere): float {
 		if (is_string($coordinates)) {
-			$coordinates = array_map("trim", explode(",", $coordinates));
+			$coordinates = array_map('trim', explode(',', $coordinates));
 		}
 
 		if (count($coordinates) !== 3) {
@@ -145,7 +145,7 @@ class ExifMetadataProvider implements IEventListener {
 
 		foreach ($data as $key => $value) {
 			if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
-				$value = 'base64:'.base64_encode($value);
+				$value = 'base64:' . base64_encode($value);
 			} elseif (is_string($value)) {
 				// TODO: Can be remove when the Sidebar use the @nextcloud/files to fetch and parse the DAV response.
 				$value = preg_replace('/[[:cntrl:]]/u', '', $value);
@@ -158,7 +158,7 @@ class ExifMetadataProvider implements IEventListener {
 			// Arbitrary limit to filter out large EXIF entries.
 			if (is_string($value) && strlen($value) > 1000) {
 				$this->logger->info(
-					"EXIF entry ignored as it is too large",
+					'EXIF entry ignored as it is too large',
 					[
 						'key' => $key,
 						'value' => $value,

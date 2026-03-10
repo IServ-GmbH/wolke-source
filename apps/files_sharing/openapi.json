@@ -129,6 +129,9 @@
                                     },
                                     "upload_files_drop": {
                                         "type": "boolean"
+                                    },
+                                    "custom_tokens": {
+                                        "type": "boolean"
                                     }
                                 }
                             },
@@ -545,6 +548,9 @@
                             1
                         ]
                     },
+                    "is_trusted_server": {
+                        "type": "boolean"
+                    },
                     "is-mount-root": {
                         "type": "boolean"
                     },
@@ -766,15 +772,9 @@
             "Sharee": {
                 "type": "object",
                 "required": [
-                    "count",
                     "label"
                 ],
                 "properties": {
-                    "count": {
-                        "type": "integer",
-                        "format": "int64",
-                        "nullable": true
-                    },
                     "label": {
                         "type": "string"
                     }
@@ -844,6 +844,24 @@
                             "shareWithDisplayNameUnique": {
                                 "type": "string"
                             },
+                            "value": {
+                                "$ref": "#/components/schemas/ShareeValue"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ShareeGroup": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Sharee"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "value"
+                        ],
+                        "properties": {
                             "value": {
                                 "$ref": "#/components/schemas/ShareeValue"
                             }
@@ -1027,6 +1045,24 @@
                     }
                 ]
             },
+            "ShareeRoom": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Sharee"
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "value"
+                        ],
+                        "properties": {
+                            "value": {
+                                "$ref": "#/components/schemas/ShareeValue"
+                            }
+                        }
+                    }
+                ]
+            },
             "ShareeUser": {
                 "allOf": [
                     {
@@ -1129,7 +1165,7 @@
                             "groups": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/Sharee"
+                                    "$ref": "#/components/schemas/ShareeGroup"
                                 }
                             },
                             "remote_groups": {
@@ -1161,7 +1197,7 @@
                     "groups": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Sharee"
+                            "$ref": "#/components/schemas/ShareeGroup"
                         }
                     },
                     "remote_groups": {
@@ -1226,7 +1262,7 @@
                             "groups": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/Sharee"
+                                    "$ref": "#/components/schemas/ShareeGroup"
                                 }
                             },
                             "remote_groups": {
@@ -1244,7 +1280,7 @@
                             "rooms": {
                                 "type": "array",
                                 "items": {
-                                    "$ref": "#/components/schemas/Sharee"
+                                    "$ref": "#/components/schemas/ShareeRoom"
                                 }
                             },
                             "users": {
@@ -1270,7 +1306,7 @@
                     "groups": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Sharee"
+                            "$ref": "#/components/schemas/ShareeGroup"
                         }
                     },
                     "lookup": {
@@ -1294,7 +1330,7 @@
                     "rooms": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Sharee"
+                            "$ref": "#/components/schemas/ShareeRoom"
                         }
                     },
                     "users": {
@@ -1444,6 +1480,19 @@
                                 1
                             ]
                         }
+                    },
+                    {
+                        "name": "mimeFallback",
+                        "in": "query",
+                        "description": "Whether to fallback to the mime icon if no preview is available",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
                     }
                 ],
                 "responses": {
@@ -1479,6 +1528,16 @@
                         "content": {
                             "application/json": {
                                 "schema": {}
+                            }
+                        }
+                    },
+                    "303": {
+                        "description": "Redirect to the mime icon url if mimeFallback is true",
+                        "headers": {
+                            "Location": {
+                                "schema": {
+                                    "type": "string"
+                                }
                             }
                         }
                     }
@@ -1767,7 +1826,7 @@
                                     "expireDate": {
                                         "type": "string",
                                         "nullable": true,
-                                        "description": "The expiry date of the share in the user's timezone at 00:00.\n                           If $expireDate is not supplied or set to `null`, the system default will be used."
+                                        "description": "The expiry date of the share in the user's timezone at 00:00. If $expireDate is not supplied or set to `null`, the system default will be used."
                                     },
                                     "note": {
                                         "type": "string",
@@ -2174,7 +2233,10 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "$ref": "#/components/schemas/Share"
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Share"
+                                                    }
                                                 }
                                             }
                                         }
@@ -2283,7 +2345,12 @@
                                     "sendMail": {
                                         "type": "string",
                                         "nullable": true,
-                                        "description": "if the share should be send by mail.\n                             Considering the share already exists, no mail will be send after the share is updated.\n                             You will have to use the sendMail action to send the mail."
+                                        "description": "if the share should be send by mail. Considering the share already exists, no mail will be send after the share is updated. You will have to use the sendMail action to send the mail."
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "description": "New token"
                                     }
                                 }
                             }
@@ -3804,12 +3871,76 @@
                     }
                 }
             }
+        },
+        "/ocs/v2.php/apps/files_sharing/api/v1/token": {
+            "get": {
+                "operationId": "shareapi-generate-token",
+                "summary": "Get a unique share token",
+                "tags": [
+                    "shareapi"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "token"
+                                                    ],
+                                                    "properties": {
+                                                        "token": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
-    "tags": [
-        {
-            "name": "external_shares",
-            "description": "Class ExternalSharesController"
-        }
-    ]
+    "tags": []
 }

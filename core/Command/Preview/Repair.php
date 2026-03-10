@@ -39,7 +39,7 @@ class Repair extends Command {
 		IniGetWrapper $phpIni,
 		private ILockingProvider $lockingProvider,
 	) {
-		$this->memoryLimit = (int) $phpIni->getBytes('memory_limit');
+		$this->memoryLimit = (int)$phpIni->getBytes('memory_limit');
 		$this->memoryTreshold = $this->memoryLimit - 25 * 1024 * 1024;
 
 		parent::__construct();

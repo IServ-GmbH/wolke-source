@@ -84,6 +84,7 @@ class ComposerStaticInitPhotos
         'OCA\\Photos\\Migration\\Version20003Date20221102170153' => __DIR__ . '/../..' . '/lib/Migration/Version20003Date20221102170153.php',
         'OCA\\Photos\\Migration\\Version20003Date20221103094628' => __DIR__ . '/../..' . '/lib/Migration/Version20003Date20221103094628.php',
         'OCA\\Photos\\Migration\\Version30000Date20240417075405' => __DIR__ . '/../..' . '/lib/Migration/Version30000Date20240417075405.php',
+        'OCA\\Photos\\Migration\\Version40000Date20250624085327' => __DIR__ . '/../..' . '/lib/Migration/Version40000Date20250624085327.php',
         'OCA\\Photos\\RepairStep\\InitMetadata' => __DIR__ . '/../..' . '/lib/RepairStep/InitMetadata.php',
         'OCA\\Photos\\Sabre\\Album\\AlbumPhoto' => __DIR__ . '/../..' . '/lib/Sabre/Album/AlbumPhoto.php',
         'OCA\\Photos\\Sabre\\Album\\AlbumRoot' => __DIR__ . '/../..' . '/lib/Sabre/Album/AlbumRoot.php',

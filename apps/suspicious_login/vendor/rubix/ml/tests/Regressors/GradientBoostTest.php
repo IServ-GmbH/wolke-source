@@ -9,11 +9,11 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Regressors\Ridge;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\Regressors\GradientBoost;
 use Rubix\ML\Regressors\RegressionTree;
-use Rubix\ML\Regressors\DummyRegressor;
 use Rubix\ML\CrossValidation\Metrics\RMSE;
 use Rubix\ML\Datasets\Generators\SwissRoll;
 use Rubix\ML\CrossValidation\Metrics\RSquared;
@@ -32,14 +32,14 @@ class GradientBoostTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 400;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -75,13 +75,18 @@ class GradientBoostTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->generator = new SwissRoll(4.0, -7.0, 0.0, 1.0, 0.3);
+        $this->generator = new SwissRoll(4.0, -7.0, 0.0, 1.0, 21.0, 0.5);
 
-        $this->estimator = new GradientBoost(new RegressionTree(3), 0.3, 0.3, 300, 1e-4, 10, 0.1, new RMSE());
+        $this->estimator = new GradientBoost(new RegressionTree(3), 0.1, 0.3, 300, 1e-4, 10, 0.1, new RMSE());
 
         $this->metric = new RSquared();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -104,7 +109,7 @@ class GradientBoostTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new GradientBoost(new DummyRegressor());
+        new GradientBoost(new Ridge());
     }
 
     /**
@@ -145,14 +150,13 @@ class GradientBoostTest extends TestCase
     {
         $expected = [
             'booster' => new RegressionTree(3),
-            'rate' => 0.3,
+            'rate' => 0.1,
             'ratio' => 0.3,
-            'estimators' => 300,
-            'min_change' => 0.0001,
+            'epochs' => 300,
+            'min change' => 0.0001,
             'window' => 10,
-            'hold_out' => 0.1,
+            'hold out' => 0.1,
             'metric' => new RMSE(),
-            'base' => new DummyRegressor(),
         ];
 
         $this->assertEquals($expected, $this->estimator->params());
@@ -172,7 +176,7 @@ class GradientBoostTest extends TestCase
 
         $this->assertTrue($this->estimator->trained());
 
-        $losses = $this->estimator->steps();
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -187,7 +191,6 @@ class GradientBoostTest extends TestCase
         $this->assertIsArray($importances);
         $this->assertCount(3, $importances);
         $this->assertContainsOnly('float', $importances);
-        $this->assertEqualsWithDelta(1.0, array_sum($importances), 1e-8);
 
         $predictions = $this->estimator->predict($testing);
 
@@ -204,10 +207,5 @@ class GradientBoostTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

@@ -1,5 +1,8 @@
 { "translations": {
     "Calendar" : "ປະຕິທິນ",
-    "Files" : "ຟາຍ"
+    "Deck" : "Deck",
+    "Files" : "ຟາຍ",
+    "Talk conversation" : "ການສົນທະນາ Talk",
+    "Talk" : "Talk"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -51,17 +51,17 @@ class PageController extends Controller {
 	private LoggerInterface $logger;
 
 	public function __construct(
-		IRequest          $request,
-		IAppManager       $appManager,
-		IEventDispatcher  $eventDispatcher,
+		IRequest $request,
+		IAppManager $appManager,
+		IEventDispatcher $eventDispatcher,
 		UserConfigService $userConfig,
-		IInitialState     $initialState,
-		IUserSession      $userSession,
-		IRootFolder       $rootFolder,
-		ICacheFactory     $cacheFactory,
-		LoggerInterface   $logger,
-		private IConfig   $config,
-		IL10N $l10n
+		IInitialState $initialState,
+		IUserSession $userSession,
+		IRootFolder $rootFolder,
+		ICacheFactory $cacheFactory,
+		LoggerInterface $logger,
+		private IConfig $config,
+		IL10N $l10n,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 
@@ -118,7 +118,7 @@ class PageController extends Controller {
 				}, $search);
 				$this->nomediaPathsCache->set($key, $paths, 60 * 60 * 24 * 28); // 28 days
 			}
-		} catch (InvalidPathException | NotFoundException | NotPermittedException | NoUserException $e) {
+		} catch (InvalidPathException|NotFoundException|NotPermittedException|NoUserException $e) {
 			$this->logger->error($e->getMessage());
 		}
 

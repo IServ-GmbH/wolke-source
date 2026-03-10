@@ -24,6 +24,10 @@ use OCP\User\Events\UserDeletedEvent;
  * @template-implements IEventListener<UserChangedEvent|UserDeletedEvent>
  */
 class DisplayNameCache implements IEventListener {
+	private const CACHE_TTL = 24 * 60 * 60; // 1 day
+
+	/** @see \OC\Config\UserConfig::USER_MAX_LENGTH */
+	public const MAX_USERID_LENGTH = 64;
 	private array $cache = [];
 	private ICache $memCache;
 	private IUserManager $userManager;
@@ -37,6 +41,11 @@ class DisplayNameCache implements IEventListener {
 		if (isset($this->cache[$userId])) {
 			return $this->cache[$userId];
 		}
+
+		if (strlen($userId) > self::MAX_USERID_LENGTH) {
+			return null;
+		}
+
 		$displayName = $this->memCache->get($userId);
 		if ($displayName) {
 			$this->cache[$userId] = $displayName;
@@ -50,7 +59,7 @@ class DisplayNameCache implements IEventListener {
 			$displayName = null;
 		}
 		$this->cache[$userId] = $displayName;
-		$this->memCache->set($userId, $displayName, 60 * 10); // 10 minutes
+		$this->memCache->set($userId, $displayName, self::CACHE_TTL);
 
 		return $displayName;
 	}
@@ -65,7 +74,7 @@ class DisplayNameCache implements IEventListener {
 			$userId = $event->getUser()->getUID();
 			$newDisplayName = $event->getValue();
 			$this->cache[$userId] = $newDisplayName;
-			$this->memCache->set($userId, $newDisplayName, 60 * 10); // 10 minutes
+			$this->memCache->set($userId, $newDisplayName, self::CACHE_TTL);
 		}
 		if ($event instanceof UserDeletedEvent) {
 			$userId = $event->getUser()->getUID();

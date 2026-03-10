@@ -110,7 +110,7 @@ class FederatedEventService extends NCSignature {
 		RemoteUpstreamService $remoteUpstreamService,
 		EventService $eventService,
 		InterfaceService $interfaceService,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->eventWrapperRequest = $eventWrapperRequest;
 		$this->remoteRequest = $remoteRequest;
@@ -142,7 +142,7 @@ class FederatedEventService extends NCSignature {
 	 */
 	public function newEvent(FederatedEvent $event): array {
 		$event->setOrigin($this->interfaceService->getLocalInstance())
-			  ->resetData();
+			->resetData();
 
 		$federatedItem = $this->getFederatedItem($event, false);
 		$this->confirmInitiator($event, true);
@@ -161,7 +161,7 @@ class FederatedEventService extends NCSignature {
 				return $event->getOutcome();
 			}
 
-			if (!$event->isAsync()) {
+			if (OC::$CLI || !$event->isAsync()) {
 				$federatedItem->manage($event);
 			}
 
@@ -224,7 +224,7 @@ class FederatedEventService extends NCSignature {
 
 		if (!$event->canBypass(FederatedEvent::BYPASS_INITIATORMEMBERSHIP)
 			&& $circle->getInitiator()->getLevel() < Member::LEVEL_MEMBER) {
-			throw new InitiatorNotConfirmedException('Initiator must be a member of the Circle');
+			throw new InitiatorNotConfirmedException('Initiator must be a member of the Team');
 		}
 	}
 
@@ -304,7 +304,7 @@ class FederatedEventService extends NCSignature {
 	private function confirmRequiredCondition(
 		FederatedEvent $event,
 		IFederatedItem $item,
-		bool $checkLocalOnly = true
+		bool $checkLocalOnly = true,
 	) {
 		if (!$event->canBypass(FederatedEvent::BYPASS_CIRCLE) && !$event->hasCircle()) {
 			throw new FederatedEventException('FederatedEvent has no Circle linked');
@@ -385,7 +385,8 @@ class FederatedEventService extends NCSignature {
 	 */
 	public function initBroadcast(FederatedEvent $event): bool {
 		$instances = $this->getInstances($event);
-		if (empty($instances) && !$event->isAsync()) {
+		// if empty instance and ran from CLI, any action as already been managed
+		if (empty($instances) && (!$event->isAsync() || OC::$CLI)) {
 			return false;
 		}
 

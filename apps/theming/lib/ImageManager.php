@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -153,7 +152,7 @@ class ImageManager {
 	 *
 	 * @param string $filename
 	 * @throws NotFoundException
-	 * @return \OCP\Files\SimpleFS\ISimpleFile
+	 * @return ISimpleFile
 	 * @throws NotPermittedException
 	 */
 	public function getCachedImage(string $filename): ISimpleFile {
@@ -166,7 +165,7 @@ class ImageManager {
 	 *
 	 * @param string $filename
 	 * @param string $data
-	 * @return \OCP\Files\SimpleFS\ISimpleFile
+	 * @return ISimpleFile
 	 * @throws NotFoundException
 	 * @throws NotPermittedException
 	 */
@@ -366,7 +365,7 @@ class ImageManager {
 	public function shouldReplaceIcons() {
 		$cache = $this->cacheFactory->createDistributed('theming-' . $this->urlGenerator->getBaseUrl());
 		if ($value = $cache->get('shouldReplaceIcons')) {
-			return (bool) $value;
+			return (bool)$value;
 		}
 		$value = false;
 		if (extension_loaded('imagick')) {

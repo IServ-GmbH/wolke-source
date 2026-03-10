@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Service;
 
 use OCA\AppAPI\Db\DaemonConfig;
@@ -25,7 +30,21 @@ class DaemonConfigService {
 	) {
 	}
 
+	/**
+	 * Validate that a string does not contain control characters.
+	 * Control characters (0x00-0x1F and 0x7F) can cause issues with URL routing and display.
+	 */
+	private function containsControlCharacters(string $value): bool {
+		return preg_match('/[\x00-\x1F\x7F]/', $value) === 1;
+	}
+
 	public function registerDaemonConfig(array $params): ?DaemonConfig {
+		$name = $params['name'] ?? '';
+		if ($name === '' || $this->containsControlCharacters($name)) {
+			$this->logger->error('Failed to register daemon configuration: `name` contains invalid characters or is empty.');
+			return null;
+		}
+
 		$bad_patterns = ['http', 'https', 'tcp', 'udp', 'ssh'];
 		$docker_host = (string)$params['host'];
 		foreach ($bad_patterns as $bad_pattern) {
@@ -112,6 +131,12 @@ class DaemonConfigService {
 	}
 
 	public function updateDaemonConfig(DaemonConfig $daemonConfig): ?DaemonConfig {
+		$name = $daemonConfig->getName() ?? '';
+		if ($name === '' || $this->containsControlCharacters($name)) {
+			$this->logger->error('Failed to update daemon configuration: `name` contains invalid characters or is empty.');
+			return null;
+		}
+
 		try {
 			return $this->mapper->update($daemonConfig);
 		} catch (Exception $e) {

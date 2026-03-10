@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Service;
 
 use OCA\AppAPI\AppInfo\Application;
@@ -421,16 +426,16 @@ class AppAPIService {
 	/**
 	 * Dispatch ExApp initialization step, that may take a long time to display the progress of initialization.
 	 */
-	public function runOccCommand(string $command): bool {
-		$args = array_map(function ($arg) {
-			return escapeshellarg($arg);
-		}, explode(' ', $command));
-		$args[] = '--no-ansi --no-warnings';
+	public function runOccCommand(array $commandParts): bool {
+		$args = array_filter($commandParts, static fn ($part) => $part !== null);
+		$args[] = '--no-ansi';
+		$args[] = '--no-warnings';
 		return $this->runOccCommandInternal($args);
 	}
 
 	public function runOccCommandInternal(array $args): bool {
-		$args = implode(' ', $args);
+		$escapedArgs = array_map('escapeshellarg', $args);
+		$args = implode(' ', $escapedArgs);
 		$descriptors = [
 			0 => ['pipe', 'r'],
 			1 => ['pipe', 'w'],
@@ -442,13 +447,28 @@ class AppAPIService {
 		}
 		$this->logger->info(sprintf('Calling occ(directory=%s): %s', $occDirectory ?? 'null', $args));
 		$process = proc_open('php console.php ' . $args, $descriptors, $pipes, $occDirectory);
+		
 		if (!is_resource($process)) {
 			$this->logger->error(sprintf('Error calling occ(directory=%s): %s', $occDirectory ?? 'null', $args));
 			return false;
 		}
+
+		$stdout = stream_get_contents($pipes[1]);
+		$stderr = stream_get_contents($pipes[2]);
+
 		fclose($pipes[0]);
 		fclose($pipes[1]);
 		fclose($pipes[2]);
+
+		$returnCode = proc_close($process);
+
+		if ($returnCode !== 0) {
+			$this->logger->error(sprintf('Error executing occ command. Return code: %d, stdout: %s, stderr: %s', $returnCode, $stdout, $stderr));
+			return false;
+		}
+
+		$this->logger->info(sprintf('OCC command executed successfully. stdout: %s, stderr: %s', $stdout, $stderr));
+		
 		return true;
 	}
 

@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Service;
 
 use OCA\AppAPI\DeployActions\DockerActions;
@@ -9,6 +14,7 @@ use OCA\AppAPI\Fetcher\ExAppFetcher;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
+use OCP\IURLGenerator;
 use Psr\Log\LoggerInterface;
 
 class ExAppsPageService {
@@ -20,6 +26,7 @@ class ExAppsPageService {
 		private readonly IConfig $config,
 		private readonly IAppManager $appManager,
 		private readonly LoggerInterface $logger,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 	}
 
@@ -56,5 +63,8 @@ class ExAppsPageService {
 		if ($defaultDaemonConfig !== null) {
 			$initialState->provideInitialState('defaultDaemonConfig', $defaultDaemonConfig);
 		}
+
+		$deployOptionsDocsUrl = $this->urlGenerator->linkToDocs('admin-deploy-options');
+		$initialState->provideInitialState('deployOptionsDocsUrl', $deployOptionsDocsUrl);
 	}
 }

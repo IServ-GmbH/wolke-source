@@ -27,6 +27,7 @@ class TextNormalizerBench
 
     public function setUp() : void
     {
+        /** @var positive-int $k */
         $k = (int) (strlen(self::SAMPLE_TEXT) / 8);
 
         $samples = [];
@@ -42,7 +43,7 @@ class TextNormalizerBench
 
     /**
      * @Subject
-     * @Iterations(3)
+     * @Iterations(5)
      * @OutputTimeUnit("milliseconds", precision=3)
      */
     public function apply() : void

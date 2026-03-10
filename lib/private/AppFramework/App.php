@@ -207,7 +207,7 @@ class App {
 		 */
 		$emptyResponse = false;
 		if (preg_match('/^HTTP\/\d\.\d (\d{3}) .*$/', $httpHeaders, $matches)) {
-			$status = (int) $matches[1];
+			$status = (int)$matches[1];
 			if ($status === Http::STATUS_NO_CONTENT || $status === Http::STATUS_NOT_MODIFIED) {
 				$emptyResponse = true;
 			}

@@ -85,8 +85,8 @@ class Search extends Command {
 		$configPrefixes = $helper->getServerConfigurationPrefixes(true);
 		$ldapWrapper = new LDAP();
 
-		$offset = (int) $input->getOption('offset');
-		$limit = (int) $input->getOption('limit');
+		$offset = (int)$input->getOption('offset');
+		$limit = (int)$input->getOption('limit');
 		$this->validateOffsetAndLimit($offset, $limit);
 
 		if ($input->getOption('group')) {
@@ -106,7 +106,7 @@ class Search extends Command {
 
 		$result = $proxy->$getMethod($input->getArgument('search'), $limit, $offset);
 		foreach ($result as $id => $name) {
-			$line = $name . ($printID ? ' ('.$id.')' : '');
+			$line = $name . ($printID ? ' (' . $id . ')' : '');
 			$output->writeln($line);
 		}
 		return self::SUCCESS;

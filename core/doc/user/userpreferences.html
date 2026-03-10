@@ -1,36 +1,36 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Setting your preferences &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=91d07486"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="_static/copybutton.js?v=f281be69"></script>
-        <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a49d5d77"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="_static/js/theme.js"></script>
+    <script src="_static/js/versions.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Universal access" href="universal_access.html" />
-    <link rel="prev" title="Join a call or chat as guest" href="talk/join_a_call_or_chat_as_guest.html" /> 
+    <link rel="prev" title="Desktop Clients" href="desktop/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,6 +45,10 @@
             
               <img src="_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -60,8 +64,10 @@
 <li class="toctree-l1"><a class="reference internal" href="files/index.html">Files &amp; synchronization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="groupware/index.html">Groupware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="talk/index.html">Talk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="desktop/index.html">Desktop Clients</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Setting your preferences</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#sharing-your-data-in-the-global-address-book">Sharing your data in the global address book</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#restrict-who-can-see-your-profile-data">Restrict who can see your profile data</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="universal_access.html">Universal access</a></li>
@@ -161,20 +167,42 @@ next to each entry:</p>
 <p>If you set your data to <strong>Global</strong>, anyone can see your data. For some use cases this is wanted.
 Someone with a public facing role such as marketing or sales might want to share their contact with a wide variety of connections which might not be using Nextcloud.</p>
 </section>
+<section id="restrict-who-can-see-your-profile-data">
+<h2>Restrict who can see your profile data<a class="headerlink" href="#restrict-who-can-see-your-profile-data" title="Link to this heading"></a></h2>
+<p>If the profile is enabled by your administrator, then your profile data can be read by other users and guest.
+To control who can see which information you can adjust the scopes already mentioned:</p>
+<ul class="simple">
+<li><p><strong>Private</strong> will only allow you and users you have added to your phone book to see the data</p></li>
+<li><p><strong>Local</strong> and above will also allow guests to see your data</p></li>
+</ul>
+<p>To restrict the visibility even more you can disable guest from seeing your profile data by changing the profile visibility to logged-in users.
+On the personal settings you can find the button for profile visibility:</p>
+<blockquote>
+<div><figure class="align-default" style="width: 50%">
+<img alt="screenshot of the profile visibility button in personal settings" src="_images/userdata-visibility-toggle.png" />
+</figure>
+</div></blockquote>
+<p>Which allows to configure the visibility for each profile attribute:</p>
+<blockquote>
+<div><figure class="align-default">
+<img alt="screenshot of scope dropdown on personal information form field" src="_images/userdata-visibility.png" />
+</figure>
+</div></blockquote>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="talk/join_a_call_or_chat_as_guest.html" class="btn btn-neutral float-left" title="Join a call or chat as guest" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="desktop/index.html" class="btn btn-neutral float-left" title="Desktop Clients" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="universal_access.html" class="btn btn-neutral float-right" title="Universal access" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -225,6 +253,14 @@ Someone with a public facing role such as marketing or sales might want to share
                
             >
               stable
+            </a>
+          </dd>
+        
+          <dd style="width: 32%">
+            <a href="https://docs.nextcloud.com/server/30/user_manual"
+               
+            >
+              30
             </a>
           </dd>
         

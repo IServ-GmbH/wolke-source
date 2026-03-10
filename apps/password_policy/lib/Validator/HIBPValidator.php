@@ -8,35 +8,25 @@ declare(strict_types=1);
 
 namespace OCA\Password_Policy\Validator;
 
-use OC\HintException;
 use OCA\Password_Policy\PasswordPolicyConfig;
+use OCP\HintException;
 use OCP\Http\Client\IClientService;
 use OCP\IL10N;
-use OCP\ILogger;
+use OCP\Security\PasswordContext;
+use Psr\Log\LoggerInterface;
 
 class HIBPValidator implements IValidator {
 
-	/** @var PasswordPolicyConfig */
-	private $config;
-	/** @var IL10N */
-	private $l;
-	/** @var IClientService */
-	private $clientService;
-	/** @var ILogger */
-	private $logger;
-
-	public function __construct(PasswordPolicyConfig $config,
-		IL10N $l,
-		IClientService $clientService,
-		ILogger $logger) {
-		$this->config = $config;
-		$this->l = $l;
-		$this->clientService = $clientService;
-		$this->logger = $logger;
+	public function __construct(
+		private PasswordPolicyConfig $config,
+		private IL10N $l,
+		private IClientService $clientService,
+		private LoggerInterface $logger,
+	) {
 	}
 
-	public function validate(string $password): void {
-		if ($this->config->getEnforceHaveIBeenPwned()) {
+	public function validate(string $password, ?PasswordContext $context = null): void {
+		if ($this->config->getEnforceHaveIBeenPwned($context)) {
 			$hash = sha1($password);
 			$range = substr($hash, 0, 5);
 			$needle = strtoupper(substr($hash, 5));
@@ -54,11 +44,14 @@ class HIBPValidator implements IValidator {
 					]
 				);
 			} catch (\Exception $e) {
-				$this->logger->logException($e, ['level' => ILogger::INFO]);
+				$this->logger->info('Could not connect to HaveIBeenPwned API', ['exception' => $e]);
 				return;
 			}
 
 			$result = $response->getBody();
+			if (is_resource($result)) {
+				$result = stream_get_contents($result);
+			}
 			$result = preg_replace('/^([0-9A-Z]+:0)$/m', '', $result);
 
 			if (strpos($result, $needle) !== false) {

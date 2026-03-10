@@ -247,8 +247,8 @@ class MaintenanceService {
 	private function removeCirclesWithNoOwner(): void {
 		$probe = new CircleProbe();
 		$probe->includeSystemCircles()
-			  ->includeSingleCircles()
-			  ->includePersonalCircles();
+			->includeSingleCircles()
+			->includePersonalCircles();
 		$circles = $this->circleService->getCircles($probe);
 		foreach ($circles as $circle) {
 			if (!$circle->hasOwner()) {
@@ -285,8 +285,8 @@ class MaintenanceService {
 	private function removeDeprecatedShares(): void {
 		$probe = new CircleProbe();
 		$probe->includePersonalCircles()
-			  ->includeSingleCircles()
-			  ->includeSystemCircles();
+			->includeSingleCircles()
+			->includeSystemCircles();
 
 		$circles = array_map(
 			function (Circle $circle) {
@@ -317,8 +317,8 @@ class MaintenanceService {
 	private function updateAllMemberships(): void {
 		$probe = new CircleProbe();
 		$probe->includeSystemCircles()
-			  ->includeSingleCircles()
-			  ->includePersonalCircles();
+			->includeSingleCircles()
+			->includePersonalCircles();
 
 		foreach ($this->circleService->getCircles($probe) as $circle) {
 			$this->membershipService->manageMemberships($circle->getSingleId());
@@ -335,8 +335,8 @@ class MaintenanceService {
 
 		$probe = new CircleProbe();
 		$probe->includeSingleCircles()
-			  ->setFilterCircle($circleFilter)
-			  ->mustBeOwner();
+			->setFilterCircle($circleFilter)
+			->mustBeOwner();
 
 		$circles = $this->circleService->getCircles($probe);
 

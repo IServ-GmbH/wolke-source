@@ -54,6 +54,9 @@ class Server implements IDelegatedSettings {
 		$this->initialStateService->provideInitialState('profileEnabledGlobally', $this->profileManager->isProfileEnabled());
 		$this->initialStateService->provideInitialState('profileEnabledByDefault', $this->isProfileEnabledByDefault($this->config));
 
+		// Basic settings
+		$this->initialStateService->provideInitialState('restrictSystemTagsCreationToAdmin', $this->appConfig->getValueBool('systemtags', 'restrict_creation_to_admin', false));
+
 		return new TemplateResponse('settings', 'settings/admin/server', [
 			'profileEnabledGlobally' => $this->profileManager->isProfileEnabled(),
 		], '');
@@ -68,7 +71,7 @@ class Server implements IDelegatedSettings {
 
 		$result = $query->execute();
 		if ($row = $result->fetch()) {
-			$maxAge = (int) $row['last_checked'];
+			$maxAge = (int)$row['last_checked'];
 		} else {
 			$maxAge = $this->timeFactory->getTime();
 		}

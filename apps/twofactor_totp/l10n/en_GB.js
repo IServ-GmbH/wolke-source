@@ -11,6 +11,7 @@ OC.L10N.register(
     "A two-factor authentication provider for TOTP (RFC 6238)" : "A two-factor authentication provider for TOTP (RFC 6238)",
     "Could not enable TOTP" : "Could not enable TOTP",
     "Could not verify your key. Please try again" : "Could not verify your key. Please try again",
+    "Could not confirm TOTP" : "Could not confirm TOTP",
     "Enable TOTP" : "Enable TOTP",
     "Your new TOTP secret is:" : "Your new TOTP secret is:",
     "For quick setup, scan this QR code with your TOTP app:" : "For quick setup, scan this QR code with your TOTP app:",
@@ -18,9 +19,6 @@ OC.L10N.register(
     "Authentication code" : "Authentication code",
     "Verify" : "Verify",
     "Get the authentication code from the two-factor authentication app on your device." : "Get the authentication code from the two-factor authentication app on your device.",
-    "Submit" : "Submit",
-    "TOTP two-factor authentication disabled by an admin" : "TOTP two-factor authentication disabled by an admin",
-    "TOTP two-factor provider" : "TOTP two-factor provider",
-    "A Two-Factor-Auth Provider for TOTP (RFC 6238)" : "A Two-Factor-Auth Provider for TOTP (RFC 6238)"
+    "Submit" : "Submit"
 },
 "nplurals=2; plural=(n != 1);");

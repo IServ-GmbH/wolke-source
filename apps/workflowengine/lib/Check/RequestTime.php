@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -17,18 +16,13 @@ class RequestTime implements ICheck {
 	/** @var bool[] */
 	protected $cachedResults;
 
-	/** @var IL10N */
-	protected $l;
-
-	/** @var ITimeFactory */
-	protected $timeFactory;
-
 	/**
 	 * @param ITimeFactory $timeFactory
 	 */
-	public function __construct(IL10N $l, ITimeFactory $timeFactory) {
-		$this->l = $l;
-		$this->timeFactory = $timeFactory;
+	public function __construct(
+		protected IL10N $l,
+		protected ITimeFactory $timeFactory,
+	) {
 	}
 
 	/**
@@ -68,7 +62,7 @@ class RequestTime implements ICheck {
 		[$hour1, $minute1] = explode(':', $time1);
 		$date1 = new \DateTime('now', new \DateTimeZone($timezone1));
 		$date1->setTimestamp($currentTimestamp);
-		$date1->setTime($hour1, $minute1);
+		$date1->setTime((int)$hour1, (int)$minute1);
 
 		return $date1->getTimestamp();
 	}
@@ -90,12 +84,12 @@ class RequestTime implements ICheck {
 		}
 
 		$values = json_decode($value, true);
-		$time1 = \DateTime::createFromFormat('H:i e', (string) $values[0]);
+		$time1 = \DateTime::createFromFormat('H:i e', (string)$values[0]);
 		if ($time1 === false) {
 			throw new \UnexpectedValueException($this->l->t('The given start time is invalid'), 3);
 		}
 
-		$time2 = \DateTime::createFromFormat('H:i e', (string) $values[1]);
+		$time2 = \DateTime::createFromFormat('H:i e', (string)$values[1]);
 		if ($time2 === false) {
 			throw new \UnexpectedValueException($this->l->t('The given end time is invalid'), 4);
 		}

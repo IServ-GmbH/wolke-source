@@ -806,7 +806,7 @@ class ReflectionClosure extends ReflectionFunction
     }
 
     /**
-     * The hash of the current file name.
+     * The the hash of the current file name.
      *
      * @return string
      */

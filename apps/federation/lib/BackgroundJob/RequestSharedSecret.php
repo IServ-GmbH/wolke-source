@@ -19,6 +19,7 @@ use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\Job;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\OCS\IDiscoveryService;
 use Psr\Log\LoggerInterface;
@@ -48,6 +49,7 @@ class RequestSharedSecret extends Job {
 		private IDiscoveryService $ocsDiscoveryService,
 		private LoggerInterface $logger,
 		ITimeFactory $timeFactory,
+		private IConfig $config,
 		private DbHandler $dbHandler,
 	) {
 		parent::__construct($timeFactory);
@@ -86,7 +88,7 @@ class RequestSharedSecret extends Job {
 	 */
 	protected function run($argument) {
 		$target = $argument['url'];
-		$created = isset($argument['created']) ? (int) $argument['created'] : $this->time->getTime();
+		$created = isset($argument['created']) ? (int)$argument['created'] : $this->time->getTime();
 		$currentTime = $this->time->getTime();
 		$source = $this->urlGenerator->getAbsoluteURL('/');
 		$source = rtrim($source, '/');
@@ -118,6 +120,7 @@ class RequestSharedSecret extends Job {
 					],
 					'timeout' => 3,
 					'connect_timeout' => 3,
+					'verify' => !$this->config->getSystemValue('sharing.federation.allowSelfSignedCertificates', false),
 				]
 			);
 
@@ -151,7 +154,7 @@ class RequestSharedSecret extends Job {
 	 */
 	protected function reAddJob(array $argument): void {
 		$url = $argument['url'];
-		$created = isset($argument['created']) ? (int) $argument['created'] : $this->time->getTime();
+		$created = isset($argument['created']) ? (int)$argument['created'] : $this->time->getTime();
 		$token = $argument['token'];
 		$attempt = $this->getAttempt($argument) + 1;
 

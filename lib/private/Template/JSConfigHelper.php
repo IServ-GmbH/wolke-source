@@ -12,7 +12,7 @@ use OC\Authentication\Token\IProvider;
 use OC\CapabilitiesManager;
 use OC\Files\FilenameValidator;
 use OC\Share\Share;
-use OCA\Provisioning_API\Controller\AUserData;
+use OCA\Provisioning_API\Controller\AUserDataOCSController;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\Authentication\Exceptions\ExpiredTokenException;
@@ -30,6 +30,7 @@ use OCP\ILogger;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\ServerVersion;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 use OCP\Share\IManager as IShareManager;
 use OCP\User\Backend\IPasswordConfirmationBackend;
@@ -41,19 +42,20 @@ class JSConfigHelper {
 	private $excludedUserBackEnds = ['user_saml' => true, 'user_globalsiteselector' => true];
 
 	public function __construct(
-		protected IL10N                $l,
-		protected Defaults             $defaults,
-		protected IAppManager          $appManager,
-		protected ISession             $session,
-		protected ?IUser               $currentUser,
-		protected IConfig              $config,
-		protected IGroupManager        $groupManager,
-		protected IniGetWrapper        $iniWrapper,
-		protected IURLGenerator        $urlGenerator,
-		protected CapabilitiesManager  $capabilitiesManager,
+		protected ServerVersion $serverVersion,
+		protected IL10N $l,
+		protected Defaults $defaults,
+		protected IAppManager $appManager,
+		protected ISession $session,
+		protected ?IUser $currentUser,
+		protected IConfig $config,
+		protected IGroupManager $groupManager,
+		protected IniGetWrapper $iniWrapper,
+		protected IURLGenerator $urlGenerator,
+		protected CapabilitiesManager $capabilitiesManager,
 		protected IInitialStateService $initialStateService,
-		protected IProvider            $tokenProvider,
-		protected FilenameValidator   $filenameValidator,
+		protected IProvider $tokenProvider,
+		protected FilenameValidator $filenameValidator,
 	) {
 	}
 
@@ -96,7 +98,7 @@ class JSConfigHelper {
 		$defaultExpireDateEnabled = $this->config->getAppValue('core', 'shareapi_default_expire_date', 'no') === 'yes';
 		$defaultExpireDate = $enforceDefaultExpireDate = null;
 		if ($defaultExpireDateEnabled) {
-			$defaultExpireDate = (int) $this->config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
+			$defaultExpireDate = (int)$this->config->getAppValue('core', 'shareapi_expire_after_n_days', '7');
 			$enforceDefaultExpireDate = $this->config->getAppValue('core', 'shareapi_enforce_expire_date', 'no') === 'yes';
 		}
 		$outgoingServer2serverShareEnabled = $this->config->getAppValue('files_sharing', 'outgoing_server2server_share_enabled', 'yes') === 'yes';
@@ -104,14 +106,14 @@ class JSConfigHelper {
 		$defaultInternalExpireDateEnabled = $this->config->getAppValue('core', 'shareapi_default_internal_expire_date', 'no') === 'yes';
 		$defaultInternalExpireDate = $defaultInternalExpireDateEnforced = null;
 		if ($defaultInternalExpireDateEnabled) {
-			$defaultInternalExpireDate = (int) $this->config->getAppValue('core', 'shareapi_internal_expire_after_n_days', '7');
+			$defaultInternalExpireDate = (int)$this->config->getAppValue('core', 'shareapi_internal_expire_after_n_days', '7');
 			$defaultInternalExpireDateEnforced = $this->config->getAppValue('core', 'shareapi_enforce_internal_expire_date', 'no') === 'yes';
 		}
 
 		$defaultRemoteExpireDateEnabled = $this->config->getAppValue('core', 'shareapi_default_remote_expire_date', 'no') === 'yes';
 		$defaultRemoteExpireDate = $defaultRemoteExpireDateEnforced = null;
 		if ($defaultRemoteExpireDateEnabled) {
-			$defaultRemoteExpireDate = (int) $this->config->getAppValue('core', 'shareapi_remote_expire_after_n_days', '7');
+			$defaultRemoteExpireDate = (int)$this->config->getAppValue('core', 'shareapi_remote_expire_after_n_days', '7');
 			$defaultRemoteExpireDateEnforced = $this->config->getAppValue('core', 'shareapi_enforce_remote_expire_date', 'no') === 'yes';
 		}
 
@@ -136,8 +138,8 @@ class JSConfigHelper {
 
 		$capabilities = $this->capabilitiesManager->getCapabilities(false, true);
 
-		$userFirstDay = $this->config->getUserValue($uid, 'core', AUserData::USER_FIELD_FIRST_DAY_OF_WEEK, null);
-		$firstDay = (int) ($userFirstDay ?? $this->l->l('firstday', null));
+		$userFirstDay = $this->config->getUserValue($uid, 'core', AUserDataOCSController::USER_FIELD_FIRST_DAY_OF_WEEK, null);
+		$firstDay = (int)($userFirstDay ?? $this->l->l('firstday', null));
 
 		$config = [
 			/** @deprecated 30.0.0 - use files capabilities instead */
@@ -156,8 +158,8 @@ class JSConfigHelper {
 			'session_lifetime' => min($this->config->getSystemValue('session_lifetime', $this->iniWrapper->getNumeric('session.gc_maxlifetime')), $this->iniWrapper->getNumeric('session.gc_maxlifetime')),
 			'sharing.maxAutocompleteResults' => max(0, $this->config->getSystemValueInt('sharing.maxAutocompleteResults', Constants::SHARING_MAX_AUTOCOMPLETE_RESULTS_DEFAULT)),
 			'sharing.minSearchStringLength' => $this->config->getSystemValueInt('sharing.minSearchStringLength', 0),
-			'version' => implode('.', Util::getVersion()),
-			'versionstring' => \OC_Util::getVersionString(),
+			'version' => implode('.', $this->serverVersion->getVersion()),
+			'versionstring' => $this->serverVersion->getVersionString(),
 			'enable_non-accessible_features' => $this->config->getSystemValueBool('enable_non-accessible_features', true),
 		];
 
@@ -247,7 +249,6 @@ class JSConfigHelper {
 					'defaultRemoteExpireDate' => $defaultRemoteExpireDate,
 					'defaultRemoteExpireDateEnforced' => $defaultRemoteExpireDateEnforced,
 					'disableFileDownloads' => $this->config->getSystemValue('iserv_disable_file_downloads', true),
-					'isFederationAppInstalled' => $this->appManager->isInstalled('federation'),
 				]
 			]),
 			'_theme' => json_encode([
@@ -268,7 +269,7 @@ class JSConfigHelper {
 		if ($this->currentUser !== null) {
 			$array['oc_userconfig'] = json_encode([
 				'avatar' => [
-					'version' => (int) $this->config->getUserValue($uid, 'avatar', 'version', 0),
+					'version' => (int)$this->config->getUserValue($uid, 'avatar', 'version', 0),
 					'generated' => $this->config->getUserValue($uid, 'avatar', 'generated', 'true') === 'true',
 				]
 			]);
@@ -286,7 +287,7 @@ class JSConfigHelper {
 
 		// Echo it
 		foreach ($array as $setting => $value) {
-			$result .= 'var '. $setting . '='. $value . ';' . PHP_EOL;
+			$result .= 'var ' . $setting . '=' . $value . ';' . PHP_EOL;
 		}
 
 		return $result;

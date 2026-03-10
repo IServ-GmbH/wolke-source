@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,6 +27,7 @@ use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\ServerVersion;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class OCJSController extends Controller {
@@ -49,10 +49,12 @@ class OCJSController extends Controller {
 		IInitialStateService $initialStateService,
 		IProvider $tokenProvider,
 		FilenameValidator $filenameValidator,
+		ServerVersion $serverVersion,
 	) {
 		parent::__construct($appName, $request);
 
 		$this->helper = new JSConfigHelper(
+			$serverVersion,
 			$l10nFactory->get('lib'),
 			$defaults,
 			$appManager,

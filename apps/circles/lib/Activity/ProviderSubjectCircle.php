@@ -10,23 +10,16 @@ declare(strict_types=1);
 namespace OCA\Circles\Activity;
 
 use OCA\Circles\Exceptions\FakeException;
-use OCA\Circles\Model\Circle;
 use OCP\Activity\IEvent;
 
 class ProviderSubjectCircle extends ProviderParser {
-	/**
-	 * @param IEvent $event
-	 * @param Circle $circle
-	 *
-	 * @throws FakeException
-	 */
-	public function parseSubjectCircleCreate(IEvent $event, Circle $circle): void {
+	public function parseSubjectCircleCreate(IEvent $event, array $params): void {
 		if ($event->getSubject() !== 'circle_create') {
 			return;
 		}
 
 		$this->parseCircleEvent(
-			$event, $circle,
+			$event, $params,
 			$this->l10n->t('You created the team {circle}'),
 			$this->l10n->t('{author} created the team {circle}')
 		);
@@ -36,17 +29,17 @@ class ProviderSubjectCircle extends ProviderParser {
 
 	/**
 	 * @param IEvent $event
-	 * @param Circle $circle
+	 * @param array $params
 	 *
 	 * @throws FakeException
 	 */
-	public function parseSubjectCircleDelete(IEvent $event, Circle $circle): void {
+	public function parseSubjectCircleDelete(IEvent $event, array $params): void {
 		if ($event->getSubject() !== 'circle_delete') {
 			return;
 		}
 
 		$this->parseCircleEvent(
-			$event, $circle,
+			$event, $params,
 			$this->l10n->t('You deleted {circle}'),
 			$this->l10n->t('{author} deleted {circle}')
 		);

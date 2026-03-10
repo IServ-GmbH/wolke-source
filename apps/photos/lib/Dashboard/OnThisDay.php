@@ -17,7 +17,7 @@ class OnThisDay implements IIconWidget {
 	public function __construct(
 		private IL10N $l,
 		private IURLGenerator $url,
-		private IInitialState $initialState
+		private IInitialState $initialState,
 	) {
 	}
 

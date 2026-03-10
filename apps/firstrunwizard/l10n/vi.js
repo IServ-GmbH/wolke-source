@@ -29,14 +29,12 @@ OC.L10N.register(
     "A welcome and introduction wizard for Nextcloud" : "Trình hướng dẫn chào mừng và giới thiệu",
     "Close" : "Đóng",
     "Welcome to {cloudName}!" : "Chào mừng đến với {cloudName}!",
+    "Skip" : "Bỏ qua",
     "Privacy" : "Bảo mật",
     "Community" : "Cộng đồng",
     "Get the apps to sync your files" : "Nhận ứng dụng để đồng bộ file của bạn",
     "Server address" : "Địa chỉ máy chủ",
     "Use this link to connect your apps and desktop client to this server:" : "Sử dụng liên kết này để kết nối ứng dụng và máy khách để bàn của bạn với máy chủ này:",
-    "Read more" : "Đọc thêm",
-    "App recommendation: Nextcloud Calendar" : "Đề xuất ứng dụng: Lịch",
-    "App recommendation: Nextcloud Contacts" : "Đề xuất ứng dụng: Danh bạ",
-    "App recommendation: Nextcloud Mail" : "Đề xuất ứng dụng: Mail"
+    "Read more" : "Đọc thêm"
 },
 "nplurals=1; plural=0;");

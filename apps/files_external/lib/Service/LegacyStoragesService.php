@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,6 +7,7 @@
 namespace OCA\Files_External\Service;
 
 use OCA\Files_External\Lib\StorageConfig;
+use OCA\Files_External\MountConfig;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -38,7 +38,7 @@ abstract class LegacyStoragesService {
 		&$storageConfig,
 		$mountType,
 		$applicable,
-		$storageOptions
+		$storageOptions,
 	) {
 		$backend = $this->backendService->getBackend($storageOptions['backend']);
 		if (!$backend) {
@@ -63,13 +63,13 @@ abstract class LegacyStoragesService {
 			$storageOptions['priority'] = $backend->getPriority();
 		}
 		$storageConfig->setPriority($storageOptions['priority']);
-		if ($mountType === \OCA\Files_External\MountConfig::MOUNT_TYPE_USER) {
+		if ($mountType === MountConfig::MOUNT_TYPE_USER) {
 			$applicableUsers = $storageConfig->getApplicableUsers();
 			if ($applicable !== 'all') {
 				$applicableUsers[] = $applicable;
 				$storageConfig->setApplicableUsers($applicableUsers);
 			}
-		} elseif ($mountType === \OCA\Files_External\MountConfig::MOUNT_TYPE_GROUP) {
+		} elseif ($mountType === MountConfig::MOUNT_TYPE_GROUP) {
 			$applicableGroups = $storageConfig->getApplicableGroups();
 			$applicableGroups[] = $applicable;
 			$storageConfig->setApplicableGroups($applicableGroups);
@@ -130,7 +130,7 @@ abstract class LegacyStoragesService {
 					$relativeMountPath = rtrim($parts[2], '/');
 					// note: we cannot do this after the loop because the decrypted config
 					// options might be needed for the config hash
-					$storageOptions['options'] = \OCA\Files_External\MountConfig::decryptPasswords($storageOptions['options']);
+					$storageOptions['options'] = MountConfig::decryptPasswords($storageOptions['options']);
 					if (!isset($storageOptions['backend'])) {
 						$storageOptions['backend'] = $storageOptions['class']; // legacy compat
 					}
@@ -138,7 +138,7 @@ abstract class LegacyStoragesService {
 						$storageOptions['authMechanism'] = null; // ensure config hash works
 					}
 					if (isset($storageOptions['id'])) {
-						$configId = (int) $storageOptions['id'];
+						$configId = (int)$storageOptions['id'];
 						if (isset($storages[$configId])) {
 							$currentStorage = $storages[$configId];
 						}
@@ -148,7 +148,7 @@ abstract class LegacyStoragesService {
 						// but at this point we don't know the max-id, so use
 						// first group it by config hash
 						$storageOptions['mountpoint'] = $rootMountPath;
-						$configId = \OCA\Files_External\MountConfig::makeConfigHash($storageOptions);
+						$configId = MountConfig::makeConfigHash($storageOptions);
 						if (isset($storagesWithConfigHash[$configId])) {
 							$currentStorage = $storagesWithConfigHash[$configId];
 						}

@@ -117,7 +117,7 @@ class Connection extends PrimaryReadReplicaConnection {
 		private array $params,
 		Driver $driver,
 		?Configuration $config = null,
-		?EventManager $eventManager = null
+		?EventManager $eventManager = null,
 	) {
 		if (!isset($params['adapter'])) {
 			throw new \Exception('adapter not set');
@@ -160,7 +160,7 @@ class Connection extends PrimaryReadReplicaConnection {
 			$this->_config->setSQLLogger($debugStack);
 		}
 
-		/** @var array<string, array{shards: array[], mapper: ?string}> $shardConfig */
+		/** @var array<string, array{shards: array[], mapper: ?string, from_primary_key: ?int, from_shard_key: ?int}> $shardConfig */
 		$shardConfig = $this->params['sharding'] ?? [];
 		$shardNames = array_keys($shardConfig);
 		$this->shards = array_map(function (array $config, string $name) {
@@ -180,7 +180,9 @@ class Connection extends PrimaryReadReplicaConnection {
 				self::SHARD_PRESETS[$name]['shard_key'],
 				$shardMapper,
 				self::SHARD_PRESETS[$name]['companion_tables'],
-				$config['shards']
+				$config['shards'],
+				$config['from_primary_key'] ?? 0,
+				$config['from_shard_key'] ?? 0,
 			);
 		}, $shardConfig, $shardNames);
 		$this->shards = array_combine($shardNames, $this->shards);
@@ -199,8 +201,10 @@ class Connection extends PrimaryReadReplicaConnection {
 		if ($this->isShardingEnabled) {
 			foreach ($this->shards as $shardDefinition) {
 				foreach ($shardDefinition->getAllShards() as $shard) {
-					/** @var ConnectionAdapter $connection */
-					$connections[] = $this->shardConnectionManager->getConnection($shardDefinition, $shard);
+					if ($shard !== ShardDefinition::MIGRATION_SHARD) {
+						/** @var ConnectionAdapter $connection */
+						$connections[] = $this->shardConnectionManager->getConnection($shardDefinition, $shard);
+					}
 				}
 			}
 		}
@@ -282,7 +286,7 @@ class Connection extends PrimaryReadReplicaConnection {
 	 * Gets the QueryBuilder for the connection.
 	 *
 	 * @return \Doctrine\DBAL\Query\QueryBuilder
-	 * @deprecated please use $this->getQueryBuilder() instead
+	 * @deprecated 8.0.0 please use $this->getQueryBuilder() instead
 	 */
 	public function createQueryBuilder() {
 		$backtrace = $this->getCallerBacktrace();
@@ -295,7 +299,7 @@ class Connection extends PrimaryReadReplicaConnection {
 	 * Gets the ExpressionBuilder for the connection.
 	 *
 	 * @return \Doctrine\DBAL\Query\Expression\ExpressionBuilder
-	 * @deprecated please use $this->getQueryBuilder()->expr() instead
+	 * @deprecated 8.0.0 please use $this->getQueryBuilder()->expr() instead
 	 */
 	public function getExpressionBuilder() {
 		$backtrace = $this->getCallerBacktrace();
@@ -342,10 +346,10 @@ class Connection extends PrimaryReadReplicaConnection {
 		if ($limit === -1 || $limit === null) {
 			$limit = null;
 		} else {
-			$limit = (int) $limit;
+			$limit = (int)$limit;
 		}
 		if ($offset !== null) {
-			$offset = (int) $offset;
+			$offset = (int)$offset;
 		}
 		if (!is_null($limit)) {
 			$platform = $this->getDatabasePlatform();
@@ -394,7 +398,7 @@ class Connection extends PrimaryReadReplicaConnection {
 			// Read to a table that has been written to previously
 			// While this might not necessarily mean that we did a read after write it is an indication for a code path to check
 			$this->logger->log(
-				(int) ($this->systemConfig->getValue('loglevel_dirty_database_queries', null) ?? 0),
+				(int)($this->systemConfig->getValue('loglevel_dirty_database_queries', null) ?? 0),
 				'dirty table reads: ' . $sql,
 				[
 					'tables' => array_keys($this->tableDirtyWrites),
@@ -459,7 +463,7 @@ class Connection extends PrimaryReadReplicaConnection {
 		$this->queriesExecuted++;
 		$this->logQueryToFile($sql);
 		try {
-			return (int) parent::executeStatement($sql, $params, $types);
+			return (int)parent::executeStatement($sql, $params, $types);
 		} catch (\Exception $e) {
 			$this->logDatabaseException($e);
 			throw $e;
@@ -664,9 +668,9 @@ class Connection extends PrimaryReadReplicaConnection {
 		$msg = $this->errorCode() . ': ';
 		$errorInfo = $this->errorInfo();
 		if (!empty($errorInfo)) {
-			$msg .= 'SQLSTATE = '.$errorInfo[0] . ', ';
-			$msg .= 'Driver Code = '.$errorInfo[1] . ', ';
-			$msg .= 'Driver Message = '.$errorInfo[2];
+			$msg .= 'SQLSTATE = ' . $errorInfo[0] . ', ';
+			$msg .= 'Driver Code = ' . $errorInfo[1] . ', ';
+			$msg .= 'Driver Message = ' . $errorInfo[2];
 		}
 		return $msg;
 	}
@@ -692,6 +696,19 @@ class Connection extends PrimaryReadReplicaConnection {
 		if ($schema->tablesExist([$table])) {
 			$schema->dropTable($table);
 		}
+	}
+
+	/**
+	 * Truncate a table data if it exists
+	 *
+	 * @param string $table table name without the prefix
+	 * @param bool $cascade whether to truncate cascading
+	 *
+	 * @throws Exception
+	 */
+	public function truncateTable(string $table, bool $cascade) {
+		$this->executeStatement($this->getDatabasePlatform()
+			->getTruncateTableSQL($this->tablePrefix . trim($table), $cascade));
 	}
 
 	/**

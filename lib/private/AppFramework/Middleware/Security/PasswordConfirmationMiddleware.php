@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -89,7 +88,7 @@ class PasswordConfirmationMiddleware extends Middleware {
 
 			$this->session->set('last-password-confirm', $this->timeFactory->getTime());
 		} else {
-			$lastConfirm = (int) $this->session->get('last-password-confirm');
+			$lastConfirm = (int)$this->session->get('last-password-confirm');
 			// TODO: confirm excludedUserBackEnds can go away and remove it
 			if (!isset($this->excludedUserBackEnds[$backendClassName]) && $lastConfirm < ($this->timeFactory->getTime() - (30 * 60 + 15))) { // allow 15 seconds delay
 				throw new NotConfirmedException();

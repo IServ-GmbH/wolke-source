@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -39,7 +38,7 @@ class Option extends Config {
 		if (!is_string($value)) { // show bools and objects correctly
 			$value = json_encode($value);
 		}
-		$output->writeln((string) $value);
+		$output->writeln((string)$value);
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -19,8 +18,11 @@ use OCP\Share\IManager;
  * @package OCA\Files_Sharing
  */
 class Capabilities implements ICapability {
-
-	public function __construct(private IConfig $config, private IManager $shareManager, private IAppManager $appManager) {
+	public function __construct(
+		private IConfig $config,
+		private IManager $shareManager,
+		private IAppManager $appManager,
+	) {
 	}
 
 	/**
@@ -54,6 +56,7 @@ class Capabilities implements ICapability {
 	 *             send_mail?: bool,
 	 *             upload?: bool,
 	 *             upload_files_drop?: bool,
+	 *             custom_tokens?: bool,
 	 *         },
 	 *         user: array{
 	 *             send_mail: bool,
@@ -135,6 +138,7 @@ class Capabilities implements ICapability {
 				$public['send_mail'] = $this->config->getAppValue('core', 'shareapi_allow_public_notification', 'no') === 'yes';
 				$public['upload'] = $this->shareManager->shareApiLinkAllowPublicUpload();
 				$public['upload_files_drop'] = $public['upload'];
+				$public['custom_tokens'] = $this->shareManager->allowCustomTokens();
 			}
 			$res['public'] = $public;
 
@@ -150,7 +154,7 @@ class Capabilities implements ICapability {
 			$res['group'] = [];
 			$res['group']['enabled'] = $this->shareManager->allowGroupSharing();
 			$res['group']['expire_date']['enabled'] = true;
-			$res['default_permissions'] = (int) $this->config->getAppValue('core', 'shareapi_default_permissions', (string) Constants::PERMISSION_ALL);
+			$res['default_permissions'] = (int)$this->config->getAppValue('core', 'shareapi_default_permissions', (string)Constants::PERMISSION_ALL);
 		}
 
 		//Federated sharing

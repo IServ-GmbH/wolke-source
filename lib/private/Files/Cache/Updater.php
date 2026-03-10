@@ -116,7 +116,7 @@ class Updater implements IUpdater {
 		}
 
 		// encryption is a pita and touches the cache itself
-		if (isset($data['encrypted']) && (bool) $data['encrypted']) {
+		if (isset($data['encrypted']) && (bool)$data['encrypted']) {
 			$sizeDifference = null;
 		}
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -34,9 +33,6 @@ class BackendService {
 	/** Priority constants for PriorityTrait */
 	public const PRIORITY_DEFAULT = 100;
 
-	/** @var IConfig */
-	protected $config;
-
 	/** @var bool */
 	private $userMountingAllowed = true;
 
@@ -64,10 +60,8 @@ class BackendService {
 	 * @param IConfig $config
 	 */
 	public function __construct(
-		IConfig $config
+		protected IConfig $config,
 	) {
-		$this->config = $config;
-
 		// Load config values
 		if ($this->config->getAppValue('files_external', 'allow_user_mounting', 'yes') !== 'yes') {
 			$this->userMountingAllowed = false;
@@ -306,7 +300,7 @@ class BackendService {
 	 */
 	public function registerConfigHandler(string $placeholder, callable $configHandlerLoader) {
 		$placeholder = trim(strtolower($placeholder));
-		if (!(bool) \preg_match('/^[a-z0-9]*$/', $placeholder)) {
+		if (!(bool)\preg_match('/^[a-z0-9]*$/', $placeholder)) {
 			throw new \RuntimeException(sprintf(
 				'Invalid placeholder %s, only [a-z0-9] are allowed', $placeholder
 			));

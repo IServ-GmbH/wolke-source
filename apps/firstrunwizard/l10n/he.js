@@ -17,15 +17,13 @@ OC.L10N.register(
     "iOS app" : "יישומון iOS",
     "A welcome and introduction wizard for Nextcloud" : "אשף קבלת פנים והיכרות ל־Nextcloud",
     "Close" : "סגירה",
+    "Skip" : "דלג",
     "Privacy" : "פרטיות",
     "Community" : "קהילה",
     "Get the apps to sync your files" : "ניתן להוריד את היישומים כדי לסנכרן את הקבצים שלך",
     "Server address" : "כתובת שרת",
     "Use this link to connect your apps and desktop client to this server:" : "יש להשתמש בקישור הזה כדי לחבר את היישומונים ואת לקוח שולחן העבודה שלך לשרת הזה:",
     "What's new?" : "מה חדש?",
-    "Read more" : "מידע נוסף",
-    "App recommendation: Nextcloud Calendar" : "המלצת יישומון: יומן מבית Nextcloud",
-    "App recommendation: Nextcloud Contacts" : "המלצת יישומון: אנשי קשר מבית Nextcloud",
-    "App recommendation: Nextcloud Mail" : "המלצת יישומון: דוא״ל מבית Nextcloud"
+    "Read more" : "מידע נוסף"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

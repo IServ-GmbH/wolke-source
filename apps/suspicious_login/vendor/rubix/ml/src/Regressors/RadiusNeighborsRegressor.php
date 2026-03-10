@@ -6,13 +6,13 @@ use Rubix\ML\Learner;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Graph\Trees\Spatial;
-use Rubix\ML\Other\Helpers\Stats;
 use Rubix\ML\Graph\Trees\BallTree;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -43,7 +43,7 @@ class RadiusNeighborsRegressor implements Estimator, Learner, Persistable
     /**
      * The value to assign to outliers when making a prediction.
      *
-     * @var float
+     * @var mixed
      */
     public const OUTLIER_VALUE = NAN;
 
@@ -52,28 +52,28 @@ class RadiusNeighborsRegressor implements Estimator, Learner, Persistable
      *
      * @var float
      */
-    protected $radius;
+    protected float $radius;
 
     /**
      * Should we consider the distances of our nearest neighbors when making predictions?
      *
      * @var bool
      */
-    protected $weighted;
+    protected bool $weighted;
 
     /**
      * The spatial tree used to run range searches.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
      * The dimensionality of the training set.
      *
      * @var int|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param float $radius
@@ -81,7 +81,7 @@ class RadiusNeighborsRegressor implements Estimator, Learner, Persistable
      * @param \Rubix\ML\Graph\Trees\Spatial|null $tree
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(float $radius = 1.0, bool $weighted = true, ?Spatial $tree = null)
+    public function __construct(float $radius = 1.0, bool $weighted = false, ?Spatial $tree = null)
     {
         if ($radius <= 0.0) {
             throw new InvalidArgumentException('Radius must be'
@@ -167,7 +167,7 @@ class RadiusNeighborsRegressor implements Estimator, Learner, Persistable
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
 
         $this->tree->grow($dataset);
     }
@@ -221,6 +221,8 @@ class RadiusNeighborsRegressor implements Estimator, Learner, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class ActivationTest extends TestCase
 {
     /**
-     * @var int
+     * @var positive-int
      */
     protected $fanIn;
 

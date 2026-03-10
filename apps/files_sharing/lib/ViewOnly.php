@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2019 ownCloud GmbH
@@ -18,15 +17,13 @@ use OCP\Files\NotFoundException;
  */
 class ViewOnly {
 
-	/** @var Folder */
-	private $userFolder;
-
-	public function __construct(Folder $userFolder) {
-		$this->userFolder = $userFolder;
+	public function __construct(
+		private Folder $userFolder,
+	) {
 	}
 
 	/**
-	 * @param string[] $pathsToCheck
+	 * @param string[] $pathsToCheck paths to check, relative to the user folder
 	 * @return bool
 	 */
 	public function check(array $pathsToCheck): bool {
@@ -89,20 +86,13 @@ class ViewOnly {
 		}
 
 		// Extract extra permissions
-		/** @var \OCA\Files_Sharing\SharedStorage $storage */
+		/** @var SharedStorage $storage */
 		$share = $storage->getShare();
 
-		$canDownload = true;
-
-		// Check if read-only and on whether permission can download is both set and disabled.
+		// Check whether download-permission was denied (granted if not set)
 		$attributes = $share->getAttributes();
-		if ($attributes !== null) {
-			$canDownload = $attributes->getAttribute('permissions', 'download');
-		}
+		$canDownload = $attributes?->getAttribute('permissions', 'download');
 
-		if ($canDownload !== null && !$canDownload) {
-			return false;
-		}
-		return true;
+		return $canDownload !== false;
 	}
 }

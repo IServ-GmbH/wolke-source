@@ -66,7 +66,7 @@ class WorkspaceController extends OCSController {
 		private IEventDispatcher $eventDispatcher,
 		private LoggerInterface $logger,
 		private ISession $session,
-		private ?string $userId
+		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -130,8 +130,10 @@ class WorkspaceController extends OCSController {
 			}
 			/** @psalm-suppress RedundantConditionGivenDocblockType */
 			if ($share->getPassword() !== null) {
-				$shareId = $this->session->get('public_link_authenticated');
-				if ($share->getId() !== $shareId) {
+				$shareIds = $this->session->get('public_link_authenticated');
+				$shareIds = is_array($shareIds) ? $shareIds : [$shareIds];
+
+				if (!in_array($share->getId(), $shareIds, true)) {
 					throw new ShareNotFound();
 				}
 			}
@@ -173,9 +175,9 @@ class WorkspaceController extends OCSController {
 			if ($folder instanceof Folder) {
 				$file = $this->getFile($folder);
 				if ($file === null) {
-					$token = $this->directEditingManager->create($path . '/'. $this->workspaceService->getSupportedFilenames()[0], Application::APP_NAME, TextDocumentCreator::CREATOR_ID);
+					$token = $this->directEditingManager->create($path . '/' . $this->workspaceService->getSupportedFilenames()[0], Application::APP_NAME, TextDocumentCreator::CREATOR_ID);
 				} else {
-					$token = $this->directEditingManager->open($path . '/'. $file->getName(), Application::APP_NAME);
+					$token = $this->directEditingManager->open($path . '/' . $file->getName(), Application::APP_NAME);
 				}
 				return new DataResponse([
 					'url' => $this->urlGenerator->linkToRouteAbsolute('files.DirectEditingView.edit', ['token' => $token])

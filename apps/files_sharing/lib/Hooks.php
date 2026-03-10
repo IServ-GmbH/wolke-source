@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,6 +7,7 @@
 namespace OCA\Files_Sharing;
 
 use OC\Files\Filesystem;
+use OC\Files\View;
 
 class Hooks {
 	public static function deleteUser($params) {
@@ -18,10 +18,10 @@ class Hooks {
 
 	public static function unshareChildren($params) {
 		$path = Filesystem::getView()->getAbsolutePath($params['path']);
-		$view = new \OC\Files\View('/');
+		$view = new View('/');
 
 		// find share mount points within $path and unmount them
-		$mountManager = \OC\Files\Filesystem::getMountManager();
+		$mountManager = Filesystem::getMountManager();
 		$mountedShares = $mountManager->findIn($path);
 		foreach ($mountedShares as $mount) {
 			if ($mount->getStorage()->instanceOfStorage(ISharedStorage::class)) {

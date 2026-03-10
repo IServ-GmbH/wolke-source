@@ -9,7 +9,6 @@ namespace OCA\Text\Service;
 
 use OCP\AppFramework\Services\IInitialState;
 use OCP\TaskProcessing\IManager;
-use OCP\Translation\ITranslationManager;
 
 class InitialStateProvider {
 	private const ASSISTANT_TASK_TYPES = [
@@ -25,9 +24,8 @@ class InitialStateProvider {
 	public function __construct(
 		private IInitialState $initialState,
 		private ConfigService $configService,
-		private ITranslationManager $translationManager,
 		private IManager $taskProcessingManager,
-		private ?string $userId
+		private ?string $userId,
 	) {
 	}
 
@@ -43,6 +41,11 @@ class InitialStateProvider {
 		);
 
 		$this->initialState->provideInitialState(
+			'open_read_only_enabled',
+			$this->configService->isOpenReadOnlyEnabled()
+		);
+
+		$this->initialState->provideInitialState(
 			'default_file_extension',
 			$this->configService->getDefaultFileExtension()
 		);
@@ -52,17 +55,19 @@ class InitialStateProvider {
 			$this->configService->isRichEditingEnabled()
 		);
 
-		$this->initialState->provideInitialState(
-			'translation_can_detect',
-			$this->translationManager->canDetectLanguage()
-		);
+		$taskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
+		$fromLanguages = $taskTypes['core:text2text:translate']['inputShapeEnumValues']['origin_language'] ?? [];
+		$toLanguages = $taskTypes['core:text2text:translate']['inputShapeEnumValues']['target_language'] ?? [];
 
 		$this->initialState->provideInitialState(
 			'translation_languages',
-			$this->translationManager->getLanguages()
+			[
+				'from' => $fromLanguages,
+				'to' => $toLanguages,
+			]
 		);
 
-		$filteredTypes = array_filter($this->taskProcessingManager->getAvailableTaskTypes(), static function (string $taskType) {
+		$filteredTypes = array_filter($taskTypes, static function (string $taskType) {
 			return in_array($taskType, self::ASSISTANT_TASK_TYPES, true);
 		}, ARRAY_FILTER_USE_KEY);
 		$this->initialState->provideInitialState(
@@ -76,6 +81,11 @@ class InitialStateProvider {
 		$this->initialState->provideInitialState(
 			'notify_push',
 			$this->configService->isNotifyPushSyncEnabled(),
+		);
+
+		$this->initialState->provideInitialState(
+			'is_full_width_editor',
+			$this->configService->isFullWidthEditor($this->userId),
 		);
 	}
 

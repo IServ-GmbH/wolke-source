@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -42,7 +41,7 @@ class S3Signature implements SignatureInterface {
 
 	public function signRequest(
 		RequestInterface $request,
-		CredentialsInterface $credentials
+		CredentialsInterface $credentials,
 	) {
 		$request = $this->prepareRequest($request, $credentials);
 		$stringToSign = $this->createCanonicalizedString($request);
@@ -57,7 +56,7 @@ class S3Signature implements SignatureInterface {
 		RequestInterface $request,
 		CredentialsInterface $credentials,
 		$expires,
-		array $options = []
+		array $options = [],
 	) {
 		$query = [];
 		// URL encoding already occurs in the URI template expansion. Undo that
@@ -107,7 +106,7 @@ class S3Signature implements SignatureInterface {
 	 */
 	private function prepareRequest(
 		RequestInterface $request,
-		CredentialsInterface $creds
+		CredentialsInterface $creds,
 	) {
 		$modify = [
 			'remove_headers' => ['X-Amz-Date'],
@@ -130,7 +129,7 @@ class S3Signature implements SignatureInterface {
 
 	private function createCanonicalizedString(
 		RequestInterface $request,
-		$expires = null
+		$expires = null,
 	) {
 		$buffer = $request->getMethod() . "\n";
 

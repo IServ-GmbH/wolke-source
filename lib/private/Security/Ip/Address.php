@@ -33,7 +33,7 @@ class Address implements IAddress {
 		return Factory::parseAddressString($ip, ParseStringFlag::MAY_INCLUDE_ZONEID) !== null;
 	}
 
-	public function matches(IRange... $ranges): bool {
+	public function matches(IRange ... $ranges): bool {
 		foreach ($ranges as $range) {
 			if ($range->contains($this)) {
 				return true;

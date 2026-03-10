@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,6 +15,8 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\Server;
+use OCP\ServerVersion;
 use OCP\Support\Subscription\IRegistry;
 use Psr\Log\LoggerInterface;
 
@@ -58,7 +59,7 @@ abstract class Fetcher {
 	 */
 	protected function fetch($ETag, $content) {
 		$appstoreenabled = $this->config->getSystemValueBool('appstoreenabled', true);
-		if ((int) $this->config->getAppValue('settings', 'appstore-fetcher-lastFailure', '0') > time() - self::RETRY_AFTER_FAILURE_SECONDS) {
+		if ((int)$this->config->getAppValue('settings', 'appstore-fetcher-lastFailure', '0') > time() - self::RETRY_AFTER_FAILURE_SECONDS) {
 			return [];
 		}
 
@@ -67,7 +68,7 @@ abstract class Fetcher {
 		}
 
 		$options = [
-			'timeout' => 60,
+			'timeout' => (int)$this->config->getAppValue('settings', 'appstore-timeout', '120')
 		];
 
 		if ($ETag !== '') {
@@ -89,7 +90,7 @@ abstract class Fetcher {
 		try {
 			$response = $client->get($this->getEndpoint(), $options);
 		} catch (ConnectException|ClientException|ServerException $e) {
-			$this->config->setAppValue('settings', 'appstore-fetcher-lastFailure', (string) time());
+			$this->config->setAppValue('settings', 'appstore-fetcher-lastFailure', (string)time());
 			$this->logger->error('Failed to connect to the app store', ['exception' => $e]);
 			return [];
 		}
@@ -148,7 +149,7 @@ abstract class Fetcher {
 						$invalidateAfterSeconds = self::INVALIDATE_AFTER_SECONDS_UNSTABLE;
 					}
 
-					if ((int) $jsonBlob['timestamp'] > ($this->timeFactory->getTime() - $invalidateAfterSeconds)) {
+					if ((int)$jsonBlob['timestamp'] > ($this->timeFactory->getTime() - $invalidateAfterSeconds)) {
 						return $jsonBlob['data'];
 					}
 
@@ -210,7 +211,7 @@ abstract class Fetcher {
 	 */
 	protected function getChannel() {
 		if ($this->channel === null) {
-			$this->channel = \OC_Util::getChannel();
+			$this->channel = Server::get(ServerVersion::class)->getChannel();
 		}
 		return $this->channel;
 	}

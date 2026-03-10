@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -24,6 +23,6 @@ class LimitFilter implements XmlDeserializable {
 			throw new BadRequest('The {' . SearchPlugin::NS_Nextcloud . '}limit has illegal value');
 		}
 
-		return (int) $value;
+		return (int)$value;
 	}
 }

@@ -2,22 +2,20 @@
 
 namespace Rubix\ML\Regressors;
 
-use Tensor\Vector;
 use Rubix\ML\Learner;
 use Rubix\ML\Verbose;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Strategies\Mean;
-use Rubix\ML\Other\Traits\LoggerAware;
-use Rubix\ML\Other\Traits\PredictsSingle;
+use Rubix\ML\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\CrossValidation\Metrics\RMSE;
 use Rubix\ML\CrossValidation\Metrics\Metric;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -27,12 +25,20 @@ use Rubix\ML\Specifications\EstimatorIsCompatibleWithMetric;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function count;
 use function is_nan;
-use function array_slice;
 use function get_class;
+use function array_map;
+use function array_reduce;
+use function array_slice;
+use function array_fill;
 use function in_array;
+use function round;
+use function max;
+use function abs;
+use function get_object_vars;
 
 /**
  * Gradient Boost
@@ -42,15 +48,12 @@ use function in_array;
  * series of *weak* base learners. Stochastic gradient boosting is achieved by varying
  * the ratio of samples to subsample uniformly at random from the training set.
  *
- * > **Note**: The default base classifier is a Dummy Classifier using the Mean strategy
- * and the default booster is a Regression Tree with a max height of 3.
- *
  * References:
- * [1] J. H. Friedman. (2001). Greedy Function Approximation: A Gradient
- * Boosting Machine.
+ * [1] J. H. Friedman. (2001). Greedy Function Approximation: A Gradient Boosting Machine.
  * [2] J. H. Friedman. (1999). Stochastic Gradient Boosting.
- * [3] Y. Wei. et al. (2017). Early stopping for kernel boosting algorithms:
- * A general analysis with localized complexities.
+ * [3] Y. Wei. et al. (2017). Early stopping for kernel boosting algorithms: A general analysis
+ * with localized complexities.
+ * [4] G. Ke et al. (2017). LightGBM: A Highly Efficient Gradient Boosting Decision Tree.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
@@ -58,7 +61,7 @@ use function in_array;
  */
 class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, LoggerAware;
+    use AutotrackRevisions, LoggerAware;
 
     /**
      * The class names of the compatible learners to used as boosters.
@@ -75,132 +78,129 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
      *
      * @var int
      */
-    protected const MIN_SUBSAMPLE = 1;
+    protected const MIN_SUBSAMPLE = 2;
 
     /**
      * The regressor that will fix up the error residuals of the *weak* base learner.
      *
      * @var \Rubix\ML\Learner
      */
-    protected $booster;
+    protected \Rubix\ML\Learner $booster;
 
     /**
      * The learning rate of the ensemble i.e. the *shrinkage* applied to each step.
      *
      * @var float
      */
-    protected $rate;
+    protected float $rate;
 
     /**
      * The ratio of samples to subsample from the training set for each booster.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
-     *  The max number of estimators to train in the ensemble.
+     * The maximum number of training epochs. i.e. the number of times to iterate before terminating.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $estimators;
+    protected int $epochs;
 
     /**
      * The minimum change in the training loss necessary to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
-     * The number of epochs without improvement in the validation score to wait
-     * before considering an early stop.
+     * The number of epochs without improvement in the validation score to wait before considering an
+     * early stop.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $window;
+    protected int $window;
 
     /**
      * The proportion of training samples to use for validation and progress monitoring.
      *
      * @var float
      */
-    protected $holdOut;
+    protected float $holdOut;
 
     /**
-     * The metric used to score the generalization performance of the model
-     * during training.
+     * The metric used to score the generalization performance of the model during training.
      *
      * @var \Rubix\ML\CrossValidation\Metrics\Metric
      */
-    protected $metric;
-
-    /**
-     * The *weak* base regressor to be boosted.
-     *
-     * @var \Rubix\ML\Learner
-     */
-    protected $base;
+    protected \Rubix\ML\CrossValidation\Metrics\Metric $metric;
 
     /**
      * An ensemble of weak regressors.
      *
      * @var mixed[]
      */
-    protected $ensemble = [
+    protected array $ensemble = [
         //
     ];
-
-    /**
-     * The dimensionality of the training set.
-     *
-     * @var int|null
-     */
-    protected $featureCount;
 
     /**
      * The validation scores at each epoch.
      *
      * @var float[]|null
      */
-    protected $scores;
+    protected ?array $scores = null;
 
     /**
      * The average training loss at each epoch.
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
+
+    /**
+     * The dimensionality of the training set.
+     *
+     * @var int<0,max>|null
+     */
+    protected ?int $featureCount = null;
+
+    /**
+     * The mean of the labels of the training set.
+     *
+     * @var float|null
+     */
+    protected ?float $mu = null;
 
     /**
      * @param \Rubix\ML\Learner|null $booster
      * @param float $rate
      * @param float $ratio
-     * @param int $estimators
+     * @param int $epochs
      * @param float $minChange
      * @param int $window
      * @param float $holdOut
      * @param \Rubix\ML\CrossValidation\Metrics\Metric|null $metric
-     * @param \Rubix\ML\Learner|null $base
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
     public function __construct(
         ?Learner $booster = null,
         float $rate = 0.1,
         float $ratio = 0.5,
-        int $estimators = 1000,
+        int $epochs = 1000,
         float $minChange = 1e-4,
-        int $window = 10,
+        int $window = 5,
         float $holdOut = 0.1,
-        ?Metric $metric = null,
-        ?Learner $base = null
+        ?Metric $metric = null
     ) {
         if ($booster and !in_array(get_class($booster), self::COMPATIBLE_BOOSTERS)) {
             throw new InvalidArgumentException('Booster is not compatible'
                 . ' with the ensemble.');
         }
 
-        if ($rate <= 0.0 or $rate > 1.0) {
+        if ($rate <= 0.0) {
             throw new InvalidArgumentException('Learning rate must be'
                 . " greater than 0, $rate given.");
         }
@@ -210,9 +210,9 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
                 . " between 0 and 1, $ratio given.");
         }
 
-        if ($estimators < 1) {
-            throw new InvalidArgumentException('Number of estimators'
-                . " must be greater than 0, $estimators given.");
+        if ($epochs < 0) {
+            throw new InvalidArgumentException('Number of epochs'
+                . " must be greater than 0, $epochs given.");
         }
 
         if ($minChange < 0.0) {
@@ -234,20 +234,14 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
             EstimatorIsCompatibleWithMetric::with($this, $metric)->check();
         }
 
-        if ($base and $base->type() != EstimatorType::regressor()) {
-            throw new InvalidArgumentException('Base Estimator must be a'
-                . " regressor, {$base->type()} given.");
-        }
-
         $this->booster = $booster ?? new RegressionTree(3);
         $this->rate = $rate;
         $this->ratio = $ratio;
-        $this->estimators = $estimators;
+        $this->epochs = $epochs;
         $this->minChange = $minChange;
         $this->window = $window;
         $this->holdOut = $holdOut;
         $this->metric = $metric ?? new RMSE();
-        $this->base = $base ?? new DummyRegressor(new Mean());
     }
 
     /**
@@ -271,12 +265,7 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
      */
     public function compatibility() : array
     {
-        $compatibility = array_intersect(
-            $this->booster->compatibility(),
-            $this->base->compatibility()
-        );
-
-        return array_values($compatibility);
+        return $this->booster->compatibility();
     }
 
     /**
@@ -292,12 +281,11 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
             'booster' => $this->booster,
             'rate' => $this->rate,
             'ratio' => $this->ratio,
-            'estimators' => $this->estimators,
-            'min_change' => $this->minChange,
+            'epochs' => $this->epochs,
+            'min change' => $this->minChange,
             'window' => $this->window,
-            'hold_out' => $this->holdOut,
+            'hold out' => $this->holdOut,
             'metric' => $this->metric,
-            'base' => $this->base,
         ];
     }
 
@@ -308,7 +296,27 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
      */
     public function trained() : bool
     {
-        return $this->base->trained() and $this->ensemble;
+        return !empty($this->ensemble);
+    }
+
+    /**
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'score' => $this->scores[$epoch] ?? null,
+                'loss' => $loss,
+            ];
+        }
     }
 
     /**
@@ -322,13 +330,13 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
     }
 
     /**
-     * Return the loss at each epoch from the last training session.
+     * Return the loss for each epoch from the last training session.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -346,95 +354,78 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
-
-        $this->featureCount = $dataset->numColumns();
 
         [$testing, $training] = $dataset->randomize()->split($this->holdOut);
 
-        [$min, $max] = $this->metric->range();
+        [$minScore, $maxScore] = $this->metric->range()->list();
 
-        if ($this->logger) {
-            $this->logger->info("Training {$this->base}");
-        }
+        [$m, $n] = $training->shape();
 
-        $this->base->train($training);
+        $targets = $training->labels();
 
-        $this->ensemble = $this->scores = $this->steps = [];
+        $mu = Stats::mean($targets);
 
-        /** @var list<int|float> $predictions */
-        $predictions = $this->base->predict($training);
-
-        $out = $prevOut = Vector::quick($predictions);
-        $target = Vector::quick($training->labels());
+        $out = array_fill(0, $m, $mu);
 
         if (!$testing->empty()) {
-            /** @var list<int|float> $predictions */
-            $predictions = $this->base->predict($testing);
-
-            $prevPred = Vector::quick($predictions);
+            $outTest = array_fill(0, $testing->numSamples(), $mu);
+        } elseif ($this->logger) {
+            $this->logger->notice('Insufficient validation data, '
+                . 'some features are disabled');
         }
 
-        $p = max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $training->numRows()));
+        $p = max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $m));
 
-        $bestScore = $min;
-        $bestEpoch = $delta = 0;
+        $weights = array_fill(0, $m, 1.0 / $m);
+
+        $this->featureCount = $n;
+        $this->ensemble = $this->scores = $this->losses = [];
+        $this->mu = $mu;
+
+        $bestScore = $minScore;
+        $bestEpoch = $numWorseEpochs = 0;
         $score = null;
         $prevLoss = INF;
 
-        for ($epoch = 1; $epoch <= $this->estimators; ++$epoch) {
-            $gradient = $target->subtract($out);
+        for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
+            $gradient = array_map([$this, 'gradient'], $out, $targets);
+            $loss = array_reduce($gradient, [$this, 'l2Loss'], 0.0);
 
-            $training = Labeled::quick($training->samples(), $gradient->asArray());
+            $loss /= $m;
 
-            $booster = clone $this->booster;
+            $lossChange = abs($prevLoss - $loss);
 
-            $subset = $training->randomSubset($p);
+            $this->losses[$epoch] = $loss;
 
-            $booster->train($subset);
+            if (isset($outTest)) {
+                $score = $this->metric->score($outTest, $testing->labels());
 
-            $this->ensemble[] = $booster;
+                $this->scores[$epoch] = $score;
+            }
 
-            /** @var list<int|float> $predictions */
-            $predictions = $booster->predict($training);
+            if ($this->logger) {
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
 
-            $out = Vector::quick($predictions)
-                ->multiply($this->rate)
-                ->add($prevOut);
+                $message = "Epoch: $epoch, "
+                    . "L2 Loss: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}, "
+                    . "{$this->metric}: " . ($score ?? 'N/A');
 
-            $loss = $gradient->square()->mean();
+                $this->logger->info($message);
+            }
 
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
             }
 
-            $this->steps[] = $loss;
-
-            if (isset($prevPred)) {
-                /** @var list<int|float> $predictions */
-                $predictions = $booster->predict($testing);
-
-                $pred = Vector::quick($predictions)
-                    ->multiply($this->rate)
-                    ->add($prevPred);
-
-                $score = $this->metric->score($pred->asArray(), $testing->labels());
-
-                $this->scores[] = $score;
-            }
-
-            if ($this->logger) {
-                $this->logger->info("Epoch $epoch - {$this->metric}: "
-                    . ($score ?? 'n/a') . ", L2 Loss: $loss");
-            }
-
-            if (isset($pred)) {
-                if ($score >= $max) {
+            if (isset($score)) {
+                if ($score >= $maxScore) {
                     break;
                 }
 
@@ -442,36 +433,51 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
                     $bestScore = $score;
                     $bestEpoch = $epoch;
 
-                    $delta = 0;
+                    $numWorseEpochs = 0;
                 } else {
-                    ++$delta;
+                    ++$numWorseEpochs;
                 }
 
-                if ($delta >= $this->window) {
+                if ($numWorseEpochs >= $this->window) {
                     break;
                 }
-
-                $prevPred = $pred;
             }
 
-            if ($loss <= 0.0) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
-            if (abs($prevLoss - $loss) < $this->minChange) {
-                break;
+            $training = Labeled::quick($training->samples(), $gradient);
+
+            $subset = $training->randomWeightedSubsetWithReplacement($p, $weights);
+
+            $booster = clone $this->booster;
+
+            $booster->train($subset);
+
+            $this->ensemble[] = $booster;
+
+            $predictions = $booster->predict($training);
+
+            $out = array_map([$this, 'updateOut'], $predictions, $out);
+
+            if (isset($outTest)) {
+                $predictions = $booster->predict($testing);
+
+                $outTest = array_map([$this, 'updateOut'], $predictions, $outTest);
             }
 
-            $prevOut = $out;
+            $weights = array_map('abs', $gradient);
+
             $prevLoss = $loss;
         }
 
-        if ($this->scores and end($this->scores) < $bestScore) {
-            if ($this->logger) {
-                $this->logger->info("Restoring ensemble state to epoch $bestEpoch");
-            }
-
+        if ($this->scores and end($this->scores) <= $bestScore) {
             $this->ensemble = array_slice($this->ensemble, 0, $bestEpoch);
+
+            if ($this->logger) {
+                $this->logger->info("Model state restored to epoch $bestEpoch");
+            }
         }
 
         if ($this->logger) {
@@ -488,56 +494,108 @@ class GradientBoost implements Estimator, Learner, RanksFeatures, Verbose, Persi
      */
     public function predict(Dataset $dataset) : array
     {
-        if (!$this->ensemble or !$this->featureCount) {
+        if (!isset($this->ensemble, $this->featureCount, $this->mu)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
         DatasetHasDimensionality::with($dataset, $this->featureCount)->check();
 
-        /** @var list<int|float> $predictions */
-        $predictions = $this->base->predict($dataset);
+        $out = array_fill(0, $dataset->numSamples(), $this->mu);
 
         foreach ($this->ensemble as $estimator) {
-            /** @var int $j */
-            foreach ($estimator->predict($dataset) as $j => $prediction) {
-                $predictions[$j] += $this->rate * $prediction;
-            }
+            $predictions = $estimator->predict($dataset);
+
+            $out = array_map([$this, 'updateOut'], $predictions, $out);
         }
 
-        return $predictions;
+        return $out;
     }
 
     /**
-     * Return the normalized importance scores of each feature column of the training set.
+     * Return the importance scores of each feature column of the training set.
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return float[]
      */
     public function featureImportances() : array
     {
-        if (!$this->ensemble or !$this->featureCount) {
+        if (!isset($this->ensemble, $this->featureCount)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
         $importances = array_fill(0, $this->featureCount, 0.0);
 
         foreach ($this->ensemble as $tree) {
-            foreach ($tree->featureImportances() as $column => $importance) {
-                $importances[$column] += $importance;
+            $scores = $tree->featureImportances();
+
+            foreach ($scores as $column => $score) {
+                $importances[$column] += $score;
             }
         }
 
-        $n = count($this->ensemble);
+        $numEstimators = count($this->ensemble);
 
         foreach ($importances as &$importance) {
-            $importance /= $n;
+            $importance /= $numEstimators;
         }
 
         return $importances;
     }
 
     /**
+     * Compute the output for an iteration.
+     *
+     * @param float $prediction
+     * @param float $out
+     * @return float
+     */
+    protected function updateOut(float $prediction, float $out) : float
+    {
+        return $this->rate * $prediction + $out;
+    }
+
+    /**
+     * Compute the gradient for a single sample.
+     *
+     * @param float $out
+     * @param float $target
+     * @return float
+     */
+    protected function gradient(float $out, float $target) : float
+    {
+        return $target - $out;
+    }
+
+    /**
+     * Compute the cross entropy loss function.
+     *
+     * @param float $loss
+     * @param float $derivative
+     * @return float
+     */
+    protected function l2Loss(float $loss, float $derivative) : float
+    {
+        return $loss + $derivative ** 2;
+    }
+
+    /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses'], $properties['scores']);
+
+        return $properties;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

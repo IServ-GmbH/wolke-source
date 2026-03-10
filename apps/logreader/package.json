@@ -14,16 +14,16 @@
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.0.1",
     "@nextcloud/eslint-config": "^8.4.1",
-    "@nextcloud/vite-config": "^1.4.2",
-    "@pinia/testing": "^0.1.5",
-    "@vitest/coverage-istanbul": "^2.0.5",
+    "@nextcloud/vite-config": "^1.7.0",
+    "@pinia/testing": "^0.1.7",
+    "@vitest/coverage-istanbul": "^3.0.2",
     "@vue/test-utils": "^1.3.6",
     "@vue/tsconfig": "^0.5.1",
     "eslint-plugin-chai-friendly": "^1.0.1",
-    "happy-dom": "^16.8.1",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.0",
-    "vitest": "^2.0.3"
+    "happy-dom": "^16.6.0",
+    "typescript": "^5.7.3",
+    "vite": "^7.1.5",
+    "vitest": "^3.0.2"
   },
   "engines": {
     "node": "^20.0.0",
@@ -33,20 +33,19 @@
     "@highlightjs/vue-plugin": "^1.0.2",
     "@mdi/svg": "^7.4.47",
     "@nextcloud/axios": "^2.5.0",
-    "@nextcloud/dialogs": "^5.3.5",
+    "@nextcloud/dialogs": "^6.0.1",
     "@nextcloud/initial-state": "^2.2.0",
     "@nextcloud/l10n": "^3.1.0",
     "@nextcloud/logger": "^3.0.2",
     "@nextcloud/router": "^3.0.0",
     "@nextcloud/typings": "^1.9.1",
-    "@nextcloud/vue": "^8.16.0",
-    "axios": "^1.7.4",
+    "@nextcloud/vue": "^8.32.0",
     "date-fns": "^3.6.0",
-    "highlight.js": "^11.10.0",
+    "highlight.js": "^11.11.1",
     "json-string-splitter": "^1.0.0",
-    "pinia": "^2.2.1",
+    "pinia": "^2.3.0",
     "vue": "^2.7.15",
-    "vue-material-design-icons": "^5.3.0"
+    "vue-material-design-icons": "^5.3.1"
   },
   "eslintConfig": {
     "ignorePatterns": [
@@ -92,5 +91,5 @@
   "browserslist": [
     "extends @nextcloud/browserslist-config"
   ],
-  "version": "3.0.0"
+  "version": "4.0.0"
 }

@@ -3,7 +3,7 @@
 namespace Rubix\ML\CrossValidation\Metrics;
 
 use Tensor\Matrix;
-use Rubix\ML\Estimator;
+use Rubix\ML\Tuple;
 use Rubix\ML\EstimatorType;
 use Rubix\ML\CrossValidation\Reports\ContingencyTable;
 
@@ -42,11 +42,11 @@ class RandIndex implements Metric
     /**
      * Return a tuple of the min and max output value for this metric.
      *
-     * @return array{float,float}
+     * @return \Rubix\ML\Tuple{float,float}
      */
-    public function range() : array
+    public function range() : Tuple
     {
-        return [-1.0, 1.0];
+        return new Tuple(-1.0, 1.0);
     }
 
     /**
@@ -74,10 +74,6 @@ class RandIndex implements Metric
     {
         $table = (new ContingencyTable())->generate($labels, $predictions);
 
-        if (empty($table)) {
-            return 0.0;
-        }
-
         $table = Matrix::build($table->toArray());
 
         $sigma = $table->map([self::class, 'comb2'])->sum()->sum();
@@ -93,6 +89,8 @@ class RandIndex implements Metric
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

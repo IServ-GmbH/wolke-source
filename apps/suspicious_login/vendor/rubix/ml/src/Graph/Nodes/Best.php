@@ -2,8 +2,6 @@
 
 namespace Rubix\ML\Graph\Nodes;
 
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
-
 /**
  * Best
  *
@@ -17,35 +15,33 @@ use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
  */
 class Best implements Outcome
 {
-    use HasBinaryChildren;
-
     /**
      * The outcome of a decision.
      *
      * @var string
      */
-    protected $outcome;
+    protected string $outcome;
 
     /**
      * The probabilities of each discrete class outcome.
      *
      * @var float[]
      */
-    protected $probabilities;
+    protected array $probabilities;
 
     /**
      * The amount of impurity among the labels in the node.
      *
      * @var float
      */
-    protected $impurity;
+    protected float $impurity;
 
     /**
      * The number of labels this node is responsible for.
      *
      * @var int
      */
-    protected $n;
+    protected int $n;
 
     /**
      * @param string $outcome
@@ -103,7 +99,19 @@ class Best implements Outcome
     }
 
     /**
+     * Return the height of the node in the tree.
+     *
+     * @return int
+     */
+    public function height() : int
+    {
+        return 1;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

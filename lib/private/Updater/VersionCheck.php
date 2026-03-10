@@ -11,12 +11,14 @@ use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IUserManager;
+use OCP\ServerVersion;
 use OCP\Support\Subscription\IRegistry;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class VersionCheck {
 	public function __construct(
+		private ServerVersion $serverVersion,
 		private IClientService $clientService,
 		private IConfig $config,
 		private IAppConfig $appConfig,
@@ -48,20 +50,20 @@ class VersionCheck {
 		$this->appConfig->setValueInt('core', 'lastupdatedat', time());
 
 		if ($this->config->getAppValue('core', 'installedat', '') === '') {
-			$this->config->setAppValue('core', 'installedat', (string) microtime(true));
+			$this->config->setAppValue('core', 'installedat', (string)microtime(true));
 		}
 
 		$version = Util::getVersion();
 		$version['installed'] = $this->config->getAppValue('core', 'installedat');
 		$version['updated'] = $this->appConfig->getValueInt('core', 'lastupdatedat');
-		$version['updatechannel'] = \OC_Util::getChannel();
+		$version['updatechannel'] = $this->serverVersion->getChannel();
 		$version['edition'] = '';
-		$version['build'] = \OC_Util::getBuild();
+		$version['build'] = $this->serverVersion->getBuild();
 		$version['php_major'] = PHP_MAJOR_VERSION;
 		$version['php_minor'] = PHP_MINOR_VERSION;
 		$version['php_release'] = PHP_RELEASE_VERSION;
 		$version['category'] = $this->computeCategory();
-		$version['isSubscriber'] = (int) $this->registry->delegateHasValidSubscription();
+		$version['isSubscriber'] = (int)$this->registry->delegateHasValidSubscription();
 		$versionString = implode('x', $version);
 
 		//fetch xml data from updater
@@ -85,13 +87,13 @@ class VersionCheck {
 				$data = @simplexml_load_string($xml);
 			}
 			if ($data !== false) {
-				$tmp['version'] = (string) $data->version;
-				$tmp['versionstring'] = (string) $data->versionstring;
-				$tmp['url'] = (string) $data->url;
-				$tmp['web'] = (string) $data->web;
-				$tmp['changes'] = isset($data->changes) ? (string) $data->changes : '';
-				$tmp['autoupdater'] = (string) $data->autoupdater;
-				$tmp['eol'] = isset($data->eol) ? (string) $data->eol : '0';
+				$tmp['version'] = (string)$data->version;
+				$tmp['versionstring'] = (string)$data->versionstring;
+				$tmp['url'] = (string)$data->url;
+				$tmp['web'] = (string)$data->web;
+				$tmp['changes'] = isset($data->changes) ? (string)$data->changes : '';
+				$tmp['autoupdater'] = (string)$data->autoupdater;
+				$tmp['eol'] = isset($data->eol) ? (string)$data->eol : '0';
 			} else {
 				libxml_clear_errors();
 			}

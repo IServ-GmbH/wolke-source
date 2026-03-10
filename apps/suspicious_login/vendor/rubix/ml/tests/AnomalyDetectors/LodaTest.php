@@ -30,14 +30,14 @@ class LodaTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 400;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -74,15 +74,20 @@ class LodaTest extends TestCase
     protected function setUp() : void
     {
         $this->generator = new Agglomerate([
-            0 => new Blob([0.0, 0.0], 0.5),
-            1 => new Circle(0.0, 0.0, 8.0, 0.1),
+            0 => new Blob([0.0, 0.0], 2.0),
+            1 => new Circle(0.0, 0.0, 8.0, 1.0),
         ], [0.9, 0.1]);
 
-        $this->estimator = new Loda(100, null, 0.1);
+        $this->estimator = new Loda(0.1, 100, null);
 
         $this->metric = new FBeta();
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -116,18 +121,6 @@ class LodaTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         new Loda(100, 0);
-    }
-
-    /**
-     * @test
-     */
-    public function estimateBins() : void
-    {
-        $this->assertSame(4, Loda::estimateBins(10));
-        $this->assertSame(8, Loda::estimateBins(100));
-        $this->assertSame(11, Loda::estimateBins(1000));
-        $this->assertSame(14, Loda::estimateBins(10000));
-        $this->assertSame(18, Loda::estimateBins(100000));
     }
 
     /**
@@ -205,10 +198,5 @@ class LodaTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

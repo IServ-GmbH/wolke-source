@@ -34,50 +34,28 @@ use OCP\WorkflowEngine\IRuleMatcher;
 
 class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 	private const EVENT_NAMESPACE = '\OCP\Files::';
-
-	/** @var IL10N */
-	protected $l10n;
-	/** @var IURLGenerator */
-	protected $urlGenerator;
-	/** @var IRootFolder */
-	protected $root;
 	/** @var string */
 	protected $eventName;
 	/** @var Event */
 	protected $event;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var ISystemTagManager */
-	private $tagManager;
 	/** @var ?Node */
 	private $node;
 	/** @var ?IUser */
 	private $actingUser = null;
-	/** @var IUserManager */
-	private $userManager;
 	/** @var UserMountCache */
 	private $userMountCache;
-	/** @var IMountManager */
-	private $mountManager;
 
 	public function __construct(
-		IL10N $l10n,
-		IURLGenerator $urlGenerator,
-		IRootFolder $root,
-		IUserSession $userSession,
-		ISystemTagManager $tagManager,
-		IUserManager $userManager,
+		protected IL10N $l10n,
+		protected IURLGenerator $urlGenerator,
+		protected IRootFolder $root,
+		private IUserSession $userSession,
+		private ISystemTagManager $tagManager,
+		private IUserManager $userManager,
 		UserMountCache $userMountCache,
-		IMountManager $mountManager
+		private IMountManager $mountManager,
 	) {
-		$this->l10n = $l10n;
-		$this->urlGenerator = $urlGenerator;
-		$this->root = $root;
-		$this->userSession = $userSession;
-		$this->tagManager = $tagManager;
-		$this->userManager = $userManager;
 		$this->userMountCache = $userMountCache;
-		$this->mountManager = $mountManager;
 	}
 
 	public function getName(): string {
@@ -166,7 +144,7 @@ class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 				if (!$this->event instanceof MapperEvent || $this->event->getObjectType() !== 'files') {
 					throw new NotFoundException();
 				}
-				$nodes = $this->root->getById((int) $this->event->getObjectId());
+				$nodes = $this->root->getById((int)$this->event->getObjectId());
 				if (is_array($nodes) && isset($nodes[0])) {
 					$this->node = $nodes[0];
 					return $this->node;
@@ -219,7 +197,7 @@ class File implements IEntity, IDisplayText, IUrl, IIcon, IContextPortation {
 					return '';
 				}
 				array_push($options, $tagString, $filename);
-				return $this->l10n->t('%s assigned %s to %s', $options);
+				return $this->l10n->t('%1$s assigned %2$s to %3$s', $options);
 		}
 	}
 

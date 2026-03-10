@@ -25,14 +25,14 @@ class Minkowski implements Distance
      *
      * @var float
      */
-    protected $lambda;
+    protected float $lambda;
 
     /**
      * The inverse of the lambda parameter.
      *
      * @var float
      */
-    protected $inverse;
+    protected float $inverse;
 
     /**
      * @param float $lambda
@@ -85,6 +85,8 @@ class Minkowski implements Distance
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

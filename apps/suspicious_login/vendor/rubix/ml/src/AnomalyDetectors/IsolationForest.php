@@ -3,18 +3,16 @@
 namespace Rubix\ML\AnomalyDetectors;
 
 use Rubix\ML\Learner;
-use Rubix\ML\Ranking;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Graph\Nodes\Depth;
 use Rubix\ML\Graph\Trees\ITree;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\RanksSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
@@ -22,7 +20,6 @@ use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 
-use function Rubix\ML\warn_deprecated;
 use function count;
 
 use const Rubix\ML\EPSILON;
@@ -38,16 +35,15 @@ use const Rubix\ML\EPSILON;
  * References:
  * [1] F. T. Liu et al. (2008). Isolation Forest.
  * [2] F. T. Liu et al. (2011). Isolation-based Anomaly Detection.
- * [3] M. Garchery et al. (2018). On the influence of categorical features in
- * ranking anomalies using mixed data.
+ * [3] M. Garchery et al. (2018). On the influence of categorical features in ranking anomalies using mixed data.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistable
+class IsolationForest implements Estimator, Learner, Scoring, Persistable
 {
-    use AutotrackRevisions, RanksSingle;
+    use AutotrackRevisions;
 
     /**
      * The default minimum anomaly score for a sample to be flagged.
@@ -75,36 +71,35 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
      *
      * @var int
      */
-    protected $estimators;
+    protected int $estimators;
 
     /**
      * The ratio of training samples to train each estimator on.
      *
      * @var float|null
      */
-    protected $ratio;
+    protected ?float $ratio = null;
 
     /**
-     * The proportion of outliers that are presumed to be present in the
-     * training set.
+     * The proportion of outliers that are presumed to be present in the training set.
      *
      * @var float|null
      */
-    protected $contamination;
+    protected ?float $contamination = null;
 
     /**
      * The sum of the average depth of all the isolation trees in the ensemble.
      *
      * @var float|null
      */
-    protected $delta;
+    protected ?float $delta = null;
 
     /**
      * The isolation trees that make up the forest.
      *
      * @var \Rubix\ML\Graph\Trees\ITree[]
      */
-    protected $trees = [
+    protected array $trees = [
         //
     ];
 
@@ -113,14 +108,14 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
      *
      * @var float|null
      */
-    protected $threshold;
+    protected ?float $threshold = null;
 
     /**
      * The dimensionality of the training set.
      *
      * @var int|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param int $estimators
@@ -215,13 +210,13 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
             new SamplesAreCompatibleWithEstimator($dataset, $this),
         ])->check();
 
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
         $p = $this->ratio
             ? max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $n))
             : min(self::DEFAULT_SUBSAMPLE, $n);
 
-        $maxHeight = (int) max(1, round(log($p, 2)));
+        $maxHeight = (int) max(1, round(log($p, 2.0)));
 
         $this->trees = [];
 
@@ -245,7 +240,7 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
 
         $this->threshold = $threshold ?? self::DEFAULT_THRESHOLD;
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
     }
 
     /**
@@ -298,21 +293,6 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
     }
 
     /**
-     * Return the anomaly scores assigned to the samples in a dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return list<float>
-     */
-    public function rank(Dataset $dataset) : array
-    {
-        warn_deprecated('Rank() is deprecated, use score() instead.');
-
-        return $this->score($dataset);
-    }
-
-    /**
      * Return the isolation score of a sample.
      *
      * @param list<string|int|float> $sample
@@ -335,6 +315,8 @@ class IsolationForest implements Estimator, Learner, Scoring, Ranking, Persistab
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

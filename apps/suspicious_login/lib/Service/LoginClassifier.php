@@ -16,8 +16,8 @@ use OCA\SuspiciousLogin\Exception\ServiceException;
 use OCA\SuspiciousLogin\Util\AddressClassifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\ILogger;
 use OCP\IRequest;
+use Psr\Log\LoggerInterface;
 use Throwable;
 use function base64_decode;
 use function explode;
@@ -27,36 +27,14 @@ use function substr;
 
 class LoginClassifier {
 
-	/** @var EstimatorService */
-	private $estimator;
-
-	/** @var IRequest */
-	private $request;
-
-	/** @var ILogger */
-	private $logger;
-
-	/** @var SuspiciousLoginMapper */
-	private $mapper;
-
-	/** @var ITimeFactory */
-	private $timeFactory;
-
-	/** @var IEventDispatcher */
-	private $dispatcher;
-
-	public function __construct(EstimatorService $estimator,
-		IRequest $request,
-		ILogger $logger,
-		SuspiciousLoginMapper $mapper,
-		ITimeFactory $timeFactory,
-		IEventDispatcher $dispatcher) {
-		$this->estimator = $estimator;
-		$this->request = $request;
-		$this->logger = $logger;
-		$this->mapper = $mapper;
-		$this->timeFactory = $timeFactory;
-		$this->dispatcher = $dispatcher;
+	public function __construct(
+		private EstimatorService $estimator,
+		private IRequest $request,
+		private LoggerInterface $logger,
+		private SuspiciousLoginMapper $mapper,
+		private ITimeFactory $timeFactory,
+		private IEventDispatcher $dispatcher,
+	) {
 	}
 
 	/**
@@ -64,7 +42,7 @@ class LoginClassifier {
 	 */
 	private function isAuthenticatedWithAppPassword(IRequest $request): bool {
 		$authHeader = $request->getHeader('Authorization');
-		if (is_null($authHeader)) {
+		if (empty($authHeader)) {
 			return false;
 		}
 		if (substr($authHeader, 0, strlen('Basic ')) !== 'Basic ') {
@@ -98,12 +76,12 @@ class LoginClassifier {
 				return;
 			}
 		} catch (ServiceException $ex) {
-			$this->logger->warning("Could not predict suspiciousness: " . $ex->getMessage());
+			$this->logger->debug("Could not predict suspiciousness: " . $ex->getMessage());
 			// This most likely means there is no trained model yet, so we return early here
 			return;
 		}
 
-		$this->logger->warning("Detected a login from a suspicious login. user=$uid ip=$ip strategy=" . $strategy::getTypeName());
+		$this->logger->info("Detected a login from a suspicious login. user=$uid ip=$ip strategy=" . $strategy::getTypeName());
 
 		$login = $this->persistSuspiciousLogin($uid, $ip);
 		$this->notifyUser($uid, $ip, $login);
@@ -113,7 +91,7 @@ class LoginClassifier {
 	 * @param string $uid
 	 * @param string $ip
 	 */
-	private function persistSuspiciousLogin(string $uid, string $ip): SuspiciousLogin {
+	private function persistSuspiciousLogin(string $uid, string $ip): ?SuspiciousLogin {
 		try {
 			$entity = new SuspiciousLogin();
 			$entity->setUid($uid);
@@ -126,17 +104,25 @@ class LoginClassifier {
 
 			return $entity;
 		} catch (Throwable $ex) {
-			$this->logger->critical("could not save the details of a suspicious login");
-			$this->logger->logException($ex);
+			$this->logger->critical('could not save the details of a suspicious login', ['exception' => $ex]);
+			return null;
 		}
 	}
 
 	/**
 	 * @param string $uid
 	 * @param string $ip
-	 * @param SuspiciousLogin $login
+	 * @param ?SuspiciousLogin $login If null the user will be notified regardless of training thresholds
 	 */
-	private function notifyUser(string $uid, string $ip, SuspiciousLogin $login): void {
+	private function notifyUser(string $uid, string $ip, ?SuspiciousLogin $login): void {
+		if ($login === null) {
+			// There was an error persisting the login attempt, so we can not look for related events in the past.
+			// But we should still warn the user and not silently accept that attempt.
+			$event = new SuspiciousLoginEvent($uid, $ip);
+			$this->dispatcher->dispatchTyped($event);
+			return;
+		}
+
 		$now = $this->timeFactory->getTime();
 
 		// Assuming that a suspicious IP is most likely one that hasn't been seen before
@@ -152,7 +138,7 @@ class LoginClassifier {
 
 		$lastTwoDays = count($this->mapper->findRecentByUid($uid, $now - 60 * 60 * 24 * 2));
 		if ($lastTwoDays > 10) {
-			$this->logger->warning("Suspicious login peak detected: $uid received $lastTwoDays alerts in the last two days");
+			$this->logger->info("Suspicious login peak detected: $uid received $lastTwoDays alerts in the last two days");
 			$login->setNotificationState(NotificationState::NOT_SENT_PEAK_TWO_DAYS);
 			$this->mapper->update($login);
 			return;
@@ -160,14 +146,14 @@ class LoginClassifier {
 
 		$lastHour = count($this->mapper->findRecentByUid($uid, $now - 60 * 60));
 		if ($lastHour > 3) {
-			$this->logger->warning("Suspicious login peak detected: $uid received $lastHour alerts in the last hour");
+			$this->logger->info("Suspicious login peak detected: $uid received $lastHour alerts in the last hour");
 			$login->setNotificationState(NotificationState::NOT_SENT_PEAK_ONE_HOUR);
 			$this->mapper->update($login);
 			return;
 		}
 
 		$event = new SuspiciousLoginEvent($uid, $ip);
-		$this->dispatcher->dispatch(SuspiciousLoginEvent::class, $event);
+		$this->dispatcher->dispatchTyped($event);
 		$login->setNotificationState(NotificationState::SENT);
 
 		$this->mapper->update($login);

@@ -18,6 +18,7 @@ use OC\Authentication\Listeners\UserDeletedTokenCleanupListener;
 use OC\Authentication\Listeners\UserDeletedWebAuthnCleanupListener;
 use OC\Authentication\Notifications\Notifier as AuthenticationNotifier;
 use OC\Core\Listener\BeforeTemplateRenderedListener;
+use OC\Core\Listener\PasswordUpdatedListener;
 use OC\Core\Notification\CoreNotifier;
 use OC\TagManager;
 use OCP\AppFramework\App;
@@ -28,6 +29,7 @@ use OCP\DB\Events\AddMissingPrimaryKeyEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\User\Events\BeforeUserDeletedEvent;
+use OCP\User\Events\PasswordUpdatedEvent;
 use OCP\User\Events\UserDeletedEvent;
 use OCP\Util;
 
@@ -37,6 +39,9 @@ use OCP\Util;
  * @package OC\Core
  */
 class Application extends App {
+
+	public const APP_ID = 'core';
+
 	public function __construct() {
 		parent::__construct('core');
 
@@ -85,11 +90,6 @@ class Application extends App {
 				'filecache',
 				'fs_size',
 				['size']
-			);
-			$event->addMissingIndex(
-				'filecache',
-				'fs_id_storage_size',
-				['fileid', 'storage', 'size']
 			);
 			$event->addMissingIndex(
 				'filecache',
@@ -204,20 +204,19 @@ class Application extends App {
 
 			$event->addMissingIndex(
 				'preferences',
-				'preferences_app_key',
-				['appid', 'configkey']
+				'prefs_uid_lazy_i',
+				['userid', 'lazy']
+			);
+			$event->addMissingIndex(
+				'preferences',
+				'prefs_app_key_ind_fl_i',
+				['appid', 'configkey', 'indexed', 'flags']
 			);
 
 			$event->addMissingIndex(
 				'mounts',
 				'mounts_class_index',
 				['mount_provider_class']
-			);
-			$event->addMissingIndex(
-				'mounts',
-				'mounts_user_root_path_index',
-				['user_id', 'root_id', 'mount_point'],
-				['lengths' => [null, null, 128]]
 			);
 
 			$event->addMissingIndex(
@@ -230,6 +229,12 @@ class Application extends App {
 				'systemtag_object_mapping',
 				'systag_by_objectid',
 				['objectid']
+			);
+
+			$event->addMissingIndex(
+				'systemtag_object_mapping',
+				'systag_objecttype',
+				['objecttype']
 			);
 
 			$event->addMissingUniqueIndex(
@@ -296,6 +301,7 @@ class Application extends App {
 		$eventDispatcher->addServiceListener(BeforeUserDeletedEvent::class, UserDeletedFilesCleanupListener::class);
 		$eventDispatcher->addServiceListener(UserDeletedEvent::class, UserDeletedFilesCleanupListener::class);
 		$eventDispatcher->addServiceListener(UserDeletedEvent::class, UserDeletedWebAuthnCleanupListener::class);
+		$eventDispatcher->addServiceListener(PasswordUpdatedEvent::class, PasswordUpdatedListener::class);
 
 		// Tags
 		$eventDispatcher->addServiceListener(UserDeletedEvent::class, TagManager::class);

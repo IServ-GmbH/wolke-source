@@ -17,6 +17,7 @@ use OCP\Files\Folder;
 use OCP\Files\InvalidDirectoryException;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use Psr\Log\LoggerInterface;
 use Sabre\DAV\Exception\Conflict;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
@@ -25,23 +26,14 @@ use Sabre\DAV\ICopyTarget;
 use Sabre\DAV\INode;
 
 class AlbumRoot implements ICollection, ICopyTarget {
-	protected AlbumMapper $albumMapper;
-	protected AlbumWithFiles $album;
-	protected IRootFolder $rootFolder;
-	protected string $userId;
-
 	public function __construct(
-		AlbumMapper $albumMapper,
-		AlbumWithFiles $album,
-		IRootFolder $rootFolder,
-		string $userId,
-		UserConfigService $userConfigService
+		protected AlbumMapper $albumMapper,
+		protected AlbumWithFiles $album,
+		protected IRootFolder $rootFolder,
+		protected string $userId,
+		protected UserConfigService $userConfigService,
+		protected LoggerInterface $logger,
 	) {
-		$this->albumMapper = $albumMapper;
-		$this->album = $album;
-		$this->rootFolder = $rootFolder;
-		$this->userId = $userId;
-		$this->userConfigService = $userConfigService;
 	}
 
 	/**
@@ -74,7 +66,7 @@ class AlbumRoot implements ICollection, ICopyTarget {
 	 *
 	 * @param string $name
 	 * @param null|resource|string $data
-	 * @return void
+	 * @return string|null
 	 */
 	public function createFile($name, $data = null) {
 		try {
@@ -97,7 +89,7 @@ class AlbumRoot implements ICollection, ICopyTarget {
 			}
 
 			// Check for conflict and rename the file accordingly
-			$newName = \basename(\OC_Helper::buildNotExistingFileName($photosLocation, $name));
+			$newName = $photosFolder->getNonExistingName($name);
 
 			$node = $photosFolder->newFile($newName, $data);
 			$this->addFile($node->getId(), $node->getOwner()->getUID());
@@ -106,6 +98,7 @@ class AlbumRoot implements ICollection, ICopyTarget {
 			\header('OC-FileId: ' . $node->getId());
 			return '"' . $node->getEtag() . '"';
 		} catch (\Exception $e) {
+			$this->logger->error('Could not create file', ['exception' => $e]);
 			throw new Forbidden('Could not create file');
 		}
 	}
@@ -117,6 +110,9 @@ class AlbumRoot implements ICollection, ICopyTarget {
 		throw new Forbidden('Not allowed to create directories in this folder');
 	}
 
+	/**
+	 * @return AlbumPhoto[]
+	 */
 	public function getChildren(): array {
 		return array_map(function (AlbumFile $file) {
 			return new AlbumPhoto($this->albumMapper, $this->album->getAlbum(), $file, $this->rootFolder, $this->rootFolder->getUserFolder($this->userId));
@@ -125,7 +121,7 @@ class AlbumRoot implements ICollection, ICopyTarget {
 
 	public function getChild($name): AlbumPhoto {
 		foreach ($this->album->getFiles() as $file) {
-			if ($file->getFileId() . "-" . $file->getName() === $name) {
+			if ($file->getFileId() . '-' . $file->getName() === $name) {
 				return new AlbumPhoto($this->albumMapper, $this->album->getAlbum(), $file, $this->rootFolder, $this->rootFolder->getUserFolder($this->userId));
 			}
 		}
@@ -147,7 +143,7 @@ class AlbumRoot implements ICollection, ICopyTarget {
 
 	public function copyInto($targetName, $sourcePath, INode $sourceNode): bool {
 		if (!$sourceNode instanceof File) {
-			throw new Forbidden("The source is not a file");
+			throw new Forbidden('The source is not a file');
 		}
 
 		$sourceId = $sourceNode->getId();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,6 +14,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\UnknownNotificationException;
 use OCP\User\Backend\ISetPasswordBackend;
 
 class Notifier implements INotifier {
@@ -74,7 +76,7 @@ class Notifier implements INotifier {
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'firstrunwizard') {
 			// Not my app => throw
-			throw new \InvalidArgumentException();
+			throw new UnknownNotificationException();
 		}
 
 		switch ($notification->getSubject()) {
@@ -83,7 +85,7 @@ class Notifier implements INotifier {
 				if ($subject === '') {
 					// Everything done, mark the notification as processed...
 					$this->notificationManager->markProcessed($notification);
-					throw new \InvalidArgumentException();
+					throw new UnknownNotificationException();
 				}
 
 				$notification->setParsedSubject($subject)
@@ -105,7 +107,7 @@ class Notifier implements INotifier {
 				return $this->setAppHintDetails($notification, $languageCode, $app);
 			default:
 				// Unknown subject => Unknown notification => throw
-				throw new \InvalidArgumentException();
+				throw new UnknownNotificationException();
 		}
 	}
 
@@ -154,17 +156,17 @@ class Notifier implements INotifier {
 		$appLink = '';
 		switch ($app) {
 			case 'calendar':
-				$notification->setParsedSubject($l->t('App recommendation: Nextcloud Calendar'));
+				$notification->setParsedSubject($l->t('App recommendation: Calendar'));
 				$notification->setParsedMessage($l->t('Schedule work & meetings, synced with all your devices.'));
 				$appLink = '/organization/calendar';
 				break;
 			case 'contacts':
-				$notification->setParsedSubject($l->t('App recommendation: Nextcloud Contacts'));
+				$notification->setParsedSubject($l->t('App recommendation: Contacts'));
 				$notification->setParsedMessage($l->t('Keep your colleagues and friends in one place without leaking their private info.'));
 				$appLink = '/organization/contacts';
 				break;
 			case 'mail':
-				$notification->setParsedSubject($l->t('App recommendation: Nextcloud Mail'));
+				$notification->setParsedSubject($l->t('App recommendation: Mail'));
 				$notification->setParsedMessage($l->t('Simple email app nicely integrated with Files, Contacts and Calendar.'));
 				$appLink = '/social/mail';
 				break;
@@ -202,7 +204,7 @@ class Notifier implements INotifier {
 		}
 		$notification
 			->setLink($this->url->linkToRouteAbsolute('settings.AppSettings.viewApps') . $appLink)
-			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('firstrunwizard', 'apps/'. $app . '.svg')));
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('firstrunwizard', 'apps/' . $app . '.svg')));
 		return $notification;
 	}
 }

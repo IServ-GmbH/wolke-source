@@ -27,7 +27,10 @@ namespace OCA\DAV\Connector\Sabre;
  * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ITagManager;
+use OCP\ITags;
+use OCP\IUserSession;
 use Sabre\DAV\PropFind;
 use Sabre\DAV\PropPatch;
 
@@ -47,12 +50,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	private $server;
 
 	/**
-	 * @var \OCP\ITagManager
-	 */
-	private $tagManager;
-
-	/**
-	 * @var \OCP\ITags
+	 * @var ITags
 	 */
 	private $tagger;
 
@@ -65,17 +63,15 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	private $cachedTags;
 
 	/**
-	 * @var \Sabre\DAV\Tree
-	 */
-	private $tree;
-
-	/**
 	 * @param \Sabre\DAV\Tree $tree tree
-	 * @param \OCP\ITagManager $tagManager tag manager
+	 * @param ITagManager $tagManager tag manager
 	 */
-	public function __construct(\Sabre\DAV\Tree $tree, \OCP\ITagManager $tagManager) {
-		$this->tree = $tree;
-		$this->tagManager = $tagManager;
+	public function __construct(
+		private \Sabre\DAV\Tree $tree,
+		private ITagManager $tagManager,
+		private IEventDispatcher $eventDispatcher,
+		private IUserSession $userSession,
+	) {
 		$this->tagger = null;
 		$this->cachedTags = [];
 	}
@@ -104,7 +100,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	/**
 	 * Returns the tagger
 	 *
-	 * @return \OCP\ITags tagger
+	 * @return ITags tagger
 	 */
 	private function getTagger() {
 		if (!$this->tagger) {
@@ -124,7 +120,7 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 		$isFav = false;
 		$tags = $this->getTags($fileId);
 		if ($tags) {
-			$favPos = array_search(self::TAG_FAVORITE, $tags);
+			$favPos = array_search(self::TAG_FAVORITE, $tags, true);
 			if ($favPos !== false) {
 				$isFav = true;
 				unset($tags[$favPos]);
@@ -177,8 +173,9 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	 *
 	 * @param int $fileId
 	 * @param array $tags array of tag strings
+	 * @param string $path path of the file
 	 */
-	private function updateTags($fileId, $tags) {
+	private function updateTags($fileId, $tags, string $path) {
 		$tagger = $this->getTagger();
 		$currentTags = $this->getTags($fileId);
 
@@ -187,14 +184,14 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 			if ($tag === self::TAG_FAVORITE) {
 				continue;
 			}
-			$tagger->tagAs($fileId, $tag);
+			$tagger->tagAs($fileId, $tag, $path);
 		}
 		$deletedTags = array_diff($currentTags, $tags);
 		foreach ($deletedTags as $tag) {
 			if ($tag === self::TAG_FAVORITE) {
 				continue;
 			}
-			$tagger->unTag($fileId, $tag);
+			$tagger->unTag($fileId, $tag, $path);
 		}
 	}
 
@@ -208,23 +205,23 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	 */
 	public function handleGetProperties(
 		PropFind $propFind,
-		\Sabre\DAV\INode $node
+		\Sabre\DAV\INode $node,
 	) {
-		if (!($node instanceof \OCA\DAV\Connector\Sabre\Node)) {
+		if (!($node instanceof Node)) {
 			return;
 		}
 
 		// need prefetch ?
-		if ($node instanceof \OCA\DAV\Connector\Sabre\Directory
+		if ($node instanceof Directory
 			&& $propFind->getDepth() !== 0
 			&& (!is_null($propFind->getStatus(self::TAGS_PROPERTYNAME))
 			|| !is_null($propFind->getStatus(self::FAVORITE_PROPERTYNAME))
 			)) {
 			// note: pre-fetching only supported for depth <= 1
 			$folderContent = $node->getChildren();
-			$fileIds = [(int) $node->getId()];
+			$fileIds = [(int)$node->getId()];
 			foreach ($folderContent as $info) {
-				$fileIds[] = (int) $info->getId();
+				$fileIds[] = (int)$info->getId();
 			}
 			$this->prefetchTagsForFileIds($fileIds);
 		}
@@ -258,20 +255,20 @@ class TagsPlugin extends \Sabre\DAV\ServerPlugin {
 	 */
 	public function handleUpdateProperties($path, PropPatch $propPatch) {
 		$node = $this->tree->getNodeForPath($path);
-		if (!($node instanceof \OCA\DAV\Connector\Sabre\Node)) {
+		if (!($node instanceof Node)) {
 			return;
 		}
 
-		$propPatch->handle(self::TAGS_PROPERTYNAME, function ($tagList) use ($node) {
-			$this->updateTags($node->getId(), $tagList->getTags());
+		$propPatch->handle(self::TAGS_PROPERTYNAME, function ($tagList) use ($node, $path) {
+			$this->updateTags($node->getId(), $tagList->getTags(), $path);
 			return true;
 		});
 
-		$propPatch->handle(self::FAVORITE_PROPERTYNAME, function ($favState) use ($node) {
-			if ((int) $favState === 1 || $favState === 'true') {
-				$this->getTagger()->tagAs($node->getId(), self::TAG_FAVORITE);
+		$propPatch->handle(self::FAVORITE_PROPERTYNAME, function ($favState) use ($node, $path) {
+			if ((int)$favState === 1 || $favState === 'true') {
+				$this->getTagger()->tagAs($node->getId(), self::TAG_FAVORITE, $path);
 			} else {
-				$this->getTagger()->unTag($node->getId(), self::TAG_FAVORITE);
+				$this->getTagger()->unTag($node->getId(), self::TAG_FAVORITE, $path);
 			}
 
 			if (is_null($favState)) {

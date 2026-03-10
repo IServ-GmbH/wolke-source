@@ -8,12 +8,10 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\LoggerAware;
-use Rubix\ML\Other\Traits\ProbaSingle;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -22,11 +20,19 @@ use Rubix\ML\Specifications\LabelsAreCompatibleWithLearner;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function count;
 use function is_nan;
+use function array_fill;
 use function array_fill_keys;
 use function array_sum;
+use function get_object_vars;
+use function round;
+use function max;
+use function abs;
+use function log;
+use function exp;
 
 use const Rubix\ML\EPSILON;
 
@@ -52,102 +58,97 @@ use const Rubix\ML\EPSILON;
  */
 class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistable
 {
-    use AutotrackRevisions, PredictsSingle, ProbaSingle, LoggerAware;
+    use AutotrackRevisions, LoggerAware;
 
     /**
      * The minimum size of each training subset.
      *
      * @var int
      */
-    protected const MIN_SUBSAMPLE = 1;
+    protected const MIN_SUBSAMPLE = 2;
 
     /**
      * The base classifier to be boosted.
      *
      * @var \Rubix\ML\Learner
      */
-    protected $base;
+    protected \Rubix\ML\Learner $base;
 
     /**
      * The learning rate of the ensemble i.e. the *shrinkage* applied to each step.
      *
      * @var float
      */
-    protected $rate;
+    protected float $rate;
 
     /**
      * The ratio of samples to train each weak learner on.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * The maximum number of estimators to train in the ensemble.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $estimators;
+    protected int $epochs;
 
     /**
      * The minimum change in the training loss necessary to continue training.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
-     * The number of epochs without improvement in the training loss to wait
-     * before considering an early stop.
+     * The number of epochs without improvement in the training loss to wait before considering an early stop.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $window;
+    protected int $window;
 
     /**
      * The ensemble of *weak* classifiers.
      *
-     * @var \Rubix\ML\Learner[]
+     * @var \Rubix\ML\Learner[]|null
      */
-    protected $ensemble = [
-        //
-    ];
+    protected ?array $ensemble = null;
 
     /**
      * The amount of influence a particular classifier has in the model.
      *
-     * @var float[]
+     * @var list<float>|null
      */
-    protected $influences = [
-        //
-    ];
+    protected ?array $influences = null;
 
     /**
      * The zero vector for the possible class outcomes.
      *
-     * @var float[]|null
+     * @var array<string,float>|null
      */
-    protected $classes;
+    protected ?array $classes = null;
 
     /**
      * The loss at each epoch from the last training session.
      *
-     * @var float[]|null
+     * @var list<float>]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * The dimensionality of the training set.
      *
-     * @var int|null
+     * @var int<0,max>|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param \Rubix\ML\Learner|null $base
      * @param float $rate
      * @param float $ratio
-     * @param int $estimators
+     * @param int $epochs
      * @param float $minChange
      * @param int $window
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
@@ -156,7 +157,7 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
         ?Learner $base = null,
         float $rate = 1.0,
         float $ratio = 0.8,
-        int $estimators = 100,
+        int $epochs = 100,
         float $minChange = 1e-4,
         int $window = 5
     ) {
@@ -175,9 +176,9 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
                 . " between 0 and 1, $ratio given.");
         }
 
-        if ($estimators < 1) {
-            throw new InvalidArgumentException('Number of estimators'
-                . " must be greater than 0, $estimators given.");
+        if ($epochs < 0) {
+            throw new InvalidArgumentException('Number of epochs'
+                . " must be greater than 0, $epochs given.");
         }
 
         if ($minChange < 0.0) {
@@ -193,7 +194,7 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
         $this->base = $base ?? new ClassificationTree(1);
         $this->rate = $rate;
         $this->ratio = $ratio;
-        $this->estimators = $estimators;
+        $this->epochs = $epochs;
         $this->minChange = $minChange;
         $this->window = $window;
     }
@@ -235,8 +236,8 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
             'base' => $this->base,
             'rate' => $this->rate,
             'ratio' => $this->ratio,
-            'estimators' => $this->estimators,
-            'min_change' => $this->minChange,
+            'epochs' => $this->epochs,
+            'min change' => $this->minChange,
             'window' => $this->window,
         ];
     }
@@ -248,17 +249,26 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
      */
     public function trained() : bool
     {
-        return $this->ensemble and $this->influences;
+        return isset($this->ensemble, $this->influences);
     }
 
     /**
-     * Return the influence scores for each classifier in the ensemble.
+     * Return an iterable progress table with the steps from the last training session.
      *
-     * @return float[]
+     * @return \Generator<mixed[]>
      */
-    public function influences() : array
+    public function steps() : Generator
     {
-        return $this->influences;
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
     }
 
     /**
@@ -266,9 +276,9 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -289,26 +299,27 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
             $this->logger->info("$this initialized");
         }
 
+        $classes = $dataset->possibleOutcomes();
+
         [$m, $n] = $dataset->shape();
-
-        $this->classes = array_fill_keys($dataset->possibleOutcomes(), 0.0);
-
-        $this->featureCount = $n;
 
         $labels = $dataset->labels();
 
+        $k = count($classes);
         $p = max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $m));
-        $k = count($this->classes);
 
-        $lossThreshold = 1.0 - (1.0 / $k);
+        $weights = array_fill(0, $m, 1.0 / $m);
+
+        $this->classes = array_fill_keys($classes, 0.0);
+        $this->featureCount = $n;
+
+        $this->ensemble = $this->influences = $this->losses = [];
+
         $prevLoss = $bestLoss = INF;
-        $delta = 0;
+        $lossThreshold = 1.0 - (1.0 / $k);
+        $numWorseEpochs = 0;
 
-        $this->ensemble = $this->influences = $this->steps = [];
-
-        $weights = array_fill(0, $m, 1 / $m);
-
-        for ($epoch = 1; $epoch <= $this->estimators; ++$epoch) {
+        for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
             $estimator = clone $this->base;
 
             $subset = $dataset->randomWeightedSubsetWithReplacement($p, $weights);
@@ -327,26 +338,33 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
 
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
             }
 
-            $total = array_sum($weights) ?: EPSILON;
+            $totalWeight = array_sum($weights) ?: EPSILON;
 
-            $loss /= $total;
+            $loss /= $totalWeight;
 
-            $this->steps[] = $loss;
+            $lossChange = abs($prevLoss - $loss);
+
+            $this->losses[$epoch] = $loss;
 
             if ($this->logger) {
-                $this->logger->info("Epoch $epoch - Exp Loss: $loss");
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "Exponential Loss: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}";
+
+                $this->logger->info($message);
             }
 
             if ($loss > $lossThreshold) {
                 if ($this->logger) {
-                    $this->logger->info('Estimator dropped due to'
-                        . ' high training loss');
+                    $this->logger->notice('Learner dropped due to high training loss');
                 }
 
                 continue;
@@ -359,34 +377,36 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
             $this->ensemble[] = $estimator;
             $this->influences[] = $influence;
 
-            if (abs($prevLoss - $loss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
             if ($loss > $bestLoss) {
                 $bestLoss = $loss;
 
-                $delta = 0;
+                $numWorseEpochs = 0;
             } else {
-                ++$delta;
+                ++$numWorseEpochs;
             }
 
-            if ($delta >= $this->window) {
+            if ($numWorseEpochs >= $this->window) {
                 break;
             }
 
-            $step = exp($influence);
+            if ($epoch < $this->epochs) {
+                $step = exp($influence);
 
-            foreach ($predictions as $i => $prediction) {
-                if ($prediction != $labels[$i]) {
-                    $weights[$i] *= $step;
+                foreach ($predictions as $i => $prediction) {
+                    if ($prediction != $labels[$i]) {
+                        $weights[$i] *= $step;
+                    }
                 }
-            }
 
-            $total = array_sum($weights) ?: EPSILON;
+                $total = array_sum($weights) ?: EPSILON;
 
-            foreach ($weights as &$weight) {
-                $weight /= $total;
+                foreach ($weights as &$weight) {
+                    $weight /= $total;
+                }
             }
 
             $prevLoss = $loss;
@@ -412,19 +432,21 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
      * Estimate the joint probabilities for each possible outcome.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
+        $scores = $this->score($dataset);
+
         $probabilities = [];
 
-        foreach ($this->score($dataset) as $scores) {
-            $total = array_sum($scores) ?: EPSILON;
+        foreach ($scores as $influences) {
+            $total = array_sum($influences) ?: EPSILON;
 
             $dist = [];
 
-            foreach ($scores as $class => $score) {
-                $dist[$class] = $score / $total;
+            foreach ($influences as $class => $influence) {
+                $dist[$class] = $influence / $total;
             }
 
             $probabilities[] = $dist;
@@ -442,18 +464,20 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
      */
     protected function score(Dataset $dataset) : array
     {
-        if (!$this->ensemble or !$this->influences or !$this->classes or !$this->featureCount) {
+        if (!isset($this->ensemble, $this->influences, $this->classes, $this->featureCount)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
         DatasetHasDimensionality::with($dataset, $this->featureCount)->check();
 
-        $scores = array_fill(0, $dataset->numRows(), $this->classes);
+        $scores = array_fill(0, $dataset->numSamples(), $this->classes);
 
         foreach ($this->ensemble as $i => $estimator) {
+            $predictions = $estimator->predict($dataset);
+
             $influence = $this->influences[$i];
 
-            foreach ($estimator->predict($dataset) as $j => $prediction) {
+            foreach ($predictions as $j => $prediction) {
                 $scores[$j][$prediction] += $influence;
             }
         }
@@ -462,7 +486,23 @@ class AdaBoost implements Estimator, Learner, Probabilistic, Verbose, Persistabl
     }
 
     /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,6 +10,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -21,35 +21,19 @@ use OCP\IRequest;
 use OCP\IUserSession;
 use OCP\Preview\IMimeIconProvider;
 
+#[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
 class PreviewController extends Controller {
-
-	/** @var IRootFolder */
-	private $rootFolder;
-
-	/** @var IUserSession */
-	private $userSession;
-
-	/** @var IVersionManager */
-	private $versionManager;
-
-	/** @var IPreview */
-	private $previewManager;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IRootFolder $rootFolder,
-		IUserSession $userSession,
-		IVersionManager $versionManager,
-		IPreview $previewManager,
+		private IRootFolder $rootFolder,
+		private IUserSession $userSession,
+		private IVersionManager $versionManager,
+		private IPreview $previewManager,
 		private IMimeIconProvider $mimeIconProvider,
 	) {
 		parent::__construct($appName, $request);
-
-		$this->rootFolder = $rootFolder;
-		$this->userSession = $userSession;
-		$this->versionManager = $versionManager;
-		$this->previewManager = $previewManager;
 	}
 
 	/**
@@ -60,7 +44,7 @@ class PreviewController extends Controller {
 	 * @param int $y Height of the preview
 	 * @param string $version Version of the file to get the preview for
 	 * @param bool $mimeFallback Whether to fallback to the mime icon if no preview is available
-	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>|RedirectResponse<Http::STATUS_SEE_OTHER, array{}>
+	 * @return FileDisplayResponse<Http::STATUS_OK, array{Content-Type: string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, list<empty>, array{}>|RedirectResponse<Http::STATUS_SEE_OTHER, array{}>
 	 *
 	 * 200: Preview returned
 	 * 303: Redirect to the mime icon url if mimeFallback is true

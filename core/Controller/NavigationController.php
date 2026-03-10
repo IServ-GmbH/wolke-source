@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -34,7 +33,7 @@ class NavigationController extends OCSController {
 	 * Get the apps navigation
 	 *
 	 * @param bool $absolute Rewrite URLs to absolute ones
-	 * @return DataResponse<Http::STATUS_OK, CoreNavigationEntry[], array{}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<CoreNavigationEntry>, array{}>|DataResponse<Http::STATUS_NOT_MODIFIED, list<empty>, array{}>
 	 *
 	 * 200: Apps navigation returned
 	 * 304: No apps navigation changed
@@ -61,7 +60,7 @@ class NavigationController extends OCSController {
 	 * Get the settings navigation
 	 *
 	 * @param bool $absolute Rewrite URLs to absolute ones
-	 * @return DataResponse<Http::STATUS_OK, CoreNavigationEntry[], array{}>|DataResponse<Http::STATUS_NOT_MODIFIED, array<empty>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<CoreNavigationEntry>, array{}>|DataResponse<Http::STATUS_NOT_MODIFIED, list<empty>, array{}>
 	 *
 	 * 200: Apps navigation returned
 	 * 304: No apps navigation changed

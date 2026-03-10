@@ -22,11 +22,13 @@ use OC\User\BackgroundJobs\CleanupDeletedUsers;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\Defaults;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\Install\Events\InstallationCompletedEvent;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\IUserSession;
@@ -34,6 +36,7 @@ use OCP\L10N\IFactory as IL10NFactory;
 use OCP\Migration\IOutput;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\ServerVersion;
 use Psr\Log\LoggerInterface;
 
 class Setup {
@@ -46,7 +49,8 @@ class Setup {
 		protected Defaults $defaults,
 		protected LoggerInterface $logger,
 		protected ISecureRandom $random,
-		protected Installer $installer
+		protected Installer $installer,
+		protected IEventDispatcher $eventDispatcher,
 	) {
 		$this->l10n = $l10nFactory->get('lib');
 	}
@@ -342,7 +346,7 @@ class Setup {
 		}
 
 		$config = Server::get(IConfig::class);
-		$config->setAppValue('core', 'installedat', (string) microtime(true));
+		$config->setAppValue('core', 'installedat', (string)microtime(true));
 		$appConfig = Server::get(IAppConfig::class);
 		$appConfig->setValueInt('core', 'lastupdatedat', time());
 
@@ -379,10 +383,10 @@ class Setup {
 		//and we are done
 		$config->setSystemValue('installed', true);
 		if (self::shouldRemoveCanInstallFile()) {
-			unlink(\OC::$configDir.'/CAN_INSTALL');
+			unlink(\OC::$configDir . '/CAN_INSTALL');
 		}
 
-		$bootstrapCoordinator = \OCP\Server::get(\OC\AppFramework\Bootstrap\Coordinator::class);
+		$bootstrapCoordinator = Server::get(\OC\AppFramework\Bootstrap\Coordinator::class);
 		$bootstrapCoordinator->runInitialRegistration();
 
 		// Create a session token for the newly created user
@@ -406,6 +410,13 @@ class Setup {
 		if (!empty($options['adminemail'])) {
 			$user->setSystemEMailAddress($options['adminemail']);
 		}
+
+		// Dispatch installation completed event
+		$adminUsername = !empty($username) ? $username : null;
+		$adminEmail = !empty($options['adminemail']) ? $options['adminemail'] : null;
+		$this->eventDispatcher->dispatchTyped(
+			new InstallationCompletedEvent($dataDir, $adminUsername, $adminEmail)
+		);
 
 		return $error;
 	}
@@ -512,12 +523,12 @@ class Setup {
 		if (function_exists('disk_free_space')) {
 			$df = disk_free_space(\OC::$SERVERROOT);
 			$size = strlen($content) + 10240;
-			if ($df !== false && $df < (float) $size) {
+			if ($df !== false && $df < (float)$size) {
 				throw new \Exception(\OC::$SERVERROOT . ' does not have enough space for writing the htaccess file! Not writing it back!');
 			}
 		}
 		//suppress errors in case we don't have permissions for it
-		return (bool) @file_put_contents($setupHelper->pathToHtaccess(), $htaccessContent . $content . "\n");
+		return (bool)@file_put_contents($setupHelper->pathToHtaccess(), $htaccessContent . $content . "\n");
 	}
 
 	public static function protectDataDirectory(): void {
@@ -559,17 +570,17 @@ class Setup {
 		/** @var mixed $vendor */
 		/** @var mixed $OC_Channel */
 		return [
-			'vendor' => (string) $vendor,
-			'channel' => (string) $OC_Channel,
+			'vendor' => (string)$vendor,
+			'channel' => (string)$OC_Channel,
 		];
 	}
 
 	public function shouldRemoveCanInstallFile(): bool {
-		return \OC_Util::getChannel() !== 'git' && is_file(\OC::$configDir.'/CAN_INSTALL');
+		return Server::get(ServerVersion::class)->getChannel() !== 'git' && is_file(\OC::$configDir . '/CAN_INSTALL');
 	}
 
 	public function canInstallFileExists(): bool {
-		return is_file(\OC::$configDir.'/CAN_INSTALL');
+		return is_file(\OC::$configDir . '/CAN_INSTALL');
 	}
 
 	protected function outputDebug(?IOutput $output, string $message): void {

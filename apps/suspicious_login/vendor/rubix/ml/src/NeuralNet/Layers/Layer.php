@@ -3,15 +3,16 @@
 namespace Rubix\ML\NeuralNet\Layers;
 
 use Tensor\Matrix;
+use Stringable;
 
-interface Layer
+interface Layer extends Stringable
 {
     /**
      * The width of the layer. i.e. the number of neurons or computation nodes.
      *
      * @internal
      *
-     * @return int
+     * @return positive-int
      */
     public function width() : int;
 
@@ -21,8 +22,8 @@ interface Layer
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int;
 

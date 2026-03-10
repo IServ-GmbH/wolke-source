@@ -32,14 +32,14 @@ class KMC2 implements Seeder
      *
      * @var int
      */
-    protected $m;
+    protected int $m;
 
     /**
      * The distance kernel used to compute the distance between samples.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * @param int $m
@@ -105,6 +105,8 @@ class KMC2 implements Seeder
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

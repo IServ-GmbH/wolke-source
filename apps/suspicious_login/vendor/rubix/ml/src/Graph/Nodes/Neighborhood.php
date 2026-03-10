@@ -3,7 +3,6 @@
 namespace Rubix\ML\Graph\Nodes;
 
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
 use Traversable;
 
 /**
@@ -18,30 +17,28 @@ use Traversable;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Neighborhood implements BinaryNode, Hypercube
+class Neighborhood implements Hypercube, BinaryNode
 {
-    use HasBinaryChildren;
-
     /**
      * The dataset stored in the node.
      *
      * @var \Rubix\ML\Datasets\Labeled
      */
-    protected $dataset;
+    protected \Rubix\ML\Datasets\Labeled $dataset;
 
     /**
      * The multivariate minimum of the bounding box.
      *
      * @var list<int|float>
      */
-    protected $min;
+    protected array $min;
 
     /**
      * The multivariate maximum of the bounding box.
      *
      * @var list<int|float>
      */
-    protected $max;
+    protected array $max;
 
     /**
      * Terminate a branch with a dataset.
@@ -53,7 +50,7 @@ class Neighborhood implements BinaryNode, Hypercube
     {
         $min = $max = [];
 
-        foreach ($dataset->columns() as $values) {
+        foreach ($dataset->features() as $values) {
             $min[] = min($values);
             $max[] = max($values);
         }
@@ -102,5 +99,15 @@ class Neighborhood implements BinaryNode, Hypercube
     public function isPoint() : bool
     {
         return $this->min == $this->max;
+    }
+
+    /**
+     * Return the height of the node in the tree.
+     *
+     * @return int
+     */
+    public function height() : int
+    {
+        return 1;
     }
 }

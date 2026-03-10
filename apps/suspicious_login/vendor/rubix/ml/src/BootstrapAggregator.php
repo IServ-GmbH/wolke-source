@@ -2,16 +2,15 @@
 
 namespace Rubix\ML;
 
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Traits\Multiprocessing;
 use Rubix\ML\Backends\Tasks\Predict;
-use Rubix\ML\Other\Traits\PredictsSingle;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Backends\Tasks\TrainLearner;
-use Rubix\ML\Other\Traits\Multiprocessing;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -40,7 +39,7 @@ use function array_count_values;
  */
 class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
 {
-    use AutotrackRevisions, Multiprocessing, PredictsSingle;
+    use AutotrackRevisions, Multiprocessing;
 
     /**
      * The estimator type codes that the ensemble is compatible with.
@@ -65,28 +64,28 @@ class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
      *
      * @var \Rubix\ML\Learner
      */
-    protected $base;
+    protected \Rubix\ML\Learner $base;
 
     /**
      * The number of base learners to train in the ensemble.
      *
      * @var int
      */
-    protected $estimators;
+    protected int $estimators;
 
     /**
      * The ratio of samples from the training set to randomly subsample to train each base learner.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * The ensemble of estimators.
      *
      * @var list<\Rubix\ML\Learner>
      */
-    protected $ensemble = [
+    protected array $ensemble = [
         //
     ];
 
@@ -194,7 +193,7 @@ class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
 
         SpecificationChain::with($specifications)->check();
 
-        $p = max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $dataset->numRows()));
+        $p = max(self::MIN_SUBSAMPLE, (int) round($this->ratio * $dataset->numSamples()));
 
         $this->backend->flush();
 
@@ -203,7 +202,9 @@ class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
 
             $subset = $dataset->randomSubsetWithReplacement($p);
 
-            $this->backend->enqueue(new TrainLearner($estimator, $subset));
+            $task = new TrainLearner($estimator, $subset);
+
+            $this->backend->enqueue($task);
         }
 
         $this->ensemble = $this->backend->process();
@@ -225,7 +226,9 @@ class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
         $this->backend->flush();
 
         foreach ($this->ensemble as $estimator) {
-            $this->backend->enqueue(new Predict($estimator, $dataset));
+            $task = new Predict($estimator, $dataset);
+
+            $this->backend->enqueue($task);
         }
 
         $aggregate = array_transpose($this->backend->process());
@@ -248,11 +251,16 @@ class BootstrapAggregator implements Estimator, Learner, Parallel, Persistable
      */
     protected function decideDiscrete(array $votes) : string
     {
-        return argmax(array_count_values($votes));
+        /** @var array<string,int> $counts */
+        $counts = array_count_values($votes);
+
+        return argmax($counts);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

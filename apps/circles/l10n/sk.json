@@ -1,5 +1,4 @@
 { "translations": {
-    "Teams" : "Tímy",
     "You created the team {circle}" : "Vytvorili ste tím {circle}",
     "{author} created the team {circle}" : "{author} vytvoril tím {circle}",
     "You deleted {circle}" : "Vymazali ste {circle}",
@@ -50,6 +49,7 @@
     "{member} sent a request to join {circle}" : "{member} odoslal(a) požiadavku na pripojenie k {circle}",
     "You are the new owner of {circle}" : "Ste novým vlastníkom {circle}",
     "{member} is the new owner of {circle}" : "{member} je novým vlastníkom {circle}",
+    "Teams" : "Tímy",
     "On events happening in a <strong>team</strong> of which you are a member" : "Pri udalostiach odohrávajúcich sa v <strong>tíme</strong>, ktorého ste členom/členkou",
     "Any important event in a <strong>team</strong> you are moderating" : "Dôležité udalosti v <strong>tíme</strong>, ktorý moderujete",
     "On global events happening in any <strong>team</strong>" : "Pri globálnych udalostiach, ktoré sa odohrávajú v ktoromkoľvek <strong>tíme</strong>",
@@ -102,12 +102,10 @@
     "Circles App Initialization" : "Inicializácia Aplikácie Kruhy",
     "Fresh installation status" : "Stav čistej inštalácie",
     "Building Local Database" : "Vytváram Lokálnu Databázu",
-    "Testing Basic Circle Creation" : "Testujem základné pridávanie Kruhov",
     "Adding local users and moderators" : "Pridávam lokálnych užívateľov a moderátorov",
     "Show all teams" : "Zobraziť všetky tímy",
     "Create a new team" : "Vytvoriť nový tím",
     "Files" : "Súbory",
-    "This feature is not available for personal circles" : "Táto funkcia nie je k dispozícii pre osobné kruhy",
     "The team is not federated" : "Tím nie je združený",
     "You cannot join this team" : "Nemôžete sa pripojiť k tomuto tímu",
     "This member is not a moderator" : "Tento člen nie je moderátor",
@@ -115,10 +113,6 @@
     "This member does not exist" : "Tento používateľ neexistuje",
     "This member is the owner of the team" : "Tento člen je vlastníkom tímu",
     "Level cannot be changed for this type of member" : "Pre tento typ člena, úroveň nemôže byť zmenená.",
-    "You are already a member of this circle" : "Už ste členom tohto kruhu",
-    "You have been blocked from this circle" : "V tomto kruhu ste boli zablokovaný",
-    "The account is already a member of this circle" : "Tento užívateľ už je členom kruhu",
-    "The account has already been invited into this circle" : "Užívateľ už bol pozvaný do tohto kruhu",
     "%s (Team owned by %s)" : "%s (Tím vlastnený %s)",
     "You are now a member of the Team \"%2$s\"" : "Teraz ste členom tímu „%2$s“",
     "You have been invited by %1$s into the Team \"%2$s\"" : "Boli ste pozvaní používateľom %1$sdo tímu „%2$s“",
@@ -140,6 +134,7 @@
     "This item is already shared with this team" : "Táto položka je už zdieľaná s týmto tímom",
     "Bring cloud-users closer together." : "Zblížte používateľov cloudu.",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "Tímy umožňujú vašim užívateľom vytvárať ich vlastné skupiny užívateľov/kolegov/priateľov.\nTieto skupiny užívateľov môžu byť potom používané akoukoľvek inou aplikáciou pre potreby zdieľania.",
+    "https://…" : "https://...",
     "Try again" : "Skúste znovu",
     "No teams found" : "Žiadne tímy sa nenašli",
     "Loading…" : "Nahrávam...",
@@ -148,11 +143,6 @@
     "Name" : "Názov",
     "Size" : "Veľkosť",
     "Modified" : "Upravené",
-    "Teams' files" : "Súbory tímov",
-    "Select team to filter by" : "Vybrať tím pre filtrovanie",
-    "Please select teams to filter by" : "Prosím, vyberte tímy pre filtrovanie",
-    "No files found for the selected teams" : "Pre vybrané tímy neboli nájdené žiadne súbory",
-    "Shared to Circles" : "Zdieľané v kruhoch",
-    "Circle" : "Kruh"
+    "Shared to Circles" : "Zdieľané v kruhoch"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

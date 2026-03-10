@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -9,7 +8,6 @@ namespace OC\Core\Controller;
 use OC\Authentication\Events\AppPasswordCreatedEvent;
 use OC\Authentication\Exceptions\PasswordlessTokenException;
 use OC\Authentication\Token\IProvider;
-use OC\Authentication\Token\IToken;
 use OCA\OAuth2\Db\AccessToken;
 use OCA\OAuth2\Db\AccessTokenMapper;
 use OCA\OAuth2\Db\ClientMapper;
@@ -26,6 +24,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\StandaloneTemplateResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Authentication\Exceptions\InvalidTokenException;
+use OCP\Authentication\Token\IToken;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -122,7 +121,7 @@ class ClientFlowLoginController extends Controller {
 
 		$stateToken = $this->random->generate(
 			64,
-			ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_DIGITS
+			ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_DIGITS
 		);
 		$this->session->set(self::STATE_NAME, $stateToken);
 
@@ -162,10 +161,12 @@ class ClientFlowLoginController extends Controller {
 	#[NoCSRFRequired]
 	#[UseSession]
 	#[FrontpageRoute(verb: 'GET', url: '/login/flow/grant')]
-	public function grantPage(string $stateToken = '',
+	public function grantPage(
+		string $stateToken = '',
 		string $clientIdentifier = '',
 		int $direct = 0,
-		string $providedRedirectUri = ''): StandaloneTemplateResponse {
+		string $providedRedirectUri = '',
+	): Response {
 		if (!$this->isValidToken($stateToken)) {
 			return $this->stateTokenForbiddenResponse();
 		}
@@ -210,16 +211,15 @@ class ClientFlowLoginController extends Controller {
 		return $response;
 	}
 
-	/**
-	 * @return Http\RedirectResponse|Response
-	 */
 	#[NoAdminRequired]
 	#[UseSession]
 	#[PasswordConfirmationRequired(strict: false)]
 	#[FrontpageRoute(verb: 'POST', url: '/login/flow')]
-	public function generateAppPassword(string $stateToken,
+	public function generateAppPassword(
+		string $stateToken,
 		string $clientIdentifier = '',
-		string $providedRedirectUri = '') {
+		string $providedRedirectUri = '',
+	): Response {
 		if (!$this->isValidToken($stateToken)) {
 			$this->session->remove(self::STATE_NAME);
 			return $this->stateTokenForbiddenResponse();
@@ -256,7 +256,7 @@ class ClientFlowLoginController extends Controller {
 			$clientName = $client->getName();
 		}
 
-		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+		$token = $this->random->generate(72, ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 		$uid = $this->userSession->getUser()->getUID();
 		$generatedToken = $this->tokenProvider->generateToken(
 			$token,
@@ -269,7 +269,7 @@ class ClientFlowLoginController extends Controller {
 		);
 
 		if ($client) {
-			$code = $this->random->generate(128, ISecureRandom::CHAR_UPPER.ISecureRandom::CHAR_LOWER.ISecureRandom::CHAR_DIGITS);
+			$code = $this->random->generate(128, ISecureRandom::CHAR_UPPER . ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 			$accessToken = new AccessToken();
 			$accessToken->setClientId($client->getId());
 			$accessToken->setEncryptedToken($this->crypto->encrypt($token, $code));

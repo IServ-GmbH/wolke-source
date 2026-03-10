@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -12,12 +11,13 @@ use Doctrine\DBAL\Driver\Exception;
 use OC\Files\Filesystem;
 use OCA\FederatedFileSharing\Events\FederatedShareAddedEvent;
 use OCA\Files_Sharing\Helper;
-use OCP\Collaboration\Collaborators\ISearch;
+use OCA\Files_Sharing\ResponseDefinitions;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Files;
+use OCP\Files\Events\InvalidateMountCacheEvent;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorageFactory;
 use OCP\Http\Client\IClientService;
@@ -30,83 +30,39 @@ use OCP\OCS\IDiscoveryService;
 use OCP\Share;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
+use OCP\Collaboration\Collaborators\ISearch;
 
+/**
+ * @psalm-import-type Files_SharingRemoteShare from ResponseDefinitions
+ */
 class Manager {
 	public const STORAGE = '\OCA\Files_Sharing\External\Storage';
 
 	/** @var string|null */
 	private $uid;
 
-	/** @var IDBConnection */
-	private $connection;
-
 	/** @var \OC\Files\Mount\Manager */
 	private $mountManager;
 
-	/** @var IStorageFactory */
-	private $storageLoader;
-
-	/** @var IClientService */
-	private $clientService;
-
-	/** @var IManager */
-	private $notificationManager;
-
-	/** @var IDiscoveryService */
-	private $discoveryService;
-
-	/** @var ICloudFederationProviderManager */
-	private $cloudFederationProviderManager;
-
-	/** @var ICloudFederationFactory */
-	private $cloudFederationFactory;
-
-	/** @var IGroupManager */
-	private $groupManager;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-
-	/** @var LoggerInterface */
-	private $logger;
-
-	/** @var ISearch */
-	private $collaboratorSearch;
-
 	public function __construct(
-		IDBConnection                   $connection,
-		\OC\Files\Mount\Manager         $mountManager,
-		IStorageFactory                 $storageLoader,
-		IClientService                  $clientService,
-		IManager                        $notificationManager,
-		IDiscoveryService               $discoveryService,
-		ICloudFederationProviderManager $cloudFederationProviderManager,
-		ICloudFederationFactory         $cloudFederationFactory,
-		IGroupManager                   $groupManager,
-		IUserManager                    $userManager,
-		IUserSession                    $userSession,
-		IEventDispatcher                $eventDispatcher,
-		LoggerInterface                 $logger,
-		ISearch                         $collaboratorSearch
+		private IDBConnection $connection,
+		\OC\Files\Mount\Manager $mountManager,
+		private IStorageFactory $storageLoader,
+		private IClientService $clientService,
+		private IManager $notificationManager,
+		private IDiscoveryService $discoveryService,
+		private ICloudFederationProviderManager $cloudFederationProviderManager,
+		private ICloudFederationFactory $cloudFederationFactory,
+		private IGroupManager $groupManager,
+		private IUserManager $userManager,
+		IUserSession $userSession,
+		private IEventDispatcher $eventDispatcher,
+		private LoggerInterface $logger,
+		private ISearch $collaboratorSearch
 	) {
 		$user = $userSession->getUser();
-		$this->connection = $connection;
 		$this->mountManager = $mountManager;
-		$this->storageLoader = $storageLoader;
-		$this->clientService = $clientService;
 		$this->uid = $user ? $user->getUID() : null;
-		$this->notificationManager = $notificationManager;
-		$this->discoveryService = $discoveryService;
-		$this->cloudFederationProviderManager = $cloudFederationProviderManager;
-		$this->cloudFederationFactory = $cloudFederationFactory;
-		$this->groupManager = $groupManager;
-		$this->userManager = $userManager;
-		$this->eventDispatcher = $eventDispatcher;
-		$this->logger = $logger;
-		$this->collaboratorSearch = $collaboratorSearch;
 	}
 
 	/**
@@ -126,7 +82,7 @@ class Manager {
 	 * @throws \Doctrine\DBAL\Exception
 	 */
 	public function addShare($remote, $token, $password, $name, $owner, $shareType, $accepted = false, $user = null, $remoteId = '', $parent = -1) {
-		$user = $user ? $user : $this->uid;
+		$user = $user ?? $this->uid;
 		$accepted = $accepted ? IShare::STATUS_ACCEPTED : IShare::STATUS_PENDING;
 		$name = Filesystem::normalizePath('/' . $name);
 
@@ -175,7 +131,7 @@ class Manager {
 			'mountpoint' => $mountPoint,
 			'owner' => $owner
 		];
-		return $this->mountShare($options);
+		return $this->mountShare($options, $user);
 	}
 
 	/**
@@ -206,18 +162,29 @@ class Manager {
 		$query->execute([$remote, $token, $password, $name, $owner, $user, $mountPoint, $hash, $accepted, $remoteId, $parent, $shareType]);
 	}
 
-	/**
-	 * get share
-	 *
-	 * @param int $id share id
-	 * @return mixed share of false
-	 */
-	private function fetchShare($id) {
+	private function fetchShare(int $id): array|false {
 		$getShare = $this->connection->prepare('
 			SELECT `id`, `remote`, `remote_id`, `share_token`, `name`, `owner`, `user`, `mountpoint`, `accepted`, `parent`, `share_type`, `password`, `mountpoint_hash`
 			FROM  `*PREFIX*share_external`
 			WHERE `id` = ?');
 		$result = $getShare->execute([$id]);
+		$share = $result->fetch();
+		$result->closeCursor();
+		return $share;
+	}
+
+	/**
+	 * get share by token
+	 *
+	 * @param string $token
+	 * @return mixed share of false
+	 */
+	private function fetchShareByToken($token) {
+		$getShare = $this->connection->prepare('
+			SELECT `id`, `remote`, `remote_id`, `share_token`, `name`, `owner`, `user`, `mountpoint`, `accepted`, `parent`, `share_type`, `password`, `mountpoint_hash`
+			FROM  `*PREFIX*share_external`
+			WHERE `share_token` = ?');
+		$result = $getShare->execute([$token]);
 		$share = $result->fetch();
 		$result->closeCursor();
 		return $share;
@@ -237,30 +204,65 @@ class Manager {
 		return null;
 	}
 
-	/**
-	 * get share
-	 *
-	 * @param int $id share id
-	 * @return mixed share of false
-	 */
-	public function getShare($id) {
+	public function getShare(int $id, ?string $user = null): array|false {
+		$user = $user ?? $this->uid;
 		$share = $this->fetchShare($id);
-		$validShare = is_array($share) && isset($share['share_type']) && isset($share['user']);
+		if ($share === false) {
+			return false;
+		}
 
 		// check if the user is allowed to access it
-		if ($validShare && (int) $share['share_type'] === IShare::TYPE_USER && $share['user'] === $this->uid) {
+		if ($this->canAccessShare($share, $user)) {
 			return $share;
-		} elseif ($validShare && (int) $share['share_type'] === IShare::TYPE_GROUP) {
-			$parentId = (int) $share['parent'];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get share by token
+	 *
+	 * @param string $token
+	 * @return array|false
+	 */
+	public function getShareByToken(string $token): array|false {
+		$share = $this->fetchShareByToken($token);
+
+		// We do not check if the user is allowed to access it here,
+		// as this is not used from a user context.
+		if ($share === false) {
+			return false;
+		}
+
+		return $share;
+	}
+
+	private function canAccessShare(array $share, string $user): bool {
+		$validShare = isset($share['share_type']) && isset($share['user']);
+
+		if (!$validShare) {
+			return false;
+		}
+
+		// If the share is a user share, check if the user is the recipient
+		if ((int)$share['share_type'] === IShare::TYPE_USER
+			&& $share['user'] === $user) {
+			return true;
+		}
+
+		// If the share is a group share, check if the user is in the group
+		if ((int)$share['share_type'] === IShare::TYPE_GROUP) {
+			$parentId = (int)$share['parent'];
 			if ($parentId !== -1) {
 				// we just retrieved a sub-share, switch to the parent entry for verification
 				$groupShare = $this->fetchShare($parentId);
 			} else {
 				$groupShare = $share;
 			}
-			$user = $this->userManager->get($this->uid);
+
+			$user = $this->userManager->get($user);
 			if ($this->groupManager->get($groupShare['user'])->inGroup($user)) {
-				return $share;
+				return true;
 			}
 		}
 
@@ -287,33 +289,42 @@ class Manager {
 	 * @param int $id
 	 * @return bool True if the share could be accepted, false otherwise
 	 */
-	public function acceptShare($id) {
-		$share = $this->getShare($id);
+	public function acceptShare(int $id, ?string $user = null) {
+		// If we're auto-accepting a share, we need to know the user id
+		// as there is no session available while processing the share
+		// from the remote server request.
+		$user = $user ?? $this->uid;
+		if ($user === null) {
+			$this->logger->error('No user specified for accepting share');
+			return false;
+		}
+
+		$share = $this->getShare($id, $user);
 		$result = false;
 
 		if ($share) {
-			\OC_Util::setupFS($this->uid);
-			$shareFolder = Helper::getShareFolder(null, $this->uid);
+			\OC_Util::setupFS($user);
+			$shareFolder = Helper::getShareFolder(null, $user);
 			$mountPoint = Files::buildNotExistingFileName($shareFolder, $share['name']);
 			$mountPoint = Filesystem::normalizePath($mountPoint);
 			$hash = md5($mountPoint);
 			$userShareAccepted = false;
 
-			if ((int) $share['share_type'] === IShare::TYPE_USER) {
+			if ((int)$share['share_type'] === IShare::TYPE_USER) {
 				$acceptShare = $this->connection->prepare('
 				UPDATE `*PREFIX*share_external`
 				SET `accepted` = ?,
 					`mountpoint` = ?,
 					`mountpoint_hash` = ?
 				WHERE `id` = ? AND `user` = ?');
-				$userShareAccepted = $acceptShare->execute([1, $mountPoint, $hash, $id, $this->uid]);
+				$userShareAccepted = $acceptShare->execute([1, $mountPoint, $hash, $id, $user]);
 			} else {
-				$parentId = (int) $share['parent'];
+				$parentId = (int)$share['parent'];
 				if ($parentId !== -1) {
 					// this is the sub-share
 					$subshare = $share;
 				} else {
-					$subshare = $this->fetchUserShare($id, $this->uid);
+					$subshare = $this->fetchUserShare($id, $user);
 				}
 
 				if ($subshare !== null) {
@@ -324,7 +335,7 @@ class Manager {
 							`mountpoint` = ?,
 							`mountpoint_hash` = ?
 						WHERE `id` = ? AND `user` = ?');
-						$acceptShare->execute([1, $mountPoint, $hash, $subshare['id'], $this->uid]);
+						$acceptShare->execute([1, $mountPoint, $hash, $subshare['id'], $user]);
 						$result = true;
 					} catch (Exception $e) {
 						$this->logger->emergency('Could not update share', ['exception' => $e]);
@@ -338,7 +349,7 @@ class Manager {
 							$share['password'],
 							$share['name'],
 							$share['owner'],
-							$this->uid,
+							$user,
 							$mountPoint, $hash, 1,
 							$share['remote_id'],
 							$id,
@@ -350,17 +361,18 @@ class Manager {
 					}
 				}
 			}
+
 			if ($userShareAccepted !== false) {
 				$this->sendFeedbackToRemote($share['remote'], $share['share_token'], $share['remote_id'], 'accept');
 				$event = new FederatedShareAddedEvent($share['remote']);
 				$this->eventDispatcher->dispatchTyped($event);
-				$this->eventDispatcher->dispatchTyped(new Files\Events\InvalidateMountCacheEvent($this->userManager->get($this->uid)));
+				$this->eventDispatcher->dispatchTyped(new InvalidateMountCacheEvent($this->userManager->get($user)));
 				$result = true;
 			}
 		}
 
 		// Make sure the user has no notification for something that does not exist anymore.
-		$this->processNotification($id);
+		$this->processNotification($id, $user);
 
 		return $result;
 	}
@@ -371,30 +383,36 @@ class Manager {
 	 * @param int $id
 	 * @return bool True if the share could be declined, false otherwise
 	 */
-	public function declineShare($id) {
-		$share = $this->getShare($id);
+	public function declineShare(int $id, ?string $user = null) {
+		$user = $user ?? $this->uid;
+		if ($user === null) {
+			$this->logger->error('No user specified for declining share');
+			return false;
+		}
+
+		$share = $this->getShare($id, $user);
 		$result = false;
 
-		if ($share && (int) $share['share_type'] === IShare::TYPE_USER) {
+		if ($share && (int)$share['share_type'] === IShare::TYPE_USER) {
 			$removeShare = $this->connection->prepare('
 				DELETE FROM `*PREFIX*share_external` WHERE `id` = ? AND `user` = ?');
-			$removeShare->execute([$id, $this->uid]);
+			$removeShare->execute([$id, $user]);
 			$this->sendFeedbackToRemote($share['remote'], $share['share_token'], $share['remote_id'], 'decline');
 
-			$this->processNotification($id);
+			$this->processNotification($id, $user);
 			$result = true;
-		} elseif ($share && (int) $share['share_type'] === IShare::TYPE_GROUP) {
-			$parentId = (int) $share['parent'];
+		} elseif ($share && (int)$share['share_type'] === IShare::TYPE_GROUP) {
+			$parentId = (int)$share['parent'];
 			if ($parentId !== -1) {
 				// this is the sub-share
 				$subshare = $share;
 			} else {
-				$subshare = $this->fetchUserShare($id, $this->uid);
+				$subshare = $this->fetchUserShare($id, $user);
 			}
 
 			if ($subshare !== null) {
 				try {
-					$this->updateAccepted((int) $subshare['id'], false);
+					$this->updateAccepted((int)$subshare['id'], false);
 					$result = true;
 				} catch (Exception $e) {
 					$this->logger->emergency('Could not update share', ['exception' => $e]);
@@ -408,7 +426,7 @@ class Manager {
 						$share['password'],
 						$share['name'],
 						$share['owner'],
-						$this->uid,
+						$user,
 						$share['mountpoint'],
 						$share['mountpoint_hash'],
 						0,
@@ -421,17 +439,28 @@ class Manager {
 					$result = false;
 				}
 			}
-			$this->processNotification($id);
+			$this->processNotification($id, $user);
 		}
 
 		return $result;
 	}
 
-	public function processNotification(int $remoteShare): void {
+	public function processNotification(int $remoteShare, ?string $user = null): void {
+		$user = $user ?? $this->uid;
+		if ($user === null) {
+			$this->logger->error('No user specified for processing notification');
+			return;
+		}
+
+		$share = $this->fetchShare($remoteShare);
+		if ($share === false) {
+			return;
+		}
+
 		$filter = $this->notificationManager->createNotification();
 		$filter->setApp('files_sharing')
-			->setUser($this->uid)
-			->setObject('remote_share', (string) $remoteShare);
+			->setUser($user)
+			->setObject('remote_share', (string)$remoteShare);
 		$this->notificationManager->markProcessed($filter);
 	}
 
@@ -530,9 +559,10 @@ class Manager {
 		return rtrim(substr($path, strlen($prefix)), '/');
 	}
 
-	public function getMount($data) {
+	public function getMount($data, ?string $user = null) {
+		$user = $user ?? $this->uid;
 		$data['manager'] = $this;
-		$mountPoint = '/' . $this->uid . '/files' . $data['mountpoint'];
+		$mountPoint = '/' . $user . '/files' . $data['mountpoint'];
 		$data['mountpoint'] = $mountPoint;
 		$data['certificateManager'] = \OC::$server->getCertificateManager();
 		return new Mount(self::STORAGE, $mountPoint, $data, $this, $this->storageLoader);
@@ -542,8 +572,8 @@ class Manager {
 	 * @param array $data
 	 * @return Mount
 	 */
-	protected function mountShare($data) {
-		$mount = $this->getMount($data);
+	protected function mountShare($data, ?string $user = null) {
+		$mount = $this->getMount($data, $user);
 		$this->mountManager->addMount($mount);
 		return $mount;
 	}
@@ -572,9 +602,9 @@ class Manager {
 			WHERE `mountpoint_hash` = ?
 			AND `user` = ?
 		');
-		$result = (bool) $query->execute([$target, $targetHash, $sourceHash, $this->uid]);
+		$result = (bool)$query->execute([$target, $targetHash, $sourceHash, $this->uid]);
 
-		$this->eventDispatcher->dispatchTyped(new Files\Events\InvalidateMountCacheEvent($this->userManager->get($this->uid)));
+		$this->eventDispatcher->dispatchTyped(new InvalidateMountCacheEvent($this->userManager->get($this->uid)));
 
 		return $result;
 	}
@@ -603,7 +633,7 @@ class Manager {
 			$result = $getShare->execute([$hash, $this->uid]);
 			$share = $result->fetch();
 			$result->closeCursor();
-			if ($share !== false && (int) $share['share_type'] === IShare::TYPE_USER) {
+			if ($share !== false && (int)$share['share_type'] === IShare::TYPE_USER) {
 				try {
 					$this->sendFeedbackToRemote($share['remote'], $share['share_token'], $share['remote_id'], 'decline');
 				} catch (\Throwable $e) {
@@ -615,10 +645,10 @@ class Manager {
 					DELETE FROM `*PREFIX*share_external`
 					WHERE `id` = ?
 				');
-				$deleteResult = $query->execute([(int) $share['id']]);
+				$deleteResult = $query->execute([(int)$share['id']]);
 				$deleteResult->closeCursor();
-			} elseif ($share !== false && (int) $share['share_type'] === IShare::TYPE_GROUP) {
-				$this->updateAccepted((int) $share['id'], false);
+			} elseif ($share !== false && (int)$share['share_type'] === IShare::TYPE_GROUP) {
+				$this->updateAccepted((int)$share['id'], false);
 			}
 
 			$this->removeReShares($id);
@@ -736,7 +766,7 @@ class Manager {
 	/**
 	 * return a list of shares which are not yet accepted by the user
 	 *
-	 * @return array list of open server-to-server shares
+	 * @return list<Files_SharingRemoteShare> list of open server-to-server shares
 	 */
 	public function getOpenShares() {
 		return $this->populateOwnerNames($this->getShares(false));
@@ -745,7 +775,7 @@ class Manager {
 	/**
 	 * return a list of shares which are accepted by the user
 	 *
-	 * @return array list of accepted server-to-server shares
+	 * @return list<Files_SharingRemoteShare> list of accepted server-to-server shares
 	 */
 	public function getAcceptedShares() {
 		return $this->getShares(true);
@@ -757,9 +787,11 @@ class Manager {
 	 * @param bool|null $accepted True for accepted only,
 	 *                            false for not accepted,
 	 *                            null for all shares of the user
-	 * @return array list of open server-to-server shares
+	 * @return list<Files_SharingRemoteShare> list of open server-to-server shares
 	 */
 	private function getShares($accepted) {
+		// Not allowing providing a user here,
+		// as we only want to retrieve shares for the current user.
 		$user = $this->userManager->get($this->uid);
 		$groups = $this->groupManager->getUserGroups($user);
 		$userGroups = [];
@@ -789,7 +821,7 @@ class Manager {
 			// remove parent group share entry if we have a specific user share entry for the user
 			$toRemove = [];
 			foreach ($shares as $share) {
-				if ((int) $share['share_type'] === IShare::TYPE_GROUP && (int) $share['parent'] > 0) {
+				if ((int)$share['share_type'] === IShare::TYPE_GROUP && (int)$share['parent'] > 0) {
 					$toRemove[] = $share['parent'];
 				}
 			}
@@ -799,7 +831,7 @@ class Manager {
 
 			if (!is_null($accepted)) {
 				$shares = array_filter($shares, function ($share) use ($accepted) {
-					return (bool) $share['accepted'] === $accepted;
+					return (bool)$share['accepted'] === $accepted;
 				});
 			}
 			return array_values($shares);

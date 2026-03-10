@@ -6,22 +6,25 @@ use Rubix\ML\Online;
 use Rubix\ML\Learner;
 use Rubix\ML\Verbose;
 use Rubix\ML\DataType;
+use Rubix\ML\Encoding;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Graphviz;
 use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\Datasets\Unlabeled;
+use Rubix\ML\Persisters\Filesystem;
 use Rubix\ML\NeuralNet\Layers\Dense;
 use Rubix\ML\Regressors\MLPRegressor;
-use Rubix\ML\Other\Loggers\BlackHole;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
 use Rubix\ML\NeuralNet\Layers\Activation;
 use Rubix\ML\CrossValidation\Metrics\RMSE;
 use Rubix\ML\Datasets\Generators\SwissRoll;
 use Rubix\ML\Transformers\ZScaleStandardizer;
 use Rubix\ML\CrossValidation\Metrics\RSquared;
+use Rubix\ML\NeuralNet\ActivationFunctions\SiLU;
 use Rubix\ML\NeuralNet\CostFunctions\LeastSquares;
-use Rubix\ML\NeuralNet\ActivationFunctions\LeakyReLU;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 use PHPUnit\Framework\TestCase;
@@ -37,14 +40,14 @@ class MLPRegressorTest extends TestCase
      *
      * @var int
      */
-    protected const TRAIN_SIZE = 500;
+    protected const TRAIN_SIZE = 512;
 
     /**
      * The number of samples in the validation set.
      *
      * @var int
      */
-    protected const TEST_SIZE = 20;
+    protected const TEST_SIZE = 256;
 
     /**
      * The minimum validation score required to pass the test.
@@ -80,20 +83,27 @@ class MLPRegressorTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->generator = new SwissRoll(4.0, -7.0, 0.0, 1.0, 0.3);
+        $this->generator = new SwissRoll(4.0, -7.0, 0.0, 1.0, 21.0, 0.5);
 
         $this->estimator = new MLPRegressor([
-            new Dense(10),
-            new Activation(new LeakyReLU()),
-            new Dense(10),
-            new Activation(new LeakyReLU()),
-        ], 10, new Adam(0.01), 1e-4, 100, 1e-3, 3, 0.1, new LeastSquares(), new RMSE());
+            new Dense(32),
+            new Activation(new SiLU()),
+            new Dense(16),
+            new Activation(new SiLU()),
+            new Dense(8),
+            new Activation(new SiLU()),
+        ], 32, new Adam(0.01), 1e-4, 100, 1e-4, 5, 0.1, new LeastSquares(), new RMSE());
 
         $this->metric = new RSquared();
 
         $this->estimator->setLogger(new BlackHole());
 
         srand(self::RANDOM_SEED);
+    }
+
+    protected function assertPreConditions() : void
+    {
+        $this->assertFalse($this->estimator->trained());
     }
 
     /**
@@ -145,20 +155,22 @@ class MLPRegressorTest extends TestCase
     public function params() : void
     {
         $expected = [
-            'hidden_layers' => [
-                new Dense(10),
-                new Activation(new LeakyReLU()),
-                new Dense(10),
-                new Activation(new LeakyReLU()),
+            'hidden layers' => [
+                new Dense(32),
+                new Activation(new SiLU()),
+                new Dense(16),
+                new Activation(new SiLU()),
+                new Dense(8),
+                new Activation(new SiLU()),
             ],
-            'batch_size' => 10,
+            'batch size' => 32,
             'optimizer' => new Adam(0.01),
-            'alpha' => 1e-4,
+            'l2 penalty' => 1e-4,
             'epochs' => 100,
-            'min_change' => 1e-3,
-            'window' => 3,
-            'hold_out' => 0.1,
-            'cost_fn' => new LeastSquares(),
+            'min change' => 1e-4,
+            'window' => 5,
+            'hold out' => 0.1,
+            'cost fn' => new LeastSquares(),
             'metric' => new RMSE(),
         ];
 
@@ -184,7 +196,14 @@ class MLPRegressorTest extends TestCase
 
         $this->assertTrue($this->estimator->trained());
 
-        $losses = $this->estimator->steps();
+        $dot = $this->estimator->exportGraphviz();
+
+        // Graphviz::dotToImage($dot)->saveTo(new Filesystem('test.png'));
+
+        $this->assertInstanceOf(Encoding::class, $dot);
+        $this->assertStringStartsWith('digraph Tree {', $dot);
+
+        $losses = $this->estimator->losses();
 
         $this->assertIsArray($losses);
         $this->assertContainsOnly('float', $losses);
@@ -219,10 +238,5 @@ class MLPRegressorTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->estimator->predict(Unlabeled::quick());
-    }
-
-    protected function assertPreConditions() : void
-    {
-        $this->assertFalse($this->estimator->trained());
     }
 }

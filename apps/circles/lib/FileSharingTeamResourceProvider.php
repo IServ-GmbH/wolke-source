@@ -21,7 +21,7 @@ class FileSharingTeamResourceProvider implements ITeamResourceProvider {
 		private IL10N $l10n,
 		private ?CirclesManager $circlesManager,
 		private ShareWrapperService $shareByCircleProvider,
-		private IURLGenerator $urlGenerator
+		private IURLGenerator $urlGenerator,
 	) {
 	}
 
@@ -43,6 +43,35 @@ class FileSharingTeamResourceProvider implements ITeamResourceProvider {
 		}
 
 		$shares = $this->shareByCircleProvider->getSharesToCircle($teamId);
+		return $this->convertWrappedShareToResource($shares);
+	}
+
+	/**
+	 * @return array<string, TeamResource[]>
+	 */
+	public function getSharedWithList(array $teams): array {
+		$data = $shares = [];
+		foreach ($this->shareByCircleProvider->getSharesToCircles($teams) as $share) {
+			if (!array_key_exists($share->getId(), $shares)) {
+				$shares[$share->getSharedWith()] = [];
+			}
+			$shares[$share->getSharedWith()][] = $share;
+		}
+
+		foreach ($teams as $teamId) {
+			$data[$teamId] = $this->convertWrappedShareToResource($shares[$teamId]);
+		}
+
+		return $data;
+	}
+
+	/**
+	 * convert list of ShareWrapper to TeamResource
+	 *
+	 * @param ShareWrapper[] $shares
+	 * @return TeamResource[]
+	 */
+	private function convertWrappedShareToResource(array $shares): array {
 		usort($shares, function ($a, $b) {
 			return (int)($b->getItemType() === 'folder') - (int)($a->getItemType() === 'folder');
 		});

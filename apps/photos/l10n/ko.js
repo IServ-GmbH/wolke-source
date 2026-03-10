@@ -46,7 +46,7 @@ OC.L10N.register(
     "All folders" : "모든 폴더",
     "Add folder" : "폴더 추가",
     "Home" : "집",
-    "View" : "보기",
+    "General" : "일반",
     "Unselect all" : "모두 선택 해제",
     "Edit album details" : "앨범 세부 정보 수정",
     "Delete album" : "앨범 삭제",
@@ -61,7 +61,11 @@ OC.L10N.register(
     "Unassigned faces" : "지정되지 않은 얼굴",
     "Last week" : "저번 주",
     "Details" : "세부사항",
+    "Cancel" : "취소",
+    "Confirm" : "확인",
+    "Group" : "구룹",
     "Remove {collaboratorLabel} from the collaborators list" : "공동 작업자 목록에서 {collaboratorLabel} 제거",
+    "View" : "보기",
     "Add" : "추가"
 },
 "nplurals=1; plural=0;");

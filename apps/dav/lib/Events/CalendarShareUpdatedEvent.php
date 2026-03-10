@@ -19,20 +19,6 @@ use OCP\EventDispatcher\Event;
  * @psalm-import-type CalendarInfo from \OCA\DAV\CalDAV\CalDavBackend
  */
 class CalendarShareUpdatedEvent extends Event {
-	private int $calendarId;
-
-	/** @psalm-var CalendarInfo $calendarData */
-	private array $calendarData;
-
-	/** @var list<array{href: string, commonName: string, status: int, readOnly: bool, '{http://owncloud.org/ns}principal': string, '{http://owncloud.org/ns}group-share': bool}> */
-	private array $oldShares;
-
-	/** @var list<array{href: string, commonName: string, readOnly: bool}> */
-	private array $added;
-
-	/** @var list<string> */
-	private array $removed;
-
 	/**
 	 * CalendarShareUpdatedEvent constructor.
 	 *
@@ -44,17 +30,14 @@ class CalendarShareUpdatedEvent extends Event {
 	 * @param list<string> $removed
 	 * @since 20.0.0
 	 */
-	public function __construct(int $calendarId,
-		array $calendarData,
-		array $oldShares,
-		array $added,
-		array $removed) {
+	public function __construct(
+		private int $calendarId,
+		private array $calendarData,
+		private array $oldShares,
+		private array $added,
+		private array $removed,
+	) {
 		parent::__construct();
-		$this->calendarId = $calendarId;
-		$this->calendarData = $calendarData;
-		$this->oldShares = $oldShares;
-		$this->added = $added;
-		$this->removed = $removed;
 	}
 
 	/**

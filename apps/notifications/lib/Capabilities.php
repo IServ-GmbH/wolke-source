@@ -23,9 +23,9 @@ class Capabilities implements ICapability {
 	 *
 	 * @return array{
 	 *     notifications: array{
-	 *         ocs-endpoints: string[],
-	 *         push: string[],
-	 *         admin-notifications: string[],
+	 *         ocs-endpoints: list<string>,
+	 *         push: list<string>,
+	 *         admin-notifications: list<string>,
 	 *     },
 	 * }
 	 */
@@ -42,6 +42,7 @@ class Capabilities implements ICapability {
 					'action-web',
 					'user-status',
 					'exists',
+					'test-push',
 				],
 				'push' => [
 					'devices',

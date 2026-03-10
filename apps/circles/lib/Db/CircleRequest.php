@@ -23,6 +23,7 @@ use OCA\Circles\Model\FederatedUser;
 use OCA\Circles\Model\Member;
 use OCA\Circles\Model\Probes\CircleProbe;
 use OCA\Circles\Model\Probes\DataProbe;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 
 /**
  * Class CircleRequest
@@ -40,15 +41,15 @@ class CircleRequest extends CircleRequestBuilder {
 
 		$qb = $this->getCircleInsertSql();
 		$qb->setValue('unique_id', $qb->createNamedParameter($circle->getSingleId()))
-		   ->setValue('name', $qb->createNamedParameter($circle->getName()))
-		   ->setValue('source', $qb->createNamedParameter($circle->getSource()))
-		   ->setValue('display_name', $qb->createNamedParameter($circle->getDisplayName()))
-		   ->setValue('sanitized_name', $qb->createNamedParameter($circle->getSanitizedName()))
-		   ->setValue('description', $qb->createNamedParameter($circle->getDescription()))
-		   ->setValue('contact_addressbook', $qb->createNamedParameter($circle->getContactAddressBook()))
-		   ->setValue('contact_groupname', $qb->createNamedParameter($circle->getContactGroupName()))
-		   ->setValue('settings', $qb->createNamedParameter(json_encode($circle->getSettings())))
-		   ->setValue('config', $qb->createNamedParameter($circle->getConfig()));
+			->setValue('name', $qb->createNamedParameter($circle->getName()))
+			->setValue('source', $qb->createNamedParameter($circle->getSource()))
+			->setValue('display_name', $qb->createNamedParameter($circle->getDisplayName()))
+			->setValue('sanitized_name', $qb->createNamedParameter($circle->getSanitizedName()))
+			->setValue('description', $qb->createNamedParameter($circle->getDescription()))
+			->setValue('contact_addressbook', $qb->createNamedParameter($circle->getContactAddressBook()))
+			->setValue('contact_groupname', $qb->createNamedParameter($circle->getContactGroupName()))
+			->setValue('settings', $qb->createNamedParameter(json_encode($circle->getSettings())))
+			->setValue('config', $qb->createNamedParameter($circle->getConfig()));
 
 		$qb->execute();
 	}
@@ -60,9 +61,9 @@ class CircleRequest extends CircleRequestBuilder {
 	public function edit(Circle $circle): void {
 		$qb = $this->getCircleUpdateSql();
 		$qb->set('name', $qb->createNamedParameter($circle->getName()))
-		   ->set('display_name', $qb->createNamedParameter($circle->getDisplayName()))
-		   ->set('sanitized_name', $qb->createNamedParameter($circle->getSanitizedName()))
-		   ->set('description', $qb->createNamedParameter($circle->getDescription()));
+			->set('display_name', $qb->createNamedParameter($circle->getDisplayName()))
+			->set('sanitized_name', $qb->createNamedParameter($circle->getSanitizedName()))
+			->set('description', $qb->createNamedParameter($circle->getDescription()));
 
 		$qb->limitToUniqueId($circle->getSingleId());
 
@@ -75,10 +76,10 @@ class CircleRequest extends CircleRequestBuilder {
 	public function update(Circle $circle) {
 		$qb = $this->getCircleUpdateSql();
 		$qb->set('name', $qb->createNamedParameter($circle->getName()))
-		   ->set('display_name', $qb->createNamedParameter($circle->getDisplayName()))
-		   ->set('description', $qb->createNamedParameter($circle->getDescription()))
-		   ->set('settings', $qb->createNamedParameter(json_encode($circle->getSettings())))
-		   ->set('config', $qb->createNamedParameter($circle->getConfig()));
+			->set('display_name', $qb->createNamedParameter($circle->getDisplayName()))
+			->set('description', $qb->createNamedParameter($circle->getDescription()))
+			->set('settings', $qb->createNamedParameter(json_encode($circle->getSettings())))
+			->set('config', $qb->createNamedParameter($circle->getConfig()));
 
 		$qb->limitToUniqueId($circle->getSingleId());
 
@@ -202,7 +203,7 @@ class CircleRequest extends CircleRequestBuilder {
 		string $singleId,
 		?IFederatedUser $initiator,
 		CircleProbe $circleProbe,
-		DataProbe $dataProbe
+		DataProbe $dataProbe,
 	): Circle {
 		$qb = $this->buildProbeCircle($initiator, $circleProbe, $dataProbe);
 		$qb->limit('unique_id', $singleId);
@@ -226,10 +227,40 @@ class CircleRequest extends CircleRequestBuilder {
 	public function probeCircles(
 		?IFederatedUser $initiator,
 		CircleProbe $circleProbe,
-		DataProbe $dataProbe
+		DataProbe $dataProbe,
 	): array {
 		$qb = $this->buildProbeCircle($initiator, $circleProbe, $dataProbe);
 		$qb->chunk($circleProbe->getItemsOffset(), $circleProbe->getItemsLimit());
+
+		return $this->getItemsFromRequest($qb);
+	}
+
+	/**
+	 * returns details about circles using a list of ids.
+	 * initiator permissions are respected
+	 */
+	public function probeCirclesByIds(
+		IFederatedUser $initiator,
+		array $ids,
+		DataProbe $dataProbe,
+	): array {
+		$qb = $this->getCircleSelectSql();
+		if (!$dataProbe->has(DataProbe::MEMBERSHIPS)) {
+			$dataProbe->add(DataProbe::MEMBERSHIPS);
+		}
+
+		$qb->setSqlPath(CoreQueryBuilder::CIRCLE, $dataProbe->getPath());
+		$qb->leftJoinOwner(CoreQueryBuilder::CIRCLE);
+		$qb->innerJoinMembership(null, CoreQueryBuilder::CIRCLE);
+
+		$aliasMembership = $qb->generateAlias(CoreQueryBuilder::CIRCLE, CoreQueryBuilder::MEMBERSHIPS);
+		$limit = $qb->exprLimit('single_id', $initiator->getSingleId(), $aliasMembership);
+		$qb->completeProbeWithInitiator(CoreQueryBuilder::CIRCLE, 'single_id', $aliasMembership);
+		$qb->andWhere(
+			$limit,
+			$qb->expr()->in(CoreQueryBuilder::CIRCLE . '.unique_id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_STR_ARRAY))
+		);
+		$qb->resetSqlPath();
 
 		return $this->getItemsFromRequest($qb);
 	}
@@ -245,7 +276,7 @@ class CircleRequest extends CircleRequestBuilder {
 	private function buildProbeCircle(
 		?IFederatedUser $initiator,
 		CircleProbe $circleProbe,
-		DataProbe $dataProbe
+		DataProbe $dataProbe,
 	): CoreQueryBuilder {
 		$qb = $this->getCircleSelectSql();
 		if (!$dataProbe->has(DataProbe::MEMBERSHIPS)) {
@@ -253,8 +284,8 @@ class CircleRequest extends CircleRequestBuilder {
 		}
 
 		$qb->setSqlPath(CoreQueryBuilder::CIRCLE, $dataProbe->getPath())
-		   ->setOptions([CoreQueryBuilder::CIRCLE], $circleProbe->getAsOptions())
-		   ->filterCircles(CoreQueryBuilder::CIRCLE, $circleProbe);
+			->setOptions([CoreQueryBuilder::CIRCLE], $circleProbe->getAsOptions())
+			->filterCircles(CoreQueryBuilder::CIRCLE, $circleProbe);
 
 		if ($circleProbe->hasFilterCircle()) {
 			$qb->filterCircleDetails($circleProbe->getFilterCircle());
@@ -318,12 +349,12 @@ class CircleRequest extends CircleRequestBuilder {
 	public function getCircle(
 		string $id,
 		?IFederatedUser $initiator = null,
-		?CircleProbe $probe = null
+		?CircleProbe $probe = null,
 	): Circle {
 		if (is_null($probe)) {
 			$probe = new CircleProbe();
 			$probe->includeSystemCircles()
-				  ->emulateVisitor();
+				->emulateVisitor();
 		}
 
 		$qb = $this->getCircleSelectSql(CoreQueryBuilder::CIRCLE, true);

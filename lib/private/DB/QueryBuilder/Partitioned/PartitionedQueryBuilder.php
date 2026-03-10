@@ -50,10 +50,10 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 	private ?int $offset = null;
 
 	public function __construct(
-		IQueryBuilder          $builder,
-		array                  $shardDefinitions,
+		IQueryBuilder $builder,
+		array $shardDefinitions,
 		ShardConnectionManager $shardConnectionManager,
-		AutoIncrementHandler   $autoIncrementHandler,
+		AutoIncrementHandler $autoIncrementHandler,
 	) {
 		parent::__construct($builder, $shardDefinitions, $shardConnectionManager, $autoIncrementHandler);
 		$this->quoteHelper = new QuoteHelper();
@@ -205,7 +205,7 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 	}
 
 	public function leftJoin($fromAlias, $join, $alias, $condition = null): self {
-		return $this->join($fromAlias, (string) $join, $alias, $condition, PartitionQuery::JOIN_MODE_LEFT);
+		return $this->join($fromAlias, (string)$join, $alias, $condition, PartitionQuery::JOIN_MODE_LEFT);
 	}
 
 	public function join($fromAlias, $join, $alias, $condition = null, $joinMode = PartitionQuery::JOIN_MODE_INNER): self {
@@ -313,7 +313,7 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 
 		$partitionPredicates = [];
 		foreach ($predicates as $predicate) {
-			$partition = $this->getPartitionForPredicate((string) $predicate);
+			$partition = $this->getPartitionForPredicate((string)$predicate);
 			if ($this->mainPartition === $partition) {
 				$partitionPredicates[''][] = $predicate;
 			} elseif ($partition) {
@@ -341,7 +341,7 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 
 						$column = $this->quoteHelper->quoteColumnName($this->splitQueries[$alias]->joinToColumn);
 						foreach ($predicates as $predicate) {
-							if ((string) $predicate === "$column IS NULL") {
+							if ((string)$predicate === "$column IS NULL") {
 								$this->splitQueries[$alias]->joinMode = PartitionQuery::JOIN_MODE_LEFT_NULL;
 							} else {
 								$this->splitQueries[$alias]->query->andWhere($predicate);
@@ -386,14 +386,14 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 
 	public function setMaxResults($maxResults) {
 		if ($maxResults > 0) {
-			$this->limit = (int) $maxResults;
+			$this->limit = (int)$maxResults;
 		}
 		return parent::setMaxResults($maxResults);
 	}
 
 	public function setFirstResult($firstResult) {
 		if ($firstResult > 0) {
-			$this->offset = (int) $firstResult;
+			$this->offset = (int)$firstResult;
 		}
 		return parent::setFirstResult($firstResult);
 	}
@@ -443,5 +443,20 @@ class PartitionedQueryBuilder extends ShardedQueryBuilder {
 
 	public function getPartitionCount(): int {
 		return count($this->splitQueries) + 1;
+	}
+
+	public function hintShardKey(string $column, mixed $value, bool $overwrite = false): self {
+		if (str_contains($column, '.')) {
+			[$alias, $column] = explode('.', $column);
+			$partition = $this->getPartition($alias);
+			if ($partition) {
+				$this->splitQueries[$partition->name]->query->hintShardKey($column, $value, $overwrite);
+			} else {
+				parent::hintShardKey($column, $value, $overwrite);
+			}
+		} else {
+			parent::hintShardKey($column, $value, $overwrite);
+		}
+		return $this;
 	}
 }

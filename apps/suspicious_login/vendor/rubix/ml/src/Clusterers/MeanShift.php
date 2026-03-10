@@ -9,27 +9,32 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Traits\LoggerAware;
 use Rubix\ML\Graph\Trees\Spatial;
-use Rubix\ML\Other\Helpers\Stats;
 use Rubix\ML\Graph\Trees\BallTree;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Clusterers\Seeders\Seeder;
 use Rubix\ML\Clusterers\Seeders\Random;
 use Rubix\ML\Kernels\Distance\Euclidean;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function Rubix\ML\array_transpose;
 use function is_nan;
+use function array_map;
+use function round;
+use function exp;
+use function get_object_vars;
 
 use const Rubix\ML\EPSILON;
 
@@ -64,56 +69,56 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
      *
      * @var float
      */
-    protected $radius;
+    protected float $radius;
 
     /**
      * The precomputed denominator of the weight calculation.
      *
      * @var float
      */
-    protected $delta;
+    protected float $delta;
 
     /**
      * The ratio of samples from the training set to use as initial centroids.
      *
      * @var float
      */
-    protected $ratio;
+    protected float $ratio;
 
     /**
      * The maximum number of iterations to run until the algorithm terminates.
      *
      * @var int
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum shift in the position of the centroids necessary to continue training.
      *
      * @var float
      */
-    protected $minShift;
+    protected float $minShift;
 
     /**
      * The spatial tree used to run range searches.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
      * The cluster centroid seeder.
      *
      * @var \Rubix\ML\Clusterers\Seeders\Seeder
      */
-    protected $seeder;
+    protected \Rubix\ML\Clusterers\Seeders\Seeder $seeder;
 
     /**
      * The computed centroid vectors of the training data.
      *
-     * @var array[]
+     * @var list<(int|float)[]>
      */
-    protected $centroids = [
+    protected array $centroids = [
         //
     ];
 
@@ -122,7 +127,7 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * Estimate the radius of a cluster that encompasses a certain percentage of
@@ -192,7 +197,7 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
                 . " between 0 and 1, $ratio given.");
         }
 
-        if ($epochs < 1) {
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -244,7 +249,7 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
             'radius' => $this->radius,
             'ratio' => $this->ratio,
             'epochs' => $this->epochs,
-            'min_shift' => $this->minShift,
+            'min shift' => $this->minShift,
             'tree' => $this->tree,
             'seeder' => $this->seeder,
         ];
@@ -263,7 +268,7 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
     /**
      * Return the computed cluster centroids of the training data.
      *
-     * @return array[]
+     * @return list<(int|float)[]>
      */
     public function centroids() : array
     {
@@ -271,13 +276,32 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
     }
 
     /**
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
+    }
+
+    /**
      * Return the amount of centroid shift at each epoch of training.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -293,10 +317,10 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
         $labels = range(0, $n - 1);
 
@@ -304,11 +328,12 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
 
         $k = max(self::MIN_SEEDS, (int) round($this->ratio * $n));
 
+        /** @var list<list<int|float>> $centroids */
         $centroids = $this->seeder->seed($dataset, $k);
 
         $this->tree->grow($dataset);
 
-        $this->steps = [];
+        $this->losses = [];
 
         $previous = $centroids;
 
@@ -339,20 +364,20 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
 
             $loss = $this->shift($centroids, $previous);
 
+            $loss /= $n;
+
+            $this->losses[$epoch] = $loss;
+
+            if ($this->logger) {
+                $this->logger->info("Epoch: $epoch, Shift: $loss");
+            }
+
             if (is_nan($loss)) {
                 if ($this->logger) {
-                    $this->logger->info('Numerical instability detected');
+                    $this->logger->warning('Numerical instability detected');
                 }
 
                 break;
-            }
-
-            $loss /= $n;
-
-            $this->steps[] = $loss;
-
-            if ($this->logger) {
-                $this->logger->info("Epoch $epoch - loss: $loss");
             }
 
             if ($loss < $this->minShift) {
@@ -462,8 +487,8 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
     /**
      * Calculate the amount of centroid shift from the previous epoch.
      *
-     * @param array[] $current
-     * @param array[] $previous
+     * @param list<(int|float)[]> $current
+     * @param list<(int|float)[]> $previous
      * @return float
      */
     protected function shift(array $current, array $previous) : float
@@ -482,7 +507,23 @@ class MeanShift implements Estimator, Learner, Probabilistic, Verbose, Persistab
     }
 
     /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

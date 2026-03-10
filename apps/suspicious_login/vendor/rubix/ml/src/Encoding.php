@@ -2,13 +2,11 @@
 
 namespace Rubix\ML;
 
-use Rubix\ML\Exceptions\RuntimeException;
+use Rubix\ML\Persisters\Persister;
+use Rubix\ML\Serializers\Serializer;
 use Stringable;
 
 use function strlen;
-use function dirname;
-use function is_file;
-use function file_put_contents;
 
 class Encoding implements Stringable
 {
@@ -17,7 +15,7 @@ class Encoding implements Stringable
      *
      * @var string
      */
-    protected $data;
+    protected string $data;
 
     /**
      * @param string $data
@@ -38,6 +36,27 @@ class Encoding implements Stringable
     }
 
     /**
+     * Deserialize the encoding with a given serializer and return a persistable object.
+     *
+     * @param \Rubix\ML\Serializers\Serializer $serializer
+     * @return \Rubix\ML\Persistable
+     */
+    public function deserializeWith(Serializer $serializer) : Persistable
+    {
+        return $serializer->deserialize($this);
+    }
+
+    /**
+     * Save the encoding with a given persister.
+     *
+     * @param \Rubix\ML\Persisters\Persister $persister
+     */
+    public function saveTo(Persister $persister) : void
+    {
+        $persister->save($this);
+    }
+
+    /**
      * Return the size of the encoding in bytes.
      *
      * @return int
@@ -45,29 +64,6 @@ class Encoding implements Stringable
     public function bytes() : int
     {
         return strlen($this->data);
-    }
-
-    /**
-     * Write the encoding to a file at the path specified.
-     *
-     * @param string $path
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     */
-    public function write(string $path) : void
-    {
-        if (!is_file($path) and !is_writable(dirname($path))) {
-            throw new RuntimeException('Folder does not exist or is not writable');
-        }
-
-        if (is_file($path) and !is_writable($path)) {
-            throw new RuntimeException("File $path is not writable.");
-        }
-
-        $success = file_put_contents($path, $this->data, LOCK_EX);
-
-        if (!$success) {
-            throw new RuntimeException('Failed to write to the filesystem.');
-        }
     }
 
     /**

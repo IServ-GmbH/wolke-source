@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -76,7 +75,7 @@ class Redis extends Cache implements IMemcacheTTL {
 	}
 
 	public function hasKey($key) {
-		return (bool) $this->getCache()->exists($this->getPrefix() . $key);
+		return (bool)$this->getCache()->exists($this->getPrefix() . $key);
 	}
 
 	public function remove($key) {
@@ -186,7 +185,7 @@ class Redis extends Cache implements IMemcacheTTL {
 
 	public function getTTL(string $key): int|false {
 		$ttl = $this->getCache()->ttl($this->getPrefix() . $key);
-		return $ttl > 0 ? (int) $ttl : false;
+		return $ttl > 0 ? (int)$ttl : false;
 	}
 
 	public function compareSetTTL(string $key, mixed $value, int $ttl): bool {
@@ -213,10 +212,10 @@ class Redis extends Cache implements IMemcacheTTL {
 	}
 
 	protected static function encodeValue(mixed $value): string {
-		return is_int($value) ? (string) $value : json_encode($value);
+		return is_int($value) ? (string)$value : json_encode($value);
 	}
 
 	protected static function decodeValue(string $value): mixed {
-		return is_numeric($value) ? (int) $value : json_decode($value, true);
+		return is_numeric($value) ? (int)$value : json_decode($value, true);
 	}
 }

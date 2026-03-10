@@ -1,25 +1,24 @@
 diff --git apps/richdocuments/lib/Controller/WopiController.php apps/richdocuments/lib/Controller/WopiController.php
-index 9e2924a00..80b94f236 100644
+index 6575c3cd8..f8cd43b60 100644
 --- apps/richdocuments/lib/Controller/WopiController.php
 +++ apps/richdocuments/lib/Controller/WopiController.php
-@@ -138,6 +138,8 @@ class WopiController extends Controller {
- 		} catch (NoLockProviderException|PreConditionNotMetException) {
- 		}
+@@ -145,6 +145,7 @@ class WopiController extends Controller {
  
-+		$downloadDisabled = $wopi->getHideDownload() || $this->config->getSystemValueBool('iserv_disable_file_downloads', false);
-+
+ 		$userId = !$isPublic ? $wopi->getEditorUid() : $guestUserId;
+ 
++		$downloadDisabled = $wopi->getHideDownload() || $shouldUseSecureView || $this->config->getSystemValueBool('iserv_disable_file_downloads', false);
+ 
  		$response = [
  			'BaseFileName' => $file->getName(),
- 			'Size' => $file->getSize(),
-@@ -158,11 +160,11 @@ class WopiController extends Controller {
+@@ -166,11 +167,11 @@ class WopiController extends Controller {
  			'EnableShare' => $file->isShareable() && !$isVersion && !$isPublic,
  			'HideUserList' => '',
  			'EnableOwnerTermination' => $wopi->getCanwrite() && !$isPublic,
--			'DisablePrint' => $wopi->getHideDownload(),
--			'DisableExport' => $wopi->getHideDownload(),
--			'DisableCopy' => $wopi->getHideDownload(),
--			'HideExportOption' => $wopi->getHideDownload(),
--			'HidePrintOption' => $wopi->getHideDownload(),
+-			'DisablePrint' => $wopi->getHideDownload() || $shouldUseSecureView,
+-			'DisableExport' => $wopi->getHideDownload() || $shouldUseSecureView,
+-			'DisableCopy' => $wopi->getHideDownload() || $shouldUseSecureView,
+-			'HideExportOption' => $wopi->getHideDownload() || $shouldUseSecureView,
+-			'HidePrintOption' => $wopi->getHideDownload() || $shouldUseSecureView,
 +			'DisablePrint' => $downloadDisabled,
 +			'DisableExport' => $downloadDisabled,
 +			'DisableCopy' => $downloadDisabled,

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -151,7 +150,7 @@ class SaveAccountsTableData implements IRepairStep {
 	 * @throws \UnexpectedValueException
 	 */
 	protected function migrateUserInfo(IQueryBuilder $update, $userdata) {
-		$state = (int) $userdata['state'];
+		$state = (int)$userdata['state'];
 		if ($state === 3) {
 			// Deleted user, ignore
 			return;
@@ -173,7 +172,8 @@ class SaveAccountsTableData implements IRepairStep {
 		}
 
 		if ($userdata['display_name'] !== null) {
-			$update->setParameter('displayname', $userdata['display_name'])
+			// user.displayname only allows 64 characters but old accounts.display_name allowed 255 characters
+			$update->setParameter('displayname', mb_substr($userdata['display_name'], 0, 64))
 				->setParameter('userid', $userdata['user_id']);
 			$update->execute();
 		}

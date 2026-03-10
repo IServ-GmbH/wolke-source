@@ -87,7 +87,7 @@ class CirclesManager {
 		MemberService $memberService,
 		MembershipService $membershipService,
 		ConfigService $configService,
-		CirclesQueryHelper $circlesQueryHelper
+		CirclesQueryHelper $circlesQueryHelper,
 	) {
 		$this->federatedUserService = $federatedUserService;
 		$this->circleService = $circleService;
@@ -215,7 +215,7 @@ class CirclesManager {
 	public function startOccSession(
 		string $userId,
 		int $userType = Member::TYPE_SINGLE,
-		string $circleId = ''
+		string $circleId = '',
 	): void {
 		$this->federatedUserService->commandLineInitiator($userId, $userType, $circleId);
 	}
@@ -276,7 +276,7 @@ class CirclesManager {
 		string $name,
 		?FederatedUser $owner = null,
 		bool $personal = false,
-		bool $local = false
+		bool $local = false,
 	): Circle {
 		$outcome = $this->circleService->create($name, $owner, $personal, $local);
 		$circle = new Circle();
@@ -324,7 +324,7 @@ class CirclesManager {
 		if (is_null($probe)) {
 			$probe = new CircleProbe();
 			$probe->filterHiddenCircles()
-				  ->filterBackendCircles();
+				->filterBackendCircles();
 		}
 
 		return $this->circleService->getCircles($probe, !$refreshCache);
@@ -342,6 +342,24 @@ class CirclesManager {
 	 */
 	public function getCircle(string $singleId, ?CircleProbe $probe = null): Circle {
 		return $this->circleService->getCircle($singleId, $probe);
+	}
+
+	/**
+	 * better than using getCircle() if only interested in teams current user is member of
+	 *
+	 * @since 33.0.0
+	 */
+	public function probeCircle(string $singleId, ?CircleProbe $probe = null, ?DataProbe $dataProbe = null): Circle {
+		return $this->circleService->probeCircle($singleId, $probe, $dataProbe);
+	}
+
+	/**
+	 * get details from a list of circles the current user is a member of
+	 *
+	 * @since 33.0.0
+	 */
+	public function getCirclesByIds(array $ids, ?DataProbe $dataProbe = null): array {
+		return $this->circleService->probeCirclesByIds($ids, $dataProbe);
 	}
 
 
@@ -525,7 +543,7 @@ class CirclesManager {
 		if (is_null($circleProbe)) {
 			$circleProbe = new CircleProbe();
 			$circleProbe->filterHiddenCircles()
-						->filterBackendCircles();
+				->filterBackendCircles();
 		}
 
 		return $this->circleService->probeCircles($circleProbe, $dataProbe);

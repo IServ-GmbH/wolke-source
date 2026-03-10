@@ -24,46 +24,45 @@ class StepDecay implements Optimizer
      *
      * @var float
      */
-    protected $rate;
+    protected float $rate;
 
     /**
-     * The size of every floor in steps. i.e. the number of steps to take before
-     * applying another factor of decay.
+     * The size of every floor in steps. i.e. the number of steps to take before applying another factor of decay.
      *
      * @var int
      */
-    protected $steps;
+    protected int $losses;
 
     /**
      * The factor to decrease the learning rate by over a period of k steps.
      *
      * @var float
      */
-    protected $decay;
+    protected float $decay;
 
     /**
      * The number of steps taken so far.
      *
      * @var int
      */
-    protected $t = 0;
+    protected int $t = 0;
 
     /**
      * @param float $rate
-     * @param int $steps
+     * @param int $losses
      * @param float $decay
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(float $rate = 0.01, int $steps = 100, float $decay = 1e-3)
+    public function __construct(float $rate = 0.01, int $losses = 100, float $decay = 1e-3)
     {
         if ($rate <= 0.0) {
             throw new InvalidArgumentException('Learning rate must be'
                 . " greater than 0, $rate given.");
         }
 
-        if ($steps < 1) {
+        if ($losses < 1) {
             throw new InvalidArgumentException('The number of steps per'
-                . " floor must be greater than 0, $steps given.");
+                . " floor must be greater than 0, $losses given.");
         }
 
         if ($decay < 0.0) {
@@ -72,7 +71,7 @@ class StepDecay implements Optimizer
         }
 
         $this->rate = $rate;
-        $this->steps = $steps;
+        $this->losses = $losses;
         $this->decay = $decay;
     }
 
@@ -87,7 +86,7 @@ class StepDecay implements Optimizer
      */
     public function step(Parameter $param, Tensor $gradient) : Tensor
     {
-        $floor = floor($this->t / $this->steps);
+        $floor = floor($this->t / $this->losses);
 
         $rate = $this->rate * (1.0 / (1.0 + $floor * $this->decay));
 
@@ -99,10 +98,12 @@ class StepDecay implements Optimizer
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Step Decay (rate: {$this->rate}, steps: {$this->steps}, decay: {$this->decay})";
+        return "Step Decay (rate: {$this->rate}, steps: {$this->losses}, decay: {$this->decay})";
     }
 }

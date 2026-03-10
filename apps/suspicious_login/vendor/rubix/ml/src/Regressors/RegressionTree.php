@@ -8,13 +8,13 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Graph\Trees\CART;
 use Rubix\ML\Graph\Nodes\Average;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -32,8 +32,7 @@ use Rubix\ML\Exceptions\RuntimeException;
  *
  * References:
  * [1] W. Y. Loh. (2011). Classification and Regression Trees.
- * [2] K. Alsabti. et al. (1998). CLOUDS: A Decision Tree Classifier for Large
- * Datasets.
+ * [2] K. Alsabti. et al. (1998). CLOUDS: A Decision Tree Classifier for Large Datasets.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
@@ -46,16 +45,18 @@ class RegressionTree extends CART implements Estimator, Learner, RanksFeatures, 
     /**
      * @param int $maxHeight
      * @param int $maxLeafSize
-     * @param int|null $maxFeatures
      * @param float $minPurityIncrease
+     * @param int|null $maxFeatures
+     * @param ?int $maxBins
      */
     public function __construct(
         int $maxHeight = PHP_INT_MAX,
         int $maxLeafSize = 3,
+        float $minPurityIncrease = 1e-7,
         ?int $maxFeatures = null,
-        float $minPurityIncrease = 1e-7
+        ?int $maxBins = null
     ) {
-        parent::__construct($maxHeight, $maxLeafSize, $maxFeatures, $minPurityIncrease);
+        parent::__construct($maxHeight, $maxLeafSize, $minPurityIncrease, $maxFeatures, $maxBins);
     }
 
     /**
@@ -95,10 +96,11 @@ class RegressionTree extends CART implements Estimator, Learner, RanksFeatures, 
     public function params() : array
     {
         return [
-            'max_height' => $this->maxHeight,
-            'max_leaf_size' => $this->maxLeafSize,
-            'max_features' => $this->maxFeatures,
-            'min_purity_increase' => $this->minPurityIncrease,
+            'max height' => $this->maxHeight,
+            'max leaf size' => $this->maxLeafSize,
+            'max features' => $this->maxFeatures,
+            'min purity increase' => $this->minPurityIncrease,
+            'max bins' => $this->maxBins,
         ];
     }
 
@@ -173,22 +175,24 @@ class RegressionTree extends CART implements Estimator, Learner, RanksFeatures, 
     {
         [$mean, $variance] = Stats::meanVar($dataset->labels());
 
-        return new Average($mean, $variance, $dataset->numRows());
+        return new Average($mean, $variance, $dataset->numSamples());
     }
 
     /**
-     * Compute the impurity of a labeled dataset.
+     * Calculate the impurity of a set of labels.
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
+     * @param list<int|float> $labels
      * @return float
      */
-    protected function impurity(Labeled $dataset) : float
+    protected function impurity(array $labels) : float
     {
-        return Stats::variance($dataset->labels());
+        return Stats::variance($labels);
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

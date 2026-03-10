@@ -3,6 +3,8 @@
 namespace Rubix\ML\Kernels\SVM;
 
 use Rubix\ML\Specifications\ExtensionIsLoaded;
+use Rubix\ML\Specifications\SpecificationChain;
+use Rubix\ML\Specifications\ExtensionMinimumVersion;
 use svm;
 
 /**
@@ -18,7 +20,10 @@ class Linear implements Kernel
 {
     public function __construct()
     {
-        ExtensionIsLoaded::with('svm')->check();
+        SpecificationChain::with([
+            new ExtensionIsLoaded('svm'),
+            new ExtensionMinimumVersion('svm', '0.2.0'),
+        ])->check();
     }
 
     /**
@@ -37,6 +42,8 @@ class Linear implements Kernel
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

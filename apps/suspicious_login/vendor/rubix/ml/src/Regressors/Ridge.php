@@ -10,10 +10,9 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\PredictsSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -29,7 +28,7 @@ use function is_null;
  * Ridge
  *
  * L2 regularized least squares linear model solved using a closed-form solution. The addition
- * of regularization, controlled by the *alpha* parameter, makes Ridge less prone to overfitting
+ * of regularization, controlled by the *l2Penalty* parameter, makes Ridge less prone to overfitting
  * than ordinary linear regression.
  *
  * @category    Machine Learning
@@ -38,41 +37,41 @@ use function is_null;
  */
 class Ridge implements Estimator, Learner, RanksFeatures, Persistable
 {
-    use AutotrackRevisions, PredictsSingle;
+    use AutotrackRevisions;
 
     /**
      * The strength of the L2 regularization penalty.
      *
      * @var float
      */
-    protected $alpha;
+    protected float $l2Penalty;
 
     /**
      * The y intercept i.e. the bias added to the decision function.
      *
      * @var float|null
      */
-    protected $bias;
+    protected ?float $bias = null;
 
     /**
      * The computed coefficients of the regression line.
      *
      * @var \Tensor\Vector|null
      */
-    protected $coefficients;
+    protected ?\Tensor\Vector $coefficients = null;
 
     /**
-     * @param float $alpha
+     * @param float $l2Penalty
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(float $alpha = 1.0)
+    public function __construct(float $l2Penalty = 1.0)
     {
-        if ($alpha < 0.0) {
-            throw new InvalidArgumentException('Alpha must be'
-                . " greater than 0, $alpha given.");
+        if ($l2Penalty < 0.0) {
+            throw new InvalidArgumentException('L2 Penalty must be'
+                . " greater than 0, $l2Penalty given.");
         }
 
-        $this->alpha = $alpha;
+        $this->l2Penalty = $l2Penalty;
     }
 
     /**
@@ -111,7 +110,7 @@ class Ridge implements Estimator, Learner, RanksFeatures, Persistable
     public function params() : array
     {
         return [
-            'alpha' => $this->alpha,
+            'l2 penalty' => $this->l2Penalty,
         ];
     }
 
@@ -159,16 +158,19 @@ class Ridge implements Estimator, Learner, RanksFeatures, Persistable
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        $biases = Matrix::ones($dataset->numRows(), 1);
+        $biases = Matrix::ones($dataset->numSamples(), 1);
 
         $x = Matrix::build($dataset->samples())->augmentLeft($biases);
         $y = Vector::build($dataset->labels());
 
-        $alphas = array_fill(0, $x->n() - 1, $this->alpha);
+        /** @var int<0,max> $nHat */
+        $nHat = $x->n() - 1;
 
-        array_unshift($alphas, 0.0);
+        $penalties = array_fill(0, $nHat, $this->l2Penalty);
 
-        $penalties = Matrix::diagonal($alphas);
+        array_unshift($penalties, 0.0);
+
+        $penalties = Matrix::diagonal($penalties);
 
         $xT = $x->transpose();
 
@@ -204,7 +206,7 @@ class Ridge implements Estimator, Learner, RanksFeatures, Persistable
     }
 
     /**
-     * Return the normalized importance scores of each feature column of the training set.
+     * Return the importance scores of each feature column of the training set.
      *
      * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return float[]
@@ -215,13 +217,13 @@ class Ridge implements Estimator, Learner, RanksFeatures, Persistable
             throw new RuntimeException('Learner has not been trained.');
         }
 
-        $importances = $this->coefficients->abs();
-
-        return $importances->divide($importances->sum())->asArray();
+        return $this->coefficients->abs()->asArray();
     }
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

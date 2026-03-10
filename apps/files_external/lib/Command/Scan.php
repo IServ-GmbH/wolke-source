@@ -11,6 +11,7 @@ namespace OCA\Files_External\Command;
 use OC\Files\Cache\Scanner;
 use OCA\Files_External\Service\GlobalStoragesService;
 use OCP\IUserManager;
+use OCP\Lock\LockedException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +25,7 @@ class Scan extends StorageAuthBase {
 
 	public function __construct(
 		GlobalStoragesService $globalService,
-		IUserManager $userManager
+		IUserManager $userManager,
 	) {
 		parent::__construct($globalService, $userManager);
 	}
@@ -75,26 +76,38 @@ class Scan extends StorageAuthBase {
 		/** @var Scanner $scanner */
 		$scanner = $storage->getScanner();
 
-		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFile', function (string $path) use ($output) {
+		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFile', function (string $path) use ($output): void {
 			$output->writeln("\tFile\t<info>$path</info>", OutputInterface::VERBOSITY_VERBOSE);
 			++$this->filesCounter;
 			$this->abortIfInterrupted();
 		});
 
-		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFolder', function (string $path) use ($output) {
+		$scanner->listen('\OC\Files\Cache\Scanner', 'scanFolder', function (string $path) use ($output): void {
 			$output->writeln("\tFolder\t<info>$path</info>", OutputInterface::VERBOSITY_VERBOSE);
 			++$this->foldersCounter;
 			$this->abortIfInterrupted();
 		});
 
-		if ($input->getOption('unscanned')) {
-			if ($path !== '') {
-				$output->writeln('<error>--unscanned is mutually exclusive with --path</error>');
-				return 1;
+		try {
+			if ($input->getOption('unscanned')) {
+				if ($path !== '') {
+					$output->writeln('<error>--unscanned is mutually exclusive with --path</error>');
+					return 1;
+				}
+				$scanner->backgroundScan();
+			} else {
+				$scanner->scan($path);
 			}
-			$scanner->backgroundScan();
-		} else {
-			$scanner->scan($path);
+		} catch (LockedException $e) {
+			if (is_string($e->getReadablePath()) && str_starts_with($e->getReadablePath(), 'scanner::')) {
+				if ($e->getReadablePath() === 'scanner::') {
+					$output->writeln('<error>Another process is already scanning this storage</error>');
+				} else {
+					$output->writeln('<error>Another process is already scanning \'' . substr($e->getReadablePath(), strlen('scanner::')) . '\' in this storage</error>');
+				}
+			} else {
+				throw $e;
+			}
 		}
 
 		$this->presentStats($output);

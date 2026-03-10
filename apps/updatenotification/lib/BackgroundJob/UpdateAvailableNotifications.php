@@ -18,6 +18,7 @@ use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Notification\IManager;
+use OCP\ServerVersion;
 
 class UpdateAvailableNotifications extends TimedJob {
 	protected $connectionNotifications = [3, 7, 14, 30];
@@ -27,6 +28,7 @@ class UpdateAvailableNotifications extends TimedJob {
 
 	public function __construct(
 		ITimeFactory $timeFactory,
+		protected ServerVersion $serverVersion,
 		protected IConfig $config,
 		protected IAppConfig $appConfig,
 		protected IManager $notificationManager,
@@ -62,10 +64,15 @@ class UpdateAvailableNotifications extends TimedJob {
 	}
 
 	/**
-	 * Check for ownCloud update
+	 * Check for Nextcloud server update
 	 */
 	protected function checkCoreUpdate() {
-		if (\in_array($this->getChannel(), ['daily', 'git'], true)) {
+		if (!$this->config->getSystemValueBool('updatechecker', true)) {
+			// update checker is disabled so no core update check!
+			return;
+		}
+
+		if (\in_array($this->serverVersion->getChannel(), ['daily', 'git'], true)) {
 			// "These aren't the update channels you're looking for." - Ben Obi-Wan Kenobi
 			return;
 		}
@@ -219,13 +226,6 @@ class UpdateAvailableNotifications extends TimedJob {
 			return;
 		}
 		$this->notificationManager->markProcessed($notification);
-	}
-
-	/**
-	 * @return string
-	 */
-	protected function getChannel(): string {
-		return \OC_Util::getChannel();
 	}
 
 	/**

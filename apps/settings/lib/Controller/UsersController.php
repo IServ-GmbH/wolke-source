@@ -14,6 +14,7 @@ use InvalidArgumentException;
 use OC\AppFramework\Http;
 use OC\Encryption\Exceptions\ModuleDoesNotExistsException;
 use OC\ForbiddenException;
+use OC\Group\MetaData;
 use OC\KnownUser\KnownUserService;
 use OC\Security\IdentityProof\Manager;
 use OC\User\Manager as UserManager;
@@ -50,6 +51,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
+use OCP\Util;
 use function in_array;
 
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
@@ -107,17 +109,17 @@ class UsersController extends Controller {
 		$navigationManager->setActiveEntry('core_users');
 
 		/* SORT OPTION: SORT_USERCOUNT or SORT_GROUPNAME */
-		$sortGroupsBy = \OC\Group\MetaData::SORT_USERCOUNT;
+		$sortGroupsBy = MetaData::SORT_USERCOUNT;
 		$isLDAPUsed = false;
 		if ($this->config->getSystemValueBool('sort_groups_by_name', false)) {
-			$sortGroupsBy = \OC\Group\MetaData::SORT_GROUPNAME;
+			$sortGroupsBy = MetaData::SORT_GROUPNAME;
 		} else {
 			if ($this->appManager->isEnabledForUser('user_ldap')) {
 				$isLDAPUsed =
 					$this->groupManager->isBackendUsed('\OCA\User_LDAP\Group_Proxy');
 				if ($isLDAPUsed) {
 					// LDAP user count can be slow, so we sort by group name here
-					$sortGroupsBy = \OC\Group\MetaData::SORT_GROUPNAME;
+					$sortGroupsBy = MetaData::SORT_GROUPNAME;
 				}
 			}
 		}
@@ -125,7 +127,7 @@ class UsersController extends Controller {
 		$canChangePassword = $this->canAdminChangeUserPasswords();
 
 		/* GROUPS */
-		$groupsInfo = new \OC\Group\MetaData(
+		$groupsInfo = new MetaData(
 			$uid,
 			$isAdmin,
 			$isDelegatedAdmin,
@@ -137,14 +139,14 @@ class UsersController extends Controller {
 		$adminGroupData = [
 			'id' => $adminGroup->getGID(),
 			'name' => $adminGroup->getDisplayName(),
-			'usercount' => $sortGroupsBy === \OC\Group\MetaData::SORT_USERCOUNT ? $adminGroup->count() : 0,
+			'usercount' => $sortGroupsBy === MetaData::SORT_USERCOUNT ? $adminGroup->count() : 0,
 			'disabled' => $adminGroup->countDisabled(),
 			'canAdd' => $adminGroup->canAddUser(),
 			'canRemove' => $adminGroup->canRemoveUser(),
 		];
 
 		if (!$isLDAPUsed && $this->appManager->isEnabledForUser('user_ldap')) {
-			$isLDAPUsed = (bool) array_reduce($this->userManager->getBackends(), function ($ldapFound, $backend) {
+			$isLDAPUsed = (bool)array_reduce($this->userManager->getBackends(), function ($ldapFound, $backend) {
 				return $ldapFound || $backend instanceof User_Proxy;
 			});
 		}
@@ -156,7 +158,7 @@ class UsersController extends Controller {
 			if ($isAdmin || $isDelegatedAdmin) {
 				$disabledUsers = $this->userManager->countDisabledUsers();
 				$userCount = array_reduce($this->userManager->countUsers(), function ($v, $w) {
-					return $v + (int) $w;
+					return $v + (int)$w;
 				}, 0);
 			} else {
 				// User is subadmin !
@@ -205,7 +207,7 @@ class UsersController extends Controller {
 		$languages = $this->l10nFactory->getLanguages();
 
 		/** Using LDAP or admins (system config) can enfore sorting by group name, in this case the frontend setting is overwritten */
-		$forceSortGroupByName = $sortGroupsBy === \OC\Group\MetaData::SORT_GROUPNAME;
+		$forceSortGroupByName = $sortGroupsBy === MetaData::SORT_GROUPNAME;
 
 		/* FINAL DATA */
 		$serverData = [];
@@ -216,8 +218,8 @@ class UsersController extends Controller {
 		$serverData['isAdmin'] = $isAdmin;
 		$serverData['isDelegatedAdmin'] = $isDelegatedAdmin;
 		$serverData['sortGroups'] = $forceSortGroupByName
-			? \OC\Group\MetaData::SORT_GROUPNAME
-			: (int) $this->config->getAppValue('core', 'group.sortBy', (string) \OC\Group\MetaData::SORT_USERCOUNT);
+			? MetaData::SORT_GROUPNAME
+			: (int)$this->config->getAppValue('core', 'group.sortBy', (string)MetaData::SORT_USERCOUNT);
 		$serverData['forceSortGroupByName'] = $forceSortGroupByName;
 		$serverData['quotaPreset'] = $quotaPreset;
 		$serverData['allowUnlimitedQuota'] = $allowUnlimitedQuota;
@@ -234,8 +236,8 @@ class UsersController extends Controller {
 
 		$this->initialState->provideInitialState('usersSettings', $serverData);
 
-		\OCP\Util::addStyle('settings', 'settings');
-		\OCP\Util::addScript('settings', 'vue-settings-apps-users-management');
+		Util::addStyle('settings', 'settings');
+		Util::addScript('settings', 'vue-settings-apps-users-management');
 
 		return new TemplateResponse('settings', 'settings/empty', ['pageTitle' => $this->l10n->t('Settings')]);
 	}
@@ -344,6 +346,8 @@ class UsersController extends Controller {
 		?string $fediverseScope = null,
 		?string $birthdate = null,
 		?string $birthdateScope = null,
+		?string $pronouns = null,
+		?string $pronounsScope = null,
 	) {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -384,6 +388,7 @@ class UsersController extends Controller {
 			IAccountManager::PROPERTY_TWITTER => ['value' => $twitter, 'scope' => $twitterScope],
 			IAccountManager::PROPERTY_FEDIVERSE => ['value' => $fediverse, 'scope' => $fediverseScope],
 			IAccountManager::PROPERTY_BIRTHDATE => ['value' => $birthdate, 'scope' => $birthdateScope],
+			IAccountManager::PROPERTY_PRONOUNS => ['value' => $pronouns, 'scope' => $pronounsScope],
 		];
 		$allowUserToChangeDisplayName = $this->config->getSystemValueBool('allow_user_to_change_display_name', true);
 		foreach ($updatable as $property => $data) {
@@ -427,6 +432,8 @@ class UsersController extends Controller {
 						'fediverseScope' => $userAccount->getProperty(IAccountManager::PROPERTY_FEDIVERSE)->getScope(),
 						'birthdate' => $userAccount->getProperty(IAccountManager::PROPERTY_BIRTHDATE)->getValue(),
 						'birthdateScope' => $userAccount->getProperty(IAccountManager::PROPERTY_BIRTHDATE)->getScope(),
+						'pronouns' => $userAccount->getProperty(IAccountManager::PROPERTY_PRONOUNS)->getValue(),
+						'pronounsScope' => $userAccount->getProperty(IAccountManager::PROPERTY_PRONOUNS)->getScope(),
 						'message' => $this->l10n->t('Settings saved'),
 					],
 				],
@@ -459,7 +466,7 @@ class UsersController extends Controller {
 		}
 
 		$oldEmailAddress = $userAccount->getUser()->getSystemEMailAddress();
-		$oldEmailAddress = strtolower((string) $oldEmailAddress);
+		$oldEmailAddress = strtolower((string)$oldEmailAddress);
 		if ($oldEmailAddress !== strtolower($userAccount->getProperty(IAccountManager::PROPERTY_EMAIL)->getValue())) {
 			// this is the only permission a backend provides and is also used
 			// for the permission of setting a email address

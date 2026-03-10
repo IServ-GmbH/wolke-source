@@ -62,8 +62,8 @@ class MigrateCustomGroups extends Base {
 		// we get list of all custom groups
 		$queryCustomGroups = $this->connection->getQueryBuilder();
 		$queryCustomGroups->select('group_id', 'display_name', 'uri')
-						  ->from('custom_group')
-						  ->orderBy('group_id');
+			->from('custom_group')
+			->orderBy('group_id');
 
 		$resultCustomGroups = $queryCustomGroups->executeQuery();
 
@@ -96,7 +96,7 @@ class MigrateCustomGroups extends Base {
 				$circle = $this->circlesManager->createCircle($name);
 			} catch (\Exception $e) {
 				$this->output->writeln('<error>' . get_class($e) . ' ' . $e->getMessage() . '</error> with data ' . json_encode($rowCG));
-				$this->logger->log(2, 'error while creating circle', ['exception' => $e]);
+				$this->logger->log(2, 'error while creating team', ['exception' => $e]);
 				$this->circlesManager->stopSession();
 				continue;
 			}
@@ -104,8 +104,8 @@ class MigrateCustomGroups extends Base {
 			// we get all members for this custom group
 			$queryMembers = $this->connection->getQueryBuilder();
 			$queryMembers->select('user_id', 'role')
-						 ->from('custom_group_member')
-						 ->where($queryMembers->expr()->eq('group_id', $queryMembers->createNamedParameter($groupId)));
+				->from('custom_group_member')
+				->where($queryMembers->expr()->eq('group_id', $queryMembers->createNamedParameter($groupId)));
 
 			$members = [$ownerId];
 			$resultMembers = $queryMembers->executeQuery();
@@ -165,12 +165,12 @@ class MigrateCustomGroups extends Base {
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('share')
-			   ->set('share_type', $update->createNamedParameter(IShare::TYPE_CIRCLE))
-			   ->set('share_with', $update->createNamedParameter($circleId))
-			   ->where($update->expr()->in('id', $update->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
+			->set('share_type', $update->createNamedParameter(IShare::TYPE_CIRCLE))
+			->set('share_with', $update->createNamedParameter($circleId))
+			->where($update->expr()->in('id', $update->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		$count = $update->executeStatement();
-		$this->output->writeln('> ' . ((string)$count) . ' shares updated');
+		$this->output->writeln('> ' . $count . ' shares updated');
 
 		$this->fixShareChildren($shareIds, $memberIds);
 	}
@@ -203,10 +203,10 @@ class MigrateCustomGroups extends Base {
 	private function fixShareChildren(array $shareIds, array $memberIds): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('share')
-			   ->set('share_type', $update->createNamedParameter(IShare::TYPE_CIRCLE))
-			   ->set('share_with', $update->createParameter('new_recipient'))
-			   ->where($update->expr()->in('parent', $update->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)))
-			   ->andWhere($update->expr()->eq('share_with', $update->createParameter('old_recipient')));
+			->set('share_type', $update->createNamedParameter(IShare::TYPE_CIRCLE))
+			->set('share_with', $update->createParameter('new_recipient'))
+			->where($update->expr()->in('parent', $update->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($update->expr()->eq('share_with', $update->createParameter('old_recipient')));
 
 		$count = 0;
 		foreach ($memberIds as $memberId) {
@@ -220,15 +220,15 @@ class MigrateCustomGroups extends Base {
 			$count += $update->executeStatement();
 		}
 
-		$this->output->writeln('> ' . ((string)$count) . ' children shares updated');
+		$this->output->writeln('> ' . $count . ' children shares updated');
 	}
 
 
 	private function getSharedIds(string $groupUri): array {
 		$select = $this->connection->getQueryBuilder();
 		$select->select('*')
-			   ->from('share')
-			   ->where($select->expr()->eq('share_type', $select->createNamedParameter(IShare::TYPE_GROUP)));
+			->from('share')
+			->where($select->expr()->eq('share_type', $select->createNamedParameter(IShare::TYPE_GROUP)));
 
 		$shareIds = [];
 		$result = $select->execute();
@@ -260,8 +260,8 @@ class MigrateCustomGroups extends Base {
 	private function extractCustomGroupsAndOwners(): array {
 		$queryOwners = $this->connection->getQueryBuilder();
 		$queryOwners->select('group_id', 'user_id')
-					->from('custom_group_member')
-					->where($queryOwners->expr()->eq('role', $queryOwners->createNamedParameter('1')));
+			->from('custom_group_member')
+			->where($queryOwners->expr()->eq('role', $queryOwners->createNamedParameter('1')));
 
 		$resultOwners = $queryOwners->executeQuery();
 		$owners = [];

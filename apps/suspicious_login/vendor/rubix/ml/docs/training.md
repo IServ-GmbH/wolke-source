@@ -32,12 +32,12 @@ $estimator->partial($dataset3);
     After the initial training, the learner will expect subsequent training sets to contain the same number and order of features.
 
 ## Monitoring Progress
-Since training is often an iterative process, it is useful to obtain feedback as to how the learner is progressing in real-time. For example, you may want to monitor the training loss to make sure that it isn't increasing instead of decreasing with training. Such early feedback saves you time by allowing you to abort training early if things aren't going well. Learners that implement the [Verbose](verbose.md) interface accept a [PSR-3](https://www.php-fig.org/psr/psr-3/) logger instance that can be used to output training information at each time step (or *epoch*). The library comes built-in with the [Screen](other/loggers/screen.md) logger that does the job for most cases.
+Since training is often an iterative process, it is useful to obtain feedback as to how the learner is progressing in real-time. For example, you may want to monitor the training loss to make sure that it isn't increasing instead of decreasing with training. Such early feedback saves you time by allowing you to abort training early if things aren't going well. Learners that implement the [Verbose](verbose.md) interface accept a [PSR-3](https://www.php-fig.org/psr/psr-3/) logger instance that can be used to output training information at each time step (or *epoch*). The library comes built-in with the [Screen](loggers/screen.md) logger that does the job for most cases.
 
 ```php
 use Rubix\ML\Classifiers\LogisticRegression;
 use Rubix\ML\NeuralNet\Optimizers\Adam;
-use Rubix\ML\Other\Loggers\Screen;
+use Rubix\ML\Loggers\Screen;
 
 $estimator = new LogisticRegression(128, new Adam(0.01));
 
@@ -46,7 +46,7 @@ $estimator->setLogger(new Screen());
 $estimator->train($dataset);
 ```
 
-```sh
+```
 [2020-09-04 08:39:04] INFO: Logistic Regression (batch_size: 128, optimizer: Adam (rate: 0.01, momentum_decay: 0.1, norm_decay: 0.001), alpha: 0.0001, epochs: 1000, min_change: 0.0001, window: 5, cost_fn: Cross Entropy) initialized
 [2020-09-04 08:39:04] INFO: Epoch 1 - Cross Entropy: 0.16895133388673
 [2020-09-04 08:39:04] INFO: Epoch 2 - Cross Entropy: 0.16559247705179
@@ -84,7 +84,7 @@ $estimator->train($dataset);
 ```
 
 ## Feature Importances
-Learners that implement the [Ranks Features](ranks-features.md) interface can evaluate the importance of each feature in the training set. Feature importances are defined as the degree to which an individual feature influences the model. Feature importances are useful for feature selection and for helping to explain predictions derived from a model. To output the normalized importance scores, call the `featureImportances()` method of a trained learner that implements the Ranks Features interface. In the example below, we'll sort the importances array so that we can easily see which features are most influential.
+Learners that implement the [Ranks Features](ranks-features.md) interface can evaluate the importance of each feature in the training set. Feature importances are defined as the degree to which an individual feature influences the model. Feature importances are useful for feature selection and for helping to explain predictions derived from a model. To output the importance scores, call the `featureImportances()` method of a trained learner that implements the Ranks Features interface.
 
 ```php
 use Rubix\ML\Regressors\Ridge;
@@ -95,17 +95,15 @@ $estimator->train($dataset);
 
 $importances = $estimator->featureImportances();
 
-arsort($importances);
-
 print_r($importances);
 ```
 
 ```sh
 Array
 (
-    [2] => 0.53170249909942
-    [1] => 0.3794817175945
-    [0] => 0.047576266783176
-    [3] => 0.041239516522901
+    [0] => 0.04757
+    [1] => 0.37948
+    [2] => 0.53170
+    [3] => 0.04123
 )
 ```

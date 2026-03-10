@@ -1,10 +1,8 @@
 OC.L10N.register(
     "app_api",
     {
-    "Cancel" : "Cancel",
     "Delete" : "Deler",
     "Edit" : "Modificar",
-    "Unlimited" : "Ilimitate",
     "Host" : "Hospite",
     "Enabled" : "Activate",
     "Confirm" : "Confirmar",

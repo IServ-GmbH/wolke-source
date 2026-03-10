@@ -28,6 +28,8 @@ class SystemTagsRelationsCollection extends SimpleCollection {
 		IRootFolder $rootFolder,
 	) {
 		$children = [
+			// Only files are supported at the moment
+			// Also see SystemTagPlugin::OBJECTIDS_PROPERTYNAME supported types
 			new SystemTagsObjectTypeCollection(
 				'files',
 				$tagManager,
@@ -37,7 +39,7 @@ class SystemTagsRelationsCollection extends SimpleCollection {
 				function (string $name) use ($rootFolder, $userSession): bool {
 					$user = $userSession->getUser();
 					if ($user) {
-						$node = $rootFolder->getUserFolder($user->getUID())->getFirstNodeById((int) $name);
+						$node = $rootFolder->getUserFolder($user->getUID())->getFirstNodeById((int)$name);
 						return $node !== null;
 					} else {
 						return false;
@@ -46,7 +48,7 @@ class SystemTagsRelationsCollection extends SimpleCollection {
 				function (string $name) use ($rootFolder, $userSession): bool {
 					$user = $userSession->getUser();
 					if ($user) {
-						$nodes = $rootFolder->getUserFolder($user->getUID())->getById((int) $name);
+						$nodes = $rootFolder->getUserFolder($user->getUID())->getById((int)$name);
 						foreach ($nodes as $node) {
 							if (($node->getPermissions() & Constants::PERMISSION_UPDATE) === Constants::PERMISSION_UPDATE) {
 								return true;

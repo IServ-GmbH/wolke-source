@@ -2,27 +2,36 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\DeployActions;
 
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-
 use OCA\AppAPI\AppInfo\Application;
 use OCA\AppAPI\Db\DaemonConfig;
+
 use OCA\AppAPI\Db\ExApp;
 use OCA\AppAPI\Service\AppAPICommonService;
-
+use OCA\AppAPI\Service\ExAppDeployOptionsService;
 use OCA\AppAPI\Service\ExAppService;
 use OCP\App\IAppManager;
+
 use OCP\ICertificateManager;
 use OCP\IConfig;
+use OCP\ITempManager;
 use OCP\IURLGenerator;
 use OCP\Security\ICrypto;
+use Phar;
+use PharData;
 use Psr\Log\LoggerInterface;
 
 class DockerActions implements IDeployActions {
-	public const DOCKER_API_VERSION = 'v1.41';
+	public const DOCKER_API_VERSION = 'v1.44';
 	public const EX_APP_CONTAINER_PREFIX = 'nc_app_';
 	public const APP_API_HAPROXY_USER = 'app_api_haproxy_user';
 
@@ -31,14 +40,16 @@ class DockerActions implements IDeployActions {
 	private string $socketAddress;
 
 	public function __construct(
-		private readonly LoggerInterface     $logger,
-		private readonly IConfig             $config,
-		private readonly ICertificateManager $certificateManager,
-		private readonly IAppManager         $appManager,
-		private readonly IURLGenerator       $urlGenerator,
-		private readonly AppAPICommonService $service,
-		private readonly ExAppService		 $exAppService,
-		private readonly ICrypto			 $crypto,
+		private readonly LoggerInterface           $logger,
+		private readonly IConfig                   $config,
+		private readonly ICertificateManager       $certificateManager,
+		private readonly IAppManager               $appManager,
+		private readonly IURLGenerator             $urlGenerator,
+		private readonly AppAPICommonService       $service,
+		private readonly ExAppService		       $exAppService,
+		private readonly ITempManager              $tempManager,
+		private readonly ICrypto			       $crypto,
+		private readonly ExAppDeployOptionsService $exAppDeployOptionsService,
 	) {
 	}
 
@@ -65,29 +76,192 @@ class DockerActions implements IDeployActions {
 		}
 
 		$this->exAppService->setAppDeployProgress($exApp, 95);
-		$containerInfo = $this->inspectContainer($dockerUrl, $this->buildExAppContainerName($params['container_params']['name']));
+		$containerName = $this->buildExAppContainerName($params['container_params']['name']);
+		$containerInfo = $this->inspectContainer($dockerUrl, $containerName);
 		if (isset($containerInfo['Id'])) {
-			$result = $this->removeContainer($dockerUrl, $this->buildExAppContainerName($params['container_params']['name']));
+			$result = $this->removeContainer($dockerUrl, $containerName);
 			if ($result) {
 				return $result;
 			}
 		}
 		$this->exAppService->setAppDeployProgress($exApp, 96);
-		$result = $this->createContainer($dockerUrl, $imageId, $params['container_params']);
+		$result = $this->createContainer($dockerUrl, $imageId, $daemonConfig, $params['container_params']);
 		if (isset($result['error'])) {
 			return $result['error'];
 		}
 		$this->exAppService->setAppDeployProgress($exApp, 97);
-		$result = $this->startContainer($dockerUrl, $this->buildExAppContainerName($params['container_params']['name']));
+
+		$this->updateCerts($dockerUrl, $containerName);
+		$this->exAppService->setAppDeployProgress($exApp, 98);
+
+		$result = $this->startContainer($dockerUrl, $containerName);
 		if (isset($result['error'])) {
 			return $result['error'];
 		}
+
+		$this->exAppDeployOptionsService->removeExAppDeployOptions($exApp->getAppid());
+		$this->exAppDeployOptionsService->addExAppDeployOptions($exApp->getAppid(), $params['deploy_options']);
+
 		$this->exAppService->setAppDeployProgress($exApp, 99);
-		if (!$this->waitTillContainerStart($this->buildExAppContainerName($exApp->getAppid()), $daemonConfig)) {
+		if (!$this->waitTillContainerStart($containerName, $daemonConfig)) {
 			return 'container startup failed';
 		}
 		$this->exAppService->setAppDeployProgress($exApp, 100);
 		return '';
+	}
+
+	private function updateCerts(string $dockerUrl, string $containerName): void {
+		try {
+			$this->startContainer($dockerUrl, $containerName);
+
+			$osInfo = $this->getContainerOsInfo($dockerUrl, $containerName);
+			if (!$this->isSupportedOs($osInfo)) {
+				$this->logger->warning(sprintf(
+					"Unsupported OS detected for container: %s. OS info: %s",
+					$containerName,
+					$osInfo
+				));
+				return;
+			}
+
+			$bundlePath = $this->certificateManager->getAbsoluteBundlePath();
+			$targetDir = $this->getTargetCertDir($osInfo); // Determine target directory based on OS
+			$this->executeCommandInContainer($dockerUrl, $containerName, ['mkdir', '-p', $targetDir]);
+			$this->installParsedCertificates($dockerUrl, $containerName, $bundlePath, $targetDir);
+
+			$updateCommand = $this->getCertificateUpdateCommand($osInfo);
+			$this->executeCommandInContainer($dockerUrl, $containerName, $updateCommand);
+		} catch (Exception $e) {
+			$this->logger->warning(sprintf(
+				"Failed to update certificates in container: %s. Error: %s",
+				$containerName,
+				$e->getMessage()
+			));
+		} finally {
+			$this->stopContainer($dockerUrl, $containerName);
+		}
+	}
+
+	private function parseCertificatesFromBundle(string $bundlePath): array {
+		$contents = file_get_contents($bundlePath);
+
+		// Match only certificates
+		preg_match_all('/-----BEGIN CERTIFICATE-----(.+?)-----END CERTIFICATE-----/s', $contents, $matches);
+
+		return $matches[0] ?? [];
+	}
+
+	private function installParsedCertificates(string $dockerUrl, string $containerId, string $bundlePath, string $targetDir): void {
+		$certificates = $this->parseCertificatesFromBundle($bundlePath);
+		$tempDir = sys_get_temp_dir();
+
+		foreach ($certificates as $index => $certificate) {
+			$tempFile = $tempDir . "/{$containerId}_cert_{$index}.crt";
+			if (file_exists($tempFile)) {
+				unlink($tempFile);
+			}
+			file_put_contents($tempFile, $certificate);
+
+			// Build the path in the container
+			$pathInContainer = $targetDir . "/custom_cert_$index.crt";
+
+			$this->dockerCopy($dockerUrl, $containerId, $tempFile, $pathInContainer);
+			unlink($tempFile);
+		}
+	}
+
+	private function dockerCopy(string $dockerUrl, string $containerId, string $sourcePath, string $pathInContainer): void {
+		$archivePath = $this->createTarArchive($sourcePath, $pathInContainer);
+		$url = $this->buildApiUrl($dockerUrl, sprintf('containers/%s/archive?path=%s', $containerId, urlencode('/')));
+
+		try {
+			$archiveData = file_get_contents($archivePath);
+			$this->guzzleClient->put($url, [
+				'body' => $archiveData,
+				'headers' => ['Content-Type' => 'application/x-tar']
+			]);
+		} catch (Exception $e) {
+			throw new Exception(sprintf("Failed to copy %s to container %s: %s", $sourcePath, $containerId, $e->getMessage()));
+		} finally {
+			if (file_exists($archivePath)) {
+				unlink($archivePath);
+			}
+		}
+	}
+
+	private function getTargetCertDir(string $osInfo): string {
+		if (stripos($osInfo, 'alpine') !== false) {
+			return '/usr/local/share/ca-certificates'; // Alpine Linux
+		}
+
+		if (stripos($osInfo, 'debian') !== false || stripos($osInfo, 'ubuntu') !== false) {
+			return '/usr/local/share/ca-certificates'; // Debian and Ubuntu
+		}
+
+		if (stripos($osInfo, 'centos') !== false || stripos($osInfo, 'almalinux') !== false) {
+			return '/etc/pki/ca-trust/source/anchors'; // CentOS and AlmaLinux
+		}
+
+		throw new Exception(sprintf('Unsupported OS: %s', $osInfo));
+	}
+
+	private function createTarArchive(string $filePath, string $pathInContainer): string {
+		$tempFile = $this->tempManager->getTemporaryFile('.tar');
+
+		try {
+			if (file_exists($tempFile)) {
+				unlink($tempFile);
+			}
+
+			$archive = new PharData($tempFile, 0, null, Phar::TAR);
+			$relativePathInArchive = ltrim($pathInContainer, '/');
+			$archive->addFile($filePath, $relativePathInArchive);
+		} catch (\Exception $e) {
+			// Clean up the temporary file in case of an error
+			if (file_exists($tempFile)) {
+				unlink($tempFile);
+			}
+			throw new Exception(sprintf("Failed to create tar archive: %s", $e->getMessage()));
+		}
+		return $tempFile; // Return the path to the TAR archive
+	}
+
+	private function getCertificateUpdateCommand(string $osInfo): string {
+		if (stripos($osInfo, 'alpine') !== false) {
+			return 'update-ca-certificates';
+		}
+		if (stripos($osInfo, 'debian') !== false || stripos($osInfo, 'ubuntu') !== false) {
+			return 'update-ca-certificates';
+		}
+		if (stripos($osInfo, 'centos') !== false || stripos($osInfo, 'almalinux') !== false) {
+			return 'update-ca-trust extract';
+		}
+		throw new Exception('Unsupported OS');
+	}
+
+	private function getContainerOsInfo(string $dockerUrl, string $containerId): string {
+		$command = ['cat', '/etc/os-release'];
+		return $this->executeCommandInContainer($dockerUrl, $containerId, $command);
+	}
+
+	private function isSupportedOs(string $osInfo): bool {
+		return (bool) preg_match('/(alpine|debian|ubuntu|centos|almalinux)/i', $osInfo);
+	}
+
+	private function executeCommandInContainer(string $dockerUrl, string $containerId, $command): string {
+		$url = $this->buildApiUrl($dockerUrl, sprintf('containers/%s/exec', $containerId));
+		$payload = [
+			'Cmd' => is_array($command) ? $command : explode(' ', $command),
+			'AttachStdout' => true,
+			'AttachStderr' => true,
+		];
+		$response = $this->guzzleClient->post($url, ['json' => $payload]);
+		$execId = json_decode((string) $response->getBody(), true)['Id'];
+
+		// Start the exec process
+		$startUrl = $this->buildApiUrl($dockerUrl, sprintf('exec/%s/start', $execId));
+		$startResponse = $this->guzzleClient->post($startUrl, ['json' => ['Detach' => false, 'Tty' => false]]);
+		return (string) $startResponse->getBody();
 	}
 
 	public function buildApiUrl(string $dockerUrl, string $route): string {
@@ -115,7 +289,7 @@ class DockerActions implements IDeployActions {
 			$imageParams['image_name'] . ':' . $imageParams['image_tag'] . '-' . $daemonConfig->getDeployConfig()['computeDevice']['id'];
 	}
 
-	public function createContainer(string $dockerUrl, string $imageId, array $params = []): array {
+	public function createContainer(string $dockerUrl, string $imageId, DaemonConfig $daemonConfig, array $params = []): array {
 		$createVolumeResult = $this->createVolume($dockerUrl, $this->buildExAppVolumeName($params['name']));
 		if (isset($createVolumeResult['error'])) {
 			return $createVolumeResult;
@@ -133,6 +307,25 @@ class DockerActions implements IDeployActions {
 			],
 			'Env' => $params['env'],
 		];
+
+		// Exposing the ExApp's primary port when the installation type is remote and the network is not a "host"
+		if (($params['net'] !== 'host') && ($daemonConfig->getProtocol() === 'https')) {
+			$exAppMainPort = $params['port'];
+			$containerParams['ExposedPorts'] = [
+				sprintf('%d/tcp', $exAppMainPort) => (object) [],
+				sprintf('%d/udp', $exAppMainPort) => (object) [],
+			];
+			$containerParams['HostConfig']['PortBindings'] = [
+				sprintf('%d/tcp', $exAppMainPort) => [
+					['HostPort' => (string)$exAppMainPort, 'HostIp' => '127.0.0.1'],
+					['HostPort' => (string)$exAppMainPort, 'HostIp' => '::1'],
+				],
+				sprintf('%d/udp', $exAppMainPort) => [
+					['HostPort' => (string)$exAppMainPort, 'HostIp' => '127.0.0.1'],
+					['HostPort' => (string)$exAppMainPort, 'HostIp' => '::1'],
+				],
+			];
+		}
 
 		if (!in_array($params['net'], ['host', 'bridge'])) {
 			$networkingConfig = [
@@ -162,6 +355,20 @@ class DockerActions implements IDeployActions {
 					$containerParams['HostConfig']['Devices'] = $this->buildDevicesParams(['/dev/kfd', '/dev/dri']);
 				}
 			}
+		}
+
+		if (isset($params['mounts'])) {
+			$containerParams['HostConfig']['Mounts'] = array_merge(
+				$containerParams['HostConfig']['Mounts'] ?? [],
+				array_map(function ($mount) {
+					return [
+						'Source' => $mount['source'],
+						'Target' => $mount['target'],
+						'Type' => 'bind', // we don't support other types for now
+						'ReadOnly' => $mount['mode'] === 'ro',
+					];
+				}, $params['mounts'])
+			);
 		}
 
 		$url = $this->buildApiUrl($dockerUrl, sprintf('containers/create?name=%s', urlencode($this->buildExAppContainerName($params['name']))));
@@ -493,6 +700,7 @@ class DockerActions implements IDeployActions {
 			'port' => $appInfo['port'],
 			'storage' => $storage,
 			'secret' => $appInfo['secret'],
+			'environment_variables' => $appInfo['external-app']['environment-variables'] ?? [],
 		], $deployConfig);
 
 		$containerParams = [
@@ -504,11 +712,16 @@ class DockerActions implements IDeployActions {
 			'computeDevice' => $deployConfig['computeDevice'] ?? null,
 			'devices' => $devices,
 			'deviceRequests' => $deviceRequests,
+			'mounts' => $appInfo['external-app']['mounts'] ?? [],
 		];
 
 		return [
 			'image_params' => $imageParams,
 			'container_params' => $containerParams,
+			'deploy_options' => [
+				'environment_variables' => $appInfo['external-app']['environment-variables'] ?? [],
+				'mounts' => $appInfo['external-app']['mounts'] ?? [],
+			]
 		];
 	}
 
@@ -534,6 +747,12 @@ class DockerActions implements IDeployActions {
 				$autoEnvs[] = sprintf('NVIDIA_DRIVER_CAPABILITIES=%s', 'compute,utility');
 			}
 		}
+
+		// Appending additional deploy options to container envs
+		foreach (array_keys($params['environment_variables']) as $envKey) {
+			$autoEnvs[] = sprintf('%s=%s', $envKey, $params['environment_variables'][$envKey]['value'] ?? '');
+		}
+
 		return $autoEnvs;
 	}
 
@@ -584,24 +803,26 @@ class DockerActions implements IDeployActions {
 
 	public function healthcheckContainer(string $containerId, DaemonConfig $daemonConfig, bool $waitForSuccess): bool {
 		$dockerUrl = $this->buildDockerUrl($daemonConfig);
-		$containerInfo = $this->inspectContainer($dockerUrl, $containerId);
-		if (!isset($containerInfo['State']['Health']['Status'])) {
-			return true;  // container does not support Healthcheck
-		}
-		if (!$waitForSuccess) {
-			return $containerInfo['State']['Health']['Status'] === 'healthy';
-		}
-		$maxTotalAttempts = 900;
+		$maxTotalAttempts = $waitForSuccess ? 900 : 1;
 		while ($maxTotalAttempts > 0) {
 			$containerInfo = $this->inspectContainer($dockerUrl, $containerId);
-			if ($containerInfo['State']['Health']['Status'] === 'healthy') {
+			if (!isset($containerInfo['State']['Health']['Status'])) {
+				return true;  // container does not support Healthcheck
+			}
+			$status = $containerInfo['State']['Health']['Status'];
+			if ($status === '') {
+				return true;  // we treat empty status as 'success', see https://github.com/nextcloud/app_api/issues/439
+			}
+			if ($status === 'healthy') {
 				return true;
 			}
-			if ($containerInfo['State']['Health']['Status'] === 'unhealthy') {
+			if ($status === 'unhealthy') {
 				return false;
 			}
 			$maxTotalAttempts--;
-			sleep(1);
+			if ($maxTotalAttempts > 0) {
+				sleep(1);
+			}
 		}
 		return false;
 	}

@@ -30,7 +30,7 @@ class FilesMetadata implements IFilesMetadata {
 	private ?int $storageId = null;
 
 	public function __construct(
-		private int $fileId = 0
+		private int $fileId = 0,
 	) {
 	}
 

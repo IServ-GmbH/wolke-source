@@ -97,6 +97,7 @@ OC.L10N.register(
     "If enabled, only administrators can create and edit tags. Accounts can still assign and remove them from files." : "Om aktiverat kan endast administratörer skapa och redigera taggar. Användare kan fortfarande tilldela och ta bort dem från filer.",
     "Restrict tag creation and editing to administrators" : "Begränsa skapande och redigering av taggar till administratörer",
     "Collaborative tags are available for all users. Restricted tags are visible to users but cannot be assigned by them. Invisible tags are for internal use, since users cannot see or assign them." : "Samarbetstaggar är tillgängliga för alla användare. Begränsade taggar är synliga för användarna men kan inte tilldelas av dem. Osynliga taggar är för internt bruk, eftersom användarna inte kan se eller tilldela dem.",
+    "Add tags" : "Lägg till taggar",
     "Assigned collaborative tags" : "Tilldelade samarbetstaggar",
     "Open in Files" : "Öppna i Filer",
     "List of tags and their associated files and folders." : "Lista över taggar och deras tillhörande filer och mappar.",
@@ -111,10 +112,10 @@ OC.L10N.register(
     "Failed to delete tag for file" : "Kunde inte ta bort tagg för filen",
     "Collaborative tags …" : "Samarbetstaggar ...",
     "Loading …" : "Laddar ...",
-    "Loading collaborative tags …" : "Läser in samarbetstaggar …",
     "File tags modification canceled" : "Ändring av filtaggar avbröts",
     "Select or create tags to apply to all selected files" : "Välj eller skapa taggar som ska tillämpas på alla valda filer",
     "Select tags to apply to all selected files" : "Välj taggar att använda på alla valda filer",
-    "Apply changes" : "Tillämpa ändringar"
+    "Apply changes" : "Tillämpa ändringar",
+    "Loading collaborative tags …" : "Läser in samarbetstaggar …"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -16,32 +17,18 @@ use OCA\Circles\Tools\Traits\TArrayTools;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Contacts\ContactsMenu\IContactsStore;
-use OCP\ILogger;
 use OCP\IUserManager;
+use Psr\Log\LoggerInterface;
 
 class MiscService {
 	use TArrayTools;
 
-
-	/** @var ILogger */
-	private $logger;
-
-	/** @var IContactsStore */
-	private $contactsStore;
-
-	/** @var string */
-	private $appName;
-
-	/** @var IUserManager */
-	private $userManager;
-
 	public function __construct(
-		ILogger $logger, IContactsStore $contactsStore, $appName, IUserManager $userManager
+		private LoggerInterface $logger,
+		private IContactsStore $contactsStore,
+		private string $appName,
+		private IUserManager $userManager,
 	) {
-		$this->logger = $logger;
-		$this->contactsStore = $contactsStore;
-		$this->appName = $appName;
-		$this->userManager = $userManager;
 	}
 
 	public function log($message, $level = 4) {
@@ -58,13 +45,13 @@ class MiscService {
 	 * @param Exception $e
 	 */
 	public function e(Exception $e) {
-		$this->logger->logException($e, ['app' => 'circles']);
+		$this->logger->error($e->getMessage(), ['app' => 'circles', 'exception' => $e]);
 	}
 
 
 	/**
-	 * @param $arr
-	 * @param $k
+	 * @param array $arr
+	 * @param int|string $k
 	 *
 	 * @param string $default
 	 *
@@ -131,7 +118,7 @@ class MiscService {
 	public function getRealUserId($userId) {
 		if ($this->userManager->userExists($userId)) {
 			return $this->userManager->get($userId)
-									 ->getUID();
+				->getUID();
 		}
 
 		$result = $this->userManager->search($userId);
@@ -209,7 +196,7 @@ class MiscService {
 		}
 
 		$user = OC::$server->getUserManager()
-						   ->get($ident);
+			->get($ident);
 		if ($user !== null) {
 			$display = $user->getDisplayName();
 		}

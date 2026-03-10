@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -109,7 +108,7 @@ class SearchBuilder {
 	public function searchOperatorArrayToDBExprArray(
 		IQueryBuilder $builder,
 		array $operators,
-		?IMetadataQuery $metadataQuery = null
+		?IMetadataQuery $metadataQuery = null,
 	) {
 		return array_filter(array_map(function ($operator) use ($builder, $metadataQuery) {
 			return $this->searchOperatorToDBExpr($builder, $operator, $metadataQuery);
@@ -119,7 +118,7 @@ class SearchBuilder {
 	public function searchOperatorToDBExpr(
 		IQueryBuilder $builder,
 		ISearchOperator $operator,
-		?IMetadataQuery $metadataQuery = null
+		?IMetadataQuery $metadataQuery = null,
 	) {
 		$expr = $builder->expr();
 
@@ -155,7 +154,7 @@ class SearchBuilder {
 		IQueryBuilder $builder,
 		ISearchComparison $comparison,
 		array $operatorMap,
-		?IMetadataQuery $metadataQuery = null
+		?IMetadataQuery $metadataQuery = null,
 	) {
 		if ($comparison->getExtra()) {
 			[$field, $value, $type, $paramType] = $this->getExtraOperatorField($comparison, $metadataQuery);
@@ -204,7 +203,7 @@ class SearchBuilder {
 			return [$resultField, $values, ISearchComparison::COMPARE_IN, $paramType];
 		}
 		if ($field === 'mimetype') {
-			$value = (string) $value;
+			$value = (string)$value;
 			if ($type === ISearchComparison::COMPARE_EQUAL) {
 				$value = $this->mimetypeLoader->getId($value);
 			} elseif ($type === ISearchComparison::COMPARE_LIKE) {
@@ -235,7 +234,7 @@ class SearchBuilder {
 			$field = 'file.fileid';
 		} elseif ($field === 'path' && $type === ISearchComparison::COMPARE_EQUAL && $pathEqHash) {
 			$field = 'path_hash';
-			$value = md5((string) $value);
+			$value = md5((string)$value);
 		} elseif ($field === 'owner') {
 			$field = 'uid_owner';
 		}

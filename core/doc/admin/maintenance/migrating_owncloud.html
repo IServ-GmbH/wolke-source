@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Migrating from ownCloud &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Issues and troubleshooting" href="../issues/index.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -59,7 +63,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -84,6 +90,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -130,8 +137,14 @@ See the table below for a version map, where migrating is easily possible:</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>10.13.x</p></td>
-<td><p>25.0.x (but at least 25.0.13)</p></td>
+<tr class="row-even"><td><p>10.13.x
+10.14.x
+10.15.x
+10.16.x</p></td>
+<td><p>25.0.13
+25.0.13
+25.0.13
+25.0.13</p></td>
 </tr>
 </tbody>
 </table>
@@ -158,8 +171,16 @@ since PHP versions prior PHP 8 are end of life, see
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="5">
-<li><p>If system cron was used, please verify if crontab entry was using the command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">system:cron</span></code>. If yes, please adjust it to use the <code class="docutils literal notranslate"><span class="pre">php</span></code> command instead according to <a class="reference internal" href="../configuration_server/background_jobs_configuration.html#system-cron-configuration-label"><span class="std std-ref">the background jobs configuration documentation</span></a></p></li>
-<li><p>Use the <a class="reference internal" href="update.html"><span class="doc">Nextcloud built-in updater</span></a> to update your instance to the newest version.</p></li>
+<li><p>If system cron was used, please verify if crontab entry was using the command <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">system:cron</span></code>.
+If yes, please adjust it to use the <code class="docutils literal notranslate"><span class="pre">php</span></code> command instead according to <a class="reference internal" href="../configuration_server/background_jobs_configuration.html#system-cron-configuration-label"><span class="std std-ref">the background jobs configuration documentation</span></a></p></li>
+<li><p>As Nextcloud 25 is the last Nextcloud version supporting PHP 7 you need to upgrade your PHP installation afterwards to continue updating to current Nextcloud release.
+We recommend to update PHP to version 8.1 before continuing with the updates.</p></li>
+<li><p>Use the <a class="reference internal" href="update.html"><span class="doc">Nextcloud built-in updater</span></a> to update your instance to the newest version.
+This must be done for every major version, since updates between multiple major versions are not supported.
+So the update path would be: 26 → 27.1 → 28 → 29 → 30 → 31.</p></li>
+<li><p>When reaching Nextcloud 30 or 31 we recommend to update PHP again to a current version like PHP 8.3.
+You can do so also in between, as PHP 8.2 is already supported since Nextcloud 26 and PHP 8.3 since Nextcloud 28,
+but in most cases it is easier to first complete the Nextcloud version updates.</p></li>
 <li><p>Make sure to also verify the “Security &amp; setup warnings” in the “Overview” section on the settings page.</p></li>
 <li><p>In some cases, apps installed from the ownCloud Market might have been disabled as incompatible
 (ex: calendar and contacts), so you should reinstall the Nextcloud ones using
@@ -178,7 +199,7 @@ since PHP versions prior PHP 8 are end of life, see
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -214,6 +235,14 @@ since PHP versions prior PHP 8 are end of life, see
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

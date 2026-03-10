@@ -10,25 +10,29 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\LoggerAware;
+use Rubix\ML\Traits\LoggerAware;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Clusterers\Seeders\Seeder;
 use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Clusterers\Seeders\PlusPlus;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
+use Generator;
 
 use function count;
 use function is_nan;
+use function array_fill;
+use function array_map;
+use function get_object_vars;
 
 use const Rubix\ML\EPSILON;
 
@@ -55,70 +59,67 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
     /**
      * The target number of clusters.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $k;
+    protected int $k;
 
     /**
      * The size of each mini batch in samples.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $batchSize;
+    protected int $batchSize;
 
     /**
-     * The maximum number of iterations to run until the algorithm
-     * terminates.
+     * The maximum number of iterations to run until the algorithm terminates.
      *
      * @var int
      */
-    protected $epochs;
+    protected int $epochs;
 
     /**
      * The minimum change in the inertia for training to continue.
      *
      * @var float
      */
-    protected $minChange;
+    protected float $minChange;
 
     /**
-     * The number of epochs without improvement in the training loss to wait
-     * before considering an early stop.
+     * The number of epochs without improvement in the training loss to wait before considering an early stop.
      *
      * @var int
      */
-    protected $window;
+    protected int $window;
 
     /**
      * The distance function to use when computing the distances.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * The cluster centroid seeder.
      *
      * @var \Rubix\ML\Clusterers\Seeders\Seeder
      */
-    protected $seeder;
+    protected \Rubix\ML\Clusterers\Seeders\Seeder $seeder;
 
     /**
      * The computed centroid vectors of the training data.
      *
-     * @var array[]
+     * @var list<list<int|float>>
      */
-    protected $centroids = [
+    protected array $centroids = [
         //
     ];
 
     /**
-     * The number of training samples contained within each cluster
-     * centroid.
+     * The number of training samples contained within each cluster centroid.
      *
      * @var int[]
      */
-    protected $sizes = [
+    protected array $sizes = [
         //
     ];
 
@@ -127,7 +128,7 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
      *
      * @var float[]|null
      */
-    protected $steps;
+    protected ?array $losses = null;
 
     /**
      * @param int $k
@@ -158,7 +159,7 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
                 . " greater than 0, $batchSize given.");
         }
 
-        if ($epochs < 1) {
+        if ($epochs < 0) {
             throw new InvalidArgumentException('Number of epochs'
                 . " must be greater than 0, $epochs given.");
         }
@@ -213,9 +214,9 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
     {
         return [
             'k' => $this->k,
-            'batch_size' => $this->batchSize,
+            'batch size' => $this->batchSize,
             'epochs' => $this->epochs,
-            'min_change' => $this->minChange,
+            'min change' => $this->minChange,
             'window' => $this->window,
             'kernel' => $this->kernel,
             'seeder' => $this->seeder,
@@ -235,7 +236,7 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
     /**
      * Return the computed cluster centroids of the training data.
      *
-     * @return array[]
+     * @return list<list<int|float>>
      */
     public function centroids() : array
     {
@@ -253,13 +254,32 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
     }
 
     /**
-     * Return the loss at each epoch from the last training session.
+     * Return an iterable progress table with the steps from the last training session.
+     *
+     * @return \Generator<mixed[]>
+     */
+    public function steps() : Generator
+    {
+        if (!$this->losses) {
+            return;
+        }
+
+        foreach ($this->losses as $epoch => $loss) {
+            yield [
+                'epoch' => $epoch,
+                'loss' => $loss,
+            ];
+        }
+    }
+
+    /**
+     * Return the loss for each epoch from the last training session.
      *
      * @return float[]|null
      */
-    public function steps() : ?array
+    public function losses() : ?array
     {
-        return $this->steps;
+        return $this->losses;
     }
 
     /**
@@ -274,10 +294,13 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
             new SamplesAreCompatibleWithEstimator($dataset, $this),
         ])->check();
 
-        $this->centroids = $this->seeder->seed($dataset, $this->k);
+        /** @var list<list<int|float>> $seeds */
+        $seeds = $this->seeder->seed($dataset, $this->k);
+
+        $this->centroids = $seeds;
 
         $sizes = array_fill(0, $this->k, 0);
-        $sizes[0] = $dataset->numRows();
+        $sizes[0] = $dataset->numSamples();
 
         $this->sizes = $sizes;
 
@@ -304,17 +327,17 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
         ])->check();
 
         if ($this->logger) {
-            $this->logger->info("$this initialized");
+            $this->logger->info("Training $this");
         }
 
-        $labels = array_fill(0, $dataset->numRows(), 0);
+        $labels = array_fill(0, $dataset->numSamples(), 0);
 
         $dataset = Labeled::quick($dataset->samples(), $labels);
 
         $prevLoss = $bestLoss = INF;
-        $delta = 0;
+        $numWorseEpochs = 0;
 
-        $this->steps = [];
+        $this->losses = [];
 
         for ($epoch = 1; $epoch <= $this->epochs; ++$epoch) {
             $batches = $dataset->randomize()->batch($this->batchSize);
@@ -341,18 +364,10 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
 
                 $loss += $this->inertia($batch->samples(), $labels);
 
-                if (is_nan($loss)) {
-                    if ($this->logger) {
-                        $this->logger->info('Numerical instability detected');
-                    }
-
-                    break;
-                }
-
-                foreach ($batch->stratify() as $cluster => $stratum) {
+                foreach ($batch->stratifyByLabel() as $cluster => $stratum) {
                     $centroid = &$this->centroids[$cluster];
 
-                    $means = array_map([Stats::class, 'mean'], $stratum->columns());
+                    $means = array_map([Stats::class, 'mean'], $stratum->features());
 
                     $weight = 1.0 / (1 + $this->sizes[$cluster]);
 
@@ -362,31 +377,47 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
                 }
             }
 
-            $loss /= $dataset->numRows();
+            $loss /= $dataset->numSamples();
 
-            $this->steps[] = $loss;
+            $lossChange = abs($prevLoss - $loss);
+
+            $this->losses[$epoch] = $loss;
 
             if ($this->logger) {
-                $this->logger->info("Epoch $epoch - Inertia: $loss");
+                $lossDirection = $loss < $prevLoss ? '↓' : '↑';
+
+                $message = "Epoch: $epoch, "
+                    . "Inertia: $loss, "
+                    . "Loss Change: {$lossDirection}{$lossChange}";
+
+                $this->logger->info($message);
+            }
+
+            if (is_nan($loss)) {
+                if ($this->logger) {
+                    $this->logger->warning('Numerical instability detected');
+                }
+
+                break;
             }
 
             if ($loss <= 0.0) {
                 break;
             }
 
-            if (abs($prevLoss - $loss) < $this->minChange) {
+            if ($lossChange < $this->minChange) {
                 break;
             }
 
             if ($loss < $bestLoss) {
                 $bestLoss = $loss;
 
-                $delta = 0;
+                $numWorseEpochs = 0;
             } else {
-                ++$delta;
+                ++$numWorseEpochs;
             }
 
-            if ($delta >= $this->window) {
+            if ($numWorseEpochs >= $this->window) {
                 break;
             }
 
@@ -512,7 +543,23 @@ class KMeans implements Estimator, Learner, Online, Probabilistic, Verbose, Pers
     }
 
     /**
+     * Return an associative array containing the data used to serialize the object.
+     *
+     * @return mixed[]
+     */
+    public function __serialize() : array
+    {
+        $properties = get_object_vars($this);
+
+        unset($properties['losses']);
+
+        return $properties;
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

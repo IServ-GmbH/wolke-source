@@ -42,16 +42,16 @@ class FileReferenceEventListener implements IEventListener {
 				return;
 			}
 
-			$this->manager->invalidateCache((string) $event->getNode()->getId());
+			$this->manager->invalidateCache((string)$event->getNode()->getId());
 		}
 		if ($event instanceof NodeRenamedEvent) {
-			$this->manager->invalidateCache((string) $event->getTarget()->getId());
+			$this->manager->invalidateCache((string)$event->getTarget()->getId());
 		}
 		if ($event instanceof ShareDeletedEvent) {
-			$this->manager->invalidateCache((string) $event->getShare()->getNodeId());
+			$this->manager->invalidateCache((string)$event->getShare()->getNodeId());
 		}
 		if ($event instanceof ShareCreatedEvent) {
-			$this->manager->invalidateCache((string) $event->getShare()->getNodeId());
+			$this->manager->invalidateCache((string)$event->getShare()->getNodeId());
 		}
 	}
 }

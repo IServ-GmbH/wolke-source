@@ -2,24 +2,9 @@
 
 declare(strict_types=1);
 
-/**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @copyright Copyright (c) 2016 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * Two-factor TOTP
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+/*
+ * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 namespace OCA\TwoFactorTOTP\Service;
@@ -65,14 +50,14 @@ class Totp implements ITotp {
 	public function hasSecret(IUser $user): bool {
 		try {
 			$secret = $this->secretMapper->getSecret($user);
-			return ITotp::STATE_ENABLED === (int)$secret->getState();
+			return (int)$secret->getState() === ITotp::STATE_ENABLED;
 		} catch (DoesNotExistException $ex) {
 			return false;
 		}
 	}
 
 	private function generateSecret(): string {
-		return $this->random->generate(32, ISecureRandom::CHAR_UPPER.'234567');
+		return $this->random->generate(32, ISecureRandom::CHAR_UPPER . '234567');
 	}
 
 	/**
@@ -99,11 +84,23 @@ class Totp implements ITotp {
 		return $secret;
 	}
 
+	public function getSecret(IUser $user): TotpSecret {
+		try {
+			return $this->secretMapper->getSecret($user);
+		} catch (DoesNotExistException $e) {
+			throw new NoTotpSecretFoundException(
+				$e->getMessage(),
+				$e->getCode(),
+				$e,
+			);
+		}
+	}
+
 	public function enable(IUser $user, $key): bool {
-		if (!$this->validateSecret($user, $key)) {
+		$dbSecret = $this->secretMapper->getSecret($user);
+		if (!$this->validateSecret($dbSecret, $key)) {
 			return false;
 		}
-		$dbSecret = $this->secretMapper->getSecret($user);
 		$dbSecret->setState(ITotp::STATE_ENABLED);
 		$this->secretMapper->update($dbSecret);
 
@@ -128,26 +125,20 @@ class Totp implements ITotp {
 		}
 	}
 
-	public function validateSecret(IUser $user, string $key): bool {
-		try {
-			$dbSecret = $this->secretMapper->getSecret($user);
-		} catch (DoesNotExistException $ex) {
-			throw new NoTotpSecretFoundException();
-		}
-
-		$secret = $this->crypto->decrypt($dbSecret->getSecret());
-		$otp = Factory::getTOTP(Base32::decode($secret), 30, 6);
+	public function validateSecret(TotpSecret $secret, string $key): bool {
+		$decryptedSecret = $this->crypto->decrypt($secret->getSecret());
+		$otp = Factory::getTOTP(Base32::decode($decryptedSecret), 30, 6);
 
 		$counter = null;
-		$lastCounter = $dbSecret->getLastCounter();
+		$lastCounter = $secret->getLastCounter();
 		if ($lastCounter !== -1) {
 			$counter = $lastCounter;
 		}
 
 		$result = $otp->verify($key, 3, $counter);
 		if ($result instanceof TOTPValidResultInterface) {
-			$dbSecret->setLastCounter($result->getCounter());
-			$this->secretMapper->update($dbSecret);
+			$secret->setLastCounter($result->getCounter());
+			$this->secretMapper->update($secret);
 
 			return true;
 		}

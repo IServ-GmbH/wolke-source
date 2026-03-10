@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2023 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 namespace OCA\AppAPI\Controller;
 
 use Exception;
@@ -16,6 +21,7 @@ use OCA\AppAPI\DeployActions\DockerActions;
 use OCA\AppAPI\Fetcher\ExAppFetcher;
 use OCA\AppAPI\Service\AppAPIService;
 use OCA\AppAPI\Service\DaemonConfigService;
+use OCA\AppAPI\Service\ExAppDeployOptionsService;
 use OCA\AppAPI\Service\ExAppService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
@@ -48,6 +54,7 @@ class ExAppsPageController extends Controller {
 		private readonly LoggerInterface $logger,
 		private readonly IAppManager $appManager,
 		private readonly ExAppService $exAppService,
+		private readonly ExAppDeployOptionsService $exAppDeployOptionsService,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -307,12 +314,38 @@ class ExAppsPageController extends Controller {
 	}
 
 	#[PasswordConfirmationRequired]
-	public function enableApp(string $appId): JSONResponse {
+	public function enableApp(string $appId, array $deployOptions = []): JSONResponse {
 		$updateRequired = false;
 		$exApp = $this->exAppService->getExApp($appId);
+
+		$envOptions = isset($deployOptions['environment_variables'])
+			? array_keys($deployOptions['environment_variables']) : [];
+		$envArgs = [];
+		foreach ($envOptions as $envOption) {
+			$envArgs[] = '--env';
+			$envArgs[] = sprintf('%s=%s', $envOption, $deployOptions['environment_variables'][$envOption]);
+		}
+
+		$mountOptions = $deployOptions['mounts'] ?? [];
+		$mountArgs = [];
+		foreach ($mountOptions as $mountOption) {
+			$readonlyModifier = $mountOption['readonly'] ? 'ro' : 'rw';
+			$mountArgs[] = '--mount';
+			$mountArgs[] = sprintf('%s:%s:%s', $mountOption['hostPath'], $mountOption['containerPath'], $readonlyModifier);
+		}
+
 		// If ExApp is not registered - then it's a "Deploy and Enable" action.
 		if (!$exApp) {
-			if (!$this->service->runOccCommand(sprintf("app_api:app:register --silent %s", $appId))) {
+			$commandParts = array_merge(
+				[
+					'app_api:app:register',
+					'--silent',
+					$appId,
+				],
+				$envArgs,
+				$mountArgs
+			);
+			if (!$this->service->runOccCommand($commandParts)) {
 				return new JSONResponse(['data' => ['message' => $this->l10n->t('Error starting install of ExApp')]], Http::STATUS_INTERNAL_SERVER_ERROR);
 			}
 			$elapsedTime = 0;
@@ -370,7 +403,12 @@ class ExAppsPageController extends Controller {
 		}
 
 		$exAppOldVersion = $this->exAppService->getExApp($appId)->getVersion();
-		if (!$this->service->runOccCommand(sprintf("app_api:app:update --silent %s", $appId))) {
+		$commandParts = [
+			'app_api:app:update',
+			'--silent',
+			$appId,
+		];
+		if (!$this->service->runOccCommand($commandParts)) {
 			return new JSONResponse(['data' => ['message' => $this->l10n->t('Error starting update of ExApp')]], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
@@ -421,7 +459,7 @@ class ExAppsPageController extends Controller {
 	#[PasswordConfirmationRequired]
 	public function force(string $appId): JSONResponse {
 		$appId = OC_App::cleanAppId($appId);
-		$this->appManager->ignoreNextcloudRequirementForApp($appId);
+		$this->appManager->overwriteNextcloudRequirement($appId);
 		return new JSONResponse();
 	}
 
@@ -474,6 +512,38 @@ class ExAppsPageController extends Controller {
 				'text/plain'
 			);
 		}
+	}
+
+	public function getAppDeployOptions(string $appId) {
+		$exApp = $this->exAppService->getExApp($appId);
+		if (is_null($exApp)) {
+			return new JSONResponse(['error' => $this->l10n->t('ExApp not found, failed to get deploy options')], Http::STATUS_NOT_FOUND);
+		}
+
+		$deployOptions = $this->exAppDeployOptionsService->formatDeployOptions(
+			$this->exAppDeployOptionsService->getDeployOptions($appId)
+		);
+
+		$envs = [];
+		if (isset($deployOptions['environment_variables'])) {
+			$envs = $deployOptions['environment_variables'];
+		}
+
+		$mounts = [];
+		if (isset($deployOptions['mounts'])) {
+			foreach ($deployOptions['mounts'] as $mount) {
+				$mounts[] = [
+					'hostPath' => $mount['source'],
+					'containerPath' => $mount['target'],
+					'readonly' => $mount['mode'] === 'ro'
+				];
+			}
+		}
+
+		return new JSONResponse([
+			'environment_variables' => $envs,
+			'mounts' => $mounts,
+		]);
 	}
 
 	/**

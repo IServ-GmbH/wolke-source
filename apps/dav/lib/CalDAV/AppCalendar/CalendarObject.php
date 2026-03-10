@@ -20,14 +20,11 @@ use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\Property\ICalendar\DateTime;
 
 class CalendarObject implements ICalendarObject, IACL {
-	private VCalendar $vobject;
-	private AppCalendar $calendar;
-	private ICalendar|ICreateFromString $backend;
-
-	public function __construct(AppCalendar $calendar, ICalendar $backend, VCalendar $vobject) {
-		$this->backend = $backend;
-		$this->calendar = $calendar;
-		$this->vobject = $vobject;
+	public function __construct(
+		private AppCalendar $calendar,
+		private ICalendar|ICreateFromString $backend,
+		private VCalendar $vobject,
+	) {
 	}
 
 	public function getOwner() {
@@ -97,7 +94,7 @@ class CalendarObject implements ICalendarObject, IACL {
 			$components = $this->vobject->getBaseComponents();
 			foreach ($components as $key => $component) {
 				$components[$key]->STATUS = 'CANCELLED';
-				$components[$key]->SEQUENCE = isset($component->SEQUENCE) ? ((int) $component->SEQUENCE->getValue()) + 1 : 1;
+				$components[$key]->SEQUENCE = isset($component->SEQUENCE) ? ((int)$component->SEQUENCE->getValue()) + 1 : 1;
 				if ($component->name === 'VEVENT') {
 					$components[$key]->METHOD = 'CANCEL';
 				}
@@ -116,9 +113,9 @@ class CalendarObject implements ICalendarObject, IACL {
 			throw new NotFound('Invalid node');
 		}
 		if (isset($base->{'X-FILENAME'})) {
-			return (string) $base->{'X-FILENAME'};
+			return (string)$base->{'X-FILENAME'};
 		}
-		return (string) $base->UID . '.ics';
+		return (string)$base->UID . '.ics';
 	}
 
 	public function setName($name): void {

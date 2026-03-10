@@ -17,16 +17,15 @@ use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class LDAP implements ILDAPWrapper {
-	protected string $logFile = '';
 	protected array $curArgs = [];
 	protected LoggerInterface $logger;
 	protected IConfig $config;
 
 	private ?LdapDataCollector $dataCollector = null;
 
-	public function __construct(string $logFile = '') {
-		$this->logFile = $logFile;
-
+	public function __construct(
+		protected string $logFile = '',
+	) {
 		/** @var IProfiler $profiler */
 		$profiler = \OC::$server->get(IProfiler::class);
 		if ($profiler->isEnabled()) {
@@ -380,7 +379,7 @@ class LDAP implements ILDAPWrapper {
 
 	/**
 	 * Called after an ldap method is run to act on LDAP error if necessary
-	 * @throw \Exception
+	 * @throws \Exception
 	 */
 	private function postFunctionCall(string $functionName): void {
 		if ($this->isResource($this->curArgs[0])) {

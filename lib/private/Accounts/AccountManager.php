@@ -65,19 +65,20 @@ class AccountManager implements IAccountManager {
 	 * The list of default scopes for each property.
 	 */
 	public const DEFAULT_SCOPES = [
-		self::PROPERTY_DISPLAYNAME => self::SCOPE_FEDERATED,
 		self::PROPERTY_ADDRESS => self::SCOPE_LOCAL,
-		self::PROPERTY_WEBSITE => self::SCOPE_LOCAL,
-		self::PROPERTY_EMAIL => self::SCOPE_FEDERATED,
 		self::PROPERTY_AVATAR => self::SCOPE_FEDERATED,
-		self::PROPERTY_PHONE => self::SCOPE_LOCAL,
-		self::PROPERTY_TWITTER => self::SCOPE_LOCAL,
-		self::PROPERTY_FEDIVERSE => self::SCOPE_LOCAL,
-		self::PROPERTY_ORGANISATION => self::SCOPE_LOCAL,
-		self::PROPERTY_ROLE => self::SCOPE_LOCAL,
-		self::PROPERTY_HEADLINE => self::SCOPE_LOCAL,
 		self::PROPERTY_BIOGRAPHY => self::SCOPE_LOCAL,
 		self::PROPERTY_BIRTHDATE => self::SCOPE_LOCAL,
+		self::PROPERTY_DISPLAYNAME => self::SCOPE_FEDERATED,
+		self::PROPERTY_EMAIL => self::SCOPE_FEDERATED,
+		self::PROPERTY_FEDIVERSE => self::SCOPE_LOCAL,
+		self::PROPERTY_HEADLINE => self::SCOPE_LOCAL,
+		self::PROPERTY_ORGANISATION => self::SCOPE_LOCAL,
+		self::PROPERTY_PHONE => self::SCOPE_LOCAL,
+		self::PROPERTY_PRONOUNS => self::SCOPE_FEDERATED,
+		self::PROPERTY_ROLE => self::SCOPE_LOCAL,
+		self::PROPERTY_TWITTER => self::SCOPE_LOCAL,
+		self::PROPERTY_WEBSITE => self::SCOPE_LOCAL,
 	];
 
 	public function __construct(
@@ -168,7 +169,7 @@ class AccountManager implements IAccountManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete($this->table)
 			->where($query->expr()->eq('uid', $query->createNamedParameter($uid)))
-			->execute();
+			->executeStatement();
 
 		$this->deleteUserData($user);
 	}
@@ -181,7 +182,7 @@ class AccountManager implements IAccountManager {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete($this->dataTable)
 			->where($query->expr()->eq('uid', $query->createNamedParameter($uid)))
-			->execute();
+			->executeStatement();
 	}
 
 	/**
@@ -352,7 +353,7 @@ class AccountManager implements IAccountManager {
 	protected function addMissingDefaultValues(array $userData, array $defaultUserData): array {
 		foreach ($defaultUserData as $defaultDataItem) {
 			// If property does not exist, initialize it
-			$userDataIndex = array_search($defaultDataItem['name'], array_column($userData, 'name'));
+			$userDataIndex = array_search($defaultDataItem['name'], array_column($userData, 'name'), true);
 			if ($userDataIndex === false) {
 				$userData[] = $defaultDataItem;
 				continue;
@@ -604,6 +605,12 @@ class AccountManager implements IAccountManager {
 			[
 				'name' => self::PROPERTY_PROFILE_ENABLED,
 				'value' => $this->isProfileEnabledByDefault($this->config) ? '1' : '0',
+			],
+
+			[
+				'name' => self::PROPERTY_PRONOUNS,
+				'value' => '',
+				'scope' => $scopes[self::PROPERTY_PRONOUNS],
 			],
 		];
 	}

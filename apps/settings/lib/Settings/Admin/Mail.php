@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -10,33 +9,27 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IBinaryFinder;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\Server;
 use OCP\Settings\IDelegatedSettings;
 
 class Mail implements IDelegatedSettings {
-	/** @var IConfig */
-	private $config;
-
-	/** @var IL10N $l */
-	private $l;
-
 	/**
 	 * @param IConfig $config
 	 * @param IL10N $l
 	 */
-	public function __construct(IConfig $config, IL10N $l) {
-		$this->config = $config;
-		$this->l = $l;
+	public function __construct(
+		private IConfig $config,
+		private IL10N $l,
+	) {
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm() {
-		$finder = \OCP\Server::get(IBinaryFinder::class);
-
 		$parameters = [
 			// Mail
-			'sendmail_is_available' => $finder->findBinaryPath('sendmail') !== false,
+			'sendmail_is_available' => (bool)Server::get(IBinaryFinder::class)->findBinaryPath('sendmail'),
 			'mail_domain' => $this->config->getSystemValue('mail_domain', ''),
 			'mail_from_address' => $this->config->getSystemValue('mail_from_address', ''),
 			'mail_smtpmode' => $this->config->getSystemValue('mail_smtpmode', ''),

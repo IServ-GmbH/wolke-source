@@ -2,10 +2,20 @@
 
 namespace Rubix\ML\Extractors;
 
-use Rubix\ML\Other\Helpers\JSON;
+use Rubix\ML\Helpers\JSON;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
-use Generator;
+use Traversable;
+
+use function is_dir;
+use function is_file;
+use function is_readable;
+use function is_writable;
+use function fopen;
+use function fgets;
+use function fputs;
+use function fclose;
+use function rtrim;
 
 /**
  * NDJSON
@@ -20,45 +30,67 @@ use Generator;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class NDJSON implements Extractor
+class NDJSON implements Extractor, Exporter
 {
     /**
-     * The file handle.
+     * The path to the file on disk.
      *
-     * @var resource
+     * @var string
      */
-    protected $handle;
+    protected string $path;
 
     /**
      * @param string $path
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @throws \Rubix\ML\Exceptions\RuntimeException
      */
     public function __construct(string $path)
     {
-        if (!is_file($path)) {
-            throw new InvalidArgumentException("Path $path does not exist.");
+        if (empty($path)) {
+            throw new InvalidArgumentException('Path cannot be empty.');
         }
 
-        if (!is_readable($path)) {
-            throw new InvalidArgumentException("Path $path is not readable.");
+        if (is_dir($path)) {
+            throw new InvalidArgumentException('Path must be to a file, folder given.');
         }
 
-        $handle = fopen($path, 'r');
-
-        if (!$handle) {
-            throw new RuntimeException("Could not open $path.");
-        }
-
-        $this->handle = $handle;
+        $this->path = $path;
     }
 
     /**
-     * Clean up the file pointer.
+     * Export an iterable data table.
+     *
+     * @param iterable<mixed[]> $iterator
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      */
-    public function __destruct()
+    public function export(iterable $iterator) : void
     {
-        fclose($this->handle);
+        if (is_file($this->path) and !is_writable($this->path)) {
+            throw new RuntimeException("Path {$this->path} is not writable.");
+        }
+
+        if (!is_file($this->path) and !is_writable(dirname($this->path))) {
+            throw new RuntimeException("Path {$this->path} is not writable.");
+        }
+
+        $handle = fopen($this->path, 'w');
+
+        if (!$handle) {
+            throw new RuntimeException('Could not open file pointer.');
+        }
+
+        $line = 1;
+
+        foreach ($iterator as $row) {
+            $length = fputs($handle, JSON::encode($row) . PHP_EOL);
+
+            if ($length === false) {
+                throw new RuntimeException("Could not write row on line $line.");
+            }
+
+            ++$line;
+        }
+
+        fclose($handle);
     }
 
     /**
@@ -67,16 +99,26 @@ class NDJSON implements Extractor
      * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return \Generator<mixed[]>
      */
-    public function getIterator() : Generator
+    public function getIterator() : Traversable
     {
-        rewind($this->handle);
+        if (!is_file($this->path)) {
+            throw new InvalidArgumentException("Path {$this->path} is not a file.");
+        }
 
-        $line = 0;
+        if (!is_readable($this->path)) {
+            throw new InvalidArgumentException("Path {$this->path} is not readable.");
+        }
 
-        while (!feof($this->handle)) {
-            $data = rtrim(fgets($this->handle) ?: '');
+        $handle = fopen($this->path, 'r');
 
-            ++$line;
+        if (!$handle) {
+            throw new RuntimeException('Could not open file pointer.');
+        }
+
+        $line = 1;
+
+        while (!feof($handle)) {
+            $data = rtrim(fgets($handle) ?: '');
 
             if (empty($data)) {
                 continue;
@@ -84,13 +126,17 @@ class NDJSON implements Extractor
 
             try {
                 yield JSON::decode($data);
-            } catch (RuntimeException $e) {
+            } catch (RuntimeException $exception) {
                 throw new RuntimeException(
-                    "JSON Error on line $line: {$e->getMessage()}",
-                    $e->getCode(),
-                    $e
+                    "JSON Error on line $line: {$exception->getMessage()}",
+                    $exception->getCode(),
+                    $exception
                 );
             }
+
+            ++$line;
         }
+
+        fclose($handle);
     }
 }

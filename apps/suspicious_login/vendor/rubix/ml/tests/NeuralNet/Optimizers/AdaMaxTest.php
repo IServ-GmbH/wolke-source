@@ -46,7 +46,7 @@ class AdaMaxTest extends TestCase
      *
      * @param \Rubix\ML\NeuralNet\Parameter $param
      * @param \Tensor\Tensor<int|float> $gradient
-     * @param array[] $expected
+     * @param list<list<float>> $expected
      */
     public function step(Parameter $param, Tensor $gradient, array $expected) : void
     {
@@ -54,11 +54,11 @@ class AdaMaxTest extends TestCase
 
         $step = $this->optimizer->step($param, $gradient);
 
-        $this->assertEquals($expected, $step->asArray());
+        $this->assertEqualsWithDelta($expected, $step->asArray(), 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function stepProvider() : Generator
     {
@@ -74,9 +74,9 @@ class AdaMaxTest extends TestCase
                 [0.04, -0.01, -0.5],
             ]),
             [
-                [0.0010000000000000002, 0.0010000000000000005, -0.0010000000000000002],
-                [-0.0010000000000000002, 0.0010000000000000002, 0.0010000000000000002],
-                [0.0010000000000000002, -0.0010000000000000002, -0.0010000000000000002],
+                [0.0001, 0.0001, -0.0001],
+                [-0.0001, 0.0001, 0.0001],
+                [0.0001, -0.0001, -0.0001],
             ],
         ];
     }

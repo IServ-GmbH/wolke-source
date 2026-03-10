@@ -6,12 +6,12 @@ use Tensor\Exceptions\InvalidArgumentException;
 use Tensor\Exceptions\DimensionalityMismatch;
 use Tensor\Exceptions\RuntimeException;
 use ArrayIterator;
-use Closure;
+use Traversable;
 
 use function count;
+use function is_float;
 use function array_slice;
 use function array_fill;
-use function is_null;
 use function gettype;
 
 /**
@@ -28,16 +28,16 @@ class Vector implements Tensor
     /**
      * The 1-d sequential array that holds the values of the vector.
      *
-     * @var (int|float)[]
+     * @var list<float>
      */
-    protected $a;
+    protected array $a;
 
     /**
      * The number of elements in the vector.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $n;
+    protected int $n;
 
     /**
      * Factory method to build a new vector from an array.
@@ -69,7 +69,7 @@ class Vector implements Tensor
      */
     public static function zeros(int $n) : self
     {
-        return static::quick(array_fill(0, $n, 0));
+        return static::fill(0.0, $n);
     }
 
     /**
@@ -80,18 +80,18 @@ class Vector implements Tensor
      */
     public static function ones(int $n) : self
     {
-        return static::quick(array_fill(0, $n, 1));
+        return static::fill(1.0, $n);
     }
 
     /**
      * Fill a vector with a given value.
      *
-     * @param int|float $value
+     * @param float $value
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
-    public static function fill($value, int $n) : self
+    public static function fill(float $value, int $n) : self
     {
         if ($n < 1) {
             throw new InvalidArgumentException('Number of elements'
@@ -105,7 +105,7 @@ class Vector implements Tensor
      * Return a random uniform vector with values between 0 and 1.
      *
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function rand(int $n) : self
@@ -131,7 +131,7 @@ class Vector implements Tensor
      * and unit variance.
      *
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function gaussian(int $n) : self
@@ -166,7 +166,7 @@ class Vector implements Tensor
      *
      * @param int $n
      * @param float $lambda
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function poisson(int $n, float $lambda = 1.0) : self
@@ -183,7 +183,7 @@ class Vector implements Tensor
         $a = [];
 
         while (count($a) < $n) {
-            $k = 0;
+            $k = 0.0;
             $p = 1.0;
 
             while ($p > $l) {
@@ -192,7 +192,7 @@ class Vector implements Tensor
                 $p *= rand() / $max;
             }
 
-            $a[] = $k - 1;
+            $a[] = $k - 1.0;
         }
 
         return static::quick($a);
@@ -202,7 +202,7 @@ class Vector implements Tensor
      * Return a uniform random vector with mean 0 and unit variance.
      *
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function uniform(int $n) : self
@@ -226,12 +226,12 @@ class Vector implements Tensor
     /**
      * Return evenly spaced values within a given interval.
      *
-     * @param int|float $start
-     * @param int|float $end
-     * @param int|float $interval
+     * @param float $start
+     * @param float $end
+     * @param float $interval
      * @return self
      */
-    public static function range($start, $end, $interval = 1) : self
+    public static function range(float $start, float $end, float $interval = 1.0) : self
     {
         return static::quick(range($start, $end, $interval));
     }
@@ -242,7 +242,7 @@ class Vector implements Tensor
      * @param float $min
      * @param float $max
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function linspace(float $min, float $max, int $n) : self
@@ -273,58 +273,19 @@ class Vector implements Tensor
     }
 
     /**
-     * Return the element-wise maximum of two vectors.
-     *
-     * @param \Tensor\Vector $a
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return self
-     */
-    public static function maximum(Vector $a, Vector $b) : self
-    {
-        if ($a->n() !== $b->n()) {
-            throw new DimensionalityMismatch('Vector A expects'
-                . " {$a->n()} elements but Vector B has{$b->n()}.");
-        }
-
-        $c = array_map('max', $a->asArray(), $b->asArray());
-
-        return static::quick($c);
-    }
-
-    /**
-     * Return the element-wise minimum of two vectors.
-     *
-     * @param \Tensor\Vector $a
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public static function minimum(Vector $a, Vector $b) : self
-    {
-        if ($a->n() !== $b->n()) {
-            throw new DimensionalityMismatch('Vector A expects'
-                . " {$a->n()} elements but Vector B has{$b->n()}.");
-        }
-
-        $c = array_map('min', $a->asArray(), $b->asArray());
-
-        return static::quick($c);
-    }
-
-    /**
-     * @param (int|float)[] $a
+     * @param mixed[] $a
      * @param bool $validate
-     * @throws \Tensor\Exceptions\InvalidArgumentException
      */
     final public function __construct(array $a, bool $validate = true)
     {
-        if (empty($a)) {
-            throw new InvalidArgumentException('Vector must contain at least one element.');
-        }
-
-        if ($validate) {
+        if ($a and $validate) {
             $a = array_values($a);
+
+            foreach ($a as &$valueA) {
+                if (!is_float($valueA)) {
+                    $valueA = (float) $valueA;
+                }
+            }
         }
 
         $this->a = $a;
@@ -334,7 +295,7 @@ class Vector implements Tensor
     /**
      * Return a tuple with the dimensionality of the tensor.
      *
-     * @return int[]
+     * @return array{int<0,max>}
      */
     public function shape() : array
     {
@@ -354,7 +315,7 @@ class Vector implements Tensor
     /**
      * Return the number of elements in the vector.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function size() : int
     {
@@ -364,7 +325,7 @@ class Vector implements Tensor
     /**
      * Return the number of rows in the vector.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function m() : int
     {
@@ -374,7 +335,7 @@ class Vector implements Tensor
     /**
      * Return the number of columns in the vector.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function n() : int
     {
@@ -384,7 +345,7 @@ class Vector implements Tensor
     /**
      * Return the vector as an array.
      *
-     * @return (int|float)[]
+     * @return list<float>
      */
     public function asArray() : array
     {
@@ -394,7 +355,7 @@ class Vector implements Tensor
     /**
      * Return this vector as a row matrix.
      *
-     * @return \Tensor\Matrix
+     * @return Matrix
      */
     public function asRowMatrix() : Matrix
     {
@@ -404,7 +365,7 @@ class Vector implements Tensor
     /**
      * Return this vector as a column matrix.
      *
-     * @return \Tensor\Matrix
+     * @return Matrix
      */
     public function asColumnMatrix() : Matrix
     {
@@ -422,8 +383,8 @@ class Vector implements Tensor
      *
      * @param int $m
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return \Tensor\Matrix
+     * @throws InvalidArgumentException
+     * @return Matrix
      */
     public function reshape(int $m, int $n) : Matrix
     {
@@ -462,47 +423,28 @@ class Vector implements Tensor
     }
 
     /**
-     * Return the index of the minimum element in the vector.
+     * Map a function over the elements in the vector and return a new vector.
      *
-     * @return int
-     */
-    public function argmin() : int
-    {
-        return (int) array_search(min($this->a), $this->a);
-    }
-
-    /**
-     * Return the index of the maximum element in the vector.
-     *
-     * @return int
-     */
-    public function argmax() : int
-    {
-        return (int) array_search(max($this->a), $this->a);
-    }
-
-    /**
-     * Map a function over the elements in the vector and return a new
-     * vector.
+     * @internal
      *
      * @param callable $callback
      * @return self
      */
     public function map(callable $callback) : self
     {
-        $validate = $callback instanceof Closure;
-
-        return new static(array_map($callback, $this->a), $validate);
+        return static::quick(array_map($callback, $this->a));
     }
 
     /**
      * Reduce the vector down to a scalar.
      *
+     * @internal
+     *
      * @param callable $callback
-     * @param int|float $initial
-     * @return int|float
+     * @param float $initial
+     * @return float
      */
-    public function reduce(callable $callback, $initial = 0)
+    public function reduce(callable $callback, float $initial = 0.0) : float
     {
         return array_reduce($this->a, $callback, $initial);
     }
@@ -510,11 +452,11 @@ class Vector implements Tensor
     /**
      * Compute the dot product of this vector and another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return int|float
+     * @param Vector $b
+     * @throws DimensionalityMismatch
+     * @return float
      */
-    public function dot(Vector $b)
+    public function dot(Vector $b) : float
     {
         if ($this->n !== $b->size()) {
             throw new DimensionalityMismatch('Vector A expects'
@@ -533,8 +475,8 @@ class Vector implements Tensor
     /**
      * Compute the vector-matrix product of this vector and matrix a.
      *
-     * @param \Tensor\Matrix $b
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @return Matrix
      */
     public function matmul(Matrix $b) : Matrix
     {
@@ -544,10 +486,10 @@ class Vector implements Tensor
     /**
      * Return the inner product of two vectors.
      *
-     * @param \Tensor\Vector $b
-     * @return int|float
+     * @param Vector $b
+     * @return float
      */
-    public function inner(Vector $b)
+    public function inner(Vector $b) : float
     {
         return $this->dot($b);
     }
@@ -555,8 +497,8 @@ class Vector implements Tensor
     /**
      * Calculate the outer product of this and another vector.
      *
-     * @param \Tensor\Vector $b
-     * @return \Tensor\Matrix
+     * @param Vector $b
+     * @return Matrix
      */
     public function outer(Vector $b) : Matrix
     {
@@ -578,34 +520,11 @@ class Vector implements Tensor
     }
 
     /**
-     * Calculate the cross product between two 3 dimensional vectors.
-     *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public function cross(Vector $b) : self
-    {
-        if ($this->n !== 3 or $b->size() !== 3) {
-            throw new InvalidArgumentException('Cross product is'
-                . ' only defined for vectors of 3 dimensions.');
-        }
-
-        $c = [];
-
-        $c[] = ($this->a[1] * $b[2]) - ($this->a[2] * $b[1]);
-        $c[] = ($this->a[2] * $b[0]) - ($this->a[0] * $b[2]);
-        $c[] = ($this->a[0] * $b[1]) - ($this->a[1] * $b[0]);
-
-        return static::quick($c);
-    }
-
-    /**
      * Return the 1D convolution of this vector and a kernel vector with given stride.
      *
-     * @param \Tensor\Vector $b
+     * @param Vector $b
      * @param int $stride
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function convolve(Vector $b, int $stride = 1) : self
@@ -645,22 +564,11 @@ class Vector implements Tensor
     }
 
     /**
-     * Project this vector on another vector.
-     *
-     * @param \Tensor\Vector $b
-     * @return self
-     */
-    public function project(Vector $b) : self
-    {
-        return $b->multiplyScalar($this->dot($b) / $b->l2Norm() ** 2);
-    }
-
-    /**
      * Calculate the L1 or Manhattan norm of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function l1Norm()
+    public function l1Norm() : float
     {
         return $this->abs()->sum();
     }
@@ -668,9 +576,9 @@ class Vector implements Tensor
     /**
      * Calculate the L2 or Euclidean norm of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function l2Norm()
+    public function l2Norm() : float
     {
         return sqrt($this->square()->sum());
     }
@@ -679,10 +587,10 @@ class Vector implements Tensor
      * Calculate the p-norm of the vector.
      *
      * @param float $p
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return int|float
+     * @throws InvalidArgumentException
+     * @return float
      */
-    public function pNorm(float $p = 3.0)
+    public function pNorm(float $p = 3.0) : float
     {
         if ($p <= 0.0) {
             throw new InvalidArgumentException("P must be greater than 0, $p given.");
@@ -694,18 +602,18 @@ class Vector implements Tensor
     /**
      * Calculate the max norm of the vector.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function maxNorm()
+    public function maxNorm() : float
     {
-        return $this->abs()->max();
+        return (float) $this->abs()->max();
     }
 
     /**
      * A universal function to multiply this vector with another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function multiply($b)
@@ -735,7 +643,7 @@ class Vector implements Tensor
      * A universal function to divide this vector by another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function divide($b)
@@ -765,7 +673,7 @@ class Vector implements Tensor
      * A universal function to add this vector with another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function add($b)
@@ -795,7 +703,7 @@ class Vector implements Tensor
      * A universal function to subtract this vector from another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function subtract($b)
@@ -826,7 +734,7 @@ class Vector implements Tensor
      * tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function pow($b)
@@ -857,7 +765,7 @@ class Vector implements Tensor
      * another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function mod($b)
@@ -888,7 +796,7 @@ class Vector implements Tensor
      * this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function equal($b)
@@ -919,7 +827,7 @@ class Vector implements Tensor
      * this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function notEqual($b)
@@ -950,7 +858,7 @@ class Vector implements Tensor
      * this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function greater($b)
@@ -981,7 +889,7 @@ class Vector implements Tensor
      * comparison of this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function greaterEqual($b)
@@ -1012,7 +920,7 @@ class Vector implements Tensor
      * this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function less($b)
@@ -1043,7 +951,7 @@ class Vector implements Tensor
      * comparison of this vector and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function lessEqual($b)
@@ -1148,7 +1056,7 @@ class Vector implements Tensor
     }
 
     /**
-     * Return the log of 1 plus the tensor i.e. a transform.
+     * Return the log of 1 plus the tensor.
      *
      * @return self
      */
@@ -1240,9 +1148,9 @@ class Vector implements Tensor
     /**
      * The sum of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function sum()
+    public function sum() : float
     {
         return array_sum($this->a);
     }
@@ -1250,9 +1158,9 @@ class Vector implements Tensor
     /**
      * Return the product of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function product()
+    public function product() : float
     {
         return array_product($this->a);
     }
@@ -1260,29 +1168,29 @@ class Vector implements Tensor
     /**
      * Return the minimum element in the vector.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function min()
+    public function min() : float
     {
-        return min($this->a);
+        return (float) min($this->a);
     }
 
     /**
      * Return the maximum element in the vector.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function max()
+    public function max() : float
     {
-        return max($this->a);
+        return (float) max($this->a);
     }
 
     /**
      * Return the mean of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function mean()
+    public function mean() : float
     {
         return $this->sum() / $this->n;
     }
@@ -1290,9 +1198,9 @@ class Vector implements Tensor
     /**
      * Return the median of the vector.
      *
-     * @return int|float
+     * @return float
      */
-    public function median()
+    public function median() : float
     {
         $mid = intdiv($this->n, 2);
 
@@ -1313,10 +1221,10 @@ class Vector implements Tensor
      * Return the q'th quantile of the vector.
      *
      * @param float $q
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return int|float
+     * @throws InvalidArgumentException
+     * @return float
      */
-    public function quantile(float $q)
+    public function quantile(float $q) : float
     {
         if ($q < 0.0 or $q > 1.0) {
             throw new InvalidArgumentException('Q must be between'
@@ -1341,12 +1249,12 @@ class Vector implements Tensor
     /**
      * Return the variance of the vector.
      *
-     * @param int|float $mean
-     * @return int|float
+     * @param float|null $mean
+     * @return float
      */
-    public function variance($mean = null)
+    public function variance($mean = null) : float
     {
-        if (is_null($mean)) {
+        if ($mean === null) {
             $mean = $this->mean();
         }
 
@@ -1361,7 +1269,7 @@ class Vector implements Tensor
      * Round the elements in the matrix to a given decimal place.
      *
      * @param int $precision
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function round(int $precision = 0) : self
@@ -1406,7 +1314,7 @@ class Vector implements Tensor
      *
      * @param float $min
      * @param float $max
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function clip(float $min, float $max) : self
@@ -1494,11 +1402,11 @@ class Vector implements Tensor
 
         foreach ($this->a as $valueA) {
             if ($valueA > 0) {
-                $b[] = 1;
+                $b[] = 1.0;
             } elseif ($valueA < 0) {
-                $b[] = -1;
+                $b[] = -1.0;
             } else {
-                $b[] = 0;
+                $b[] = 0.0;
             }
         }
 
@@ -1524,9 +1432,9 @@ class Vector implements Tensor
     /**
      * Multiply this vector with a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function multiplyMatrix(Matrix $b) : Matrix
     {
@@ -1553,9 +1461,9 @@ class Vector implements Tensor
     /**
      * Divide this vector with a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function divideMatrix(Matrix $b) : Matrix
     {
@@ -1582,9 +1490,9 @@ class Vector implements Tensor
     /**
      * Add this vector to a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function addMatrix(Matrix $b) : Matrix
     {
@@ -1611,9 +1519,9 @@ class Vector implements Tensor
     /**
      * Subtract a matrix from this vector.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function subtractMatrix(Matrix $b) : Matrix
     {
@@ -1640,9 +1548,9 @@ class Vector implements Tensor
     /**
      * Raise this vector to the power of a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function powMatrix(Matrix $b) : Matrix
     {
@@ -1669,9 +1577,9 @@ class Vector implements Tensor
     /**
      * Mod this vector with a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function modMatrix(Matrix $b) : Matrix
     {
@@ -1698,9 +1606,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise equality comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function equalMatrix(Matrix $b) : Matrix
     {
@@ -1727,9 +1635,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise not equal comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function notEqualMatrix(Matrix $b) : Matrix
     {
@@ -1756,9 +1664,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function greaterMatrix(Matrix $b) : Matrix
     {
@@ -1785,9 +1693,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function greaterEqualMatrix(Matrix $b) : Matrix
     {
@@ -1814,9 +1722,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function lessMatrix(Matrix $b) : Matrix
     {
@@ -1843,9 +1751,9 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this vector and a matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\Matrix
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
+     * @return Matrix
      */
     public function lessEqualMatrix(Matrix $b) : Matrix
     {
@@ -1860,7 +1768,7 @@ class Vector implements Tensor
             $rowC = [];
 
             foreach ($this->a as $j => $valueA) {
-                $rowC[] = $valueA < $rowB[$j] ? 1 : 0;
+                $rowC[] = $valueA <= $rowB[$j] ? 1 : 0;
             }
 
             $c[] = $rowC;
@@ -1872,8 +1780,8 @@ class Vector implements Tensor
     /**
      * Multiply this vector with another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function multiplyVector(Vector $b) : self
@@ -1895,8 +1803,8 @@ class Vector implements Tensor
     /**
      * Divide this vector by another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function divideVector(Vector $b) : self
@@ -1918,8 +1826,8 @@ class Vector implements Tensor
     /**
      * Add this vector to another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function addVector(Vector $b) : self
@@ -1941,8 +1849,8 @@ class Vector implements Tensor
     /**
      * Subtract a vector from this vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function subtractVector(Vector $b) : self
@@ -1964,8 +1872,8 @@ class Vector implements Tensor
     /**
      * Raise this vector to a power of another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function powVector(Vector $b) : self
@@ -1987,8 +1895,8 @@ class Vector implements Tensor
     /**
      * Calculate the modulus of this vector with another vector element-wise.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function modVector(Vector $b) : self
@@ -2010,8 +1918,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise equality comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function equalVector(Vector $b) : self
@@ -2033,8 +1941,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise not equal comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function notEqualVector(Vector $b) : self
@@ -2056,8 +1964,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterVector(Vector $b) : self
@@ -2079,8 +1987,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function greaterEqualVector(Vector $b) : self
@@ -2102,8 +2010,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function lessVector(Vector $b) : self
@@ -2125,8 +2033,8 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this vector and a another vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return static
      */
     public function lessEqualVector(Vector $b) : self
@@ -2148,10 +2056,10 @@ class Vector implements Tensor
     /**
      * Multiply this vector by a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function multiplyScalar($b) : self
+    public function multiplyScalar(float $b) : self
     {
         $c = [];
 
@@ -2165,10 +2073,10 @@ class Vector implements Tensor
     /**
      * Divide this vector by a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function divideScalar($b) : self
+    public function divideScalar(float $b) : self
     {
         $c = [];
 
@@ -2182,10 +2090,10 @@ class Vector implements Tensor
     /**
      * Add a scalar to this vector.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function addScalar($b) : self
+    public function addScalar(float $b) : self
     {
         $c = [];
 
@@ -2199,10 +2107,10 @@ class Vector implements Tensor
     /**
      * Subtract a scalar from this vector.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function subtractScalar($b) : self
+    public function subtractScalar(float $b) : self
     {
         $c = [];
 
@@ -2216,10 +2124,10 @@ class Vector implements Tensor
     /**
      * Raise the vector to a the power of a scalar value.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function powScalar($b) : self
+    public function powScalar(float $b) : self
     {
         $c = [];
 
@@ -2233,10 +2141,10 @@ class Vector implements Tensor
     /**
      * Calculate the modulus of this vector with a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function modScalar($b) : self
+    public function modScalar(float $b) : self
     {
         $c = [];
 
@@ -2250,10 +2158,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise equality comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function equalScalar($b) : self
+    public function equalScalar(float $b) : self
     {
         $c = [];
 
@@ -2267,10 +2175,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise not equal comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function notEqualScalar($b) : self
+    public function notEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -2284,10 +2192,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function greaterScalar($b) : self
+    public function greaterScalar(float $b) : self
     {
         $c = [];
 
@@ -2301,10 +2209,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function greaterEqualScalar($b) : self
+    public function greaterEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -2318,10 +2226,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function lessScalar($b) : self
+    public function lessScalar(float $b) : self
     {
         $c = [];
 
@@ -2335,10 +2243,10 @@ class Vector implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this vector and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return static
      */
-    public function lessEqualScalar($b) : self
+    public function lessEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -2362,8 +2270,9 @@ class Vector implements Tensor
     /**
      * @param mixed $index
      * @param mixed[] $values
-     * @throws \Tensor\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($index, $values) : void
     {
         throw new RuntimeException('Vector cannot be mutated directly.');
@@ -2382,7 +2291,7 @@ class Vector implements Tensor
 
     /**
      * @param mixed $index
-     * @throws \Tensor\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function offsetUnset($index) : void
     {
@@ -2393,9 +2302,10 @@ class Vector implements Tensor
      * Return a row from the matrix at the given index.
      *
      * @param mixed $index
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return int|float
+     * @throws InvalidArgumentException
+     * @return float
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($index)
     {
         if (isset($this->a[$index])) {
@@ -2409,20 +2319,11 @@ class Vector implements Tensor
     /**
      * Get an iterator for the rows in the matrix.
      *
-     * @return \ArrayIterator<int, int|float>
+     * @return \ArrayIterator<int,float>
      */
-    public function getIterator()
+    #[\ReturnTypeWillChange]
+    public function getIterator() : Traversable
     {
         return new ArrayIterator($this->a);
-    }
-
-    /**
-     * Convert the tensor into a string representation.
-     *
-     * @return string
-     */
-    public function __toString() : string
-    {
-        return '[ ' . implode(' ', $this->a) . ' ]' . PHP_EOL;
     }
 }

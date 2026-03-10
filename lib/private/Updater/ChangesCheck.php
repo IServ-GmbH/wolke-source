@@ -32,7 +32,7 @@ class ChangesCheck {
 
 	/**
 	 * @throws DoesNotExistException
-	 * @return array{changelogURL: string, whatsNew: array<string, array{admin: string[], regular: string[]}>}
+	 * @return array{changelogURL: string, whatsNew: array<string, array{admin: list<string>, regular: list<string>}>}
 	 */
 	public function getChangesForVersion(string $version): array {
 		$version = $this->normalizeVersion($version);
@@ -127,12 +127,12 @@ class ChangesCheck {
 				$xml = @simplexml_load_string($body);
 			}
 			if ($xml !== false) {
-				$data['changelogURL'] = (string) $xml->changelog['href'];
+				$data['changelogURL'] = (string)$xml->changelog['href'];
 				$data['whatsNew'] = [];
 				foreach ($xml->whatsNew as $infoSet) {
-					$data['whatsNew'][(string) $infoSet['lang']] = [
-						'regular' => (array) $infoSet->regular->item,
-						'admin' => (array) $infoSet->admin->item,
+					$data['whatsNew'][(string)$infoSet['lang']] = [
+						'regular' => (array)$infoSet->regular->item,
+						'admin' => (array)$infoSet->admin->item,
 					];
 				}
 			} else {

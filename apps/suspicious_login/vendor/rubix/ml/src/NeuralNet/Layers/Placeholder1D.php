@@ -22,9 +22,9 @@ class Placeholder1D implements Input
     /**
      * The number of input nodes. i.e. feature inputs.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $inputs;
+    protected int $inputs;
 
     /**
      * @param int $inputs
@@ -41,7 +41,7 @@ class Placeholder1D implements Input
     }
 
     /**
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
@@ -52,8 +52,8 @@ class Placeholder1D implements Input
      * Initialize the layer with the fan in from the previous layer and return
      * the fan out for this layer.
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -87,5 +87,17 @@ class Placeholder1D implements Input
     public function infer(Matrix $input) : Matrix
     {
         return $this->forward($input);
+    }
+
+    /**
+     * Return the string representation of the object.
+     *
+     * @internal
+     *
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return "Placeholder 1D (inputs: {$this->inputs})";
     }
 }

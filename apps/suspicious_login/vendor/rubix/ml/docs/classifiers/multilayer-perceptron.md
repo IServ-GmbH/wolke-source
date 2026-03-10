@@ -16,11 +16,11 @@ A multiclass feed-forward neural network classifier with user-defined hidden lay
 | 1 | hidden | | array | An array composing the user-specified hidden layers of the network in order. |
 | 2 | batchSize | 128 | int | The number of training samples to process at a time. |
 | 3 | optimizer | Adam | Optimizer | The gradient descent optimizer used to update the network parameters. |
-| 4 | alpha | 1e-4 | float | The amount of L2 regularization applied to the weights of the output layer. |
+| 4 | l2Penalty | 1e-4 | float | The amount of L2 regularization applied to the weights of the output layer. |
 | 5 | epochs | 1000 | int | The maximum number of training epochs. i.e. the number of times to iterate over the entire training set before terminating. |
 | 6 | minChange | 1e-4 | float | The minimum change in the training loss necessary to continue training. |
-| 7 | window | 3 | int | The number of epochs without improvement in the validation score to wait before considering an early stop. |
-| 8 | holdOut | 0.1 | float | The proportion of training samples to use for progress monitoring. |
+| 7 | window | 5 | int | The number of epochs without improvement in the validation score to wait before considering an early stop. |
+| 8 | holdOut | 0.1 | float | The proportion of training samples to use for internal validation. Set to 0 to disable. |
 | 9 | costFn | CrossEntropy | ClassificationLoss | The function that computes the loss associated with an erroneous activation during training. |
 | 10 | metric | FBeta | Metric | The validation metric used to score the generalization performance of the model during training. |
 
@@ -49,12 +49,25 @@ $estimator = new MultilayerPerceptron([
 ```
 
 ## Additional Methods
-Return the loss at each epoch from the last training session:
+Return an iterable progress table with the steps from the last training session:
 ```php
-public steps() : float[]|null
+public steps() : iterable
 ```
 
-Return the validation score at each epoch from the last training session:
+```php
+use Rubix\ML\Extractors\CSV;
+
+$extractor = new CSV('progress.csv', true);
+
+$extractor->export($estimator->steps());
+```
+
+Return the loss for each epoch from the last training session:
+```php
+public losses() : float[]|null
+```
+
+Return the validation score for each epoch from the last training session:
 ```php
 public scores() : float[]|null
 ```
@@ -63,6 +76,22 @@ Returns the underlying neural network instance or `null` if untrained:
 ```php
 public network() : Network|null
 ```
+
+Export a Graphviz "dot" encoding of the neural network architecture.
+```php
+public exportGraphviz() : Encoding
+```
+
+```php
+use Rubix\ML\Helpers\Graphviz;
+use Rubix\ML\Persisters\Filesystem;
+
+$dot = $estimator->exportGraphviz();
+
+Graphviz::dotToImage($dot)->saveTo(new Filesystem('network.png'));
+```
+
+![Neural Network Graph](https://github.com/RubixML/ML/blob/master/docs/images/neural-network-graph.png?raw=true)
 
 ## References
 [^1]: G. E. Hinton. (1989). Connectionist learning procedures.

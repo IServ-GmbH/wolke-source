@@ -1,7 +1,6 @@
 OC.L10N.register(
     "circles",
     {
-    "Teams" : "Каманды",
     "You created the team {circle}" : "Вы стварылі каманду {circle}",
     "{author} created the team {circle}" : "{author} стварыў(-ла) каманду {circle}",
     "You deleted {circle}" : "Вы выдалілі {circle}",
@@ -24,6 +23,7 @@ OC.L10N.register(
     "You left {circle}" : "Вы выйшлі з {circle}",
     "{member} left {circle}" : "{member} выйшаў(-ла) з {circle}",
     "You removed {external} from {circle}" : "Вы выдалілі {external} з {circle}",
+    "Teams" : "Каманды",
     "Personal" : "Асабістыя",
     "System" : "Сістэма",
     "Open" : "Адкрыць",
@@ -53,6 +53,7 @@ OC.L10N.register(
     "%s" : "%s",
     "You have no permission to create a new team" : "У вас няма дазволу на стварэнне новай каманды",
     "Open %s" : "Адкрыць %s",
+    "https://…" : "https://…",
     "Failed to load teams" : "Не ўдалося загрузіць каманды",
     "Try again" : "Паспрабаваць яшчэ раз",
     "No teams found" : "Каманд не знойдзена",
@@ -62,8 +63,6 @@ OC.L10N.register(
     "No entries found in this folder" : "У гэтай папцы не знойдзена запісаў",
     "Name" : "Назва",
     "Size" : "Памер",
-    "Modified" : "Зменены",
-    "Teams' files" : "Файлы каманд",
-    "Circle" : "Круг"
+    "Modified" : "Зменены"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

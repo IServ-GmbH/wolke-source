@@ -47,7 +47,7 @@ class RemoveOldTasksBackgroundJob extends TimedJob {
 			$folder = $this->appData->getFolder('text2image');
 			foreach ($deletedTasks as $deletedTask) {
 				try {
-					$folder->getFolder((string) $deletedTask->getId())->delete();
+					$folder->getFolder((string)$deletedTask->getId())->delete();
 				} catch (NotFoundException) {
 					// noop
 				} catch (NotPermittedException $e) {

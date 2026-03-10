@@ -3,9 +3,17 @@
 namespace Rubix\ML\Graph\Nodes;
 
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildren;
+use Rubix\ML\Graph\Nodes\Traits\HasBinaryChildrenTrait;
+use Rubix\ML\Exceptions\RuntimeException;
 
-use const Rubix\ML\PHI;
+use function array_unique;
+use function array_rand;
+use function floor;
+use function ceil;
+use function min;
+use function max;
+use function getrandmax;
+use function rand;
 
 /**
  * Isolator
@@ -19,16 +27,16 @@ use const Rubix\ML\PHI;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class Isolator implements BinaryNode
+class Isolator implements HasBinaryChildren
 {
-    use HasBinaryChildren;
+    use HasBinaryChildrenTrait;
 
     /**
      * The feature column (index) of the split value.
      *
      * @var int
      */
-    protected $column;
+    protected int $column;
 
     /**
      * The value that the node splits on.
@@ -38,52 +46,58 @@ class Isolator implements BinaryNode
     protected $value;
 
     /**
-     * The left and right splits of the training data.
+     * The left and right subsets of the training data.
      *
      * @var array{\Rubix\ML\Datasets\Dataset,\Rubix\ML\Datasets\Dataset}
      */
-    protected $groups;
+    protected array $subsets;
 
     /**
-     * Factory method to build a isolator node from a dataset using a random split
-     * of the dataset.
+     * Factory method to build a isolator node from a dataset using a random split of the dataset.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @return self
      */
     public static function split(Dataset $dataset) : self
     {
-        $column = rand(0, $dataset->numColumns() - 1);
+        $column = rand(0, $dataset->numFeatures() - 1);
 
-        $values = $dataset->column($column);
+        $values = $dataset->feature($column);
 
-        if ($dataset->columnType($column)->isContinuous()) {
-            $min = (int) floor(min($values) * PHI);
-            $max = (int) ceil(max($values) * PHI);
+        $type = $dataset->featureType($column);
 
-            $value = rand($min, $max) / PHI;
+        if ($type->isContinuous()) {
+            $min = min($values);
+            $max = max($values);
+
+            $phi = getrandmax() / max(abs($max), abs($min));
+
+            $min = (int) floor($min * $phi);
+            $max = (int) ceil($max * $phi);
+
+            $value = rand($min, $max) / $phi;
         } else {
             $offset = array_rand(array_unique($values));
 
             $value = $values[$offset];
         }
 
-        $groups = $dataset->splitByColumn($column, $value);
+        $subsets = $dataset->splitByFeature($column, $value);
 
-        return new self($column, $value, $groups);
+        return new self($column, $value, $subsets);
     }
 
     /**
      * @param int $column
      * @param string|int|float $value
-     * @param array{Dataset,Dataset} $groups
+     * @param array{\Rubix\ML\Datasets\Dataset,\Rubix\ML\Datasets\Dataset} $subsets
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(int $column, $value, array $groups)
+    public function __construct(int $column, $value, array $subsets)
     {
         $this->column = $column;
         $this->value = $value;
-        $this->groups = $groups;
+        $this->subsets = $subsets;
     }
 
     /**
@@ -107,20 +121,25 @@ class Isolator implements BinaryNode
     }
 
     /**
-     * Return the left and right splits of the training data.
+     * Return the left and right subsets of the training data.
      *
+     * @throws \Rubix\ML\Exceptions\RuntimeException
      * @return array{\Rubix\ML\Datasets\Dataset,\Rubix\ML\Datasets\Dataset}
      */
-    public function groups() : array
+    public function subsets() : array
     {
-        return $this->groups;
+        if (!isset($this->subsets)) {
+            throw new RuntimeException('Subsets property does not exist.');
+        }
+
+        return $this->subsets;
     }
 
     /**
-     * Remove the left and right splits of the training data.
+     * Remove any variables carried over from the parent node.
      */
     public function cleanup() : void
     {
-        unset($this->groups);
+        unset($this->subsets);
     }
 }

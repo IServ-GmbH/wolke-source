@@ -32,18 +32,18 @@ class ITree implements BinaryTree
     protected const MAX_LEAF_SIZE = 2;
 
     /**
-     * The root node of the tree.
-     *
-     * @var \Rubix\ML\Graph\Nodes\Isolator|null
-     */
-    protected $root;
-
-    /**
      * The maximum depth of a branch before it is forced to terminate.
      *
      * @var int
      */
-    protected $maxHeight;
+    protected int $maxHeight;
+
+    /**
+     * The root node of the tree.
+     *
+     * @var \Rubix\ML\Graph\Nodes\Isolator|null
+     */
+    protected ?\Rubix\ML\Graph\Nodes\Isolator $root = null;
 
     /**
      * @param int $maxHeight
@@ -104,8 +104,10 @@ class ITree implements BinaryTree
         /** @var list<array{Isolator,int}> */
         $stack = [[$this->root, 1]];
 
-        while ([$current, $depth] = array_pop($stack)) {
-            [$left, $right] = $current->groups();
+        while ($stack) {
+            [$current, $depth] = array_pop($stack);
+
+            [$left, $right] = $current->subsets();
 
             $current->cleanup();
 
@@ -127,7 +129,7 @@ class ITree implements BinaryTree
                 continue;
             }
 
-            if ($left->numRows() > self::MAX_LEAF_SIZE) {
+            if ($left->numSamples() > self::MAX_LEAF_SIZE) {
                 $node = Isolator::split($left);
 
                 $current->attachLeft($node);
@@ -137,7 +139,7 @@ class ITree implements BinaryTree
                 $current->attachLeft(Depth::terminate($left, $depth));
             }
 
-            if ($right->numRows() > self::MAX_LEAF_SIZE) {
+            if ($right->numSamples() > self::MAX_LEAF_SIZE) {
                 $node = Isolator::split($right);
 
                 $current->attachRight($node);

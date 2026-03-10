@@ -11,8 +11,13 @@ use OC\Tagging\Tag;
 use OC\Tagging\TagMapper;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Events\NodeAddedToFavorite;
+use OCP\Files\Events\NodeRemovedFromFavorite;
+use OCP\Files\Folder;
 use OCP\IDBConnection;
 use OCP\ITags;
+use OCP\IUserSession;
 use OCP\Share_Backend;
 use Psr\Log\LoggerInterface;
 
@@ -21,10 +26,6 @@ class Tags implements ITags {
 	 * Used for storing objectid/categoryname pairs while rescanning.
 	 */
 	private static array $relations = [];
-	private string $type;
-	private string $user;
-	private IDBConnection $db;
-	private LoggerInterface $logger;
 	private array $tags = [];
 
 	/**
@@ -37,11 +38,6 @@ class Tags implements ITags {
 	 * user, if $this->includeShared === true.
 	 */
 	private array $owners = [];
-
-	/**
-	 * The Mapper we are using to communicate our Tag objects to the database.
-	 */
-	private TagMapper $mapper;
 
 	/**
 	 * The sharing backend for objects of $this->type. Required if
@@ -62,14 +58,19 @@ class Tags implements ITags {
 	 *
 	 * since 20.0.0 $includeShared isn't used anymore
 	 */
-	public function __construct(TagMapper $mapper, string $user, string $type, LoggerInterface $logger, IDBConnection $connection, array $defaultTags = []) {
-		$this->mapper = $mapper;
-		$this->user = $user;
-		$this->type = $type;
+	public function __construct(
+		private TagMapper $mapper,
+		private string $user,
+		private string $type,
+		private LoggerInterface $logger,
+		private IDBConnection $db,
+		private IEventDispatcher $dispatcher,
+		private IUserSession $userSession,
+		private Folder $userFolder,
+		array $defaultTags = [],
+	) {
 		$this->owners = [$this->user];
 		$this->tags = $this->mapper->loadTags($this->owners, $this->type);
-		$this->db = $connection;
-		$this->logger = $logger;
 
 		if (count($defaultTags) > 0 && count($this->tags) === 0) {
 			$this->addMultiple($defaultTags, true);
@@ -147,9 +148,9 @@ class Tags implements ITags {
 	/**
 	 * Get the list of tags for the given ids.
 	 *
-	 * @param array $objIds array of object ids
-	 * @return array|false of tags id as key to array of tag names
-	 *                     or false if an error occurred
+	 * @param list<int> $objIds array of object ids
+	 * @return array<int, list<string>>|false of tags id as key to array of tag names
+	 *                                        or false if an error occurred
 	 */
 	public function getTagsForObjects(array $objIds) {
 		$entries = [];
@@ -169,7 +170,7 @@ class Tags implements ITags {
 				$qb->setParameter('chunk', $chunk, IQueryBuilder::PARAM_INT_ARRAY);
 				$result = $qb->executeQuery();
 				while ($row = $result->fetch()) {
-					$objId = (int) $row['objid'];
+					$objId = (int)$row['objid'];
 					if (!isset($entries[$objId])) {
 						$entries[$objId] = [];
 					}
@@ -233,7 +234,7 @@ class Tags implements ITags {
 		}
 
 		while ($row = $result->fetch()) {
-			$ids[] = (int) $row['objid'];
+			$ids[] = (int)$row['objid'];
 		}
 		$result->closeCursor();
 
@@ -242,7 +243,7 @@ class Tags implements ITags {
 
 	/**
 	 * Checks whether a tag is saved for the given user,
-	 * disregarding the ones shared with him or her.
+	 * disregarding the ones shared with them.
 	 *
 	 * @param string $name The tag name to check for.
 	 * @param string $user The user whose tags are to be checked.
@@ -496,16 +497,12 @@ class Tags implements ITags {
 
 	/**
 	 * Creates a tag/object relation.
-	 *
-	 * @param int $objid The id of the object
-	 * @param string $tag The id or name of the tag
-	 * @return boolean Returns false on error.
 	 */
-	public function tagAs($objid, $tag) {
+	public function tagAs($objid, $tag, ?string $path = null) {
 		if (is_string($tag) && !is_numeric($tag)) {
 			$tag = trim($tag);
 			if ($tag === '') {
-				$this->logger->debug(__METHOD__.', Cannot add an empty tag');
+				$this->logger->debug(__METHOD__ . ', Cannot add an empty tag');
 				return false;
 			}
 			if (!$this->hasTag($tag)) {
@@ -531,21 +528,29 @@ class Tags implements ITags {
 			]);
 			return false;
 		}
+		if ($tag === ITags::TAG_FAVORITE) {
+			if ($path === null) {
+				$node = $this->userFolder->getFirstNodeById($objid);
+				if ($node !== null) {
+					$path = $node->getPath();
+				} else {
+					throw new Exception('Failed to favorite: node with id ' . $objid . ' not found');
+				}
+			}
+
+			$this->dispatcher->dispatchTyped(new NodeAddedToFavorite($this->userSession->getUser(), $objid, $path));
+		}
 		return true;
 	}
 
 	/**
 	 * Delete single tag/object relation from the db
-	 *
-	 * @param int $objid The id of the object
-	 * @param string $tag The id or name of the tag
-	 * @return boolean
 	 */
-	public function unTag($objid, $tag) {
+	public function unTag($objid, $tag, ?string $path = null) {
 		if (is_string($tag) && !is_numeric($tag)) {
 			$tag = trim($tag);
 			if ($tag === '') {
-				$this->logger->debug(__METHOD__.', Tag name is empty');
+				$this->logger->debug(__METHOD__ . ', Tag name is empty');
 				return false;
 			}
 			$tagId = $this->getTagId($tag);
@@ -567,6 +572,18 @@ class Tags implements ITags {
 				'exception' => $e,
 			]);
 			return false;
+		}
+		if ($tag === ITags::TAG_FAVORITE) {
+			if ($path === null) {
+				$node = $this->userFolder->getFirstNodeById($objid);
+				if ($node !== null) {
+					$path = $node->getPath();
+				} else {
+					throw new Exception('Failed to unfavorite: node with id ' . $objid . ' not found');
+				}
+			}
+
+			$this->dispatcher->dispatchTyped(new NodeRemovedFromFavorite($this->userSession->getUser(), $objid, $path));
 		}
 		return true;
 	}
@@ -628,7 +645,8 @@ class Tags implements ITags {
 		return array_search(strtolower($needle), array_map(
 			function ($tag) use ($mem) {
 				return strtolower(call_user_func([$tag, $mem]));
-			}, $haystack)
+			}, $haystack),
+			true
 		);
 	}
 

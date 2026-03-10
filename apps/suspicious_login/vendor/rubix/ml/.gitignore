@@ -4,10 +4,10 @@ test.model
 composer.lock
 .phpunit.result.cache
 .php-cs-fixer.cache
-.php_cs.cache
 Thumbs.db
 .DS_Store
 debug.log
-/.idea
-/.vscode
-/.vs
+/test.png
+.idea
+.vscode
+.vs

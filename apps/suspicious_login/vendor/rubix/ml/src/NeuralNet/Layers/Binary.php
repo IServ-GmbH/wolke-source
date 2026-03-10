@@ -30,39 +30,39 @@ class Binary implements Output
     /**
      * The labels of either of the possible outcomes.
      *
-     * @var string[]
+     * @var float[]
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
     /**
      * The function that computes the loss of erroneous activations.
      *
-     * @var \Rubix\ML\NeuralNet\CostFunctions\CostFunction
+     * @var \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss
      */
-    protected $costFn;
+    protected \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss $costFn;
 
     /**
      * The sigmoid activation function.
      *
      * @var \Rubix\ML\NeuralNet\ActivationFunctions\Sigmoid
      */
-    protected $activationFn;
+    protected \Rubix\ML\NeuralNet\ActivationFunctions\Sigmoid $sigmoid;
 
     /**
      * The memorized input matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $input;
+    protected ?\Tensor\Matrix $input = null;
 
     /**
      * The memorized activation matrix.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $computed;
+    protected ?\Tensor\Matrix $output = null;
 
     /**
      * @param string[] $classes
@@ -71,22 +71,27 @@ class Binary implements Output
      */
     public function __construct(array $classes, ?ClassificationLoss $costFn = null)
     {
-        $classes = array_unique($classes);
+        $classes = array_values(array_unique($classes));
 
         if (count($classes) !== 2) {
             throw new InvalidArgumentException('Number of classes'
                 . ' must be 2, ' . count($classes) . ' given.');
         }
 
-        $this->classes = array_map('strval', array_flip(array_values($classes)));
+        $classes = [
+            $classes[0] => 0.0,
+            $classes[1] => 1.0,
+        ];
+
+        $this->classes = $classes;
         $this->costFn = $costFn ?? new CrossEntropy();
-        $this->activationFn = new Sigmoid();
+        $this->sigmoid = new Sigmoid();
     }
 
     /**
      * Return the width of the layer.
      *
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
@@ -97,9 +102,9 @@ class Binary implements Output
      * Initialize the layer with the fan in from the previous layer and return
      * the fan out for this layer.
      *
-     * @param int $fanIn
+     * @param positive-int $fanIn
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
-     * @return int
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -119,11 +124,12 @@ class Binary implements Output
      */
     public function forward(Matrix $input) : Matrix
     {
+        $output = $this->sigmoid->activate($input);
+
         $this->input = $input;
+        $this->output = $output;
 
-        $this->computed = $this->activationFn->compute($input);
-
-        return $this->computed;
+        return $output;
     }
 
     /**
@@ -134,7 +140,7 @@ class Binary implements Output
      */
     public function infer(Matrix $input) : Matrix
     {
-        return $this->activationFn->compute($input);
+        return $this->sigmoid->activate($input);
     }
 
     /**
@@ -147,7 +153,7 @@ class Binary implements Output
      */
     public function back(array $labels, Optimizer $optimizer) : array
     {
-        if (!$this->input or !$this->computed) {
+        if (!$this->input or !$this->output) {
             throw new RuntimeException('Must perform forward pass'
                 . ' before backpropagating.');
         }
@@ -161,13 +167,13 @@ class Binary implements Output
         $expected = Matrix::quick([$expected]);
 
         $input = $this->input;
-        $computed = $this->computed;
+        $output = $this->output;
 
-        $gradient = new Deferred([$this, 'gradient'], [$input, $computed, $expected]);
+        $gradient = new Deferred([$this, 'gradient'], [$input, $output, $expected]);
 
-        $loss = $this->costFn->compute($computed, $expected);
+        $loss = $this->costFn->compute($output, $expected);
 
-        $this->input = $this->computed = null;
+        $this->input = $this->output = null;
 
         return [$gradient, $loss];
     }
@@ -176,21 +182,33 @@ class Binary implements Output
      * Calculate the gradient for the previous layer.
      *
      * @param \Tensor\Matrix $input
-     * @param \Tensor\Matrix $computed
+     * @param \Tensor\Matrix $output
      * @param \Tensor\Matrix $expected
      * @return \Tensor\Matrix
      */
-    public function gradient(Matrix $input, Matrix $computed, Matrix $expected) : Matrix
+    public function gradient(Matrix $input, Matrix $output, Matrix $expected) : Matrix
     {
         if ($this->costFn instanceof CrossEntropy) {
-            return $computed->subtract($expected)
-                ->divide($computed->n());
+            return $output->subtract($expected)
+                ->divide($output->n());
         }
 
-        $dL = $this->costFn->differentiate($computed, $expected)
-            ->divide($computed->n());
+        $dLoss = $this->costFn->differentiate($output, $expected)
+            ->divide($output->n());
 
-        return $this->activationFn->differentiate($input, $computed)
-            ->multiply($dL);
+        return $this->sigmoid->differentiate($input, $output)
+            ->multiply($dLoss);
+    }
+
+    /**
+     * Return the string representation of the object.
+     *
+     * @internal
+     *
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return "Binary (cost function: {$this->costFn})";
     }
 }

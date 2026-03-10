@@ -27,7 +27,7 @@ class MemoryCacheBackend implements IBackend {
 		ICacheFactory $cacheFactory,
 		private ITimeFactory $timeFactory,
 	) {
-		$this->cache = $cacheFactory->createDistributed(__CLASS__);
+		$this->cache = $cacheFactory->createDistributed(self::class);
 	}
 
 	private function hash(
@@ -93,7 +93,7 @@ class MemoryCacheBackend implements IBackend {
 		$existingAttempts = array_values($existingAttempts);
 
 		// Store the new attempt
-		$existingAttempts[] = (string) ($currentTime + $period);
+		$existingAttempts[] = (string)($currentTime + $period);
 
 		if (!$this->config->getSystemValueBool('ratelimit.protection.enabled', true)) {
 			return;

@@ -5,12 +5,15 @@ namespace Rubix\ML\Transformers;
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\RuntimeException;
 
 use function count;
-use function is_null;
+use function array_values;
+use function array_merge;
+use function array_fill;
+use function array_flip;
 
 /**
  * One Hot Encoder
@@ -34,9 +37,9 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
     /**
      * The set of unique possible categories per feature column of the training set.
      *
-     * @var array[]|null
+     * @var array<int[]>|null
      */
-    protected $categories;
+    protected ?array $categories = null;
 
     /**
      * Return the data types that this transformer is compatible with.
@@ -63,11 +66,11 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
     /**
      * Return the categories computed during fitting indexed by feature column.
      *
-     * @return array[]|null
+     * @return array<string[]>|null
      */
     public function categories() : ?array
     {
-        return $this->categories ? array_map('array_flip', $this->categories) : null;
+        return isset($this->categories) ? array_map('array_flip', $this->categories) : null;
     }
 
     /**
@@ -81,13 +84,16 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
 
         $this->categories = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isCategorical()) {
-                $values = $dataset->column($column);
+                $values = $dataset->feature($column);
 
                 $categories = array_values(array_unique($values));
 
-                $this->categories[$column] = array_flip($categories);
+                /** @var int[] $offsets */
+                $offsets = array_flip($categories);
+
+                $this->categories[$column] = $offsets;
             }
         }
     }
@@ -100,7 +106,7 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
      */
     public function transform(array &$samples) : void
     {
-        if (is_null($this->categories)) {
+        if ($this->categories === null) {
             throw new RuntimeException('Transformer has not been fitted.');
         }
 
@@ -108,14 +114,15 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
             $vectors = [];
 
             foreach ($this->categories as $column => $categories) {
-                $template = array_fill(0, count($categories), 0);
                 $category = $sample[$column];
 
+                $vector = array_fill(0, count($categories), 0);
+
                 if (isset($categories[$category])) {
-                    $template[$categories[$category]] = 1;
+                    $vector[$categories[$category]] = 1;
                 }
 
-                $vectors[] = $template;
+                $vectors[] = $vector;
 
                 unset($sample[$column]);
             }
@@ -126,6 +133,8 @@ class OneHotEncoder implements Transformer, Stateful, Persistable
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

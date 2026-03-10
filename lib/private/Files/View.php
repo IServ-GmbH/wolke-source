@@ -10,6 +10,7 @@ namespace OC\Files;
 use Icewind\Streams\CallbackWrapper;
 use OC\Files\Mount\MoveableMount;
 use OC\Files\Storage\Storage;
+use OC\Files\Storage\Wrapper\Quota;
 use OC\Share\Share;
 use OC\User\LazyUser;
 use OC\User\Manager as UserManager;
@@ -29,6 +30,7 @@ use OCP\Files\Mount\IMountPoint;
 use OCP\Files\NotFoundException;
 use OCP\Files\ReservedWordException;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
@@ -606,13 +608,13 @@ class View {
 				$this->lockFile($path, ILockingProvider::LOCK_SHARED);
 
 				$exists = $this->file_exists($path);
-				$run = true;
 				if ($this->shouldEmitHooks($path)) {
+					$run = true;
 					$this->emit_file_hooks_pre($exists, $path, $run);
-				}
-				if (!$run) {
-					$this->unlockFile($path, ILockingProvider::LOCK_SHARED);
-					return false;
+					if (!$run) {
+						$this->unlockFile($path, ILockingProvider::LOCK_SHARED);
+						return false;
+					}
 				}
 
 				try {
@@ -1437,7 +1439,7 @@ class View {
 
 			$ownerId = $storage->getOwner($internalPath);
 			$owner = null;
-			if ($ownerId !== null && $ownerId !== false) {
+			if ($ownerId !== false) {
 				// ownerId might be null if files are accessed with an access token without file system access
 				$owner = $this->getUserObjectForOwner($ownerId);
 			}
@@ -1523,7 +1525,12 @@ class View {
 			if ($sharingDisabled) {
 				$content['permissions'] = $content['permissions'] & ~\OCP\Constants::PERMISSION_SHARE;
 			}
-			$owner = $this->getUserObjectForOwner($storage->getOwner($content['path']));
+			$ownerId = $storage->getOwner($content['path']);
+			if ($ownerId !== false) {
+				$owner = $this->getUserObjectForOwner($ownerId);
+			} else {
+				$owner = null;
+			}
 			return new FileInfo($path . '/' . $content['name'], $storage, $content['path'], $content, $mount, $owner);
 		}, $contents);
 		$files = array_combine($fileNames, $fileInfos);
@@ -1573,11 +1580,21 @@ class View {
 						// Create parent folders if the mountpoint is inside a subfolder that doesn't exist yet
 						if (!isset($files[$entryName])) {
 							try {
+								[$storage, ] = $this->resolvePath($path . '/' . $entryName);
+								// make sure we can create the mountpoint folder, even if the user has a quota of 0
+								if ($storage->instanceOfStorage(Quota::class)) {
+									$storage->enableQuota(false);
+								}
+
 								if ($this->mkdir($path . '/' . $entryName) !== false) {
 									$info = $this->getFileInfo($path . '/' . $entryName);
 									if ($info !== false) {
 										$files[$entryName] = $info;
 									}
+								}
+
+								if ($storage->instanceOfStorage(Quota::class)) {
+									$storage->enableQuota(true);
 								}
 							} catch (\Exception $e) {
 								// Creating the parent folder might not be possible, for example due to a lack of permissions.
@@ -1607,7 +1624,12 @@ class View {
 							$rootEntry['permissions'] = $rootEntry['permissions'] & ~\OCP\Constants::PERMISSION_SHARE;
 						}
 
-						$owner = $this->getUserObjectForOwner($subStorage->getOwner(''));
+						$ownerId = $subStorage->getOwner('');
+						if ($ownerId !== false) {
+							$owner = $this->getUserObjectForOwner($ownerId);
+						} else {
+							$owner = null;
+						}
 						$files[$rootEntry->getName()] = new FileInfo($path . '/' . $rootEntry['name'], $subStorage, '', $rootEntry, $mount, $owner);
 					}
 				}
@@ -1724,7 +1746,12 @@ class View {
 					$internalPath = $result['path'];
 					$path = $mountPoint . $result['path'];
 					$result['path'] = substr($mountPoint . $result['path'], $rootLength);
-					$owner = $userManager->get($storage->getOwner($internalPath));
+					$ownerId = $storage->getOwner($internalPath);
+					if ($ownerId !== false) {
+						$owner = $userManager->get($ownerId);
+					} else {
+						$owner = null;
+					}
 					$files[] = new FileInfo($path, $storage, $internalPath, $result, $mount, $owner);
 				}
 			}
@@ -1743,7 +1770,12 @@ class View {
 							$internalPath = $result['path'];
 							$result['path'] = rtrim($relativeMountPoint . $result['path'], '/');
 							$path = rtrim($mountPoint . $internalPath, '/');
-							$owner = $userManager->get($storage->getOwner($internalPath));
+							$ownerId = $storage->getOwner($internalPath);
+							if ($ownerId !== false) {
+								$owner = $userManager->get($ownerId);
+							} else {
+								$owner = null;
+							}
 							$files[] = new FileInfo($path, $storage, $internalPath, $result, $mount, $owner);
 						}
 					}
@@ -1756,11 +1788,9 @@ class View {
 	/**
 	 * Get the owner for a file or folder
 	 *
-	 * @param string $path
-	 * @return string the user id of the owner
 	 * @throws NotFoundException
 	 */
-	public function getOwner($path) {
+	public function getOwner(string $path): string {
 		$info = $this->getFileInfo($path);
 		if (!$info) {
 			throw new NotFoundException($path . ' not found while trying to get owner');
@@ -1799,7 +1829,7 @@ class View {
 	 * @throws NotFoundException
 	 */
 	public function getPath($id, ?int $storageId = null) {
-		$id = (int) $id;
+		$id = (int)$id;
 		$manager = Filesystem::getMountManager();
 		$mounts = $manager->findIn($this->fakeRoot);
 		$mounts[] = $manager->find($this->fakeRoot);
@@ -1874,7 +1904,15 @@ class View {
 		}, $providers));
 
 		foreach ($shares as $share) {
-			$sharedPath = $share->getNode()->getPath();
+			try {
+				$sharedPath = $share->getNode()->getPath();
+			} catch (NotFoundException $e) {
+				// node is not found, ignoring
+				$this->logger->debug(
+					'Could not find the node linked to a share',
+					['app' => 'files', 'exception' => $e]);
+				continue;
+			}
 			if ($targetPath === $sharedPath || str_starts_with($targetPath, $sharedPath . '/')) {
 				$this->logger->debug(
 					'It is not allowed to move one mount point into a shared folder',
@@ -1893,7 +1931,12 @@ class View {
 		$mount = $this->getMount($path);
 		$storage = $mount->getStorage();
 		$internalPath = $mount->getInternalPath($this->getAbsolutePath($path));
-		$owner = \OC::$server->getUserManager()->get($storage->getOwner($internalPath));
+		$ownerId = $storage->getOwner($internalPath);
+		if ($ownerId !== false) {
+			$owner = Server::get(IUserManager::class)->get($ownerId);
+		} else {
+			$owner = null;
+		}
 		return new FileInfo(
 			$this->getAbsolutePath($path),
 			$storage,
@@ -1928,7 +1971,7 @@ class View {
 
 		// Short cut for read-only validation
 		if ($readonly) {
-			$validator = \OCP\Server::get(FilenameValidator::class);
+			$validator = Server::get(FilenameValidator::class);
 			if ($validator->isForbidden($fileName)) {
 				$l = \OCP\Util::getL10N('lib');
 				throw new InvalidPathException($l->t('Filename is a reserved word'));

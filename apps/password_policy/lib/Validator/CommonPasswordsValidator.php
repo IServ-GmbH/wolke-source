@@ -8,27 +8,29 @@ declare(strict_types=1);
 
 namespace OCA\Password_Policy\Validator;
 
-use OC\HintException;
 use OCA\Password_Policy\PasswordPolicyConfig;
+use OCP\HintException;
 use OCP\IL10N;
+use OCP\Security\PasswordContext;
 
 class CommonPasswordsValidator implements IValidator {
 
-	/** @var PasswordPolicyConfig */
-	private $config;
-	/** @var IL10N */
-	private $l;
-
-	public function __construct(PasswordPolicyConfig $config, IL10N $l) {
-		$this->config = $config;
-		$this->l = $l;
+	public function __construct(
+		private PasswordPolicyConfig $config,
+		private IL10N $l,
+	) {
 	}
 
-	public function validate(string $password): void {
-		$enforceNonCommonPassword = $this->config->getEnforceNonCommonPassword();
-		$passwordFile = __DIR__ . '/../../lists/list-'.strlen($password).'.php';
-		if ($enforceNonCommonPassword && file_exists($passwordFile)) {
+	public function validate(string $password, ?PasswordContext $context = null): void {
+		$enforceNonCommonPassword = $this->config->getEnforceNonCommonPassword($context);
+		if (!$enforceNonCommonPassword) {
+			return;
+		}
+
+		$passwordFile = __DIR__ . '/../../lists/list-' . strlen($password) . '.php';
+		if (file_exists($passwordFile)) {
 			$commonPasswords = require $passwordFile;
+			assert(is_array($commonPasswords));
 			if (isset($commonPasswords[strtolower($password)])) {
 				$message = 'Password is among the 1,000,000 most common ones. Please make it unique.';
 				$message_t = $this->l->t(

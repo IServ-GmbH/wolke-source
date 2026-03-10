@@ -32,7 +32,7 @@ class MetadataQuery implements IMetadataQuery {
 		private string $fileTableAlias = 'fc',
 		private string $fileIdField = 'fileid',
 		private string $alias = 'meta',
-		private string $aliasIndexPrefix = 'meta_index'
+		private string $aliasIndexPrefix = 'meta_index',
 	) {
 		if ($manager instanceof IFilesMetadata) {
 			/**
@@ -71,7 +71,7 @@ class MetadataQuery implements IMetadataQuery {
 	 */
 	public function extractMetadata(array $row): IFilesMetadata {
 		$fileId = (array_key_exists($this->fileIdField, $row)) ? $row[$this->fileIdField] : 0;
-		$metadata = new FilesMetadata((int) $fileId);
+		$metadata = new FilesMetadata((int)$fileId);
 		try {
 			$metadata->importFromDatabase($row, $this->alias . '_');
 		} catch (FilesMetadataNotFoundException) {

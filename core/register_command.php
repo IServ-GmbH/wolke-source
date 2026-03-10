@@ -8,6 +8,8 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 use OC\Core\Command;
+use OC\Core\Command\Router\ListRoutes;
+use OC\Core\Command\Router\MatchRoute;
 use OCP\IConfig;
 use OCP\Server;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionCommand;
@@ -20,6 +22,8 @@ $application->add(Server::get(Command\Integrity\SignApp::class));
 $application->add(Server::get(Command\Integrity\SignCore::class));
 $application->add(Server::get(Command\Integrity\CheckApp::class));
 $application->add(Server::get(Command\Integrity\CheckCore::class));
+$application->add(Server::get(ListRoutes::class));
+$application->add(Server::get(MatchRoute::class));
 
 $config = Server::get(IConfig::class);
 
@@ -57,6 +61,8 @@ if ($config->getSystemValueBool('installed', false)) {
 
 	$application->add(Server::get(Command\Info\File::class));
 	$application->add(Server::get(Command\Info\Space::class));
+	$application->add(Server::get(Command\Info\Storage::class));
+	$application->add(Server::get(Command\Info\Storages::class));
 
 	$application->add(Server::get(Command\Db\ConvertType::class));
 	$application->add(Server::get(Command\Db\ConvertMysqlToMB4::class));
@@ -102,6 +108,7 @@ if ($config->getSystemValueBool('installed', false)) {
 	$application->add(Server::get(Command\Maintenance\Repair::class));
 	$application->add(Server::get(Command\Maintenance\RepairShareOwnership::class));
 
+	$application->add(Server::get(Command\Preview\Cleanup::class));
 	$application->add(Server::get(Command\Preview\Generate::class));
 	$application->add(Server::get(Command\Preview\Repair::class));
 	$application->add(Server::get(Command\Preview\ResetRenderedTexts::class));
@@ -145,8 +152,12 @@ if ($config->getSystemValueBool('installed', false)) {
 	$application->add(Server::get(Command\SetupChecks::class));
 	$application->add(Server::get(Command\FilesMetadata\Get::class));
 
+	$application->add(Server::get(Command\TaskProcessing\GetCommand::class));
+	$application->add(Server::get(Command\TaskProcessing\EnabledCommand::class));
 	$application->add(Server::get(Command\TaskProcessing\ListCommand::class));
 	$application->add(Server::get(Command\TaskProcessing\Statistics::class));
+
+	$application->add(Server::get(Command\Memcache\RedisCommand::class));
 	$application->add(Server::get(Command\Memcache\DistributedClear::class));
 	$application->add(Server::get(Command\Memcache\DistributedDelete::class));
 	$application->add(Server::get(Command\Memcache\DistributedGet::class));

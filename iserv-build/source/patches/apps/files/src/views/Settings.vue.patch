@@ -1,5 +1,5 @@
 diff --git apps/files/src/views/Settings.vue apps/files/src/views/Settings.vue
-index c64f3b8..f04ac3a 100644
+index cf8b7f8..8ea051c 100644
 --- apps/files/src/views/Settings.vue
 +++ apps/files/src/views/Settings.vue
 @@ -68,18 +68,7 @@
@@ -18,7 +18,7 @@ index c64f3b8..f04ac3a 100644
 -				<a class="setting-link" :href="appPasswordUrl">
 -					{{ t('files', 'If you have enabled 2FA, you must create and use a new app password by clicking here.') }} ↗
 -				</a>
-+                {{ t('files', 'Use this address to access your Files via WebDAV') }}
++				{{ t('files', 'Use this address to access your Files via WebDAV') }}
  			</em>
  		</NcAppSettingsSection>
- 	</NcAppSettingsDialog>
+ 

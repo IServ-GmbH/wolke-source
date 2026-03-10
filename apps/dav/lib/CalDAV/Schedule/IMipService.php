@@ -14,6 +14,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\IUserManager;
 use OCP\L10N\IFactory as L10NFactory;
 use OCP\Mail\IEMailTemplate;
 use OCP\Security\ISecureRandom;
@@ -24,16 +25,11 @@ use Sabre\VObject\ITip\Message;
 use Sabre\VObject\Parameter;
 use Sabre\VObject\Property;
 use Sabre\VObject\Recur\EventIterator;
+use function htmlspecialchars;
 
 class IMipService {
 
-	private URLGenerator $urlGenerator;
-	private IConfig $config;
-	private IDBConnection $db;
-	private ISecureRandom $random;
-	private L10NFactory $l10nFactory;
 	private IL10N $l10n;
-	private ITimeFactory $timeFactory;
 
 	/** @var string[] */
 	private const STRING_DIFF = [
@@ -43,18 +39,15 @@ class IMipService {
 		'meeting_location' => 'LOCATION'
 	];
 
-	public function __construct(URLGenerator $urlGenerator,
-		IConfig $config,
-		IDBConnection $db,
-		ISecureRandom $random,
-		L10NFactory $l10nFactory,
-		ITimeFactory $timeFactory) {
-		$this->urlGenerator = $urlGenerator;
-		$this->config = $config;
-		$this->db = $db;
-		$this->random = $random;
-		$this->l10nFactory = $l10nFactory;
-		$this->timeFactory = $timeFactory;
+	public function __construct(
+		private URLGenerator $urlGenerator,
+		private IConfig $config,
+		private IDBConnection $db,
+		private ISecureRandom $random,
+		private L10NFactory $l10nFactory,
+		private ITimeFactory $timeFactory,
+		private readonly IUserManager $userManager,
+	) {
 		$language = $this->l10nFactory->findGenericLanguage();
 		$locale = $this->l10nFactory->findLocale($language);
 		$this->l10n = $this->l10nFactory->get('dav', $language, $locale);
@@ -88,10 +81,11 @@ class IMipService {
 		if (!isset($vevent->$property)) {
 			return $default;
 		}
-		$newstring = $vevent->$property->getValue();
+		$value = $vevent->$property->getValue();
+		$newstring = $value === null ? null : htmlspecialchars($value);
 		if (isset($oldVEvent->$property) && $oldVEvent->$property->getValue() !== $newstring) {
 			$oldstring = $oldVEvent->$property->getValue();
-			return sprintf($strikethrough, $oldstring, $newstring);
+			return sprintf($strikethrough, htmlspecialchars($oldstring), $newstring);
 		}
 		return $newstring;
 	}
@@ -103,9 +97,9 @@ class IMipService {
 		if (!isset($vevent->$property)) {
 			return $default;
 		}
-		/** @var string|null $newString */
-		$newString = $vevent->$property->getValue();
-		$oldString = isset($oldVEvent->$property) ? $oldVEvent->$property->getValue() : null;
+		$value = $vevent->$property->getValue();
+		$newString = $value === null ? null : htmlspecialchars($value);
+		$oldString = isset($oldVEvent->$property) ? htmlspecialchars($oldVEvent->$property->getValue()) : null;
 		if ($oldString !== $newString) {
 			return sprintf(
 				"<span style='text-decoration: line-through'>%s</span><br />%s",
@@ -364,7 +358,7 @@ class IMipService {
 	public function generateWhenStringRecurringDaily(EventReader $er): string {
 		
 		// initialize
-		$interval = (int) $er->recurringInterval();
+		$interval = (int)$er->recurringInterval();
 		$startTime = null;
 		$conclusion = null;
 		// time of the day
@@ -415,7 +409,7 @@ class IMipService {
 	public function generateWhenStringRecurringWeekly(EventReader $er): string {
 		
 		// initialize
-		$interval = (int) $er->recurringInterval();
+		$interval = (int)$er->recurringInterval();
 		$startTime = null;
 		$conclusion = null;
 		// days of the week
@@ -468,7 +462,7 @@ class IMipService {
 	public function generateWhenStringRecurringMonthly(EventReader $er): string {
 		
 		// initialize
-		$interval = (int) $er->recurringInterval();
+		$interval = (int)$er->recurringInterval();
 		$startTime = null;
 		$conclusion = null;
 		// days of month
@@ -533,7 +527,7 @@ class IMipService {
 	public function generateWhenStringRecurringYearly(EventReader $er): string {
 		
 		// initialize
-		$interval = (int) $er->recurringInterval();
+		$interval = (int)$er->recurringInterval();
 		$startTime = null;
 		$conclusion = null;
 		// months of year
@@ -805,10 +799,10 @@ class IMipService {
 		$strikethrough = "<span style='text-decoration: line-through'>%s</span>";
 
 		$newMeetingWhen = $this->generateWhenString($eventReaderCurrent);
-		$newSummary = isset($vEvent->SUMMARY) && (string) $vEvent->SUMMARY !== '' ? (string) $vEvent->SUMMARY : $this->l10n->t('Untitled event');
-		$newDescription = isset($vEvent->DESCRIPTION) && (string) $vEvent->DESCRIPTION !== '' ? (string) $vEvent->DESCRIPTION : $defaultVal;
-		$newUrl = isset($vEvent->URL) && (string) $vEvent->URL !== '' ? sprintf('<a href="%1$s">%1$s</a>', $vEvent->URL) : $defaultVal;
-		$newLocation = isset($vEvent->LOCATION) && (string) $vEvent->LOCATION !== '' ? (string) $vEvent->LOCATION : $defaultVal;
+		$newSummary = htmlspecialchars(isset($vEvent->SUMMARY) && (string)$vEvent->SUMMARY !== '' ? (string)$vEvent->SUMMARY : $this->l10n->t('Untitled event'));
+		$newDescription = htmlspecialchars(isset($vEvent->DESCRIPTION) && (string)$vEvent->DESCRIPTION !== '' ? (string)$vEvent->DESCRIPTION : $defaultVal);
+		$newUrl = isset($vEvent->URL) && (string)$vEvent->URL !== '' ? sprintf('<a href="%1$s">%1$s</a>', $vEvent->URL) : $defaultVal;
+		$newLocation = htmlspecialchars(isset($vEvent->LOCATION) && (string)$vEvent->LOCATION !== '' ? (string)$vEvent->LOCATION : $defaultVal);
 		$newLocationHtml = $this->linkify($newLocation) ?? $newLocation;
 
 		$data = [];
@@ -819,7 +813,7 @@ class IMipService {
 		$data['meeting_description_html'] = $newDescription !== '' ? sprintf($strikethrough, $newDescription) : '';
 		$data['meeting_description'] = $newDescription;
 		$data['meeting_url_html'] = $newUrl !== '' ? sprintf($strikethrough, $newUrl) : '';
-		$data['meeting_url'] = isset($vEvent->URL) ? (string) $vEvent->URL : '';
+		$data['meeting_url'] = isset($vEvent->URL) ? (string)$vEvent->URL : '';
 		$data['meeting_location_html'] = $newLocationHtml !== '' ? sprintf($strikethrough, $newLocationHtml) : '';
 		$data['meeting_location'] = $newLocation;
 		return $data;
@@ -836,7 +830,7 @@ class IMipService {
 		$component = $vObject->VEVENT;
 
 		if (isset($component->RRULE)) {
-			$it = new EventIterator($vObject, (string) $component->UID);
+			$it = new EventIterator($vObject, (string)$component->UID);
 			$maxDate = new \DateTime(IMipPlugin::MAX_DATE);
 			if ($it->isInfinite()) {
 				return $maxDate->getTimestamp();
@@ -880,18 +874,45 @@ class IMipService {
 	}
 
 	/**
-	 * @param Property|null $attendee
+	 * Check if an email address belongs to a system user
+	 *
+	 * @param string $email
+	 * @return bool True if the email belongs to a system user, false otherwise
 	 */
-	public function setL10n(?Property $attendee = null) {
-		if ($attendee === null) {
-			return;
-		}
+	public function isSystemUser(string $email): bool {
+		return !empty($this->userManager->getByEmail($email));
+	}
 
-		$lang = $attendee->offsetGet('LANGUAGE');
-		if ($lang instanceof Parameter) {
-			$lang = $lang->getValue();
-			$this->l10n = $this->l10nFactory->get('dav', $lang);
+	/**
+	 * @param Property $attendee
+	 */
+	public function setL10nFromAttendee(Property $attendee) {
+		$language = null;
+		$locale = null;
+		// check if the attendee is a system user
+		$userAddress = $attendee->getValue();
+		if (str_starts_with($userAddress, 'mailto:')) {
+			$userAddress = substr($userAddress, 7);
 		}
+		$users = $this->userManager->getByEmail($userAddress);
+		if ($users !== []) {
+			$user = array_shift($users);
+			$language = $this->config->getUserValue($user->getUID(), 'core', 'lang', null);
+			$locale = $this->config->getUserValue($user->getUID(), 'core', 'locale', null);
+		}
+		// fallback to attendee LANGUAGE parameter if language not set
+		if ($language === null && isset($attendee['LANGUAGE']) && $attendee['LANGUAGE'] instanceof Parameter) {
+			$language = $attendee['LANGUAGE']->getValue();
+		}
+		// fallback to system language if language not set
+		if ($language === null) {
+			$language = $this->l10nFactory->findGenericLanguage();
+		}
+		// fallback to system locale if locale not set
+		if ($locale === null) {
+			$locale = $this->l10nFactory->findLocale($language);
+		}
+		$this->l10n = $this->l10nFactory->get('dav', $language, $locale);
 	}
 
 	/**
@@ -1058,22 +1079,22 @@ class IMipService {
 	 */
 	public function addBulletList(IEMailTemplate $template, VEvent $vevent, $data) {
 		$template->addBodyListItem(
-			$data['meeting_title_html'] ?? $data['meeting_title'], $this->l10n->t('Title:'),
+			$data['meeting_title_html'] ?? htmlspecialchars($data['meeting_title']), $this->l10n->t('Title:'),
 			$this->getAbsoluteImagePath('caldav/title.png'), $data['meeting_title'], '', IMipPlugin::IMIP_INDENT);
 		if ($data['meeting_when'] !== '') {
-			$template->addBodyListItem($data['meeting_when_html'] ?? $data['meeting_when'], $this->l10n->t('When:'),
+			$template->addBodyListItem($data['meeting_when_html'] ?? htmlspecialchars($data['meeting_when']), $this->l10n->t('When:'),
 				$this->getAbsoluteImagePath('caldav/time.png'), $data['meeting_when'], '', IMipPlugin::IMIP_INDENT);
 		}
 		if ($data['meeting_location'] !== '') {
-			$template->addBodyListItem($data['meeting_location_html'] ?? $data['meeting_location'], $this->l10n->t('Location:'),
+			$template->addBodyListItem($data['meeting_location_html'] ?? htmlspecialchars($data['meeting_location']), $this->l10n->t('Location:'),
 				$this->getAbsoluteImagePath('caldav/location.png'), $data['meeting_location'], '', IMipPlugin::IMIP_INDENT);
 		}
 		if ($data['meeting_url'] !== '') {
-			$template->addBodyListItem($data['meeting_url_html'] ?? $data['meeting_url'], $this->l10n->t('Link:'),
+			$template->addBodyListItem($data['meeting_url_html'] ?? htmlspecialchars($data['meeting_url']), $this->l10n->t('Link:'),
 				$this->getAbsoluteImagePath('caldav/link.png'), $data['meeting_url'], '', IMipPlugin::IMIP_INDENT);
 		}
 		if (isset($data['meeting_occurring'])) {
-			$template->addBodyListItem($data['meeting_occurring_html'] ?? $data['meeting_occurring'], $this->l10n->t('Occurring:'),
+			$template->addBodyListItem($data['meeting_occurring_html'] ?? htmlspecialchars($data['meeting_occurring']), $this->l10n->t('Occurring:'),
 				$this->getAbsoluteImagePath('caldav/time.png'), $data['meeting_occurring'], '', IMipPlugin::IMIP_INDENT);
 		}
 
@@ -1081,7 +1102,7 @@ class IMipService {
 
 		/* Put description last, like an email body, since it can be arbitrarily long */
 		if ($data['meeting_description']) {
-			$template->addBodyListItem($data['meeting_description_html'] ?? $data['meeting_description'], $this->l10n->t('Description:'),
+			$template->addBodyListItem($data['meeting_description_html'] ?? htmlspecialchars($data['meeting_description']), $this->l10n->t('Description:'),
 				$this->getAbsoluteImagePath('caldav/description.png'), $data['meeting_description'], '', IMipPlugin::IMIP_INDENT);
 		}
 	}
@@ -1133,7 +1154,7 @@ class IMipService {
 				'expiration' => $query->createNamedParameter($lastOccurrence),
 				'uid' => $query->createNamedParameter($uid)
 			])
-			->execute();
+			->executeStatement();
 
 		return $token;
 	}
@@ -1221,7 +1242,7 @@ class IMipService {
 			$interval = $dateInterval->m;
 			$scale = 'month';
 		} elseif ($dateInterval->d >= 7) {
-			$interval = (int) ($dateInterval->d / 7);
+			$interval = (int)($dateInterval->d / 7);
 			$scale = 'week';
 		} elseif ($dateInterval->d > 0) {
 			$interval = $dateInterval->d;

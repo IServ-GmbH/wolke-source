@@ -8,11 +8,11 @@ use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Params;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Kernels\Distance\Distance;
 use Rubix\ML\Kernels\Distance\Euclidean;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -48,46 +48,46 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
      *
      * @var int
      */
-    protected $k;
+    protected int $k;
 
     /**
      * Should we consider the distances of our nearest neighbors when making predictions?
      *
      * @var bool
      */
-    protected $weighted;
+    protected bool $weighted;
 
     /**
      * The distance function to use when computing the distances.
      *
      * @var \Rubix\ML\Kernels\Distance\Distance
      */
-    protected $kernel;
+    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
 
     /**
      * The zero vector for the possible class outcomes.
      *
      * @var float[]
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
     /**
-     * The training samples that make up the neighborhood of the problem space.
+     * The training samples.
      *
-     * @var array[]
+     * @var list<list<string|int|float>>
      */
-    protected $samples = [
+    protected array $samples = [
         //
     ];
 
     /**
-     * The memoized labels of the training set.
+     * The training labels.
      *
      * @var string[]
      */
-    protected $labels = [
+    protected array $labels = [
         //
     ];
 
@@ -97,7 +97,7 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
      * @param \Rubix\ML\Kernels\Distance\Distance|null $kernel
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(int $k = 5, bool $weighted = true, ?Distance $kernel = null)
+    public function __construct(int $k = 5, bool $weighted = false, ?Distance $kernel = null)
     {
         if ($k < 1) {
             throw new InvalidArgumentException('At least 1 neighbor'
@@ -235,6 +235,7 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
             $weights = array_count_values($labels);
         }
 
+        /** @var array<string,float|int> $weights */
         return argmax($weights);
     }
 
@@ -243,7 +244,7 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return array[]
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -262,7 +263,7 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
      * @internal
      *
      * @param list<string|int|float> $sample
-     * @return float[]
+     * @return array<string,float>
      */
     public function probaSample(array $sample) : array
     {
@@ -290,11 +291,10 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
     }
 
     /**
-     * Find the K nearest neighbors to the given sample vector using
-     * the brute force method.
+     * Find the K nearest neighbors to the given sample vector using the brute force method.
      *
      * @param list<string|int|float> $sample
-     * @return array[]
+     * @return array{list<string|int|float>,list<float>}
      */
     protected function nearest(array $sample) : array
     {
@@ -315,6 +315,8 @@ class KNearestNeighbors implements Estimator, Learner, Online, Probabilistic, Pe
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

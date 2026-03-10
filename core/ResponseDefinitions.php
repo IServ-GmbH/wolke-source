@@ -63,7 +63,7 @@ namespace OC\Core;
  * @psalm-type CoreCollection = array{
  *     id: int,
  *     name: string,
- *     resources: CoreResource[],
+ *     resources: list<CoreResource>,
  * }
  *
  * @psalm-type CoreReference = array{
@@ -78,7 +78,7 @@ namespace OC\Core;
  *     title: string,
  *     icon_url: string,
  *     order: int,
- *     search_providers_ids: ?string[]
+ *     search_providers_ids: ?list<string>,
  * }
  *
  * @psalm-type CoreUnifiedSearchProvider = array{
@@ -87,7 +87,7 @@ namespace OC\Core;
  *     name: string,
  *     icon: string,
  *     order: int,
- *     triggers: string[],
+ *     triggers: list<string>,
  *     filters: array<string, string>,
  *     inAppSearch: bool,
  * }
@@ -99,13 +99,13 @@ namespace OC\Core;
  *     resourceUrl: string,
  *     icon: string,
  *     rounded: bool,
- *     attributes: string[],
+ *     attributes: list<string>,
  * }
  *
  * @psalm-type CoreUnifiedSearchResult = array{
  *     name: string,
  *     isPaginated: bool,
- *     entries: CoreUnifiedSearchResultEntry[],
+ *     entries: list<CoreUnifiedSearchResultEntry>,
  *     cursor: int|string|null,
  * }
  *
@@ -148,19 +148,30 @@ namespace OC\Core;
  *  }
  *
  * @psalm-type CoreTeam = array{
- *      id: string,
- *      name: string,
- *      icon: string,
+ *      teamId: string,
+ *      displayName: string,
+ *      link: ?string,
  * }
  *
  * @psalm-type CoreTeamResource = array{
- *       id: int,
- *       label: string,
- *       url: string,
- *       iconSvg: ?string,
- *       iconURL: ?string,
- *       iconEmoji: ?string,
- *   }
+ *      id: string,
+ *      label: string,
+ *      url: string,
+ *      iconSvg: ?string,
+ *      iconURL: ?string,
+ *      iconEmoji: ?string,
+ *      provider: array{
+ *          id: string,
+ *          name: string,
+ *          icon: string,
+ *     },
+ * }
+ *
+ * @psalm-type CoreTeamWithResources = CoreTeam&array{
+ *     resources: list<CoreTeamResource>,
+ * }
+ *
+ *
  *
  * @psalm-type CoreTaskProcessingShape = array{
  *     name: string,
@@ -171,16 +182,16 @@ namespace OC\Core;
  * @psalm-type CoreTaskProcessingTaskType = array{
  *     name: string,
  *     description: string,
- *     inputShape: CoreTaskProcessingShape[],
- *     inputShapeEnumValues: array{name: string, value: string}[][],
+ *     inputShape: array<string, CoreTaskProcessingShape>,
+ *     inputShapeEnumValues: array<string, list<array{name: string, value: string}>>,
  *     inputShapeDefaults: array<string, numeric|string>,
- *     optionalInputShape: CoreTaskProcessingShape[],
- *     optionalInputShapeEnumValues: array{name: string, value: string}[][],
+ *     optionalInputShape: array<string, CoreTaskProcessingShape>,
+ *     optionalInputShapeEnumValues: array<string, list<array{name: string, value: string}>>,
  *     optionalInputShapeDefaults: array<string, numeric|string>,
- *     outputShape: CoreTaskProcessingShape[],
- *     outputShapeEnumValues: array{name: string, value: string}[][],
- *     optionalOutputShape: CoreTaskProcessingShape[],
- *     optionalOutputShapeEnumValues: array{name: string, value: string}[][]}
+ *     outputShape: array<string, CoreTaskProcessingShape>,
+ *     outputShapeEnumValues: array<string, list<array{name: string, value: string}>>,
+ *     optionalOutputShape: array<string, CoreTaskProcessingShape>,
+ *     optionalOutputShapeEnumValues: array<string, list<array{name: string, value: string}>>,
  * }
  *
  * @psalm-type CoreTaskProcessingIO = array<string, numeric|list<numeric>|string|list<string>>
@@ -196,7 +207,35 @@ namespace OC\Core;
  *     output: null|CoreTaskProcessingIO,
  *     customId: ?string,
  *     completionExpectedAt: ?int,
- *     progress: ?float
+ *     progress: ?float,
+ *     scheduledAt: ?int,
+ *     startedAt: ?int,
+ *     endedAt: ?int,
+ * }
+ *
+ * @psalm-type CoreProfileAction = array{
+ *     id: string,
+ *     icon: string,
+ *     title: string,
+ *     target: ?string,
+ * }
+ *
+ * @psalm-type CoreProfileFields = array{
+ *     userId: string,
+ *     address?: string|null,
+ *     biography?: string|null,
+ *     displayname?: string|null,
+ *     headline?: string|null,
+ *     isUserAvatarVisible?: bool,
+ *     organisation?: string|null,
+ *     pronouns?: string|null,
+ *     role?: string|null,
+ *     actions: list<CoreProfileAction>,
+ * }
+ *
+ * @psalm-type CoreProfileData = CoreProfileFields&array{
+ *     timezone: string,
+ *     timezoneOffset: int,
  * }
  *
  */

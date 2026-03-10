@@ -1,32 +1,32 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGINX configuration &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=c6e86fd7"></script>
-        <script src="../_static/doctools.js?v=888ff710"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../_static/copybutton.js?v=f281be69"></script>
-        <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-        <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Hardening and security guidance" href="harden_server.html" />
@@ -45,6 +45,10 @@
             
               <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -87,7 +91,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
@@ -102,6 +108,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
 </ul>
 
         </div>
@@ -133,7 +140,7 @@
 <span id="nginx-config"></span><h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Please note that webservers other than Apache 2.x are not officially supported.</p>
+<p>Please note that web servers other than Apache 2.x are not officially supported.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -142,7 +149,8 @@ These configurations examples were originally provided by <a class="reference ex
 and are exclusively community-maintained. (Thank you contributors!)</p>
 </div>
 <ul class="simple">
-<li><p>You need to insert the following code into <strong>your Nginx configuration file</strong>. Choose the appropriate example based on whether you are deploying <a class="reference internal" href="#nginx-webroot-example"><span class="std std-ref">Nextcloud in the webroot of NGINX</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/</span></code>) or <a class="reference internal" href="#nginx-subdir-example"><span class="std std-ref">Nextcloud in a subdir of the NGINX webroot</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/nextcloud</span></code>).</p></li>
+<li><p>You need to insert the following code into <strong>your Nginx configuration file</strong>.
+Choose the appropriate example based on whether you are deploying <a class="reference internal" href="#nginx-webroot-example"><span class="std std-ref">Nextcloud in the webroot of NGINX</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/</span></code>) or <a class="reference internal" href="#nginx-subdir-example"><span class="std std-ref">Nextcloud in a subdir of the NGINX webroot</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/nextcloud</span></code>).</p></li>
 <li><p>Adjust the server directive under <code class="code docutils literal notranslate"><span class="pre">upstream</span> <span class="pre">php-handler</span></code> to match your PHP installation’s configured FPM listener (a misconfiguration here will result in a <code class="code docutils literal notranslate"><span class="pre">502</span> <span class="pre">Bad</span> <span class="pre">Gateway</span></code> - see <a class="reference internal" href="#nginx-php-handler-tips"><span class="std std-ref">PHP-Handler Configuration / Avoiding “502 Bad Gateway”</span></a> for details)</p></li>
 <li><p>Adjust the existing <code class="code docutils literal notranslate"><span class="pre">server_name</span></code> directives found under <em>both</em> <code class="code docutils literal notranslate"><span class="pre">server</span></code> sections to your real hostname</p></li>
 <li><p>Adjust <code class="code docutils literal notranslate"><span class="pre">root</span></code> to the webroot of your Nextcloud installation</p></li>
@@ -159,7 +167,9 @@ broken for page display and result in an invalid configuration files.</p></li>
 <p>The following configuration should be used when Nextcloud is placed in the
 webroot of your nginx installation. In this example it is
 <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud</span></code> and it is accessed via <code class="docutils literal notranslate"><span class="pre">http(s)://cloud.example.com/</span></code></p>
-<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">upstream</span><span class="w"> </span><span class="s">php-handler</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="c1"># Version 2024-07-17</span>
+
+<span class="k">upstream</span><span class="w"> </span><span class="s">php-handler</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">#server unix:/run/php/php8.2-fpm.sock;</span>
 <span class="p">}</span>
@@ -183,8 +193,12 @@ webroot of your nginx installation. In this example it is
 <span class="p">}</span>
 
 <span class="k">server</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w">      </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+<span class="w">    </span><span class="c1"># With NGinx &gt;= 1.25.1 you should use this instead:</span>
+<span class="w">    </span><span class="c1"># listen 443      ssl;</span>
+<span class="w">    </span><span class="c1"># listen [::]:443 ssl;</span>
+<span class="w">    </span><span class="c1"># http2 on;</span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1"># Path to the root of your installation</span>
@@ -326,7 +340,7 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1"># Serve static files</span>
-<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac|mp4|webm)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">        </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
@@ -399,6 +413,10 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="k">server</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w">      </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="s">[::]:443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+<span class="w">    </span><span class="c1"># With NGinx &gt;= 1.25.1 you should use this instead:</span>
+<span class="w">    </span><span class="c1"># listen 443      ssl;</span>
+<span class="w">    </span><span class="c1"># listen [::]:443 ssl;</span>
+<span class="w">    </span><span class="c1"># http2 on;</span>
 <span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">cloud.example.com</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1"># Path to the root of the domain</span>
@@ -537,7 +555,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="c1"># Serve static files</span>
-<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac)$</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">\.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac|mp4|webm)$</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="kn">try_files</span><span class="w"> </span><span class="nv">$uri</span><span class="w"> </span><span class="s">/nextcloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
 <span class="w">            </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Cache-Control</span><span class="w">                     </span><span class="s">&quot;public,</span><span class="w"> </span><span class="s">max-age=15778463</span><span class="nv">$asset_immutable&quot;</span><span class="p">;</span>
@@ -627,6 +645,7 @@ due to Nextclouds requirement to upload the file to a URL ending with <code clas
 </pre></div>
 </div>
 <p>See <a class="reference external" href="https://github.com/nextcloud/server/issues/8802">issue #8802 on nextcloud/server</a> for more information.</p>
+<p>Other parameters besides the above are relevant to uploading large files (see <a class="reference internal" href="../configuration_files/big_file_upload_configuration.html#uploading-big-files"><span class="std std-ref">Uploading big files &gt; 512MB</span></a>).</p>
 </section>
 <section id="login-loop-without-any-clue-in-access-log-error-log-nor-nextcloud-log">
 <h3>Login loop without any clue in access.log, error.log, nor nextcloud.log<a class="headerlink" href="#login-loop-without-any-clue-in-access-log-error-log-nor-nextcloud-log" title="Link to this heading"></a></h3>
@@ -657,7 +676,7 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
   </div>
 
    
@@ -693,6 +712,14 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
              
           >
             stable
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+             
+          >
+            30
           </a>
         </dd>
         

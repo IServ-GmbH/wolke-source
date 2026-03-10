@@ -142,10 +142,13 @@ class ConvertType extends Command implements CompletionAwareInterface {
 		if ($input->isInteractive()) {
 			/** @var QuestionHelper $helper */
 			$helper = $this->getHelper('question');
-			$question = new Question('What is the database password?');
+			$question = new Question('What is the database password (press <enter> for none)? ');
 			$question->setHidden(true);
 			$question->setHiddenFallback(false);
 			$password = $helper->ask($input, $output, $question);
+			if ($password === null) {
+				$password = ''; // possibly unnecessary
+			}
 			$input->setOption('password', $password);
 			return;
 		}
@@ -205,7 +208,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 
 		$apps = $input->getOption('all-apps') ? \OC_App::getAllApps() : \OC_App::getEnabledApps();
 		foreach ($apps as $app) {
-			$output->writeln('<info> - '.$app.'</info>');
+			$output->writeln('<info> - ' . $app . '</info>');
 			// Make sure autoloading works...
 			\OC_App::loadApp($app);
 			$fromMS = new MigrationService($app, $fromDB);
@@ -226,9 +229,24 @@ class ConvertType extends Command implements CompletionAwareInterface {
 			'password' => $input->getOption('password'),
 			'dbname' => $input->getArgument('database'),
 		]);
+
+		// parse port
 		if ($input->getOption('port')) {
 			$connectionParams['port'] = $input->getOption('port');
 		}
+
+		// parse hostname for unix socket
+		if (preg_match('/^(.+)(:(\d+|[^:]+))?$/', $input->getArgument('hostname'), $matches)) {
+			$connectionParams['host'] = $matches[1];
+			if (isset($matches[3])) {
+				if (is_numeric($matches[3])) {
+					$connectionParams['port'] = $matches[3];
+				} else {
+					$connectionParams['unix_socket'] = $matches[3];
+				}
+			}
+		}
+
 		return $this->connectionFactory->getConnection($type, $connectionParams);
 	}
 
@@ -267,13 +285,13 @@ class ConvertType extends Command implements CompletionAwareInterface {
 			return;
 		}
 
-		$chunkSize = (int) $input->getOption('chunk-size');
+		$chunkSize = (int)$input->getOption('chunk-size');
 
 		$query = $fromDB->getQueryBuilder();
 		$query->automaticTablePrefix(false);
 		$query->select($query->func()->count('*', 'num_entries'))
 			->from($table->getName());
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$count = $result->fetchOne();
 		$result->closeCursor();
 
@@ -312,7 +330,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 		for ($chunk = 0; $chunk < $numChunks; $chunk++) {
 			$query->setFirstResult($chunk * $chunkSize);
 
-			$result = $query->execute();
+			$result = $query->executeQuery();
 
 			try {
 				$toDB->beginTransaction();
@@ -379,7 +397,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 		try {
 			// copy table rows
 			foreach ($tables as $table) {
-				$output->writeln('<info> - '.$table.'</info>');
+				$output->writeln('<info> - ' . $table . '</info>');
 				$this->copyTable($fromDB, $toDB, $schema->getTable($table), $input, $output);
 			}
 			if ($input->getArgument('type') === 'pgsql') {
@@ -402,7 +420,7 @@ class ConvertType extends Command implements CompletionAwareInterface {
 		$dbName = $input->getArgument('database');
 		$password = $input->getOption('password');
 		if ($input->getOption('port')) {
-			$dbHost .= ':'.$input->getOption('port');
+			$dbHost .= ':' . $input->getOption('port');
 		}
 
 		$this->config->setSystemValues([

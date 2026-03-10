@@ -17,6 +17,7 @@ use OCP\L10N\IFactory as L10NFactory;
 use OCP\Mail\Headers\AutoSubmitted;
 use OCP\Mail\IEMailTemplate;
 use OCP\Mail\IMailer;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 use Sabre\VObject;
 use Sabre\VObject\Component\VEvent;
@@ -32,15 +33,14 @@ class EmailProvider extends AbstractProvider {
 	/** @var string */
 	public const NOTIFICATION_TYPE = 'EMAIL';
 
-	private IMailer $mailer;
-
-	public function __construct(IConfig $config,
-		IMailer $mailer,
+	public function __construct(
+		IConfig $config,
+		private IMailer $mailer,
 		LoggerInterface $logger,
 		L10NFactory $l10nFactory,
-		IURLGenerator $urlGenerator) {
+		IURLGenerator $urlGenerator,
+	) {
 		parent::__construct($logger, $l10nFactory, $urlGenerator, $config);
-		$this->mailer = $mailer;
 	}
 
 	/**
@@ -87,7 +87,7 @@ class EmailProvider extends AbstractProvider {
 				$lang = $fallbackLanguage;
 			}
 			$l10n = $this->getL10NForLang($lang);
-			$fromEMail = \OCP\Util::getDefaultEmailAddress('reminders-noreply');
+			$fromEMail = Util::getDefaultEmailAddress('reminders-noreply');
 
 			$template = $this->mailer->createEMailTemplate('dav.calendarReminder');
 			$template->addHeader();
@@ -142,19 +142,31 @@ class EmailProvider extends AbstractProvider {
 		IL10N $l10n,
 		string $calendarDisplayName,
 		VEvent $vevent):void {
-		$template->addBodyListItem($calendarDisplayName, $l10n->t('Calendar:'),
-			$this->getAbsoluteImagePath('actions/info.png'));
+		$template->addBodyListItem(
+			htmlspecialchars($calendarDisplayName),
+			$l10n->t('Calendar:'),
+			$this->getAbsoluteImagePath('actions/info.png'),
+			htmlspecialchars($calendarDisplayName),
+		);
 
 		$template->addBodyListItem($this->generateDateString($l10n, $vevent), $l10n->t('Date:'),
 			$this->getAbsoluteImagePath('places/calendar.png'));
 
 		if (isset($vevent->LOCATION)) {
-			$template->addBodyListItem((string) $vevent->LOCATION, $l10n->t('Where:'),
-				$this->getAbsoluteImagePath('actions/address.png'));
+			$template->addBodyListItem(
+				htmlspecialchars((string)$vevent->LOCATION),
+				$l10n->t('Where:'),
+				$this->getAbsoluteImagePath('actions/address.png'),
+				htmlspecialchars((string)$vevent->LOCATION),
+			);
 		}
 		if (isset($vevent->DESCRIPTION)) {
-			$template->addBodyListItem((string) $vevent->DESCRIPTION, $l10n->t('Description:'),
-				$this->getAbsoluteImagePath('actions/more.png'));
+			$template->addBodyListItem(
+				htmlspecialchars((string)$vevent->DESCRIPTION),
+				$l10n->t('Description:'),
+				$this->getAbsoluteImagePath('actions/more.png'),
+				htmlspecialchars((string)$vevent->DESCRIPTION),
+			);
 		}
 	}
 
@@ -417,24 +429,24 @@ class EmailProvider extends AbstractProvider {
 	}
 
 	private function getWeekDayName(IL10N $l10n, DateTime $dt):string {
-		return (string) $l10n->l('weekdayName', $dt, ['width' => 'abbreviated']);
+		return (string)$l10n->l('weekdayName', $dt, ['width' => 'abbreviated']);
 	}
 
 	private function getDateString(IL10N $l10n, DateTime $dt):string {
-		return (string) $l10n->l('date', $dt, ['width' => 'medium']);
+		return (string)$l10n->l('date', $dt, ['width' => 'medium']);
 	}
 
 	private function getDateTimeString(IL10N $l10n, DateTime $dt):string {
-		return (string) $l10n->l('datetime', $dt, ['width' => 'medium|short']);
+		return (string)$l10n->l('datetime', $dt, ['width' => 'medium|short']);
 	}
 
 	private function getTimeString(IL10N $l10n, DateTime $dt):string {
-		return (string) $l10n->l('time', $dt, ['width' => 'short']);
+		return (string)$l10n->l('time', $dt, ['width' => 'short']);
 	}
 
 	private function getTitleFromVEvent(VEvent $vevent, IL10N $l10n):string {
 		if (isset($vevent->SUMMARY)) {
-			return (string) $vevent->SUMMARY;
+			return (string)$vevent->SUMMARY;
 		}
 
 		return $l10n->t('Untitled event');

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,7 +27,7 @@ class CachingTree extends Tree {
 		// flushing the entire cache
 		$path = trim($path, '/');
 		foreach ($this->cache as $nodePath => $node) {
-			$nodePath = (string) $nodePath;
+			$nodePath = (string)$nodePath;
 			if ($path === '' || $nodePath == $path || str_starts_with($nodePath, $path . '/')) {
 				unset($this->cache[$nodePath]);
 			}

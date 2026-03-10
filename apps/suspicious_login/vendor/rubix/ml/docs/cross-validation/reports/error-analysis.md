@@ -21,23 +21,22 @@ echo $results;
 
 ```json
 {
-    "mean_absolute_error": 0.18220216502615122,
-    "median_absolute_error": 0.17700000000000005,
-    "mean_squared_error": 0.05292430893457563,
-    "mean_absolute_percentage_error": 18.174348688407402,
-    "rms_error": 0.23005283944036775,
-    "mean_squared_log_error": 51.96853354084834,
-    "r_squared": 0.9999669635675313,
-    "error_mean": -0.07112216502615118,
-    "error_midrange": -0.12315541256537399,
-    "error_median": 0.0007000000000000001,
-    "error_variance": 0.04786594657656853,
-    "error_mad": 0.17630000000000004,
-    "error_iqr": 0.455155412565378,
-    "error_skewness": -0.49093461098755187,
-    "error_kurtosis": -1.216490935575394,
-    "error_min": -0.423310825130748,
-    "error_max": 0.17700000000000005,
-    "cardinality": 5
+    "mean absolute error": 0.8,
+    "median absolute error": 1,
+    "mean squared error": 1,
+    "mean absolute percentage error": 14.02077497665733,
+    "rms error": 1,
+    "mean squared log error": 0.019107097505647368,
+    "r squared": 0.9958930551562692,
+    "error mean": -0.2,
+    "error standard deviation": 0.9898464007663,
+    "error skewness": -0.22963966338592326,
+    "error kurtosis": -1.0520833333333324,
+    "error min": -2,
+    "error 25%": -1.0,
+    "error median": 0.0,
+    "error 75%": 0.75,
+    "error max": 1,
+    "cardinality": 10
 }
 ```

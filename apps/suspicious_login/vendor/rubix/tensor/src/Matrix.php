@@ -12,14 +12,12 @@ use Tensor\Exceptions\InvalidArgumentException;
 use Tensor\Exceptions\DimensionalityMismatch;
 use Tensor\Exceptions\RuntimeException;
 use Tensor\Exceptions\NotImplemented;
-use ArrayIterator;
-use Closure;
+use Traversable;
 
 use function count;
+use function is_float;
 use function array_slice;
 use function array_fill;
-use function is_int;
-use function is_float;
 use function gettype;
 
 /**
@@ -36,28 +34,28 @@ class Matrix implements Tensor
     /**
      * A 2-dimensional sequential array that holds the values of the matrix.
      *
-     * @var array[]
+     * @var list<list<float>>
      */
-    protected $a;
+    protected array $a;
 
     /**
      * The number of rows in the matrix.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $m;
+    protected int $m;
 
     /**
      * The number of columns in the matrix.
      *
-     * @var int
+     * @var int<0,max>
      */
-    protected $n;
+    protected int $n;
 
     /**
      * Factory method to build a new matrix from an array.
      *
-     * @param array[] $a
+     * @param array<array<int|float>> $a
      * @return self
      */
     public static function build(array $a = []) : self
@@ -68,7 +66,7 @@ class Matrix implements Tensor
     /**
      * Build a new matrix foregoing any validation for quicker instantiation.
      *
-     * @param array[] $a
+     * @param array<array<int|float>> $a
      * @return self
      */
     public static function quick(array $a = []) : self
@@ -80,7 +78,7 @@ class Matrix implements Tensor
      * Return an identity matrix with the given dimensions.
      *
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function identity(int $n) : self
@@ -96,7 +94,7 @@ class Matrix implements Tensor
             $rowA = [];
 
             for ($j = 0; $j < $n; ++$j) {
-                $rowA[] = $i === $j ? 1 : 0;
+                $rowA[] = $i === $j ? 1.0 : 0.0;
             }
 
             $a[] = $rowA;
@@ -114,7 +112,7 @@ class Matrix implements Tensor
      */
     public static function zeros(int $m, int $n) : self
     {
-        return self::fill(0, $m, $n);
+        return self::fill(0.0, $m, $n);
     }
 
     /**
@@ -126,25 +124,20 @@ class Matrix implements Tensor
      */
     public static function ones(int $m, int $n) : self
     {
-        return self::fill(1, $m, $n);
+        return self::fill(1.0, $m, $n);
     }
 
     /**
-     * Build a diagonal matrix with the value of each element along the
-     * diagonal and 0s everywhere else.
+     * Build a diagonal matrix with the value of each element along the diagonal and 0s everywhere else.
      *
-     * @param (int|float)[] $elements
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @param float[] $elements
      * @return self
      */
     public static function diagonal(array $elements) : self
     {
         $n = count($elements);
 
-        if ($n < 1) {
-            throw new InvalidArgumentException('Number of elements'
-                . " must be greater than 0, $n given.");
-        }
+        $elements = array_values($elements);
 
         $a = [];
 
@@ -164,13 +157,13 @@ class Matrix implements Tensor
     /**
      * Fill a matrix with a given value at each element.
      *
-     * @param int|float $value
+     * @param float $value
      * @param int $m
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
-    public static function fill($value, int $m, int $n) : self
+    public static function fill(float $value, int $m, int $n) : self
     {
         if ($m < 1) {
             throw new InvalidArgumentException('M must be'
@@ -190,7 +183,7 @@ class Matrix implements Tensor
      *
      * @param int $m
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function rand(int $m, int $n) : self
@@ -223,12 +216,11 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return a standard normally distributed random matrix i.e values
-     * between -1 and 1.
+     * Return a standard normally distributed random matrix i.e values between -1 and 1.
      *
      * @param int $m
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function gaussian(int $m, int $n) : self
@@ -279,7 +271,7 @@ class Matrix implements Tensor
      * @param int $m
      * @param int $n
      * @param float $lambda
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function poisson(int $m, int $n, float $lambda = 1.0) : self
@@ -304,7 +296,7 @@ class Matrix implements Tensor
             $rowA = [];
 
             while (count($rowA) < $n) {
-                $k = 0;
+                $k = 0.0;
                 $p = 1.0;
 
                 while ($p > $l) {
@@ -313,7 +305,7 @@ class Matrix implements Tensor
                     $p *= rand() / $max;
                 }
 
-                $rowA[] = $k - 1;
+                $rowA[] = $k - 1.0;
             }
 
             $a[] = $rowA;
@@ -327,7 +319,7 @@ class Matrix implements Tensor
      *
      * @param int $m
      * @param int $n
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public static function uniform(int $m, int $n) : self
@@ -360,130 +352,16 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return the element-wise minimum of two matrices.
-     *
-     * @param \Tensor\Matrix $a
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return self
-     */
-    public static function minimum(Matrix $a, Matrix $b) : self
-    {
-        if ($a->m() !== $b->m()) {
-            throw new DimensionalityMismatch('Matrix A expects'
-                . " {$a->m()} rows but Matrix B has {$b->m()}.");
-        }
-
-        if ($a->n() !== $b->n()) {
-            throw new DimensionalityMismatch('Matrix A expects'
-                . " {$a->n()} columns but Matrix B has {$b->n()}.");
-        }
-
-        $c = [];
-
-        foreach ($a as $i => $rowA) {
-            $c[] = array_map('min', $rowA, $b[$i]);
-        }
-
-        return self::quick($c);
-    }
-
-    /**
-     * Return the element-wise maximum of two matrices.
-     *
-     * @param \Tensor\Matrix $a
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return self
-     */
-    public static function maximum(Matrix $a, Matrix $b) : self
-    {
-        if ($a->m() !== $b->m()) {
-            throw new DimensionalityMismatch('Matrix A expects'
-                . " {$a->m()} rows but Matrix B has {$b->m()}.");
-        }
-
-        if ($a->n() !== $b->n()) {
-            throw new DimensionalityMismatch('Matrix A expects'
-                . " {$a->n()} columns but Matrix B has {$b->n()}.");
-        }
-
-        $c = [];
-
-        foreach ($a as $i => $rowA) {
-            $c[] = array_map('max', $rowA, $b[$i]);
-        }
-
-        return self::quick($c);
-    }
-
-    /**
-     * Build a matrix by stacking an array of vectors.
-     *
-     * @param \Tensor\Vector[] $vectors
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public static function stack(array $vectors) : self
-    {
-        if (empty($vectors)) {
-            return self::quick();
-        }
-
-        $proto = reset($vectors);
-
-        $size = $proto->size();
-
-        $columnwise = $proto instanceof ColumnVector;
-
-        $a = [];
-
-        foreach ($vectors as $vector) {
-            if ($columnwise and !$vector instanceof ColumnVector) {
-                throw new InvalidArgumentException('Cannot stack a non'
-                    . ' column vector, ' . gettype($vector) . ' found.');
-            }
-
-            if ($vector->size() !== $size) {
-                throw new InvalidArgumentException('Vectors must be the same size.');
-            }
-
-            $a[] = $vector->asArray();
-        }
-
-        $a = self::quick($a);
-
-        return $columnwise ? $a->transpose() : $a;
-    }
-
-    /**
-     * Implode a row of the matrix and return the output.
-     *
-     * @param string $carry
-     * @param (int|float)[] $row
-     * @return string
-     */
-    protected static function implodeRow(string $carry, array $row) : string
-    {
-        return $carry . PHP_EOL . '[ ' . implode(' ', $row) . ' ]';
-    }
-
-    /**
-     * @param array[] $a
+     * @param array<array<int|float>> $a
      * @param bool $validate
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(array $a, bool $validate = true)
     {
-        if (empty($a)) {
-            throw new InvalidArgumentException('Matrix must contain'
-                . ' at least 1 element.');
-        }
-
         $m = count($a);
-        $n = count(current($a));
+        $n = count(current($a) ?: []);
 
-        if ($validate) {
+        if ($a and $validate) {
             $a = array_values($a);
 
             foreach ($a as $i => &$rowA) {
@@ -495,11 +373,9 @@ class Matrix implements Tensor
 
                 $rowA = array_values($rowA);
 
-                foreach ($rowA as $valueA) {
-                    if (!is_int($valueA) and !is_float($valueA)) {
-                        throw new InvalidArgumentException('Matrix element must'
-                            . ' be an integer or floating point number, '
-                            . gettype($valueA) . ' given.');
+                foreach ($rowA as &$valueA) {
+                    if (!is_float($valueA)) {
+                        $valueA = (float) $valueA;
                     }
                 }
             }
@@ -513,7 +389,7 @@ class Matrix implements Tensor
     /**
      * Return a tuple with the dimensionality of the tensor.
      *
-     * @return int[]
+     * @return array{int<0,max>,int<0,max>}
      */
     public function shape() : array
     {
@@ -543,7 +419,7 @@ class Matrix implements Tensor
     /**
      * Return the number of elements in the tensor.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function size() : int
     {
@@ -553,7 +429,7 @@ class Matrix implements Tensor
     /**
      * Return the number of rows in the matrix.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function m() : int
     {
@@ -563,7 +439,7 @@ class Matrix implements Tensor
     /**
      * Return the number of columns in the matrix.
      *
-     * @return int
+     * @return int<0,max>
      */
     public function n() : int
     {
@@ -571,54 +447,32 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return a row from the matrix.
-     *
-     * @param int $index
-     * @return (int|float)[]
-     */
-    public function row(int $index) : array
-    {
-        return $this->offsetGet($index);
-    }
-
-    /**
      * Return a row as a vector from the matrix.
      *
      * @param int $index
-     * @return \Tensor\Vector
+     * @return Vector
      */
     public function rowAsVector(int $index) : Vector
     {
-        return Vector::quick($this->offsetGet($index));
-    }
-
-    /**
-     * Return a column from the matrix.
-     *
-     * @param int $index
-     * @return (int|float)[]
-     */
-    public function column(int $index) : array
-    {
-        return array_column($this->a, $index);
+        return $this->offsetGet($index);
     }
 
     /**
      * Return a column as a vector from the matrix.
      *
      * @param int $index
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function columnAsVector(int $index) : ColumnVector
     {
-        return ColumnVector::quick($this->column($index));
+        return ColumnVector::quick(array_column($this->a, $index));
     }
 
     /**
      * Return the diagonal elements of a square matrix as a vector.
      *
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return \Tensor\Vector
+     * @throws InvalidArgumentException
+     * @return Vector
      */
     public function diagonalAsVector() : Vector
     {
@@ -639,7 +493,7 @@ class Matrix implements Tensor
     /**
      * Return the elements of the matrix in a 2-d array.
      *
-     * @return array[]
+     * @return list<list<float>>
      */
     public function asArray() : array
     {
@@ -675,7 +529,7 @@ class Matrix implements Tensor
     /**
      * Flatten i.e unravel the matrix into a vector.
      *
-     * @return \Tensor\Vector
+     * @return Vector
      */
     public function flatten() : Vector
     {
@@ -683,64 +537,34 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return the index of the minimum element in every row of the matrix.
-     *
-     * @return \Tensor\ColumnVector
-     */
-    public function argmin() : ColumnVector
-    {
-        $b = [];
-
-        foreach ($this->a as $rowA) {
-            $b[] = (int) array_search(min($rowA), $rowA);
-        }
-
-        return ColumnVector::quick($b);
-    }
-
-    /**
-     * Return the index of the maximum element in every row of the matrix.
-     *
-     * @return \Tensor\ColumnVector
-     */
-    public function argmax() : ColumnVector
-    {
-        $b = [];
-
-        foreach ($this->a as $rowA) {
-            $b[] = (int) array_search(max($rowA), $rowA);
-        }
-
-        return ColumnVector::quick($b);
-    }
-
-    /**
      * Run a function over all of the elements in the matrix.
+     *
+     * @internal
      *
      * @param callable $callback
      * @return self
      */
     public function map(callable $callback) : self
     {
-        $validate = $callback instanceof Closure;
-
         $b = [];
 
         foreach ($this->a as $rowA) {
             $b[] = array_map($callback, $rowA);
         }
 
-        return new self($b, $validate);
+        return self::quick($b);
     }
 
     /**
      * Reduce the matrix down to a scalar.
      *
+     * @internal
+     *
      * @param callable $callback
-     * @param int|float $initial
-     * @return int|float
+     * @param float $initial
+     * @return float
      */
-    public function reduce(callable $callback, $initial = 0)
+    public function reduce(callable $callback, float $initial = 0.0) : float
     {
         $carry = $initial;
 
@@ -813,14 +637,13 @@ class Matrix implements Tensor
     /**
      * Calculate the determinant of the matrix.
      *
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return int|float
+     * @throws InvalidArgumentException
+     * @return float
      */
-    public function det()
+    public function det() : float
     {
         if (!$this->isSquare()) {
-            throw new InvalidArgumentException('Matrix must be'
-                . " square, {$this->shapeString()} given.");
+            throw new InvalidArgumentException("Matrix must be square, {$this->shapeString()} given.");
         }
 
         $ref = $this->ref();
@@ -833,9 +656,9 @@ class Matrix implements Tensor
     /**
      * Return the trace of the matrix i.e the sum of all diagonal elements of a square matrix.
      *
-     * @return int|float
+     * @return float
      */
-    public function trace()
+    public function trace() : float
     {
         return $this->diagonalAsVector()->sum();
     }
@@ -899,56 +722,10 @@ class Matrix implements Tensor
     }
 
     /**
-     * Is the matrix positive definite i.e. do all of its principal
-     * minor matrices have a determinant greater than 0.
-     *
-     * @return bool
-     */
-    public function positiveDefinite() : bool
-    {
-        if (!$this->symmetric()) {
-            return false;
-        }
-
-        for ($i = 1; $i < $this->n; ++$i) {
-            $b = $this->subMatrix(0, 0, $i, $i);
-
-            if ($b->det() <= 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Is the matrix positive semi-definite i.e. do all of its principal
-     * minor matrices have a determinant greater or equal to 0.
-     *
-     * @return bool
-     */
-    public function positiveSemidefinite() : bool
-    {
-        if (!$this->symmetric()) {
-            return false;
-        }
-
-        for ($i = 1; $i < $this->n; ++$i) {
-            $b = $this->subMatrix(0, 0, $i, $i);
-
-            if ($b->det() < 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Multiply this matrix with another matrix (matrix-matrix product).
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function matmul(Matrix $b) : self
@@ -984,9 +761,9 @@ class Matrix implements Tensor
     /**
      * Compute the dot product of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\ColumnVector
+     * @param Vector $b
+     * @throws DimensionalityMismatch
+     * @return ColumnVector
      */
     public function dot(Vector $b) : ColumnVector
     {
@@ -1001,9 +778,9 @@ class Matrix implements Tensor
     /**
      * Return the 2D convolution of this matrix and a kernel matrix with given stride using the "same" method for zero padding.
      *
-     * @param \Tensor\Matrix $b
+     * @param Matrix $b
      * @param int $stride
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function convolve(Matrix $b, int $stride = 1) : self
@@ -1063,9 +840,9 @@ class Matrix implements Tensor
     }
 
     /**
-     * Calculate the row echelon form (REF) of the matrix. Return the reduced matrix and the number of swaps needed to compute the REF.
+     * Calculate the row echelon form (REF) of the matrix.
      *
-     * @return \Tensor\Reductions\REF
+     * @return REF
      */
     public function ref() : REF
     {
@@ -1073,9 +850,9 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return the reduced row echelon (RREF) form of the matrix. Return the reduced matrix and the number of swaps needed to compute the RREF.
+     * Return the reduced row echelon (RREF) form of the matrix.
      *
-     * @return \Tensor\Reductions\RREF
+     * @return RREF
      */
     public function rref() : RREF
     {
@@ -1085,7 +862,7 @@ class Matrix implements Tensor
     /**
      * Return the LU decomposition of the matrix.
      *
-     * @return \Tensor\Decompositions\LU
+     * @return LU
      */
     public function lu() : LU
     {
@@ -1095,7 +872,7 @@ class Matrix implements Tensor
     /**
      * Return the lower triangular matrix of the Cholesky decomposition.
      *
-     * @return \Tensor\Decompositions\Cholesky
+     * @return Cholesky
      */
     public function cholesky() : Cholesky
     {
@@ -1106,7 +883,7 @@ class Matrix implements Tensor
      * Compute the eigenvalues and eigenvectors of the matrix.
      *
      * @param bool $symmetric
-     * @return \Tensor\Decompositions\Eigen
+     * @return Eigen
      */
     public function eig(bool $symmetric = false) : Eigen
     {
@@ -1116,7 +893,7 @@ class Matrix implements Tensor
     /**
      * Return the singular value decomposition (SVD) of the matrix.
      *
-     * @return \Tensor\Decompositions\SVD
+     * @return SVD
      */
     public function svd() : SVD
     {
@@ -1124,63 +901,11 @@ class Matrix implements Tensor
     }
 
     /**
-     * Solve a linear system of equations given the matrix and a solution vector b. Returns the column vector x that satisfies
-     * the solution.
-     *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\ColumnVector
-     */
-    public function solve(Vector $b) : ColumnVector
-    {
-        if ($b->size() !== $this->n) {
-            throw new DimensionalityMismatch('Solution vector must have'
-                . " {$this->n} elements, {$b->size()} given.");
-        }
-
-        $lu = $this->lu();
-
-        $l = $lu->l()->asArray();
-        $u = $lu->u()->asArray();
-        $pb = $lu->p()->dot($b)->asArray();
-
-        $k = $this->m - 1;
-
-        $y = [$pb[0] / ($l[0][0] ?: EPSILON)];
-
-        for ($i = 1; $i < $this->m; ++$i) {
-            $sigma = 0.0;
-
-            for ($j = 0; $j <= $i - 1; ++$j) {
-                $sigma += $l[$i][$j] * $y[$j];
-            }
-
-            $y[] = ($pb[$i] - $sigma)
-                / $l[$i][$i];
-        }
-
-        $x = [$k => $y[$k] / ($l[$k][$k] ?: EPSILON)];
-
-        for ($i = $this->m - 2; $i >= 0; --$i) {
-            $sigma = 0.0;
-
-            for ($j = $i + 1; $j < $this->m; ++$j) {
-                $sigma += $u[$i][$j] * $x[$j];
-            }
-
-            $x[$i] = ($y[$i] - $sigma)
-                / $u[$i][$i];
-        }
-
-        return ColumnVector::quick(array_reverse($x));
-    }
-
-    /**
      * Return the L1 norm of the matrix.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function l1Norm()
+    public function l1Norm() : float
     {
         return $this->transpose()->abs()->sum()->max();
     }
@@ -1188,9 +913,9 @@ class Matrix implements Tensor
     /**
      * Return the L2 norm of the matrix.
      *
-     * @return int|float
+     * @return float
      */
-    public function l2Norm()
+    public function l2Norm() : float
     {
         return sqrt($this->square()->sum()->sum());
     }
@@ -1198,9 +923,9 @@ class Matrix implements Tensor
     /**
      * Return the infinity norm of the matrix.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function infinityNorm()
+    public function infinityNorm() : float
     {
         return $this->abs()->sum()->max();
     }
@@ -1208,9 +933,9 @@ class Matrix implements Tensor
     /**
      * Return the max norm of the matrix.
      *
-     * @return int|float|false
+     * @return float
      */
-    public function maxNorm()
+    public function maxNorm() : float
     {
         return $this->abs()->max()->max();
     }
@@ -1219,7 +944,7 @@ class Matrix implements Tensor
      * A universal function to multiply this matrix with another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function multiply($b)
@@ -1252,7 +977,7 @@ class Matrix implements Tensor
      * A universal function to divide this matrix by another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function divide($b)
@@ -1285,7 +1010,7 @@ class Matrix implements Tensor
      * A universal function to add this matrix with another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function add($b)
@@ -1318,7 +1043,7 @@ class Matrix implements Tensor
      * A universal function to subtract this matrix from another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function subtract($b)
@@ -1352,7 +1077,7 @@ class Matrix implements Tensor
      * tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function pow($b)
@@ -1386,7 +1111,7 @@ class Matrix implements Tensor
      * and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function mod($b)
@@ -1420,7 +1145,7 @@ class Matrix implements Tensor
      * this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function equal($b)
@@ -1454,7 +1179,7 @@ class Matrix implements Tensor
      * this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function notEqual($b)
@@ -1488,7 +1213,7 @@ class Matrix implements Tensor
      * this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function greater($b)
@@ -1522,7 +1247,7 @@ class Matrix implements Tensor
      * comparison of this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function greaterEqual($b)
@@ -1556,7 +1281,7 @@ class Matrix implements Tensor
      * this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function less($b)
@@ -1590,7 +1315,7 @@ class Matrix implements Tensor
      * comparison of this matrix and another tensor element-wise.
      *
      * @param mixed $b
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return mixed
      */
     public function lessEqual($b)
@@ -1704,7 +1429,7 @@ class Matrix implements Tensor
     }
 
     /**
-     * Return the log of 1 plus the tensor i.e. a transform.
+     * Return the log of 1 plus the tensor.
      *
      * @return self
      */
@@ -1796,7 +1521,7 @@ class Matrix implements Tensor
     /**
      * Sum the rows of the matrix and return a vector.
      *
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function sum() : ColumnVector
     {
@@ -1806,7 +1531,7 @@ class Matrix implements Tensor
     /**
      * Calculate the row product of the matrix.
      *
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function product() : ColumnVector
     {
@@ -1816,7 +1541,7 @@ class Matrix implements Tensor
     /**
      * Return the minimum of each row in the matrix.
      *
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function min() : ColumnVector
     {
@@ -1826,7 +1551,7 @@ class Matrix implements Tensor
     /**
      * Return the maximum of each row in the matrix.
      *
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function max() : ColumnVector
     {
@@ -1836,8 +1561,8 @@ class Matrix implements Tensor
     /**
      * Compute the means of each row and return them in a vector.
      *
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return \Tensor\ColumnVector
+     * @throws InvalidArgumentException
+     * @return ColumnVector
      */
     public function mean() : ColumnVector
     {
@@ -1847,10 +1572,10 @@ class Matrix implements Tensor
     /**
      * Compute the row variance of the matrix.
      *
-     * @param \Tensor\ColumnVector|null $mean
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
-     * @return \Tensor\ColumnVector
+     * @param ColumnVector|null $mean
+     * @throws InvalidArgumentException
+     * @throws DimensionalityMismatch
+     * @return ColumnVector
      */
     public function variance($mean = null) : ColumnVector
     {
@@ -1876,7 +1601,7 @@ class Matrix implements Tensor
     /**
      * Return the median vector of this matrix.
      *
-     * @return \Tensor\ColumnVector
+     * @return ColumnVector
      */
     public function median() : ColumnVector
     {
@@ -1905,8 +1630,8 @@ class Matrix implements Tensor
      * Compute the q'th quantile of the matrix.
      *
      * @param float $q
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return \Tensor\ColumnVector
+     * @throws InvalidArgumentException
+     * @return ColumnVector
      */
     public function quantile(float $q) : ColumnVector
     {
@@ -1937,8 +1662,8 @@ class Matrix implements Tensor
     /**
      * Compute the covariance matrix.
      *
-     * @param \Tensor\ColumnVector|null $mean
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector|null $mean
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function covariance(?ColumnVector $mean = null) : self
@@ -1962,7 +1687,7 @@ class Matrix implements Tensor
      * Round the elements in the matrix to a given decimal place.
      *
      * @param int $precision
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function round(int $precision = 0) : self
@@ -2013,7 +1738,7 @@ class Matrix implements Tensor
      *
      * @param float $min
      * @param float $max
-     * @throws \Tensor\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function clip(float $min, float $max) : self
@@ -2121,11 +1846,11 @@ class Matrix implements Tensor
 
             foreach ($rowA as $valueA) {
                 if ($valueA > 0) {
-                    $rowB[] = 1;
+                    $rowB[] = 1.0;
                 } elseif ($valueA < 0) {
-                    $rowB[] = -1;
+                    $rowB[] = -1.0;
                 } else {
-                    $rowB[] = 0;
+                    $rowB[] = 0.0;
                 }
             }
 
@@ -2158,109 +1883,10 @@ class Matrix implements Tensor
     }
 
     /**
-     * Insert a smaller matrix b into this matrix.
-     *
-     * @param \Tensor\Matrix $b
-     * @param int $rowOffset
-     * @param int $columnOffset
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public function insert(Matrix $b, int $rowOffset, int $columnOffset) : self
-    {
-        if ($b->m() + $rowOffset > $this->m) {
-            throw new InvalidArgumentException('Matrix B does not fit'
-                . " into matrix A with row offset $rowOffset.");
-        }
-
-        if ($b->n() + $columnOffset > $this->n) {
-            throw new InvalidArgumentException('Matrix B does not fit'
-                . " into matrix A with column offset $columnOffset.");
-        }
-
-        $c = $this->a;
-
-        foreach ($b->asArray() as $i => $rowB) {
-            $ii = $rowOffset + $i;
-
-            foreach ($rowB as $j => $valueB) {
-                $jj = $columnOffset + $j;
-
-                $c[$ii][$jj] = $valueB;
-            }
-        }
-
-        return self::quick($c);
-    }
-
-    /**
-     * Return the sub matrix starting at row and column offset.
-     *
-     * @param int $startRow
-     * @param int $startColumn
-     * @param int $endRow
-     * @param int $endColumn
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return self
-     */
-    public function subMatrix(
-        int $startRow,
-        int $startColumn,
-        int $endRow,
-        int $endColumn
-    ) : self {
-        if ($startRow < 0) {
-            throw new InvalidArgumentException('Start row must'
-                . " be greater than 0, $startRow given.");
-        }
-
-        if ($startColumn < 0) {
-            throw new InvalidArgumentException('Start column must'
-                . " be greater than 0, $startColumn given.");
-        }
-
-        if ($endRow < $startRow) {
-            throw new InvalidArgumentException('End row must be'
-                . ' greater than start row.');
-        }
-
-        if ($endColumn < $startColumn) {
-            throw new InvalidArgumentException('End column must be'
-                . ' greater than start column.');
-        }
-
-        if ($endRow > $this->m) {
-            throw new InvalidArgumentException('End row is out of'
-                . ' bounds of matrix.');
-        }
-
-        if ($endColumn > $this->n) {
-            throw new InvalidArgumentException('End column is out of'
-                . ' bounds of matrix.');
-        }
-
-        $b = [];
-
-        for ($i = $startRow; $i < $endRow; ++$i) {
-            $rowA = $this->a[$i];
-
-            $rowB = [];
-
-            for ($j = $startColumn; $j < $endColumn; ++$j) {
-                $rowB[] = $rowA[$j];
-            }
-
-            $b[] = $rowB;
-        }
-
-        return self::quick($b);
-    }
-
-    /**
      * Attach matrix b above this matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function augmentAbove(Matrix $b) : self
@@ -2276,8 +1902,8 @@ class Matrix implements Tensor
     /**
      * Attach matrix b below this matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function augmentBelow(Matrix $b) : self
@@ -2293,8 +1919,8 @@ class Matrix implements Tensor
     /**
      * Attach matrix b to the left of this matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function augmentLeft(Matrix $b) : self
@@ -2310,8 +1936,8 @@ class Matrix implements Tensor
     /**
      * Attach matrix b to the left of this matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function augmentRight(Matrix $b) : self
@@ -2361,8 +1987,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise product between this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function multiplyMatrix(Matrix $b) : self
@@ -2392,8 +2018,8 @@ class Matrix implements Tensor
     /**
      * Return the division of two elements, element-wise.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function divideMatrix(Matrix $b) : self
@@ -2423,8 +2049,8 @@ class Matrix implements Tensor
     /**
      * Add this matrix together with another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function addMatrix(Matrix $b) : self
@@ -2454,8 +2080,8 @@ class Matrix implements Tensor
     /**
      * Subtract a matrix from this matrix element-wise.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function subtractMatrix(Matrix $b) : self
@@ -2485,8 +2111,8 @@ class Matrix implements Tensor
     /**
      * Raise this matrix to the power of the element-wise entry in another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function powMatrix(Matrix $b) : self
@@ -2516,8 +2142,8 @@ class Matrix implements Tensor
     /**
      * Calculate the modulus i.e remainder of division between this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function modMatrix(Matrix $b) : self
@@ -2547,8 +2173,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise equality comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function equalMatrix(Matrix $b) : self
@@ -2578,8 +2204,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise not equal comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function notEqualMatrix(Matrix $b) : self
@@ -2609,8 +2235,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterMatrix(Matrix $b) : self
@@ -2640,8 +2266,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterEqualMatrix(Matrix $b) : self
@@ -2671,8 +2297,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessMatrix(Matrix $b) : self
@@ -2702,8 +2328,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this matrix and another matrix.
      *
-     * @param \Tensor\Matrix $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Matrix $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessEqualMatrix(Matrix $b) : self
@@ -2733,8 +2359,8 @@ class Matrix implements Tensor
     /**
      * Multiply this matrix by a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function multiplyVector(Vector $b) : self
@@ -2764,8 +2390,8 @@ class Matrix implements Tensor
     /**
      * Divide this matrix by a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function divideVector(Vector $b) : self
@@ -2795,8 +2421,8 @@ class Matrix implements Tensor
     /**
      * Add this matrix by a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function addVector(Vector $b) : self
@@ -2826,8 +2452,8 @@ class Matrix implements Tensor
     /**
      * Subtract a vector from this matrix.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function subtractVector(Vector $b) : self
@@ -2857,8 +2483,8 @@ class Matrix implements Tensor
     /**
      * Raise this matrix to the power of a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function powVector(Vector $b) : self
@@ -2888,8 +2514,8 @@ class Matrix implements Tensor
     /**
      * Calculate the modulus of this matrix with a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function modVector(Vector $b) : self
@@ -2919,8 +2545,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise equality comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function equalVector(Vector $b) : self
@@ -2950,8 +2576,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise not equal comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function notEqualVector(Vector $b) : self
@@ -2981,8 +2607,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterVector(Vector $b) : self
@@ -3012,8 +2638,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterEqualVector(Vector $b) : self
@@ -3043,8 +2669,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessVector(Vector $b) : self
@@ -3074,8 +2700,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this matrix and a vector.
      *
-     * @param \Tensor\Vector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param Vector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessEqualVector(Vector $b) : self
@@ -3105,8 +2731,8 @@ class Matrix implements Tensor
     /**
      * Multiply this matrix with a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function multiplyColumnVector(ColumnVector $b) : self
@@ -3136,8 +2762,8 @@ class Matrix implements Tensor
     /**
      * Divide this matrix with a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function divideColumnVector(ColumnVector $b) : self
@@ -3167,8 +2793,8 @@ class Matrix implements Tensor
     /**
      * Add this matrix to a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function addColumnVector(ColumnVector $b) : self
@@ -3198,8 +2824,8 @@ class Matrix implements Tensor
     /**
      * Subtract a column vector from this matrix.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function subtractColumnVector(ColumnVector $b) : self
@@ -3229,8 +2855,8 @@ class Matrix implements Tensor
     /**
      * Raise this matrix to the power of a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function powColumnVector(ColumnVector $b) : self
@@ -3260,8 +2886,8 @@ class Matrix implements Tensor
     /**
      * Mod this matrix with a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function modColumnVector(ColumnVector $b) : self
@@ -3291,8 +2917,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise equality comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function equalColumnVector(ColumnVector $b) : self
@@ -3322,8 +2948,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise not equal comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function notEqualColumnVector(ColumnVector $b) : self
@@ -3353,8 +2979,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterColumnVector(ColumnVector $b) : self
@@ -3384,8 +3010,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function greaterEqualColumnVector(ColumnVector $b) : self
@@ -3415,8 +3041,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessColumnVector(ColumnVector $b) : self
@@ -3446,8 +3072,8 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this matrix and a column vector.
      *
-     * @param \Tensor\ColumnVector $b
-     * @throws \Tensor\Exceptions\DimensionalityMismatch
+     * @param ColumnVector $b
+     * @throws DimensionalityMismatch
      * @return self
      */
     public function lessEqualColumnVector(ColumnVector $b) : self
@@ -3477,10 +3103,10 @@ class Matrix implements Tensor
     /**
      * Multiply this matrix by a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function multiplyScalar($b) : self
+    public function multiplyScalar(float $b) : self
     {
         $c = [];
 
@@ -3500,10 +3126,10 @@ class Matrix implements Tensor
     /**
      * Divide this matrix by a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function divideScalar($b) : self
+    public function divideScalar(float $b) : self
     {
         $c = [];
 
@@ -3523,10 +3149,10 @@ class Matrix implements Tensor
     /**
      * Add this matrix by a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function addScalar($b) : self
+    public function addScalar(float $b) : self
     {
         $c = [];
 
@@ -3546,10 +3172,10 @@ class Matrix implements Tensor
     /**
      * Subtract a scalar from this matrix.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function subtractScalar($b) : self
+    public function subtractScalar(float $b) : self
     {
         $c = [];
 
@@ -3569,10 +3195,10 @@ class Matrix implements Tensor
     /**
      * Raise the matrix to a given scalar power.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function powScalar($b) : self
+    public function powScalar(float $b) : self
     {
         $c = [];
 
@@ -3592,10 +3218,10 @@ class Matrix implements Tensor
     /**
      * Calculate the modulus of this matrix with a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function modScalar($b) : self
+    public function modScalar(float $b) : self
     {
         $c = [];
 
@@ -3615,10 +3241,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise equality comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function equalScalar($b) : self
+    public function equalScalar(float $b) : self
     {
         $c = [];
 
@@ -3638,10 +3264,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise not equal comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function notEqualScalar($b) : self
+    public function notEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -3661,10 +3287,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function greaterScalar($b) : self
+    public function greaterScalar(float $b) : self
     {
         $c = [];
 
@@ -3684,10 +3310,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise greater than or equal to comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function greaterEqualScalar($b) : self
+    public function greaterEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -3707,10 +3333,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function lessScalar($b) : self
+    public function lessScalar(float $b) : self
     {
         $c = [];
 
@@ -3730,10 +3356,10 @@ class Matrix implements Tensor
     /**
      * Return the element-wise less than or equal to comparison of this matrix and a scalar.
      *
-     * @param int|float $b
+     * @param float $b
      * @return self
      */
-    public function lessEqualScalar($b) : self
+    public function lessEqualScalar(float $b) : self
     {
         $c = [];
 
@@ -3760,8 +3386,8 @@ class Matrix implements Tensor
 
     /**
      * @param mixed $index
-     * @param (int|float)[] $values
-     * @throws \Tensor\Exceptions\RuntimeException
+     * @param mixed $values
+     * @throws RuntimeException
      */
     public function offsetSet($index, $values) : void
     {
@@ -3781,7 +3407,7 @@ class Matrix implements Tensor
 
     /**
      * @param mixed $index
-     * @throws \Tensor\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function offsetUnset($index) : void
     {
@@ -3792,36 +3418,28 @@ class Matrix implements Tensor
      * Return a row from the matrix at the given index.
      *
      * @param mixed $index
-     * @throws \Tensor\Exceptions\InvalidArgumentException
-     * @return (int|float)[]
+     * @throws InvalidArgumentException
+     * @return Vector
      */
-    public function offsetGet($index) : array
+    public function offsetGet($index) : Vector
     {
         if (isset($this->a[$index])) {
-            return $this->a[$index];
+            return Vector::quick($this->a[$index]);
         }
 
-        throw new InvalidArgumentException('Element not found at'
-            . " offset $index.");
+        throw new InvalidArgumentException("Element not found at offset $index.");
     }
 
     /**
      * Get an iterator for the rows in the matrix.
      *
-     * @return \ArrayIterator<int, array>
+     * @return \Generator<int,\Tensor\Vector>
      */
-    public function getIterator()
+    #[\ReturnTypeWillChange]
+    public function getIterator() : Traversable
     {
-        return new ArrayIterator($this->a);
-    }
-
-    /**
-     * Convert the tensor into a string representation.
-     *
-     * @return string
-     */
-    public function __toString() : string
-    {
-        return array_reduce($this->a, [self::class, 'implodeRow'], '') . PHP_EOL;
+        foreach ($this->a as $row) {
+            yield Vector::quick($row);
+        }
     }
 }

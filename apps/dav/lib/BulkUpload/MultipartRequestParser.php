@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2021 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -46,8 +45,8 @@ class MultipartRequestParser {
 		$this->stream = $stream;
 
 		$boundary = $this->parseBoundaryFromHeaders($contentType);
-		$this->boundary = '--'.$boundary."\r\n";
-		$this->lastBoundary = '--'.$boundary."--\r\n";
+		$this->boundary = '--' . $boundary . "\r\n";
+		$this->lastBoundary = '--' . $boundary . "--\r\n";
 	}
 
 	/**
@@ -135,7 +134,7 @@ class MultipartRequestParser {
 
 		$headers = $this->readPartHeaders();
 
-		$content = $this->readPartContent($headers['content-length'], $headers['x-file-md5']);
+		$content = $this->readPartContent((int)$headers['content-length'], $headers['x-file-md5']);
 
 		return [$headers, $content];
 	}

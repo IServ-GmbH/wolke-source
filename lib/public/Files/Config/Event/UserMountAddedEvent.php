@@ -15,14 +15,9 @@ use OCP\Files\Config\ICachedMountInfo;
 /**
  * Event emitted when a user mount was added.
  *
- * @since 31.0.6
+ * @since 30.0.12
  */
 class UserMountAddedEvent extends Event {
-	/**
-	 * Creates a new @see UserMountAddedEvent
-	 *
-	 * @since 31.0.6
-	 */
 	public function __construct(
 		public readonly ICachedMountInfo $mountPoint,
 	) {

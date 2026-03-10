@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -372,6 +371,6 @@ class DependencyAnalyzer {
 		if (isset($element['@value'])) {
 			return $element['@value'];
 		}
-		return (string) $element;
+		return (string)$element;
 	}
 }

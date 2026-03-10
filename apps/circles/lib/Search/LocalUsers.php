@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -33,7 +34,7 @@ class LocalUsers implements ISearch {
 	 */
 	public function __construct(
 		ICollaboratorSearch $search,
-		ConfigService $configService
+		ConfigService $configService,
 	) {
 		$this->search = $search;
 		$this->configService = $configService;

@@ -9,12 +9,12 @@ use Rubix\ML\Persistable;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\RanksFeatures;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Graph\Trees\CART;
 use Rubix\ML\Graph\Nodes\Best;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -24,6 +24,12 @@ use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\RuntimeException;
 
 use function Rubix\ML\argmax;
+use function count;
+use function array_fill;
+use function array_combine;
+use function array_replace;
+use function array_count_values;
+use function array_map;
 
 /**
  * Classification Tree
@@ -46,27 +52,29 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
     use AutotrackRevisions;
 
     /**
-     * The zero vector for the possible class outcomes.
+     * The list of possible class outcomes.
      *
-     * @var float[]
+     * @var list<string>
      */
-    protected $classes = [
+    protected array $classes = [
         //
     ];
 
     /**
      * @param int $maxHeight
      * @param int $maxLeafSize
-     * @param int|null $maxFeatures
      * @param float $minPurityIncrease
+     * @param int|null $maxFeatures
+     * @param int|null $maxBins
      */
     public function __construct(
         int $maxHeight = PHP_INT_MAX,
         int $maxLeafSize = 3,
+        float $minPurityIncrease = 1e-7,
         ?int $maxFeatures = null,
-        float $minPurityIncrease = 1e-7
+        ?int $maxBins = null
     ) {
-        parent::__construct($maxHeight, $maxLeafSize, $maxFeatures, $minPurityIncrease);
+        parent::__construct($maxHeight, $maxLeafSize, $minPurityIncrease, $maxFeatures, $maxBins);
     }
 
     /**
@@ -106,10 +114,11 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
     public function params() : array
     {
         return [
-            'max_height' => $this->maxHeight,
-            'max_leaf_size' => $this->maxLeafSize,
-            'max_features' => $this->maxFeatures,
-            'min_purity_increase' => $this->minPurityIncrease,
+            'max height' => $this->maxHeight,
+            'max leaf size' => $this->maxLeafSize,
+            'min purity increase' => $this->minPurityIncrease,
+            'max features' => $this->maxFeatures,
+            'max bins' => $this->maxBins,
         ];
     }
 
@@ -137,7 +146,7 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        $this->classes = array_fill_keys($dataset->possibleOutcomes(), 0.0);
+        $this->classes = $dataset->possibleOutcomes();
 
         $this->grow($dataset);
     }
@@ -181,33 +190,28 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
-        if ($this->bare() or !$this->classes) {
+        if ($this->bare() or !isset($this->featureCount, $this->classes)) {
             throw new RuntimeException('Estimator has not been trained.');
         }
 
         DatasetHasDimensionality::with($dataset, $this->featureCount)->check();
 
-        return array_map([$this, 'probaSample'], $dataset->samples());
-    }
+        $template = array_combine($this->classes, array_fill(0, count($this->classes), 0.0)) ?: [];
 
-    /**
-     * Predict the probabilities of a single sample and return the joint distribution.
-     *
-     * @internal
-     *
-     * @param list<string|int|float> $sample
-     * @return float[]
-     */
-    public function probaSample(array $sample) : array
-    {
-        /** @var \Rubix\ML\Graph\Nodes\Best $node */
-        $node = $this->search($sample);
+        $probabilities = [];
 
-        return array_replace($this->classes, $node->probabilities()) ?? [];
+        foreach ($dataset->samples() as $sample) {
+            /** @var \Rubix\ML\Graph\Nodes\Best $node */
+            $node = $this->search($sample);
+
+            $probabilities[] = array_replace($template, $node->probabilities());
+        }
+
+        return $probabilities;
     }
 
     /**
@@ -219,10 +223,11 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
      */
     protected function terminate(Labeled $dataset) : Best
     {
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
         $counts = array_count_values($dataset->labels());
 
+        /** @var string $outcome */
         $outcome = argmax($counts);
 
         $probabilities = [];
@@ -237,20 +242,20 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
     }
 
     /**
-     * Compute the gini impurity of a labeled dataset.
+     * Calculate the impurity of a set of labels.
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
+     * @param list<string|int> $labels
      * @return float
      */
-    protected function impurity(Labeled $dataset) : float
+    protected function impurity(array $labels) : float
     {
-        $n = $dataset->numRows();
+        $n = count($labels);
 
         if ($n <= 1) {
             return 0.0;
         }
 
-        $counts = array_count_values($dataset->labels());
+        $counts = array_count_values($labels);
 
         $gini = 0.0;
 
@@ -263,6 +268,8 @@ class ClassificationTree extends CART implements Estimator, Learner, Probabilist
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

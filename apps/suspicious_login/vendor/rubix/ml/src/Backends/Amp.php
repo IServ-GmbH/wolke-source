@@ -3,7 +3,7 @@
 namespace Rubix\ML\Backends;
 
 use Amp\Loop;
-use Rubix\ML\Other\Helpers\CPU;
+use Rubix\ML\Helpers\CPU;
 use Rubix\ML\Backends\Tasks\Task;
 use Amp\Parallel\Worker\DefaultPool;
 use Amp\Parallel\Worker\CallableTask;
@@ -32,14 +32,14 @@ class Amp implements Backend
      *
      * @var \Amp\Parallel\Worker\Pool
      */
-    protected $pool;
+    protected \Amp\Parallel\Worker\Pool $pool;
 
     /**
      * The queue of coroutines to be processed in parallel.
      *
      * @var \Amp\Promise<mixed>[]
      */
-    protected $queue = [
+    protected array $queue = [
         //
     ];
 
@@ -48,7 +48,7 @@ class Amp implements Backend
      *
      * @var mixed[]
      */
-    protected $results = [
+    protected array $results = [
         //
     ];
 
@@ -84,13 +84,14 @@ class Amp implements Backend
      * @internal
      *
      * @param \Rubix\ML\Backends\Tasks\Task $task
-     * @param callable(mixed):void|null $after
+     * @param callable(mixed,mixed):void $after
+     * @param mixed $context
      */
-    public function enqueue(Task $task, ?callable $after = null) : void
+    public function enqueue(Task $task, ?callable $after = null, $context = null) : void
     {
         $task = new CallableTask($task, []);
 
-        $coroutine = call([$this, 'coroutine'], $task, $after);
+        $coroutine = call([$this, 'coroutine'], $task, $after, $context);
 
         $this->queue[] = $coroutine;
     }
@@ -101,15 +102,16 @@ class Amp implements Backend
      * @internal
      *
      * @param \Amp\Parallel\Worker\Task $task
-     * @param callable(mixed):void|null $after
+     * @param callable(mixed,mixed):void $after
+     * @param mixed $context
      * @return \Generator<\Amp\Promise>
      */
-    public function coroutine(AmpTask $task, ?callable $after = null) : Generator
+    public function coroutine(AmpTask $task, ?callable $after = null, $context = null) : Generator
     {
         $result = yield $this->pool->enqueue($task);
 
         if ($after) {
-            $after($result);
+            $after($result, $context);
         }
 
         return $result;
@@ -155,6 +157,8 @@ class Amp implements Backend
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

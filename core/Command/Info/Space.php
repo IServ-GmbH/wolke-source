@@ -34,7 +34,7 @@ class Space extends Command {
 
 	public function execute(InputInterface $input, OutputInterface $output): int {
 		$fileInput = $input->getArgument('file');
-		$count = (int) $input->getOption('count');
+		$count = (int)$input->getOption('count');
 		$all = $input->getOption('all');
 		$node = $this->fileUtils->getNode($fileInput);
 		if (!$node) {

@@ -622,7 +622,7 @@ class Filesystem {
 		 *        conversion should get removed as soon as all existing
 		 *        function calls have been fixed.
 		 */
-		$path = (string) $path;
+		$path = (string)$path;
 
 		if ($path === '') {
 			return '/';

@@ -15,10 +15,13 @@ OC.L10N.register(
     "Go back" : "Nôl",
     "Add folder" : "Ychwanegu ffolder",
     "Home" : "Cartref",
-    "View" : "Golwg",
+    "General" : "Cyffredinol",
     "Remove from favorites" : "Remove from favorites",
     "Details" : "Manylion",
+    "Cancel" : "Cancel",
+    "Confirm" : "Cadarnhau",
     "Group" : "Grŵp",
+    "View" : "Golwg",
     "Add" : "Ychwanegu"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

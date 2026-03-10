@@ -1,7 +1,6 @@
 OC.L10N.register(
     "app_api",
     {
-    "Cancel" : "Cancel",
     "Delete" : "Dileu",
     "Edit" : "Golygu",
     "Name" : "Enw",

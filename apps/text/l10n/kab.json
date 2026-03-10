@@ -7,9 +7,8 @@
     "New text file" : "Afaylu n uḍris amaynut",
     "File not found" : "Ulac afaylu",
     "Text" : "Aḍris",
-    "Nextcloud Assistant" : "Amallal n Nextcloud",
-    "Translate" : "Suqel",
     "Guest" : "Inebgi",
+    "Copy link" : "Nɣel aseɣwen",
     "Offline" : "D aruqqin",
     "Saving …" : "Asekles ...",
     "Keyboard shortcuts" : "Inegzumen n unasiw",
@@ -18,6 +17,10 @@
     "Save changes" : "Sekles asnifel",
     "Cancel" : "Semmet",
     "URL" : "URL",
+    "Save" : "Sekles",
+    "Translate" : "Suqel",
+    "Nextcloud Assistant" : "Amallal n Nextcloud",
+    "Delete task" : "Kkes tawuri",
     "_%n word_::_%n words_" : ["%n n wawal","%n n wawalen"],
     "_%n char_::_%n chars_" : ["%n n usekkil","%n n isekkilen"],
     "Translate from {language}" : "Suqel seg {language}",
@@ -27,8 +30,8 @@
     "Select language" : "Fren tutlayt",
     "Translate to" : "Suqel ar",
     "Replace" : "Semselsi",
-    "Upload" : "Sili",
     "Edit" : "Ẓreg",
+    "Upload" : "Sili",
     "Done" : "Immed",
     "Table" : "Tafelwit",
     "Details" : "Talqayt",
@@ -36,7 +39,6 @@
     "Option" : "Taxtiṛt",
     "Choose" : "Fren",
     "Choose {file}" : "Fren {file}",
-    "Add folder description" : "Rnu aglam i ukaram",
-    "Warning" : "Alɣu"
+    "Add folder description" : "Rnu aglam i ukaram"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

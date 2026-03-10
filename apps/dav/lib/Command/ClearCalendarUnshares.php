@@ -53,7 +53,7 @@ class ClearCalendarUnshares extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$user = (string) $input->getArgument('uid');
+		$user = (string)$input->getArgument('uid');
 		if (!$this->userManager->userExists($user)) {
 			throw new \InvalidArgumentException("User $user is unknown");
 		}

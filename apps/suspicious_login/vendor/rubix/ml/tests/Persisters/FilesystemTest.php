@@ -2,11 +2,9 @@
 
 namespace Rubix\ML\Tests\Persisters;
 
-use Rubix\ML\Persistable;
+use Rubix\ML\Encoding;
 use Rubix\ML\Persisters\Persister;
 use Rubix\ML\Persisters\Filesystem;
-use Rubix\ML\Classifiers\DummyClassifier;
-use Rubix\ML\Persisters\Serializers\RBX;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,10 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FilesystemTest extends TestCase
 {
-    /**
-     * @var \Rubix\ML\Persistable
-     */
-    protected $persistable;
+    protected const PATH = __DIR__ . '/test.model';
 
     /**
      * @var \Rubix\ML\Persisters\Filesystem
@@ -26,20 +21,16 @@ class FilesystemTest extends TestCase
     protected $persister;
 
     /**
-     * @var string
-     */
-    protected $path;
-
-    /**
      * @before
      */
     protected function setUp() : void
     {
-        $this->path = __DIR__ . '/test.model';
+        $this->persister = new Filesystem(self::PATH, true);
+    }
 
-        $this->persistable = new DummyClassifier();
-
-        $this->persister = new Filesystem($this->path, true, new RBX());
+    protected function assertPreConditions() : void
+    {
+        $this->assertFileDoesNotExist(self::PATH);
     }
 
     /**
@@ -47,11 +38,11 @@ class FilesystemTest extends TestCase
      */
     protected function tearDown() : void
     {
-        if (file_exists($this->path)) {
-            unlink($this->path);
+        if (file_exists(self::PATH)) {
+            unlink(self::PATH);
         }
 
-        foreach (glob("$this->path.*.old") ?: [] as $filename) {
+        foreach (glob(self::PATH . '*.old') ?: [] as $filename) {
             unlink($filename);
         }
     }
@@ -70,18 +61,14 @@ class FilesystemTest extends TestCase
      */
     public function saveLoad() : void
     {
-        $this->persister->save($this->persistable);
+        $encoding = new Encoding("Bitch, I'm for real!");
 
-        $this->assertFileExists($this->path);
+        $this->persister->save($encoding);
 
-        $model = $this->persister->load();
+        $this->assertFileExists(self::PATH);
 
-        $this->assertInstanceOf(DummyClassifier::class, $model);
-        $this->assertInstanceOf(Persistable::class, $model);
-    }
+        $encoding = $this->persister->load();
 
-    protected function assertPreConditions() : void
-    {
-        $this->assertFileNotExists($this->path);
+        $this->assertInstanceOf(Encoding::class, $encoding);
     }
 }

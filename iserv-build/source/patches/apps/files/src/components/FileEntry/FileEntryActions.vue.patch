@@ -1,5 +1,5 @@
 diff --git apps/files/src/components/FileEntry/FileEntryActions.vue apps/files/src/components/FileEntry/FileEntryActions.vue
-index 50642d0..657a88c 100644
+index 1041cc0..338947a 100644
 --- apps/files/src/components/FileEntry/FileEntryActions.vue
 +++ apps/files/src/components/FileEntry/FileEntryActions.vue
 @@ -26,7 +26,7 @@
@@ -11,7 +11,7 @@ index 50642d0..657a88c 100644
  				:key="action.id"
  				:ref="`action-${action.id}`"
  				class="files-list__row-action"
-@@ -240,6 +240,18 @@ export default defineComponent({
+@@ -228,6 +228,18 @@ export default defineComponent({
  		getBoundariesElement() {
  			return document.querySelector('.app-content > .files-list')
  		},

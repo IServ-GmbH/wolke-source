@@ -74,7 +74,7 @@ class Absence extends Entity implements JsonSerializable {
 		$endDate = new DateTime($this->getLastDay(), $tz);
 		$endDate->setTime(23, 59);
 		return new OutOfOfficeData(
-			(string) $this->getId(),
+			(string)$this->getId(),
 			$user,
 			$startDate->getTimestamp(),
 			$endDate->getTimestamp(),

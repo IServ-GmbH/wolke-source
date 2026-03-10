@@ -10,7 +10,7 @@ namespace OCA\DAV\CardDAV;
 
 class Card extends \Sabre\CardDAV\Card {
 	public function getId(): int {
-		return (int) $this->cardData['id'];
+		return (int)$this->cardData['id'];
 	}
 
 	public function getUri(): string {
@@ -26,7 +26,7 @@ class Card extends \Sabre\CardDAV\Card {
 	}
 
 	public function getAddressbookId(): int {
-		return (int) $this->cardData['addressbookid'];
+		return (int)$this->cardData['addressbookid'];
 	}
 
 	public function getPrincipalUri(): string {

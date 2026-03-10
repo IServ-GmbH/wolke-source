@@ -60,7 +60,7 @@ class Orphans extends Base {
 
 		$objects = $objectStore->listObjects('urn:oid:');
 		$orphans = new \CallbackFilterIterator($objects, function (array $object) use ($prefixLength) {
-			$fileId = (int) substr($object['urn'], $prefixLength);
+			$fileId = (int)substr($object['urn'], $prefixLength);
 			return !$this->fileIdInDb($fileId);
 		});
 

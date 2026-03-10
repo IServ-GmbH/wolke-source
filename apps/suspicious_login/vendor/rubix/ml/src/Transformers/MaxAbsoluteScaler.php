@@ -5,7 +5,7 @@ namespace Rubix\ML\Transformers;
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\RuntimeException;
 
@@ -21,7 +21,7 @@ use const Rubix\ML\EPSILON;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Persistable
+class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Reversible, Persistable
 {
     use AutotrackRevisions;
 
@@ -30,7 +30,7 @@ class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Persistable
      *
      * @var (int|float)[]|null
      */
-    protected $maxabs;
+    protected ?array $maxabs = null;
 
     /**
      * Return the data types that this transformer is compatible with.
@@ -75,7 +75,7 @@ class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Persistable
 
         $this->maxabs = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             if ($type->isContinuous()) {
                 $this->maxabs[$column] = -INF;
             }
@@ -98,7 +98,7 @@ class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Persistable
         }
 
         foreach ($this->maxabs as $column => $oldMax) {
-            $values = $dataset->column($column);
+            $values = $dataset->feature($column);
 
             $max = max(array_map('abs', $values));
 
@@ -128,7 +128,28 @@ class MaxAbsoluteScaler implements Transformer, Stateful, Elastic, Persistable
     }
 
     /**
+     * Perform the reverse transformation to the samples.
+     *
+     * @param list<list<mixed>> $samples
+     * @throws \Rubix\ML\Exceptions\RuntimeException
+     */
+    public function reverseTransform(array &$samples) : void
+    {
+        if ($this->maxabs === null) {
+            throw new RuntimeException('Transformer has not been fitted.');
+        }
+
+        foreach ($samples as &$sample) {
+            foreach ($this->maxabs as $column => $maxabs) {
+                $sample[$column] *= $maxabs;
+            }
+        }
+    }
+
+    /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

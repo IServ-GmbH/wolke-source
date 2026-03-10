@@ -5,11 +5,11 @@ namespace Rubix\ML\CrossValidation;
 use Rubix\ML\Learner;
 use Rubix\ML\Parallel;
 use Rubix\ML\Estimator;
+use Rubix\ML\Helpers\Stats;
 use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Traits\Multiprocessing;
+use Rubix\ML\Traits\Multiprocessing;
 use Rubix\ML\CrossValidation\Metrics\Metric;
 use Rubix\ML\Backends\Tasks\TrainAndValidate;
 use Rubix\ML\Specifications\EstimatorIsCompatibleWithMetric;
@@ -35,7 +35,7 @@ class LeavePOut implements Validator, Parallel
      *
      * @var int
      */
-    protected $p;
+    protected int $p;
 
     /**
      * @param int $p
@@ -65,7 +65,7 @@ class LeavePOut implements Validator, Parallel
     {
         EstimatorIsCompatibleWithMetric::with($estimator, $metric)->check();
 
-        $n = (int) round($dataset->numRows() / $this->p);
+        $n = (int) round($dataset->numSamples() / $this->p);
 
         $this->backend->flush();
 
@@ -86,6 +86,8 @@ class LeavePOut implements Validator, Parallel
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

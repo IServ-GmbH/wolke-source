@@ -23,7 +23,7 @@ class NaturalSort {
 		// or inject an instance of \OC\NaturalSort_DefaultCollator to force using Owncloud's default collator
 		if (isset($injectedCollator)) {
 			$this->collator = $injectedCollator;
-			\OC::$server->get(LoggerInterface::class)->debug('forced use of '.get_class($injectedCollator));
+			\OC::$server->get(LoggerInterface::class)->debug('forced use of ' . get_class($injectedCollator));
 		}
 	}
 
@@ -98,8 +98,8 @@ class NaturalSort {
 			if ($aChunk !== $bChunk) {
 				// test first character (character comparison, not number comparison)
 				if ($aChunk[0] >= '0' && $aChunk[0] <= '9' && $bChunk[0] >= '0' && $bChunk[0] <= '9') {
-					$aNum = (int) $aChunk;
-					$bNum = (int) $bChunk;
+					$aNum = (int)$aChunk;
+					$bNum = (int)$bChunk;
 					return $aNum - $bNum;
 				}
 				return self::getCollator()->compare($aChunk, $bChunk);

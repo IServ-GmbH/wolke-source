@@ -29,18 +29,13 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<UserLiveStatusEvent>
  */
 class UserLiveStatusListener implements IEventListener {
-	private UserStatusMapper $mapper;
-	private StatusService $statusService;
-	private ITimeFactory $timeFactory;
-
-	public function __construct(UserStatusMapper $mapper,
-		StatusService $statusService,
-		ITimeFactory $timeFactory,
+	public function __construct(
+		private UserStatusMapper $mapper,
+		private StatusService $statusService,
+		private ITimeFactory $timeFactory,
 		private CalendarStatusService $calendarStatusService,
-		private LoggerInterface $logger) {
-		$this->mapper = $mapper;
-		$this->statusService = $statusService;
-		$this->timeFactory = $timeFactory;
+		private LoggerInterface $logger,
+	) {
 	}
 
 	/**
@@ -87,7 +82,7 @@ class UserLiveStatusListener implements IEventListener {
 
 		// If the emitted status is more important than the current status
 		// treat it as outdated and update
-		if (array_search($event->getStatus(), StatusService::PRIORITY_ORDERED_STATUSES) < array_search($userStatus->getStatus(), StatusService::PRIORITY_ORDERED_STATUSES)) {
+		if (array_search($event->getStatus(), StatusService::PRIORITY_ORDERED_STATUSES, true) < array_search($userStatus->getStatus(), StatusService::PRIORITY_ORDERED_STATUSES, true)) {
 			$needsUpdate = true;
 		}
 

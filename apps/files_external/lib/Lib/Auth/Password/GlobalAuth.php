@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2015 ownCloud, Inc.
@@ -22,12 +21,10 @@ class GlobalAuth extends AuthMechanism {
 	public const CREDENTIALS_IDENTIFIER = 'password::global';
 	private const PWD_PLACEHOLDER = '************************';
 
-	/** @var ICredentialsManager */
-	protected $credentialsManager;
-
-	public function __construct(IL10N $l, ICredentialsManager $credentialsManager) {
-		$this->credentialsManager = $credentialsManager;
-
+	public function __construct(
+		IL10N $l,
+		protected ICredentialsManager $credentialsManager,
+	) {
 		$this
 			->setIdentifier('password::global')
 			->setVisibility(BackendService::VISIBILITY_DEFAULT)

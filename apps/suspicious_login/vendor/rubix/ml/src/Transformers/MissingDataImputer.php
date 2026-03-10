@@ -4,11 +4,11 @@ namespace Rubix\ML\Transformers;
 
 use Rubix\ML\DataType;
 use Rubix\ML\Persistable;
+use Rubix\ML\Strategies\Mean;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Strategies\Mean;
-use Rubix\ML\Other\Strategies\Strategy;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
-use Rubix\ML\Other\Strategies\KMostFrequent;
+use Rubix\ML\Strategies\Strategy;
+use Rubix\ML\Strategies\KMostFrequent;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithTransformer;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
@@ -32,41 +32,41 @@ class MissingDataImputer implements Transformer, Stateful, Persistable
     /**
      * The guessing strategy to use when imputing continuous values.
      *
-     * @var \Rubix\ML\Other\Strategies\Strategy
+     * @var \Rubix\ML\Strategies\Strategy
      */
-    protected $continuous;
+    protected \Rubix\ML\Strategies\Strategy $continuous;
 
     /**
      * The guessing strategy to use when imputing categorical values.
      *
-     * @var \Rubix\ML\Other\Strategies\Strategy
+     * @var \Rubix\ML\Strategies\Strategy
      */
-    protected $categorical;
+    protected \Rubix\ML\Strategies\Strategy $categorical;
 
     /**
      * The placeholder category that denotes missing values.
      *
      * @var string
      */
-    protected $categoricalPlaceholder;
+    protected string $categoricalPlaceholder;
 
     /**
      * The fitted guessing strategy for each feature column.
      *
-     * @var list<\Rubix\ML\Other\Strategies\Strategy>|null
+     * @var list<\Rubix\ML\Strategies\Strategy>|null
      */
-    protected $strategies;
+    protected ?array $strategies = null;
 
     /**
      * The data types of the fitted feature columns.
      *
      * @var list<\Rubix\ML\DataType>|null
      */
-    protected $types;
+    protected ?array $types = null;
 
     /**
-     * @param \Rubix\ML\Other\Strategies\Strategy|null $continuous
-     * @param \Rubix\ML\Other\Strategies\Strategy|null $categorical
+     * @param \Rubix\ML\Strategies\Strategy|null $continuous
+     * @param \Rubix\ML\Strategies\Strategy|null $categorical
      * @param string $categoricalPlaceholder
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
@@ -109,7 +109,7 @@ class MissingDataImputer implements Transformer, Stateful, Persistable
      */
     public function fitted() : bool
     {
-        return isset($this->strategies) and isset($this->types);
+        return isset($this->strategies, $this->types);
     }
 
     /**
@@ -124,14 +124,14 @@ class MissingDataImputer implements Transformer, Stateful, Persistable
 
         $this->strategies = $this->types = [];
 
-        foreach ($dataset->columnTypes() as $column => $type) {
+        foreach ($dataset->featureTypes() as $column => $type) {
             $donors = [];
 
             switch ($type->code()) {
                 case DataType::CONTINUOUS:
                     $strategy = clone $this->continuous;
 
-                    foreach ($dataset->column($column) as $value) {
+                    foreach ($dataset->feature($column) as $value) {
                         if (is_float($value) and is_nan($value)) {
                             continue;
                         }
@@ -144,7 +144,7 @@ class MissingDataImputer implements Transformer, Stateful, Persistable
                 case DataType::CATEGORICAL:
                     $strategy = clone $this->categorical;
 
-                    foreach ($dataset->column($column) as $value) {
+                    foreach ($dataset->feature($column) as $value) {
                         if ($value !== $this->categoricalPlaceholder) {
                             $donors[] = $value;
                         }
@@ -207,12 +207,14 @@ class MissingDataImputer implements Transformer, Stateful, Persistable
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Missing Data Imputer (continuous_strategy: {$this->continuous},"
-            . " categorical_strategy: {$this->categorical},"
-            . " categorical_placeholder: {$this->categoricalPlaceholder})";
+        return "Missing Data Imputer (continuous strategy: {$this->continuous},"
+            . " categorical strategy: {$this->categorical},"
+            . " categorical placeholder: {$this->categoricalPlaceholder})";
     }
 }

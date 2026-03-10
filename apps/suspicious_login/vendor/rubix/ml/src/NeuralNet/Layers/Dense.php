@@ -4,8 +4,8 @@ namespace Rubix\ML\NeuralNet\Layers;
 
 use Tensor\Matrix;
 use Rubix\ML\Deferred;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\NeuralNet\Parameter;
-use Rubix\ML\Other\Helpers\Params;
 use Rubix\ML\NeuralNet\Initializers\He;
 use Rubix\ML\NeuralNet\Optimizers\Optimizer;
 use Rubix\ML\NeuralNet\Initializers\Constant;
@@ -31,62 +31,62 @@ class Dense implements Hidden, Parametric
     /**
      * The number of nodes in the layer.
      *
-     * @var int
+     * @var positive-int
      */
-    protected $neurons;
+    protected int $neurons;
 
     /**
      * The amount of L2 regularization applied to the weights.
      *
      * @var float
      */
-    protected $alpha;
+    protected float $l2Penalty;
 
     /**
      * Should the layer include a bias parameter?
      *
      * @var bool
      */
-    protected $bias;
+    protected bool $bias;
 
     /**
      * The weight initializer.
      *
      * @var \Rubix\ML\NeuralNet\Initializers\Initializer
      */
-    protected $weightInitializer;
+    protected \Rubix\ML\NeuralNet\Initializers\Initializer $weightInitializer;
 
     /**
      * The bias initializer.
      *
      * @var \Rubix\ML\NeuralNet\Initializers\Initializer
      */
-    protected $biasInitializer;
+    protected \Rubix\ML\NeuralNet\Initializers\Initializer $biasInitializer;
 
     /**
      * The weights.
      *
      * @var \Rubix\ML\NeuralNet\Parameter|null
      */
-    protected $weights;
+    protected ?\Rubix\ML\NeuralNet\Parameter $weights = null;
 
     /**
      * The biases.
      *
      * @var \Rubix\ML\NeuralNet\Parameter|null
      */
-    protected $biases;
+    protected ?\Rubix\ML\NeuralNet\Parameter $biases = null;
 
     /**
      * The memorized inputs to the layer.
      *
      * @var \Tensor\Matrix|null
      */
-    protected $input;
+    protected ?\Tensor\Matrix $input = null;
 
     /**
      * @param int $neurons
-     * @param float $alpha
+     * @param float $l2Penalty
      * @param bool $bias
      * @param \Rubix\ML\NeuralNet\Initializers\Initializer|null $weightInitializer
      * @param \Rubix\ML\NeuralNet\Initializers\Initializer|null $biasInitializer
@@ -94,7 +94,7 @@ class Dense implements Hidden, Parametric
      */
     public function __construct(
         int $neurons,
-        float $alpha = 0.0,
+        float $l2Penalty = 0.0,
         bool $bias = true,
         ?Initializer $weightInitializer = null,
         ?Initializer $biasInitializer = null
@@ -104,13 +104,13 @@ class Dense implements Hidden, Parametric
                 . " must be greater than 0, $neurons given.");
         }
 
-        if ($alpha < 0.0) {
-            throw new InvalidArgumentException('Alpha must be'
-                . " greater than 0, $alpha given.");
+        if ($l2Penalty < 0.0) {
+            throw new InvalidArgumentException('L2 Penalty must be'
+                . " greater than 0, $l2Penalty given.");
         }
 
         $this->neurons = $neurons;
-        $this->alpha = $alpha;
+        $this->l2Penalty = $l2Penalty;
         $this->bias = $bias;
         $this->weightInitializer = $weightInitializer ?? new He();
         $this->biasInitializer = $biasInitializer ?? new Constant(0.0);
@@ -121,7 +121,7 @@ class Dense implements Hidden, Parametric
      *
      * @internal
      *
-     * @return int
+     * @return positive-int
      */
     public function width() : int
     {
@@ -151,8 +151,8 @@ class Dense implements Hidden, Parametric
      *
      * @internal
      *
-     * @param int $fanIn
-     * @return int
+     * @param positive-int $fanIn
+     * @return positive-int
      */
     public function initialize(int $fanIn) : int
     {
@@ -186,15 +186,15 @@ class Dense implements Hidden, Parametric
             throw new RuntimeException('Layer is not initialized');
         }
 
-        $z = $this->weights->param()->matmul($input);
+        $output = $this->weights->param()->matmul($input);
 
         if ($this->biases) {
-            $z = $z->add($this->biases->param());
+            $output = $output->add($this->biases->param());
         }
 
         $this->input = $input;
 
-        return $z;
+        return $output;
     }
 
     /**
@@ -212,13 +212,13 @@ class Dense implements Hidden, Parametric
             throw new RuntimeException('Layer is not initialized');
         }
 
-        $z = $this->weights->param()->matmul($input);
+        $output = $this->weights->param()->matmul($input);
 
         if ($this->biases) {
-            $z = $z->add($this->biases->param());
+            $output = $output->add($this->biases->param());
         }
 
-        return $z;
+        return $output;
     }
 
     /**
@@ -248,16 +248,16 @@ class Dense implements Hidden, Parametric
 
         $weights = $this->weights->param();
 
-        if ($this->alpha) {
-            $dW = $dW->add($weights->multiply($this->alpha));
+        if ($this->l2Penalty) {
+            $dW = $dW->add($weights->multiply($this->l2Penalty));
         }
 
-        $this->weights->update($optimizer->step($this->weights, $dW));
+        $this->weights->update($dW, $optimizer);
 
         if ($this->biases) {
             $dB = $dOut->sum();
 
-            $this->biases->update($optimizer->step($this->biases, $dB));
+            $this->biases->update($dB, $optimizer);
         }
 
         $this->input = null;
@@ -316,13 +316,15 @@ class Dense implements Hidden, Parametric
     /**
      * Return the string representation of the object.
      *
+     * @internal
+     *
      * @return string
      */
     public function __toString() : string
     {
-        return "Dense (neurons: {$this->neurons}, alpha: {$this->alpha},"
+        return "Dense (neurons: {$this->neurons}, l2 penalty: {$this->l2Penalty},"
             . ' bias: ' . Params::toString($this->bias) . ','
-            . " weight_initializer: {$this->weightInitializer},"
-            . " bias_initializer: {$this->biasInitializer})";
+            . " weight initializer: {$this->weightInitializer},"
+            . " bias initializer: {$this->biasInitializer})";
     }
 }

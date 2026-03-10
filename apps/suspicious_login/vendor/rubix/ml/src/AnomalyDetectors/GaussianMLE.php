@@ -3,17 +3,16 @@
 namespace Rubix\ML\AnomalyDetectors;
 
 use Rubix\ML\Online;
-use Rubix\ML\Ranking;
 use Rubix\ML\Learner;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\CPU;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\RanksSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
@@ -21,10 +20,7 @@ use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
 
-use function Rubix\ML\warn_deprecated;
-
 use const Rubix\ML\TWO_PI;
-use const Rubix\ML\EPSILON;
 
 /**
  * Gaussian MLE
@@ -35,31 +31,37 @@ use const Rubix\ML\EPSILON;
  * are more likely to be outliers.
  *
  * References:
- * [1] T. F. Chan et al. (1979). Updating Formulae and a Pairwise Algorithm for
- * Computing Sample Variances.
+ * [1] T. F. Chan et al. (1979). Updating Formulae and a Pairwise Algorithm for Computing
+ * Sample Variances.
  *
  * @category    Machine Learning
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persistable
+class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
 {
-    use AutotrackRevisions, RanksSingle;
+    use AutotrackRevisions;
 
     /**
-     * The proportion of outliers that are assumed to be present in the
-     * training set.
+     * The proportion of outliers that are assumed to be present in the training set.
      *
      * @var float
      */
-    protected $contamination;
+    protected float $contamination;
+
+    /**
+     * The amount of epsilon smoothing added to the variance of each feature.
+     *
+     * @var float
+     */
+    protected float $smoothing;
 
     /**
      * The precomputed means of each feature column of the training set.
      *
      * @var float[]
      */
-    protected $means = [
+    protected array $means = [
         //
     ];
 
@@ -68,36 +70,50 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
      *
      * @var float[]
      */
-    protected $variances = [
+    protected array $variances = [
         //
     ];
 
     /**
-     * The minimum log likelihood score necessary to flag an anomaly.
+     * A small portion of variance to add for smoothing.
      *
      * @var float|null
      */
-    protected $threshold;
+    protected ?float $epsilon = null;
 
     /**
      * The number of samples that have passed through training so far.
      *
      * @var int
      */
-    protected $n = 0;
+    protected int $n = 0;
+
+    /**
+     * The minimum log likelihood score necessary to flag an anomaly.
+     *
+     * @var float|null
+     */
+    protected ?float $threshold = null;
 
     /**
      * @param float $contamination
+     * @param float $smoothing
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(float $contamination = 0.1)
+    public function __construct(float $contamination = 0.1, float $smoothing = 1e-9)
     {
         if ($contamination < 0.0 or $contamination > 0.5) {
             throw new InvalidArgumentException('Contamination must be'
                 . " between 0 and 0.5, $contamination given.");
         }
 
+        if ($smoothing <= 0.0) {
+            throw new InvalidArgumentException('Smoothing must be'
+                . " greater than 0, $smoothing given.");
+        }
+
         $this->contamination = $contamination;
+        $this->smoothing = $smoothing;
     }
 
     /**
@@ -137,6 +153,7 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
     {
         return [
             'contamination' => $this->contamination,
+            'smoothing' => $this->smoothing,
         ];
     }
 
@@ -184,18 +201,26 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
 
         $this->means = $this->variances = [];
 
-        foreach ($dataset->columns() as $column => $values) {
+        foreach ($dataset->features() as $column => $values) {
             [$mean, $variance] = Stats::meanVar($values);
 
             $this->means[$column] = $mean;
-            $this->variances[$column] = $variance ?: EPSILON;
+            $this->variances[$column] = $variance;
+        }
+
+        $epsilon = max($this->smoothing * max($this->variances), CPU::epsilon());
+
+        foreach ($this->variances as &$variance) {
+            $variance += $epsilon;
         }
 
         $lls = array_map([$this, 'logLikelihood'], $dataset->samples());
 
         $this->threshold = Stats::quantile($lls, 1.0 - $this->contamination);
 
-        $this->n = $dataset->numRows();
+        $this->epsilon = $epsilon;
+
+        $this->n = $dataset->numSamples();
     }
 
     /**
@@ -217,25 +242,33 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
             new DatasetHasDimensionality($dataset, count($this->means)),
         ])->check();
 
-        $n = $dataset->numRows();
+        $n = $dataset->numSamples();
 
-        foreach ($dataset->columns() as $column => $values) {
+        foreach ($dataset->features() as $column => $values) {
             [$mean, $variance] = Stats::meanVar($values);
 
             $oldMean = $this->means[$column];
             $oldVariance = $this->variances[$column];
 
-            $muHat = (($this->n * $oldMean) + ($n * $mean))
-                / ($this->n + $n);
+            $oldVariance -= $this->epsilon;
 
-            $vHat = ($this->n * $oldVariance + ($n * $variance)
+            $this->means[$column] = (($this->n * $oldMean)
+                + ($n * $mean)) / ($this->n + $n);
+
+            $this->variances[$column] = ($this->n
+                * $oldVariance + ($n * $variance)
                 + ($this->n / ($n * ($this->n + $n)))
                 * ($n * $oldMean - $n * $mean) ** 2)
                 / ($this->n + $n);
-
-            $this->means[$column] = $muHat;
-            $this->variances[$column] = $vHat ?: EPSILON;
         }
+
+        $epsilon = max($this->smoothing * max($this->variances), CPU::epsilon());
+
+        foreach ($this->variances as &$variance) {
+            $variance += $epsilon;
+        }
+
+        $this->epsilon = $epsilon;
 
         $this->n += $n;
 
@@ -297,21 +330,6 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
     }
 
     /**
-     * Return the anomaly scores assigned to the samples in a dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return list<float>
-     */
-    public function rank(Dataset $dataset) : array
-    {
-        warn_deprecated('Rank() is deprecated, use score() instead.');
-
-        return $this->score($dataset);
-    }
-
-    /**
      * Calculate the log likelihood of a sample being an outlier.
      *
      * @param list<int|float> $sample
@@ -336,6 +354,8 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Ranking, Persi
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

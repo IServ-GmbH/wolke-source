@@ -14,6 +14,7 @@ use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\INavigationManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
@@ -36,12 +37,13 @@ class URLGenerator implements IURLGenerator {
 	/** @var null|string */
 	private $baseUrl = null;
 	private ?IAppManager $appManager = null;
+	private ?INavigationManager $navigationManager = null;
 
 	public function __construct(IConfig $config,
 		IUserSession $userSession,
 		ICacheFactory $cacheFactory,
 		IRequest $request,
-		Router $router
+		Router $router,
 	) {
 		$this->config = $config;
 		$this->userSession = $userSession;
@@ -56,6 +58,14 @@ class URLGenerator implements IURLGenerator {
 		}
 		$this->appManager = \OCP\Server::get(IAppManager::class);
 		return $this->appManager;
+	}
+
+	private function getNavigationManager(): INavigationManager {
+		if ($this->navigationManager !== null) {
+			return $this->navigationManager;
+		}
+		$this->navigationManager = \OCP\Server::get(INavigationManager::class);
+		return $this->navigationManager;
 	}
 
 	/**
@@ -86,7 +96,7 @@ class URLGenerator implements IURLGenerator {
 	public function linkToOCSRouteAbsolute(string $routeName, array $arguments = []): string {
 		// Returns `/subfolder/index.php/ocsapp/…` with `'htaccess.IgnoreFrontController' => false` in config.php
 		// And `/subfolder/ocsapp/…` with `'htaccess.IgnoreFrontController' => true` in config.php
-		$route = $this->router->generate('ocs.'.$routeName, $arguments, false);
+		$route = $this->router->generate('ocs.' . $routeName, $arguments, false);
 
 		// Cut off `/subfolder`
 		if (\OC::$WEBROOT !== '' && str_starts_with($route, \OC::$WEBROOT)) {
@@ -166,8 +176,8 @@ class URLGenerator implements IURLGenerator {
 	 * Returns the path to the image.
 	 */
 	public function imagePath(string $appName, string $file): string {
-		$cache = $this->cacheFactory->createDistributed('imagePath-'.md5($this->getBaseUrl()).'-');
-		$cacheKey = $appName.'-'.$file;
+		$cache = $this->cacheFactory->createDistributed('imagePath-' . md5($this->getBaseUrl()) . '-');
+		$cacheKey = $appName . '-' . $file;
 		if ($key = $cache->get($cacheKey)) {
 			return $key;
 		}
@@ -288,14 +298,22 @@ class URLGenerator implements IURLGenerator {
 			return $this->getAbsoluteURL($defaultPage);
 		}
 
-		$appId = $this->getAppManager()->getDefaultAppForUser();
-
-		if ($this->config->getSystemValueBool('htaccess.IgnoreFrontController', false)
-			|| getenv('front_controller_active') === 'true') {
-			return $this->getAbsoluteURL('/apps/' . $appId . '/');
+		$entryId = $this->getNavigationManager()->getDefaultEntryIdForUser();
+		$entry = $this->getNavigationManager()->get($entryId);
+		$href = (string)$entry['href'];
+		if ($href === '') {
+			throw new \InvalidArgumentException('Default navigation entry is missing href: ' . $entryId);
 		}
 
-		return $this->getAbsoluteURL('/index.php/apps/' . $appId . '/');
+		if (str_starts_with($href, $this->getBaseUrl())) {
+			return $href;
+		}
+
+		if (str_starts_with($href, '/index.php/') && ($this->config->getSystemValueBool('htaccess.IgnoreFrontController', false) || getenv('front_controller_active') === 'true')) {
+			$href = substr($href, 10);
+		}
+
+		return $this->getAbsoluteURL($href);
 	}
 
 	/**

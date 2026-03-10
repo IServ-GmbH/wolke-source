@@ -7,12 +7,13 @@ use Rubix\ML\Learner;
 use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
+use Rubix\ML\Helpers\CPU;
 use Rubix\ML\Probabilistic;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsLabeled;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
@@ -24,9 +25,11 @@ use Rubix\ML\Exceptions\RuntimeException;
 
 use function Rubix\ML\argmax;
 use function Rubix\ML\logsumexp;
+use function is_null;
+use function log;
+use function exp;
 
 use const Rubix\ML\TWO_PI;
-use const Rubix\ML\EPSILON;
 use const Rubix\ML\LOG_EPSILON;
 
 /**
@@ -54,47 +57,62 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
      *
      * @var float[]|null
      */
-    protected $logPriors;
+    protected ?array $logPriors = null;
 
     /**
      * Should we compute the prior probabilities from the training set?
      *
      * @var bool
      */
-    protected $fitPriors;
+    protected bool $fitPriors;
+
+    /**
+     * The amount of epsilon smoothing added to the variance of each feature.
+     *
+     * @var float
+     */
+    protected float $smoothing;
 
     /**
      * The weight of each class as a proportion of the entire training set.
      *
      * @var float[]
      */
-    protected $weights = [
+    protected array $weights = [
         //
     ];
 
     /**
      * The means of each feature of the training set conditioned on a class basis.
      *
-     * @var array[]
+     * @var array<list<float>>
      */
-    protected $means = [
+    protected array $means = [
         //
     ];
 
     /**
      * The variances of each feature of the training set conditioned by class.
      *
-     * @var array[]
+     * @var array<list<float>>
      */
-    protected $variances = [
+    protected array $variances = [
         //
     ];
 
     /**
-     * @param (int|float)[]|null $priors
+     * A small portion of variance to add for smoothing.
+     *
+     * @var float|null
+     */
+    protected ?float $epsilon = null;
+
+    /**
+     * @param float[]|null $priors
+     * @param float $smoothing
      * @throws \Rubix\ML\Exceptions\InvalidArgumentException
      */
-    public function __construct(?array $priors = null)
+    public function __construct(?array $priors = null, float $smoothing = 1e-9)
     {
         $logPriors = [];
 
@@ -116,8 +134,14 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
             }
         }
 
+        if ($smoothing <= 0.0) {
+            throw new InvalidArgumentException('Smoothing must be'
+                . " greater than 0, $smoothing given.");
+        }
+
         $this->logPriors = $logPriors;
         $this->fitPriors = is_null($priors);
+        $this->smoothing = $smoothing;
     }
 
     /**
@@ -157,6 +181,7 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
     {
         return [
             'priors' => $this->fitPriors ? null : $this->priors(),
+            'smoothing' => $this->smoothing,
         ];
     }
 
@@ -183,7 +208,7 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
     /**
      * Return the running means of each feature column of the training data by class.
      *
-     * @return array[]|null
+     * @return array<list<float>>|null
      */
     public function means() : ?array
     {
@@ -193,7 +218,7 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
     /**
      * Return the running variances of each feature column of the training data by class.
      *
-     * @return array[]|null
+     * @return array<list<float>>|null
      */
     public function variances() : ?array
     {
@@ -226,49 +251,64 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
             new LabelsAreCompatibleWithLearner($dataset, $this),
         ])->check();
 
-        foreach ($dataset->stratify() as $class => $stratum) {
+        $maxVariance = 0.0;
+
+        foreach ($dataset->stratifyByLabel() as $class => $stratum) {
             if (isset($this->means[$class])) {
                 $oldMeans = $this->means[$class];
                 $oldVariances = $this->variances[$class];
                 $oldWeight = $this->weights[$class];
 
-                $n = $stratum->numRows();
+                $n = $stratum->numSamples();
 
                 $means = $variances = [];
 
-                foreach ($stratum->columns() as $column => $values) {
+                foreach ($stratum->features() as $column => $values) {
+                    $oldMean = $oldMeans[$column];
+                    $oldVariance = $oldVariances[$column];
+
+                    $oldVariance -= $this->epsilon;
+
                     [$mean, $variance] = Stats::meanVar($values);
 
                     $means[] = (($n * $mean)
-                        + ($oldWeight * $oldMeans[$column]))
+                        + ($oldWeight * $oldMean))
                         / ($oldWeight + $n);
 
-                    $vHat = ($oldWeight
-                        * $oldVariances[$column] + ($n * $variance)
+                    $variances[] = ($oldWeight
+                        * $oldVariance + ($n * $variance)
                         + ($oldWeight / ($n * ($oldWeight + $n)))
-                        * ($n * $oldMeans[$column] - $n * $mean) ** 2)
+                        * ($n * $oldMean - $n * $mean) ** 2)
                         / ($oldWeight + $n);
-
-                    $variances[] = $vHat ?: EPSILON;
                 }
 
                 $weight = $oldWeight + $n;
             } else {
                 $means = $variances = [];
 
-                foreach ($stratum->columns() as $values) {
+                foreach ($stratum->features() as $values) {
                     [$mean, $variance] = Stats::meanVar($values);
 
                     $means[] = $mean;
-                    $variances[] = $variance ?: EPSILON;
+                    $variances[] = $variance;
                 }
 
-                $weight = $stratum->numRows();
+                $weight = $stratum->numSamples();
             }
+
+            $maxVariance = max($maxVariance, ...$variances);
 
             $this->means[$class] = $means;
             $this->variances[$class] = $variances;
             $this->weights[$class] = $weight;
+        }
+
+        $epsilon = max($this->smoothing * $maxVariance, CPU::epsilon());
+
+        foreach ($this->variances as &$variances) {
+            foreach ($variances as &$variance) {
+                $variance += $epsilon;
+            }
         }
 
         if ($this->fitPriors) {
@@ -278,11 +318,12 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
                 $this->logPriors[$class] = log($weight / $total);
             }
         }
+
+        $this->epsilon = $epsilon;
     }
 
     /**
-     * Calculate the likelihood of the sample being a member of a class and
-     * choose the class with the highest likelihood as the prediction.
+     * Calculate the likelihood of the sample being a member of a class and choose the class with the highest likelihood as the prediction.
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
@@ -317,7 +358,7 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
      *
      * @param \Rubix\ML\Datasets\Dataset $dataset
      * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return list<float[]>
+     * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
     {
@@ -357,7 +398,7 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
      * Calculate the joint log likelihood of a sample being a member of each class.
      *
      * @param list<int|float> $sample
-     * @return float[]
+     * @return array<string,float>
      */
     protected function jointLogLikelihood(array $sample) : array
     {
@@ -386,6 +427,8 @@ class GaussianNB implements Estimator, Learner, Online, Probabilistic, Persistab
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

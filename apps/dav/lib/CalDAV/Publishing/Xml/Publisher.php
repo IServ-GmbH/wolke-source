@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -12,22 +11,13 @@ use Sabre\Xml\XmlSerializable;
 class Publisher implements XmlSerializable {
 
 	/**
-	 * @var string $publishUrl
-	 */
-	protected $publishUrl;
-
-	/**
-	 * @var boolean $isPublished
-	 */
-	protected $isPublished;
-
-	/**
 	 * @param string $publishUrl
 	 * @param boolean $isPublished
 	 */
-	public function __construct($publishUrl, $isPublished) {
-		$this->publishUrl = $publishUrl;
-		$this->isPublished = $isPublished;
+	public function __construct(
+		protected $publishUrl,
+		protected $isPublished,
+	) {
 	}
 
 	/**

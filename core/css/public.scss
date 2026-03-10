@@ -5,7 +5,7 @@
 #body-public {
 	--footer-height: calc(2lh + 2 * var(--default-grid-baseline)); // Set the initial value, will be updated programmatically to match the actual height
 
-	.header-right {
+	.header-end {
 		#header-primary-action a {
 			color: var(--color-primary-element-text);
 		}

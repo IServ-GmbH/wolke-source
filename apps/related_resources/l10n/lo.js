@@ -2,6 +2,9 @@ OC.L10N.register(
     "related_resources",
     {
     "Calendar" : "ປະຕິທິນ",
-    "Files" : "ຟາຍ"
+    "Deck" : "Deck",
+    "Files" : "ຟາຍ",
+    "Talk conversation" : "ການສົນທະນາ Talk",
+    "Talk" : "Talk"
 },
 "nplurals=1; plural=0;");

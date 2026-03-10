@@ -21,8 +21,10 @@ use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IBinaryFinder;
 use OCP\IConfig;
 use OCP\IPreview;
-use OCP\IServerContainer;
 use OCP\Preview\IProviderV2;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+
 use function array_key_exists;
 
 class PreviewManager implements IPreview {
@@ -47,22 +49,22 @@ class PreviewManager implements IPreview {
 	 * @psalm-var array<string, null>
 	 */
 	private array $loadedBootstrapProviders = [];
-	private IServerContainer $container;
+	private ContainerInterface $container;
 	private IBinaryFinder $binaryFinder;
 	private IMagickSupport $imagickSupport;
 	private bool $enablePreviews;
 
 	public function __construct(
-		IConfig                  $config,
-		IRootFolder              $rootFolder,
-		IAppData                 $appData,
-		IEventDispatcher 		 $eventDispatcher,
-		GeneratorHelper          $helper,
-		?string                  $userId,
-		Coordinator              $bootstrapCoordinator,
-		IServerContainer         $container,
-		IBinaryFinder            $binaryFinder,
-		IMagickSupport           $imagickSupport
+		IConfig $config,
+		IRootFolder $rootFolder,
+		IAppData $appData,
+		IEventDispatcher $eventDispatcher,
+		GeneratorHelper $helper,
+		?string $userId,
+		Coordinator $bootstrapCoordinator,
+		ContainerInterface $container,
+		IBinaryFinder $binaryFinder,
+		IMagickSupport $imagickSupport,
 	) {
 		$this->config = $config;
 		$this->rootFolder = $rootFolder;
@@ -136,7 +138,8 @@ class PreviewManager implements IPreview {
 					$this->rootFolder,
 					$this->config
 				),
-				$this->eventDispatcher
+				$this->eventDispatcher,
+				$this->container->get(LoggerInterface::class),
 			);
 		}
 		return $this->generator;
@@ -248,29 +251,29 @@ class PreviewManager implements IPreview {
 	 * List of enabled default providers
 	 *
 	 * The following providers are enabled by default:
-	 *  - OC\Preview\PNG
-	 *  - OC\Preview\JPEG
-	 *  - OC\Preview\GIF
 	 *  - OC\Preview\BMP
-	 *  - OC\Preview\XBitmap
+	 *  - OC\Preview\GIF
+	 *  - OC\Preview\JPEG
 	 *  - OC\Preview\MarkDown
-	 *  - OC\Preview\MP3
+	 *  - OC\Preview\PNG
 	 *  - OC\Preview\TXT
+	 *  - OC\Preview\XBitmap
 	 *
 	 * The following providers are disabled by default due to performance or privacy concerns:
 	 *  - OC\Preview\Font
 	 *  - OC\Preview\HEIC
 	 *  - OC\Preview\Illustrator
-	 *  - OC\Preview\Movie
-	 *  - OC\Preview\MSOfficeDoc
+	 *  - OC\Preview\MP3
 	 *  - OC\Preview\MSOffice2003
 	 *  - OC\Preview\MSOffice2007
+	 *  - OC\Preview\MSOfficeDoc
+	 *  - OC\Preview\Movie
 	 *  - OC\Preview\OpenDocument
 	 *  - OC\Preview\PDF
 	 *  - OC\Preview\Photoshop
 	 *  - OC\Preview\Postscript
-	 *  - OC\Preview\StarOffice
 	 *  - OC\Preview\SVG
+	 *  - OC\Preview\StarOffice
 	 *  - OC\Preview\TIFF
 	 *
 	 * @return array
@@ -292,7 +295,6 @@ class PreviewManager implements IPreview {
 
 		$this->defaultProviders = $this->config->getSystemValue('enabledPreviewProviders', array_merge([
 			Preview\MarkDown::class,
-			Preview\MP3::class,
 			Preview\TXT::class,
 			Preview\OpenDocument::class,
 		], $imageProviders));

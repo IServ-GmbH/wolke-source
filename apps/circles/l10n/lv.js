@@ -1,7 +1,6 @@
 OC.L10N.register(
     "circles",
     {
-    "Teams" : "Komandas",
     "You created the team {circle}" : "Tu izveidoji komandu {circle}",
     "You deleted {circle}" : "Tu izdzēsi {circle}",
     "You removed {member} from {circle}" : "Tu noņēmi {member} no {circle}",
@@ -10,6 +9,7 @@ OC.L10N.register(
     "You removed {external} from {circle}" : "Tu noņēmi {external} no {circle}",
     "You changed {member}'s level in {circle} to %1$s" : "Tu nomainīji {member} līmeni {circle} uz %1$s",
     "{author} changed your level in {circle} to %1$s" : "{author} nomainīja Tavu līmeni {circle} uz %1$s",
+    "Teams" : "Komandas",
     "Personal" : "Personīgs",
     "System" : "Sistēma",
     "Visible" : "Redzams",
@@ -23,6 +23,7 @@ OC.L10N.register(
     "Email address" : "E-pasta adrese",
     "Contact" : "Kontaktpersona",
     "Team" : "Komanda",
+    "Moderator" : "Satura pārraudzītājs",
     "Admin" : "Pārvaldītājs",
     "Owner" : "Īpašnieks",
     "Open »%s«" : "Atvērt »%s«",
@@ -37,8 +38,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Šajā mapē nekas nav atrasts",
     "Name" : "Vārds",
     "Size" : "Izmērs",
-    "Modified" : "Mainīts",
-    "Teams' files" : "Komandas datnes",
-    "Circle" : "Loks"
+    "Modified" : "Mainīts"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

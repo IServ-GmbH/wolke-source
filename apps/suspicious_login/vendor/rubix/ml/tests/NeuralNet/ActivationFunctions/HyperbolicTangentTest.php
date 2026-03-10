@@ -41,17 +41,17 @@ class HyperbolicTangentTest extends TestCase
      * @dataProvider computeProvider
      *
      * @param \Tensor\Matrix $input
-     * @param array[] $expected
+     * @param list<list<float>> $expected $expected
      */
-    public function compute(Matrix $input, array $expected) : void
+    public function activate(Matrix $input, array $expected) : void
     {
-        $activations = $this->activationFn->compute($input)->asArray();
+        $activations = $this->activationFn->activate($input)->asArray();
 
-        $this->assertEquals($expected, $activations);
+        $this->assertEqualsWithDelta($expected, $activations, 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function computeProvider() : Generator
     {
@@ -84,17 +84,17 @@ class HyperbolicTangentTest extends TestCase
      *
      * @param \Tensor\Matrix $input
      * @param \Tensor\Matrix $activations
-     * @param array[] $expected
+     * @param list<list<float>> $expected $expected
      */
     public function differentiate(Matrix $input, Matrix $activations, array $expected) : void
     {
         $derivatives = $this->activationFn->differentiate($input, $activations)->asArray();
 
-        $this->assertEquals($expected, $derivatives);
+        $this->assertEqualsWithDelta($expected, $derivatives, 1e-8);
     }
 
     /**
-     * @return \Generator<array>
+     * @return \Generator<mixed[]>
      */
     public function differentiateProvider() : Generator
     {

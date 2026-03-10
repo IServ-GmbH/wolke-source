@@ -23,37 +23,14 @@ $dataset = Labeled::fromIterator(new CSV('example.csv', true))
     ->apply(new NumericStringConverter());
 ```
 
-## JSON
-Javascript Object Notation (JSON) is a standardized lightweight plain-text format that is used to represent structured data such as objects and arrays. The records of a dataset can either be represented as a sequential array or an object with keyed properties. Since it is possible to derive the original data type from the JSON format, JSON files have the advantage of importing the data in the proper type. A downside, however, is that the entire document must be read into memory all at once.
-
-**Example**
-
-```json
-[
-    {
-        "attitude": "nice",
-        "texture": "furry",
-        "sociability": "friendly",
-        "rating": 4,
-        "class": "not monster"
-    },
-    [
-        "mean",
-        "furry",
-        "loner",
-        -1.5,
-        "monster"
-    ]
-]
-```
-
-The [JSON](extractors/json.md) extractor handles loading data from JSON files.
+We can check the number of records that were imported by calling the `numSamples()` method on the dataset object.
 
 ```php
-use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Extractors\JSON;
+echo $dataset->numSamples();
+```
 
-$dataset = Labeled::fromIterator(new JSON('example.json'));
+```
+5000
 ```
 
 ## NDJSON
@@ -62,8 +39,9 @@ Another plain-text format called [NDJSON](http://ndjson.org/) or *Newline Delimi
 **Example**
 
 ```json
-{"attitude": "nice", "texture": "furry", "sociability": "friendly", "rating": 4, "class": "not monster"}
-["mean", "furry", "loner", -1.5, "monster"]
+{"attitude":"nice","texture":"furry","sociability":"friendly","rating":4,"class":"not monster"}
+{"attitude":"mean","texture":"furry","sociability":"loner","rating":-1.5,"class":"monster"}
+{"attitude":"nice","texture":"rough","sociability":"friendly","rating":2.6,"class":"not monster"}
 ```
 
 The [NDJSON](extractors/ndjson.md) extractor can be used to instantiate a new dataset object from a NDJSON file. Optionally, it can be combined with the standard PHP library's [Limit Iterator](https://www.php.net/manual/en/class.limititerator.php) to only load a portion of the data into memory. In the example below, we load the first 1,000 rows of data from an NDJSON file into an [Unlabeled](datasets/unlabeled.md) dataset.
@@ -81,18 +59,36 @@ $dataset = Unlabeled::fromIterator($iterator);
 ```
 
 ## SQL
-Medium to large datasets will often be stored in an RDBMS (relational database management system) such as [MySQL](https://www.mysql.com) or [PostgreSQL](https://www.postgresql.org). Relational databases allow you to query large amounts of data on-the-fly and can be very flexible. PHP comes with robust relational database support through its [PDO](https://www.php.net/manual/en/book.pdo.php) interface. The following example uses PDO and the `fetchAll()` method to return the first 1,000 rows of data from the `patients` table. Then, we'll load those samples into an [Unlabeled](datasets/unlabeled.md) dataset object using the standard constructor.
+Medium to large datasets will often be stored in an RDBMS (relational database management system) such as [MySQL](https://www.mysql.com), [PostgreSQL](https://www.postgresql.org)or [Sqlite](https://www.sqlite.org). Relational databases allow you to query large amounts of data on-the-fly and can be very flexible. PHP comes with robust relational database support through its [PDO](https://www.php.net/manual/en/book.pdo.php) interface. To iterate over the rows of an SQL table we provide an [SQL Table](extractors/sql-table.md) extractor uses the PDO interface under the hood. In the example below we'll wrap our SQL Table extractor in a [Column Picker](extractors/column-picker.md) to instantiate a new Unlabeled dataset object from a particular set of columns of the table.
+
+```php
+use Rubix\ML\Extractors\SQLTable;
+use Rubix\ML\Extractors\ColumnPicker;
+use Rubix\ML\Datasets\Unlabeled;
+use PDO;
+
+$connection = new PDO('sqlite:/example.sqlite');
+
+$extractor = new ColumnPicker(new SQLTable($connection, 'patients'), [
+    'age', 'gender', 'height', 'diagnosis',
+]);
+
+$dataset = Unlabeled::fromIterator($extractor);
+```
+
+If you need more control over your data pipeline then we recommend writing your own custom queries. The following example uses the PDO interface to execute a user-defined SQL query and instantiate a dataset object containing the same data as the example above. However, this method may be more efficient because it avoids querying for more data than you need.
 
 ```php
 use Rubix\ML\Datasets\Unlabeled;
+use PDO;
 
-$pdo = new PDO('mysql:dbname=example;host=127.0.0.1');
+$pdo = new PDO('sqlite:/example.sqlite');
 
-$query = $pdo->prepare('SELECT age, gender, height, diagnosis FROM patients LIMIT 1000');
+$query = $pdo->prepare('SELECT age, gender, height, diagnosis FROM patients');
 
 $query->execute();
 
-$samples = $query->fetchAll();
+$samples = $query->fetchAll(PDO::FETCH_NUM);
 
 $dataset = new Unlabeled($samples);
 ```
@@ -115,29 +111,6 @@ $dataset = Labeled::build($samples, $labels)
     ->apply(new ImageVectorizer());
 ```
 
-## Missing Values
-By convention, missing continuous feature values are denoted by the `NAN` constant and missing categorical values are denoted by a special placeholder category (ex. the `?` category). Dataset objects do not allow missing values of image or other data types.
-
-```php
-$samples = [
-    [0.01, -500, 'furry'], // Complete sample
-    [0.001, NAN, 'rough'], // Missing a continuous value
-    [0.25, -1000, '?'], // Missing a categorical value
-];
-```
-
-## Converting Formats
-It may be useful to convert a dataset stored in one format to another format. In the example below we'll use the [CSV](extractors/csv.md) extractor to read the data from a file in CSV format and then convert to NDJSON format using the `toNDJSON()` method on the [Dataset](datasets/api.md#encode-the-dataset) object. Then we'll write the returned encoding to a file on disk by specifying the path as an argument to the `write()` method.
-
-```php
-use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Extractors\CSV;
-
-Labeled::fromIterator(new CSV('example.csv'))
-    ->toNDJSON()
-    ->write('example.ndjson');
-```
-
 ## Synthetic Datasets
 Synthetic datasets are those that can be generated by one or more predefined formulas. In Rubix ML, we can generate synthetic datasets using [Generator](datasets/generators/api.md) objects. Generators are useful in educational settings and for supplementing a small dataset with more samples. To generate a labeled dataset using the [Half Moon](datasets/generators/half-moon.md) generator pass the number of records you wish to generate to the `generate()` method.
 
@@ -152,7 +125,9 @@ $dataset = $generator->generate(1000);
 Now we can write the dataset to a CSV file and import it into our favorite plotting software.
 
 ```php
-$dataset->toCSV(['x', 'y', 'label'])->write('half-moon.csv');
+use Rubix\ML\Extractors\CSV;
+
+$dataset->exportTo(new CSV('half-moon.csv'));
 ```
 
 ![Half Moon Dataset Scatterplot](https://github.com/RubixML/ML/blob/master/docs/images/half-moon-scatterplot.png?raw=true)

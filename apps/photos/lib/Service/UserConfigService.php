@@ -18,6 +18,7 @@ class UserConfigService {
 		'croppedLayout' => 'false',
 		'photosLocation' => '/Photos',
 		'photosSourceFolders' => '["/Photos"]',
+		/** If you add any new configs, make sure to validate the contents in {@see \OCA\Photos\Controller\ApiController::setUserConfig} */
 	];
 
 	private IConfig $config;
@@ -25,7 +26,7 @@ class UserConfigService {
 
 	public function __construct(
 		IConfig $config,
-		IUserSession $userSession
+		IUserSession $userSession,
 	) {
 		$this->config = $config;
 		$this->userSession = $userSession;

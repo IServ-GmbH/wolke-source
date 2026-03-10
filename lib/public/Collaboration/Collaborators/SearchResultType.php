@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -40,7 +39,7 @@ class SearchResultType {
 	 * @since 13.0.0
 	 */
 	protected function getValidatedType($type) {
-		$type = trim((string) $type);
+		$type = trim((string)$type);
 
 		if ($type === '') {
 			throw new \InvalidArgumentException('Type must not be empty');

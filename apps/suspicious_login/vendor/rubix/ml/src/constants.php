@@ -9,7 +9,7 @@ namespace Rubix\ML
      *
      * @var string
      */
-    const VERSION = '0.4.1';
+    const VERSION = '2.3';
 
     /**
      * A small number used in substitution of 0.
@@ -46,13 +46,4 @@ namespace Rubix\ML
      * @var float
      */
     const HALF_PI = 0.5 * M_PI;
-
-    /**
-     * Coefficient that determines floating point precision of random number generation.
-     *
-     * @internal
-     *
-     * @var int
-     */
-    const PHI = 100000000;
 }

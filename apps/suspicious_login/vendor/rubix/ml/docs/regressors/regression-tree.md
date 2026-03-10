@@ -12,30 +12,40 @@ A decision tree based on the CART (*Classification and Regression Tree*) learnin
 |---|---|---|---|---|
 | 1 | maxHeight | PHP_INT_MAX | int | The maximum height of the tree. |
 | 2 | maxLeafSize | 3 | int | The max number of samples that a leaf node can contain. |
-| 3 | maxFeatures | Auto | int | The max number of feature columns to consider when determining a best split. |
-| 4 | minPurityIncrease | 1e-7 | float | The minimum increase in purity necessary for a node *not* to be post pruned during tree growth. |
+| 3 | minPurityIncrease | 1e-7 | float | The minimum increase in purity necessary to continue splitting a subtree. |
+| 4 | maxFeatures | Auto | int | The max number of feature columns to consider when determining a best split. |
+| 5 | maxBins | Auto | int | The maximum number of bins to consider when determining a split with a continuous feature as the split point. |
 
 ## Example
 ```php
 use Rubix\ML\Regressors\RegressionTree;
 
-$estimator = new RegressionTree(20, 2, null, 1e-3);
+$estimator = new RegressionTree(20, 2, 1e-3, 10, null);
 ```
 
 ## Additional Methods
-Return a human-readable text representation of the decision tree ruleset:
+Export a Graphviz "dot" encoding of the decision tree structure.
 ```php
-public rules(?array $header = null) : string
+public exportGraphviz() : Encoding
 ```
 
-Return the height of the tree i.e. the number of layers:
 ```php
-public height() : int
+use Rubix\ML\Helpers\Graphviz;
+use Rubix\ML\Persisters\Filesystem;
+
+$dot = $estimator->exportGraphviz();
+
+Graphviz::dotToImage($dot)->saveTo(new Filesystem('tree.png'));
 ```
 
-Return the balance factor of the tree:
+Return the number of levels in the tree.
 ```php
-public balance() : int
+public height() : ?int
+```
+
+Return a factor that quantifies the skewness of the distribution of nodes in the tree.
+```php
+public balance() : ?int
 ```
 
 ## References:

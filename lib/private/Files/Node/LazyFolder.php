@@ -134,9 +134,6 @@ class LazyFolder implements Folder {
 		$this->__call(__FUNCTION__, func_get_args());
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function get($path) {
 		return $this->getRootFolder()->get($this->getFullPath($path));
 	}
@@ -317,10 +314,7 @@ class LazyFolder implements Folder {
 		return $this->__call(__FUNCTION__, func_get_args());
 	}
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getMimetype() {
+	public function getMimetype(): string {
 		if (isset($this->data['mimetype'])) {
 			return $this->data['mimetype'];
 		}
@@ -422,9 +416,6 @@ class LazyFolder implements Folder {
 		return $this->__call(__FUNCTION__, func_get_args());
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	public function nodeExists($path) {
 		return $this->__call(__FUNCTION__, func_get_args());
 	}
@@ -472,7 +463,7 @@ class LazyFolder implements Folder {
 	 * @inheritDoc
 	 */
 	public function getById($id) {
-		return $this->getRootFolder()->getByIdInPath((int) $id, $this->getPath());
+		return $this->getRootFolder()->getByIdInPath((int)$id, $this->getPath());
 	}
 
 	public function getFirstNodeById(int $id): ?\OCP\Files\Node {

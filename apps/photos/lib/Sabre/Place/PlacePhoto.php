@@ -24,7 +24,7 @@ class PlacePhoto extends CollectionPhoto implements IFile {
 		private PlaceInfo $placeInfo,
 		PlaceFile $file,
 		private IRootFolder $rootFolder,
-		Folder $userFolder
+		Folder $userFolder,
 	) {
 		parent::__construct($file, $userFolder);
 	}
@@ -46,7 +46,7 @@ class PlacePhoto extends CollectionPhoto implements IFile {
 		if ($node) {
 			return $node;
 		} else {
-			throw new NotFoundException("Photo not found for user");
+			throw new NotFoundException('Photo not found for user');
 		}
 	}
 
@@ -56,7 +56,7 @@ class PlacePhoto extends CollectionPhoto implements IFile {
 		if ($node instanceof File) {
 			return $node->fopen('r');
 		} else {
-			throw new NotFoundException("Photo is a folder");
+			throw new NotFoundException('Photo is a folder');
 		}
 	}
 

@@ -3,26 +3,22 @@
 namespace Rubix\ML\AnomalyDetectors;
 
 use Rubix\ML\Learner;
-use Rubix\ML\Ranking;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
+use Rubix\ML\Helpers\Stats;
+use Rubix\ML\Helpers\Params;
 use Rubix\ML\Datasets\Dataset;
 use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Graph\Trees\KDTree;
 use Rubix\ML\Graph\Trees\Spatial;
-use Rubix\ML\Other\Helpers\Stats;
-use Rubix\ML\Other\Helpers\Params;
-use Rubix\ML\Other\Traits\RanksSingle;
-use Rubix\ML\Other\Traits\AutotrackRevisions;
+use Rubix\ML\Traits\AutotrackRevisions;
 use Rubix\ML\Specifications\DatasetIsNotEmpty;
 use Rubix\ML\Specifications\SpecificationChain;
 use Rubix\ML\Specifications\DatasetHasDimensionality;
 use Rubix\ML\Specifications\SamplesAreCompatibleWithEstimator;
 use Rubix\ML\Exceptions\InvalidArgumentException;
 use Rubix\ML\Exceptions\RuntimeException;
-
-use function Rubix\ML\warn_deprecated;
 
 use const Rubix\ML\EPSILON;
 
@@ -41,9 +37,9 @@ use const Rubix\ML\EPSILON;
  * @package     Rubix/ML
  * @author      Andrew DalPino
  */
-class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persistable
+class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
 {
-    use AutotrackRevisions, RanksSingle;
+    use AutotrackRevisions;
 
     /**
      * The default minimum anomaly score for a sample to be flagged.
@@ -57,30 +53,28 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
      *
      * @var int
      */
-    protected $k;
+    protected int $k;
 
     /**
-     * The percentage of outliers that are assumed to be present in the
-     * training set.
+     * The percentage of outliers that are assumed to be present in the training set.
      *
      * @var float|null
      */
-    protected $contamination;
+    protected ?float $contamination = null;
 
     /**
      * The k-d tree used for nearest neighbor queries.
      *
      * @var \Rubix\ML\Graph\Trees\Spatial
      */
-    protected $tree;
+    protected \Rubix\ML\Graph\Trees\Spatial $tree;
 
     /**
-     * The precomputed k distances between each training sample and its kth
-     * nearest neighbor.
+     * The precomputed k distances between each training sample and its k'th nearest neighbor.
      *
      * @var float[]
      */
-    protected $kdistances = [
+    protected array $kdistances = [
         //
     ];
 
@@ -89,7 +83,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
      *
      * @var float[]
      */
-    protected $lrds = [
+    protected array $lrds = [
         //
     ];
 
@@ -98,14 +92,14 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
      *
      * @var float|null
      */
-    protected $threshold;
+    protected ?float $threshold = null;
 
     /**
      * The dimensionality of the training set.
      *
      * @var int|null
      */
-    protected $featureCount;
+    protected ?int $featureCount = null;
 
     /**
      * @param int $k
@@ -202,7 +196,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
             new SamplesAreCompatibleWithEstimator($dataset, $this),
         ])->check();
 
-        $labels = range(0, $dataset->numRows() - 1);
+        $labels = range(0, $dataset->numSamples() - 1);
 
         $dataset = Labeled::quick($dataset->samples(), $labels);
 
@@ -231,7 +225,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
 
         $this->threshold = $threshold ?? self::DEFAULT_THRESHOLD;
 
-        $this->featureCount = $dataset->numColumns();
+        $this->featureCount = $dataset->numFeatures();
     }
 
     /**
@@ -283,21 +277,6 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
     }
 
     /**
-     * Return the anomaly scores assigned to the samples in a dataset.
-     *
-     * @deprecated
-     *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @return list<float>
-     */
-    public function rank(Dataset $dataset) : array
-    {
-        warn_deprecated('Rank() is deprecated, use score() instead.');
-
-        return $this->score($dataset);
-    }
-
-    /**
      * Calculate the local outlier factor of a given sample given its k
      * nearest neighbors.
      *
@@ -342,6 +321,8 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Ranking, Persis
 
     /**
      * Return the string representation of the object.
+     *
+     * @internal
      *
      * @return string
      */

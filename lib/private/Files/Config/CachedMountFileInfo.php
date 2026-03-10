@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +19,7 @@ class CachedMountFileInfo extends CachedMountInfo implements ICachedMountFileInf
 		?int $mountId,
 		string $mountProvider,
 		string $rootInternalPath,
-		string $internalPath
+		string $internalPath,
 	) {
 		parent::__construct($user, $storageId, $rootId, $mountPoint, $mountProvider, $mountId, $rootInternalPath);
 		$this->internalPath = $internalPath;

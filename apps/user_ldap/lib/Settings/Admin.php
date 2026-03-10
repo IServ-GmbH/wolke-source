@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,14 +13,12 @@ use OCP\Settings\IDelegatedSettings;
 use OCP\Template;
 
 class Admin implements IDelegatedSettings {
-	/** @var IL10N */
-	private $l;
-
 	/**
 	 * @param IL10N $l
 	 */
-	public function __construct(IL10N $l) {
-		$this->l = $l;
+	public function __construct(
+		private IL10N $l,
+	) {
 	}
 
 	/**
@@ -56,7 +53,7 @@ class Admin implements IDelegatedSettings {
 		}
 		$defaults = $config->getDefaults();
 		foreach ($defaults as $key => $default) {
-			$parameters[$key.'_default'] = $default;
+			$parameters[$key . '_default'] = $default;
 		}
 
 		return new TemplateResponse('user_ldap', 'settings', $parameters);
