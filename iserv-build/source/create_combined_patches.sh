@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# NOTE: This script is no longer used by the Dockerfile (which now uses per-stage
+# builds for parallel PHP/JS patch generation). Retained for local development
+# and debugging. See Dockerfile for the current build logic.
+
 set -e
 
 # Create patch files based on the changes in git working directories

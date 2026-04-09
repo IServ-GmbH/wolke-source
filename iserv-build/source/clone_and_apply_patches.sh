@@ -9,6 +9,7 @@ print_help()
   echo
   echo "Options:"
   echo
+  echo "--clone-only  only clone upstream repositories, skip copying added files and applying patches"
   echo "-m  write 3-way-merge representation (<<<<<<<...>>>>>>>) for failed files"
   echo "    (Don't try to do this repeatedly!)"
   echo "-h  display help"
@@ -19,6 +20,18 @@ print_help()
   echo "Available versions: https://nextcloud.com/changelog/"
   exit 1
 }
+
+# Parse --clone-only before getopts (which only handles short flags)
+CLONE_ONLY=0
+ARGS=()
+for arg in "$@"; do
+  if [ "$arg" = "--clone-only" ]; then
+    CLONE_ONLY=1
+  else
+    ARGS+=("$arg")
+  fi
+done
+set -- "${ARGS[@]}"
 
 fetch_latest_version_for_apps() {
   GITHUB_USER="$1"
@@ -105,6 +118,11 @@ else
   # files_linkeditor does not use usual branch naming - keep in sync with version number in Dockerfile
   # TODO: Have a central place to keep the app versions #76427
   fetch_specific_tag_for_apps "te-online" "files_linkeditor" "v1.1.23"
+fi
+
+if [ "$CLONE_ONLY" = "1" ] ; then
+  echo "Clone-only mode: skipping added files and patches."
+  exit 0
 fi
 
 echo "Copying added files into repo directories..."

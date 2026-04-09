@@ -13,9 +13,14 @@ If you make changes to the patches or the Dockerfile and want to test a new imag
   - Completely new files are located in `./source/added/`.
 - The patches were created based on [nextcloud/server](https://github.com/nextcloud/server) and [nextcloud/activity](https://github.com/nextcloud/activity).
 
-When the Docker image is built, in the first stage, `clone_and_apply_patches.sh` applies patches and copies the added files into a freshly checked-out working copy of Nextcloud.  
-Then `create_combined_patches.sh` builds the JavaScript assets and creates temporary (binary) patch files representing all changes.  
-These binary patches will be applied to the production code in the second build stage.
+The Docker image build uses multiple parallel stages for fast iteration:
+
+1. **clone** — Clones upstream Nextcloud and app repositories. Cached by VERSION alone, so patch changes don't invalidate this layer.
+2. **js-main / js-richdocuments / js-viewer / js-linkeditor** — Each stage applies only its relevant `src/` patches, runs `npm ci` + JS build, and produces a binary diff of the compiled output. These stages run in parallel.
+3. **php-patches** — Applies all patches (via `clone_and_apply_patches.sh`) and produces diffs excluding JS source files. No JS compilation happens here.
+4. **production** — Collects all patch files from the parallel stages and applies them to the production Nextcloud image.
+
+This means PHP-only changes skip all JS compilation, and JS changes only rebuild the affected app.
 
 ## Build the image
 
@@ -103,15 +108,14 @@ If for some reason you need to manually restart the container with a new image, 
   - `./source/added/`  
   - `./source/patches/`.
 
-If patches need to be created for Nextcloud apps, corresponding changes must be made to the scripts `clone_and_apply_patches.sh`, `create_combined_patches.sh`, and `extract_patches.sh`.
+If patches need to be created for Nextcloud apps, corresponding changes must be made to the scripts `clone_and_apply_patches.sh`, `extract_patches.sh`, and the `Dockerfile`.
 
 ### Patching a new app
 
 If patches need to be applied to an app that has not been patched yet, make sure to update the following scripts as well:
 
-* Dockerfile
+* Dockerfile (add a new JS stage if the app has frontend patches, and update the production stage)
 * clone_and_apply_patches.sh
-* create_combined_patches.sh
 * extract_patches.sh
 
 ## Handling failed patches
