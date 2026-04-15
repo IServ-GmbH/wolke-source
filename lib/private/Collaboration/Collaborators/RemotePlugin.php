@@ -108,6 +108,7 @@ class RemotePlugin implements ISearchPlugin {
 								'server' => $serverUrl,
 								'isTrustedServer' => $this->trustedServers?->isTrustedServer($serverUrl) ?? false,
 							],
+							'shareWithDisplayNameUnique' => is_array($contact['EMAIL']) ? array_values($contact['EMAIL'])[0] ?? '': $contact['EMAIL'] ?? '',
 						];
 					} else {
 						$result['wide'][] = [
@@ -121,6 +122,7 @@ class RemotePlugin implements ISearchPlugin {
 								'server' => $serverUrl,
 								'isTrustedServer' => $this->trustedServers?->isTrustedServer($serverUrl) ?? false,
 							],
+							'shareWithDisplayNameUnique' => is_array($contact['EMAIL']) ? array_values($contact['EMAIL'])[0] ?? '' : $contact['EMAIL'] ?? '',
 						];
 					}
 				}

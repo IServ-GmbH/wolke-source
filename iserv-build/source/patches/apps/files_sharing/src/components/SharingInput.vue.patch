@@ -1,0 +1,17 @@
+diff --git apps/files_sharing/src/components/SharingInput.vue apps/files_sharing/src/components/SharingInput.vue
+index 56af1b4..e730fe6 100644
+--- apps/files_sharing/src/components/SharingInput.vue
++++ apps/files_sharing/src/components/SharingInput.vue
+@@ -492,7 +492,11 @@ export default {
+ 			} else if ((result.value.shareType === ShareType.Remote
+ 					|| result.value.shareType === ShareType.RemoteGroup
+ 			) && result.value.server) {
+-				subname = t('files_sharing', 'on {server}', { server: result.value.server })
++				if (result.shareWithDisplayNameUnique) {
++					subname = result.shareWithDisplayNameUnique
++				} else {
++					subname = t('files_sharing', 'on {server}', { server: result.value.server })
++				}
+ 			} else if (result.value.shareType === ShareType.Email) {
+ 				subname = result.value.shareWith
+ 			} else {
