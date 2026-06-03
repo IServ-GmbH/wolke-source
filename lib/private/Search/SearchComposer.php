@@ -10,13 +10,14 @@ namespace OC\Search;
 
 use InvalidArgumentException;
 use OC\AppFramework\Bootstrap\Coordinator;
+use OC\Core\AppInfo\Application;
 use OC\Core\AppInfo\ConfigLexicon;
-use OC\Core\Application;
 use OC\Core\ResponseDefinitions;
 use OCP\IAppConfig;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Search\FilterDefinition;
+use OCP\Search\IExternalProvider;
 use OCP\Search\IFilter;
 use OCP\Search\IFilteringProvider;
 use OCP\Search\IInAppSearch;
@@ -180,6 +181,7 @@ class SearchComposer {
 				if ($order === null) {
 					return;
 				}
+				$isExternalProvider = $provider instanceof IExternalProvider ? $provider->isExternalProvider() : false;
 				$triggers = [$provider->getId()];
 				if ($provider instanceof IFilteringProvider) {
 					$triggers += $provider->getAlternateIds();
@@ -194,6 +196,7 @@ class SearchComposer {
 					'name' => $provider->getName(),
 					'icon' => $this->fetchIcon($appId, $provider->getId()),
 					'order' => $order,
+					'isExternalProvider' => $isExternalProvider,
 					'triggers' => array_values($triggers),
 					'filters' => $this->getFiltersType($filters, $provider->getId()),
 					'inAppSearch' => $provider instanceof IInAppSearch,

@@ -7,18 +7,19 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Encryption details &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+  <title>Server-side encryption details &mdash; Nextcloud latest Administration Manual latest documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/configuration_files/encryption_details.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -29,8 +30,8 @@
     <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Encryption migration" href="encryption_migration.html" />
-    <link rel="prev" title="Encryption configuration" href="encryption_configuration.html" /> 
+    <link rel="next" title="Server-side encryption migration" href="encryption_migration.html" />
+    <link rel="prev" title="Server-side Encryption" href="encryption_configuration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,16 +58,32 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">File sharing and management</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="file_sharing_configuration.html">File Sharing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="federated_cloud_sharing_configuration.html">Configuring Federation Sharing</a></li>
@@ -75,8 +92,8 @@
 <li class="toctree-l2"><a class="reference internal" href="primary_storage.html">Configuring Object Storage as Primary Storage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="external_storage_configuration_gui.html">Configuring External Storage (GUI)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="external_storage/auth_mechanisms.html">External Storage authentication mechanisms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="encryption_configuration.html">Encryption configuration</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Encryption details</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="encryption_configuration.html">Server-side Encryption</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Server-side encryption details</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#key-type-master-key">Key type: master key</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#key-type-public-sharing-key">Key type: public sharing key</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#key-type-recovery-key">Key type: recovery key</a></li>
@@ -152,27 +169,55 @@
 <li class="toctree-l3"><a class="reference internal" href="#sources">Sources</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="encryption_migration.html">Encryption migration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encryption_migration.html">Server-side encryption migration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="files_locking_transactional.html">Transactional file locking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="previews_configuration.html">Previews configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file_versioning.html">Controlling file versions and aging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trashbin_configuration.html">Deleted Items (trash bin)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="file_conversion.html">File conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windows_compatible_filenames.html">Windows compatible filenames</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -190,7 +235,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../contents.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">File sharing and management</a></li>
-      <li class="breadcrumb-item active">Encryption details</li>
+      <li class="breadcrumb-item active">Server-side encryption details</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/nextcloud/documentation/edit/master/admin_manual/configuration_files/encryption_details.rst" class="fa fa-github"> Edit on GitHub</a>
       </li>
@@ -200,9 +245,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="encryption-details">
-<h1>Encryption details<a class="headerlink" href="#encryption-details" title="Link to this heading"></a></h1>
-<p>This document - provided by <a class="reference external" href="https://syseleven.de">SysEleven</a> - describes the server-side encryption scheme implemented by Nextcloud’s default encryption module. This includes:</p>
+  <section id="server-side-encryption-details">
+<h1>Server-side encryption details<a class="headerlink" href="#server-side-encryption-details" title="Link to this heading"></a></h1>
+<p>This document describes the server-side encryption scheme implemented by Nextcloud’s default encryption module. This includes:</p>
 <ul class="simple">
 <li><p>the encryption and signature of files with a master key.</p></li>
 <li><p>the encryption and signature of files with a public sharing key.</p></li>
@@ -501,7 +546,7 @@ $encrypted[$n].&quot;00iv00&quot;.$iv[$n].&quot;00sig00&quot;.$signature[$n].&qu
 <h2>Sources<a class="headerlink" href="#sources" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/nextcloud/encryption-recovery-tools">encryption-recovery-tools repository on GitHub</a></p></li>
-<li><p><a class="reference external" href="https://docs.nextcloud.com/server/31/admin_manual/configuration_files/encryption_configuration.html">Nextcloud Encryption Configuration documentation</a></p></li>
+<li><p><a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/configuration_files/encryption_configuration.html">Nextcloud Encryption Configuration documentation</a></p></li>
 <li><p><a class="reference external" href="https://help.nextcloud.com/t/allow-file-decryption-with-only-the-files-keys-and-passwords/436/12">Nextcloud Help response concerning the usage of version information</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/blob/a374d8837d6de459500e619cf608e0721ea14574/apps/encryption/lib/Crypto/Crypt.php#L504">Sourcecode: Creation of the Message Authentication Code</a></p></li>
 <li><p><a class="reference external" href="https://github.com/nextcloud/server/blob/a374d8837d6de459500e619cf608e0721ea14574/apps/encryption/lib/Crypto/Crypt.php#L346">Sourcecode: Derivation of the Encryption Key</a></p></li>
@@ -519,14 +564,14 @@ $encrypted[$n].&quot;00iv00&quot;.$iv[$n].&quot;00sig00&quot;.$signature[$n].&qu
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="encryption_configuration.html" class="btn btn-neutral float-left" title="Encryption configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="encryption_migration.html" class="btn btn-neutral float-right" title="Encryption migration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="encryption_configuration.html" class="btn btn-neutral float-left" title="Server-side Encryption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="encryption_migration.html" class="btn btn-neutral float-right" title="Server-side encryption migration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -566,26 +611,18 @@ $encrypted[$n].&quot;00iv00&quot;.$iv[$n].&quot;00sig00&quot;.$signature[$n].&qu
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

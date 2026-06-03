@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,6 +23,11 @@ class NotificationService {
 	}
 
 	public function mention(int $fileId, string $userId): bool {
+		if ($userId === $this->userId) {
+			// We allow self mentions in documents but do not notify about it
+			return false;
+		}
+
 		$notification = $this->manager->createNotification();
 		$notification->setUser($userId)
 			->setApp('text')

@@ -23,6 +23,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -30,6 +31,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\Install\Events\InstallationCompletedEvent;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory as IL10NFactory;
@@ -174,8 +176,7 @@ class Setup {
 			self::protectDataDirectory();
 
 			try {
-				$util = new \OC_Util();
-				$htAccessWorking = $util->isHtaccessWorking(Server::get(IConfig::class));
+				$htAccessWorking = $this->isHtaccessWorking($dataDir);
 			} catch (\OCP\HintException $e) {
 				$errors[] = [
 					'error' => $e->getMessage(),
@@ -189,8 +190,8 @@ class Setup {
 		if (\OC_Util::runningOnMac()) {
 			$errors[] = [
 				'error' => $this->l10n->t(
-					'Mac OS X is not supported and %s will not work properly on this platform. ' .
-					'Use it at your own risk!',
+					'Mac OS X is not supported and %s will not work properly on this platform. '
+					. 'Use it at your own risk!',
 					[$this->defaults->getProductName()]
 				),
 				'hint' => $this->l10n->t('For the best results, please consider using a GNU/Linux server instead.'),
@@ -200,8 +201,8 @@ class Setup {
 		if ($this->iniWrapper->getString('open_basedir') !== '' && PHP_INT_SIZE === 4) {
 			$errors[] = [
 				'error' => $this->l10n->t(
-					'It seems that this %s instance is running on a 32-bit PHP environment and the open_basedir has been configured in php.ini. ' .
-					'This will lead to problems with files over 4 GB and is highly discouraged.',
+					'It seems that this %s instance is running on a 32-bit PHP environment and the open_basedir has been configured in php.ini. '
+					. 'This will lead to problems with files over 4 GB and is highly discouraged.',
 					[$this->defaults->getProductName()]
 				),
 				'hint' => $this->l10n->t('Please remove the open_basedir setting within your php.ini or switch to 64-bit PHP.'),
@@ -209,15 +210,92 @@ class Setup {
 		}
 
 		return [
-			'hasSQLite' => isset($databases['sqlite']),
-			'hasMySQL' => isset($databases['mysql']),
-			'hasPostgreSQL' => isset($databases['pgsql']),
-			'hasOracle' => isset($databases['oci']),
 			'databases' => $databases,
 			'directory' => $dataDir,
 			'htaccessWorking' => $htAccessWorking,
 			'errors' => $errors,
 		];
+	}
+
+	public function createHtaccessTestFile(string $dataDir): string|false {
+		// php dev server does not support htaccess
+		if (php_sapi_name() === 'cli-server') {
+			return false;
+		}
+
+		// testdata
+		$fileName = '/htaccesstest.txt';
+		$testContent = 'This is used for testing whether htaccess is properly enabled to disallow access from the outside. This file can be safely removed.';
+
+		// creating a test file
+		$testFile = $dataDir . '/' . $fileName;
+
+		if (file_exists($testFile)) {// already running this test, possible recursive call
+			return false;
+		}
+
+		$fp = @fopen($testFile, 'w');
+		if (!$fp) {
+			throw new \OCP\HintException('Can\'t create test file to check for working .htaccess file.',
+				'Make sure it is possible for the web server to write to ' . $testFile);
+		}
+		fwrite($fp, $testContent);
+		fclose($fp);
+
+		return $testContent;
+	}
+
+	/**
+	 * Check if the .htaccess file is working
+	 *
+	 * @param \OCP\IConfig $config
+	 * @return bool
+	 * @throws Exception
+	 * @throws \OCP\HintException If the test file can't get written.
+	 */
+	public function isHtaccessWorking(string $dataDir) {
+		$config = Server::get(IConfig::class);
+
+		if (\OC::$CLI || !$config->getSystemValueBool('check_for_working_htaccess', true)) {
+			return true;
+		}
+
+		$testContent = $this->createHtaccessTestFile($dataDir);
+		if ($testContent === false) {
+			return false;
+		}
+
+		$fileName = '/htaccesstest.txt';
+		$testFile = $dataDir . '/' . $fileName;
+
+		// accessing the file via http
+		$url = Server::get(IURLGenerator::class)->getAbsoluteURL(\OC::$WEBROOT . '/data' . $fileName);
+		try {
+			$content = Server::get(IClientService::class)->newClient()->get($url)->getBody();
+		} catch (\Exception $e) {
+			$content = false;
+		}
+
+		if (str_starts_with($url, 'https:')) {
+			$url = 'http:' . substr($url, 6);
+		} else {
+			$url = 'https:' . substr($url, 5);
+		}
+
+		try {
+			$fallbackContent = Server::get(IClientService::class)->newClient()->get($url)->getBody();
+		} catch (\Exception $e) {
+			$fallbackContent = false;
+		}
+
+		// cleanup
+		@unlink($testFile);
+
+		/*
+		 * If the content is not equal to test content our .htaccess
+		 * is working as required
+		 */
+		return $content !== $testContent && $fallbackContent !== $testContent;
 	}
 
 	/**
@@ -229,11 +307,15 @@ class Setup {
 		$error = [];
 		$dbType = $options['dbtype'];
 
-		if (empty($options['adminlogin'])) {
-			$error[] = $l->t('Set an admin Login.');
-		}
-		if (empty($options['adminpass'])) {
-			$error[] = $l->t('Set an admin password.');
+		$disableAdminUser = (bool)($options['admindisable'] ?? false);
+
+		if (!$disableAdminUser) {
+			if (empty($options['adminlogin'])) {
+				$error[] = $l->t('Set an admin Login.');
+			}
+			if (empty($options['adminpass'])) {
+				$error[] = $l->t('Set an admin password.');
+			}
 		}
 		if (empty($options['directory'])) {
 			$options['directory'] = \OC::$SERVERROOT . '/data';
@@ -243,8 +325,6 @@ class Setup {
 			$dbType = 'sqlite';
 		}
 
-		$username = htmlspecialchars_decode($options['adminlogin']);
-		$password = htmlspecialchars_decode($options['adminpass']);
 		$dataDir = htmlspecialchars_decode($options['directory']);
 
 		$class = self::$dbSetupClasses[$dbType];
@@ -300,7 +380,7 @@ class Setup {
 		$this->outputDebug($output, 'Configuring database');
 		$dbSetup->initialize($options);
 		try {
-			$dbSetup->setupDatabase($username);
+			$dbSetup->setupDatabase();
 		} catch (\OC\DatabaseSetupException $e) {
 			$error[] = [
 				'error' => $e->getMessage(),
@@ -330,19 +410,22 @@ class Setup {
 			return $error;
 		}
 
-		$this->outputDebug($output, 'Create admin account');
-
-		// create the admin account and group
 		$user = null;
-		try {
-			$user = Server::get(IUserManager::class)->createUser($username, $password);
-			if (!$user) {
-				$error[] = "Account <$username> could not be created.";
+		if (!$disableAdminUser) {
+			$username = htmlspecialchars_decode($options['adminlogin']);
+			$password = htmlspecialchars_decode($options['adminpass']);
+			$this->outputDebug($output, 'Create admin account');
+
+			try {
+				$user = Server::get(IUserManager::class)->createUser($username, $password);
+				if (!$user) {
+					$error[] = "Account <$username> could not be created.";
+					return $error;
+				}
+			} catch (Exception $exception) {
+				$error[] = $exception->getMessage();
 				return $error;
 			}
-		} catch (Exception $exception) {
-			$error[] = $exception->getMessage();
-			return $error;
 		}
 
 		$config = Server::get(IConfig::class);
@@ -357,13 +440,14 @@ class Setup {
 		}
 
 		$group = Server::get(IGroupManager::class)->createGroup('admin');
-		if ($group instanceof IGroup) {
+		if ($user !== null && $group instanceof IGroup) {
 			$group->addUser($user);
 		}
 
 		// Install shipped apps and specified app bundles
 		$this->outputDebug($output, 'Install default apps');
-		Installer::installShippedApps(false, $output);
+		$installer = Server::get(Installer::class);
+		$installer->installShippedApps(false, $output);
 
 		// create empty file in data dir, so we can later find
 		// out that this is indeed a Nextcloud data directory
@@ -389,30 +473,32 @@ class Setup {
 		$bootstrapCoordinator = Server::get(\OC\AppFramework\Bootstrap\Coordinator::class);
 		$bootstrapCoordinator->runInitialRegistration();
 
-		// Create a session token for the newly created user
-		// The token provider requires a working db, so it's not injected on setup
-		/** @var \OC\User\Session $userSession */
-		$userSession = Server::get(IUserSession::class);
-		$provider = Server::get(PublicKeyTokenProvider::class);
-		$userSession->setTokenProvider($provider);
-		$userSession->login($username, $password);
-		$user = $userSession->getUser();
-		if (!$user) {
-			$error[] = 'No account found in session.';
-			return $error;
-		}
-		$userSession->createSessionToken($request, $user->getUID(), $username, $password);
+		if (!$disableAdminUser) {
+			// Create a session token for the newly created user
+			// The token provider requires a working db, so it's not injected on setup
+			/** @var \OC\User\Session $userSession */
+			$userSession = Server::get(IUserSession::class);
+			$provider = Server::get(PublicKeyTokenProvider::class);
+			$userSession->setTokenProvider($provider);
+			$userSession->login($username, $password);
+			$user = $userSession->getUser();
+			if (!$user) {
+				$error[] = 'No account found in session.';
+				return $error;
+			}
+			$userSession->createSessionToken($request, $user->getUID(), $username, $password);
 
-		$session = $userSession->getSession();
-		$session->set('last-password-confirm', Server::get(ITimeFactory::class)->getTime());
+			$session = $userSession->getSession();
+			$session->set('last-password-confirm', Server::get(ITimeFactory::class)->getTime());
 
-		// Set email for admin
-		if (!empty($options['adminemail'])) {
-			$user->setSystemEMailAddress($options['adminemail']);
+			// Set email for admin
+			if (!empty($options['adminemail'])) {
+				$user->setSystemEMailAddress($options['adminemail']);
+			}
 		}
 
 		// Dispatch installation completed event
-		$adminUsername = !empty($username) ? $username : null;
+		$adminUsername = !$disableAdminUser ? ($options['adminlogin'] ?? null) : null;
 		$adminEmail = !empty($options['adminemail']) ? $options['adminemail'] : null;
 		$this->eventDispatcher->dispatchTyped(
 			new InstallationCompletedEvent($dataDir, $adminUsername, $adminEmail)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -464,7 +465,7 @@ class SharedStorage extends Jail implements LegacyISharedStorage, ISharedStorage
 	 */
 	public function unshareStorage(): bool {
 		foreach ($this->groupedShares as $share) {
-			\OC::$server->getShareManager()->deleteFromSelf($share, $this->user);
+			Server::get(\OCP\Share\IManager::class)->deleteFromSelf($share, $this->user);
 		}
 		return true;
 	}

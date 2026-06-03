@@ -1,0 +1,17 @@
+diff --git apps/files/src/actions/downloadAction.ts apps/files/src/actions/downloadAction.ts
+index f705e5f..1c6bbfd 100644
+--- apps/files/src/actions/downloadAction.ts
++++ apps/files/src/actions/downloadAction.ts
+@@ -128,6 +128,12 @@ export const action = new FileAction({
+ 			return false
+ 		}
+ 
++		// IServ: globally disable downloads (also removes the default click-to-download
++		// action, batch download and keyboard handlers) when configured.
++		if (window.OC?.appConfig?.core?.disableFileDownloads) {
++			return false
++		}
++
+ 		// We can only download dav files and folders.
+ 		if (nodes.some(node => !node.isDavResource)) {
+ 			return false

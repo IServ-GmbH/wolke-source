@@ -314,7 +314,7 @@ class ExAppsPageController extends Controller {
 	}
 
 	#[PasswordConfirmationRequired]
-	public function enableApp(string $appId, array $deployOptions = []): JSONResponse {
+	public function enableApp(string $appId, string $daemonId, array $deployOptions = []): JSONResponse {
 		$updateRequired = false;
 		$exApp = $this->exAppService->getExApp($appId);
 
@@ -341,6 +341,7 @@ class ExAppsPageController extends Controller {
 					'app_api:app:register',
 					'--silent',
 					$appId,
+					$daemonId,
 				],
 				$envArgs,
 				$mountArgs
@@ -441,10 +442,14 @@ class ExAppsPageController extends Controller {
 			$daemonConfig = $this->daemonConfigService->getDaemonConfigByName($exApp->getDaemonConfigName());
 			if ($daemonConfig->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
 				$this->dockerActions->initGuzzleClient($daemonConfig);
-				if ($removeContainer) {
-					$this->dockerActions->removeContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($appId));
-					if ($removeData) {
-						$this->dockerActions->removeVolume($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppVolumeName($appId));
+				if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+					$this->dockerActions->removeExApp($this->dockerActions->buildDockerUrl($daemonConfig), $exApp->getAppid(), removeData: $removeData);
+				} else {
+					if ($removeContainer) {
+						$this->dockerActions->removeContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($appId));
+						if ($removeData) {
+							$this->dockerActions->removeVolume($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppVolumeName($appId));
+						}
 					}
 				}
 			}

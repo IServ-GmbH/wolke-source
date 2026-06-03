@@ -55,23 +55,23 @@ class KSkipNGram implements Tokenizer
     /**
      * The word tokenizer.
      *
-     * @var \Rubix\ML\Tokenizers\Word
+     * @var Word
      */
-    protected \Rubix\ML\Tokenizers\Word $wordTokenizer;
+    protected Word $wordTokenizer;
 
     /**
      * The sentence tokenizer.
      *
-     * @var \Rubix\ML\Tokenizers\Sentence
+     * @var Sentence
      */
-    protected \Rubix\ML\Tokenizers\Sentence $sentenceTokenizer;
+    protected Sentence $sentenceTokenizer;
 
     /**
      * @param int $min
      * @param int $max
      * @param int $skip
-     * @param \Rubix\ML\Tokenizers\Word|null $wordTokenizer
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Word|null $wordTokenizer
+     * @throws InvalidArgumentException
      */
     public function __construct(int $min = 2, int $max = 2, int $skip = 2, ?Word $wordTokenizer = null)
     {

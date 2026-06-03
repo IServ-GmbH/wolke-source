@@ -164,6 +164,7 @@ nav:
         - Swish: neural-network/hidden-layers/swish.md
       - Activation Functions:
         - ELU: neural-network/activation-functions/elu.md
+        - GELU: neural-network/activation-functions/gelu.md
         - Hyperbolic Tangent: neural-network/activation-functions/hyperbolic-tangent.md
         - Leaky ReLU: neural-network/activation-functions/leaky-relu.md
         - ReLU: neural-network/activation-functions/relu.md
@@ -200,6 +201,7 @@ nav:
       - Trees:
         - Ball Tree: graph/trees/ball-tree.md
         - K-d Tree: graph/trees/k-d-tree.md
+        - Vantage Tree: graph/trees/vantage-tree.md
     - Kernels:
       - Distance:
         - Canberra: kernels/distance/canberra.md
@@ -320,7 +322,6 @@ markdown_extensions:
   - footnotes
 
 extra_javascript:
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   - js/custom.js
 

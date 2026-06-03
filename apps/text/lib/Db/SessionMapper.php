@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -169,6 +170,51 @@ class SessionMapper extends QBMapper {
 			$batchDeleted = $deleteSessionsQb->delete('text_sessions')
 				->where($deleteSessionsQb->expr()->in('id', $deleteSessionsQb->createParameter('ids'), IQueryBuilder::PARAM_INT_ARRAY))
 				->setParameter('ids', $sessionIds, IQueryBuilder::PARAM_INT_ARRAY)
+				->executeStatement();
+
+			$deletedCount += $batchDeleted;
+		} while ((microtime(true) - $startTime) < $maxExecutionSeconds);
+
+		return $deletedCount;
+	}
+
+	public function deleteOrphanedSteps(int $ageInSeconds): int {
+		$startTime = microtime(true);
+		$maxExecutionSeconds = 30;
+		$batchSize = 1000;
+		$deletedCount = 0;
+		$ageThreshold = time() - $ageInSeconds;
+
+		do {
+			$orphanedStepsQb = $this->db->getQueryBuilder();
+			$orphanedStepsQb->select('st.id')
+				->from('text_steps', 'st')
+				->leftJoin('st', 'text_sessions', 's', $orphanedStepsQb->expr()->eq('st.document_id', 's.document_id'))
+				->leftJoin('st', 'text_documents', 'd', $orphanedStepsQb->expr()->eq('st.document_id', 'd.id'))
+				->where($orphanedStepsQb->expr()->isNull('s.id'))
+				->andWhere($orphanedStepsQb->expr()->lt('st.timestamp', $orphanedStepsQb->createNamedParameter($ageThreshold)))
+				->andWhere(
+					$orphanedStepsQb->expr()->orX(
+						$orphanedStepsQb->expr()->isNull('d.id'),
+						$orphanedStepsQb->expr()->lt('st.id', 'd.last_saved_version')
+					)
+				)
+				->setMaxResults($batchSize);
+
+			$result = $orphanedStepsQb->executeQuery();
+			$stepIds = array_map(function ($row) {
+				return (int)$row['id'];
+			}, $result->fetchAll());
+			$result->closeCursor();
+
+			if (empty($stepIds)) {
+				break;
+			}
+
+			$deleteQb = $this->db->getQueryBuilder();
+			$batchDeleted = $deleteQb->delete('text_steps')
+				->where($deleteQb->expr()->in('id', $deleteQb->createParameter('ids'), IQueryBuilder::PARAM_INT_ARRAY))
+				->setParameter('ids', $stepIds, IQueryBuilder::PARAM_INT_ARRAY)
 				->executeStatement();
 
 			$deletedCount += $batchDeleted;

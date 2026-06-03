@@ -127,7 +127,7 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, 
     /**
      * Fit the transformer to a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function fit(Dataset $dataset) : void
     {
@@ -152,7 +152,7 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, 
     /**
      * Update the fitting of the transformer.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function update(Dataset $dataset) : void
     {
@@ -164,6 +164,8 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, 
 
         $n = $dataset->numSamples();
 
+        $weight = $this->n + $n;
+
         foreach ($this->means as $column => $oldMean) {
             $oldVariance = $this->variances[$column];
 
@@ -172,23 +174,23 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, 
             [$mean, $variance] = Stats::meanVar($values);
 
             $this->means[$column] = (($this->n * $oldMean)
-                + ($n * $mean)) / ($this->n + $n);
+                + ($n * $mean)) / $weight;
 
             $this->variances[$column] = ($this->n
                 * $oldVariance + ($n * $variance)
-                + ($this->n / ($n * ($this->n + $n)))
+                + ($this->n / ($n * $weight))
                 * ($n * $oldMean - $n * $mean) ** 2)
-                / ($this->n + $n);
+                / $weight;
         }
 
-        $this->n += $n;
+        $this->n = $weight;
     }
 
     /**
      * Transform the dataset in place.
      *
      * @param list<list<mixed>> $samples
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function transform(array &$samples) : void
     {
@@ -215,7 +217,7 @@ class ZScaleStandardizer implements Transformer, Stateful, Elastic, Reversible, 
      * Perform the reverse transformation to the samples.
      *
      * @param list<list<mixed>> $samples
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function reverseTransform(array &$samples) : void
     {

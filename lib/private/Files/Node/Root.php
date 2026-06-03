@@ -15,6 +15,7 @@ use OC\Files\View;
 use OC\Hooks\PublicEmitter;
 use OC\User\NoUserException;
 use OCA\Files\AppInfo\Application;
+use OCA\Files\ConfigLexicon;
 use OCP\Cache\CappedMemoryCache;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Cache\ICacheEntry;
@@ -76,7 +77,7 @@ class Root extends Folder implements IRootFolder {
 			$this->userFolderCache = new CappedMemoryCache();
 		});
 		$this->pathByIdCache = $cacheFactory->createLocal('path-by-id');
-		$this->useDefaultHomeFoldersPermissions = count($appConfig->getValueArray(Application::APP_ID, 'overwrites_home_folders')) === 0;
+		$this->useDefaultHomeFoldersPermissions = count($appConfig->getValueArray(Application::APP_ID, ConfigLexicon::OVERWRITES_HOME_FOLDERS)) === 0;
 	}
 
 	/**
@@ -404,7 +405,7 @@ class Root extends Folder implements IRootFolder {
 	 */
 	public function getByIdInPath(int $id, string $path): array {
 		$mountCache = $this->getUserMountCache();
-		if (strpos($path, '/', 1) > 0) {
+		if ($path !== '' && strpos($path, '/', 1) > 0) {
 			[, $user] = explode('/', $path);
 		} else {
 			$user = null;
@@ -515,9 +516,9 @@ class Root extends Folder implements IRootFolder {
 		$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
 		$view = new View('');
 		if ($isDir) {
-			return new Folder($this, $view, $path, $info, $parent);
+			return new Folder($this, $view, $fullPath, $info, $parent);
 		} else {
-			return new File($this, $view, $path, $info, $parent);
+			return new File($this, $view, $fullPath, $info, $parent);
 		}
 	}
 }

@@ -8,7 +8,6 @@
 namespace OC\Files\Storage\Wrapper;
 
 use OC\Encryption\Exceptions\ModuleDoesNotExistsException;
-use OC\Encryption\Update;
 use OC\Encryption\Util;
 use OC\Files\Cache\CacheEntry;
 use OC\Files\Filesystem;
@@ -22,6 +21,7 @@ use OCP\Encryption\Exceptions\InvalidHeaderException;
 use OCP\Encryption\IFile;
 use OCP\Encryption\IManager;
 use OCP\Encryption\Keys\IStorage;
+use OCP\Files;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\GenericFileException;
 use OCP\Files\Mount\IMountPoint;
@@ -51,7 +51,6 @@ class Encryption extends Wrapper {
 		private IFile $fileHelper,
 		private ?string $uid,
 		private IStorage $keyStorage,
-		private Update $update,
 		private Manager $mountManager,
 		private ArrayCache $arrayCache,
 	) {
@@ -66,7 +65,8 @@ class Encryption extends Wrapper {
 
 		$info = $this->getCache()->get($path);
 		if ($info === false) {
-			return false;
+			/* Pass call to wrapped storage, it may be a special file like a part file */
+			return $this->storage->filesize($path);
 		}
 		if (isset($this->unencryptedSize[$fullPath])) {
 			$size = $this->unencryptedSize[$fullPath];
@@ -320,7 +320,7 @@ class Encryption extends Wrapper {
 					if (!empty($encryptionModuleId)) {
 						$encryptionModule = $this->encryptionManager->getEncryptionModule($encryptionModuleId);
 						$shouldEncrypt = true;
-					} elseif (empty($encryptionModuleId) && $info['encrypted'] === true) {
+					} elseif ($info !== false && $info['encrypted'] === true) {
 						// we come from a old installation. No header and/or no module defined
 						// but the file is encrypted. In this case we need to use the
 						// OC_DEFAULT_MODULE to read the file
@@ -337,7 +337,7 @@ class Encryption extends Wrapper {
 			}
 
 			// encryption disabled on write of new file and write to existing unencrypted file -> don't encrypt
-			if (!$encryptionEnabled || !$this->shouldEncrypt($path)) {
+			if (!$this->shouldEncrypt($path)) {
 				if (!$targetExists || !$targetIsEncrypted) {
 					$shouldEncrypt = false;
 				}
@@ -539,10 +539,22 @@ class Encryption extends Wrapper {
 
 		$result = $this->copyBetweenStorage($sourceStorage, $sourceInternalPath, $targetInternalPath, $preserveMtime, true);
 		if ($result) {
-			if ($sourceStorage->is_dir($sourceInternalPath)) {
-				$result = $sourceStorage->rmdir($sourceInternalPath);
-			} else {
-				$result = $sourceStorage->unlink($sourceInternalPath);
+			$setPreserveCacheOnDelete = $sourceStorage->instanceOfStorage(ObjectStoreStorage::class) && !$this->instanceOfStorage(ObjectStoreStorage::class);
+			if ($setPreserveCacheOnDelete) {
+				/** @var ObjectStoreStorage $sourceStorage */
+				$sourceStorage->setPreserveCacheOnDelete(true);
+			}
+			try {
+				if ($sourceStorage->is_dir($sourceInternalPath)) {
+					$result = $sourceStorage->rmdir($sourceInternalPath);
+				} else {
+					$result = $sourceStorage->unlink($sourceInternalPath);
+				}
+			} finally {
+				if ($setPreserveCacheOnDelete) {
+					/** @var ObjectStoreStorage $sourceStorage */
+					$sourceStorage->setPreserveCacheOnDelete(false);
+				}
 			}
 		}
 		return $result;
@@ -574,7 +586,7 @@ class Encryption extends Wrapper {
 		bool $isRename,
 		bool $keepEncryptionVersion,
 	): void {
-		$isEncrypted = $this->encryptionManager->isEnabled() && $this->shouldEncrypt($targetInternalPath);
+		$isEncrypted = $this->shouldEncrypt($targetInternalPath);
 		$cacheInformation = [
 			'encrypted' => $isEncrypted,
 		];
@@ -667,7 +679,7 @@ class Encryption extends Wrapper {
 			if (is_resource($dh)) {
 				while ($result && ($file = readdir($dh)) !== false) {
 					if (!Filesystem::isIgnoredDir($file)) {
-						$result &= $this->copyFromStorage($sourceStorage, $sourceInternalPath . '/' . $file, $targetInternalPath . '/' . $file, false, $isRename);
+						$result = $this->copyFromStorage($sourceStorage, $sourceInternalPath . '/' . $file, $targetInternalPath . '/' . $file, $preserveMtime, $isRename);
 					}
 				}
 			}
@@ -680,7 +692,7 @@ class Encryption extends Wrapper {
 				if ($source === false || $target === false) {
 					$result = false;
 				} else {
-					[, $result] = \OC_Helper::streamCopy($source, $target);
+					[, $result] = Files::streamCopy($source, $target, true);
 				}
 			} finally {
 				if ($source !== false) {
@@ -873,7 +885,10 @@ class Encryption extends Wrapper {
 	/**
 	 * check if the given storage should be encrypted or not
 	 */
-	protected function shouldEncrypt(string $path): bool {
+	public function shouldEncrypt(string $path): bool {
+		if (!$this->encryptionManager->isEnabled()) {
+			return false;
+		}
 		$fullPath = $this->getFullPath($path);
 		$mountPointConfig = $this->mount->getOption('encrypt', true);
 		if ($mountPointConfig === false) {
@@ -899,7 +914,7 @@ class Encryption extends Wrapper {
 		if ($target === false) {
 			throw new GenericFileException("Failed to open $path for writing");
 		}
-		[$count, $result] = \OC_Helper::streamCopy($stream, $target);
+		[$count, $result] = Files::streamCopy($stream, $target, true);
 		fclose($stream);
 		fclose($target);
 

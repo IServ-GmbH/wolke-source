@@ -8,25 +8,26 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Encrypting your Nextcloud files on the server &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ff6e0db" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
-    <script src="../_static/js/theme.js"></script>
-    <script src="../_static/js/versions.js"></script>
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/user_manual/files/encrypting_files.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a49d5d77"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <script src="../../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="File Sharing" href="sharing.html" />
@@ -43,7 +44,7 @@
           
           <a href="../contents.html">
             
-              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+              <img src="../../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
               <div class="switch-menus">
                 <div class="version-switch"></div>
@@ -59,7 +60,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud latest user manual introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">What’s new for users in Nextcloud latest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Files &amp; synchronization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="access_webgui.html">Accessing your files using the Nextcloud Web interface</a></li>
@@ -160,16 +160,16 @@ to learn more.)</p>
 <h2>Encryption FAQ<a class="headerlink" href="#encryption-faq" title="Link to this heading"></a></h2>
 <section id="how-can-encryption-be-disabled">
 <h3>How can encryption be disabled?<a class="headerlink" href="#how-can-encryption-be-disabled" title="Link to this heading"></a></h3>
-<p>The only way to disable encryption is to run the <a class="reference external" href="https://docs.nextcloud.com/server/31/admin_manual/occ_command.html#encryption-label">“decrypt all”</a>
+<p>The only way to disable encryption is to run the <a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/occ_command.html#encryption-label">“decrypt all”</a>
 script, which decrypts all files and disables encryption.</p>
 </section>
 <section id="is-it-possible-to-disable-encryption-with-the-recovery-key">
 <h3>Is it possible to disable encryption with the recovery key?<a class="headerlink" href="#is-it-possible-to-disable-encryption-with-the-recovery-key" title="Link to this heading"></a></h3>
-<p>Yes, <em>if</em> every user uses the <a class="reference external" href="https://docs.nextcloud.com/server/31/admin_manual/configuration_files/encryption_configuration.html#enabling-users-file-recovery-keys">file recovery key</a>, <a class="reference external" href="https://docs.nextcloud.com/server/31/admin_manual/occ_command.html#encryption-label">“decrypt all”</a> will use it to decrypt all files.</p>
+<p>Yes, <em>if</em> every user uses the <a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/configuration_files/encryption_configuration.html#enabling-users-file-recovery-keys">file recovery key</a>, <a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/occ_command.html#encryption-label">“decrypt all”</a> will use it to decrypt all files.</p>
 </section>
 <section id="can-encryption-be-disabled-without-the-user-s-password">
 <h3>Can encryption be disabled without the user’s password?<a class="headerlink" href="#can-encryption-be-disabled-without-the-user-s-password" title="Link to this heading"></a></h3>
-<p>If you don’t have the users password or <a class="reference external" href="https://docs.nextcloud.com/server/31/admin_manual/configuration_files/encryption_configuration.html#enabling-users-file-recovery-keys">file recovery key</a>,
+<p>If you don’t have the users password or <a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/configuration_files/encryption_configuration.html#enabling-users-file-recovery-keys">file recovery key</a>,
 then there is no way to decrypt all files. What’s more, running it on login
 would be dangerous, because you would most likely run into timeouts.</p>
 </section>
@@ -193,12 +193,12 @@ out and then log back in to create your encryption keys and encrypt your files.
 When encryption has been enabled on your Nextcloud server you will see a yellow
 banner on your Files page warning you to log out and then log back in:</p>
 <figure class="align-default">
-<img alt="../_images/encryption1.png" src="../_images/encryption1.png" />
+<img alt="../../_images/encryption1.png" src="../../_images/encryption1.png" />
 </figure>
 <p>When you log back in it takes a few minutes to work, depending on how many
 files you have, and then you are returned to your default Nextcloud page.</p>
 <figure class="align-default">
-<img alt="../_images/encryption2.png" src="../_images/encryption2.png" />
+<img alt="../../_images/encryption2.png" src="../../_images/encryption2.png" />
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -231,7 +231,7 @@ enables the administrator to recover your files in the event you lose your
 Nextcloud password. If the recovery key is not enabled, then there is no way to
 restore your files if you lose your login password.</p>
 <figure class="align-default">
-<img alt="../_images/encryption3.png" src="../_images/encryption3.png" />
+<img alt="../../_images/encryption3.png" src="../../_images/encryption3.png" />
 </figure>
 </section>
 </section>
@@ -272,7 +272,7 @@ your encryption password are identical.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -283,6 +283,47 @@ your encryption password are identical.</p>
     </section>
   </div>
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <!-- Here go the languages -->
   
@@ -301,6 +342,418 @@ your encryption password are identical.</p>
     <div class="rst-other-versions">
       <dl>
         <dt>🌐 Languages</dt>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ar/"
+                 
+              >
+                
+                Arabic
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/br/"
+                 
+              >
+                
+                Breton
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ca/"
+                 
+              >
+                
+                Catalan
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/cs/"
+                 
+              >
+                
+                Czech
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/da/"
+                 
+              >
+                
+                Danish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/de/"
+                 
+              >
+                
+                German
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/el/"
+                 
+              >
+                
+                Greek
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/en/"
+                 
+                 style="color: var(--dark-link-color);"
+                 
+              >
+                
+                English
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/es/"
+                 
+              >
+                
+                Spanish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/eu/"
+                 
+              >
+                
+                eu
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/fi_FI/"
+                 
+              >
+                
+                Finnish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/fr/"
+                 
+              >
+                
+                French
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ga/"
+                 
+              >
+                
+                Irish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/gl/"
+                 
+              >
+                
+                Glacian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/hu_HU/"
+                 
+              >
+                
+                Hungarian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/id/"
+                 
+              >
+                
+                Indonesian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/it/"
+                 
+              >
+                
+                Italian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ja_JP/"
+                 
+              >
+                
+                Japanese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ko/"
+                 
+              >
+                
+                Korean
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/mn/"
+                 
+              >
+                
+                Mongolian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nb_NO/"
+                 
+              >
+                
+                Norwegian (NB)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nl/"
+                 
+              >
+                
+                Dutch
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nn/"
+                 
+              >
+                
+                Norwegian (NN)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pl/"
+                 
+              >
+                
+                Polish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pt_BR/"
+                 
+              >
+                
+                Portuguese (BR)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pt_PT/"
+                 
+              >
+                
+                Portuguese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ro/"
+                 
+              >
+                
+                Romanian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ru/"
+                 
+              >
+                
+                Russian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/si/"
+                 
+              >
+                
+                Sinhala
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sk_SK/"
+                 
+              >
+                
+                Slovakian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sr/"
+                 
+              >
+                
+                Slovenian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sv/"
+                 
+              >
+                
+                Swedish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ta/"
+                 
+              >
+                
+                Tamil
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/tr/"
+                 
+              >
+                
+                Turkish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uk/"
+                 
+              >
+                
+                Ukrainian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uk_UA/"
+                 
+              >
+                
+                uk_UA
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uz/"
+                 
+              >
+                
+                Uzbek
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/vi/"
+                 
+              >
+                
+                Vietnamese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_CN/"
+                 
+              >
+                
+                Chinese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_HK/"
+                 
+              >
+                
+                Chinese (HK)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_TW/"
+                 
+              >
+                
+                Chinese (TW)
+                
+              </a>
+            </dd>
           
       </dl>
     </div>
@@ -327,26 +780,18 @@ your encryption password are identical.</p>
           </dd>
         
           <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/30/user_manual"
+            <a href="https://docs.nextcloud.com/server/32/user_manual"
                
             >
-              30
+              32
             </a>
           </dd>
         
           <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/29/user_manual"
+            <a href="https://docs.nextcloud.com/server/31/user_manual"
                
             >
-              29
-            </a>
-          </dd>
-        
-          <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/28/user_manual"
-               
-            >
-              28
+              31
             </a>
           </dd>
         

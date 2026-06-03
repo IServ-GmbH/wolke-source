@@ -91,10 +91,11 @@ class ZipFolderPlugin extends ServerPlugin {
 	 * It is possible to filter / limit the files that should be downloaded,
 	 * either by passing (multiple) `X-NC-Files: the-file` headers
 	 * or by setting a `files=JSON_ARRAY_OF_FILES` URL query.
-	 *
-	 * @return false|null
 	 */
 	public function handleDownload(Request $request, Response $response): ?bool {
+		if ($request->getHeader('X-Sabre-Original-Method') === 'HEAD') {
+			return null;
+		}
 		$node = $this->tree->getNodeForPath($request->getPath());
 		if (!($node instanceof Directory)) {
 			// only handle directories
@@ -157,14 +158,18 @@ class ZipFolderPlugin extends ServerPlugin {
 			$content[] = $child->getNode();
 		}
 
-		$archiveName = 'download';
+		$archiveName = $folder->getName();
+		if (count(explode('/', trim($folder->getPath(), '/'), 3)) === 2) {
+			// this is a download of the root folder
+			$archiveName = 'download';
+		}
+
 		$rootPath = $folder->getPath();
 		if (empty($files)) {
 			// We download the full folder so keep it in the tree
 			$rootPath = dirname($folder->getPath());
-			// Full folder is loaded to rename the archive to the folder name
-			$archiveName = $folder->getName();
 		}
+
 		$streamer = new Streamer($tarRequest, -1, count($content), $this->timezoneFactory);
 		$streamer->sendHeaders($archiveName);
 		// For full folder downloads we also add the folder itself to the archive
@@ -179,11 +184,12 @@ class ZipFolderPlugin extends ServerPlugin {
 	}
 
 	/**
-	 * Tell sabre/dav not to trigger it's own response sending logic as the handleDownload will have already send the response
-	 *
-	 * @return false|null
+	 * Tell sabre/dav not to trigger its own response sending logic as the handleDownload will have already sent the response
 	 */
 	public function afterDownload(Request $request, Response $response): ?bool {
+		if ($request->getHeader('X-Sabre-Original-Method') === 'HEAD') {
+			return null;
+		}
 		$node = $this->tree->getNodeForPath($request->getPath());
 		if (!($node instanceof Directory)) {
 			// only handle directories

@@ -11,6 +11,7 @@ namespace OCA\Notifications;
 
 use OCA\Notifications\Model\Settings;
 use OCA\Notifications\Model\SettingsMapper;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Defaults;
 use OCP\IConfig;
@@ -35,6 +36,7 @@ class MailNotifications {
 
 	public function __construct(
 		protected IConfig $config,
+		protected IAppConfig $appConfig,
 		protected IManager $manager,
 		protected Handler $handler,
 		protected IUserManager $userManager,
@@ -69,6 +71,7 @@ class MailNotifications {
 		/** @psalm-var array<string, string> $userTimezones */
 		$userTimezones = $this->config->getUserValueForUsers('core', 'timezone', $userIds);
 		$userEnabled = $this->config->getUserValueForUsers('core', 'enabled', $userIds);
+		$defaultBatchTime = SettingsMapper::batchSettingToTime($this->appConfig->getAppValueInt('setting_batchtime'));
 
 		$fallbackLang = $this->config->getSystemValue('force_language', null);
 		if (is_string($fallbackLang)) {
@@ -81,11 +84,17 @@ class MailNotifications {
 		}
 
 		foreach ($userSettings as $settings) {
-			if (isset($userEnabled[$settings->getUserId()]) && $userEnabled[$settings->getUserId()] === 'false') {
+			$batchTime = $settings->getBatchTime();
+			if ($batchTime === Settings::EMAIL_SEND_DEFAULT) {
+				$batchTime = $defaultBatchTime;
+			}
+
+			$userId = $settings->getUserId();
+			if (isset($userEnabled[$userId]) && $userEnabled[$userId] === 'false') {
 				// User is disabled, skip sending the email for them
 				if ($settings->getNextSendTime() <= $sendTime) {
 					$settings->setNextSendTime(
-						$sendTime + $settings->getBatchTime()
+						$sendTime + $batchTime
 					);
 					$this->settingsMapper->update($settings);
 				}
@@ -93,18 +102,18 @@ class MailNotifications {
 			}
 
 			// Get the settings for this particular user, then check if we have notifications to email them
-			$languageCode = $userLanguages[$settings->getUserId()] ?? $fallbackLang;
-			$timezone = $userTimezones[$settings->getUserId()] ?? $fallbackTimeZone;
+			$languageCode = $userLanguages[$userId] ?? $fallbackLang;
+			$timezone = $userTimezones[$userId] ?? $fallbackTimeZone;
 
 			/** @var array<int, INotification> $notifications */
-			$notifications = $this->handler->getAfterId($settings->getLastSendId(), $settings->getUserId());
+			$notifications = $this->handler->getAfterId($settings->getLastSendId(), $userId);
 			if (!empty($notifications)) {
 				$oldestNotification = end($notifications);
-				$shouldSendAfter = $oldestNotification->getDateTime()->getTimestamp() + $settings->getBatchTime();
+				$shouldSendAfter = $oldestNotification->getDateTime()->getTimestamp() + $batchTime;
 
 				if ($shouldSendAfter <= $sendTime) {
 					// User has notifications that should send
-					$this->sendEmailToUser($settings, $notifications, $languageCode, $timezone);
+					$this->sendEmailToUser($settings, $notifications, $languageCode, $timezone, $batchTime);
 				} else {
 					// User has notifications but we didn't reach the timeout yet,
 					// So delay sending to the time of the notification + batch setting
@@ -112,7 +121,7 @@ class MailNotifications {
 					$this->settingsMapper->update($settings);
 				}
 			} else {
-				$settings->setNextSendTime($sendTime + $settings->getBatchTime());
+				$settings->setNextSendTime($sendTime + $batchTime);
 				$this->settingsMapper->update($settings);
 			}
 		}
@@ -126,7 +135,7 @@ class MailNotifications {
 	 * @param string $language
 	 * @param string $timezone
 	 */
-	protected function sendEmailToUser(Settings $settings, array $notifications, string $language, string $timezone): void {
+	protected function sendEmailToUser(Settings $settings, array $notifications, string $language, string $timezone, int $batchTime): void {
 		$lastSendId = array_key_first($notifications);
 		$lastSendTime = $this->timeFactory->getTime();
 
@@ -163,7 +172,7 @@ class MailNotifications {
 				}
 
 				$settings->setLastSendId($lastSendId);
-				$settings->setNextSendTime($lastSendTime + $settings->getBatchTime());
+				$settings->setNextSendTime($lastSendTime + $batchTime);
 				$this->settingsMapper->update($settings);
 			}
 		}
@@ -185,7 +194,6 @@ class MailNotifications {
 		}
 
 		$userEmailAddress = $user->getEMailAddress();
-
 		if (empty($userEmailAddress)) {
 			return null;
 		}
@@ -193,22 +201,26 @@ class MailNotifications {
 		// Prepare our email template
 		$l10n = $this->l10nFactory->get('notifications', $language);
 
+		$userDisplayName = $user->getDisplayName();
+		$absoluteUrl = $this->urlGenerator->getAbsoluteURL('/');
+		$instanceName = $this->defaults->getName();
+
 		$template = $this->mailer->createEMailTemplate('notifications.EmailNotification', [
-			'displayname' => $user->getDisplayName(),
-			'url' => $this->urlGenerator->getAbsoluteURL('/')
+			'displayname' => $userDisplayName,
+			'url' => $absoluteUrl
 		]);
 
 		// Prepare email header
 		$template->addHeader();
-		$template->addHeading($l10n->t('Hello %s', [$user->getDisplayName()]), $l10n->t('Hello %s,', [$user->getDisplayName()]));
+		$template->addHeading($l10n->t('Hello %s', [$userDisplayName]), $l10n->t('Hello %s,', [$userDisplayName]));
 
 		// Prepare email subject and body mentioning amount of notifications
-		$homeLink = '<a href="' . $this->urlGenerator->getAbsoluteURL('/') . '">' . htmlspecialchars($this->defaults->getName()) . '</a>';
+		$homeLink = '<a href="' . $absoluteUrl . '">' . htmlspecialchars($instanceName) . '</a>';
 		$notificationsCount = count($notifications);
-		$template->setSubject($l10n->n('New notification for %s', '%n new notifications for %s', $notificationsCount, [$this->defaults->getName()]));
+		$template->setSubject($l10n->n('New notification for %s', '%n new notifications for %s', $notificationsCount, [$instanceName]));
 		$template->addBodyText(
 			$l10n->n('You have a new notification for %s', 'You have %n new notifications for %s', $notificationsCount, [$homeLink]),
-			$l10n->n('You have a new notification for %s', 'You have %n new notifications for %s', $notificationsCount, [$this->urlGenerator->getAbsoluteURL('/')])
+			$l10n->n('You have a new notification for %s', 'You have %n new notifications for %s', $notificationsCount, [$absoluteUrl])
 		);
 
 		// Prepare email body with the content of missed notifications
@@ -246,17 +258,18 @@ class MailNotifications {
 		}
 
 		// Prepare email footer
+		$linkToPersonalSettings = $this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index', ['section' => 'notifications']);
 		$template->addBodyText(
-			$l10n->t('You can change the frequency of these emails or disable them in the <a href="%s">settings</a>.', $this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index', ['section' => 'notifications'])),
-			$l10n->t('You can change the frequency of these emails or disable them in the settings: %s', $this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index', ['section' => 'notifications']))
+			$l10n->t('You can change the frequency of these emails or disable them in the <a href="%s">settings</a>.', $linkToPersonalSettings),
+			$l10n->t('You can change the frequency of these emails or disable them in the settings: %s', $linkToPersonalSettings)
 		);
 
 		$template->addFooter();
 
 		$message = $this->mailer->createMessage();
 		$message->useTemplate($template);
-		$message->setTo([$userEmailAddress => $user->getDisplayName()]);
-		$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
+		$message->setTo([$userEmailAddress => $userDisplayName]);
+		$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $instanceName]);
 
 		return $message;
 	}
@@ -271,7 +284,11 @@ class MailNotifications {
 		$HTMLSubject = $this->getHTMLSubject($notification);
 		$link = $notification->getLink();
 		if ($link !== '') {
-			$HTMLSubject = '<a href="' . $link . '">' . $HTMLSubject . '</a>';
+			// Only render absolute links
+			$scheme = strtolower((string)parse_url($link, PHP_URL_SCHEME));
+			if ($scheme === 'http' || $scheme === 'https') {
+				$HTMLSubject = '<a href="' . htmlspecialchars($link) . '">' . $HTMLSubject . '</a>';
+			}
 		}
 
 		return $HTMLSubject . '<br>' . $this->getHTMLMessage($notification);
@@ -325,8 +342,17 @@ class MailNotifications {
 				$replacement = $parameter['name'];
 			}
 
-			if (isset($parameter['link'])) {
-				$replacements[] = '<a href="' . $parameter['link'] . '">' . htmlspecialchars($replacement) . '</a>';
+			// Only render absolute links
+			$href = '';
+			if (isset($parameter['link']) && is_string($parameter['link'])) {
+				$scheme = strtolower((string)parse_url($parameter['link'], PHP_URL_SCHEME));
+				if ($scheme === 'http' || $scheme === 'https') {
+					$href = htmlspecialchars($parameter['link']);
+				}
+			}
+
+			if ($href !== '') {
+				$replacements[] = '<a href="' . $href . '">' . htmlspecialchars($replacement) . '</a>';
 			} else {
 				$replacements[] = '<strong>' . htmlspecialchars($replacement) . '</strong>';
 			}

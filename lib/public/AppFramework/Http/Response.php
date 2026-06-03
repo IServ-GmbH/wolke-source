@@ -12,6 +12,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -94,11 +95,10 @@ class Response {
 
 			// Set expires header
 			$expires = new \DateTime();
-			/** @var ITimeFactory $time */
 			$time = \OCP\Server::get(ITimeFactory::class);
 			$expires->setTimestamp($time->getTime());
 			$expires->add(new \DateInterval('PT' . $cacheSeconds . 'S'));
-			$this->addHeader('Expires', $expires->format(\DateTimeInterface::RFC2822));
+			$this->addHeader('Expires', $expires->format(\DateTimeInterface::RFC7231));
 		} else {
 			$this->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 			unset($this->headers['Expires']);
@@ -185,10 +185,10 @@ class Response {
 		if ($this->status === Http::STATUS_NOT_MODIFIED
 			&& stripos($name, 'x-') === 0) {
 			/** @var IConfig $config */
-			$config = \OC::$server->get(IConfig::class);
+			$config = \OCP\Server::get(IConfig::class);
 
 			if ($config->getSystemValueBool('debug', false)) {
-				\OC::$server->get(LoggerInterface::class)->error('Setting custom header on a 304 is not supported (Header: {header})', [
+				\OCP\Server::get(LoggerInterface::class)->error('Setting custom header on a 304 is not supported (Header: {header})', [
 					'header' => $name,
 				]);
 			}
@@ -230,7 +230,7 @@ class Response {
 		/**
 		 * @psalm-suppress UndefinedClass
 		 */
-		$request = \OC::$server->get(IRequest::class);
+		$request = Server::get(IRequest::class);
 		$mergeWith = [
 			'X-Request-Id' => $request->getId(),
 			'Cache-Control' => 'no-cache, no-store, must-revalidate',
@@ -240,14 +240,14 @@ class Response {
 		];
 
 		if ($this->lastModified) {
-			$mergeWith['Last-Modified'] = $this->lastModified->format(\DateTimeInterface::RFC2822);
+			$mergeWith['Last-Modified'] = $this->lastModified->format(\DateTimeInterface::RFC7231);
 		}
 
 		if ($this->ETag) {
 			$mergeWith['ETag'] = '"' . $this->ETag . '"';
 		}
 
-		$userSession = \OC::$server->get(IUserSession::class);
+		$userSession = Server::get(IUserSession::class);
 		if ($user = $userSession->getUser()) {
 			$mergeWith['X-User-Id'] = $user->getUID();
 		}

@@ -58,9 +58,9 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
     /**
      * The spatial tree used to run range searches.
      *
-     * @var \Rubix\ML\Graph\Trees\Spatial
+     * @var Spatial
      */
-    protected \Rubix\ML\Graph\Trees\Spatial $tree;
+    protected Spatial $tree;
 
     /**
      * The class label for any samples that have 0 neighbors within the specified radius.
@@ -89,8 +89,8 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      * @param float $radius
      * @param bool $weighted
      * @param string $outlierClass
-     * @param \Rubix\ML\Graph\Trees\Spatial|null $tree
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Spatial|null $tree
+     * @throws InvalidArgumentException
      */
     public function __construct(
         float $radius = 1.0,
@@ -119,7 +119,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -168,7 +168,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
     /**
      * Return the base spatial tree instance.
      *
-     * @return \Rubix\ML\Graph\Trees\Spatial
+     * @return Spatial
      */
     public function tree() : Spatial
     {
@@ -179,7 +179,7 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
      * Train the learner with a dataset.
      *
      * @param \Rubix\ML\Datasets\Labeled $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function train(Dataset $dataset) : void
     {
@@ -209,8 +209,8 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<string>
      */
     public function predict(Dataset $dataset) : array
@@ -257,8 +257,8 @@ class RadiusNeighbors implements Estimator, Learner, Probabilistic, Persistable
     /**
      * Estimate the joint probabilities for each possible outcome.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array

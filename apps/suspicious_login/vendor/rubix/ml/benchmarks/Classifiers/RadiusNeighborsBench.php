@@ -12,7 +12,7 @@ use Rubix\ML\Datasets\Generators\Agglomerate;
  */
 class RadiusNeighborsBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     protected const TESTING_SIZE = 10000;
 
@@ -27,7 +27,7 @@ class RadiusNeighborsBench
     protected $testing;
 
     /**
-     * @var \Rubix\ML\Classifiers\RadiusNeighbors
+     * @var RadiusNeighbors
      */
     protected $estimator;
 

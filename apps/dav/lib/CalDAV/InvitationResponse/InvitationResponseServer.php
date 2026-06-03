@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,8 +21,10 @@ use OCA\DAV\Connector\Sabre\MaintenancePlugin;
 use OCA\DAV\Events\SabrePluginAuthInitEvent;
 use OCA\DAV\RootCollection;
 use OCA\Theming\ThemingDefaults;
+use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
+use OCP\IURLGenerator;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 use Sabre\VObject\ITip\Message;
@@ -42,7 +45,7 @@ class InvitationResponseServer {
 		$this->server = new \OCA\DAV\Connector\Sabre\Server(new CachingTree($root));
 
 		// Add maintenance plugin
-		$this->server->addPlugin(new MaintenancePlugin(\OC::$server->getConfig(), \OC::$server->getL10N('dav')));
+		$this->server->addPlugin(new MaintenancePlugin(Server::get(IConfig::class), \OC::$server->getL10N('dav')));
 
 		// Set URL explicitly due to reverse-proxy situations
 		$this->server->httpRequest->setUrl($baseUri);
@@ -79,13 +82,13 @@ class InvitationResponseServer {
 		// calendar plugins
 		$this->server->addPlugin(new \OCA\DAV\CalDAV\Plugin());
 		$this->server->addPlugin(new \Sabre\CalDAV\ICSExportPlugin());
-		$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OC::$server->getConfig(), \OC::$server->get(LoggerInterface::class), \OC::$server->get(DefaultCalendarValidator::class)));
+		$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(Server::get(IConfig::class), Server::get(LoggerInterface::class), Server::get(DefaultCalendarValidator::class)));
 		$this->server->addPlugin(new \Sabre\CalDAV\Subscriptions\Plugin());
 		$this->server->addPlugin(new \Sabre\CalDAV\Notifications\Plugin());
 		//$this->server->addPlugin(new \OCA\DAV\DAV\Sharing\Plugin($authBackend, \OC::$server->getRequest()));
 		$this->server->addPlugin(new PublishPlugin(
-			\OC::$server->getConfig(),
-			\OC::$server->getURLGenerator()
+			Server::get(IConfig::class),
+			Server::get(IURLGenerator::class)
 		));
 
 		// wait with registering these until auth is handled and the filesystem is setup
@@ -93,7 +96,7 @@ class InvitationResponseServer {
 			// register plugins from apps
 			$pluginManager = new PluginManager(
 				\OC::$server,
-				\OC::$server->getAppManager()
+				Server::get(IAppManager::class)
 			);
 			foreach ($pluginManager->getAppPlugins() as $appPlugin) {
 				$this->server->addPlugin($appPlugin);

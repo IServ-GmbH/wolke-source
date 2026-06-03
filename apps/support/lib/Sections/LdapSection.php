@@ -15,6 +15,7 @@ use OCA\User_LDAP\Configuration;
 use OCA\User_LDAP\Helper;
 use OCA\User_LDAP\User_Proxy;
 use OCP\IUserManager;
+use OCP\Server;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -25,6 +26,7 @@ class LdapSection extends Section {
 		parent::__construct('ldap', 'LDAP');
 	}
 
+	#[\Override]
 	public function getDetails(): array {
 		$this->createDetail('LDAP configuration', $this->getLDAPInfo(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 
@@ -44,7 +46,7 @@ class LdapSection extends Section {
 	}
 
 	private function getLDAPInfo(): string {
-		$helper = \OCP\Server::get(Helper::class);
+		$helper = Server::get(Helper::class);
 
 		$output = new BufferedOutput();
 

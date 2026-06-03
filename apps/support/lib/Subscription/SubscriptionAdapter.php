@@ -13,6 +13,7 @@ use OCA\Support\Service\SubscriptionService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\ServerVersion;
 use OCP\Support\Subscription\ISubscription;
 use OCP\Support\Subscription\ISupportedApps;
 
@@ -22,12 +23,14 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 		private readonly IConfig $config,
 		private readonly IAppConfig $appConfig,
 		private readonly ITimeFactory $timeFactory,
+		private readonly ServerVersion $serverVersion,
 	) {
 	}
 
 	/**
 	 * Indicates if a valid subscription is available
 	 */
+	#[\Override]
 	public function hasValidSubscription(): bool {
 		try {
 			$endDate = $this->appConfig->getAppValueString('end_date');
@@ -53,6 +56,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 *
 	 * @since 17.0.0
 	 */
+	#[\Override]
 	public function getSupportedApps(): array {
 		[
 			$instanceSize,
@@ -132,7 +136,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 			'workflow_script',
 		];
 
-		$nextcloudVersion = \OCP\Util::getVersion()[0];
+		$nextcloudVersion = $this->serverVersion->getMajorVersion();
 
 		if ($nextcloudVersion >= 30) {
 			$filesSubscription[] = 'app_api';
@@ -228,6 +232,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 *
 	 * @since 17.0.0
 	 */
+	#[\Override]
 	public function hasExtendedSupport(): bool {
 		try {
 			return $this->appConfig->getAppValueBool('extended_support');
@@ -241,6 +246,7 @@ class SubscriptionAdapter implements ISubscription, ISupportedApps {
 	 *
 	 * @since 21.0.0
 	 */
+	#[\Override]
 	public function isHardUserLimitReached(): bool {
 		[
 			,,

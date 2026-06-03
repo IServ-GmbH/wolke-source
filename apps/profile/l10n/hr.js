@@ -1,9 +1,16 @@
 OC.L10N.register(
     "profile",
     {
+    "Profile picker" : "Odabir profila",
     "Profile" : "Profil",
     "This application provides the profile" : "Ova aplikacija pruža profil",
     "Provides a customisable user profile interface." : "Pruža prilagodljivo sučelje korisničkog profila.",
+    "Searching …" : "Traženje …",
+    "Not found" : "Nije pronađeno",
+    "Search for a user profile" : "Pretraži korisnički profil",
+    "Search for a user profile. Start typing" : "Pretraži korisnički profil. Počni tipkati",
+    "Insert selected user profile link" : "Umetni poveznicu na odabrani korisnički profil",
+    "Insert" : "Umetni",
     "You have not added any info yet" : "Još niste dodali nikakve podatke",
     "{user} has not added any info yet" : "{user} nije još dodao nikakve podatke",
     "Error opening the user status modal, try hard refreshing the page" : "Pogreška pri otvaranju modala statusa korisnika, pokušajte ponovno učitati stranicu",

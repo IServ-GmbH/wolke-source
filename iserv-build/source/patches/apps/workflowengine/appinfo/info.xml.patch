@@ -1,0 +1,12 @@
+diff --git apps/workflowengine/appinfo/info.xml apps/workflowengine/appinfo/info.xml
+index ebbfb57..f924067 100644
+--- apps/workflowengine/appinfo/info.xml
++++ apps/workflowengine/appinfo/info.xml
+@@ -46,7 +46,5 @@
+ 	<settings>
+ 		<admin>OCA\WorkflowEngine\Settings\Admin</admin>
+ 		<admin-section>OCA\WorkflowEngine\Settings\Section</admin-section>
+-		<personal>OCA\WorkflowEngine\Settings\Personal</personal>
+-		<personal-section>OCA\WorkflowEngine\Settings\Section</personal-section>
+ 	</settings>
+ </info>

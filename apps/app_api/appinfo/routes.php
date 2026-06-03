@@ -34,8 +34,8 @@ return [
 		// ExApps actions
 		['name' => 'ExAppsPage#listCategories', 'url' => '/apps/categories', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#listApps', 'url' => '/apps/list', 'verb' => 'GET' , 'root' => ''],
-		['name' => 'ExAppsPage#enableApp', 'url' => '/apps/enable/{appId}', 'verb' => 'GET' , 'root' => ''],
-		['name' => 'ExAppsPage#enableApp', 'url' => '/apps/enable/{appId}', 'verb' => 'POST' , 'root' => ''],
+		['name' => 'ExAppsPage#enableApp', 'url' => '/apps/enable/{appId}/{daemonId}', 'verb' => 'GET' , 'root' => ''],
+		['name' => 'ExAppsPage#enableApp', 'url' => '/apps/enable/{appId}/{daemonId}', 'verb' => 'POST' , 'root' => ''],
 		['name' => 'ExAppsPage#getAppStatus', 'url' => '/apps/status/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#getAppLogs', 'url' => '/apps/logs/{appId}', 'verb' => 'GET' , 'root' => ''],
 		['name' => 'ExAppsPage#getAppDeployOptions', 'url' => '/apps/deploy-options/{appId}', 'verb' => 'GET' , 'root' => ''],
@@ -53,11 +53,17 @@ return [
 		['name' => 'DaemonConfig#verifyDaemonConnection', 'url' => '/daemons/{name}/check', 'verb' => 'POST'],
 		['name' => 'DaemonConfig#checkDaemonConnection', 'url' => '/daemons/verify_connection', 'verb' => 'POST'],
 		['name' => 'DaemonConfig#updateDaemonConfig', 'url' => '/daemons/{name}', 'verb' => 'PUT'],
+		['name' => 'DaemonConfig#addDaemonDockerRegistry', 'url' => '/daemons/{name}/add-registry', 'verb' => 'POST'],
+		['name' => 'DaemonConfig#removeDaemonDockerRegistry', 'url' => '/daemons/{name}/remove-registry', 'verb' => 'POST'],
 
 		// Test Deploy actions
 		['name' => 'DaemonConfig#startTestDeploy', 'url' => '/daemons/{name}/test_deploy', 'verb' => 'POST'],
 		['name' => 'DaemonConfig#stopTestDeploy', 'url' => '/daemons/{name}/test_deploy', 'verb' => 'DELETE'],
 		['name' => 'DaemonConfig#getTestDeployStatus', 'url' => '/daemons/{name}/test_deploy/status', 'verb' => 'GET'],
+
+		// HaRP actions
+		['name' => 'Harp#getExAppMetadata', 'url' => '/harp/exapp-meta', 'verb' => 'GET'],
+		['name' => 'Harp#getUserInfo', 'url' => '/harp/user-info', 'verb' => 'GET'],
 	],
 	'ocs' => [
 		// Logging
@@ -137,24 +143,6 @@ return [
 		['name' => 'OCSSettings#registerForm', 'url' => '/api/v1/ui/settings', 'verb' => 'POST'],
 		['name' => 'OCSSettings#unregisterForm', 'url' => '/api/v1/ui/settings', 'verb' => 'DELETE'],
 		['name' => 'OCSSettings#getForm', 'url' => '/api/v1/ui/settings', 'verb' => 'GET'],
-
-		// Speech-To-Text
-		['name' => 'speechToText#registerProvider', 'url' => '/api/v1/ai_provider/speech_to_text', 'verb' => 'POST'],
-		['name' => 'speechToText#unregisterProvider', 'url' => '/api/v1/ai_provider/speech_to_text', 'verb' => 'DELETE'],
-		['name' => 'speechToText#getProvider', 'url' => '/api/v1/ai_provider/speech_to_text', 'verb' => 'GET'],
-		['name' => 'speechToText#reportResult', 'url' => '/api/v1/ai_provider/speech_to_text', 'verb' => 'PUT'],
-
-		// Text-Processing
-		['name' => 'textProcessing#registerProvider', 'url' => '/api/v1/ai_provider/text_processing', 'verb' => 'POST'],
-		['name' => 'textProcessing#unregisterProvider', 'url' => '/api/v1/ai_provider/text_processing', 'verb' => 'DELETE'],
-		['name' => 'textProcessing#getProvider', 'url' => '/api/v1/ai_provider/text_processing', 'verb' => 'GET'],
-		['name' => 'textProcessing#reportResult', 'url' => '/api/v1/ai_provider/text_processing', 'verb' => 'PUT'],
-
-		// Machine-Translation
-		['name' => 'Translation#registerProvider', 'url' => '/api/v1/ai_provider/translation', 'verb' => 'POST'],
-		['name' => 'Translation#unregisterProvider', 'url' => '/api/v1/ai_provider/translation', 'verb' => 'DELETE'],
-		['name' => 'Translation#getProvider', 'url' => '/api/v1/ai_provider/translation', 'verb' => 'GET'],
-		['name' => 'Translation#reportResult', 'url' => '/api/v1/ai_provider/translation', 'verb' => 'PUT'],
 
 		// Task-Processing
 		['name' => 'taskProcessing#registerProvider', 'url' => '/api/v1/ai_provider/task_processing', 'verb' => 'POST'],

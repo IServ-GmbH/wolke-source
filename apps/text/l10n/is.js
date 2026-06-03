@@ -68,10 +68,10 @@ OC.L10N.register(
     "Bold text" : "Feitletraður texti",
     "Italic" : "Skáletrað",
     "Italicized text" : "Skáletraður texti",
-    "Strikethrough" : "Gegnumstrikað",
-    "Mistaken text" : "Útstrikaður texti",
     "Underline" : "Undirstrikað",
     "Underlined text" : "Undirstrikaður texti",
+    "Strikethrough" : "Gegnumstrikað",
+    "Mistaken text" : "Útstrikaður texti",
     "Heading 1" : "Fyrirsögn 1",
     "Heading level 1" : "Fyrirsögn stig 1",
     "Heading 6" : "Fyrirsögn 6",
@@ -206,10 +206,6 @@ OC.L10N.register(
     "Front matter" : "Forsíðuefni",
     "Link to this section" : "Tengja í þennan hluta",
     "Close outline view" : "Loka efnisskipulagssýn",
-    "Outline" : "Efnisskipan",
-    "Edit guest name" : "Breyta nafni gests",
-    "Save guest name" : "Vista nafn gests",
-    "Cannot copy, please copy the link manually" : "Mistókst að afrita, afritaðu tengilinn handvirkt",
-    "Copy link to clipboard" : "Afrita tengil á klippispjald"
+    "Outline" : "Efnisskipan"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

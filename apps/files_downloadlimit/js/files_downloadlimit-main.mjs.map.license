@@ -33,7 +33,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.3.1
 	- license: MIT
 - files_downloadlimit
-	- version: 4.0.0
+	- version: 5.0.0-dev.0
 	- license: AGPL-3.0-or-later
 - safe-buffer
 	- version: 5.2.1

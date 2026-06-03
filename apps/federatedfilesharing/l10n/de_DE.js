@@ -64,12 +64,9 @@ OC.L10N.register(
     "Cancel" : "Abbrechen",
     "Add remote share" : "Externe Freigabe hinzufügen",
     "Remote share" : "Externe Freigabe",
-    "Do you want to add the remote share {name} from {owner}@{remote}?" : "Möchten Sie die externe Freigabe {name} von {owner}@{remote} hinzufügen?",
+    "Do you want to add the remote share {name} from {owner}@{remote}?" : "Soll die externe Freigabe {name} von {owner}@{remote} hinzufügt werden?",
     "Remote share password" : "Passwort für die externe Freigabe",
     "Incoming share could not be processed" : "Eingehende Freigabe konnte nicht verarbeitet werden",
-    "Cloud ID copied to the clipboard" : "Cloud-ID wurde in die Zwischenablage kopiert",
-    "Copy to clipboard" : "In die Zwischenablage kopieren",
-    "You can share with anyone who uses a Nextcloud server or other Open Cloud Mesh (OCM) compatible servers and services! Just put their Federated Cloud ID in the share dialog. It looks like person@cloud.example.com" : "Sie können mit jedem teilen, der einen Nextcloud-Server oder andere Open Cloud Mesh (OCM) kompatible Server und Dienste verwendet! Geben Sie einfach deren Federated-Cloud-ID in den Teilen-Dialog ein. Diese sieht wie folgt aus: person@cloud.example.com",
     "X (formerly Twitter)" : "X (früher Twitter)",
     "formerly Twitter" : "früher Twitter"
 },

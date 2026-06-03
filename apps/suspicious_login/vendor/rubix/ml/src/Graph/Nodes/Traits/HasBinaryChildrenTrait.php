@@ -21,16 +21,16 @@ trait HasBinaryChildrenTrait
     /**
      * The left child node.
      *
-     * @var \Rubix\ML\Graph\Nodes\BinaryNode|null
+     * @var BinaryNode|null
      */
-    protected ?\Rubix\ML\Graph\Nodes\BinaryNode $left = null;
+    protected ?BinaryNode $left = null;
 
     /**
      * The right child node.
      *
-     * @var \Rubix\ML\Graph\Nodes\BinaryNode|null
+     * @var BinaryNode|null
      */
-    protected ?\Rubix\ML\Graph\Nodes\BinaryNode $right = null;
+    protected ?BinaryNode $right = null;
 
     /**
      * Return the children of this node in a generator.
@@ -51,7 +51,7 @@ trait HasBinaryChildrenTrait
     /**
      * Return the left child node.
      *
-     * @return \Rubix\ML\Graph\Nodes\BinaryNode|null
+     * @return BinaryNode|null
      */
     public function left() : ?BinaryNode
     {
@@ -61,7 +61,7 @@ trait HasBinaryChildrenTrait
     /**
      * Return the right child node.
      *
-     * @return \Rubix\ML\Graph\Nodes\BinaryNode|null
+     * @return BinaryNode|null
      */
     public function right() : ?BinaryNode
     {
@@ -95,7 +95,7 @@ trait HasBinaryChildrenTrait
     /**
      * Set the left child node.
      *
-     * @param \Rubix\ML\Graph\Nodes\BinaryNode|null $node
+     * @param BinaryNode|null $node
      */
     public function attachLeft(?BinaryNode $node = null) : void
     {
@@ -105,7 +105,7 @@ trait HasBinaryChildrenTrait
     /**
      * Set the right child node.
      *
-     * @param \Rubix\ML\Graph\Nodes\BinaryNode|null $node
+     * @param BinaryNode|null $node
      */
     public function attachRight(?BinaryNode $node = null) : void
     {

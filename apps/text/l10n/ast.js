@@ -54,10 +54,10 @@ OC.L10N.register(
     "Bold text" : "Testu en negrina",
     "Italic" : "Cursiva",
     "Italicized text" : "Testu en cursiva",
-    "Strikethrough" : "Tacháu",
-    "Mistaken text" : "Errata",
     "Underline" : "Solliniáu",
     "Underlined text" : "Testu solliniáu",
+    "Strikethrough" : "Tacháu",
+    "Mistaken text" : "Errata",
     "Heading 1" : "Testera 1",
     "Heading level 1" : "Testera de nivel 1",
     "Heading 6" : "Testera 6",
@@ -144,10 +144,6 @@ OC.L10N.register(
     "Copied to the clipboard" : "Copióse nel cartafueyu",
     "Could not copy to the clipboard" : "Nun se pudo copiar nel cartafueyu",
     "Close outline view" : "Zarrar la visualización d'esquemes",
-    "Outline" : "Esquema",
-    "Edit guest name" : "Editar el nome de convidáu",
-    "Save guest name" : "Guardar el nome de convidáu",
-    "Cannot copy, please copy the link manually" : "Nun se pue copiar. Copia l'enllaz manualmente",
-    "Copy link to clipboard" : "Copiar l'enllaz nel cartafueyu"
+    "Outline" : "Esquema"
 },
 "nplurals=2; plural=(n != 1);");

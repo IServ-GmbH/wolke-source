@@ -44,7 +44,7 @@ class ImageResizer implements Transformer
     /**
      * @param int $width
      * @param int $height
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $width = 32, int $height = 32)
     {
@@ -86,14 +86,14 @@ class ImageResizer implements Transformer
      * resize the images in a sample.
      *
      * @param list<mixed> $sample
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function resize(array &$sample) : void
     {
         foreach ($sample as &$value) {
             if (DataType::detect($value)->isImage()) {
-                $width = imagesx($value) ?: 0;
-                $height = imagesy($value) ?: 0;
+                $width = imagesx($value);
+                $height = imagesy($value);
 
                 if ($width === $this->width and $height === $this->height) {
                     continue;

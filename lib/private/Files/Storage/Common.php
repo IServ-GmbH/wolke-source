@@ -19,6 +19,7 @@ use OC\Files\ObjectStore\ObjectStoreStorage;
 use OC\Files\Storage\Wrapper\Encryption;
 use OC\Files\Storage\Wrapper\Jail;
 use OC\Files\Storage\Wrapper\Wrapper;
+use OCP\Files;
 use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\IPropagator;
 use OCP\Files\Cache\IScanner;
@@ -90,11 +91,15 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage, 
 	}
 
 	public function filesize(string $path): int|float|false {
-		if ($this->is_dir($path)) {
-			return 0; //by definition
+		$type = $this->filetype($path);
+		if ($type === false) {
+			return false;
+		}
+		if ($type !== 'file') {
+			return 0;
 		} else {
 			$stat = $this->stat($path);
-			return isset($stat['size']) ? $stat['size'] : 0;
+			return $stat['size'] ?? 0;
 		}
 	}
 
@@ -205,7 +210,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage, 
 		} else {
 			$sourceStream = $this->fopen($source, 'r');
 			$targetStream = $this->fopen($target, 'w');
-			[, $result] = \OC_Helper::streamCopy($sourceStream, $targetStream);
+			[, $result] = Files::streamCopy($sourceStream, $targetStream, true);
 			if (!$result) {
 				Server::get(LoggerInterface::class)->warning("Failed to write data while copying $source to $target");
 			}
@@ -550,8 +555,8 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage, 
 
 	public function moveFromStorage(IStorage $sourceStorage, string $sourceInternalPath, string $targetInternalPath): bool {
 		if (
-			!$sourceStorage->instanceOfStorage(Encryption::class) &&
-			$this->isSameStorage($sourceStorage)
+			!$sourceStorage->instanceOfStorage(Encryption::class)
+			&& $this->isSameStorage($sourceStorage)
 		) {
 			// resolve any jailed paths
 			while ($sourceStorage->instanceOfStorage(Jail::class)) {
@@ -735,7 +740,7 @@ abstract class Common implements Storage, ILockingStorage, IWriteStreamStorage, 
 			throw new GenericFileException("Failed to open $path for writing");
 		}
 		try {
-			[$count, $result] = \OC_Helper::streamCopy($stream, $target);
+			[$count, $result] = Files::streamCopy($stream, $target, true);
 			if (!$result) {
 				throw new GenericFileException('Failed to copy stream');
 			}

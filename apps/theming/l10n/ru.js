@@ -70,6 +70,7 @@ OC.L10N.register(
     "Primary color" : "Основной цвет",
     "Background color" : "Цвет фона",
     "Remove background image" : "Убрать фоновое изображение ",
+    "Background image" : "Фоновое изображение",
     "Favicon" : "Favicon (значок сайта)",
     "Logo" : "Логотип",
     "Although you can select and customize your instance, users can change their background and colors. If you want to enforce your customization, you can toggle this on." : "Хотя вы можете выбрать и настроить свой экземпляр, пользователи могут изменять свой фон и цвета. Если вы хотите принудительно применить свои настройки для всех, вы можете включить это.",
@@ -116,8 +117,6 @@ OC.L10N.register(
     "Background and login image" : "Фоновое изображение и изображение входа в систему",
     "Advanced options" : "Дополнительные параметры",
     "Install the ImageMagick PHP extension with support for SVG images to automatically generate favicons based on the uploaded logo and color." : "Для автоматической генерации favicon на основе загруженного логотипа и цвета нужно установить PHP расширение ImageMagick  с поддержкой изображений SVG ",
-    "Universal access is very important to us. We follow web standards and check to make everything usable also without mouse, and assistive software such as screenreaders. We aim to be compliant with the {guidelines}Web Content Accessibility Guidelines{linkend} 2.1 on AA level, with the high contrast theme even on AAA level." : "Доступная среда очень важна для нас. При разработке мы следуем веб-стандартам, контролируя возможность пользования всем сервисом без помощи мыши и с использованием вспомогательных программ, например, выполняющих чтение с экрана. Мы стремимся к выполнению рекомендаций {guidelines}Руководства доступности Веб-Контента{linkend} 2.1 на уровне АА, а при использовании режима высокой контрастности  — даже на уровне ААА.",
-    ". Unable to apply the setting." : ". Невозможно применить настройку.",
     "No background has been selected" : "Фоновое изображение не было выбрано",
     "Select a custom color" : "Выберать собственный цвет",
     "Upload" : "Отправить"

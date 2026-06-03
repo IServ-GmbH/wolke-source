@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -9,6 +10,7 @@ namespace OC\Files\ObjectStore;
 use Aws\Result;
 use Exception;
 use OCP\Files\ObjectStore\IObjectStore;
+use OCP\Files\ObjectStore\IObjectStoreMetaData;
 use OCP\Files\ObjectStore\IObjectStoreMultiPartUpload;
 
 class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaData {
@@ -94,6 +96,19 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 		]);
 	}
 
+	private function parseS3Metadata(array $metadata): array {
+		$result = [];
+		foreach ($metadata as $key => $value) {
+			if (str_starts_with($key, 'x-amz-meta-')) {
+				if (str_starts_with($value, 'base64:')) {
+					$value = base64_decode(substr($value, 7));
+				}
+				$result[substr($key, strlen('x-amz-meta-'))] = $value;
+			}
+		}
+		return $result;
+	}
+
 	public function getObjectMetaData(string $urn): array {
 		$object = $this->getConnection()->headObject([
 			'Bucket' => $this->bucket,
@@ -103,7 +118,7 @@ class S3 implements IObjectStore, IObjectStoreMultiPartUpload, IObjectStoreMetaD
 			'mtime' => $object['LastModified'],
 			'etag' => trim($object['ETag'], '"'),
 			'size' => (int)($object['Size'] ?? $object['ContentLength']),
-		];
+		] + $this->parseS3Metadata($object['Metadata'] ?? []);
 	}
 
 	public function listObjects(string $prefix = ''): \Iterator {

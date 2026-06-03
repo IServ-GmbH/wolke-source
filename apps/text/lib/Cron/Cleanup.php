@@ -36,13 +36,7 @@ class Cleanup extends TimedJob {
 	 */
 	protected function run($argument): void {
 		$this->logger->debug('Run cleanup job for text documents');
-		foreach ($this->documentService->getAll() as $document) {
-			if ($this->sessionService->countAllSessions($document->getId()) > 0) {
-				// Do not reset if there are any sessions left
-				// Inactive sessions will get removed further down and will trigger a reset next time
-				continue;
-			}
-
+		foreach ($this->documentService->getAllWithNoActiveSession() as $document) {
 			try {
 				$this->documentService->resetDocument($document->getId());
 			} catch (DocumentHasUnsavedChangesException) {
@@ -57,6 +51,10 @@ class Cleanup extends TimedJob {
 		$this->logger->debug('Run cleanup job for old sessions');
 		$removedOldSessions = $this->sessionService->removeOldSessions();
 		$this->logger->debug('Removed ' . $removedOldSessions . ' old sessions');
+
+		$this->logger->debug('Run cleanup job for orphaned steps');
+		$removedSteps = $this->sessionService->removeOrphanedSteps();
+		$this->logger->debug('Removed ' . $removedSteps . ' orphaned steps');
 
 		$this->logger->debug('Run cleanup job for obsolete documents folders');
 		$this->documentService->cleanupOldDocumentsFolders();

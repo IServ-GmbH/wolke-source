@@ -49,10 +49,9 @@ OC.L10N.register(
     "Source code" : "Izejas kods",
     "Done" : "Pabeigts",
     "Details" : "Informācija",
-    "Insert link" : "Ievietojiet saiti",
+    "Insert link" : "Ievietot saiti",
     "Command" : "Komanda",
     "Choose" : "Izvēlēties",
-    "Add folder description" : "Pievienot mapes aprakstu",
-    "Copy link to clipboard" : "Ievietot saiti starpliktuvē"
+    "Add folder description" : "Pievienot mapes aprakstu"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

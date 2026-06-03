@@ -90,16 +90,16 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * The distance kernel to use when computing the distances between samples.
      *
-     * @var \Rubix\ML\Kernels\Distance\Distance
+     * @var Distance
      */
-    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
+    protected Distance $kernel;
 
     /**
      * The cluster centroid seeder.
      *
-     * @var \Rubix\ML\Clusterers\Seeders\Seeder
+     * @var Seeder
      */
-    protected \Rubix\ML\Clusterers\Seeders\Seeder $seeder;
+    protected Seeder $seeder;
 
     /**
      * The computed centroid vectors of the training data.
@@ -122,9 +122,9 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
      * @param float $fuzz
      * @param int $epochs
      * @param float $minChange
-     * @param \Rubix\ML\Kernels\Distance\Distance|null $kernel
-     * @param \Rubix\ML\Clusterers\Seeders\Seeder|null $seeder
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Distance|null $kernel
+     * @param Seeder|null $seeder
+     * @throws InvalidArgumentException
      */
     public function __construct(
         int $c,
@@ -166,7 +166,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Return the estimator type.
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -254,7 +254,7 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Train the learner with a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function train(Dataset $dataset) : void
     {
@@ -345,8 +345,8 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<int>
      */
     public function predict(Dataset $dataset) : array
@@ -376,8 +376,8 @@ class FuzzyCMeans implements Estimator, Learner, Probabilistic, Verbose, Persist
     /**
      * Estimate the joint probabilities for each possible outcome.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<float[]>
      */
     public function proba(Dataset $dataset) : array

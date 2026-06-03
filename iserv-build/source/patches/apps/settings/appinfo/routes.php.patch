@@ -1,5 +1,5 @@
 diff --git apps/settings/appinfo/routes.php apps/settings/appinfo/routes.php
-index 5038cf3..9eb8b14 100644
+index c3f1333..31edd39 100644
 --- apps/settings/appinfo/routes.php
 +++ apps/settings/appinfo/routes.php
 @@ -48,7 +48,7 @@ return [

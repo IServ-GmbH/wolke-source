@@ -19,6 +19,7 @@ class SystemReport extends Command {
 		parent::__construct();
 	}
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('support:report')
@@ -26,6 +27,7 @@ class SystemReport extends Command {
 		;
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$output->writeln($this->detailManager->getRenderedDetails());
 		return 0;

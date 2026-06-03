@@ -22,9 +22,9 @@ class Neighborhood implements Hypercube, BinaryNode
     /**
      * The dataset stored in the node.
      *
-     * @var \Rubix\ML\Datasets\Labeled
+     * @var Labeled
      */
-    protected \Rubix\ML\Datasets\Labeled $dataset;
+    protected Labeled $dataset;
 
     /**
      * The multivariate minimum of the bounding box.
@@ -43,7 +43,7 @@ class Neighborhood implements Hypercube, BinaryNode
     /**
      * Terminate a branch with a dataset.
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
+     * @param Labeled $dataset
      * @return self
      */
     public static function terminate(Labeled $dataset) : self
@@ -59,7 +59,7 @@ class Neighborhood implements Hypercube, BinaryNode
     }
 
     /**
-     * @param \Rubix\ML\Datasets\Labeled $dataset
+     * @param Labeled $dataset
      * @param list<int|float> $min
      * @param list<int|float> $max
      */
@@ -73,7 +73,7 @@ class Neighborhood implements Hypercube, BinaryNode
     /**
      * Return the dataset stored in the node.
      *
-     * @return \Rubix\ML\Datasets\Labeled
+     * @return Labeled
      */
     public function dataset() : Labeled
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -27,9 +28,11 @@ class Mail implements IDelegatedSettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm() {
+		$finder = Server::get(IBinaryFinder::class);
+
 		$parameters = [
 			// Mail
-			'sendmail_is_available' => (bool)Server::get(IBinaryFinder::class)->findBinaryPath('sendmail'),
+			'sendmail_is_available' => $finder->findBinaryPath('sendmail') !== false,
 			'mail_domain' => $this->config->getSystemValue('mail_domain', ''),
 			'mail_from_address' => $this->config->getSystemValue('mail_from_address', ''),
 			'mail_smtpmode' => $this->config->getSystemValue('mail_smtpmode', ''),

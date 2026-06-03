@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGINX configuration &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/installation/nginx.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,14 +58,23 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">Preparing PHP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
@@ -90,25 +100,59 @@
 <li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -138,16 +182,7 @@
              
   <section id="nginx-configuration">
 <span id="nginx-config"></span><h1>NGINX configuration<a class="headerlink" href="#nginx-configuration" title="Link to this heading"></a></h1>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Please note that web servers other than Apache 2.x are not officially supported.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This page covers example NGINX configurations to run a Nextcloud server.
-These configurations examples were originally provided by <a class="reference external" href="https://github.com/josh4trunks">&#64;josh4trunks</a>
-and are exclusively community-maintained. (Thank you contributors!)</p>
-</div>
+<p>This page covers how to run a Nextcloud server using NGINX backed by PHP-FPM, which is also an officially supported setup.</p>
 <ul class="simple">
 <li><p>You need to insert the following code into <strong>your Nginx configuration file</strong>.
 Choose the appropriate example based on whether you are deploying <a class="reference internal" href="#nginx-webroot-example"><span class="std std-ref">Nextcloud in the webroot of NGINX</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/</span></code>) or <a class="reference internal" href="#nginx-subdir-example"><span class="std std-ref">Nextcloud in a subdir of the NGINX webroot</span></a> (i.e. <code class="code docutils literal notranslate"><span class="pre">https://cloud.example.com/nextcloud</span></code>).</p></li>
@@ -157,6 +192,8 @@ Choose the appropriate example based on whether you are deploying <a class="refe
 <li><p>Adjust the <code class="code docutils literal notranslate"><span class="pre">ssl_certificate</span></code> and <code class="code docutils literal notranslate"><span class="pre">ssl_certificate_key</span></code> directives to the real paths for your signed
 certificate and private key. Make sure your SSL certificates are readable by the nginx server process (see <a class="reference external" href="https://wiki.nginx.org/HttpSslModule">nginx HTTPS SSL
 Module documentation</a>).</p></li>
+<li><p>If using Let’s Encrypt as TLS certificate and nginx as webserver, set <cite>ssl_stapling</cite> and <cite>ssl_stapling_verify</cite> to <cite>off</cite>
+in main nginx config (see [Let’s Encrypt blog post](<a class="reference external" href="https://letsencrypt.org/2024/12/05/ending-ocsp">https://letsencrypt.org/2024/12/05/ending-ocsp</a>)).</p></li>
 <li><p>Be careful about line breaks if you copy the examples, as long lines may be
 broken for page display and result in an invalid configuration files.</p></li>
 <li><p>Some environments might need a <code class="docutils literal notranslate"><span class="pre">cgi.fix_pathinfo</span></code> set to <code class="docutils literal notranslate"><span class="pre">1</span></code> in their
@@ -167,7 +204,7 @@ broken for page display and result in an invalid configuration files.</p></li>
 <p>The following configuration should be used when Nextcloud is placed in the
 webroot of your nginx installation. In this example it is
 <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud</span></code> and it is accessed via <code class="docutils literal notranslate"><span class="pre">http(s)://cloud.example.com/</span></code></p>
-<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="c1"># Version 2024-07-17</span>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="c1"># Version 2025-07-23</span>
 
 <span class="k">upstream</span><span class="w"> </span><span class="s">php-handler</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
@@ -218,12 +255,19 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="c1"># will add the domain to a hardcoded list that is shipped</span>
 <span class="w">    </span><span class="c1"># in all major browsers and getting removed from this list</span>
 <span class="w">    </span><span class="c1"># could take several months.</span>
-<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload&quot; always;</span>
+<span class="w">    </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains; preload&quot; always;</span>
 
 <span class="w">    </span><span class="c1"># set max upload size and increase upload timeout:</span>
 <span class="w">    </span><span class="kn">client_max_body_size</span><span class="w"> </span><span class="s">512M</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">client_body_timeout</span><span class="w"> </span><span class="s">300s</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">fastcgi_buffers</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="s">4K</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Proxy and client response timeouts</span>
+<span class="w">    </span><span class="c1"># Uncomment an increase these if facing timeout errors during large file uploads</span>
+<span class="w">    </span><span class="c1">#proxy_connect_timeout 60s;</span>
+<span class="w">    </span><span class="c1">#proxy_send_timeout 60s;</span>
+<span class="w">    </span><span class="c1">#proxy_read_timeout 60s;</span>
+<span class="w">    </span><span class="c1">#send_timeout 60s;</span>
 
 <span class="w">    </span><span class="c1"># Enable gzip but do not remove ETag headers</span>
 <span class="w">    </span><span class="kn">gzip</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
@@ -248,7 +292,6 @@ webroot of your nginx installation. In this example it is
 <span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
 <span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
-<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1"># Remove X-Powered-By, which is an information leak</span>
 <span class="w">    </span><span class="kn">fastcgi_hide_header</span><span class="w"> </span><span class="s">X-Powered-By</span><span class="p">;</span>
@@ -336,6 +379,12 @@ webroot of your nginx installation. In this example it is
 <span class="w">        </span><span class="kn">fastcgi_intercept_errors</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">on</span><span class="p">;</span><span class="w">                   </span><span class="c1"># Required as PHP-FPM does not support chunked transfer encoding and requires a valid ContentLength header.</span>
 
+<span class="w">        </span><span class="c1"># PHP-FPM 504 response timeouts</span>
+<span class="w">        </span><span class="c1"># Uncomment and increase these if facing timeout errors during large file uploads</span>
+<span class="w">        </span><span class="c1">#fastcgi_read_timeout 60s;</span>
+<span class="w">        </span><span class="c1">#fastcgi_send_timeout 60s;</span>
+<span class="w">        </span><span class="c1">#fastcgi_connect_timeout 60s;</span>
+
 <span class="w">        </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -349,7 +398,6 @@ webroot of your nginx installation. In this example it is
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
-<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
 <span class="w">    </span><span class="p">}</span>
 
@@ -385,7 +433,9 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <li><p>The blocks that handle requests for paths outside of <code class="docutils literal notranslate"><span class="pre">/nextcloud</span></code> (i.e. <code class="docutils literal notranslate"><span class="pre">/robots.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">/.well-known</span></code>) are pulled out of the <code class="docutils literal notranslate"><span class="pre">location</span> <span class="pre">^~</span> <span class="pre">/nextcloud</span></code> block.</p></li>
 <li><p>The block which handles <cite>/.well-known</cite> doesn’t need a regex exception, since the rule which prevents users from accessing hidden folders at the root of the Nextcloud installation no longer matches that path.</p></li>
 </ul>
-<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">upstream</span><span class="w"> </span><span class="s">php-handler</span><span class="w"> </span><span class="p">{</span>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="c1"># Version 2025-07-23</span>
+
+<span class="k">upstream</span><span class="w"> </span><span class="s">php-handler</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">#server unix:/run/php/php8.2-fpm.sock;</span>
 <span class="p">}</span>
@@ -467,6 +517,13 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="kn">client_body_timeout</span><span class="w"> </span><span class="s">300s</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">fastcgi_buffers</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="s">4K</span><span class="p">;</span>
 
+<span class="w">        </span><span class="c1"># Proxy and client response timeouts</span>
+<span class="w">        </span><span class="c1"># Uncomment an increase these if facing timeout errors during large file uploads</span>
+<span class="w">        </span><span class="c1">#proxy_connect_timeout 60s;</span>
+<span class="w">        </span><span class="c1">#proxy_send_timeout 60s;</span>
+<span class="w">        </span><span class="c1">#proxy_read_timeout 60s;</span>
+<span class="w">        </span><span class="c1">#send_timeout 60s;</span>
+
 <span class="w">        </span><span class="c1"># Enable gzip but do not remove ETag headers</span>
 <span class="w">        </span><span class="kn">gzip</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">gzip_vary</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
@@ -490,7 +547,7 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="c1"># will add the domain to a hardcoded list that is shipped</span>
 <span class="w">        </span><span class="c1"># in all major browsers and getting removed from this list</span>
 <span class="w">        </span><span class="c1"># could take several months.</span>
-<span class="w">        </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=15768000; includeSubDomains; preload;&quot; always;</span>
+<span class="w">        </span><span class="c1">#add_header Strict-Transport-Security &quot;max-age=31536000; includeSubDomains; preload&quot; always;</span>
 
 <span class="w">        </span><span class="c1"># HTTP response headers borrowed from Nextcloud `.htaccess`</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Referrer-Policy</span><span class="w">                   </span><span class="s">&quot;no-referrer&quot;</span><span class="w">       </span><span class="s">always</span><span class="p">;</span>
@@ -498,7 +555,6 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
 <span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
-<span class="w">        </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1"># Remove X-Powered-By, which is an information leak</span>
 <span class="w">        </span><span class="kn">fastcgi_hide_header</span><span class="w"> </span><span class="s">X-Powered-By</span><span class="p">;</span>
@@ -551,6 +607,12 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">            </span><span class="kn">fastcgi_intercept_errors</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">fastcgi_request_buffering</span><span class="w"> </span><span class="no">on</span><span class="p">;</span><span class="w">                   </span><span class="c1"># Required as PHP-FPM does not support chunked transfer encoding and requires a valid ContentLength header.</span>
 
+<span class="w">            </span><span class="c1"># PHP-FPM 504 response timeouts</span>
+<span class="w">            </span><span class="c1"># Uncomment and increase these if facing timeout errors during large file uploads</span>
+<span class="w">            </span><span class="c1">#fastcgi_read_timeout 60s;</span>
+<span class="w">            </span><span class="c1">#fastcgi_send_timeout 60s;</span>
+<span class="w">            </span><span class="c1">#fastcgi_connect_timeout 60s;</span>
+
 <span class="w">            </span><span class="kn">fastcgi_max_temp_file_size</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">        </span><span class="p">}</span>
 
@@ -564,7 +626,6 @@ The configuration differs from the “Nextcloud in webroot” configuration abov
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Frame-Options</span><span class="w">                   </span><span class="s">&quot;SAMEORIGIN&quot;</span><span class="w">        </span><span class="s">always</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Permitted-Cross-Domain-Policies</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="w">              </span><span class="s">always</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-Robots-Tag</span><span class="w">                      </span><span class="s">&quot;noindex,</span><span class="w"> </span><span class="s">nofollow&quot;</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
-<span class="w">            </span><span class="kn">add_header</span><span class="w"> </span><span class="s">X-XSS-Protection</span><span class="w">                  </span><span class="s">&quot;1</span><span class="p">;</span><span class="w"> </span><span class="kn">mode=block&quot;</span><span class="w">     </span><span class="s">always</span><span class="p">;</span>
 <span class="w">            </span><span class="kn">access_log</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">     </span><span class="c1"># Optional: Don&#39;t log access to assets</span>
 <span class="w">        </span><span class="p">}</span>
 
@@ -676,7 +737,7 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -716,26 +777,18 @@ chown<span class="w"> </span>root:nginx<span class="w"> </span>/var/lib/php/opca
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

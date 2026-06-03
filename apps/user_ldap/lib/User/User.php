@@ -18,6 +18,7 @@ use OCP\Accounts\PropertyDoesNotExistException;
 use OCP\IAvatarManager;
 use OCP\IConfig;
 use OCP\Image;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
@@ -113,12 +114,8 @@ class User {
 			$displayName2 = (string)$ldapEntry[$attr][0];
 		}
 		if ($displayName !== '') {
-			$this->composeAndStoreDisplayName($displayName, $displayName2);
-			$this->access->cacheUserDisplayName(
-				$this->getUsername(),
-				$displayName,
-				$displayName2
-			);
+			$composedDisplayName = $this->composeAndStoreDisplayName($displayName, $displayName2);
+			$this->access->cacheUserDisplayName($this->getUsername(), $composedDisplayName);
 		}
 		unset($attr);
 
@@ -128,7 +125,8 @@ class User {
 		$attr = strtolower($this->connection->ldapEmailAttribute);
 		if (isset($ldapEntry[$attr])) {
 			$mailValue = 0;
-			for ($x = 0; $x < count($ldapEntry[$attr]); $x++) {
+			$emailValues = count($ldapEntry[$attr]);
+			for ($x = 0; $x < $emailValues; $x++) {
 				if (filter_var($ldapEntry[$attr][$x], FILTER_VALIDATE_EMAIL)) {
 					$mailValue = $x;
 					break;
@@ -174,9 +172,9 @@ class User {
 		$cacheKey = 'getUserProfile-' . $username;
 		$profileCached = $this->connection->getFromCache($cacheKey);
 		// honoring profile disabled in config.php and check if user profile was refreshed
-		if ($this->config->getSystemValueBool('profile.enabled', true) &&
-			($profileCached === null) && // no cache or TTL not expired
-			!$this->wasRefreshed('profile')) {
+		if ($this->config->getSystemValueBool('profile.enabled', true)
+			&& ($profileCached === null) // no cache or TTL not expired
+			&& !$this->wasRefreshed('profile')) {
 			// check current data
 			$profileValues = [];
 			//User Profile Field - Phone number
@@ -451,6 +449,10 @@ class User {
 		return $displayName;
 	}
 
+	public function fetchStoredDisplayName(): string {
+		return $this->config->getUserValue($this->uid, 'user_ldap', 'displayName', '');
+	}
+
 	/**
 	 * Stores the LDAP Username in the Database
 	 */
@@ -514,7 +516,7 @@ class User {
 	 * fetch all the user's attributes in one call and use the fetched values in this function.
 	 * The expected value for that parameter is a string describing the quota for the user. Valid
 	 * values are 'none' (unlimited), 'default' (the Nextcloud's default quota), '1234' (quota in
-	 * bytes), '1234 MB' (quota in MB - check the \OC_Helper::computerFileSize method for more info)
+	 * bytes), '1234 MB' (quota in MB - check the \OCP\Util::computerFileSize method for more info)
 	 *
 	 * fetches the quota from LDAP and stores it as Nextcloud user value
 	 * @param ?string $valueFromLDAP the quota attribute's value can be passed,
@@ -562,7 +564,7 @@ class User {
 	}
 
 	private function verifyQuotaValue(string $quotaValue): bool {
-		return $quotaValue === 'none' || $quotaValue === 'default' || \OC_Helper::computerFileSize($quotaValue) !== false;
+		return $quotaValue === 'none' || $quotaValue === 'default' || Util::computerFileSize($quotaValue) !== false;
 	}
 
 	/**
@@ -771,10 +773,10 @@ class User {
 				if (!empty($pwdGraceAuthNLimit)
 					&& count($pwdGraceUseTime) < (int)$pwdGraceAuthNLimit[0]) { //at least one more grace login available?
 					$this->config->setUserValue($uid, 'user_ldap', 'needsPasswordReset', 'true');
-					header('Location: ' . \OC::$server->getURLGenerator()->linkToRouteAbsolute(
+					header('Location: ' . Server::get(IURLGenerator::class)->linkToRouteAbsolute(
 						'user_ldap.renewPassword.showRenewPasswordForm', ['user' => $uid]));
 				} else { //no more grace login available
-					header('Location: ' . \OC::$server->getURLGenerator()->linkToRouteAbsolute(
+					header('Location: ' . Server::get(IURLGenerator::class)->linkToRouteAbsolute(
 						'user_ldap.renewPassword.showLoginFormInvalidPassword', ['user' => $uid]));
 				}
 				exit();
@@ -782,7 +784,7 @@ class User {
 			//handle pwdReset attribute
 			if (!empty($pwdReset) && $pwdReset[0] === 'TRUE') { //user must change their password
 				$this->config->setUserValue($uid, 'user_ldap', 'needsPasswordReset', 'true');
-				header('Location: ' . \OC::$server->getURLGenerator()->linkToRouteAbsolute(
+				header('Location: ' . Server::get(IURLGenerator::class)->linkToRouteAbsolute(
 					'user_ldap.renewPassword.showRenewPasswordForm', ['user' => $uid]));
 				exit();
 			}

@@ -69,10 +69,10 @@ OC.L10N.register(
     "Bold text" : "Text en negreta",
     "Italic" : "Cursiva",
     "Italicized text" : "Text en cursiva",
-    "Strikethrough" : "Ratllat",
-    "Mistaken text" : "Text equivocat",
     "Underline" : "Subratllat",
     "Underlined text" : "Text subratllat",
+    "Strikethrough" : "Ratllat",
+    "Mistaken text" : "Text equivocat",
     "Heading 1" : "Títol 1",
     "Heading level 1" : "Títol de nivell 1",
     "Heading 6" : "Títol 6",
@@ -208,10 +208,6 @@ OC.L10N.register(
     "Front matter" : "Text preliminar",
     "Link to this section" : "Enllaç a aquesta secció",
     "Close outline view" : "Tanca la visualització d'esquema",
-    "Outline" : "Esquema",
-    "Edit guest name" : "Edita el nom de convidat",
-    "Save guest name" : "Desa el nom de convidat",
-    "Cannot copy, please copy the link manually" : "No es pot copiar; copieu l'enllaç manualment",
-    "Copy link to clipboard" : "Copia l'enllaç al porta-retalls"
+    "Outline" : "Esquema"
 },
 "nplurals=2; plural=(n != 1);");

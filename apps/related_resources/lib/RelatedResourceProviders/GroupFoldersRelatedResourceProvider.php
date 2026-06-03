@@ -33,7 +33,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 
 	private ?FolderManager $folderManager = null;
 	/**
-	 * @var array<int, array{acl: bool, groups: array<array-key, array<array-key, int|string>>, id: int, mount_point: mixed, quota: int, size: 0}>
+	 * @var array<int, \OCA\GroupFolders\Folder\FolderDefinitionWithMappings>
 	 */
 	private array $folders = [];
 
@@ -80,6 +80,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 	public function getItemsAvailableToEntity(FederatedUser $entity): array {
 		$items = [];
 		foreach ($this->folders as $folder) {
+			$folder = $folder->toArray();
 			foreach ($folder['groups'] as $k => $entry) {
 				if ($entity->getBasedOn()->getSource() === Member::TYPE_GROUP
 					&& $entry['type'] === 'group'
@@ -144,7 +145,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 	public function processApplicableMap(
 		CirclesManager $circlesManager,
 		RelatedResource $related,
-		array $applicableMap
+		array $applicableMap,
 	): void {
 		foreach ($applicableMap as $k => $entry) {
 			$entityId = '';
@@ -156,7 +157,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 			}
 
 			$related->addRecipient($entityId)
-					->setAsGroupShared();
+				->setAsGroupShared();
 		}
 	}
 
@@ -169,6 +170,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 	 */
 	public function getFolder(int $folderId): array {
 		foreach ($this->folders as $folder) {
+			$folder = $folder->toArray();
 			if ($folder['id'] === $folderId) {
 				return $folder;
 			}

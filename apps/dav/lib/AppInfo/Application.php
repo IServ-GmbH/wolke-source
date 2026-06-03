@@ -9,20 +9,18 @@ declare(strict_types=1);
  */
 namespace OCA\DAV\AppInfo;
 
-use OCA\DAV\CalDAV\Activity\Backend;
 use OCA\DAV\CalDAV\AppCalendar\AppCalendarPlugin;
 use OCA\DAV\CalDAV\CachedSubscriptionProvider;
 use OCA\DAV\CalDAV\CalendarManager;
 use OCA\DAV\CalDAV\CalendarProvider;
+use OCA\DAV\CalDAV\Federation\CalendarFederationProvider;
 use OCA\DAV\CalDAV\Reminder\NotificationProvider\AudioProvider;
 use OCA\DAV\CalDAV\Reminder\NotificationProvider\EmailProvider;
 use OCA\DAV\CalDAV\Reminder\NotificationProvider\PushProvider;
 use OCA\DAV\CalDAV\Reminder\NotificationProviderManager;
 use OCA\DAV\CalDAV\Reminder\Notifier;
 use OCA\DAV\Capabilities;
-
 use OCA\DAV\CardDAV\ContactsManager;
-use OCA\DAV\CardDAV\PhotoCache;
 use OCA\DAV\CardDAV\SyncService;
 use OCA\DAV\Events\AddressBookCreatedEvent;
 use OCA\DAV\Events\AddressBookDeletedEvent;
@@ -39,32 +37,38 @@ use OCA\DAV\Events\CalendarUpdatedEvent;
 use OCA\DAV\Events\CardCreatedEvent;
 use OCA\DAV\Events\CardDeletedEvent;
 use OCA\DAV\Events\CardUpdatedEvent;
+use OCA\DAV\Events\SabrePluginAuthInitEvent;
 use OCA\DAV\Events\SubscriptionCreatedEvent;
 use OCA\DAV\Events\SubscriptionDeletedEvent;
-use OCA\DAV\HookManager;
 use OCA\DAV\Listener\ActivityUpdaterListener;
 use OCA\DAV\Listener\AddMissingIndicesListener;
 use OCA\DAV\Listener\AddressbookListener;
 use OCA\DAV\Listener\BirthdayListener;
 use OCA\DAV\Listener\CalendarContactInteractionListener;
 use OCA\DAV\Listener\CalendarDeletionDefaultUpdaterListener;
+use OCA\DAV\Listener\CalendarFederationNotificationListener;
 use OCA\DAV\Listener\CalendarObjectReminderUpdaterListener;
 use OCA\DAV\Listener\CalendarPublicationListener;
 use OCA\DAV\Listener\CalendarShareUpdateListener;
 use OCA\DAV\Listener\CardListener;
 use OCA\DAV\Listener\ClearPhotoCacheListener;
+use OCA\DAV\Listener\DavAdminSettingsListener;
 use OCA\DAV\Listener\OutOfOfficeListener;
+use OCA\DAV\Listener\SabrePluginAuthInitListener;
 use OCA\DAV\Listener\SubscriptionListener;
 use OCA\DAV\Listener\TrustedServerRemovedListener;
+use OCA\DAV\Listener\UserEventsListener;
 use OCA\DAV\Listener\UserPreferenceListener;
 use OCA\DAV\Search\ContactsSearchProvider;
 use OCA\DAV\Search\EventsSearchProvider;
 use OCA\DAV\Search\TasksSearchProvider;
+use OCA\DAV\Settings\Admin\SystemAddressBookSettings;
 use OCA\DAV\SetupChecks\NeedsSystemAddressBookSync;
 use OCA\DAV\SetupChecks\WebdavEndpoint;
 use OCA\DAV\UserMigration\CalendarMigrator;
 use OCA\DAV\UserMigration\ContactsMigrator;
 use OCP\Accounts\UserUpdatedEvent;
+use OCP\App\IAppManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -81,15 +85,24 @@ use OCP\Config\BeforePreferenceDeletedEvent;
 use OCP\Config\BeforePreferenceSetEvent;
 use OCP\Contacts\IManager as IContactsManager;
 use OCP\DB\Events\AddMissingIndicesEvent;
-use OCP\EventDispatcher\GenericEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Events\TrustedServerRemovedEvent;
-use OCP\Files\AppData\IAppDataFactory;
-use OCP\IUser;
+use OCP\Federation\ICloudFederationProviderManager;
+use OCP\Group\Events\GroupDeletedEvent;
+use OCP\IUserSession;
 use OCP\Server;
+use OCP\Settings\Events\DeclarativeSettingsGetValueEvent;
+use OCP\Settings\Events\DeclarativeSettingsSetValueEvent;
+use OCP\User\Events\BeforeUserDeletedEvent;
+use OCP\User\Events\BeforeUserIdUnassignedEvent;
 use OCP\User\Events\OutOfOfficeChangedEvent;
 use OCP\User\Events\OutOfOfficeClearedEvent;
 use OCP\User\Events\OutOfOfficeScheduledEvent;
+use OCP\User\Events\UserChangedEvent;
+use OCP\User\Events\UserCreatedEvent;
+use OCP\User\Events\UserDeletedEvent;
+use OCP\User\Events\UserFirstTimeLoggedInEvent;
+use OCP\User\Events\UserIdAssignedEvent;
+use OCP\User\Events\UserIdUnassignedEvent;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -104,12 +117,6 @@ class Application extends App implements IBootstrap {
 
 	public function register(IRegistrationContext $context): void {
 		$context->registerServiceAlias('CardDAVSyncService', SyncService::class);
-		$context->registerService(PhotoCache::class, function (ContainerInterface $c) {
-			return new PhotoCache(
-				$c->get(IAppDataFactory::class)->get('dav-photocache'),
-				$c->get(LoggerInterface::class)
-			);
-		});
 		$context->registerService(AppCalendarPlugin::class, function (ContainerInterface $c) {
 			return new AppCalendarPlugin(
 				$c->get(ICalendarManager::class),
@@ -187,6 +194,23 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(OutOfOfficeClearedEvent::class, OutOfOfficeListener::class);
 		$context->registerEventListener(OutOfOfficeScheduledEvent::class, OutOfOfficeListener::class);
 
+		$context->registerEventListener(UserFirstTimeLoggedInEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserIdAssignedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(BeforeUserIdUnassignedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserIdUnassignedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(BeforeUserDeletedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserDeletedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserCreatedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserChangedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(UserUpdatedEvent::class, UserEventsListener::class);
+		$context->registerEventListener(GroupDeletedEvent::class, UserEventsListener::class);
+
+		$context->registerEventListener(SabrePluginAuthInitEvent::class, SabrePluginAuthInitListener::class);
+
+		$context->registerEventListener(CalendarObjectCreatedEvent::class, CalendarFederationNotificationListener::class);
+		$context->registerEventListener(CalendarObjectUpdatedEvent::class, CalendarFederationNotificationListener::class);
+		$context->registerEventListener(CalendarObjectDeletedEvent::class, CalendarFederationNotificationListener::class);
+
 		$context->registerNotifierService(Notifier::class);
 
 		$context->registerCalendarProvider(CalendarProvider::class);
@@ -197,55 +221,26 @@ class Application extends App implements IBootstrap {
 
 		$context->registerSetupCheck(NeedsSystemAddressBookSync::class);
 		$context->registerSetupCheck(WebdavEndpoint::class);
+
+		// register admin settings form and listener(s)
+		$context->registerDeclarativeSettings(SystemAddressBookSettings::class);
+		$context->registerEventListener(DeclarativeSettingsGetValueEvent::class, DavAdminSettingsListener::class);
+		$context->registerEventListener(DeclarativeSettingsSetValueEvent::class, DavAdminSettingsListener::class);
 	}
 
 	public function boot(IBootContext $context): void {
 		// Load all dav apps
-		\OC_App::loadApps(['dav']);
+		$context->getServerContainer()->get(IAppManager::class)->loadApps(['dav']);
 
-		$context->injectFn([$this, 'registerHooks']);
-		$context->injectFn([$this, 'registerContactsManager']);
-		$context->injectFn([$this, 'registerCalendarManager']);
-		$context->injectFn([$this, 'registerCalendarReminders']);
-	}
-
-	public function registerHooks(HookManager $hm,
-		IEventDispatcher $dispatcher,
-		IAppContainer $container) {
-		$hm->setup();
-
-		// first time login event setup
-		$dispatcher->addListener(IUser::class . '::firstLogin', function ($event) use ($hm): void {
-			if ($event instanceof GenericEvent) {
-				$hm->firstLogin($event->getSubject());
-			}
-		});
-
-		$dispatcher->addListener(UserUpdatedEvent::class, function (UserUpdatedEvent $event) use ($container): void {
-			/** @var SyncService $syncService */
-			$syncService = Server::get(SyncService::class);
-			$syncService->updateUser($event->getUser());
-		});
-
-
-		$dispatcher->addListener(CalendarShareUpdatedEvent::class, function (CalendarShareUpdatedEvent $event) use ($container): void {
-			/** @var Backend $backend */
-			$backend = $container->query(Backend::class);
-			$backend->onCalendarUpdateShares(
-				$event->getCalendarData(),
-				$event->getOldShares(),
-				$event->getAdded(),
-				$event->getRemoved()
-			);
-
-			// Here we should recalculate if reminders should be sent to new or old sharees
-		});
-
+		$context->injectFn($this->registerContactsManager(...));
+		$context->injectFn($this->registerCalendarManager(...));
+		$context->injectFn($this->registerCalendarReminders(...));
+		$context->injectFn($this->registerCloudFederationProvider(...));
 	}
 
 	public function registerContactsManager(IContactsManager $cm, IAppContainer $container): void {
 		$cm->register(function () use ($container, $cm): void {
-			$user = \OC::$server->getUserSession()->getUser();
+			$user = Server::get(IUserSession::class)->getUser();
 			if (!is_null($user)) {
 				$this->setupContactsProvider($cm, $container, $user->getUID());
 			} else {
@@ -273,7 +268,7 @@ class Application extends App implements IBootstrap {
 	public function registerCalendarManager(ICalendarManager $calendarManager,
 		IAppContainer $container): void {
 		$calendarManager->register(function () use ($container, $calendarManager): void {
-			$user = \OC::$server->getUserSession()->getUser();
+			$user = Server::get(IUserSession::class)->getUser();
 			if ($user !== null) {
 				$this->setupCalendarProvider($calendarManager, $container, $user->getUID());
 			}
@@ -296,5 +291,15 @@ class Application extends App implements IBootstrap {
 		} catch (Throwable $ex) {
 			$logger->error($ex->getMessage(), ['exception' => $ex]);
 		}
+	}
+
+	public function registerCloudFederationProvider(
+		ICloudFederationProviderManager $manager,
+	): void {
+		$manager->addCloudFederationProvider(
+			CalendarFederationProvider::PROVIDER_ID,
+			'Calendar Federation',
+			static fn () => Server::get(CalendarFederationProvider::class),
+		);
 	}
 }

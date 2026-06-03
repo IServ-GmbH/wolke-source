@@ -56,10 +56,10 @@ OC.L10N.register(
     "Bold text" : "Texto en negrita",
     "Italic" : "Itálica",
     "Italicized text" : "Texto en cursiva",
-    "Strikethrough" : "Tachado",
-    "Mistaken text" : "Texto equivocado",
     "Underline" : "Subrayado",
     "Underlined text" : "Texto subrayado",
+    "Strikethrough" : "Tachado",
+    "Mistaken text" : "Texto equivocado",
     "Heading 1" : "Título 1",
     "Heading level 1" : "Nivel de encabezado 1",
     "Heading 6" : "Encabezado 6",
@@ -149,10 +149,6 @@ OC.L10N.register(
     "Front matter" : "Materias principales",
     "Link to this section" : "Enlace a esta sección",
     "Close outline view" : "Cerrar vista de esquema",
-    "Outline" : "Esquema",
-    "Edit guest name" : "Editar nombre de invitado",
-    "Save guest name" : "Guardar nombre de invitado",
-    "Cannot copy, please copy the link manually" : "No se puede copiar, por favor copia el enlace manualmente",
-    "Copy link to clipboard" : "Copiar enlace al portapapeles"
+    "Outline" : "Esquema"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

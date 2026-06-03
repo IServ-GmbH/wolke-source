@@ -26,6 +26,7 @@ use OCP\Files\StorageNotAvailableException;
 use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IUserManager;
 use OCP\Lock\LockedException;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -112,8 +113,8 @@ class Scan extends Base {
 		$scanner = new Scanner(
 			$user,
 			new ConnectionAdapter($connection),
-			\OC::$server->get(IEventDispatcher::class),
-			\OC::$server->get(LoggerInterface::class)
+			Server::get(IEventDispatcher::class),
+			Server::get(LoggerInterface::class)
 		);
 
 		# check on each file/folder if there was a user interrupt (ctrl-c) and throw an exception
@@ -285,8 +286,8 @@ class Scan extends Base {
 		$this->execTime = -microtime(true);
 		// Convert PHP errors to exceptions
 		set_error_handler(
-			fn (int $severity, string $message, string $file, int $line): bool =>
-				$this->exceptionErrorHandler($output, $severity, $message, $file, $line),
+			fn (int $severity, string $message, string $file, int $line): bool
+				=> $this->exceptionErrorHandler($output, $severity, $message, $file, $line),
 			E_ALL
 		);
 	}
@@ -357,7 +358,7 @@ class Scan extends Base {
 
 	protected function reconnectToDatabase(OutputInterface $output): Connection {
 		/** @var Connection $connection */
-		$connection = \OC::$server->get(Connection::class);
+		$connection = Server::get(Connection::class);
 		try {
 			$connection->close();
 		} catch (\Exception $ex) {

@@ -24,6 +24,7 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
+use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IPreview;
 use OCP\ISession;
 use OCP\IURLGenerator;
@@ -41,6 +42,7 @@ class AttachmentService {
 		private IMimeTypeDetector $mimeTypeDetector,
 		private IURLGenerator $urlGenerator,
 		private IFilenameValidator $filenameValidator,
+		private IFilesMetadataManager $filesMetadataManager,
 		private ISession $session,
 	) {
 	}
@@ -226,21 +228,34 @@ class AttachmentService {
 		$davFolder = $userId !== null
 			? $this->rootFolder->getUserFolder($userId)
 			: $this->getShareFolder($shareToken);
+
+		$fileNodes = [];
+		$fileIds = [];
 		foreach ($attachmentDir->getDirectoryListing() as $node) {
-			if (!($node instanceof File)) {
-				// Ignore anything but files
-				continue;
+			if ($node instanceof File) {
+				// we only want Files
+				$fileNodes[] = $node;
+				$fileIds[] = $node->getId();
 			}
+		}
+
+		// this is done outside the loop for efficiency
+		$metadataMap = $this->filesMetadataManager->getMetadataForFiles($fileIds);
+
+		foreach ($fileNodes as $node) {
 			$isImage = in_array($node->getMimetype(), AttachmentController::IMAGE_MIME_TYPES, true);
 			$name = $node->getName();
+			$fileId = $node->getId();
+			$metadata = $metadataMap[$fileId] ?? null;
 			$attachments[] = [
-				'fileId' => $node->getId(),
+				'fileId' => $fileId,
 				'name' => $name,
 				'size' => Util::humanFileSize($node->getSize()),
 				'mimetype' => $node->getMimeType(),
 				'mtime' => $node->getMTime(),
 				'isImage' => $isImage,
 				'davPath' => $davFolder?->getRelativePath($node->getPath()),
+				'metadata' => $metadata,
 				'fullUrl' => $isImage
 					? $this->urlGenerator->linkToRouteAbsolute('text.Attachment.getImageFile') . $urlParamsBase . '&imageFileName=' . rawurlencode($name) . '&preferRawImage=1'
 					: $this->urlGenerator->linkToRouteAbsolute('text.Attachment.getMediaFile') . $urlParamsBase . '&mediaFileName=' . rawurlencode($name),
@@ -360,6 +375,35 @@ class AttachmentService {
 		$originalFile = $this->getFileFromPath($path, $userId);
 		$saveDir = $this->getAttachmentDirectoryForFile($textFile, true);
 		return $this->copyFile($originalFile, $saveDir, $textFile);
+	}
+
+	/**
+	 * create a new file in the attachment folder
+	 *
+	 * @param int $documentId
+	 * @param string $userId
+	 *
+	 * @return array
+	 * @throws NotFoundException
+	 * @throws NotPermittedException
+	 * @throws InvalidPathException
+	 * @throws NoUserException
+	 */
+	public function createAttachmentFile(int $documentId, string $newFileName, string $userId): array {
+		$textFile = $this->getTextFile($documentId, $userId);
+		if (!$textFile->isUpdateable()) {
+			throw new NotPermittedException('No write permissions');
+		}
+		$saveDir = $this->getAttachmentDirectoryForFile($textFile, true);
+		$fileName = self::getUniqueFileName($saveDir, $newFileName);
+		$newFile = $saveDir->newFile($fileName);
+		return [
+			'name' => $newFile->getName(),
+			'dirname' => $saveDir->getName(),
+			'id' => $newFile->getId(),
+			'documentId' => $textFile->getId(),
+			'mimetype' => $newFile->getMimetype(),
+		];
 	}
 
 	/**
@@ -596,6 +640,11 @@ class AttachmentService {
 	public function cleanupAttachments(int $fileId): int {
 		$textFile = $this->rootFolder->getFirstNodeById($fileId);
 		if ($textFile instanceof File) {
+			if ($textFile->getStorage()->instanceOfStorage(\OCA\Collectives\Mount\CollectiveStorage::class)) {
+				// Don't cleanup attachments for Collectives pages
+				return 0;
+			}
+
 			if ($textFile->getMimeType() === 'text/markdown') {
 				// get IDs of the files inside the attachment dir
 				try {
@@ -604,16 +653,17 @@ class AttachmentService {
 					// this only happens if the attachment dir was deleted by the user while editing the document
 					return 0;
 				}
-				$attachmentsByName = [];
-				foreach ($attachmentDir->getDirectoryListing() as $attNode) {
-					$attachmentsByName[$attNode->getName()] = $attNode;
-				}
-
+				$contentAttachmentFileIds = self::getAttachmentIdsFromContent($textFile->getContent());
 				$contentAttachmentNames = self::getAttachmentNamesFromContent($textFile->getContent(), $fileId);
 
-				$toDelete = array_diff(array_keys($attachmentsByName), $contentAttachmentNames);
-				foreach ($toDelete as $name) {
-					$attachmentsByName[$name]->delete();
+				$toDelete = array_filter($attachmentDir->getDirectoryListing(),
+					function ($node) use ($contentAttachmentFileIds, $contentAttachmentNames) {
+						return !in_array($node->getName(), $contentAttachmentNames)
+							&& !in_array($node->getId(), $contentAttachmentFileIds);
+					}
+				);
+				foreach ($toDelete as $node) {
+					$node->delete();
 				}
 				return count($toDelete);
 			}
@@ -621,6 +671,26 @@ class AttachmentService {
 		return 0;
 	}
 
+	/**
+	 * Get attachment file ids listed in the markdown file content
+	 *
+	 * @param string $content
+	 *
+	 * @return array
+	 */
+	public static function getAttachmentIdsFromContent(string $content): array {
+		$matches = [];
+		// matches [ANY_CONSIDERED_CORRECT_BY_PHP-MARKDOWN](ANY_URL/f/FILE_ID and captures FILE_ID
+		preg_match_all(
+			'/\[(?>[^\[\]]+|\[(?>[^\[\]]+|\[(?>[^\[\]]+|\[(?>[^\[\]]+|\[(?>[^\[\]]+|\[(?>[^\[\]]+|\[\])*\])*\])*\])*\])*\])*\]\(\S+\/f\/(\d+)/',
+			$content,
+			$matches,
+			PREG_SET_ORDER
+		);
+		return array_map(static function (array $match) {
+			return intval($match[1]);
+		}, $matches);
+	}
 
 	/**
 	 * Get attachment file names listed in the markdown file content
@@ -722,6 +792,38 @@ class AttachmentService {
 			}
 		}
 		return $fileIdMapping;
+	}
+
+	public function copyAttachmentsInFolder(Folder $sourceFolder, Folder $targetFolder): void {
+		foreach ($sourceFolder->getDirectoryListing() as $sourceNode) {
+			if ($sourceNode instanceof Folder && !str_starts_with($sourceNode->getName(), '.attachments.')) {
+				try {
+					$targetNode = $targetFolder->get($sourceNode->getName());
+				} catch (NotFoundException) {
+					// ignore if target node doesn't exist
+					continue;
+				}
+				if ($targetNode instanceof Folder) {
+					$this->copyAttachmentsInFolder($sourceNode, $targetNode);
+				}
+			} elseif ($sourceNode instanceof File
+				&& $sourceNode->getMimeType() === 'text/markdown') {
+				$sourceAttachmentDirName = '.attachments.' . $sourceNode->getId();
+				try {
+					$sourceAttachmentDir = $sourceFolder->get($sourceAttachmentDirName);
+					$targetNode = $targetFolder->get($sourceNode->getName());
+					$targetAttachmentDirName = '.attachments.' . $targetNode->getId();
+					$targetAttachmentDir = $targetFolder->get($sourceAttachmentDirName);
+				} catch (NotFoundException) {
+					// ignore if either of the attachment dirs don't exist
+					continue;
+				}
+				if ($targetNode instanceof File && $targetAttachmentDir instanceof Folder) {
+					$targetAttachmentDir->move($targetFolder->getPath() . '/' . $targetAttachmentDirName);
+					self::replaceAttachmentFolderId($sourceNode, $targetNode);
+				}
+			}
+		}
 	}
 
 	public static function replaceAttachmentFolderId(File $source, File $target): void {

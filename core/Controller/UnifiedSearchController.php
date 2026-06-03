@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace OC\Core\Controller;
 
 use InvalidArgumentException;
+use OC\Core\AppInfo\Application;
 use OC\Core\AppInfo\ConfigLexicon;
-use OC\Core\Application;
 use OC\Core\ResponseDefinitions;
 use OC\Search\SearchComposer;
 use OC\Search\SearchQuery;

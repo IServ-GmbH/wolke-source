@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -12,11 +13,23 @@ namespace OCA\Files_External\Lib;
 trait DependencyTrait {
 
 	/**
-	 * Check if object is valid for use
+	 * Check if object has unsatisfied required or optional dependencies
 	 *
 	 * @return MissingDependency[] Unsatisfied dependencies
 	 */
 	public function checkDependencies() {
 		return []; // no dependencies by default
+	}
+
+	/**
+	 * Check if object has unsatisfied required dependencies
+	 *
+	 * @return MissingDependency[] Unsatisfied required dependencies
+	 */
+	public function checkRequiredDependencies(): array {
+		return array_filter(
+			$this->checkDependencies(),
+			fn (MissingDependency $dependency) => !$dependency->isOptional()
+		);
 	}
 }

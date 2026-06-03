@@ -10,19 +10,31 @@ class ComposerStaticInitSuspiciousLogin
         'e8aa6e4b5a1db2f56ae794f1505391a8' => __DIR__ . '/..' . '/amphp/amp/lib/functions.php',
         '76cd0796156622033397994f25b0d8fc' => __DIR__ . '/..' . '/amphp/amp/lib/Internal/functions.php',
         '6cd5651c4fef5ed6b63e8d8b8ffbf3cc' => __DIR__ . '/..' . '/amphp/byte-stream/lib/functions.php',
-        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
-        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
-        'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '8dc56fe697ca93c4b40d876df1c94584' => __DIR__ . '/..' . '/amphp/process/lib/functions.php',
         '3da389f428d8ee50333e4391c3f45046' => __DIR__ . '/..' . '/amphp/serialization/src/functions.php',
         'bcb7d4fc55f4b1a7e10f5806723e9892' => __DIR__ . '/..' . '/amphp/sync/src/functions.php',
         'e187e371b30897d6dc51cac6a8c94ff6' => __DIR__ . '/..' . '/amphp/sync/src/ConcurrentIterator/functions.php',
-        'b46ad4fe52f4d1899a2951c7e6ea56b0' => __DIR__ . '/..' . '/voku/portable-utf8/bootstrap.php',
+        '2fb9d6f23c8e8faefc193a4cde0cab4f' => __DIR__ . '/..' . '/joomla/string/src/phputf8/utf8.php',
+        'e6851e0ae7328fe5412fcec73928f3d9' => __DIR__ . '/..' . '/joomla/string/src/phputf8/ord.php',
+        'd9ad1b7c85c100a18c404a13824b846e' => __DIR__ . '/..' . '/joomla/string/src/phputf8/str_ireplace.php',
+        '62bad9b6730d2f83493d2337bf61519d' => __DIR__ . '/..' . '/joomla/string/src/phputf8/str_pad.php',
+        'c4d521b8d54308532dce032713d4eec0' => __DIR__ . '/..' . '/joomla/string/src/phputf8/str_split.php',
+        'fa973e71cace925de2afdc692b861b1d' => __DIR__ . '/..' . '/joomla/string/src/phputf8/strcasecmp.php',
+        '0c98c2f1295d9f4d093cc77d5834bb04' => __DIR__ . '/..' . '/joomla/string/src/phputf8/strcspn.php',
+        'a52639d843b4094945115c178a91ca86' => __DIR__ . '/..' . '/joomla/string/src/phputf8/stristr.php',
+        '73ee7d0297e683c4c2e7798ef040fb2f' => __DIR__ . '/..' . '/joomla/string/src/phputf8/strrev.php',
+        'd55633c05ddb996e0005f35debaa7b5b' => __DIR__ . '/..' . '/joomla/string/src/phputf8/strspn.php',
+        '944e69d23b93558fc0714353cf0c8beb' => __DIR__ . '/..' . '/joomla/string/src/phputf8/trim.php',
+        '31264bab20f14a8fc7a9d4265d91ee98' => __DIR__ . '/..' . '/joomla/string/src/phputf8/ucfirst.php',
+        '05d739a990f75f0c44ebe1f032b33148' => __DIR__ . '/..' . '/joomla/string/src/phputf8/ucwords.php',
+        '4292e2fa66516089e6006723267587b4' => __DIR__ . '/..' . '/joomla/string/src/phputf8/utils/ascii.php',
+        '87465e33b7551b401bf051928f220e9a' => __DIR__ . '/..' . '/joomla/string/src/phputf8/utils/validation.php',
         '430de19db8b7ee88fdbe5c545d82d33d' => __DIR__ . '/..' . '/amphp/parallel/lib/Context/functions.php',
         '888e1afeed2e8d13ef5a662692091e6e' => __DIR__ . '/..' . '/amphp/parallel/lib/Sync/functions.php',
         '384cf4f2eb4d2f896db72315a76066ad' => __DIR__ . '/..' . '/amphp/parallel/lib/Worker/functions.php',
         '8f758069bf9eb3411d096c10be343745' => __DIR__ . '/..' . '/rubix/tensor/src/constants.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '5897ea0ac4cccf14d323035e65887801' => __DIR__ . '/..' . '/symfony/polyfill-php82/bootstrap.php',
         '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
@@ -31,10 +43,6 @@ class ComposerStaticInitSuspiciousLogin
     );
 
     public static $prefixLengthsPsr4 = array (
-        'v' => 
-        array (
-            'voku\\' => 5,
-        ),
         'Z' => 
         array (
             'Zephir\\Optimizers\\FunctionCall\\' => 31,
@@ -53,9 +61,6 @@ class ComposerStaticInitSuspiciousLogin
             'Symfony\\Polyfill\\Php82\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
-            'Symfony\\Polyfill\\Intl\\Grapheme\\' => 31,
-            'Symfony\\Polyfill\\Iconv\\' => 23,
         ),
         'R' => 
         array (
@@ -69,6 +74,10 @@ class ComposerStaticInitSuspiciousLogin
         array (
             'OkBloomer\\' => 10,
             'OCA\\SuspiciousLogin\\' => 20,
+        ),
+        'J' => 
+        array (
+            'Joomla\\String\\' => 14,
         ),
         'B' => 
         array (
@@ -87,11 +96,6 @@ class ComposerStaticInitSuspiciousLogin
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
-            1 => __DIR__ . '/..' . '/voku/portable-utf8/src/voku',
-        ),
         'Zephir\\Optimizers\\FunctionCall\\' => 
         array (
             0 => __DIR__ . '/..' . '/rubix/tensor/optimizers',
@@ -120,18 +124,6 @@ class ComposerStaticInitSuspiciousLogin
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
-        ),
-        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
-        ),
-        'Symfony\\Polyfill\\Iconv\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
-        ),
         'Rubix\\ML\\' => 
         array (
             0 => __DIR__ . '/..' . '/rubix/ml/src',
@@ -147,6 +139,10 @@ class ComposerStaticInitSuspiciousLogin
         'OCA\\SuspiciousLogin\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib',
+        ),
+        'Joomla\\String\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/joomla/string/src',
         ),
         'Bamarni\\Composer\\Bin\\' => 
         array (
@@ -366,7 +362,9 @@ class ComposerStaticInitSuspiciousLogin
         'DateMalformedStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedStringException.php',
         'DateObjectError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateObjectError.php',
         'DateRangeError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateRangeError.php',
-        'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'Joomla\\String\\Inflector' => __DIR__ . '/..' . '/joomla/string/src/Inflector.php',
+        'Joomla\\String\\Normalise' => __DIR__ . '/..' . '/joomla/string/src/Normalise.php',
+        'Joomla\\String\\StringHelper' => __DIR__ . '/..' . '/joomla/string/src/StringHelper.php',
         'OCA\\SuspiciousLogin\\AppInfo\\Application' => __DIR__ . '/../..' . '/lib/AppInfo/Application.php',
         'OCA\\SuspiciousLogin\\BackgroundJob\\ETLJob' => __DIR__ . '/../..' . '/lib/BackgroundJob/ETLJob.php',
         'OCA\\SuspiciousLogin\\BackgroundJob\\TrainIpV4OnceJob' => __DIR__ . '/../..' . '/lib/BackgroundJob/TrainIpV4OnceJob.php',
@@ -392,6 +390,7 @@ class ComposerStaticInitSuspiciousLogin
         'OCA\\SuspiciousLogin\\Event\\PostLoginEvent' => __DIR__ . '/../..' . '/lib/Event/PostLoginEvent.php',
         'OCA\\SuspiciousLogin\\Event\\SuspiciousLoginEvent' => __DIR__ . '/../..' . '/lib/Event/SuspiciousLoginEvent.php',
         'OCA\\SuspiciousLogin\\Exception\\InsufficientDataException' => __DIR__ . '/../..' . '/lib/Exception/InsufficientDataException.php',
+        'OCA\\SuspiciousLogin\\Exception\\ModelNotFoundException' => __DIR__ . '/../..' . '/lib/Exception/ModelNotFoundException.php',
         'OCA\\SuspiciousLogin\\Exception\\ServiceException' => __DIR__ . '/../..' . '/lib/Exception/ServiceException.php',
         'OCA\\SuspiciousLogin\\Listener\\LoginListener' => __DIR__ . '/../..' . '/lib/Listener/LoginListener.php',
         'OCA\\SuspiciousLogin\\Listener\\LoginMailListener' => __DIR__ . '/../..' . '/lib/Listener/LoginMailListener.php',
@@ -542,6 +541,7 @@ class ComposerStaticInitSuspiciousLogin
         'Rubix\\ML\\Encoding' => __DIR__ . '/..' . '/rubix/ml/src/Encoding.php',
         'Rubix\\ML\\Estimator' => __DIR__ . '/..' . '/rubix/ml/src/Estimator.php',
         'Rubix\\ML\\EstimatorType' => __DIR__ . '/..' . '/rubix/ml/src/EstimatorType.php',
+        'Rubix\\ML\\EstimatorWrapper' => __DIR__ . '/..' . '/rubix/ml/src/EstimatorWrapper.php',
         'Rubix\\ML\\Exceptions\\ClassRevisionMismatch' => __DIR__ . '/..' . '/rubix/ml/src/Exceptions/ClassRevisionMismatch.php',
         'Rubix\\ML\\Exceptions\\EmptyDataset' => __DIR__ . '/..' . '/rubix/ml/src/Exceptions/EmptyDataset.php',
         'Rubix\\ML\\Exceptions\\EstimatorIncompatibleWithMetric' => __DIR__ . '/..' . '/rubix/ml/src/Exceptions/EstimatorIncompatibleWithMetric.php',
@@ -578,6 +578,7 @@ class ComposerStaticInitSuspiciousLogin
         'Rubix\\ML\\Graph\\Nodes\\Outcome' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Nodes/Outcome.php',
         'Rubix\\ML\\Graph\\Nodes\\Split' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Nodes/Split.php',
         'Rubix\\ML\\Graph\\Nodes\\Traits\\HasBinaryChildrenTrait' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Nodes/Traits/HasBinaryChildrenTrait.php',
+        'Rubix\\ML\\Graph\\Nodes\\VantagePoint' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Nodes/VantagePoint.php',
         'Rubix\\ML\\Graph\\Trees\\BallTree' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/BallTree.php',
         'Rubix\\ML\\Graph\\Trees\\BinaryTree' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/BinaryTree.php',
         'Rubix\\ML\\Graph\\Trees\\CART' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/CART.php',
@@ -587,6 +588,7 @@ class ComposerStaticInitSuspiciousLogin
         'Rubix\\ML\\Graph\\Trees\\KDTree' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/KDTree.php',
         'Rubix\\ML\\Graph\\Trees\\Spatial' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/Spatial.php',
         'Rubix\\ML\\Graph\\Trees\\Tree' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/Tree.php',
+        'Rubix\\ML\\Graph\\Trees\\VantageTree' => __DIR__ . '/..' . '/rubix/ml/src/Graph/Trees/VantageTree.php',
         'Rubix\\ML\\GridSearch' => __DIR__ . '/..' . '/rubix/ml/src/GridSearch.php',
         'Rubix\\ML\\Helpers\\CPU' => __DIR__ . '/..' . '/rubix/ml/src/Helpers/CPU.php',
         'Rubix\\ML\\Helpers\\Graphviz' => __DIR__ . '/..' . '/rubix/ml/src/Helpers/Graphviz.php',
@@ -617,6 +619,7 @@ class ComposerStaticInitSuspiciousLogin
         'Rubix\\ML\\Loggers\\Screen' => __DIR__ . '/..' . '/rubix/ml/src/Loggers/Screen.php',
         'Rubix\\ML\\NeuralNet\\ActivationFunctions\\ActivationFunction' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/ActivationFunction.php',
         'Rubix\\ML\\NeuralNet\\ActivationFunctions\\ELU' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/ELU.php',
+        'Rubix\\ML\\NeuralNet\\ActivationFunctions\\GELU' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/GELU.php',
         'Rubix\\ML\\NeuralNet\\ActivationFunctions\\HyperbolicTangent' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/HyperbolicTangent.php',
         'Rubix\\ML\\NeuralNet\\ActivationFunctions\\LeakyReLU' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/LeakyReLU.php',
         'Rubix\\ML\\NeuralNet\\ActivationFunctions\\ReLU' => __DIR__ . '/..' . '/rubix/ml/src/NeuralNet/ActivationFunctions/ReLU.php',
@@ -770,9 +773,6 @@ class ComposerStaticInitSuspiciousLogin
         'SensitiveParameter' => __DIR__ . '/..' . '/symfony/polyfill-php82/Resources/stubs/SensitiveParameter.php',
         'SensitiveParameterValue' => __DIR__ . '/..' . '/symfony/polyfill-php82/Resources/stubs/SensitiveParameterValue.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
-        'Symfony\\Polyfill\\Iconv\\Iconv' => __DIR__ . '/..' . '/symfony/polyfill-iconv/Iconv.php',
-        'Symfony\\Polyfill\\Intl\\Grapheme\\Grapheme' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/Grapheme.php',
-        'Symfony\\Polyfill\\Intl\\Normalizer\\Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Normalizer.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php80\\Php80' => __DIR__ . '/..' . '/symfony/polyfill-php80/Php80.php',
         'Symfony\\Polyfill\\Php80\\PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/PhpToken.php',
@@ -824,6 +824,7 @@ class ComposerStaticInitSuspiciousLogin
         'Wamania\\Snowball\\Stemmer\\Stem' => __DIR__ . '/..' . '/wamania/php-stemmer/src/Stemmer/Stem.php',
         'Wamania\\Snowball\\Stemmer\\Stemmer' => __DIR__ . '/..' . '/wamania/php-stemmer/src/Stemmer/Stemmer.php',
         'Wamania\\Snowball\\Stemmer\\Swedish' => __DIR__ . '/..' . '/wamania/php-stemmer/src/Stemmer/Swedish.php',
+        'Wamania\\Snowball\\Transliterate' => __DIR__ . '/..' . '/wamania/php-stemmer/src/Transliterate.php',
         'Zephir\\Optimizers\\FunctionCall\\TensorAddOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorAddOptimizer.php',
         'Zephir\\Optimizers\\FunctionCall\\TensorAddScalarOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorAddScalarOptimizer.php',
         'Zephir\\Optimizers\\FunctionCall\\TensorCholeskyOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorCholeskyOptimizer.php',
@@ -862,9 +863,6 @@ class ComposerStaticInitSuspiciousLogin
         'Zephir\\Optimizers\\FunctionCall\\TensorSubtractOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorSubtractOptimizer.php',
         'Zephir\\Optimizers\\FunctionCall\\TensorSubtractScalarOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorSubtractScalarOptimizer.php',
         'Zephir\\Optimizers\\FunctionCall\\TensorSvdOptimizer' => __DIR__ . '/..' . '/rubix/tensor/optimizers/TensorSvdOptimizer.php',
-        'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
-        'voku\\helper\\Bootup' => __DIR__ . '/..' . '/voku/portable-utf8/src/voku/helper/Bootup.php',
-        'voku\\helper\\UTF8' => __DIR__ . '/..' . '/voku/portable-utf8/src/voku/helper/UTF8.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

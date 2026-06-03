@@ -7,6 +7,7 @@
  */
 namespace OC\Share20;
 
+use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\File;
 use OCP\Files\FileInfo;
@@ -14,8 +15,10 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IUserManager;
+use OCP\Server;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\IAttributes;
+use OCP\Share\IManager;
 use OCP\Share\IShare;
 
 class Share implements IShare {
@@ -58,8 +61,7 @@ class Share implements IShare {
 	private $sendPasswordByTalk = false;
 	/** @var string */
 	private $token;
-	/** @var int */
-	private $parent;
+	private ?int $parent = null;
 	/** @var string */
 	private $target;
 	/** @var \DateTime */
@@ -418,8 +420,8 @@ class Share implements IShare {
 	 * @inheritdoc
 	 */
 	public function isExpired() {
-		return $this->getExpirationDate() !== null &&
-			$this->getExpirationDate() <= new \DateTime();
+		return $this->getExpirationDate() !== null
+			&& $this->getExpirationDate() <= new \DateTime();
 	}
 
 	/**
@@ -524,25 +526,12 @@ class Share implements IShare {
 		return $this->token;
 	}
 
-	/**
-	 * Set the parent of this share
-	 *
-	 * @param int $parent
-	 * @return IShare
-	 * @deprecated 12.0.0 The new shares do not have parents. This is just here for legacy reasons.
-	 */
-	public function setParent($parent) {
+	public function setParent(int $parent): self {
 		$this->parent = $parent;
 		return $this;
 	}
 
-	/**
-	 * Get the parent of this share.
-	 *
-	 * @return int
-	 * @deprecated 12.0.0 The new shares do not have parents. This is just here for legacy reasons.
-	 */
-	public function getParent() {
+	public function getParent(): ?int {
 		return $this->parent;
 	}
 
@@ -621,5 +610,30 @@ class Share implements IShare {
 
 	public function getReminderSent(): bool {
 		return $this->reminderSent;
+	}
+
+	public function canDownload(): bool {
+		if (($this->getPermissions() & Constants::PERMISSION_READ) === 0) {
+			return false;
+		}
+
+		$attributes = $this->getAttributes();
+		if ($attributes?->getAttribute('permissions', 'download') === false) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function canSeeContent(): bool {
+		$shareManager = Server::get(IManager::class);
+
+		$allowViewWithoutDownload = $shareManager->allowViewWithoutDownload();
+		// If the share manager allows viewing without download, we can always see the content.
+		if ($allowViewWithoutDownload) {
+			return true;
+		}
+
+		return $this->canDownload();
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -340,6 +341,7 @@ class Version13000Date20170718121200 extends SimpleMigrationStep {
 			// $table->addIndex(['userid'], 'property_index');
 			$table->addIndex(['userid', 'propertypath'], 'properties_path_index');
 			$table->addIndex(['propertypath'], 'properties_pathonly_index');
+			$table->addIndex(['propertyname', 'propertypath', 'userid'], 'properties_name_path_user');
 		} else {
 			$table = $schema->getTable('properties');
 			if ($table->hasColumn('propertytype')) {

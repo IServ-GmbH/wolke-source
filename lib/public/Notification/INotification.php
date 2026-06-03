@@ -8,11 +8,9 @@ declare(strict_types=1);
  */
 namespace OCP\Notification;
 
-/**
- * Interface INotification
- *
- * @since 9.0.0
- */
+use OCP\AppFramework\Attribute\Consumable;
+
+#[Consumable(since: '9.0.0')]
 interface INotification {
 	/**
 	 * @param string $app
@@ -234,6 +232,10 @@ interface INotification {
 	public function getRichMessageParameters(): array;
 
 	/**
+	 * Set the target endpoint for this action
+	 *
+	 * All links should always be relative to support desktop and mobile clients.
+	 *
 	 * @param string $link
 	 * @return $this
 	 * @throws InvalidValueException if the link is invalid

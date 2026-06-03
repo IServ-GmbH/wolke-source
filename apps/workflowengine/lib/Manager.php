@@ -467,7 +467,7 @@ class Manager implements IManager {
 		try {
 			/** @var IOperation $instance */
 			$instance = $this->container->query($class);
-		} catch (QueryException $e) {
+		} catch (QueryException) {
 			throw new \UnexpectedValueException($this->l->t('Operation %s does not exist', [$class]));
 		}
 
@@ -479,10 +479,6 @@ class Manager implements IManager {
 
 		if (count($checks) === 0) {
 			throw new \UnexpectedValueException($this->l->t('At least one check needs to be provided'));
-		}
-
-		if (strlen((string)$operation) > IManager::MAX_OPERATION_VALUE_BYTES) {
-			throw new \UnexpectedValueException($this->l->t('The provided operation data is too long'));
 		}
 
 		$instance->validateOperation($name, $checks, $operation);

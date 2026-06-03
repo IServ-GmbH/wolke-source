@@ -14,6 +14,8 @@
     "Press ⌘-C to copy." : "⌘-C でコピーします。",
     "Press Ctrl-C to copy." : "Ctrl-Cを押してコピーします。",
     "Unknown" : "不明",
+    "%1$d days, %2$d hours, %3$d minutes, %4$d seconds" : "%1$d 日、%2$d 時間、%3$d 分、%4$d 秒",
+    "%1$d hours, %2$d minutes, %3$d seconds" : "%1$d時間、%2$d分、%3$d秒",
     "System" : "システム",
     "Monitoring" : "モニタリング",
     "Monitoring app with useful server information" : "有用なサーバー情報でアプリケーションを監視する",
@@ -62,12 +64,14 @@
     "PHP" : "PHP",
     "Version:" : "バージョン:",
     "Memory limit:" : "メモリ制限:",
+    "MB" : "MB",
     "Max execution time:" : "最大実行時間:",
     "seconds" : "秒",
     "Upload max size:" : "最大アップロードサイズ:",
     "OPcache Revalidate Frequency:" : "OPcache再検証の頻度:",
     "Extensions:" : "拡張:",
     "Unable to list extensions" : "拡張リストを読み込めません",
+    "PHP Info:" : "PHP Info:",
     "Show phpinfo" : "phpinfoを表示",
     "FPM worker pool" : "FPMワーカープール",
     "Pool name:" : "プール名:",
@@ -91,7 +95,6 @@
     "Skip apps section (including apps section will send an external request to the app store)" : "アプリセクションをスキップする（アプリセクションを含むとアプリストアに外部リクエストが送信される）",
     "Skip server update" : "サーバーの更新をスキップ",
     "To use an access token, please generate one then set it using the following command:" : "アクセストークンを使用するには、アクセストークンを生成し、以下のコマンドで設定してください。",
-    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "次に、上記のURLをクエリするときに、\"NC-Token\" ヘッダーでトークンを渡します。",
-    "Unknown Processor" : "不明なプロセッサー"
+    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "次に、上記のURLをクエリするときに、\"NC-Token\" ヘッダーでトークンを渡します。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

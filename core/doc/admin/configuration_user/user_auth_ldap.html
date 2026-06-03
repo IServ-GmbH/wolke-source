@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User authentication with LDAP &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/configuration_user/user_auth_ldap.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,15 +58,44 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">User management</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="user_configuration.html">User management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reset_admin_password.html">Resetting a lost admin password</a></li>
@@ -121,22 +151,37 @@
 <li class="toctree-l2"><a class="reference internal" href="user_auth_ldap_api.html">The LDAP configuration API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_provisioning_api.html">User provisioning API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="profile_configuration.html">Profile configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_auth_oidc.html">User authentication with OpenID Connect</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -627,7 +672,7 @@ attribute value. The attribute can also return an absolute path, e.g.
 </dl>
 <p>In new Nextcloud installations the home folder rule is enforced. This means that once you set a home folder naming rule (get a home folder from an LDAP attribute), it must be available for all users. If it isn’t available for a user, then that user will not be able to login. Also, the filesystem will not be set up for that user, so their file shares will not be available to other users.</p>
 <p>In migrated Nextcloud installations the old behavior still applies, which is using the Nextcloud username as the home folder when an LDAP attribute is not set. You may change this enforcing the home folder rule with the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command in Nextcloud, like this example on Ubuntu:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">user_ldap</span> <span class="n">enforce_home_folder_naming_rule</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">user_ldap</span> <span class="n">enforce_home_folder_naming_rule</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span>
 </pre></div>
 </div>
 </section>
@@ -649,7 +694,7 @@ attribute value. The attribute can also return an absolute path, e.g.
 </ul>
 </dd>
 </dl>
-<p>By calling <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">ldap:check-user</span> <span class="pre">--update</span> <span class="pre">&lt;uid&gt;</span></code> the users data from LDAP will be displayed and the profile gets updated. To get the correct <code class="docutils literal notranslate"><span class="pre">&lt;uid&gt;</span></code> value for any user you can use <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">user:list</span></code>.</p>
+<p>By calling <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">-E</span> <span class="pre">-u</span> <span class="pre">www-data</span> <span class="pre">php</span> <span class="pre">occ</span> <span class="pre">ldap:check-user</span> <span class="pre">--update</span> <span class="pre">&lt;uid&gt;</span></code> the users data from LDAP will be displayed and the profile gets updated. To get the correct <code class="docutils literal notranslate"><span class="pre">&lt;uid&gt;</span></code> value for any user you can use <code class="docutils literal notranslate"><span class="pre">php</span> <span class="pre">occ</span> <span class="pre">user:list</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>After unsetting an attribute name here, the data won’t be deleted from user profile. Setting an nonexisting attribute will empty the corresponding profile field.</p>
@@ -808,7 +853,7 @@ the database.</p>
 <p>The interval is described in seconds and it defaults to 86400 equalling a day.
 It is not a per-configuration option.</p>
 <p>The value can be modified by:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">user_ldap</span> <span class="n">updateAttributesInterval</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">86400</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">user_ldap</span> <span class="n">updateAttributesInterval</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">86400</span>
 </pre></div>
 </div>
 <p>A value of 0 will update it on every of the named occasions.</p>
@@ -821,7 +866,7 @@ that all its members also have administrative privileges in Nextcloud.</p>
 parameter that can be either a nextcloud group ID or a group name that will be
 search against. When a search is executed an exact match is required.</p>
 <p>Example usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ php occ ldap:promote-group --help
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo -E -u www-data php occ ldap:promote-group --help
 Description:
   declares the specified group as admin group (only one is possible per LDAP configuration)
 
@@ -836,15 +881,15 @@ Options:
 …
 
 # Example
-$ php occ ldap:promote-group  &quot;Nextcloud Admins&quot;
+$ sudo -E -u www-data php occ ldap:promote-group  &quot;Nextcloud Admins&quot;
 Promote Nextcloud Admins to the admin group (y|N)? y
 Group Nextcloud Admins was promoted
 
-$ php occ ldap:promote-group  &quot;Paramount Court&quot;
+$ sudo -E -u www-data php occ ldap:promote-group  &quot;Paramount Court&quot;
 Promote Nextcloud Admins to the admin group and demote Nextcloud Admins (Group ID: nextcloud_admins) (y|N)? y
 Group Paramount Court was promoted
 
-$ php occ ldap:promote-group  &quot;Paramount Court&quot;
+$ sudo -E -u www-data php occ ldap:promote-group  &quot;Paramount Court&quot;
 The specified group is already promoted
 </pre></div>
 </div>
@@ -1068,7 +1113,7 @@ technical accounts.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -1108,26 +1153,18 @@ technical accounts.</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

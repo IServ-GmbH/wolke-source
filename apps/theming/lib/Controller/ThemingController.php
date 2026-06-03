@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -270,8 +271,8 @@ class ThemingController extends Controller {
 
 		return new DataResponse(
 			[
-				'data' =>
-					[
+				'data'
+					=> [
 						'name' => $name,
 						'url' => $this->imageManager->getImageUrl($key),
 						'message' => $this->l10n->t('Saved'),
@@ -294,8 +295,8 @@ class ThemingController extends Controller {
 
 		return new DataResponse(
 			[
-				'data' =>
-					[
+				'data'
+					=> [
 						'value' => $value,
 						'message' => $this->l10n->t('Saved'),
 					],
@@ -317,8 +318,8 @@ class ThemingController extends Controller {
 
 		return new DataResponse(
 			[
-				'data' =>
-					[
+				'data'
+					=> [
 						'message' => $this->l10n->t('Saved'),
 					],
 				'status' => 'success'
@@ -344,6 +345,7 @@ class ThemingController extends Controller {
 	#[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
 	public function getImage(string $key, bool $useSvg = true) {
 		try {
+			$useSvg = $useSvg && $this->imageManager->canConvert('SVG');
 			$file = $this->imageManager->getImage($key, $useSvg);
 		} catch (NotFoundException $e) {
 			return new NotFoundResponse();
@@ -354,13 +356,8 @@ class ThemingController extends Controller {
 		$csp->allowInlineStyle();
 		$response->setContentSecurityPolicy($csp);
 		$response->cacheFor(3600);
-		$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . 'Mime', ''));
+		$response->addHeader('Content-Type', $file->getMimeType());
 		$response->addHeader('Content-Disposition', 'attachment; filename="' . $key . '"');
-		if (!$useSvg) {
-			$response->addHeader('Content-Type', 'image/png');
-		} else {
-			$response->addHeader('Content-Type', $this->config->getAppValue($this->appName, $key . 'Mime', ''));
-		}
 		return $response;
 	}
 
@@ -428,7 +425,7 @@ class ThemingController extends Controller {
 	 *
 	 * @param string $app ID of the app
 	 * @psalm-suppress LessSpecificReturnStatement The content of the Manifest doesn't need to be described in the return type
-	 * @return JSONResponse<Http::STATUS_OK, array{name: string, short_name: string, start_url: string, theme_color: string, background_color: string, description: string, icons: list<array{src: non-empty-string, type: string, sizes: string}>, display: string}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{}, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, array{name: string, short_name: string, start_url: string, theme_color: string, background_color: string, description: string, icons: list<array{src: non-empty-string, type: string, sizes: string}>, display_override: list<string>, display: string}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, list<empty>, array{}>
 	 *
 	 * 200: Manifest returned
 	 * 404: App not found
@@ -472,8 +469,8 @@ class ThemingController extends Controller {
 			'theme_color' => $this->themingDefaults->getColorPrimary(),
 			'background_color' => $this->themingDefaults->getColorPrimary(),
 			'description' => $description,
-			'icons' =>
-				[
+			'icons'
+				=> [
 					[
 						'src' => $this->urlGenerator->linkToRoute('theming.Icon.getTouchIcon',
 							['app' => $app]) . '?v=' . $cacheBusterValue,
@@ -487,6 +484,7 @@ class ThemingController extends Controller {
 						'sizes' => '16x16'
 					]
 				],
+			'display_override' => [$this->config->getSystemValueBool('theming.standalone_window.enabled', true) ? 'minimal-ui' : ''],
 			'display' => $this->config->getSystemValueBool('theming.standalone_window.enabled', true) ? 'standalone' : 'browser'
 		];
 		$response = new JSONResponse($responseJS);

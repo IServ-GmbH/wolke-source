@@ -22,6 +22,8 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Mail\IMailer;
 use OCP\Notification\IManager;
+use OCP\ServerVersion;
+use OCP\User\Backend\ICountUsersBackend;
 use Psr\Log\LoggerInterface;
 
 class SubscriptionService {
@@ -50,6 +52,7 @@ class SubscriptionService {
 		protected readonly IFactory $l10nFactory,
 		protected readonly ICacheFactory $cacheFactory,
 		protected readonly IAppConfig $appConfig,
+		protected readonly ServerVersion $serverVersion,
 	) {
 	}
 
@@ -74,6 +77,7 @@ class SubscriptionService {
 		$backends = $this->userManager->getBackends();
 		foreach ($backends as $backend) {
 			if ($backend->implementsActions(Backend::COUNT_USERS)) {
+				/** @var ICountUsersBackend $backend */
 				try {
 					$backendUsers = $backend->countUsers();
 				} catch (\Exception $e) {
@@ -147,7 +151,7 @@ class SubscriptionService {
 						'userCount' => $userCount,
 						'activeUserCount' => $activeUserCount,
 						'apps' => $this->getAppsDetails(),
-						'version' => implode('.', \OCP\Util::getVersion()),
+						'version' => implode('.', $this->serverVersion->getVersion()),
 					],
 					'timeout' => $fast ? 10 : 30,
 					'connect_timeout' => $fast ? 3 : 30,

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -49,8 +50,8 @@ class Storage extends Wrapper {
 			} catch (GenericEncryptionException $e) {
 				// in case of a encryption exception we delete the file right away
 				$this->logger->info(
-					"Can't move file " . $path .
-					' to the trash bin, therefore it was deleted right away');
+					"Can't move file " . $path
+					. ' to the trash bin, therefore it was deleted right away');
 
 				return $this->storage->unlink($path);
 			}
@@ -148,12 +149,12 @@ class Storage extends Wrapper {
 	 * Setup the storage wrapper callback
 	 */
 	public static function setupStorage(): void {
-		$trashManager = \OC::$server->get(ITrashManager::class);
-		$userManager = \OC::$server->get(IUserManager::class);
-		$logger = \OC::$server->get(LoggerInterface::class);
-		$eventDispatcher = \OC::$server->get(IEventDispatcher::class);
-		$rootFolder = \OC::$server->get(IRootFolder::class);
-		$request = \OC::$server->get(IRequest::class);
+		$trashManager = Server::get(ITrashManager::class);
+		$userManager = Server::get(IUserManager::class);
+		$logger = Server::get(LoggerInterface::class);
+		$eventDispatcher = Server::get(IEventDispatcher::class);
+		$rootFolder = Server::get(IRootFolder::class);
+		$request = Server::get(IRequest::class);
 		Filesystem::addStorageWrapper(
 			'oc_trashbin',
 			function (string $mountPoint, IStorage $storage) use ($trashManager, $userManager, $logger, $eventDispatcher, $rootFolder, $request) {

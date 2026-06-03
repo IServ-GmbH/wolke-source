@@ -12,7 +12,7 @@ use Rubix\ML\Datasets\Generators\Agglomerate;
  */
 class LocalOutlierFactorBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     protected const TESTING_SIZE = 10000;
 
@@ -27,7 +27,7 @@ class LocalOutlierFactorBench
     protected $testing;
 
     /**
-     * @var \Rubix\ML\AnomalyDetectors\LocalOutlierFactor
+     * @var LocalOutlierFactor
      */
     protected $estimator;
 

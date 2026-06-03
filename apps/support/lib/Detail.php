@@ -17,18 +17,22 @@ class Detail implements IDetail {
 	) {
 	}
 
+	#[\Override]
 	public function getTitle(): string {
 		return $this->title;
 	}
 
+	#[\Override]
 	public function getSection(): string {
 		return $this->section;
 	}
 
+	#[\Override]
 	public function getInformation(): string {
 		return $this->information;
 	}
 
+	#[\Override]
 	public function getType(): int {
 		return $this->type;
 	}

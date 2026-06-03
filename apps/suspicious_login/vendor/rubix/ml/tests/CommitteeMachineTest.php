@@ -8,7 +8,6 @@ use Rubix\ML\DataType;
 use Rubix\ML\Estimator;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
-use Rubix\ML\Backends\Serial;
 use Rubix\ML\CommitteeMachine;
 use Rubix\ML\Datasets\Unlabeled;
 use Rubix\ML\Classifiers\GaussianNB;
@@ -36,17 +35,17 @@ class CommitteeMachineTest extends TestCase
     protected const RANDOM_SEED = 0;
 
     /**
-     * @var \Rubix\ML\Datasets\Generators\Agglomerate
+     * @var Agglomerate
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\CommitteeMachine
+     * @var CommitteeMachine
      */
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var Accuracy
      */
     protected $metric;
 
@@ -135,8 +134,6 @@ class CommitteeMachineTest extends TestCase
      */
     public function trainPredict() : void
     {
-        $this->estimator->setBackend(new Serial());
-
         $training = $this->generator->generate(self::TRAIN_SIZE);
         $testing = $this->generator->generate(self::TEST_SIZE);
 

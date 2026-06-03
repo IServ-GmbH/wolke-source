@@ -1,17 +1,22 @@
 diff --git apps/files/src/components/FileEntry/FileEntryActions.vue apps/files/src/components/FileEntry/FileEntryActions.vue
-index 1041cc0..338947a 100644
+index 9ed8de1..7afee04 100644
 --- apps/files/src/components/FileEntry/FileEntryActions.vue
 +++ apps/files/src/components/FileEntry/FileEntryActions.vue
-@@ -26,7 +26,7 @@
- 			@close="onMenuClose"
- 			@closed="onMenuClosed">
- 			<!-- Default actions list-->
--			<NcActionButton v-for="action, index in enabledMenuActions"
-+			<NcActionButton v-for="action, index in menuActions"
- 				:key="action.id"
- 				:ref="`action-${action.id}`"
- 				class="files-list__row-action"
-@@ -228,6 +228,18 @@ export default defineComponent({
+@@ -243,11 +243,11 @@ export default defineComponent({
+ 		},
+ 
+ 		renderedNonDestructiveActions() {
+-			return this.enabledMenuActions.filter(action => !action.destructive)
++			return this.menuActions.filter(action => !action.destructive)
+ 		},
+ 
+ 		renderedDestructiveActions() {
+-			return this.enabledMenuActions.filter(action => action.destructive)
++			return this.menuActions.filter(action => action.destructive)
+ 		},
+ 
+ 		openedMenu: {
+@@ -267,6 +267,18 @@ export default defineComponent({
  		getBoundariesElement() {
  			return document.querySelector('.app-content > .files-list')
  		},

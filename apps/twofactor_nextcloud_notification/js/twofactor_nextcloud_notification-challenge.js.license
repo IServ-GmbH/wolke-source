@@ -33,8 +33,8 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - webpack
-	- version: 5.94.0
+	- version: 5.105.2
 	- license: MIT
 - twofactor_nextcloud_notification
-	- version: 5.0.0
+	- version: 6.0.0-dev.0
 	- license: AGPL-3.0-or-later

@@ -70,7 +70,7 @@ class MatchRoute extends Base {
 			$output->writeln('<error>Path not matched</error>');
 			if (preg_match('/\/apps\/([^\/]+)\//', $path, $matches)) {
 				$appManager = Server::get(IAppManager::class);
-				if (!$appManager->isInstalled($matches[1])) {
+				if (!$appManager->isEnabledForAnyone($matches[1])) {
 					$output->writeln('');
 					$output->writeln('<comment>App ' . $matches[1] . ' is not enabled</comment>');
 				}

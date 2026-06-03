@@ -38,8 +38,8 @@ OC.L10N.register(
     "Bold" : "מודגש",
     "Bold text" : "טקסט בולט",
     "Italic" : "נטוי",
-    "Strikethrough" : "קו חוצה",
     "Underlined text" : "טקסט בקו תחתון",
+    "Strikethrough" : "קו חוצה",
     "Heading 1" : "כותרת 1",
     "Heading 6" : "כותרת 6",
     "Unordered list" : "רשימה בלתי ממוינת",
@@ -63,9 +63,11 @@ OC.L10N.register(
     "Select language" : "בחירת שפה",
     "to" : "סיום",
     "Replace" : "החלפה",
+    "Insert" : "הכנסה",
     "Edit" : "עריכה",
     "Upload" : "העלאה",
     "Source code" : "קוד מקור",
+    "Both" : "שניהם",
     "Done" : "הסתיים",
     "Headings" : "כותרות",
     "Heading 2" : "כותרת 2",
@@ -77,10 +79,6 @@ OC.L10N.register(
     "Insert attachment" : "הוספת קובץ מצורף",
     "Command" : "פקודה",
     "Formatting" : "עיצוב",
-    "Choose" : "בחר",
-    "Edit guest name" : "עריכת שם אורח",
-    "Save guest name" : "שמירת שם אורח",
-    "Cannot copy, please copy the link manually" : "לא ניתן להעתיק, נא להעתיק את הקישור ידנית",
-    "Copy link to clipboard" : "העתקת קישור ללוח הגזירים"
+    "Choose" : "בחר"
 },
 "nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");

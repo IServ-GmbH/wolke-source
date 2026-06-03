@@ -14,10 +14,7 @@ use OCA\AppAPI\Db\ExApp;
 use OCA\AppAPI\Db\ExAppMapper;
 use OCA\AppAPI\Fetcher\ExAppArchiveFetcher;
 use OCA\AppAPI\Fetcher\ExAppFetcher;
-use OCA\AppAPI\Service\ProvidersAI\SpeechToTextService;
 use OCA\AppAPI\Service\ProvidersAI\TaskProcessingService;
-use OCA\AppAPI\Service\ProvidersAI\TextProcessingService;
-use OCA\AppAPI\Service\ProvidersAI\TranslationService;
 use OCA\AppAPI\Service\UI\FilesActionsMenuService;
 use OCA\AppAPI\Service\UI\InitialStateService;
 use OCA\AppAPI\Service\UI\ScriptsService;
@@ -52,13 +49,9 @@ class ExAppService {
 		private readonly ScriptsService             $scriptsService,
 		private readonly StylesService              $stylesService,
 		private readonly FilesActionsMenuService    $filesActionsMenuService,
-		private readonly SpeechToTextService        $speechToTextService,
-		private readonly TextProcessingService      $textProcessingService,
-		private readonly TranslationService         $translationService,
 		private readonly TaskProcessingService      $taskProcessingService,
 		private readonly TalkBotsService            $talkBotsService,
 		private readonly SettingsService            $settingsService,
-		private readonly ExAppEventsListenerService $eventsListenerService,
 		private readonly ExAppOccService            $occService,
 		private readonly ExAppDeployOptionsService  $deployOptionsService,
 		private readonly IConfig                    $config,
@@ -121,13 +114,9 @@ class ExAppService {
 		$this->initialStateService->deleteExAppInitialStates($appId);
 		$this->scriptsService->deleteExAppScripts($appId);
 		$this->stylesService->deleteExAppStyles($appId);
-		$this->speechToTextService->unregisterExAppSpeechToTextProviders($appId);
-		$this->textProcessingService->unregisterExAppTextProcessingProviders($appId);
-		$this->translationService->unregisterExAppTranslationProviders($appId);
 		$this->taskProcessingService->unregisterExAppTaskProcessingProviders($appId);
 		$this->settingsService->unregisterExAppForms($appId);
 		$this->exAppArchiveFetcher->removeExAppFolder($appId);
-		$this->eventsListenerService->unregisterExAppEventListeners($appId);
 		$this->occService->unregisterExAppOccCommands($appId);
 		$this->deployOptionsService->removeExAppDeployOptions($appId);
 		$this->unregisterExAppWebhooks($appId);
@@ -252,11 +241,7 @@ class ExAppService {
 	private function resetCaches(): void {
 		$this->topMenuService->resetCacheEnabled();
 		$this->filesActionsMenuService->resetCacheEnabled();
-		$this->textProcessingService->resetCacheEnabled();
-		$this->speechToTextService->resetCacheEnabled();
-		$this->translationService->resetCacheEnabled();
 		$this->settingsService->resetCacheEnabled();
-		$this->eventsListenerService->resetCacheEnabled();
 		$this->occService->resetCacheEnabled();
 		$this->deployOptionsService->resetCache();
 	}
@@ -265,6 +250,9 @@ class ExAppService {
 		$extractedDir = '';
 		if ($jsonInfo !== null) {
 			$appInfo = json_decode($jsonInfo, true);
+			if (!$appInfo) {
+				return ['error' => 'Invalid app info provided in JSON format'];
+			}
 			# fill 'id' if it is missing(this field was called `appid` in previous versions in json)
 			$appInfo['id'] = $appInfo['id'] ?? $appId;
 			# during manual install JSON can have all values at root level
@@ -276,7 +264,11 @@ class ExAppService {
 			}
 		} else {
 			if ($infoXml !== null) {
-				$xmlAppInfo = simplexml_load_string(file_get_contents($infoXml));
+				$infoXmlContents = file_get_contents($infoXml);
+				if ($infoXmlContents === false) {
+					return ['error' => sprintf('Failed to read info.xml from %s', $infoXml)];
+				}
+				$xmlAppInfo = simplexml_load_string($infoXmlContents);
 				if ($xmlAppInfo === false) {
 					return ['error' => sprintf('Failed to load info.xml from %s', $infoXml)];
 				}
@@ -446,10 +438,6 @@ class ExAppService {
 	 * @psalm-suppress UndefinedClass
 	 */
 	private function unregisterExAppWebhooks(string $appId): void {
-		// webhook_listeners app since NC30 only
-		if (version_compare($this->config->getSystemValueString('version', '0.0.0'), '30.0', '<')) {
-			return;
-		}
 		try {
 			$webhookListenerMapper = \OCP\Server::get(\OCA\WebhookListeners\Db\WebhookListenerMapper::class);
 			$webhookListenerMapper->deleteByAppId($appId);

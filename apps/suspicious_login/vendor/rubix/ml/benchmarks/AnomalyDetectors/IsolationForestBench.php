@@ -12,7 +12,7 @@ use Rubix\ML\AnomalyDetectors\IsolationForest;
  */
 class IsolationForestBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     protected const TESTING_SIZE = 10000;
 
@@ -27,7 +27,7 @@ class IsolationForestBench
     protected $testing;
 
     /**
-     * @var \Rubix\ML\AnomalyDetectors\IsolationForest
+     * @var IsolationForest
      */
     protected $estimator;
 

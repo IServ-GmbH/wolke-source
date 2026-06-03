@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,6 +15,7 @@ use Sabre\DAV\Server;
 use Sabre\DAV\ServerPlugin;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 
 class AppleProvisioningPlugin extends ServerPlugin {
 	/**
@@ -126,7 +128,11 @@ class AppleProvisioningPlugin extends ServerPlugin {
 		));
 
 		$response->setStatus(Http::STATUS_OK);
-		$response->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
+		$sanitized = str_replace(['/', '\\'], '-', $filename);
+		$fallback = @iconv('UTF-8', 'ASCII//TRANSLIT', $sanitized) ?: $sanitized;
+		$fallback = preg_replace('/[^\x20-\x7e]/', '', $fallback);
+		$fallback = str_replace('%', '', $fallback);
+		$response->setHeader('Content-Disposition', HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, $sanitized, $fallback));
 		$response->setHeader('Content-Type', 'application/xml; charset=utf-8');
 		$response->setBody($body);
 

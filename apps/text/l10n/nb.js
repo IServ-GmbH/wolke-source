@@ -70,10 +70,10 @@ OC.L10N.register(
     "Bold text" : "Fet tekst",
     "Italic" : "Kursiv",
     "Italicized text" : "Kursiv tekst",
-    "Strikethrough" : "Gjennomstreking",
-    "Mistaken text" : "Feil tekst",
     "Underline" : "Understreking",
     "Underlined text" : "Understreket tekst",
+    "Strikethrough" : "Gjennomstreking",
+    "Mistaken text" : "Feil tekst",
     "Heading 1" : "Overskrift 1",
     "Heading level 1" : "Overskriftsnivå 1",
     "Heading 6" : "Overskrift 6",
@@ -199,10 +199,6 @@ OC.L10N.register(
     "Front matter" : "Innledning",
     "Link to this section" : "Kobling til denne seksjonen",
     "Close outline view" : "Lukk konturvisning",
-    "Outline" : "Omriss",
-    "Edit guest name" : "Rediger gjestenavn",
-    "Save guest name" : "Lagre gjestenavn",
-    "Cannot copy, please copy the link manually" : "Kan ikke kopiere, kopier lenken manuelt",
-    "Copy link to clipboard" : "Kopier lenke til utklippstavlen"
+    "Outline" : "Omriss"
 },
 "nplurals=2; plural=(n != 1);");

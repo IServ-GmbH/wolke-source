@@ -71,9 +71,9 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     /**
      * The base learner.
      *
-     * @var \Rubix\ML\Learner
+     * @var Learner
      */
-    protected \Rubix\ML\Learner $base;
+    protected Learner $base;
 
     /**
      * The number of learners to train in the ensemble.
@@ -118,11 +118,11 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     protected ?int $featureCount = null;
 
     /**
-     * @param \Rubix\ML\Learner|null $base
+     * @param Learner|null $base
      * @param int $estimators
      * @param float $ratio
      * @param bool $balanced
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         ?Learner $base = null,
@@ -157,7 +157,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -255,8 +255,8 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<string>
      */
     public function predict(Dataset $dataset) : array
@@ -290,8 +290,8 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     /**
      * Estimate the joint probabilities for each possible outcome.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
@@ -333,7 +333,7 @@ class RandomForest implements Estimator, Learner, Probabilistic, Parallel, Ranks
     /**
      * Return the importance scores of each feature column of the training set.
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return float[]
      */
     public function featureImportances() : array

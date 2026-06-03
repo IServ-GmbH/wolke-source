@@ -14,12 +14,15 @@ use OCA\DAV\Files\Sharing\FilesDropPlugin;
 use OCA\DAV\Files\Sharing\PublicLinkCheckPlugin;
 use OCA\DAV\Storage\PublicOwnerWrapper;
 use OCA\DAV\Storage\PublicShareWrapper;
+use OCA\DAV\Upload\ChunkingPlugin;
+use OCA\DAV\Upload\ChunkingV2Plugin;
 use OCA\FederatedFileSharing\FederatedShareProvider;
 use OCP\BeforeSabrePubliclyLoadedEvent;
 use OCP\Constants;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\Mount\IMountManager;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IPreview;
@@ -77,12 +80,8 @@ $serverFactory = new ServerFactory(
 $linkCheckPlugin = new PublicLinkCheckPlugin();
 $filesDropPlugin = new FilesDropPlugin();
 
-// Define root url with /public.php/dav/files/TOKEN
 /** @var string $baseuri defined in public.php */
-preg_match('/(^files\/[a-z0-9-_]+)/i', substr($requestUri, strlen($baseuri)), $match);
-$baseuri = $baseuri . $match[0];
-
-$server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, function (\Sabre\DAV\Server $server) use ($authBackend, $linkCheckPlugin, $filesDropPlugin) {
+$server = $serverFactory->createServer(true, $baseuri, $requestUri, $authPlugin, function (\Sabre\DAV\Server $server) use ($baseuri, $requestUri, $authBackend, $linkCheckPlugin, $filesDropPlugin) {
 	// GET must be allowed for e.g. showing images and allowing Zip downloads
 	if ($server->httpRequest->getMethod() !== 'GET') {
 		// If this is *not* a GET request we only allow access to public DAV from AJAX or when Server2Server is allowed
@@ -95,7 +94,6 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 	}
 
 	$share = $authBackend->getShare();
-	$owner = $share->getShareOwner();
 	$isReadable = $share->getPermissions() & Constants::PERMISSION_READ;
 	$fileId = $share->getNodeId();
 
@@ -104,8 +102,16 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 	$previousLog = Filesystem::logWarningWhenAddingStorageWrapper(false);
 
 	/** @psalm-suppress MissingClosureParamType */
-	Filesystem::addStorageWrapper('sharePermissions', function ($mountPoint, $storage) use ($share) {
-		return new PermissionsMask(['storage' => $storage, 'mask' => $share->getPermissions() | Constants::PERMISSION_SHARE]);
+	Filesystem::addStorageWrapper('sharePermissions', function ($mountPoint, $storage) use ($requestUri, $baseuri, $share) {
+		$mask = $share->getPermissions() | Constants::PERMISSION_SHARE;
+
+		// For chunked uploads it is necessary to have read and delete permission,
+		// so the temporary directory, chunks and destination file can be read and delete after the assembly.
+		if (str_starts_with(substr($requestUri, strlen($baseuri) - 1), '/uploads/')) {
+			$mask |= Constants::PERMISSION_READ | Constants::PERMISSION_DELETE;
+		}
+
+		return new PermissionsMask(['storage' => $storage, 'mask' => $mask]);
 	});
 
 	/** @psalm-suppress MissingClosureParamType */
@@ -123,7 +129,7 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 	Filesystem::logWarningWhenAddingStorageWrapper($previousLog);
 
 	$rootFolder = Server::get(IRootFolder::class);
-	$userFolder = $rootFolder->getUserFolder($owner);
+	$userFolder = $rootFolder->getUserFolder($share->getSharedBy());
 	$node = $userFolder->getFirstNodeById($fileId);
 	if (!$node) {
 		throw new NotFound();
@@ -134,16 +140,16 @@ $server = $serverFactory->createServer($baseuri, $requestUri, $authPlugin, funct
 	if (!$isReadable) {
 		$filesDropPlugin->enable();
 	}
-
-	$view = new View($node->getPath());
-	$filesDropPlugin->setView($view);
 	$filesDropPlugin->setShare($share);
 
+	$view = new View($node->getPath());
 	return $view;
 });
 
 $server->addPlugin($linkCheckPlugin);
 $server->addPlugin($filesDropPlugin);
+$server->addPlugin(new ChunkingV2Plugin(Server::get(ICacheFactory::class)));
+$server->addPlugin(new ChunkingPlugin());
 
 // allow setup of additional plugins
 $event = new BeforeSabrePubliclyLoadedEvent($server);

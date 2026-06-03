@@ -7,17 +7,24 @@
  */
 namespace OCA\Activity;
 
+use OCP\Activity\ActivitySettings;
+use OCP\Activity\IBulkConsumer;
 use OCP\Activity\IConsumer;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\Activity\ISetting;
+use OCP\Config\IUserConfig;
+use OCP\Config\ValueType;
+use OCP\DB\Exception;
 
-class Consumer implements IConsumer {
+class Consumer implements IConsumer, IBulkConsumer {
 
 	public function __construct(
 		protected Data $data,
 		protected IManager $manager,
 		protected UserSettings $userSettings,
 		protected NotificationGenerator $notificationGenerator,
+		protected IUserConfig $userConfig,
 	) {
 	}
 
@@ -28,7 +35,8 @@ class Consumer implements IConsumer {
 	 *
 	 * @return void
 	 */
-	public function receive(IEvent $event) {
+	#[\Override]
+	public function receive(IEvent $event): void {
 		$selfAction = $event->getAffectedUser() === $event->getAuthor();
 		$notificationSetting = $this->userSettings->getUserSetting($event->getAffectedUser(), 'notification', $event->getType());
 		$emailSetting = $this->userSettings->getUserSetting($event->getAffectedUser(), 'email', $event->getType());
@@ -44,6 +52,67 @@ class Consumer implements IConsumer {
 		if ($emailSetting !== false && !$selfAction) {
 			$latestSend = $event->getTimestamp() + $emailSetting;
 			$this->data->storeMail($event, $latestSend);
+		}
+	}
+
+	/**
+	 * Send an event to the notifications of a bulk of users
+	 *
+	 * @param IEvent $event
+	 * @param array $affectedUserIds
+	 * @param ISetting $setting
+	 * @return void
+	 * @throws Exception
+	 */
+	#[\Override]
+	public function bulkReceive(IEvent $event, array $affectedUserIds, ISetting $setting): void {
+		if (empty($affectedUserIds)) {
+			return;
+		}
+
+		$activityIds = $this->data->bulkSend($event, $affectedUserIds);
+
+		if (empty($activityIds)) {
+			return;
+		}
+
+		$canChangeMail = $setting->canChangeMail();
+		$canChangePush = $setting instanceof ActivitySettings && $setting->canChangeNotification() === true;
+
+		$userPushSettings = $userEmailSettings = $batchTimeSettings = null;
+		if ($canChangePush === true) {
+			$userPushSettings = $this->userConfig->getValuesByUsers('activity', 'notify_notification_' . $event->getType(), ValueType::BOOL, $affectedUserIds);
+		}
+
+		if ($canChangeMail === true || $setting->isDefaultEnabledMail() === true) {
+			$userEmailSettings = $this->userConfig->getValuesByUsers('activity', 'notify_email_' . $event->getType(), ValueType::BOOL, $affectedUserIds);
+			$batchTimeSettings = $this->userConfig->getValuesByUsers('activity', 'notify_setting_batchtime', ValueType::INT, $affectedUserIds);
+		}
+
+		$shouldFlush = $this->notificationGenerator->deferNotifications();
+		foreach ($activityIds as $activityId => $affectedUser) {
+			if ($event->getAuthor() === $affectedUser) {
+				continue;
+			}
+			$event->setAffectedUser($affectedUser);
+			$notificationSetting = $userPushSettings[$affectedUser] ?? null;
+			if ($notificationSetting !== null) {
+				$notificationSetting = (bool)$notificationSetting;
+			}
+			$emailSetting = $userEmailSettings[$affectedUser] ?? false;
+			$emailSetting = ($emailSetting) ? ($batchTimeSettings[$affectedUser] ?? false) : false;
+
+			if ($notificationSetting !== false) {
+				$this->notificationGenerator->sendNotificationForEvent($event, $activityId, $notificationSetting);
+			}
+
+			if (isset($emailSetting) && $emailSetting !== false) {
+				$latestSend = (int)($event->getTimestamp() + $emailSetting);
+				$this->data->storeMail($event, $latestSend);
+			}
+		}
+		if ($shouldFlush === true) {
+			$this->notificationGenerator->flushNotifications();
 		}
 	}
 }

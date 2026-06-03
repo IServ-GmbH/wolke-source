@@ -24,6 +24,7 @@ class CheckSubscription extends TimedJob {
 		$this->setInterval(60 * 5);
 	}
 
+	#[\Override]
 	public function run($argument) {
 		$lastCheck = $this->appConfig->getValueInt('support', 'last_check');
 		// renew subscription info every 23h

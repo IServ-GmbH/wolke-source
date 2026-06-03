@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -13,8 +14,8 @@ use OC\App\AppStore\Fetcher\AppFetcher;
 use OC\App\AppStore\Fetcher\CategoryFetcher;
 use OC\App\AppStore\Version\VersionParser;
 use OC\App\DependencyAnalyzer;
-use OC\App\Platform;
 use OC\Installer;
+use OCA\AppAPI\Service\ExAppsPageService;
 use OCP\App\AppPathNotFoundException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -92,7 +93,6 @@ class AppSettingsController extends Controller {
 
 		$this->initialState->provideInitialState('appstoreEnabled', $this->config->getSystemValueBool('appstoreenabled', true));
 		$this->initialState->provideInitialState('appstoreBundles', $this->getBundles());
-		$this->initialState->provideInitialState('appstoreDeveloperDocs', $this->urlGenerator->linkToDocs('developer-manual'));
 		$this->initialState->provideInitialState('appstoreUpdateCount', count($this->getAppsWithUpdates()));
 
 		$groups = array_map(static fn (IGroup $group): array => [
@@ -102,9 +102,9 @@ class AppSettingsController extends Controller {
 
 		$this->initialState->provideInitialState('usersSettings', [ 'systemGroups' => $groups]);
 
-		if ($this->appManager->isInstalled('app_api')) {
+		if ($this->appManager->isEnabledForAnyone('app_api')) {
 			try {
-				Server::get(\OCA\AppAPI\Service\ExAppsPageService::class)->provideAppApiState($this->initialState);
+				Server::get(ExAppsPageService::class)->provideAppApiState($this->initialState);
 			} catch (\Psr\Container\NotFoundExceptionInterface|\Psr\Container\ContainerExceptionInterface $e) {
 			}
 		}
@@ -367,7 +367,7 @@ class AppSettingsController extends Controller {
 		$this->fetchApps();
 		$apps = $this->getAllApps();
 
-		$dependencyAnalyzer = new DependencyAnalyzer(new Platform($this->config), $this->l10n);
+		$dependencyAnalyzer = Server::get(DependencyAnalyzer::class);
 
 		$ignoreMaxApps = $this->config->getSystemValue('app_install_overwrite', []);
 		if (!is_array($ignoreMaxApps)) {
@@ -496,7 +496,7 @@ class AppSettingsController extends Controller {
 			}
 
 			$currentVersion = '';
-			if ($this->appManager->isInstalled($app['id'])) {
+			if ($this->appManager->isEnabledForAnyone($app['id'])) {
 				$currentVersion = $this->appManager->getAppVersion($app['id']);
 			} else {
 				$currentVersion = $app['releases'][0]['version'];
@@ -565,7 +565,7 @@ class AppSettingsController extends Controller {
 	 * @param array $groups
 	 * @return JSONResponse
 	 */
-	#[PasswordConfirmationRequired]
+	#[PasswordConfirmationRequired(strict: true)]
 	public function enableApps(array $appIds, array $groups = []): JSONResponse {
 		try {
 			$updateRequired = false;
@@ -574,24 +574,18 @@ class AppSettingsController extends Controller {
 				$appId = $this->appManager->cleanAppId($appId);
 
 				// Check if app is already downloaded
-				/** @var Installer $installer */
-				$installer = \OC::$server->get(Installer::class);
-				$isDownloaded = $installer->isDownloaded($appId);
-
-				if (!$isDownloaded) {
-					$installer->downloadApp($appId);
+				if (!$this->installer->isDownloaded($appId)) {
+					$this->installer->downloadApp($appId);
 				}
 
-				$installer->installApp($appId);
+				$this->installer->installApp($appId);
 
 				if (count($groups) > 0) {
 					$this->appManager->enableAppForGroups($appId, $this->getGroupList($groups));
 				} else {
 					$this->appManager->enableApp($appId);
 				}
-				if (\OC_App::shouldUpgrade($appId)) {
-					$updateRequired = true;
-				}
+				$updateRequired = $updateRequired || $this->appManager->isUpgradeRequired($appId);
 			}
 			return new JSONResponse(['data' => ['update_required' => $updateRequired]]);
 		} catch (\Throwable $e) {
@@ -601,7 +595,7 @@ class AppSettingsController extends Controller {
 	}
 
 	private function getGroupList(array $groups) {
-		$groupManager = \OC::$server->getGroupManager();
+		$groupManager = Server::get(IGroupManager::class);
 		$groupsList = [];
 		foreach ($groups as $group) {
 			$groupItem = $groupManager->get($group);

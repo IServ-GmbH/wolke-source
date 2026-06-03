@@ -1,8 +1,12 @@
 OC.L10N.register(
     "app_api",
     {
+    "Cancel" : "Cancel",
     "Delete" : "Skrap",
     "Host" : "Gasheer",
+    "From" : "Van",
+    "To" : "Aan",
+    "Add" : "Voeg toe",
     "Confirm" : "Bevestig",
     "Save" : "Stoor",
     "Register" : "Registreer",

@@ -20,8 +20,10 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
 use OCP\IAvatarManager;
 use OCP\IL10N;
+use OCP\Image;
 use OCP\IRequest;
 use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
@@ -179,7 +181,7 @@ class AvatarController extends Controller {
 
 			try {
 				$content = $node->getContent();
-			} catch (\OCP\Files\NotPermittedException $e) {
+			} catch (NotPermittedException $e) {
 				return new JSONResponse(
 					['data' => ['message' => $this->l10n->t('The selected file cannot be read.')]],
 					Http::STATUS_BAD_REQUEST
@@ -187,8 +189,8 @@ class AvatarController extends Controller {
 			}
 		} elseif (!is_null($files)) {
 			if (
-				$files['error'][0] === 0 &&
-				 is_uploaded_file($files['tmp_name'][0])
+				$files['error'][0] === 0
+				 && is_uploaded_file($files['tmp_name'][0])
 			) {
 				if ($files['size'][0] > 20 * 1024 * 1024) {
 					return new JSONResponse(
@@ -225,7 +227,7 @@ class AvatarController extends Controller {
 		}
 
 		try {
-			$image = new \OCP\Image();
+			$image = new Image();
 			$image->loadFromData($content);
 			$image->readExif($content);
 			$image->fixOrientation();

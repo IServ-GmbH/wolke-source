@@ -40,7 +40,7 @@ interface IFilterCollection extends IteratorAggregate {
 	/**
 	 * Return the number of filters
 	 *
-	 * @since 31.0.10
+	 * @since 32.0.1
 	 */
 	public function count(): int;
 }

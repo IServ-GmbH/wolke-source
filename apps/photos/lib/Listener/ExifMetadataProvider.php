@@ -20,11 +20,16 @@ use Psr\Log\LoggerInterface;
  * Extract EXIF, IFD0, and GPS data from a picture file.
  * EXIF data reference: https://web.archive.org/web/20220428165430/exif.org/Exif2-2.PDF
  *
- * @template-implements IEventListener<MetadataLiveEvent>
+ * @template-implements IEventListener<MetadataLiveEvent|MetadataBackgroundEvent>
  */
 class ExifMetadataProvider implements IEventListener {
+
+	public const METADATA_KEY_EXIF = 'photos-exif';
+	public const METADATA_KEY_IFD0 = 'photos-ifd0';
+	public const METADATA_KEY_GPS = 'photos-gps';
+
 	public function __construct(
-		private LoggerInterface $logger,
+		private readonly LoggerInterface $logger,
 	) {
 	}
 
@@ -74,11 +79,11 @@ class ExifMetadataProvider implements IEventListener {
 		}
 
 		if ($rawExifData && array_key_exists('EXIF', $rawExifData)) {
-			$event->getMetadata()->setArray('photos-exif', $this->sanitizeEntries($rawExifData['EXIF'], $node));
+			$event->getMetadata()->setArray(self::METADATA_KEY_EXIF, $this->sanitizeEntries($rawExifData['EXIF'], $node));
 		}
 
 		if ($rawExifData && array_key_exists('IFD0', $rawExifData)) {
-			$event->getMetadata()->setArray('photos-ifd0', $this->sanitizeEntries($rawExifData['IFD0'], $node));
+			$event->getMetadata()->setArray(self::METADATA_KEY_IFD0, $this->sanitizeEntries($rawExifData['IFD0'], $node));
 		}
 
 		if (
@@ -100,7 +105,7 @@ class ExifMetadataProvider implements IEventListener {
 			}
 
 			if (!empty($gps)) {
-				$event->getMetadata()->setArray('photos-gps', $gps);
+				$event->getMetadata()->setArray(self::METADATA_KEY_GPS, $gps);
 			}
 		}
 	}
@@ -117,7 +122,7 @@ class ExifMetadataProvider implements IEventListener {
 			throw new \Exception('Invalid coordinate format: ' . json_encode($coordinates));
 		}
 
-		[$degrees, $minutes, $seconds] = array_map(fn ($rawDegree) => $this->parseGPSData($rawDegree), $coordinates);
+		[$degrees, $minutes, $seconds] = array_map(fn ($rawDegree): float => $this->parseGPSData($rawDegree), $coordinates);
 
 		$sign = ($hemisphere === 'W' || $hemisphere === 'S') ? -1 : 1;
 		return $sign * ($degrees + $minutes / 60 + $seconds / 3600);

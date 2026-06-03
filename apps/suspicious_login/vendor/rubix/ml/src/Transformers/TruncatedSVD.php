@@ -47,9 +47,9 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
     /**
      * The transposed right singular vectors of the decomposition.
      *
-     * @var \Tensor\Matrix|null
+     * @var Matrix|null
      */
-    protected ?\Tensor\Matrix $components = null;
+    protected ?Matrix $components = null;
 
     /**
      * The proportion of information lost due to the transformation.
@@ -60,7 +60,7 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
 
     /**
      * @param int $dimensions
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $dimensions)
     {
@@ -114,8 +114,8 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
     /**
      * Fit the transformer to a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Dataset $dataset
+     * @throws InvalidArgumentException
      */
     public function fit(Dataset $dataset) : void
     {
@@ -144,7 +144,7 @@ class TruncatedSVD implements Transformer, Stateful, Persistable
      * Transform the dataset in place.
      *
      * @param list<list<mixed>> $samples
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function transform(array &$samples) : void
     {

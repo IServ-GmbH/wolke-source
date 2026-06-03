@@ -188,9 +188,9 @@ class TSNE implements Transformer, Verbose
     /**
      * The distance metric used to measure distances between samples in both high and low dimensions.
      *
-     * @var \Rubix\ML\Kernels\Distance\Distance
+     * @var Distance
      */
-    protected \Rubix\ML\Kernels\Distance\Distance $kernel;
+    protected Distance $kernel;
 
     /**
      * The loss at each epoch from the last embedding.
@@ -207,8 +207,8 @@ class TSNE implements Transformer, Verbose
      * @param int $epochs
      * @param float $minGradient
      * @param int $window
-     * @param \Rubix\ML\Kernels\Distance\Distance|null $kernel
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Distance|null $kernel
+     * @throws InvalidArgumentException
      */
     public function __construct(
         int $dimensions = 2,
@@ -515,10 +515,10 @@ class TSNE implements Transformer, Verbose
     /**
      * Compute the gradient of the KL Divergence cost function with respect to the embedding.
      *
-     * @param \Tensor\Matrix $p
-     * @param \Tensor\Matrix $y
-     * @param \Tensor\Matrix $distances
-     * @return \Tensor\Matrix
+     * @param Matrix $p
+     * @param Matrix $y
+     * @param Matrix $distances
+     * @return Matrix
      */
     protected function gradient(Matrix $p, Matrix $y, Matrix $distances) : Matrix
     {

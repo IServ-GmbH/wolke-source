@@ -20,12 +20,14 @@ use OC\DB\QueryBuilder\FunctionBuilder\PgSqlFunctionBuilder;
 use OC\DB\QueryBuilder\FunctionBuilder\SqliteFunctionBuilder;
 use OC\SystemConfig;
 use OCP\DB\IResult;
+use OCP\DB\QueryBuilder\ConflictResolutionMode;
 use OCP\DB\QueryBuilder\ICompositeExpression;
 use OCP\DB\QueryBuilder\ILiteral;
 use OCP\DB\QueryBuilder\IParameter;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\QueryBuilder\IQueryFunction;
 use OCP\IDBConnection;
+use Override;
 use Psr\Log\LoggerInterface;
 
 class QueryBuilder implements IQueryBuilder {
@@ -96,6 +98,7 @@ class QueryBuilder implements IQueryBuilder {
 		return match($this->connection->getDatabaseProvider()) {
 			IDBConnection::PLATFORM_ORACLE => new OCIExpressionBuilder($this->connection, $this, $this->logger),
 			IDBConnection::PLATFORM_POSTGRES => new PgSqlExpressionBuilder($this->connection, $this, $this->logger),
+			IDBConnection::PLATFORM_MARIADB,
 			IDBConnection::PLATFORM_MYSQL => new MySqlExpressionBuilder($this->connection, $this, $this->logger),
 			IDBConnection::PLATFORM_SQLITE => new SqliteExpressionBuilder($this->connection, $this, $this->logger),
 		};
@@ -121,6 +124,7 @@ class QueryBuilder implements IQueryBuilder {
 		return match($this->connection->getDatabaseProvider()) {
 			IDBConnection::PLATFORM_ORACLE => new OCIFunctionBuilder($this->connection, $this, $this->helper),
 			IDBConnection::PLATFORM_POSTGRES => new PgSqlFunctionBuilder($this->connection, $this, $this->helper),
+			IDBConnection::PLATFORM_MARIADB,
 			IDBConnection::PLATFORM_MYSQL => new FunctionBuilder($this->connection, $this, $this->helper),
 			IDBConnection::PLATFORM_SQLITE => new SqliteFunctionBuilder($this->connection, $this, $this->helper),
 		};
@@ -1347,6 +1351,8 @@ class QueryBuilder implements IQueryBuilder {
 	/**
 	 * Returns the table name with database prefix as needed by the implementation
 	 *
+	 * Was protected until version 30.
+	 *
 	 * @param string $table
 	 * @return string
 	 */
@@ -1400,4 +1406,12 @@ class QueryBuilder implements IQueryBuilder {
 		return $this;
 	}
 
+	#[Override]
+	public function forUpdate(ConflictResolutionMode $conflictResolutionMode = ConflictResolutionMode::Ordinary): self {
+		match ($conflictResolutionMode) {
+			ConflictResolutionMode::Ordinary => $this->queryBuilder->forUpdate(),
+			ConflictResolutionMode::SkipLocked => $this->queryBuilder->forUpdate(\Doctrine\DBAL\Query\ForUpdate\ConflictResolutionMode::SKIP_LOCKED),
+		};
+		return $this;
+	}
 }

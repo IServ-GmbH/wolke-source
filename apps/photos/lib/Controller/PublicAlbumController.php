@@ -18,8 +18,8 @@ use OCP\IRequest;
 use OCP\Util;
 
 class PublicAlbumController extends Controller {
-	private IEventDispatcher $eventDispatcher;
-	private IInitialState $initialState;
+	private readonly IEventDispatcher $eventDispatcher;
+	private readonly IInitialState $initialState;
 
 	public function __construct(
 		IRequest $request,
@@ -46,6 +46,7 @@ class PublicAlbumController extends Controller {
 		$this->initialState->provideInitialState('systemtags', false);
 
 		Util::addScript(Application::APP_ID, 'photos-public');
+		Util::addStyle(Application::APP_ID, 'photos-public');
 
 		$response = new PublicTemplateResponse(Application::APP_ID, 'public');
 

@@ -18,10 +18,12 @@ class MigrateLazyAppConfig implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Migrate some config values to lazy loading';
 	}
 
+	#[\Override]
 	public function run(IOutput $output): void {
 		$this->appConfig->updateLazy('support', 'last_response', true);
 

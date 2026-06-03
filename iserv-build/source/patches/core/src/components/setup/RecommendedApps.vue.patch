@@ -1,8 +1,8 @@
 diff --git core/src/components/setup/RecommendedApps.vue core/src/components/setup/RecommendedApps.vue
-index d6968bb..491c701 100644
+index f2120c2..a0f9bb2 100644
 --- core/src/components/setup/RecommendedApps.vue
 +++ core/src/components/setup/RecommendedApps.vue
-@@ -83,7 +83,7 @@ const recommended = {
+@@ -84,7 +84,7 @@ const recommended = {
  		icon: imagePath('core', 'apps/spreed.svg'),
  	},
  	richdocuments: {

@@ -42,9 +42,9 @@ class OneClassSVM implements Estimator, Learner
     /**
      * The support vector machine instance.
      *
-     * @var \svm
+     * @var svm
      */
-    protected \svm $svm;
+    protected svm $svm;
 
     /**
      * The hyper-parameters of the model.
@@ -56,17 +56,17 @@ class OneClassSVM implements Estimator, Learner
     /**
      * The trained model instance.
      *
-     * @var \svmmodel|null
+     * @var svmmodel|null
      */
-    protected ?\svmmodel $model = null;
+    protected ?svmmodel $model = null;
 
     /**
      * @param float $nu
-     * @param \Rubix\ML\Kernels\SVM\Kernel|null $kernel
+     * @param Kernel|null $kernel
      * @param bool $shrinking
      * @param float $tolerance
      * @param float $cacheSize
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         float $nu = 0.5,
@@ -127,7 +127,7 @@ class OneClassSVM implements Estimator, Learner
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -173,7 +173,7 @@ class OneClassSVM implements Estimator, Learner
     /**
      * Train the learner with a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function train(Dataset $dataset) : void
     {
@@ -182,13 +182,20 @@ class OneClassSVM implements Estimator, Learner
             new SamplesAreCompatibleWithEstimator($dataset, $this),
         ])->check();
 
-        $this->model = $this->svm->train($dataset->samples());
+        $data = [];
+
+        foreach ($dataset->samples() as $sample) {
+            array_unshift($sample, 1);
+            $data[] = $sample;
+        }
+
+        $this->model = $this->svm->train($data);
     }
 
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<int>
      */
     public function predict(Dataset $dataset) : array
@@ -202,7 +209,7 @@ class OneClassSVM implements Estimator, Learner
      * @internal
      *
      * @param list<int|float> $sample
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return int
      */
     public function predictSample(array $sample) : int
@@ -211,14 +218,20 @@ class OneClassSVM implements Estimator, Learner
             throw new RuntimeException('Estimator has not been trained.');
         }
 
-        return $this->model->predict($sample) !== 1.0 ? 0 : 1;
+        $sampleWithOffset = [];
+
+        foreach ($sample as $key => $value) {
+            $sampleWithOffset[$key + 1] = $value;
+        }
+
+        return $this->model->predict($sampleWithOffset) == 1 ? 0 : 1;
     }
 
     /**
      * Save the model data to the filesystem.
      *
      * @param string $path
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function save(string $path) : void
     {

@@ -1,5 +1,5 @@
 diff --git apps/federation/composer/composer/autoload_classmap.php apps/federation/composer/composer/autoload_classmap.php
-index d648b64..3110b65 100644
+index deca7ce..79de140 100644
 --- apps/federation/composer/composer/autoload_classmap.php
 +++ apps/federation/composer/composer/autoload_classmap.php
 @@ -10,6 +10,10 @@ return array(
@@ -11,9 +11,9 @@ index d648b64..3110b65 100644
 +    'OCA\\Federation\\Command\\ListTrustedServer' => $baseDir . '/../lib/Command/ListTrustedServer.php',
 +    'OCA\\Federation\\Command\\RemoveTrustedServer' => $baseDir . '/../lib/Command/RemoveTrustedServer.php',
      'OCA\\Federation\\Command\\SyncFederationAddressBooks' => $baseDir . '/../lib/Command/SyncFederationAddressBooks.php',
+     'OCA\\Federation\\Command\\SyncFederationCalendars' => $baseDir . '/../lib/Command/SyncFederationCalendars.php',
      'OCA\\Federation\\Controller\\OCSAuthAPIController' => $baseDir . '/../lib/Controller/OCSAuthAPIController.php',
-     'OCA\\Federation\\Controller\\SettingsController' => $baseDir . '/../lib/Controller/SettingsController.php',
-@@ -20,5 +24,6 @@ return array(
+@@ -22,5 +26,6 @@ return array(
      'OCA\\Federation\\Settings\\Admin' => $baseDir . '/../lib/Settings/Admin.php',
      'OCA\\Federation\\SyncFederationAddressBooks' => $baseDir . '/../lib/SyncFederationAddressBooks.php',
      'OCA\\Federation\\SyncJob' => $baseDir . '/../lib/SyncJob.php',

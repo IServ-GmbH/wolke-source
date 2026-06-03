@@ -21,6 +21,8 @@ use OCP\Notification\IncompleteNotificationException;
 use OCP\Notification\IncompleteParsedNotificationException;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\Notification\IPreloadableNotifier;
+use OCP\Notification\NotificationPreloadReason;
 use OCP\Notification\UnknownNotificationException;
 use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
@@ -74,7 +76,15 @@ class Manager implements IManager {
 	 * @since 17.0.0
 	 */
 	public function registerApp(string $appClass): void {
-		$this->appClasses[] = $appClass;
+		// other apps may want to rely on the 'main' notification app so make it deterministic that
+		// the 'main' notification app adds it's notifications first and removes it's notifications last
+		if ($appClass === \OCA\Notifications\App::class) {
+			// add 'main' notifications app to start of internal list of apps
+			array_unshift($this->appClasses, $appClass);
+		} else {
+			// add app to end of internal list of apps
+			$this->appClasses[] = $appClass;
+		}
 	}
 
 	/**
@@ -239,7 +249,7 @@ class Manager implements IManager {
 		$alreadyDeferring = $this->deferPushing;
 		$this->deferPushing = true;
 
-		$apps = $this->getApps();
+		$apps = array_reverse($this->getApps());
 
 		foreach ($apps as $app) {
 			if ($app instanceof IDeferrableApp) {
@@ -254,7 +264,7 @@ class Manager implements IManager {
 	 * @since 20.0.0
 	 */
 	public function flush(): void {
-		$apps = $this->getApps();
+		$apps = array_reverse($this->getApps());
 
 		foreach ($apps as $app) {
 			if (!$app instanceof IDeferrableApp) {
@@ -362,31 +372,29 @@ class Manager implements IManager {
 			throw new IncompleteParsedNotificationException();
 		}
 
-		$link = $notification->getLink();
-		if ($link !== '' && !str_starts_with($link, 'http://') && !str_starts_with($link, 'https://')) {
-			$this->logger->warning('Link of notification is not an absolute URL and does not work in mobile and desktop clients [app: ' . $notification->getApp() . ', subject: ' . $notification->getSubject() . ']');
-		}
-
-		$icon = $notification->getIcon();
-		if ($icon !== '' && !str_starts_with($icon, 'http://') && !str_starts_with($icon, 'https://')) {
-			$this->logger->warning('Icon of notification is not an absolute URL and does not work in mobile and desktop clients [app: ' . $notification->getApp() . ', subject: ' . $notification->getSubject() . ']');
-		}
-
-		foreach ($notification->getParsedActions() as $action) {
-			$link = $action->getLink();
-			if ($link !== '' && !str_starts_with($link, 'http://') && !str_starts_with($link, 'https://')) {
-				$this->logger->warning('Link of action is not an absolute URL and does not work in mobile and desktop clients [app: ' . $notification->getApp() . ', subject: ' . $notification->getSubject() . ']');
-			}
-		}
-
 		return $notification;
+	}
+
+	public function preloadDataForParsing(
+		array $notifications,
+		string $languageCode,
+		NotificationPreloadReason $reason,
+	): void {
+		$notifiers = $this->getNotifiers();
+		foreach ($notifiers as $notifier) {
+			if (!($notifier instanceof IPreloadableNotifier)) {
+				continue;
+			}
+
+			$notifier->preloadDataForParsing($notifications, $languageCode, $reason);
+		}
 	}
 
 	/**
 	 * @param INotification $notification
 	 */
 	public function markProcessed(INotification $notification): void {
-		$apps = $this->getApps();
+		$apps = array_reverse($this->getApps());
 
 		foreach ($apps as $app) {
 			$app->markProcessed($notification);
@@ -398,7 +406,7 @@ class Manager implements IManager {
 	 * @return int
 	 */
 	public function getCount(INotification $notification): int {
-		$apps = $this->getApps();
+		$apps = array_reverse($this->getApps());
 
 		$count = 0;
 		foreach ($apps as $app) {

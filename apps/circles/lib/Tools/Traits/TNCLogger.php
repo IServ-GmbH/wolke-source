@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace OCA\Circles\Tools\Traits;
 
 use Exception;
-use OC;
 use OC\HintException;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -172,10 +172,10 @@ trait TNCLogger {
 	 * @return LoggerInterface
 	 */
 	public function logger(): LoggerInterface {
-		if (isset($this->logger) && $this->logger instanceof LoggerInterface) {
+		if (isset($this->logger)) {
 			return $this->logger;
 		} else {
-			return OC::$server->get(LoggerInterface::class);
+			return Server::get(LoggerInterface::class);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 diff --git apps/viewer/src/views/Viewer.vue apps/viewer/src/views/Viewer.vue
-index 0dd20ee..5adcb77 100644
+index 21a00d1..35ec3da 100644
 --- apps/viewer/src/views/Viewer.vue
 +++ apps/viewer/src/views/Viewer.vue
 @@ -76,7 +76,7 @@
@@ -28,3 +28,16 @@ index 0dd20ee..5adcb77 100644
  	},
  
  	watch: {
+@@ -1198,6 +1208,12 @@ export default defineComponent({
+ 				return
+ 			}
+ 
++			// IServ: also block the keyboard shortcut (Ctrl+S) and any programmatic
++			// download path when downloads are globally disabled, not just the button.
++			if (!this.enabledDownloads) {
++				return
++			}
++
+ 			// Get the current handler for this file
+ 			const mime = this.currentFile.mime
+ 			const alias = mime?.split('/')[0]

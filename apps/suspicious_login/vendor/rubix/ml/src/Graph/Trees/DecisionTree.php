@@ -65,9 +65,9 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
     /**
      * The root node of the tree.
      *
-     * @var \Rubix\ML\Graph\Nodes\Split|null
+     * @var Split|null
      */
-    protected ?\Rubix\ML\Graph\Nodes\Split $root = null;
+    protected ?Split $root = null;
 
     /**
      * The number of feature columns in the training set.
@@ -163,7 +163,7 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
      *
      * @internal
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
+     * @param Labeled $dataset
      * @throws \InvalidArgumentException
      */
     public function grow(Labeled $dataset) : void
@@ -242,7 +242,7 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
      * @internal
      *
      * @param list<string|int|float> $sample
-     * @return \Rubix\ML\Graph\Nodes\Outcome|null
+     * @return Outcome|null
      */
     public function search(array $sample) : ?Outcome
     {
@@ -328,8 +328,8 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
      *
      * @param string[]|null $featureNames
      * @param int $maxDepth
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Rubix\ML\Encoding
+     * @throws RuntimeException
+     * @return Encoding
      */
     public function exportGraphviz(?array $featureNames = null, ?int $maxDepth = null) : Encoding
     {
@@ -353,16 +353,16 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
     /**
      * Find a split point for a given subset of the training set.
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
-     * @return \Rubix\ML\Graph\Nodes\Split
+     * @param Labeled $dataset
+     * @return Split
      */
     abstract protected function split(Labeled $dataset) : Split;
 
     /**
      * Terminate a branch with an outcome node.
      *
-     * @param \Rubix\ML\Datasets\Labeled $dataset
-     * @return \Rubix\ML\Graph\Nodes\Outcome
+     * @param Labeled $dataset
+     * @return Outcome
      */
     abstract protected function terminate(Labeled $dataset);
 
@@ -404,7 +404,7 @@ abstract class DecisionTree implements BinaryTree, IteratorAggregate
      *
      * @param string $carry
      * @param int $nodesCounter
-     * @param \Rubix\ML\Graph\Nodes\BinaryNode $node
+     * @param BinaryNode $node
      * @param int $maxDepth
      * @param string[]|null $featureNames
      * @param int|null $parentId

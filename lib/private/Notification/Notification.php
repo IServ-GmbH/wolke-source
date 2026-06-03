@@ -310,6 +310,12 @@ class Notification implements INotification {
 		if ($link === '' || isset($link[4000])) {
 			throw new InvalidValueException('link');
 		}
+
+		// Only allow absolute URLs for support of desktop and mobile clients
+		if (!str_starts_with($link, 'http://') && !str_starts_with($link, 'https://')) {
+			throw new InvalidValueException('link');
+		}
+
 		$this->link = $link;
 		return $this;
 	}
@@ -328,6 +334,12 @@ class Notification implements INotification {
 		if ($icon === '' || isset($icon[4000])) {
 			throw new InvalidValueException('icon');
 		}
+
+		// Only allow absolute URLs for support of desktop and mobile clients
+		if (!str_starts_with($icon, 'http://') && !str_starts_with($icon, 'https://')) {
+			throw new InvalidValueException('icon');
+		}
+
 		$this->icon = $icon;
 		return $this;
 	}
@@ -429,8 +441,7 @@ class Notification implements INotification {
 	public function isValid(): bool {
 		return
 			$this->isValidCommon()
-			&&
-			$this->getSubject() !== ''
+			&& $this->getSubject() !== ''
 		;
 	}
 
@@ -456,8 +467,7 @@ class Notification implements INotification {
 
 		return
 			$this->isValidCommon()
-			&&
-			$this->getParsedSubject() !== ''
+			&& $this->getParsedSubject() !== ''
 		;
 	}
 
@@ -468,14 +478,10 @@ class Notification implements INotification {
 
 		return
 			$this->getApp() !== ''
-			&&
-			$this->getUser() !== ''
-			&&
-			$this->getDateTime()->getTimestamp() !== 0
-			&&
-			$this->getObjectType() !== ''
-			&&
-			$this->getObjectId() !== ''
+			&& $this->getUser() !== ''
+			&& $this->getDateTime()->getTimestamp() !== 0
+			&& $this->getObjectType() !== ''
+			&& $this->getObjectId() !== ''
 		;
 	}
 }

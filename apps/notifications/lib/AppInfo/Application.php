@@ -13,7 +13,6 @@ use OCA\Notifications\App;
 use OCA\Notifications\Capabilities;
 use OCA\Notifications\Listener\AddMissingIndicesListener;
 use OCA\Notifications\Listener\BeforeTemplateRenderedListener;
-use OCA\Notifications\Listener\PostLoginListener;
 use OCA\Notifications\Listener\UserCreatedListener;
 use OCA\Notifications\Listener\UserDeletedListener;
 use OCA\Notifications\Notifier\AdminNotifications;
@@ -24,7 +23,6 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\DB\Events\AddMissingIndicesEvent;
 use OCP\Notification\IManager;
-use OCP\User\Events\PostLoginEvent;
 use OCP\User\Events\UserCreatedEvent;
 use OCP\User\Events\UserDeletedEvent;
 
@@ -35,6 +33,7 @@ class Application extends \OCP\AppFramework\App implements IBootstrap {
 		parent::__construct(self::APP_ID);
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		$context->registerCapability(Capabilities::class);
 
@@ -46,14 +45,14 @@ class Application extends \OCP\AppFramework\App implements IBootstrap {
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, BeforeTemplateRenderedListener::class);
 		$context->registerEventListener(UserCreatedEvent::class, UserCreatedListener::class);
-		$context->registerEventListener(PostLoginEvent::class, PostLoginListener::class);
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
-		$context->injectFn(\Closure::fromCallable([$this, 'registerAppAndNotifier']));
+		$context->injectFn(\Closure::fromCallable([$this, 'registerApp']));
 	}
 
-	public function registerAppAndNotifier(IManager $notificationManager): void {
+	public function registerApp(IManager $notificationManager): void {
 		// notification app
 		$notificationManager->registerApp(App::class);
 	}

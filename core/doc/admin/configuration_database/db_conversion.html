@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Converting database type &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/configuration_database/db_conversion.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,24 +58,20 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Database configuration</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Converting database type</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#run-the-conversion">Run the conversion</a><ul>
@@ -92,11 +89,58 @@
 <li class="toctree-l2"><a class="reference internal" href="splitting.html">Splitting databases</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -150,7 +194,7 @@ the database name, database username, and database password you specified when c
 <section id="triggering-the-conversion">
 <h3>Triggering the conversion<a class="headerlink" href="#triggering-the-conversion" title="Link to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">db:convert-type</span></code> command handles all the tasks of the conversion. The following are the parameters available:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">convert</span><span class="o">-</span><span class="nb">type</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="nb">type</span> <span class="n">username</span> <span class="n">hostname</span> <span class="n">database</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">convert</span><span class="o">-</span><span class="nb">type</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="nb">type</span> <span class="n">username</span> <span class="n">hostname</span> <span class="n">database</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">type</span></code> should be the target database type. The same values are available here as for the <code class="docutils literal notranslate"><span class="pre">config.php</span></code> <code class="docutils literal notranslate"><span class="pre">dbtype</span></code> parameter. It should be one of: <code class="docutils literal notranslate"><span class="pre">mysql</span></code> for MariaDB/MySQL,
@@ -170,7 +214,7 @@ the schema (table) definitions in the apps to create the new tables. Any tables 
 apps will not be converted (even with option <code class="docutils literal notranslate"><span class="pre">--all-apps</span></code>).</p>
 </div>
 <p>Let’s convert our existing (functioning) sqlite3 installation to be MariaDB/MySQL based:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">convert</span><span class="o">-</span><span class="nb">type</span> <span class="o">--</span><span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span> <span class="o">--</span><span class="n">port</span><span class="o">=</span><span class="s2">&quot;3306&quot;</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">apps</span> <span class="n">mysql</span> <span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="n">nextcloud</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">db</span><span class="p">:</span><span class="n">convert</span><span class="o">-</span><span class="nb">type</span> <span class="o">--</span><span class="n">password</span><span class="o">=</span><span class="s2">&quot;&lt;password&gt;&quot;</span> <span class="o">--</span><span class="n">port</span><span class="o">=</span><span class="s2">&quot;3306&quot;</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">apps</span> <span class="n">mysql</span> <span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hostname</span><span class="o">&gt;</span> <span class="n">nextcloud</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -182,7 +226,7 @@ database server.</p>
 <p>On success the converter will automatically configure the new database in your
 Nextcloud config <code class="docutils literal notranslate"><span class="pre">config.php</span></code>.</p>
 <p>If you are converting to a MySQL/MariaDB database, you will also want to set <code class="docutils literal notranslate"><span class="pre">mysql.utf8mb4</span></code> parameter to true in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="nb">set</span> <span class="n">mysql</span><span class="o">.</span><span class="n">utf8mb4</span> <span class="o">--</span><span class="nb">type</span> <span class="n">boolean</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">system</span><span class="p">:</span><span class="nb">set</span> <span class="n">mysql</span><span class="o">.</span><span class="n">utf8mb4</span> <span class="o">--</span><span class="nb">type</span> <span class="n">boolean</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;true&quot;</span>
 </pre></div>
 </div>
 <p>If you like, you can view the changes that were made by looking for the <code class="docutils literal notranslate"><span class="pre">db*</span></code> parameters in your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> (you could also use this command before
@@ -234,7 +278,7 @@ Here is a list of known old tables:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -274,26 +318,18 @@ Here is a list of known old tables:</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

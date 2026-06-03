@@ -11,6 +11,8 @@ use OC\KnownUser\KnownUserService;
 use OCA\DAV\AppInfo\PluginManager;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\CalendarRoot;
+use OCA\DAV\CalDAV\Federation\FederatedCalendarFactory;
+use OCA\DAV\CalDAV\Federation\FederatedCalendarMapper;
 use OCA\DAV\CalDAV\Principal\Collection;
 use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\CalDAV\PublicCalendarRoot;
@@ -21,6 +23,7 @@ use OCA\DAV\CardDAV\AddressBookRoot;
 use OCA\DAV\CardDAV\CardDavBackend;
 use OCA\DAV\Connector\Sabre\Principal;
 use OCA\DAV\DAV\GroupPrincipalBackend;
+use OCA\DAV\DAV\RemoteUserPrincipalBackend;
 use OCA\DAV\DAV\SystemPrincipalBackend;
 use OCA\DAV\Provisioning\Apple\AppleProvisioningNode;
 use OCA\DAV\SystemTag\SystemTagsByIdCollection;
@@ -30,44 +33,55 @@ use OCA\DAV\Upload\CleanupService;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
+use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
+use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\IUserSession;
+use OCP\Security\ISecureRandom;
 use OCP\Server;
+use OCP\SystemTag\ISystemTagManager;
+use OCP\SystemTag\ISystemTagObjectMapper;
 use Psr\Log\LoggerInterface;
 use Sabre\DAV\SimpleCollection;
 
 class RootCollection extends SimpleCollection {
 	public function __construct() {
 		$l10n = \OC::$server->getL10N('dav');
-		$random = \OC::$server->getSecureRandom();
-		$logger = \OC::$server->get(LoggerInterface::class);
-		$userManager = \OC::$server->getUserManager();
-		$userSession = \OC::$server->getUserSession();
-		$groupManager = \OC::$server->getGroupManager();
-		$shareManager = \OC::$server->getShareManager();
-		$db = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->get(IEventDispatcher::class);
-		$config = \OC::$server->get(IConfig::class);
-		$proxyMapper = \OC::$server->query(ProxyMapper::class);
+		$random = Server::get(ISecureRandom::class);
+		$logger = Server::get(LoggerInterface::class);
+		$userManager = Server::get(IUserManager::class);
+		$userSession = Server::get(IUserSession::class);
+		$groupManager = Server::get(IGroupManager::class);
+		$shareManager = Server::get(\OCP\Share\IManager::class);
+		$db = Server::get(IDBConnection::class);
+		$dispatcher = Server::get(IEventDispatcher::class);
+		$config = Server::get(IConfig::class);
+		$proxyMapper = Server::get(ProxyMapper::class);
 		$rootFolder = Server::get(IRootFolder::class);
+		$federatedCalendarFactory = Server::get(FederatedCalendarFactory::class);
 
 		$userPrincipalBackend = new Principal(
 			$userManager,
 			$groupManager,
-			\OC::$server->get(IAccountManager::class),
+			Server::get(IAccountManager::class),
 			$shareManager,
-			\OC::$server->getUserSession(),
-			\OC::$server->getAppManager(),
+			Server::get(IUserSession::class),
+			Server::get(IAppManager::class),
 			$proxyMapper,
-			\OC::$server->get(KnownUserService::class),
-			\OC::$server->getConfig(),
+			Server::get(KnownUserService::class),
+			Server::get(IConfig::class),
 			\OC::$server->getL10NFactory()
 		);
 
 		$groupPrincipalBackend = new GroupPrincipalBackend($groupManager, $userSession, $shareManager, $config);
 		$calendarResourcePrincipalBackend = new ResourcePrincipalBackend($db, $userSession, $groupManager, $logger, $proxyMapper);
 		$calendarRoomPrincipalBackend = new RoomPrincipalBackend($db, $userSession, $groupManager, $logger, $proxyMapper);
+		$remoteUserPrincipalBackend = Server::get(RemoteUserPrincipalBackend::class);
 		// as soon as debug mode is enabled we allow listing of principals
 		$disableListing = !$config->getSystemValue('debug', false);
 
@@ -80,7 +94,8 @@ class RootCollection extends SimpleCollection {
 		$systemPrincipals->disableListing = $disableListing;
 		$calendarResourcePrincipals = new Collection($calendarResourcePrincipalBackend, 'principals/calendar-resources');
 		$calendarRoomPrincipals = new Collection($calendarRoomPrincipalBackend, 'principals/calendar-rooms');
-		$calendarSharingBackend = \OC::$server->get(Backend::class);
+		$remoteUserPrincipals = new Collection($remoteUserPrincipalBackend, RemoteUserPrincipalBackend::PRINCIPAL_PREFIX);
+		$calendarSharingBackend = Server::get(Backend::class);
 
 		$filesCollection = new Files\RootCollection($userPrincipalBackend, 'principals/users');
 		$filesCollection->disableListing = $disableListing;
@@ -93,39 +108,45 @@ class RootCollection extends SimpleCollection {
 			$dispatcher,
 			$config,
 			$calendarSharingBackend,
+			Server::get(FederatedCalendarMapper::class),
+			Server::get(ICacheFactory::class),
 			false,
 		);
-		$userCalendarRoot = new CalendarRoot($userPrincipalBackend, $caldavBackend, 'principals/users', $logger);
+		$userCalendarRoot = new CalendarRoot($userPrincipalBackend, $caldavBackend, 'principals/users', $logger, $l10n, $config, $federatedCalendarFactory);
 		$userCalendarRoot->disableListing = $disableListing;
 
-		$resourceCalendarRoot = new CalendarRoot($calendarResourcePrincipalBackend, $caldavBackend, 'principals/calendar-resources', $logger);
+		$remoteUserCalendarRoot = new CalendarRoot($remoteUserPrincipalBackend, $caldavBackend, RemoteUserPrincipalBackend::PRINCIPAL_PREFIX, $logger, $l10n, $config, $federatedCalendarFactory);
+		$remoteUserCalendarRoot->disableListing = $disableListing;
+
+		$resourceCalendarRoot = new CalendarRoot($calendarResourcePrincipalBackend, $caldavBackend, 'principals/calendar-resources', $logger, $l10n, $config, $federatedCalendarFactory);
 		$resourceCalendarRoot->disableListing = $disableListing;
-		$roomCalendarRoot = new CalendarRoot($calendarRoomPrincipalBackend, $caldavBackend, 'principals/calendar-rooms', $logger);
+		$roomCalendarRoot = new CalendarRoot($calendarRoomPrincipalBackend, $caldavBackend, 'principals/calendar-rooms', $logger, $l10n, $config, $federatedCalendarFactory);
 		$roomCalendarRoot->disableListing = $disableListing;
 
 		$publicCalendarRoot = new PublicCalendarRoot($caldavBackend, $l10n, $config, $logger);
 
 		$systemTagCollection = Server::get(SystemTagsByIdCollection::class);
 		$systemTagRelationsCollection = new SystemTagsRelationsCollection(
-			\OC::$server->getSystemTagManager(),
-			\OC::$server->getSystemTagObjectMapper(),
-			\OC::$server->getUserSession(),
+			Server::get(ISystemTagManager::class),
+			Server::get(ISystemTagObjectMapper::class),
+			Server::get(IUserSession::class),
 			$groupManager,
 			$dispatcher,
 			$rootFolder,
 		);
 		$systemTagInUseCollection = Server::get(SystemTagsInUseCollection::class);
 		$commentsCollection = new Comments\RootCollection(
-			\OC::$server->getCommentsManager(),
+			Server::get(ICommentsManager::class),
 			$userManager,
-			\OC::$server->getUserSession(),
+			Server::get(IUserSession::class),
 			$dispatcher,
 			$logger
 		);
 
-		$contactsSharingBackend = \OC::$server->get(\OCA\DAV\CardDAV\Sharing\Backend::class);
+		$contactsSharingBackend = Server::get(\OCA\DAV\CardDAV\Sharing\Backend::class);
+		$config = Server::get(IConfig::class);
 
-		$pluginManager = new PluginManager(\OC::$server, \OC::$server->query(IAppManager::class));
+		$pluginManager = new PluginManager(\OC::$server, Server::get(IAppManager::class));
 		$usersCardDavBackend = new CardDavBackend(
 			$db,
 			$userPrincipalBackend,
@@ -154,6 +175,7 @@ class RootCollection extends SimpleCollection {
 			Server::get(CleanupService::class),
 			$rootFolder,
 			$userSession,
+			$shareManager,
 		);
 		$uploadCollection->disableListing = $disableListing;
 
@@ -161,7 +183,7 @@ class RootCollection extends SimpleCollection {
 		$avatarCollection->disableListing = $disableListing;
 
 		$appleProvisioning = new AppleProvisioningNode(
-			\OC::$server->query(ITimeFactory::class));
+			Server::get(ITimeFactory::class));
 
 		$children = [
 			new SimpleCollection('principals', [
@@ -169,9 +191,11 @@ class RootCollection extends SimpleCollection {
 				$groupPrincipals,
 				$systemPrincipals,
 				$calendarResourcePrincipals,
-				$calendarRoomPrincipals]),
+				$calendarRoomPrincipals,
+				$remoteUserPrincipals]),
 			$filesCollection,
 			$userCalendarRoot,
+			$remoteUserCalendarRoot,
 			new SimpleCollection('system-calendars', [
 				$resourceCalendarRoot,
 				$roomCalendarRoot,

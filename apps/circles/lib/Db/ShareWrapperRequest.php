@@ -42,6 +42,8 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb = $this->getShareInsertSql();
 		$qb->setValue('attributes', $qb->createNamedParameter($this->formatShareAttributes($share->getAttributes())))
 			->setValue('share_type', $qb->createNamedParameter($share->getShareType()))
+			->setValue('mail_send', $qb->createNamedParameter($share->getMailSend()))
+			->setValue('note', $qb->createNamedParameter($share->getNote()))
 			->setValue('item_type', $qb->createNamedParameter($share->getNodeType()))
 			->setValue('item_source', $qb->createNamedParameter($share->getNodeId()))
 			->setValue('file_source', $qb->createNamedParameter($share->getNodeId()))
@@ -54,7 +56,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			->setValue('password', $qb->createNamedParameter(''))
 			->setValue('permissions', $qb->createNamedParameter($share->getPermissions()))
 			->setValue('token', $qb->createNamedParameter($share->getToken()))
-			->setValue('stime', $qb->createFunction('UNIX_TIMESTAMP()'));
+			->setValue('stime', (string)$qb->createFunction('UNIX_TIMESTAMP()'));
 
 		if ($parentId > 0) {
 			$qb->setValue('parent', $qb->createNamedParameter($parentId));
@@ -180,18 +182,16 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 
 
 	/**
-	 * @param string $circleId
-	 * @param FederatedUser|null $shareRecipient
-	 * @param FederatedUser|null $shareInitiator
-	 * @param bool $completeDetails
-	 *
 	 * @return ShareWrapper[]
 	 * @throws RequestBuilderException
 	 */
-	public function getSharesToCircles(array $circleIds): array {
+	public function getSharesToCircles(array $circleIds, ?string $fileId = null): array {
 		$qb = $this->getShareSelectSql();
 		$qb->limitNull('parent', false);
-		$qb->expr()->in('share_with', $qb->createNamedParameter($circleIds, IQueryBuilder::PARAM_STR_ARRAY));
+		$qb->andWhere($qb->expr()->in('share_with', $qb->createNamedParameter($circleIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		if ($fileId !== null) {
+			$qb->limitToFileSource((int)$fileId);
+		}
 		return $this->getItemsFromRequest($qb);
 	}
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,6 +21,8 @@ class CloudFederationShare implements ICloudFederationShare {
 		'ownerDisplayName' => '',
 		'sharedBy' => '',
 		'sharedByDisplayName' => '',
+		'sender' => '',
+		'senderDisplayName' => '',
 		'protocol' => []
 	];
 
@@ -121,7 +124,7 @@ class CloudFederationShare implements ICloudFederationShare {
 	 * @since 14.0.0
 	 */
 	public function setProviderId($providerId) {
-		$this->share['providerId'] = $providerId;
+		$this->share['providerId'] = (string)$providerId;
 	}
 
 	/**
@@ -155,6 +158,7 @@ class CloudFederationShare implements ICloudFederationShare {
 	 */
 	public function setSharedBy($sharedBy) {
 		$this->share['sharedBy'] = $sharedBy;
+		$this->share['sender'] = $sharedBy;
 	}
 
 	/**
@@ -166,6 +170,7 @@ class CloudFederationShare implements ICloudFederationShare {
 	 */
 	public function setSharedByDisplayName($sharedByDisplayName) {
 		$this->share['sharedByDisplayName'] = $sharedByDisplayName;
+		$this->share['senderDisplayName'] = $sharedByDisplayName;
 	}
 
 	/**

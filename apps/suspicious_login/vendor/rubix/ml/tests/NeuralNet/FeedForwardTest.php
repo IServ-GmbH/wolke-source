@@ -22,12 +22,12 @@ use PHPUnit\Framework\TestCase;
 class FeedForwardTest extends TestCase
 {
     /**
-     * @var \Rubix\ML\Datasets\Labeled
+     * @var Labeled
      */
     protected $dataset;
 
     /**
-     * @var \Rubix\ML\NeuralNet\FeedForward
+     * @var FeedForward
      */
     protected $network;
 
@@ -42,7 +42,7 @@ class FeedForwardTest extends TestCase
     protected $hidden;
 
     /**
-     * @var \Rubix\ML\NeuralNet\Layers\Output
+     * @var Output
      */
     protected $output;
 
@@ -86,7 +86,7 @@ class FeedForwardTest extends TestCase
      */
     public function layers() : void
     {
-        $this->assertCount(7, $this->network->layers());
+        $this->assertCount(5, iterator_to_array($this->network->layers()));
     }
 
     /**
@@ -111,6 +111,16 @@ class FeedForwardTest extends TestCase
     public function output() : void
     {
         $this->assertInstanceOf(Output::class, $this->network->output());
+    }
+
+    /**
+     * @test
+     */
+    public function numParams() : void
+    {
+        $this->network->initialize();
+
+        $this->assertEquals(103, $this->network->numParams());
     }
 
     /**

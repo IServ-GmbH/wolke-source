@@ -65,9 +65,9 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * The k-d tree used for nearest neighbor queries.
      *
-     * @var \Rubix\ML\Graph\Trees\Spatial
+     * @var Spatial
      */
-    protected \Rubix\ML\Graph\Trees\Spatial $tree;
+    protected Spatial $tree;
 
     /**
      * The precomputed k distances between each training sample and its k'th nearest neighbor.
@@ -104,8 +104,8 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * @param int $k
      * @param float|null $contamination
-     * @param \Rubix\ML\Graph\Trees\Spatial|null $tree
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Spatial|null $tree
+     * @throws InvalidArgumentException
      */
     public function __construct(int $k = 20, ?float $contamination = null, ?Spatial $tree = null)
     {
@@ -129,7 +129,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -177,7 +177,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * Return the base spatial tree instance.
      *
-     * @return \Rubix\ML\Graph\Trees\Spatial
+     * @return Spatial
      */
     public function tree() : Spatial
     {
@@ -187,7 +187,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * Train the learner with a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function train(Dataset $dataset) : void
     {
@@ -231,7 +231,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<int>
      */
     public function predict(Dataset $dataset) : array
@@ -261,8 +261,8 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     /**
      * Return the anomaly scores assigned to the samples in a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<float>
      */
     public function score(Dataset $dataset) : array
@@ -287,7 +287,7 @@ class LocalOutlierFactor implements Estimator, Learner, Scoring, Persistable
     {
         [$samples, $indices, $distances] = $this->tree->nearest($sample, $this->k);
 
-        $lrd = $this->localReachabilityDensity($indices, $distances);
+        $lrd = $this->localReachabilityDensity($indices, $distances) ?: EPSILON;
 
         $ratios = [];
 

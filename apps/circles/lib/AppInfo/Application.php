@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace OCA\Circles\AppInfo;
 
 use Closure;
-use OC;
+use OCA\Circles\ConfigLexicon;
 use OCA\Circles\Dashboard\TeamDashboardWidget;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleMemberAddedEvent;
@@ -39,6 +39,7 @@ use OCA\Circles\Listeners\GroupCreated;
 use OCA\Circles\Listeners\GroupDeleted;
 use OCA\Circles\Listeners\GroupMemberAdded;
 use OCA\Circles\Listeners\GroupMemberRemoved;
+use OCA\Circles\Listeners\NodeEventListener;
 use OCA\Circles\Listeners\Notifications\RequestingMember as ListenerNotificationsRequestingMember;
 use OCA\Circles\Listeners\UserCreated;
 use OCA\Circles\Listeners\UserDeleted;
@@ -46,19 +47,24 @@ use OCA\Circles\MountManager\CircleMountProvider;
 use OCA\Circles\Notification\Notifier;
 use OCA\Circles\Search\UnifiedSearchProvider;
 use OCA\Circles\Service\ConfigService;
-use OCA\Files\App as FilesApp;
+use OCA\Circles\ShareByCircleProvider;
 use OCP\Accounts\UserUpdatedEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Config\IMountProviderCollection;
+use OCP\Files\Events\Node\NodeCreatedEvent;
+use OCP\Files\Events\Node\NodeDeletedEvent;
+use OCP\Files\Events\Node\NodeRenamedEvent;
+use OCP\Files\Events\Node\NodeWrittenEvent;
 use OCP\Group\Events\GroupChangedEvent;
 use OCP\Group\Events\GroupCreatedEvent;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IServerContainer;
+use OCP\Share\IManager as IShareManager;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserCreatedEvent;
 use OCP\User\Events\UserDeletedEvent;
@@ -117,13 +123,20 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RequestingCircleMemberEvent::class, ListenerNotificationsRequestingMember::class);
 		$context->registerEventListener(DestroyingCircleEvent::class, ListenerFilesDestroyingCircle::class);
 
+		// Node events
+		$context->registerEventListener(NodeCreatedEvent::class, NodeEventListener::class);
+		$context->registerEventListener(NodeDeletedEvent::class, NodeEventListener::class);
+		$context->registerEventListener(NodeRenamedEvent::class, NodeEventListener::class);
+		$context->registerEventListener(NodeWrittenEvent::class, NodeEventListener::class);
+
 		$context->registerSearchProvider(UnifiedSearchProvider::class);
 		$context->registerWellKnownHandler(WebfingerHandler::class);
 
 		$context->registerDashboardWidget(TeamDashboardWidget::class);
 		$context->registerTeamResourceProvider(FileSharingTeamResourceProvider::class);
-	}
 
+		$context->registerConfigLexicon(ConfigLexicon::class);
+	}
 
 	/**
 	 * @param IBootContext $context
@@ -133,11 +146,14 @@ class Application extends App implements IBootstrap {
 	public function boot(IBootContext $context): void {
 		$serverContainer = $context->getServerContainer();
 
+		$context->injectFn(function (IShareManager $shareManager) {
+			$shareManager->registerShareProvider(ShareByCircleProvider::class);
+		});
+
 		$this->configService = $context->getAppContainer()
 			->get(ConfigService::class);
 
 		$context->injectFn(Closure::fromCallable([$this, 'registerMountProvider']));
-		$context->injectFn(Closure::fromCallable([$this, 'registerFilesNavigation']));
 	}
 
 
@@ -148,22 +164,5 @@ class Application extends App implements IBootstrap {
 
 		$mountProviderCollection = $container->get(IMountProviderCollection::class);
 		$mountProviderCollection->registerProvider($container->get(CircleMountProvider::class));
-	}
-
-	public function registerFilesNavigation() {
-		$appManager = FilesApp::getNavigationManager();
-		$appManager->add(
-			function () {
-				$l = OC::$server->getL10N('circles');
-
-				return [
-					'id' => 'circlesfilter',
-					'appname' => 'circles',
-					'script' => 'files/list.php',
-					'order' => 25,
-					'name' => $l->t('Shared to Circles'),
-				];
-			}
-		);
 	}
 }

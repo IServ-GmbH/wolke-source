@@ -20,6 +20,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IAppConfig;
 use OCP\IRequest;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 /**

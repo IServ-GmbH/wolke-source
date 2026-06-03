@@ -44,7 +44,7 @@ class SVC implements Estimator, Learner
     /**
      * The support vector machine instance.
      *
-     * @var \svm
+     * @var svm
      */
     protected $svm;
 
@@ -58,7 +58,7 @@ class SVC implements Estimator, Learner
     /**
      * The trained model instance.
      *
-     * @var \svmmodel|null
+     * @var svmmodel|null
      */
     protected $model;
 
@@ -73,11 +73,11 @@ class SVC implements Estimator, Learner
 
     /**
      * @param float $c
-     * @param \Rubix\ML\Kernels\SVM\Kernel|null $kernel
+     * @param Kernel|null $kernel
      * @param bool $shrinking
      * @param float $tolerance
      * @param float $cacheSize
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         float $c = 1.0,
@@ -138,7 +138,7 @@ class SVC implements Estimator, Learner
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -213,7 +213,7 @@ class SVC implements Estimator, Learner
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<string>
      */
     public function predict(Dataset $dataset) : array
@@ -227,7 +227,7 @@ class SVC implements Estimator, Learner
      * @internal
      *
      * @param list<int|float> $sample
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return string
      */
     public function predictSample(array $sample) : string
@@ -236,7 +236,13 @@ class SVC implements Estimator, Learner
             throw new RuntimeException('Estimator has not been trained.');
         }
 
-        $index = $this->model->predict($sample);
+        $sampleWithOffset = [];
+
+        foreach ($sample as $key => $value) {
+            $sampleWithOffset[$key + 1] = $value;
+        }
+
+        $index = $this->model->predict($sampleWithOffset);
 
         return $this->classes[$index];
     }
@@ -245,7 +251,7 @@ class SVC implements Estimator, Learner
      * Save the model data to the filesystem.
      *
      * @param string $path
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function save(string $path) : void
     {

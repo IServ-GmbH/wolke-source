@@ -1,11 +1,12 @@
 diff --git apps/dav/appinfo/info.xml apps/dav/appinfo/info.xml
-index 6c71443..795f3ee 100644
+index bf0deec..1863c61 100644
 --- apps/dav/appinfo/info.xml
 +++ apps/dav/appinfo/info.xml
-@@ -77,29 +77,5 @@
+@@ -82,30 +82,5 @@
  
  	<settings>
  		<admin>OCA\DAV\Settings\CalDAVSettings</admin>
+-		<admin>OCA\DAV\Settings\ExampleContentSettings</admin>
 -		<personal>OCA\DAV\Settings\AvailabilitySettings</personal>
  	</settings>
 -

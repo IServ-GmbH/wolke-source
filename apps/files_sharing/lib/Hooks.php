@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,10 +9,11 @@ namespace OCA\Files_Sharing;
 
 use OC\Files\Filesystem;
 use OC\Files\View;
+use OCP\Server;
 
 class Hooks {
 	public static function deleteUser($params) {
-		$manager = \OC::$server->get(External\Manager::class);
+		$manager = Server::get(External\Manager::class);
 
 		$manager->removeUserShares($params['uid']);
 	}

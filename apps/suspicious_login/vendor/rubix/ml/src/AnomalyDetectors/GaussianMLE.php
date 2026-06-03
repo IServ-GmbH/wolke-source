@@ -98,7 +98,7 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
     /**
      * @param float $contamination
      * @param float $smoothing
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(float $contamination = 0.1, float $smoothing = 1e-9)
     {
@@ -121,7 +121,7 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -190,7 +190,7 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
     /**
      * Train the learner with a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function train(Dataset $dataset) : void
     {
@@ -226,7 +226,7 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
     /**
      * Perform a partial train on the learner.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function partial(Dataset $dataset) : void
     {
@@ -244,6 +244,8 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
 
         $n = $dataset->numSamples();
 
+        $weight = $this->n + $n;
+
         foreach ($dataset->features() as $column => $values) {
             [$mean, $variance] = Stats::meanVar($values);
 
@@ -253,13 +255,13 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
             $oldVariance -= $this->epsilon;
 
             $this->means[$column] = (($this->n * $oldMean)
-                + ($n * $mean)) / ($this->n + $n);
+                + ($n * $mean)) / $weight;
 
             $this->variances[$column] = ($this->n
                 * $oldVariance + ($n * $variance)
-                + ($this->n / ($n * ($this->n + $n)))
+                + ($this->n / ($n * $weight))
                 * ($n * $oldMean - $n * $mean) ** 2)
-                / ($this->n + $n);
+                / $weight;
         }
 
         $epsilon = max($this->smoothing * max($this->variances), CPU::epsilon());
@@ -270,21 +272,21 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
 
         $this->epsilon = $epsilon;
 
-        $this->n += $n;
+        $this->n = $weight;
 
         $lls = array_map([$this, 'logLikelihood'], $dataset->samples());
 
         $threshold = Stats::quantile($lls, 1.0 - $this->contamination);
 
-        $weight = $n / $this->n;
+        $proportion = $n / $this->n;
 
-        $this->threshold = (1.0 - $weight) * $this->threshold + $weight * $threshold;
+        $this->threshold = $proportion * $threshold + (1.0 - $proportion) * $this->threshold;
     }
 
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<int>
      */
     public function predict(Dataset $dataset) : array
@@ -314,8 +316,8 @@ class GaussianMLE implements Estimator, Learner, Online, Scoring, Persistable
     /**
      * Return the anomaly scores assigned to the samples in a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<float>
      */
     public function score(Dataset $dataset) : array

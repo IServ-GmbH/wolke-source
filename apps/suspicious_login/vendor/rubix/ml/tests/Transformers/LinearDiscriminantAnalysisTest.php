@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
 class LinearDiscriminantAnalysisTest extends TestCase
 {
     /**
-     * @var \Rubix\ML\Datasets\Generators\Agglomerate
+     * @var Agglomerate
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\Transformers\LinearDiscriminantAnalysis
+     * @var LinearDiscriminantAnalysis
      */
     protected $transformer;
 
@@ -56,9 +56,9 @@ class LinearDiscriminantAnalysisTest extends TestCase
      */
     public function fitTransform() : void
     {
-        $this->assertEquals(3, $this->generator->dimensions());
+        $dataset = $this->generator->generate(30);
 
-        $this->transformer->fit($this->generator->generate(30));
+        $this->transformer->fit($dataset);
 
         $this->assertTrue($this->transformer->fitted());
 

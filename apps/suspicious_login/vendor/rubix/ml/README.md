@@ -23,7 +23,6 @@ $ composer require rubix/ml
 
 #### Optional
 
-- [Extras Package](https://github.com/RubixML/Extras) for experimental features
 - [GD extension](https://php.net/manual/en/book.image.php) for image support
 - [Mbstring extension](https://www.php.net/manual/en/book.mbstring.php) for fast multibyte string manipulation
 - [SVM extension](https://php.net/manual/en/book.svm.php) for Support Vector Machine engine (libsvm)
@@ -54,6 +53,7 @@ Check out these example projects using the Rubix ML library. Many come with inst
 - [Iris Flower Classifier](https://github.com/RubixML/Iris)
 - [MNIST Handwritten Digit Recognizer](https://github.com/RubixML/MNIST)
 - [Text Sentiment Analyzer](https://github.com/RubixML/Sentiment)
+- [Titanic Survival Predictor](https://github.com/Jenutka/titanic_php)
 
 ## Interact With The Community
 

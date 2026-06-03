@@ -46,10 +46,10 @@
     "Bold" : "Болд",
     "Bold text" : "Болдиран текст",
     "Italic" : "Италик",
-    "Strikethrough" : "Прецртај",
-    "Mistaken text" : "Погрешен текст",
     "Underline" : "Подвлечен",
     "Underlined text" : "Подвлечен текст",
+    "Strikethrough" : "Прецртај",
+    "Mistaken text" : "Погрешен текст",
     "Heading 1" : "Заглавие 1",
     "Heading 6" : "Заглавие 6",
     "Unordered list" : "Неподредена листа",
@@ -104,9 +104,6 @@
     "Choose {file}" : "Избери {file}",
     "Add folder description" : "Додади опис на папката",
     "Close outline view" : "Затвори преглед",
-    "Outline" : "Преглед",
-    "Edit guest name" : "Промени име на гостин",
-    "Save guest name" : "Зачувај име на гостин",
-    "Cannot copy, please copy the link manually" : "Неможе да се копира, копирајте го линкот рачно"
+    "Outline" : "Преглед"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

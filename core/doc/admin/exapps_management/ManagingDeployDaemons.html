@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Managing Deploy Daemons &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/exapps_management/ManagingDeployDaemons.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,13 +58,38 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">ExApps management</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="AppAPIAndExternalApps.html">AppAPI and External Apps</a></li>
@@ -84,21 +110,39 @@
 <li class="toctree-l2"><a class="reference internal" href="AdvancedDeployOptions.html">Advanced Deploy Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -141,11 +185,10 @@
 <section id="register">
 <h3>Register<a class="headerlink" href="#register" title="Link to this heading"></a></h3>
 <p>Register Deploy Daemon (DaemonConfig).</p>
-<p>Command: <code class="docutils literal notranslate"><span class="pre">app_api:daemon:register</span> <span class="pre">[--net</span> <span class="pre">NET]</span> <span class="pre">[--haproxy_password</span> <span class="pre">HAPROXY_PASSWORD]</span> <span class="pre">[--compute_device</span> <span class="pre">COMPUTE_DEVICE]</span> <span class="pre">[--set-default]</span> <span class="pre">[--]</span> <span class="pre">&lt;name&gt;</span> <span class="pre">&lt;display-name&gt;</span> <span class="pre">&lt;accepts-deploy-id&gt;</span> <span class="pre">&lt;protocol&gt;</span> <span class="pre">&lt;host&gt;</span> <span class="pre">&lt;nextcloud_url&gt;</span></code></p>
+<p>Command: <code class="docutils literal notranslate"><span class="pre">app_api:daemon:register</span> <span class="pre">[--net</span> <span class="pre">NET]</span> <span class="pre">[--haproxy_password</span> <span class="pre">HAPROXY_PASSWORD]</span> <span class="pre">[--compute_device</span> <span class="pre">COMPUTE_DEVICE]</span> <span class="pre">[--set-default]</span> <span class="pre">[--harp]</span> <span class="pre">[--harp_frp_address</span> <span class="pre">HARP_FRP_ADDRESS]</span> <span class="pre">[--harp_shared_key</span> <span class="pre">HARP_SHARED_KEY]</span> <span class="pre">[--harp_docker_socket_port</span> <span class="pre">HARP_DOCKER_SOCKET_PORT]</span> <span class="pre">[--harp_exapp_direct]</span> <span class="pre">[--]</span> <span class="pre">&lt;name&gt;</span> <span class="pre">&lt;display-name&gt;</span> <span class="pre">&lt;accepts-deploy-id&gt;</span> <span class="pre">&lt;protocol&gt;</span> <span class="pre">&lt;host&gt;</span> <span class="pre">&lt;nextcloud_url&gt;</span></code></p>
 <section id="arguments">
 <h4>Arguments<a class="headerlink" href="#arguments" title="Link to this heading"></a></h4>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code> - unique name of the daemon (e.g. <code class="docutils literal notranslate"><span class="pre">docker_local_sock</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">display-name</span></code> - name of the daemon (e.g. <code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">Local</span> <span class="pre">Docker</span></code>, will be displayed in the UI)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">accepts-deploy-id</span></code> - type of deployment (<code class="docutils literal notranslate"><span class="pre">docker-install</span></code> or <code class="docutils literal notranslate"><span class="pre">manual-install</span></code>)</p></li>
@@ -153,18 +196,81 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">protocol</span></code> - protocol used to communicate with the Daemon/ExApps (<code class="docutils literal notranslate"><span class="pre">http</span></code> or <code class="docutils literal notranslate"><span class="pre">https</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nextcloud_url</span></code> - Nextcloud URL, Daemon config required option (e.g. <code class="docutils literal notranslate"><span class="pre">https://nextcloud.local</span></code>)</p></li>
 </ul>
-</div></blockquote>
 </section>
 <section id="options">
 <h4>Options<a class="headerlink" href="#options" title="Link to this heading"></a></h4>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--net</span> <span class="pre">[network-name]</span></code>  - <code class="docutils literal notranslate"><span class="pre">[required]</span></code> network name to bind docker container to (default: <code class="docutils literal notranslate"><span class="pre">host</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--haproxy_password</span> <span class="pre">HAPROXY_PASSWORD</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> password for AppAPI Docker Socket Proxy</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--compute_device</span> <span class="pre">GPU</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> GPU device to expose to the daemon (e.g. <code class="docutils literal notranslate"><span class="pre">cpu|cuda|rocm</span></code>, default: <code class="docutils literal notranslate"><span class="pre">cpu</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--set-default</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> set created daemon as default for ExApps installation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--harp</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> Flag to set daemon to use HaRP for all docker and exapp communication</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--harp_frp_address</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> [host]:[port] of the HaRP FRP server, default host is same as HaRP host and port is 8782</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--harp_shared_key</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> HaRP shared key for secure communication between HaRP and AppAPI</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--harp_docker_socket_port</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> ‘remotePort’ of the FRP client of the remote docker socket proxy. There is one included in the harp container so this can be skipped for default setups. (default: “24000”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--harp_exapp_direct</span></code> - <code class="docutils literal notranslate"><span class="pre">[optional]</span></code> Flag for the advanced setups only. Disables the FRP tunnel between ExApps and HaRP.</p></li>
 </ul>
+</section>
+<section id="usage-examples">
+<h4>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h4>
+<ul>
+<li><p>Register a HaRP deploy daemon within the <code class="docutils literal notranslate"><span class="pre">nextcloud</span></code> docker network, with the <code class="docutils literal notranslate"><span class="pre">appapi-harp</span></code> container as the host and the <code class="docutils literal notranslate"><span class="pre">appapi-harp:8782</span></code> as the FRP server address. This can be paired with a HaRP container running in the same network.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>occ<span class="w"> </span>app_api:daemon:register<span class="w"> </span>harp_proxy_docker<span class="w"> </span><span class="s2">&quot;Harp Proxy (Docker)&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;appapi-harp:8780&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--net<span class="w"> </span>nextcloud<span class="w"> </span>--harp<span class="w"> </span>--harp_frp_address<span class="w"> </span><span class="s2">&quot;appapi-harp:8782&quot;</span><span class="w"> </span>--harp_shared_key<span class="w"> </span><span class="s2">&quot;some_very_secure_password&quot;</span><span class="w"> </span>--set-default<span class="w"> </span>--compute_device<span class="o">=</span>cuda
+</pre></div>
+</div>
 </div></blockquote>
+</li>
+<li><p>Register a HaRP deploy daemon with the <code class="docutils literal notranslate"><span class="pre">localhost</span></code> as the host and the <code class="docutils literal notranslate"><span class="pre">localhost:8782</span></code> as the FRP server address. This can be paired with a HaRP container running in the host network mode or has exposed the ports <code class="docutils literal notranslate"><span class="pre">8780</span></code> and <code class="docutils literal notranslate"><span class="pre">8782</span></code> to the host.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>harp_proxy_host<span class="w"> </span><span class="s2">&quot;Harp Proxy (Host)&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;localhost:8780&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--harp<span class="w"> </span>--harp_frp_address<span class="w"> </span><span class="s2">&quot;localhost:8782&quot;</span><span class="w"> </span>--harp_shared_key<span class="w"> </span><span class="s2">&quot;some_very_secure_password&quot;</span><span class="w"> </span>--set-default<span class="w"> </span>--compute_device<span class="o">=</span>cuda
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Register a manual install deploy daemon with HaRP support. This can be paired with a HaRP container running in the same network. The HaRP container need not have access to a docker socket or any other ports exposed to the host. It will not create docker containers of the ExApps but will only proxy the requests to the ExApp process manually launched by the user.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<div class="line-block">
+<div class="line">The ExApp process should have a FRP Client (frpc) running in the same network as the HaRP container or should be able to connect to the ports exposed by the HaRP container.</div>
+<div class="line">If the communication has to go without the FRP client, the <code class="docutils literal notranslate"><span class="pre">--harp_exapp_direct</span></code> flag should be provided. The localhost IP address is always used as the host in this case for manual deployments and <code class="docutils literal notranslate"><span class="pre">OVERRIDE_APP_HOST</span></code> or the <code class="docutils literal notranslate"><span class="pre">&lt;app_id&gt;</span></code> is used for ExApp deployments. Take care not to use the host network mode or the default bridge network for this.</div>
+</div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>manual_install_harp<span class="w"> </span><span class="s2">&quot;Harp Manual Install&quot;</span><span class="w"> </span><span class="s2">&quot;manual-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;appapi-harp:8780&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--net<span class="w"> </span>nextcloud<span class="w"> </span>--harp<span class="w"> </span>--harp_frp_address<span class="w"> </span><span class="s2">&quot;appapi-harp:8782&quot;</span><span class="w"> </span>--harp_shared_key<span class="w"> </span><span class="s2">&quot;some_very_secure_password&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Register a Docker Socket Proxy deploy daemon with the <code class="docutils literal notranslate"><span class="pre">nextcloud-appapi-dsp:2375</span></code> as the host and the <code class="docutils literal notranslate"><span class="pre">nextcloud</span></code> docker network. This can be paired with a Docker Socket Proxy container running in the same network with the default port <code class="docutils literal notranslate"><span class="pre">2375</span></code>.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>docker_install<span class="w"> </span><span class="s2">&quot;Docker Socket Proxy&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;nextcloud-appapi-dsp:2375&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--net<span class="o">=</span>nextcloud<span class="w"> </span>--set-default<span class="w"> </span>--compute_device<span class="o">=</span>cuda
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Register a manual deploy daemon with <code class="docutils literal notranslate"><span class="pre">host.docker.internal</span></code> as the host used to connect to the ExApps.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>manual_install<span class="w"> </span><span class="s2">&quot;Manual Install&quot;</span><span class="w"> </span><span class="s2">&quot;manual-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span>null<span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Register a local docker deploy daemon with the <code class="docutils literal notranslate"><span class="pre">/var/run/docker.sock</span></code> as the socket and the host, and the <code class="docutils literal notranslate"><span class="pre">nextcloud</span></code> docker network. This does not need a Docker Socket Proxy container. The compute device used by this daemon is <code class="docutils literal notranslate"><span class="pre">CPU</span></code>.</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>local_docker<span class="w"> </span><span class="s2">&quot;Docker Local&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;/var/run/docker.sock&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--net<span class="o">=</span>nextcloud
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Register a local docker deploy daemon with the <code class="docutils literal notranslate"><span class="pre">/var/run/docker.sock</span></code> as the socket and the host, and the <code class="docutils literal notranslate"><span class="pre">nextcloud</span></code> docker network. This does not need a Docker Socket Proxy container. The compute device used by this daemon is <code class="docutils literal notranslate"><span class="pre">CUDA</span></code> (NVIDIA).</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>local_docker<span class="w"> </span><span class="s2">&quot;Docker Local&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;/var/run/docker.sock&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--net<span class="o">=</span>nextcloud<span class="w"> </span>--set-default<span class="w"> </span>--compute_device<span class="o">=</span>cuda
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
 </section>
 <section id="deployconfig">
 <h4>DeployConfig<a class="headerlink" href="#deployconfig" title="Link to this heading"></a></h4>
@@ -178,6 +284,11 @@ ExApp container.</p>
 <span class="w">                </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
 <span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CUDA (NVIDIA)&quot;</span><span class="p">,</span>
 <span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nt">&quot;harp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;frp_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;localhost:8782&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;docker_socket_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;24000&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;exapp_direct&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">        </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -190,6 +301,15 @@ ExApp container.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">nextcloud_url</span></code> <strong>[required]</strong> - Nextcloud URL (e.g. <code class="docutils literal notranslate"><span class="pre">https://nextcloud.local</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">haproxy_password</span></code> <em>[optional]</em> - password for AppAPI Docker Socket Proxy</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">computeDevice</span></code> <em>[optional]</em> - Compute device to attach to the daemon (e.g. <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">&quot;id&quot;:</span> <span class="pre">&quot;cuda&quot;,</span> <span class="pre">&quot;label&quot;:</span> <span class="pre">&quot;CUDA</span> <span class="pre">(NVIDIA)&quot;</span> <span class="pre">}</span></code>)</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">harp</span></code> <em>[optional]</em> - HaRP options, can be <code class="docutils literal notranslate"><span class="pre">null</span></code> in case of non-HaRP setups</dt><dd><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">frp_address</span></code> <em>[optional]</em> - [host]:[port] of the HaRP FRP server, default host is same as HaRP host and port is 8782</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docker_socket_port</span></code> <em>[optional]</em> - ‘remotePort’ of the FRP client of the remote docker socket proxy. There is one included in the harp container so this can be skipped for default setups. [default: “24000”]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exapp_direct</span></code> <em>[optional]</em> - Flag for the advanced setups only. Disables the FRP tunnel between ExApps and HaRP.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </div></blockquote>
 </section>
@@ -212,8 +332,10 @@ It is possible to register additional Deploy Daemons using the same methods as d
 </section>
 <section id="additional-options">
 <span id="additional-options-list"></span><h2>Additional options<a class="headerlink" href="#additional-options" title="Link to this heading"></a></h2>
-<p>There is a possibility to add additional options to the Deploy Daemon configuration,
-which are key-value pairs.</p>
+<div class="line-block">
+<div class="line">There is a possibility to add additional options to the Deploy Daemon configuration, which are key-value pairs.</div>
+<div class="line">This should not be used for HaRP.</div>
+</div>
 <p>Currently, the following options are available:</p>
 <blockquote>
 <div><ul class="simple">
@@ -234,7 +356,7 @@ which are key-value pairs.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -274,26 +396,18 @@ which are key-value pairs.</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

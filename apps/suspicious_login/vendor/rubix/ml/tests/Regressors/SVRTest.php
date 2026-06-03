@@ -43,7 +43,7 @@ class SVRTest extends TestCase
      *
      * @var float
      */
-    protected const MIN_SCORE = -INF;
+    protected const MIN_SCORE = 0.9;
 
     /**
      * Constant used to see the random number generator.
@@ -53,17 +53,17 @@ class SVRTest extends TestCase
     protected const RANDOM_SEED = 0;
 
     /**
-     * @var \Rubix\ML\Datasets\Generators\Hyperplane
+     * @var Hyperplane
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\Regressors\SVR
+     * @var SVR
      */
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\RSquared
+     * @var RSquared
      */
     protected $metric;
 

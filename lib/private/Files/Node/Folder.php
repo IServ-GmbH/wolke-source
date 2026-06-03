@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -174,6 +175,7 @@ class Folder extends Node implements \OCP\Files\Folder {
 				throw new NotPermittedException('Could not create path "' . $fullPath . '"');
 			}
 			$node = new File($this->root, $this->view, $fullPath, null, $this);
+			$this->view->putFileInfo($fullPath, ['creation_time' => time()]);
 			$this->sendHooks(['postWrite', 'postCreate'], [$node]);
 			return $node;
 		}
@@ -459,5 +461,13 @@ class Folder extends Node implements \OCP\Files\Folder {
 		}
 
 		return $this->search($query);
+	}
+
+	public function verifyPath($fileName, $readonly = false): void {
+		$this->view->verifyPath(
+			$this->getPath(),
+			$fileName,
+			$readonly,
+		);
 	}
 }

@@ -15,7 +15,7 @@ use OCP\Files\Config\ICachedMountInfo;
 /**
  * Event emitted when a user mount was moved.
  *
- * @since 30.0.12
+ * @since 32.0.0
  */
 class UserMountUpdatedEvent extends Event {
 	public function __construct(

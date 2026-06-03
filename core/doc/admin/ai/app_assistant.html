@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nextcloud Assistant &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/ai/app_assistant.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,21 +58,40 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Artificial Intelligence</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Nextcloud Assistant</a><ul>
@@ -85,6 +105,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#text-to-image">Text-To-Image</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#context-chat">Context Chat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#context-agent">Context Agent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#text-to-speech">Text-To-Speech</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
@@ -105,18 +126,44 @@
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_text2speech_kokoro.html">App: Local Text-To-Speech (text2speech_kokoro)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -152,7 +199,7 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>You can install the <em>assistant</em> app via the “Apps” page in Nextcloud, or by executing</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">enable</span> <span class="n">assistant</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">enable</span> <span class="n">assistant</span>
 </pre></div>
 </div>
 </section>
@@ -191,6 +238,7 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="app_llm2.html#ai-app-llm2"><span class="std std-ref">llm2</span></a> - Runs open source AI language models locally on your own server hardware (Customer support available upon request)</p></li>
 <li><p><em>integration_openai</em> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
+<li><p><em>integration_watsonx</em> - Integrates with the IBM watsonx.ai API to provide AI functionality from IBM Cloud servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
 </ul>
 <p>These apps currently implement the following Assistant Tasks:</p>
 <ul class="simple">
@@ -198,11 +246,8 @@
 <li><p><em>Summarize</em> (Tested with OpenAI GPT-3.5 and Llama 3.1 8B)</p></li>
 <li><p><em>Generate headline</em> (Tested with OpenAI GPT-3.5 and Llama 3.1 8B)</p></li>
 <li><p><em>Extract topics</em> (Tested with OpenAI GPT-3.5 and Llama 3.1 8B)</p></li>
-</ul>
-<p>Additionally, <em>integration_openai</em> also implements the following Assistant Tasks:</p>
-<ul class="simple">
-<li><p><em>Context write</em> (Tested with OpenAI GPT-3.5)</p></li>
-<li><p><em>Reformulate text</em> (Tested with OpenAI GPT-3.5)</p></li>
+<li><p><em>Context write</em> (Tested with OpenAI GPT-3.5 and Llama 3.1 8B)</p></li>
+<li><p><em>Reformulate text</em> (Tested with OpenAI GPT-3.5 and Llama 3.1 8B)</p></li>
 </ul>
 <p>These tasks may work with other models, but we can give no guarantees.</p>
 </section>
@@ -221,7 +266,7 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="app_context_chat.html#ai-app-context-chat"><span class="std std-ref">context_chat + context_chat_backend</span></a> -  (Customer support available upon request)</p></li>
 </ul>
-<p>You will also need a text processing provider as specified above (ie. llm2 or integration_openai).</p>
+<p>You will also need a text processing provider as specified above (ie. llm2, integration_openai or integration_watsonx).</p>
 </section>
 <section id="context-agent">
 <h3>Context Agent<a class="headerlink" href="#context-agent" title="Link to this heading"></a></h3>
@@ -230,6 +275,14 @@
 <li><p><a class="reference internal" href="app_context_agent.html#ai-app-context-agent"><span class="std std-ref">context_agent</span></a> -  (Customer support available upon request)</p></li>
 </ul>
 <p>You will also need a text processing provider as specified above (ie. <em>llm2</em> or <em>integration_openai</em>).</p>
+</section>
+<section id="text-to-speech">
+<h3>Text-To-Speech<a class="headerlink" href="#text-to-speech" title="Link to this heading"></a></h3>
+<p>In order to make use of Text-To-Speech, you will need an app that provides a Text-To-Speech backend:</p>
+<ul class="simple">
+<li><p><em>integration_openai</em> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
+<li><p><em>text2speech_kokoro</em> - Runs a local model</p></li>
+</ul>
 </section>
 </section>
 <section id="configuration">
@@ -298,6 +351,13 @@ The occ commands to change the options are listed below.</p>
 </pre></div>
 </div>
 <p>shows statistics for all task processing Tasks.</p>
+<ol class="arabic simple" start="5">
+<li><p>Clean-up old tasks</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">task</span><span class="p">:</span><span class="n">cleanup</span>
+</pre></div>
+</div>
+<p>delete tasks that are older than this number of seconds, defaults to 4 months.</p>
 </section>
 <section id="image-storage">
 <h3>Image storage<a class="headerlink" href="#image-storage" title="Link to this heading"></a></h3>
@@ -350,7 +410,7 @@ The AI text generation provider should ideally handle the max token limit case.<
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -390,26 +450,18 @@ The AI text generation provider should ideally handle the max token limit case.<
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

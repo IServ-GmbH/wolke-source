@@ -15,6 +15,7 @@ OC.L10N.register(
     "Do you want to help us to improve Nextcloud by providing some anonymized data about your setup and usage? You can disable it at any time in the admin settings again." : "您是否想通過提供一些有關您的設置和使用情況的匿名數據來幫助我們改善Nextcloud？ 您可以隨時在管理設置中再次禁用它。",
     "Send usage" : "發送使用情況數據",
     "Not now" : "現在不了",
+    "Never ask again" : "不要再次詢問",
     "Never" : "絕不",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud." : "將匿名數據發送到Nextcloud，以幫助我們改進Nextcloud。",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud. You\n\t\talways have full control over the content sent to Nextcloud and can disable\n\t\tit again at any time." : "將匿名數據發送到 Nextcloud，以幫助我們改進 Nextcloud。你一律完全控制發送到 Nextcloud 的內容，並且可以隨時禁用。",
@@ -23,7 +24,7 @@ OC.L10N.register(
     "Send new report now" : "立即發送新報告",
     "Send usage survey monthly" : "每月發送使用情況調查",
     "Data to send" : "要發送的數據",
-    "Last report sent on: %s" : "上次發送報告的時間：%s",
-    "Last report" : "上次發送的報告"
+    "Last report" : "上次發送的報告",
+    "Last report sent on: %s" : "上次發送報告的時間：%s"
 },
 "nplurals=1; plural=0;");

@@ -68,9 +68,9 @@ class TokenHashingVectorizer implements Transformer
     /**
      * The tokenizer used to extract tokens from blobs of text.
      *
-     * @var \Rubix\ML\Tokenizers\Tokenizer
+     * @var Tokenizer
      */
-    protected \Rubix\ML\Tokenizers\Tokenizer $tokenizer;
+    protected Tokenizer $tokenizer;
 
     /**
      * The hash function that accepts a string token and returns an integer.
@@ -103,9 +103,9 @@ class TokenHashingVectorizer implements Transformer
 
     /**
      * @param int $dimensions
-     * @param \Rubix\ML\Tokenizers\Tokenizer|null $tokenizer
+     * @param Tokenizer|null $tokenizer
      * @param callable(string):int|null $hashFn
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $dimensions, ?Tokenizer $tokenizer = null, ?callable $hashFn = null)
     {

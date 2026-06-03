@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation on Linux &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -30,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installation wizard" href="installation_wizard.html" />
-    <link rel="prev" title="PHP Modules &amp; Configuration" href="php_configuration.html" /> 
+    <link rel="prev" title="Preparing PHP" href="php_configuration.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -57,14 +58,23 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">Preparing PHP</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Installation on Linux</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#prerequisites-for-manual-installation">Prerequisites for manual installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#apache-web-server-configuration">Apache Web server configuration</a><ul>
@@ -86,7 +96,14 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#other-web-servers">Other Web servers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installing-on-windows-virtual-machine">Installing on Windows (virtual machine)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#installing-via-snap-packages">Installing via Snap packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-via-snap-packages">Installing via Snap packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#st-login">1st login</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#https-encryption">HTTPS encryption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-media">External media</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#installation-via-web-installer-on-a-vps-or-web-space">Installation via web installer on a VPS or web space</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation-on-truenas">Installation on TrueNAS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation-via-install-script">Installation via install script</a></li>
@@ -104,25 +121,59 @@
 <li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -185,7 +236,7 @@ Nextcloud. See <a class="reference internal" href="#selinux-tips-label"><span cl
 <h2>Prerequisites for manual installation<a class="headerlink" href="#prerequisites-for-manual-installation" title="Link to this heading"></a></h2>
 <p>The Nextcloud .tar archive contains all of the required PHP modules.
 Your Linux distribution should have packages for all required modules.
-See <a class="reference internal" href="php_configuration.html"><span class="doc">PHP Modules &amp; Configuration</span></a> for a list of required and suggested modules.</p>
+See <a class="reference internal" href="php_configuration.html"><span class="doc">Preparing PHP</span></a> for a list of required and suggested modules.</p>
 <p>You don’t need the WebDAV module for your Web server (i.e. Apache’s
 <code class="docutils literal notranslate"><span class="pre">mod_webdav</span></code>), as Nextcloud has a built-in WebDAV server of its own,
 SabreDAV.
@@ -315,7 +366,7 @@ must be writable by the HTTP user. To enable <code class="docutils literal notra
 </div>
 <p>if it isn’t installed in a subfolder. Finally run this occ-command to update
 your .htaccess file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">update</span><span class="p">:</span><span class="n">htaccess</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">update</span><span class="p">:</span><span class="n">htaccess</span>
 </pre></div>
 </div>
 <p>After each update, these changes are automatically applied to the <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code>-file.</p>
@@ -519,15 +570,68 @@ offered. Collabora, OnlyOffice, Full Text Search and other apps can easily be in
 </section>
 <section id="installing-via-snap-packages">
 <span id="snaps-label"></span><h2>Installing via Snap packages<a class="headerlink" href="#installing-via-snap-packages" title="Link to this heading"></a></h2>
-<p>A snap is a zip file containing an application together with its dependencies,
-and a description of how it should safely be run on your system, especially
-the different ways it should talk to other software. Most importantly snaps are
-designed to be secure, sandboxed, containerized applications isolated from the
-underlying system and from other applications.</p>
-<p>To install the Nextcloud Snap Package, run the following command in a terminal:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">snap</span> <span class="n">install</span> <span class="n">nextcloud</span>
-</pre></div>
-</div>
+<p>Nextcloud snap is a community driven installation method and is designed
+to be easy to install and simple to maintain. The ideal Nextcloud snap is
+an “install and forget” Nextcloud instance that works on most architectures
+and updates itself without needing administrative skills.
+Combining Nextcloud with snapd makes it a perfect fit for IoT or
+scalable environments. <a class="reference external" href="https://snapcraft.io/docs">Snapd</a> is a secure
+and robust technology which the Nextcloud snap team has embraced.</p>
+<p>Most importantly snaps are designed to be secure, sandboxed, containerized
+applications isolated from the underlying system and from other applications.</p>
+<p>However, the snap is opinionated and there are <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Installation-requirements">requirements</a> to be met.</p>
+<ul class="simple">
+<li><p>Nextcloud snap uses recommended Apache.</p></li>
+<li><p>Nextcloud snap uses recommended MySQL.</p></li>
+<li><p>Nextcloud snap uses recommended PHP.</p></li>
+</ul>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h3>
+<p><strong>On Ubuntu</strong></p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://snapcraft.io/nextcloud">https://snapcraft.io/nextcloud</a></p></li>
+<li><p>Install Nextcloud <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">snap</span> <span class="pre">install</span> <span class="pre">nextcloud</span></code></p></li>
+</ul>
+<p><strong>All other distros</strong>
+<a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Why-Ubuntu-is-the-only-supported-distro/">be warned</a></p>
+<p>By default the latest stable Nextcloud snap release will be installed and it will automatically update to
+subsequent stable releases, but there are <a class="reference external" href="https://github.com/nextcloud/nextcloud-snap/wiki/Release-strategy">other releases available as well</a>
+and you have full control of <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Managing-automatic-updates">automatic updates</a>.</p>
+<p>After installation, Nextcloud will start automatically.
+Assuming you and the device on which it was installed are on the same network, you will reach the Nextcloud
+installation by visiting <code class="docutils literal notranslate"><span class="pre">&lt;hostname&gt;.local</span></code> or the IP address of the instance in your browser.
+If your hostname is <code class="docutils literal notranslate"><span class="pre">localhost</span></code>  or <code class="docutils literal notranslate"><span class="pre">localhost.localdomain</span></code>, like on an Ubuntu Core device,
+<code class="docutils literal notranslate"><span class="pre">nextcloud.local</span></code> will be used instead.</p>
+</section>
+<section id="st-login">
+<h3>1st login<a class="headerlink" href="#st-login" title="Link to this heading"></a></h3>
+<p>Upon visiting the Nextcloud installation for the first time, you will be prompted to enter an admin username
+and password before Nextcloud is initialised. This may take a while depending on resources and the device.
+After you provide that information you will be logged in and able to install apps, create users, and upload files.</p>
+</section>
+<section id="https-encryption">
+<h3>HTTPS encryption<a class="headerlink" href="#https-encryption" title="Link to this heading"></a></h3>
+<p>Nextcloud snap includes a service for automated HTTPS encryption and automated renewal using Lets Encrypt,
+or self-signed certificates. Run <code class="docutils literal notranslate"><span class="pre">nextcloud.enable-https</span> <span class="pre">-h</span></code> for more information. <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Managing-HTTP-encryption-(HTTPS)">Managing encryption</a>.</p>
+</section>
+<section id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h3>
+<p>While the default Nextcloud configurations are mostly fine, it may be necessary to fine tune Nextcloud snap by
+editing configuration files manually or using the management console. <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Configure-Nextcloud-snap">Configuring Nextcloud snap</a>.</p>
+</section>
+<section id="external-media">
+<h3>External media<a class="headerlink" href="#external-media" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://snapcraft.io/docs/snap-confinement">Snap confinement</a> is a security feature and determines the amount of access an application has to system resources,
+such as files, the network, peripherals and services. Thus your Nextcloud snap is securely confined from the host
+system. Unless you specifically allow the Nextcloud snap to access the <code class="docutils literal notranslate"><span class="pre">/media</span></code> or <code class="docutils literal notranslate"><span class="pre">/mnt</span></code> directories on the
+host system, you will not be able to access any other directory outside of the confinement.</p>
+<p>Removable media or external storage must be mounted to either <code class="docutils literal notranslate"><span class="pre">/media</span></code> or <code class="docutils literal notranslate"><span class="pre">/mnt</span></code> as root with root permissions
+and connected to Snap! <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/Managing-external-media,-shares-and-storage">Managing external media and storage</a></p>
+<p>The interface providing the ability to access removable media is not automatically connected upon install, to use
+external storage (or otherwise use a device in <code class="docutils literal notranslate"><span class="pre">/media</span></code> or <code class="docutils literal notranslate"><span class="pre">/mnt</span></code> for data), you need to give the snap permission
+to access removable media by connecting that interface:</p>
+<p><code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">snap</span> <span class="pre">connect</span> <span class="pre">nextcloud:removable-media</span></code></p>
+<p>Further documentation, an extensive <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki">Wiki</a> and <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap/wiki/FAQ's">FAQ’s</a>  can be found on the <a class="reference external" href="https://github.com/nextcloud-snap/nextcloud-snap">developers GitHub</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <a class="reference external" href="http://snapcraft.io/docs/core/">snapd technology</a> is the core
@@ -535,6 +639,7 @@ that powers snaps, and it offers a new way to package, distribute, update and
 run OS components and applications on a Linux system. See more about snaps on
 <a class="reference external" href="http://snapcraft.io/">snapcraft.io</a>.</p>
 </div>
+</section>
 </section>
 <section id="installation-via-web-installer-on-a-vps-or-web-space">
 <h2>Installation via web installer on a VPS or web space<a class="headerlink" href="#installation-via-web-installer-on-a-vps-or-web-space" title="Link to this heading"></a></h2>
@@ -591,14 +696,14 @@ spread the deployment of new major releases out over time.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="php_configuration.html" class="btn btn-neutral float-left" title="PHP Modules &amp; Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="php_configuration.html" class="btn btn-neutral float-left" title="Preparing PHP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="installation_wizard.html" class="btn btn-neutral float-right" title="Installation wizard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -638,26 +743,18 @@ spread the deployment of new major releases out over time.</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

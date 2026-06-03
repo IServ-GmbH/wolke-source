@@ -13,6 +13,7 @@ use OCA\Photos\Album\AlbumMapper;
 use OCA\Photos\Album\AlbumWithFiles;
 use OCA\Photos\Service\UserConfigService;
 use OCP\Files\IRootFolder;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
@@ -22,7 +23,7 @@ class AlbumsHome implements ICollection {
 	public const NAME = 'albums';
 
 	/**
-	 * @var AlbumRoot[]
+	 * @var AlbumRootBase[]|null
 	 */
 	protected ?array $children = null;
 
@@ -33,13 +34,14 @@ class AlbumsHome implements ICollection {
 		protected IRootFolder $rootFolder,
 		protected UserConfigService $userConfigService,
 		protected LoggerInterface $logger,
+		protected IUserManager $userManager,
 	) {
 	}
 
 	/**
 	 * @return never
 	 */
-	public function delete() {
+	public function delete(): never {
 		throw new Forbidden();
 	}
 
@@ -50,12 +52,12 @@ class AlbumsHome implements ICollection {
 	/**
 	 * @return never
 	 */
-	public function setName($name) {
-		throw new Forbidden('Permission denied to rename this folder');
+	public function setName($name): never {
+		throw new Forbidden('Permission denied to rename albums home');
 	}
 
-	public function createFile($name, $data = null) {
-		throw new Forbidden('Not allowed to create files in this folder');
+	public function createFile($name, $data = null): never {
+		throw new Forbidden('Not allowed to create files in albums');
 	}
 
 	/**
@@ -76,21 +78,20 @@ class AlbumsHome implements ICollection {
 	}
 
 	/**
-	 * @return AlbumRoot[]
+	 * @return AlbumRootBase[]
 	 */
 	public function getChildren(): array {
 		if ($this->children === null) {
 			$albumInfos = $this->albumMapper->getForUser($this->userId);
-			$this->children = array_map(function (AlbumInfo $albumInfo) {
-				return new AlbumRoot(
-					$this->albumMapper,
-					new AlbumWithFiles($albumInfo, $this->albumMapper),
-					$this->rootFolder,
-					$this->userId,
-					$this->userConfigService,
-					$this->logger,
-				);
-			}, $albumInfos);
+			$this->children = array_map(fn (AlbumInfo $albumInfo): AlbumRoot => new AlbumRoot(
+				$this->albumMapper,
+				new AlbumWithFiles($albumInfo, $this->albumMapper),
+				$this->rootFolder,
+				$this->userId,
+				$this->userConfigService,
+				$this->logger,
+				$this->userManager,
+			), $albumInfos);
 		}
 
 		return $this->children;
@@ -100,7 +101,7 @@ class AlbumsHome implements ICollection {
 		try {
 			$this->getChild($name);
 			return true;
-		} catch (NotFound $e) {
+		} catch (NotFound) {
 			return false;
 		}
 	}

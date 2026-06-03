@@ -65,12 +65,12 @@ class ListRoutes extends Base {
 
 				try {
 					$this->appManager->getAppPath($app);
-				} catch (AppPathNotFoundException) {
+				} catch (AppPathNotFoundException $e) {
 					$output->writeln('<comment>App ' . $app . ' not found</comment>');
 					return self::FAILURE;
 				}
 
-				if (!$this->appManager->isInstalled($app)) {
+				if (!$this->appManager->isEnabledForAnyone($app)) {
 					$output->writeln('<comment>App ' . $app . ' is not enabled</comment>');
 					return self::FAILURE;
 				}

@@ -7,11 +7,16 @@ declare(strict_types=1);
  */
 namespace OCA\DAV\CalDAV\Import;
 
+use Exception;
 use Generator;
 use InvalidArgumentException;
 use OCA\DAV\CalDAV\CalDavBackend;
+use OCA\DAV\CalDAV\CalendarImpl;
+use OCP\Calendar\CalendarImportOptions;
 use Sabre\VObject\Component\VCalendar;
+use Sabre\VObject\Node;
 use Sabre\VObject\Reader;
+use Sabre\VObject\UUIDUtil;
 
 /**
  * Calendar Import Service
@@ -21,6 +26,34 @@ class ImportService {
 	public function __construct(
 		private CalDavBackend $backend,
 	) {
+	}
+
+	/**
+	 * Executes import with appropriate object generator based on format
+	 *
+	 * @param resource $source
+	 *
+	 * @return array<string,array<string,string|array<string>>>
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function import($source, CalendarImpl $calendar, CalendarImportOptions $options): array {
+		if (!is_resource($source)) {
+			throw new InvalidArgumentException('Invalid import source must be a file resource');
+		}
+		switch ($options->getFormat()) {
+			case 'ical':
+				return $this->importProcess($source, $calendar, $options, $this->importText(...));
+				break;
+			case 'jcal':
+				return $this->importProcess($source, $calendar, $options, $this->importJson(...));
+				break;
+			case 'xcal':
+				return $this->importProcess($source, $calendar, $options, $this->importXml(...));
+				break;
+			default:
+				throw new InvalidArgumentException('Invalid import format');
+		}
 	}
 
 	/**
@@ -183,4 +216,129 @@ class ImportService {
 		return array_keys($timezones);
 	}
 
+	/**
+	 * Import objects
+	 *
+	 * @since 32.0.0
+	 *
+	 * @param resource $source
+	 * @param CalendarImportOptions $options
+	 * @param callable $generator<CalendarImportOptions>: Generator<\Sabre\VObject\Component\VCalendar>
+	 *
+	 * @return array<string,array<string,string|array<string>>>
+	 */
+	public function importProcess($source, CalendarImpl $calendar, CalendarImportOptions $options, callable $generator): array {
+		$calendarId = $calendar->getKey();
+		$calendarUri = $calendar->getUri();
+		$principalUri = $calendar->getPrincipalUri();
+		$outcome = [];
+		foreach ($generator($source) as $vObject) {
+			$components = $vObject->getBaseComponents();
+			// determine if the object has no base component types
+			if (count($components) === 0) {
+				$errorMessage = 'One or more objects discovered with no base component types';
+				if ($options->getErrors() === $options::ERROR_FAIL) {
+					throw new InvalidArgumentException('Error importing calendar data: ' . $errorMessage);
+				}
+				$outcome['nbct'] = ['outcome' => 'error', 'errors' => [$errorMessage]];
+				continue;
+			}
+			// determine if the object has more than one base component type
+			// object can have multiple base components with the same uid
+			// but we need to make sure they are of the same type
+			if (count($components) > 1) {
+				$type = $components[0]->name;
+				foreach ($components as $entry) {
+					if ($type !== $entry->name) {
+						$errorMessage = 'One or more objects discovered with multiple base component types';
+						if ($options->getErrors() === $options::ERROR_FAIL) {
+							throw new InvalidArgumentException('Error importing calendar data: ' . $errorMessage);
+						}
+						$outcome['mbct'] = ['outcome' => 'error', 'errors' => [$errorMessage]];
+						continue 2;
+					}
+				}
+			}
+			// determine if the object has a uid
+			if (!isset($components[0]->UID)) {
+				$errorMessage = 'One or more objects discovered without a UID';
+				if ($options->getErrors() === $options::ERROR_FAIL) {
+					throw new InvalidArgumentException('Error importing calendar data: ' . $errorMessage);
+				}
+				$outcome['noid'] = ['outcome' => 'error', 'errors' => [$errorMessage]];
+				continue;
+			}
+			$uid = $components[0]->UID->getValue();
+			// validate object
+			if ($options->getValidate() !== $options::VALIDATE_NONE) {
+				$issues = $this->componentValidate($vObject, true, 3);
+				if ($options->getValidate() === $options::VALIDATE_SKIP && $issues !== []) {
+					$outcome[$uid] = ['outcome' => 'error', 'errors' => $issues];
+					continue;
+				} elseif ($options->getValidate() === $options::VALIDATE_FAIL && $issues !== []) {
+					throw new InvalidArgumentException('Error importing calendar data: UID <' . $uid . '> - ' . $issues[0]);
+				}
+			}
+			// create or update object in the data store
+			$objectId = $this->backend->getCalendarObjectByUID($principalUri, $uid, $calendarUri);
+			$objectData = $vObject->serialize();
+			try {
+				if ($objectId === null) {
+					$objectId = UUIDUtil::getUUID();
+					$this->backend->createCalendarObject(
+						$calendarId,
+						$objectId,
+						$objectData
+					);
+					$outcome[$uid] = ['outcome' => 'created'];
+				} else {
+					[$cid, $oid] = explode('/', $objectId);
+					if ($options->getSupersede()) {
+						$this->backend->updateCalendarObject(
+							$calendarId,
+							$oid,
+							$objectData
+						);
+						$outcome[$uid] = ['outcome' => 'updated'];
+					} else {
+						$outcome[$uid] = ['outcome' => 'exists'];
+					}
+				}
+			} catch (Exception $e) {
+				$errorMessage = $e->getMessage();
+				if ($options->getErrors() === $options::ERROR_FAIL) {
+					throw new Exception('Error importing calendar data: UID <' . $uid . '> - ' . $errorMessage, 0, $e);
+				}
+				$outcome[$uid] = ['outcome' => 'error', 'errors' => [$errorMessage]];
+			}
+		}
+
+		return $outcome;
+	}
+
+	/**
+	 * Validate a component
+	 *
+	 * @param VCalendar $vObject
+	 * @param bool $repair attempt to repair the component
+	 * @param int $level minimum level of issues to return
+	 * @return list<mixed>
+	 */
+	private function componentValidate(VCalendar $vObject, bool $repair, int $level): array {
+		// validate component(S)
+		$issues = $vObject->validate(Node::PROFILE_CALDAV);
+		// attempt to repair
+		if ($repair && count($issues) > 0) {
+			$issues = $vObject->validate(Node::REPAIR);
+		}
+		// filter out messages based on level
+		$result = [];
+		foreach ($issues as $key => $issue) {
+			if (isset($issue['level']) && $issue['level'] >= $level) {
+				$result[] = $issue['message'];
+			}
+		}
+
+		return $result;
+	}
 }

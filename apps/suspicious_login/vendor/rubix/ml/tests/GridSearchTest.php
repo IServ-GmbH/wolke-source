@@ -9,7 +9,6 @@ use Rubix\ML\Estimator;
 use Rubix\ML\GridSearch;
 use Rubix\ML\Persistable;
 use Rubix\ML\EstimatorType;
-use Rubix\ML\Backends\Serial;
 use Rubix\ML\Loggers\BlackHole;
 use Rubix\ML\CrossValidation\HoldOut;
 use Rubix\ML\Kernels\Distance\Euclidean;
@@ -36,17 +35,17 @@ class GridSearchTest extends TestCase
     protected const RANDOM_SEED = 0;
 
     /**
-     * @var \Rubix\ML\Datasets\Generators\Agglomerate
+     * @var Agglomerate
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\GridSearch
+     * @var GridSearch
      */
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var Accuracy
      */
     protected $metric;
 
@@ -126,7 +125,6 @@ class GridSearchTest extends TestCase
     public function trainPredictBest() : void
     {
         $this->estimator->setLogger(new BlackHole());
-        $this->estimator->setBackend(new Serial());
 
         $training = $this->generator->generate(self::TRAIN_SIZE);
         $testing = $this->generator->generate(self::TEST_SIZE);

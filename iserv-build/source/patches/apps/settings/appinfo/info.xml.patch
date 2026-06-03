@@ -1,5 +1,5 @@
 diff --git apps/settings/appinfo/info.xml apps/settings/appinfo/info.xml
-index d91c4ff..0c39276 100644
+index 87ec7d4..09db7ef 100644
 --- apps/settings/appinfo/info.xml
 +++ apps/settings/appinfo/info.xml
 @@ -24,6 +24,7 @@
@@ -10,12 +10,13 @@ index d91c4ff..0c39276 100644
  	</commands>
  
  	<settings>
-@@ -37,22 +38,15 @@
+@@ -38,23 +39,16 @@
  		<admin>OCA\Settings\Settings\Admin\Users</admin>
  		<admin-section>OCA\Settings\Sections\Admin\Additional</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Delegation</admin-section>
 -		<admin-section>OCA\Settings\Sections\Admin\Groupware</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Overview</admin-section>
+ 		<admin-section>OCA\Settings\Sections\Admin\Presets</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\ArtificialIntelligence</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Security</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Server</admin-section>

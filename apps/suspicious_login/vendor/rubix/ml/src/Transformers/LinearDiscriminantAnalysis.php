@@ -47,9 +47,9 @@ class LinearDiscriminantAnalysis implements Transformer, Stateful, Persistable
     /**
      * The matrix of eigenvectors computed at fitting.
      *
-     * @var \Tensor\Matrix|null
+     * @var Matrix|null
      */
-    protected ?\Tensor\Matrix $eigenvectors = null;
+    protected ?Matrix $eigenvectors = null;
 
     /**
      * The percentage of information lost due to the transformation.
@@ -60,7 +60,7 @@ class LinearDiscriminantAnalysis implements Transformer, Stateful, Persistable
 
     /**
      * @param int $dimensions
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $dimensions)
     {
@@ -114,8 +114,8 @@ class LinearDiscriminantAnalysis implements Transformer, Stateful, Persistable
     /**
      * Fit the transformer to a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param Dataset $dataset
+     * @throws InvalidArgumentException
      */
     public function fit(Dataset $dataset) : void
     {
@@ -174,7 +174,7 @@ class LinearDiscriminantAnalysis implements Transformer, Stateful, Persistable
      * Transform the dataset in place.
      *
      * @param list<list<mixed>> $samples
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function transform(array &$samples) : void
     {

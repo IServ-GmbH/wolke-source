@@ -23,6 +23,7 @@ class SetupChecksSection extends Section {
 		parent::__construct('setupchecks', 'Setup checks');
 	}
 
+	#[\Override]
 	public function getDetails(): array {
 		// FIXME Make sure to use the cached version once we have it
 		$results = $this->setupCheckManager->runAll();

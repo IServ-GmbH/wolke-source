@@ -17,6 +17,8 @@ use OC\DB\SchemaWrapper;
 use OCA\Circles\Exceptions\InvalidIdException;
 use OCA\Circles\Service\ConfigService;
 use OCA\Circles\Service\TimezoneService;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Server;
 use OCP\Share\IShare;
 
 /**
@@ -116,7 +118,9 @@ class CoreRequestBuilder {
 			'token',
 			'parent',
 			'mountpoint',
-			'mountpoint_hash'
+			'mountpoint_hash',
+			'remote',
+			'remote_id',
 		],
 		self::TABLE_MOUNTPOINT => [],
 		self::TABLE_SHARE_LOCK => [],
@@ -200,10 +204,12 @@ class CoreRequestBuilder {
 
 
 	/**
-	 * @return CoreQueryBuilder
+	 * @return CoreQueryBuilder&IQueryBuilder
 	 */
 	public function getQueryBuilder(): CoreQueryBuilder {
-		return new CoreQueryBuilder();
+		/** @var CoreQueryBuilder&IQueryBuilder $qb */
+		$qb = new CoreQueryBuilder();
+		return $qb;
 	}
 
 
@@ -264,7 +270,7 @@ class CoreRequestBuilder {
 	 * this just empty all tables from the app.
 	 */
 	public function uninstallAppTables() {
-		$dbConn = \OC::$server->get(Connection::class);
+		$dbConn = Server::get(Connection::class);
 		$schema = new SchemaWrapper($dbConn);
 
 		foreach (array_keys(self::$tables) as $table) {

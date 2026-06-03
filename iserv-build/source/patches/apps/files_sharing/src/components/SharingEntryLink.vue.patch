@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/components/SharingEntryLink.vue apps/files_sharing/src/components/SharingEntryLink.vue
-index cd2eb2c..d35cb3a 100644
+index d354c1d..880f203 100644
 --- apps/files_sharing/src/components/SharingEntryLink.vue
 +++ apps/files_sharing/src/components/SharingEntryLink.vue
 @@ -11,17 +11,13 @@
@@ -20,4 +20,20 @@ index cd2eb2c..d35cb3a 100644
 -					@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  			</div>
  
- 			<!-- clipboard -->
+ 			<div class="sharing-entry__actions">
+@@ -264,7 +260,6 @@ import CheckIcon from 'vue-material-design-icons/CheckBold.vue'
+ import CloseIcon from 'vue-material-design-icons/Close.vue'
+ import PlusIcon from 'vue-material-design-icons/Plus.vue'
+ 
+-import SharingEntryQuickShareSelect from './SharingEntryQuickShareSelect.vue'
+ import ShareExpiryTime from './ShareExpiryTime.vue'
+ import SidebarTabExternalActionLegacy from './SidebarTabExternal/SidebarTabExternalActionLegacy.vue'
+ 
+@@ -298,7 +293,6 @@ export default {
+ 		CheckIcon,
+ 		CloseIcon,
+ 		PlusIcon,
+-		SharingEntryQuickShareSelect,
+ 		ShareExpiryTime,
+ 		SidebarTabExternalActionLegacy,
+ 	},

@@ -1,8 +1,8 @@
 diff --git lib/private/Federation/CloudIdManager.php lib/private/Federation/CloudIdManager.php
-index b07679a..ce8a81d 100644
+index b0996d5..d018b2b 100644
 --- lib/private/Federation/CloudIdManager.php
 +++ lib/private/Federation/CloudIdManager.php
-@@ -78,7 +78,7 @@ class CloudIdManager implements ICloudIdManager {
+@@ -71,7 +71,7 @@ class CloudIdManager implements ICloudIdManager {
  	 * @return ICloudId
  	 * @throws \InvalidArgumentException
  	 */
@@ -10,8 +10,8 @@ index b07679a..ce8a81d 100644
 +	public function resolveCloudId(string $cloudId, ?string $displayName = null): ICloudId {
  		// TODO magic here to get the url and user instead of just splitting on @
  
- 		if (!$this->isValidCloudId($cloudId)) {
-@@ -113,7 +113,7 @@ class CloudIdManager implements ICloudIdManager {
+ 		foreach ($this->cloudIdResolvers as $resolver) {
+@@ -112,7 +112,7 @@ class CloudIdManager implements ICloudIdManager {
  
  			if (!empty($user) && !empty($remote)) {
  				$remote = $this->ensureDefaultProtocol($remote);

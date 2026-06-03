@@ -270,7 +270,7 @@ class CircleRequest extends CircleRequestBuilder {
 	 * @param CircleProbe $circleProbe
 	 * @param DataProbe $dataProbe
 	 *
-	 * @return CoreQueryBuilder
+	 * @return CoreQueryBuilder&IQueryBuilder
 	 * @throws RequestBuilderException
 	 */
 	private function buildProbeCircle(
@@ -296,17 +296,14 @@ class CircleRequest extends CircleRequestBuilder {
 
 		$aliasMembership = $qb->generateAlias(CoreQueryBuilder::CIRCLE, CoreQueryBuilder::MEMBERSHIPS);
 
-		$limit = $qb->expr()->orX();
 		if (is_null($initiator)) {
 			// to get unique result, enforce a limit on level=owner
-			$limit->add($qb->exprLimitInt('level', Member::LEVEL_OWNER, $aliasMembership));
+			$limit = $qb->exprLimitInt('level', Member::LEVEL_OWNER, $aliasMembership);
 		} else {
-			$limit->add(
-				$qb->exprLimit(
-					'single_id',
-					$initiator->getSingleId(),
-					$aliasMembership
-				)
+			$limit = $qb->exprLimit(
+				'single_id',
+				$initiator->getSingleId(),
+				$aliasMembership
 			);
 			$qb->completeProbeWithInitiator(CoreQueryBuilder::CIRCLE, 'single_id', $aliasMembership);
 		}

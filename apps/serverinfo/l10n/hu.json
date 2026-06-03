@@ -14,6 +14,8 @@
     "Press ⌘-C to copy." : "A másoláshoz nyomjon ⌘+C-t.",
     "Press Ctrl-C to copy." : "A másoláshoz nyomjon Ctrl+C-t.",
     "Unknown" : "Ismeretlen",
+    "%1$d days, %2$d hours, %3$d minutes, %4$d seconds" : "%1$d nap, %2$d óra, %3$d perc, %4$d másodperc",
+    "%1$d hours, %2$d minutes, %3$d seconds" : "%1$d óra, %2$d perc, %3$d másodperc",
     "System" : "Rendszer",
     "Monitoring" : "Rendszerfelügyelet",
     "Monitoring app with useful server information" : "Rendszerfelügyeleti alkalmazás hasznos kiszolgálóinformációkkal",
@@ -62,12 +64,14 @@
     "PHP" : "PHP",
     "Version:" : "Verzió:",
     "Memory limit:" : "Memóriakorlát:",
+    "MB" : "MB",
     "Max execution time:" : "Maximális végrehajtási idő:",
-    "seconds" : "másodpercek",
+    "seconds" : "másodperc",
     "Upload max size:" : "Maximális feltöltési méret:",
     "OPcache Revalidate Frequency:" : "OPcache újraellenőrzési gyakorisága:",
     "Extensions:" : "Bővítmények:",
     "Unable to list extensions" : "Nem lehet felsorolni a bővítményeket",
+    "PHP Info:" : "PHP információk:",
     "Show phpinfo" : "A phpinfo megjelenítése",
     "FPM worker pool" : "FPM futtatókészlet",
     "Pool name:" : "Készlet neve:",
@@ -91,7 +95,6 @@
     "Skip apps section (including apps section will send an external request to the app store)" : "Alkalmazás szekció kihagyása (külső kérést küld az alkalmazásboltba az alkalmazás szekciót is belefoglalva)",
     "Skip server update" : "Kiszolgálófrissítés kihagyása",
     "To use an access token, please generate one then set it using the following command:" : "A hozzáférési token használatához hozzon létre egyet, majd állítsa be a következő paranccsal:",
-    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Ezután adja át a tokent az „NC-Token” fejléccel, amikor lekérdezi a fenti webcímet.",
-    "Unknown Processor" : "Ismeretlen processzor"
+    "Then pass the token with the \"NC-Token\" header when querying the above URL." : "Ezután adja át a tokent az „NC-Token” fejléccel, amikor lekérdezi a fenti webcímet."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

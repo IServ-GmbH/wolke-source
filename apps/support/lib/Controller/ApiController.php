@@ -81,6 +81,14 @@ class ApiController extends Controller {
 			}
 		}
 
+		if (!($directory instanceof Folder)) {
+			$this->logger->warning('Could not create folder "System information" to store generated report, a file exists with this name.', [
+				'app' => 'support',
+			]);
+			$response = new DataResponse(['message' => $this->l10n->t('Could not create folder "System information" to store generated report, a file exists with this name.')]);
+			$response->setStatus(Http::STATUS_INTERNAL_SERVER_ERROR);
+			return $response;
+		}
 
 		$date = $this->timeFactory->getDateTime()->format('Y-m-d');
 		$filename = $date . '.md';

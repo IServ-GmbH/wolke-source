@@ -50,6 +50,7 @@
     "Remaining actions" : "Mai d’accions",
     "Select language" : "Causir lenga",
     "to" : "a",
+    "Insert" : "Inserir",
     "Edit" : "Modificar",
     "Upload" : "Telecargament",
     "Source code" : "Còdi font",
@@ -64,8 +65,6 @@
     "Insert link" : "Inserir un ligam",
     "Insert attachment" : "Inserir una pèça junta",
     "Command" : "Comanda",
-    "Choose" : "Causir",
-    "Edit guest name" : "Modificar lo nom de convidat",
-    "Save guest name" : "Enregistrar lo nom de convidat"
+    "Choose" : "Causir"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/src/view/Office.vue apps/richdocuments/src/view/Office.vue
-index 9cac7d434..79b5baac6 100644
+index aae190df9..f2ad25116 100644
 --- apps/richdocuments/src/view/Office.vue
 +++ apps/richdocuments/src/view/Office.vue
 @@ -25,16 +25,7 @@
@@ -28,7 +28,7 @@ index 9cac7d434..79b5baac6 100644
  			<input name="host_session_id" :value="formData.hostSessionID" type="hidden">
  			<input name="wopi_setting_base_url" :value="formData.wopiSettingBaseUrl" type="hidden">
  		</form>
-@@ -212,7 +202,7 @@ export default {
+@@ -215,7 +205,7 @@ export default {
  			return this.loading >= LOADING_STATE.FRAME_READY || this.debug
  		},
  		iframeTitle() {
@@ -37,7 +37,7 @@ index 9cac7d434..79b5baac6 100644
  		},
  		showLoadingIndicator() {
  			return this.loading < LOADING_STATE.FRAME_READY
-@@ -220,7 +210,7 @@ export default {
+@@ -223,7 +213,7 @@ export default {
  		errorMessage() {
  			switch (parseInt(this.error)) {
  			case LOADING_ERROR.COLLABORA_UNCONFIGURED:
@@ -46,7 +46,7 @@ index 9cac7d434..79b5baac6 100644
  			case LOADING_ERROR.PROXY_FAILED:
  				return t('richdocuments', 'Starting the built-in CODE server failed')
  			default:
-@@ -345,7 +335,7 @@ export default {
+@@ -353,7 +343,7 @@ export default {
  			this.loadingTimeout = setTimeout(() => {
  				console.error('Document loading failed due to timeout: Please check for failing network requests')
  				this.loading = LOADING_STATE.FAILED

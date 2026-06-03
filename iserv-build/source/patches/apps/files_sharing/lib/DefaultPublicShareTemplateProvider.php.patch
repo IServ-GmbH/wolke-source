@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
-index b6644f1..8eff1c7 100644
+index fe047ce..6e347a5 100644
 --- apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
 +++ apps/files_sharing/lib/DefaultPublicShareTemplateProvider.php
 @@ -68,15 +68,11 @@ class DefaultPublicShareTemplateProvider implements IPublicShareTemplateProvider

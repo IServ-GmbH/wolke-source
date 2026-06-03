@@ -7,6 +7,7 @@
  */
 namespace OCP\Files;
 
+use OCP\AppFramework\Attribute\Consumable;
 use OCP\Files\Storage\IStorage;
 
 /**
@@ -14,6 +15,7 @@ use OCP\Files\Storage\IStorage;
  *
  * @since 7.0.0
  */
+#[Consumable(since: '7.0.0')]
 interface FileInfo {
 	/**
 	 * @since 7.0.0
@@ -279,6 +281,16 @@ interface FileInfo {
 	 * @since 18.0.0
 	 */
 	public function getUploadTime(): int;
+
+	/**
+	 * Get the last activity date as unix timestamp
+	 *
+	 * Last activity is the more recent of the upload time and the modification time
+	 *
+	 * @return int
+	 * @since 32.0.7
+	 */
+	public function getLastActivity(): int;
 
 	/**
 	 * Get the fileid or the parent folder

@@ -76,38 +76,53 @@ class IMipService {
 		return $default;
 	}
 
-	private function generateDiffString(VEvent $vevent, VEvent $oldVEvent, string $property, string $default): ?string {
-		$strikethrough = "<span style='text-decoration: line-through'>%s</span><br />%s";
-		if (!isset($vevent->$property)) {
-			return $default;
+	private function getStrikethroughString(?string $oldString, ?string $newValue = null): ?string {
+		if ($oldString === null || $oldString === '') {
+			return null;
 		}
-		$value = $vevent->$property->getValue();
-		$newstring = $value === null ? null : htmlspecialchars($value);
-		if (isset($oldVEvent->$property) && $oldVEvent->$property->getValue() !== $newstring) {
-			$oldstring = $oldVEvent->$property->getValue();
-			return sprintf($strikethrough, htmlspecialchars($oldstring), $newstring);
+
+		$strikethrough = '<span style="text-decoration: line-through">%s</span><br />%s';
+		return sprintf($strikethrough, $oldString, $newValue ?? '');
+	}
+
+	private function generateDiffString(VEvent $vEvent, VEvent $oldVEvent, string $property): ?string {
+		if (!isset($vEvent->$property)) {
+			return null;
 		}
-		return $newstring;
+
+		$newValue = $vEvent->$property->getValue();
+		$newString = $newValue === null ? null : htmlspecialchars($newValue);
+
+		$propertyChanged = isset($oldVEvent->$property) && $oldVEvent->$property->getValue() !== $newString;
+		if ($propertyChanged) {
+			$oldValue = $oldVEvent->$property->getValue();
+			$oldString = htmlspecialchars($oldValue);
+
+			return $this->getStrikethroughString($oldString, $newString);
+		}
+		return $newString;
 	}
 
 	/**
 	 * Like generateDiffString() but linkifies the property values if they are urls.
 	 */
-	private function generateLinkifiedDiffString(VEvent $vevent, VEvent $oldVEvent, string $property, string $default): ?string {
-		if (!isset($vevent->$property)) {
-			return $default;
+	private function generateLinkifiedDiffString(VEvent $vEvent, VEvent $oldVEvent, string $property): ?string {
+		if (!isset($vEvent->$property)) {
+			return null;
 		}
-		$value = $vevent->$property->getValue();
-		$newString = $value === null ? null : htmlspecialchars($value);
-		$oldString = isset($oldVEvent->$property) ? htmlspecialchars($oldVEvent->$property->getValue()) : null;
-		if ($oldString !== $newString) {
-			return sprintf(
-				"<span style='text-decoration: line-through'>%s</span><br />%s",
-				$this->linkify($oldString) ?? $oldString ?? '',
-				$this->linkify($newString) ?? $newString ?? ''
-			);
+
+		$newValue = $vEvent->$property->getValue();
+		$newString = $this->linkify($newValue) ?? htmlspecialchars($newValue);
+
+		$propertyChanged = isset($oldVEvent->$property) && $oldVEvent->$property->getValue() !== $newValue;
+		if ($propertyChanged) {
+			$oldValue = $oldVEvent->$property->getValue();
+			$oldString = $this->linkify($oldValue) ?? htmlspecialchars($oldValue);
+
+			return $this->getStrikethroughString($oldString, $newString);
 		}
-		return $this->linkify($newString) ?? $newString;
+
+		return $this->getStrikethroughString($newString);
 	}
 
 	/**
@@ -117,7 +132,15 @@ class IMipService {
 		if ($url === null) {
 			return null;
 		}
-		if (!str_starts_with($url, 'http://') && !str_starts_with($url, 'https://')) {
+
+		$isValidLinkUrl
+			= filter_var($url, FILTER_VALIDATE_URL) !== false
+			&& (
+				str_starts_with($url, 'http://')
+				|| str_starts_with($url, 'https://')
+			);
+
+		if (!$isValidLinkUrl) {
 			return null;
 		}
 
@@ -130,7 +153,6 @@ class IMipService {
 	 * @return array
 	 */
 	public function buildBodyData(VEvent $vEvent, ?VEvent $oldVEvent): array {
-
 		// construct event reader
 		$eventReaderCurrent = new EventReader($vEvent);
 		$eventReaderPrevious = !empty($oldVEvent) ? new EventReader($oldVEvent) : null;
@@ -142,22 +164,26 @@ class IMipService {
 			$data[$key] = self::readPropertyWithDefault($vEvent, $property, $defaultVal);
 		}
 
-		$data['meeting_url_html'] = self::readPropertyWithDefault($vEvent, 'URL', $defaultVal);
-
-		if (($locationHtml = $this->linkify($data['meeting_location'])) !== null) {
-			$data['meeting_location_html'] = $locationHtml;
-		}
+		$data['meeting_location_html'] = $this->linkify($data['meeting_location']);
+		$data['meeting_url_html'] = $this->linkify($data['meeting_url']);
 
 		if (!empty($oldVEvent)) {
+			$data['meeting_title_html'] = $this->generateDiffString($vEvent, $oldVEvent, 'SUMMARY');
+			$data['meeting_description_html'] = $this->generateDiffString($vEvent, $oldVEvent, 'DESCRIPTION');
+			$data['meeting_location_html'] = $this->generateLinkifiedDiffString($vEvent, $oldVEvent, 'LOCATION');
+
+			$oldMeetingUrl = self::readPropertyWithDefault($oldVEvent, 'URL', $defaultVal);
+			$oldMeetingUrlAsLink = $this->linkify($oldMeetingUrl);
+			$meetingUrlAsLinkChanged = !empty($oldMeetingUrlAsLink) && $oldMeetingUrlAsLink !== $data['meeting_url_html'];
+			if ($meetingUrlAsLinkChanged) {
+				$data['meeting_url_html'] = $this->getStrikethroughString(htmlspecialchars($oldMeetingUrl), $data['meeting_url_html']);
+			}
+
 			$oldMeetingWhen = $this->generateWhenString($eventReaderPrevious);
-			$data['meeting_title_html'] = $this->generateDiffString($vEvent, $oldVEvent, 'SUMMARY', $data['meeting_title']);
-			$data['meeting_description_html'] = $this->generateDiffString($vEvent, $oldVEvent, 'DESCRIPTION', $data['meeting_description']);
-			$data['meeting_location_html'] = $this->generateLinkifiedDiffString($vEvent, $oldVEvent, 'LOCATION', $data['meeting_location']);
-
-			$oldUrl = self::readPropertyWithDefault($oldVEvent, 'URL', $defaultVal);
-			$data['meeting_url_html'] = !empty($oldUrl) && $oldUrl !== $data['meeting_url'] ? sprintf('<a href="%1$s">%1$s</a>', $oldUrl) : $data['meeting_url'];
-
-			$data['meeting_when_html'] = $oldMeetingWhen !== $data['meeting_when'] ? sprintf("<span style='text-decoration: line-through'>%s</span><br />%s", $oldMeetingWhen, $data['meeting_when']) : $data['meeting_when'];
+			$meetingWhenChanged = $oldMeetingWhen !== $data['meeting_when'];
+			$data['meeting_when_html'] = $meetingWhenChanged
+				? $this->getStrikethroughString($oldMeetingWhen, $data['meeting_when'])
+				: null;
 		}
 		// generate occurring next string
 		if ($eventReaderCurrent->recurs()) {
@@ -181,11 +207,8 @@ class IMipService {
 			$data[$key] = self::readPropertyWithDefault($vEvent, $property, $defaultVal);
 		}
 
-		if (($locationHtml = $this->linkify($data['meeting_location'])) !== null) {
-			$data['meeting_location_html'] = $locationHtml;
-		}
-
-		$data['meeting_url_html'] = $data['meeting_url'] ? sprintf('<a href="%1$s">%1$s</a>', $data['meeting_url']) : '';
+		$data['meeting_location_html'] = $this->linkify($data['meeting_location']);
+		$data['meeting_url_html'] = $this->linkify($data['meeting_url']);
 
 		// generate occurring next string
 		if ($eventReader->recurs()) {
@@ -238,8 +261,8 @@ class IMipService {
 		// TRANSLATORS
 		// Indicates when a calendar event will happen, shown on invitation emails
 		// Output produced in order:
-		// In a minute/hour/day/week/month/year on July 1, 2024 for the entire day
-		// In a minute/hour/day/week/month/year on July 1, 2024 between 8:00 AM - 9:00 AM (America/Toronto)
+		// In 1 minute/hour/day/week/month/year on July 1, 2024 for the entire day
+		// In 1 minute/hour/day/week/month/year on July 1, 2024 between 8:00 AM - 9:00 AM (America/Toronto)
 		// In 2 minutes/hours/days/weeks/months/years on July 1, 2024 for the entire day
 		// In 2 minutes/hours/days/weeks/months/years on July 1, 2024 between 8:00 AM - 9:00 AM (America/Toronto)
 		return match ([$occurring['scale'], $endTime !== null]) {
@@ -248,37 +271,37 @@ class IMipService {
 				[$startDate]
 			),
 			['minute', false] => $this->l10n->n(
-				'In a minute on %1$s for the entire day',
+				'In %n minute on %1$s for the entire day',
 				'In %n minutes on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
 			),
 			['hour', false] => $this->l10n->n(
-				'In a hour on %1$s for the entire day',
+				'In %n hour on %1$s for the entire day',
 				'In %n hours on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
 			),
 			['day', false] => $this->l10n->n(
-				'In a day on %1$s for the entire day',
+				'In %n day on %1$s for the entire day',
 				'In %n days on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
 			),
 			['week', false] => $this->l10n->n(
-				'In a week on %1$s for the entire day',
+				'In %n week on %1$s for the entire day',
 				'In %n weeks on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
 			),
 			['month', false] => $this->l10n->n(
-				'In a month on %1$s for the entire day',
+				'In %n month on %1$s for the entire day',
 				'In %n months on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
 			),
 			['year', false] => $this->l10n->n(
-				'In a year on %1$s for the entire day',
+				'In %n year on %1$s for the entire day',
 				'In %n years on %1$s for the entire day',
 				$occurring['interval'],
 				[$startDate]
@@ -288,37 +311,37 @@ class IMipService {
 				[$startDate, $startTime, $endTime]
 			),
 			['minute', true] => $this->l10n->n(
-				'In a minute on %1$s between %2$s - %3$s',
+				'In %n minute on %1$s between %2$s - %3$s',
 				'In %n minutes on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
 			),
 			['hour', true] => $this->l10n->n(
-				'In a hour on %1$s between %2$s - %3$s',
+				'In %n hour on %1$s between %2$s - %3$s',
 				'In %n hours on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
 			),
 			['day', true] => $this->l10n->n(
-				'In a day on %1$s between %2$s - %3$s',
+				'In %n day on %1$s between %2$s - %3$s',
 				'In %n days on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
 			),
 			['week', true] => $this->l10n->n(
-				'In a week on %1$s between %2$s - %3$s',
+				'In %n week on %1$s between %2$s - %3$s',
 				'In %n weeks on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
 			),
 			['month', true] => $this->l10n->n(
-				'In a month on %1$s between %2$s - %3$s',
+				'In %n month on %1$s between %2$s - %3$s',
 				'In %n months on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
 			),
 			['year', true] => $this->l10n->n(
-				'In a year on %1$s between %2$s - %3$s',
+				'In %n year on %1$s between %2$s - %3$s',
 				'In %n years on %1$s between %2$s - %3$s',
 				$occurring['interval'],
 				[$startDate, $startTime, $endTime]
@@ -356,7 +379,7 @@ class IMipService {
 	 * @return string
 	 */
 	public function generateWhenStringRecurringDaily(EventReader $er): string {
-		
+
 		// initialize
 		$interval = (int)$er->recurringInterval();
 		$startTime = null;
@@ -407,7 +430,7 @@ class IMipService {
 	 * @return string
 	 */
 	public function generateWhenStringRecurringWeekly(EventReader $er): string {
-		
+
 		// initialize
 		$interval = (int)$er->recurringInterval();
 		$startTime = null;
@@ -460,15 +483,15 @@ class IMipService {
 	 * @return string
 	 */
 	public function generateWhenStringRecurringMonthly(EventReader $er): string {
-		
+
 		// initialize
 		$interval = (int)$er->recurringInterval();
 		$startTime = null;
 		$conclusion = null;
 		// days of month
 		if ($er->recurringPattern() === 'R') {
-			$days = implode(', ', array_map(function ($value) { return $this->localizeRelativePositionName($value); }, $er->recurringRelativePositionNamed())) . ' ' .
-					implode(', ', array_map(function ($value) { return $this->localizeDayName($value); }, $er->recurringDaysOfWeekNamed()));
+			$days = implode(', ', array_map(function ($value) { return $this->localizeRelativePositionName($value); }, $er->recurringRelativePositionNamed())) . ' '
+				. implode(', ', array_map(function ($value) { return $this->localizeDayName($value); }, $er->recurringDaysOfWeekNamed()));
 		} else {
 			$days = implode(', ', $er->recurringDaysOfMonth());
 		}
@@ -525,7 +548,7 @@ class IMipService {
 	 * @return string
 	 */
 	public function generateWhenStringRecurringYearly(EventReader $er): string {
-		
+
 		// initialize
 		$interval = (int)$er->recurringInterval();
 		$startTime = null;
@@ -534,8 +557,8 @@ class IMipService {
 		$months = implode(', ', array_map(function ($value) { return $this->localizeMonthName($value); }, $er->recurringMonthsOfYearNamed()));
 		// days of month
 		if ($er->recurringPattern() === 'R') {
-			$days = implode(', ', array_map(function ($value) { return $this->localizeRelativePositionName($value); }, $er->recurringRelativePositionNamed())) . ' ' .
-					implode(', ', array_map(function ($value) { return $this->localizeDayName($value); }, $er->recurringDaysOfWeekNamed()));
+			$days = implode(', ', array_map(function ($value) { return $this->localizeRelativePositionName($value); }, $er->recurringRelativePositionNamed())) . ' '
+				. implode(', ', array_map(function ($value) { return $this->localizeDayName($value); }, $er->recurringDaysOfWeekNamed()));
 		} else {
 			$days = $er->startDateTime()->format('jS');
 		}
@@ -614,7 +637,7 @@ class IMipService {
 			true => $this->l10n->t('On specific dates between %1$s - %2$s until %3$s', [$startTime, $endTime, $conclusion]),
 		};
 	}
-	
+
 	/**
 	 * generates a occurring next string for a recurring event
 	 *
@@ -625,7 +648,6 @@ class IMipService {
 	 * @return string
 	 */
 	public function generateOccurringString(EventReader $er): string {
-
 		// initialize
 		$occurrence = null;
 		$occurrence2 = null;
@@ -656,9 +678,9 @@ class IMipService {
 		// TRANSLATORS
 		// Indicates when a calendar event will happen, shown on invitation emails
 		// Output produced in order:
-		// In a minute/hour/day/week/month/year on July 1, 2024
-		// In a minute/hour/day/week/month/year on July 1, 2024 then on July 3, 2024
-		// In a minute/hour/day/week/month/year on July 1, 2024 then on July 3, 2024 and July 5, 2024
+		// In 1 minute/hour/day/week/month/year on July 1, 2024
+		// In 1 minute/hour/day/week/month/year on July 1, 2024 then on July 3, 2024
+		// In 1 minute/hour/day/week/month/year on July 1, 2024 then on July 3, 2024 and July 5, 2024
 		// In 2 minutes/hours/days/weeks/months/years on July 1, 2024
 		// In 2 minutes/hours/days/weeks/months/years on July 1, 2024 then on July 3, 2024
 		// In 2 minutes/hours/days/weeks/months/years on July 1, 2024 then on July 3, 2024 and July 5, 2024
@@ -668,37 +690,37 @@ class IMipService {
 				[$occurrence]
 			),
 			['minute', false, false] => $this->l10n->n(
-				'In a minute on %1$s',
+				'In %n minute on %1$s',
 				'In %n minutes on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
 			),
 			['hour', false, false] => $this->l10n->n(
-				'In a hour on %1$s',
+				'In %n hour on %1$s',
 				'In %n hours on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
 			),
 			['day', false, false] => $this->l10n->n(
-				'In a day on %1$s',
+				'In %n day on %1$s',
 				'In %n days on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
 			),
 			['week', false, false] => $this->l10n->n(
-				'In a week on %1$s',
+				'In %n week on %1$s',
 				'In %n weeks on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
 			),
 			['month', false, false] => $this->l10n->n(
-				'In a month on %1$s',
+				'In %n month on %1$s',
 				'In %n months on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
 			),
 			['year', false, false] => $this->l10n->n(
-				'In a year on %1$s',
+				'In %n year on %1$s',
 				'In %n years on %1$s',
 				$occurrenceIn['interval'],
 				[$occurrence]
@@ -708,37 +730,37 @@ class IMipService {
 				[$occurrence, $occurrence2]
 			),
 			['minute', true, false] => $this->l10n->n(
-				'In a minute on %1$s then on %2$s',
+				'In %n minute on %1$s then on %2$s',
 				'In %n minutes on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
 			),
 			['hour', true, false] => $this->l10n->n(
-				'In a hour on %1$s then on %2$s',
+				'In %n hour on %1$s then on %2$s',
 				'In %n hours on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
 			),
 			['day', true, false] => $this->l10n->n(
-				'In a day on %1$s then on %2$s',
+				'In %n day on %1$s then on %2$s',
 				'In %n days on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
 			),
 			['week', true, false] => $this->l10n->n(
-				'In a week on %1$s then on %2$s',
+				'In %n week on %1$s then on %2$s',
 				'In %n weeks on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
 			),
 			['month', true, false] => $this->l10n->n(
-				'In a month on %1$s then on %2$s',
+				'In %n month on %1$s then on %2$s',
 				'In %n months on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
 			),
 			['year', true, false] => $this->l10n->n(
-				'In a year on %1$s then on %2$s',
+				'In %n year on %1$s then on %2$s',
 				'In %n years on %1$s then on %2$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2]
@@ -748,37 +770,37 @@ class IMipService {
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['minute', true, true] => $this->l10n->n(
-				'In a minute on %1$s then on %2$s and %3$s',
+				'In %n minute on %1$s then on %2$s and %3$s',
 				'In %n minutes on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['hour', true, true] => $this->l10n->n(
-				'In a hour on %1$s then on %2$s and %3$s',
+				'In %n hour on %1$s then on %2$s and %3$s',
 				'In %n hours on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['day', true, true] => $this->l10n->n(
-				'In a day on %1$s then on %2$s and %3$s',
+				'In %n day on %1$s then on %2$s and %3$s',
 				'In %n days on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['week', true, true] => $this->l10n->n(
-				'In a week on %1$s then on %2$s and %3$s',
+				'In %n week on %1$s then on %2$s and %3$s',
 				'In %n weeks on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['month', true, true] => $this->l10n->n(
-				'In a month on %1$s then on %2$s and %3$s',
+				'In %n month on %1$s then on %2$s and %3$s',
 				'In %n months on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
 			),
 			['year', true, true] => $this->l10n->n(
-				'In a year on %1$s then on %2$s and %3$s',
+				'In %n year on %1$s then on %2$s and %3$s',
 				'In %n years on %1$s then on %2$s and %3$s',
 				$occurrenceIn['interval'],
 				[$occurrence, $occurrence2, $occurrence3]
@@ -796,26 +818,26 @@ class IMipService {
 		// construct event reader
 		$eventReaderCurrent = new EventReader($vEvent);
 		$defaultVal = '';
-		$strikethrough = "<span style='text-decoration: line-through'>%s</span>";
 
 		$newMeetingWhen = $this->generateWhenString($eventReaderCurrent);
-		$newSummary = htmlspecialchars(isset($vEvent->SUMMARY) && (string)$vEvent->SUMMARY !== '' ? (string)$vEvent->SUMMARY : $this->l10n->t('Untitled event'));
-		$newDescription = htmlspecialchars(isset($vEvent->DESCRIPTION) && (string)$vEvent->DESCRIPTION !== '' ? (string)$vEvent->DESCRIPTION : $defaultVal);
-		$newUrl = isset($vEvent->URL) && (string)$vEvent->URL !== '' ? sprintf('<a href="%1$s">%1$s</a>', $vEvent->URL) : $defaultVal;
-		$newLocation = htmlspecialchars(isset($vEvent->LOCATION) && (string)$vEvent->LOCATION !== '' ? (string)$vEvent->LOCATION : $defaultVal);
-		$newLocationHtml = $this->linkify($newLocation) ?? $newLocation;
+		$newSummary = isset($vEvent->SUMMARY) && (string)$vEvent->SUMMARY !== '' ? (string)$vEvent->SUMMARY : $this->l10n->t('Untitled event');
+		$newDescription = isset($vEvent->DESCRIPTION) && (string)$vEvent->DESCRIPTION !== '' ? (string)$vEvent->DESCRIPTION : $defaultVal;
+		$newUrl = isset($vEvent->URL) && (string)$vEvent->URL !== '' ? $this->linkify((string)$vEvent->URL) : $defaultVal;
+		$newLocation = isset($vEvent->LOCATION) && (string)$vEvent->LOCATION !== '' ? (string)$vEvent->LOCATION : $defaultVal;
+		$newLocationHtml = $this->linkify($newLocation);
 
 		$data = [];
-		$data['meeting_when_html'] = $newMeetingWhen === '' ?: sprintf($strikethrough, $newMeetingWhen);
+		$data['meeting_when_html'] = $this->getStrikethroughString(htmlspecialchars($newMeetingWhen));
 		$data['meeting_when'] = $newMeetingWhen;
-		$data['meeting_title_html'] = sprintf($strikethrough, $newSummary);
+		$data['meeting_title_html'] = $this->getStrikethroughString(htmlspecialchars($newSummary));
 		$data['meeting_title'] = $newSummary !== '' ? $newSummary: $this->l10n->t('Untitled event');
-		$data['meeting_description_html'] = $newDescription !== '' ? sprintf($strikethrough, $newDescription) : '';
+		$data['meeting_description_html'] = $this->getStrikethroughString(htmlspecialchars($newDescription));
 		$data['meeting_description'] = $newDescription;
-		$data['meeting_url_html'] = $newUrl !== '' ? sprintf($strikethrough, $newUrl) : '';
+		$data['meeting_url_html'] = $this->getStrikethroughString($newUrl);
 		$data['meeting_url'] = isset($vEvent->URL) ? (string)$vEvent->URL : '';
-		$data['meeting_location_html'] = $newLocationHtml !== '' ? sprintf($strikethrough, $newLocationHtml) : '';
+		$data['meeting_location_html'] = $this->getStrikethroughString($newLocationHtml ?? htmlspecialchars($newLocation));
 		$data['meeting_location'] = $newLocation;
+
 		return $data;
 	}
 
@@ -1139,8 +1161,8 @@ class IMipService {
 		$attendee = $iTipMessage->recipient;
 		$organizer = $iTipMessage->sender;
 		$sequence = $iTipMessage->sequence;
-		$recurrenceId = isset($vevent->{'RECURRENCE-ID'}) ?
-			$vevent->{'RECURRENCE-ID'}->serialize() : null;
+		$recurrenceId = isset($vevent->{'RECURRENCE-ID'})
+			? $vevent->{'RECURRENCE-ID'}->serialize() : null;
 		$uid = $vevent->{'UID'}?->getValue();
 
 		$query = $this->db->getQueryBuilder();

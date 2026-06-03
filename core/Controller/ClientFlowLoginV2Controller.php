@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OC\Core\Controller;
 
 use OC\Core\Db\LoginFlowV2;
+use OC\Core\Exception\LoginFlowV2ClientForbiddenException;
 use OC\Core\Exception\LoginFlowV2NotFoundException;
 use OC\Core\ResponseDefinitions;
 use OC\Core\Service\LoginFlowV2Service;
@@ -34,6 +35,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 
 /**
  * @psalm-import-type CoreLoginFlowV2Credentials from ResponseDefinitions
@@ -110,6 +112,8 @@ class ClientFlowLoginV2Controller extends Controller {
 			$flow = $this->getFlowByLoginToken();
 		} catch (LoginFlowV2NotFoundException $e) {
 			return $this->loginTokenForbiddenResponse();
+		} catch (LoginFlowV2ClientForbiddenException $e) {
+			return $this->loginTokenForbiddenClientResponse();
 		}
 
 		$stateToken = $this->random->generate(
@@ -153,6 +157,8 @@ class ClientFlowLoginV2Controller extends Controller {
 			$flow = $this->getFlowByLoginToken();
 		} catch (LoginFlowV2NotFoundException $e) {
 			return $this->loginTokenForbiddenResponse();
+		} catch (LoginFlowV2ClientForbiddenException $e) {
+			return $this->loginTokenForbiddenClientResponse();
 		}
 
 		/** @var IUser $user */
@@ -189,6 +195,8 @@ class ClientFlowLoginV2Controller extends Controller {
 			$this->getFlowByLoginToken();
 		} catch (LoginFlowV2NotFoundException $e) {
 			return $this->loginTokenForbiddenResponse();
+		} catch (LoginFlowV2ClientForbiddenException $e) {
+			return $this->loginTokenForbiddenClientResponse();
 		}
 
 		$loginToken = $this->session->get(self::TOKEN_NAME);
@@ -198,7 +206,7 @@ class ClientFlowLoginV2Controller extends Controller {
 		$this->session->remove(self::STATE_NAME);
 
 		try {
-			$token = \OC::$server->get(\OC\Authentication\Token\IProvider::class)->getToken($password);
+			$token = Server::get(\OC\Authentication\Token\IProvider::class)->getToken($password);
 			if ($token->getLoginName() !== $user) {
 				throw new InvalidTokenException('login name does not match');
 			}
@@ -235,6 +243,8 @@ class ClientFlowLoginV2Controller extends Controller {
 			$this->getFlowByLoginToken();
 		} catch (LoginFlowV2NotFoundException $e) {
 			return $this->loginTokenForbiddenResponse();
+		} catch (LoginFlowV2ClientForbiddenException $e) {
+			return $this->loginTokenForbiddenClientResponse();
 		}
 
 		$loginToken = $this->session->get(self::TOKEN_NAME);
@@ -283,7 +293,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	#[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
 	public function init(): JSONResponse {
 		// Get client user agent
-		$userAgent = $this->request->getHeader('USER_AGENT');
+		$userAgent = $this->request->getHeader('user-agent');
 
 		$tokens = $this->loginFlowV2Service->createTokens($userAgent);
 
@@ -335,6 +345,7 @@ class ClientFlowLoginV2Controller extends Controller {
 	/**
 	 * @return LoginFlowV2
 	 * @throws LoginFlowV2NotFoundException
+	 * @throws LoginFlowV2ClientForbiddenException
 	 */
 	private function getFlowByLoginToken(): LoginFlowV2 {
 		$currentToken = $this->session->get(self::TOKEN_NAME);
@@ -351,6 +362,19 @@ class ClientFlowLoginV2Controller extends Controller {
 			'403',
 			[
 				'message' => $this->l10n->t('Your login token is invalid or has expired'),
+			],
+			'guest'
+		);
+		$response->setStatus(Http::STATUS_FORBIDDEN);
+		return $response;
+	}
+
+	private function loginTokenForbiddenClientResponse(): StandaloneTemplateResponse {
+		$response = new StandaloneTemplateResponse(
+			$this->appName,
+			'403',
+			[
+				'message' => $this->l10n->t('Please use original client'),
 			],
 			'guest'
 		);

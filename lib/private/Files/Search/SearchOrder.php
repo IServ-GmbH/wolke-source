@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -57,6 +58,8 @@ class SearchOrder implements ISearchOrder {
 				return $a->getId() <=> $b->getId();
 			case 'permissions':
 				return $a->getPermissions() <=> $b->getPermissions();
+			case 'last_activity':
+				return $a->getLastActivity() <=> $b->getLastActivity();
 			default:
 				return 0;
 		}

@@ -22,6 +22,7 @@ use OCP\Files\FileInfo;
 use OCP\Files\GenericFileException;
 use OCP\Files\NotFoundException;
 use OCP\Files\ObjectStore\IObjectStore;
+use OCP\Files\ObjectStore\IObjectStoreMetaData;
 use OCP\Files\ObjectStore\IObjectStoreMultiPartUpload;
 use OCP\Files\Storage\IChunkedFileWrite;
 use OCP\Files\Storage\IStorage;
@@ -35,8 +36,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 	private string $objectPrefix = 'urn:oid:';
 
 	private LoggerInterface $logger;
-
-	private bool $handleCopiesAsOwned;
 	protected bool $validateWrites = true;
 	private bool $preserveCacheItemsOnDelete = false;
 
@@ -61,7 +60,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		if (isset($parameters['validateWrites'])) {
 			$this->validateWrites = (bool)$parameters['validateWrites'];
 		}
-		$this->handleCopiesAsOwned = (bool)($parameters['handleCopiesAsOwned'] ?? false);
 
 		$this->logger = \OCP\Server::get(LoggerInterface::class);
 	}
@@ -117,7 +115,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		$path = str_replace('//', '/', $path);
 
 		// dirname('/folder') returns '.' but internally (in the cache) we store the root as ''
-		if (!$path || $path === '.') {
+		if ($path === '.') {
 			$path = '';
 		}
 
@@ -412,16 +410,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 				//create a empty file, need to have at least on char to make it
 				// work with all object storage implementations
 				$this->file_put_contents($path, ' ');
-				$mimeType = \OC::$server->getMimeTypeDetector()->detectPath($path);
-				$stat = [
-					'etag' => $this->getETag($path),
-					'mimetype' => $mimeType,
-					'size' => 0,
-					'mtime' => $mtime,
-					'storage_mtime' => $mtime,
-					'permissions' => \OCP\Constants::PERMISSION_ALL - \OCP\Constants::PERMISSION_CREATE,
-				];
-				$this->getCache()->put($path, $stat);
 			} catch (\Exception $ex) {
 				$this->logger->error(
 					'Could not create object for ' . $path,
@@ -481,6 +469,8 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		$mimetype = $mimetypeDetector->detectPath($path);
 		$metadata = [
 			'mimetype' => $mimetype,
+			'original-storage' => $this->getId(),
+			'original-path' => $path,
 		];
 		if ($size) {
 			$metadata['size'] = $size;
@@ -602,8 +592,8 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 	public function moveFromStorage(IStorage $sourceStorage, string $sourceInternalPath, string $targetInternalPath, ?ICacheEntry $sourceCacheEntry = null): bool {
 		$sourceCache = $sourceStorage->getCache();
 		if (
-			$sourceStorage->instanceOfStorage(ObjectStoreStorage::class) &&
-			$sourceStorage->getObjectStore()->getStorageId() === $this->getObjectStore()->getStorageId()
+			$sourceStorage->instanceOfStorage(ObjectStoreStorage::class)
+			&& $sourceStorage->getObjectStore()->getStorageId() === $this->getObjectStore()->getStorageId()
 		) {
 			if ($this->getCache()->get($targetInternalPath)) {
 				$this->unlink($targetInternalPath);
@@ -729,10 +719,6 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 
 		try {
 			$this->objectStore->copyObject($sourceUrn, $targetUrn);
-			if ($this->handleCopiesAsOwned) {
-				// Copied the file thus we gain all permissions as we are the owner now ! warning while this aligns with local storage it should not be used and instead fix local storage !
-				$cache->update($targetId, ['permissions' => \OCP\Constants::PERMISSION_ALL]);
-			}
 		} catch (\Exception $e) {
 			$cache->remove($to);
 

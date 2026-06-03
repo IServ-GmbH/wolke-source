@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Windmill Workflows &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/windmill_workflows/index.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -29,7 +30,7 @@
     <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Database configuration" href="../configuration_database/index.html" />
+    <link rel="next" title="File sharing and management" href="../configuration_files/index.html" />
     <link rel="prev" title="Webhook Listeners" href="../webhook_listeners/index.html" /> 
 </head>
 
@@ -57,22 +58,27 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Windmill Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
@@ -94,12 +100,50 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -161,6 +205,15 @@ If the wrong workspace is selected on the first run, it is always possible to sw
 <p>During the initial installation, the ExApp Flow will create a <strong>Nextcloud Authentication Resource</strong> for AppAPI.</p>
 <p>This resource includes a <strong>baseUrl</strong> field, which specifies the URL that Windmill scripts/apps use to reach the Nextcloud instance. In most cases, this URL will be configured correctly. However, certain configurations and network topologies may result in an incorrect URL, which you will need to adjust manually.</p>
 <p>To set the correct URL, navigate to the Windmill interface, go to the <strong>Resources</strong> tab, locate the resource labeled <code class="docutils literal notranslate"><span class="pre">u/admin/exapp_resource</span></code>, click the three dots on the right, and select the “Edit” button.</p>
+<p>Next, navigate to <strong>Settings-&gt;Instance-&gt;Core</strong> in Windmill and check if the <strong>Base url</strong> for the Windmill instance is correct.</p>
+<p>If you are using DockerSocketProxy, the Base URL should be:</p>
+<blockquote>
+<div><p><cite>https://&lt;your-nextcloud-base-url&gt;/index.php/apps/app_api/proxy/flow</cite></p>
+</div></blockquote>
+<p>If you are using HaRP (as introduced in Nextcloud 32), the Base URL should be:</p>
+<blockquote>
+<div><p><cite>https://&lt;your-nextcloud-base-url&gt;/exapps/flow</cite></p>
+</div></blockquote>
 </section>
 <section id="building-a-workflow">
 <h2>Building a workflow<a class="headerlink" href="#building-a-workflow" title="Link to this heading"></a></h2>
@@ -168,14 +221,15 @@ If the wrong workspace is selected on the first run, it is always possible to sw
 If you are using the ExApp-packaged Windmill, it will automatically register webhooks for the workflows you build using the following mechanism.
 If you are not using the ExApp-packaged windmill install then you will have to register
 webhooks for your workflows manually via the webhook_listeners API:
-see <a class="reference external" href="https://docs.nextcloud.com/server/31/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/31/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
+see <a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
 <section id="the-magic-listener-script">
 <h3>The magic listener script<a class="headerlink" href="#the-magic-listener-script" title="Link to this heading"></a></h3>
-<p>The first script (after the “Input” block) in any workflow you build that should listen to a Nextcloud webhook must be <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code>. It must be an empty script with two parameters that you should fill statically: <code class="docutils literal notranslate"><span class="pre">events</span></code>, which is a list of event IDs to listen to and <code class="docutils literal notranslate"><span class="pre">filters</span></code> a filter condition that allows more fine grained filtering for which events should be used. The filter condition as well as the available events with their payloads is documented in <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">the webhook_listeners documentation</span></a>.</p>
+<p>The first script (after the “Input” block) in any workflow you build that should listen to a Nextcloud webhook must have “Summary” set to the exact, literal string <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code>. It must be an empty script with two parameters that you should fill statically: <code class="docutils literal notranslate"><span class="pre">events</span></code>, which is a list of event IDs to listen to and <code class="docutils literal notranslate"><span class="pre">filters</span></code> a filter condition that allows more fine grained filtering for which events should be used. The filter condition as well as the available events with their payloads is documented in <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">the webhook_listeners documentation</span></a>.</p>
 <p>You can copy the following Deno script for this:</p>
 <div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">(</span><span class="nx">events</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[],</span><span class="w"> </span><span class="nx">filters</span><span class="o">:</span><span class="w"> </span><span class="kt">object</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
 </pre></div>
 </div>
+<p>The webhook data will be made available on the flow “Input” block, <strong>not</strong> the <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code> block. Updates to the webhook configuration take effect only when the flow is deployed. Consider disabling any schedule for the flow, since it will be started when a webhook is received.</p>
 </section>
 </section>
 <section id="nextcloud-scripts">
@@ -188,7 +242,7 @@ you can run a flow named “Synchronize Hub Resource types with instance” in t
 <p>You can create your own Nextcloud-related scripts by taking one of the existing ones as example.
 In a script, when sending a request to Nextcloud, make sure that the <code class="docutils literal notranslate"><span class="pre">EX-APP-ID</span></code> header is set to <code class="docutils literal notranslate"><span class="pre">flow</span></code>.
 Your custom scripts can make requests to any endpoint of the
-<a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
+<a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
 <p>All the scripts we provide have a set of common input parameters:</p>
 <ul class="simple">
 <li><p>nextcloudResource: This should be set to the path of the Windmill resource that was automatically created and contains what is necessary to authenticate against Nextcloud with the AppAPI authentication method. For example “u/wapp_user/appapi_nextcloud”. You can find this path by looking at the resource list in Windmill.</p></li>
@@ -235,7 +289,7 @@ which allows creating a beautiful temporary approval page with a custom message 
 <p>If the Windmill Hub does not contain any script to perform the action you have in mind,
 you can take an existing Nextcloud script as example and create your own.
 Your custom scripts can make requests to any endpoint of the
-<a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
+<a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
 </section>
 </section>
 </section>
@@ -245,13 +299,13 @@ Your custom scripts can make requests to any endpoint of the
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../webhook_listeners/index.html" class="btn btn-neutral float-left" title="Webhook Listeners" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../configuration_database/index.html" class="btn btn-neutral float-right" title="Database configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../configuration_files/index.html" class="btn btn-neutral float-right" title="File sharing and management" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -291,26 +345,18 @@ Your custom scripts can make requests to any endpoint of the
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

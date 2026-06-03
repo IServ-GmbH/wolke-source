@@ -39,12 +39,15 @@ OC.L10N.register(
     "Send email reminders about unhandled notifications after:" : "Wysyłaj przypomnienia e-mail o nieobsłużonych powiadomieniach po:",
     "Play sound when a new notification arrives" : "Odtwórz dźwięk, gdy nadejdzie nowe powiadomienie",
     "Play sound when a call started (requires Nextcloud Talk)" : "Odtwórz dźwięk po rozpoczęciu połączenia (wymaga Nextcloud Talk)",
+    "Web push settings" : "Ustawienia Web Push",
+    "Web push is a push notification system that lets web applications send notifications to users´ mobile apps or browser, even when the app is not open in a tab." : "Web Push to system powiadomień push, który pozwala aplikacjom webowym wysyłać powiadomienia do aplikacji mobilnych użytkowników lub przeglądarki, nawet gdy aplikacja nie jest otwarta w karcie.",
+    "Web push notifications are encrypted but routed through services provided by Mozilla, Microsoft, Apple, Google or user-choosen ones in case of mobile apps. While the content is protected, metadata such as timing and frequency of notifications may be exposed to these providers." : "Powiadomienia Web Push są szyfrowane, ale przekazywane przez usługi dostarczane przez Mozilla, Microsoft, Apple, Google lub wybrane przez użytkownika w przypadku aplikacji mobilnych. Chociaż treść jest chroniona, metadane takie jak czas i częstotliwość powiadomień mogą być ujawniane tym dostawcom.",
+    "Allow web push to be used" : "Zezwalaj na używanie Web Push",
+    "Allow web push for browsers" : "Zezwalaj na Web Push w przeglądarkach",
     "None" : "Brak",
     "You need to set up your email address before you can receive notification emails." : "Aby otrzymywać powiadomienia e-mail, musisz skonfigurować swój adres e-mail.",
     "Also repeat sound on a secondary speaker" : "Powtarzaj dźwięk także na drugim głośniku",
     "Selection of the speaker device is currently not supported by Safari" : "Wybór urządzenia głośnikowego nie jest obecnie obsługiwany przez przeglądarkę Safari",
-    "Select a device" : "Wybierz urządzenie",
-    "seconds ago" : "przed chwilą",
-    "Configure the default notification settings for new users" : "Skonfiguruj domyślne ustawienia powiadomień dla nowych użytkowników"
+    "Select a device" : "Wybierz urządzenie"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

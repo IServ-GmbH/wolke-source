@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
 class RobustStandardizerTest extends TestCase
 {
     /**
-     * @var \Rubix\ML\Datasets\Generators\Blob
+     * @var Blob
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\Transformers\RobustStandardizer
+     * @var RobustStandardizer
      */
     protected $transformer;
 
@@ -86,7 +86,7 @@ class RobustStandardizerTest extends TestCase
 
         $dataset->reverseApply($this->transformer);
 
-        $this->assertEquals($original, $dataset->sample(0));
+        $this->assertEqualsWithDelta($original, $dataset->sample(0), 1e-8);
     }
 
     /**

@@ -21,10 +21,12 @@ class SwitchUpdaterServer implements IRepairStep {
 	) {
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return 'Switches from default updater server to the customer one if a valid subscription is available';
 	}
 
+	#[\Override]
 	public function run(IOutput $output): void {
 		if ($this->config->getAppValue('support', 'SwitchUpdaterServerHasRun') === 'yes') {
 			$output->info('Repair step already executed');

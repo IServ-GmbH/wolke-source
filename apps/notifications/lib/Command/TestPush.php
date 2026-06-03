@@ -30,6 +30,7 @@ class TestPush extends Command {
 		parent::__construct();
 	}
 
+	#[\Override]
 	protected function configure(): void {
 		$this
 			->setName('notification:test-push')
@@ -54,11 +55,7 @@ class TestPush extends Command {
 		;
 	}
 
-	/**
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int
-	 */
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		if (!$this->notificationManager->isFairUseOfFreePushService()) {
 			$output->writeln('<error>We want to keep offering our push notification service for free, but large</error>');
@@ -109,7 +106,7 @@ class TestPush extends Command {
 				->setObject('admin_notifications', dechex($datetime->getTimestamp()))
 				->setSubject('cli', ['Testing push notifications']);
 
-			$this->app->setOutput($output);
+			$this->app->setOutput($output, false);
 			$this->notificationManager->notify($notification);
 		} catch (\InvalidArgumentException) {
 			$output->writeln('Error while sending the notification');

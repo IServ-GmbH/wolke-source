@@ -15,7 +15,7 @@ use OCP\Files\Config\ICachedMountInfo;
 /**
  * Event emitted when a user mount was added.
  *
- * @since 30.0.12
+ * @since 32.0.0
  */
 class UserMountAddedEvent extends Event {
 	public function __construct(

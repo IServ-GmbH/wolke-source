@@ -41,13 +41,13 @@ class ITree implements BinaryTree
     /**
      * The root node of the tree.
      *
-     * @var \Rubix\ML\Graph\Nodes\Isolator|null
+     * @var Isolator|null
      */
-    protected ?\Rubix\ML\Graph\Nodes\Isolator $root = null;
+    protected ?Isolator $root = null;
 
     /**
      * @param int $maxHeight
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $maxHeight = PHP_INT_MAX)
     {
@@ -95,7 +95,7 @@ class ITree implements BinaryTree
      * Insert a root node and recursively split the dataset until a
      * terminating condition is met.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      */
     public function grow(Dataset $dataset) : void
     {
@@ -155,7 +155,7 @@ class ITree implements BinaryTree
      * Search the tree for a leaf node.
      *
      * @param list<string|int|float> $sample
-     * @return \Rubix\ML\Graph\Nodes\Depth|null
+     * @return Depth|null
      */
     public function search(array $sample) : ?Depth
     {

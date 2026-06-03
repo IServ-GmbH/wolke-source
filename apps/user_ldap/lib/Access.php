@@ -19,7 +19,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IAppConfig;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IUserManager;
+use OCP\Server;
 use OCP\User\Events\UserIdAssignedEvent;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
@@ -339,8 +341,8 @@ class Access extends LDAPUtility {
 		$cr = $this->connection->getConnectionResource();
 		try {
 			// try PASSWD extended operation first
-			return @$this->invokeLDAPMethod('exopPasswd', $userDN, '', $password) ||
-				@$this->invokeLDAPMethod('modReplace', $userDN, $password);
+			return @$this->invokeLDAPMethod('exopPasswd', $userDN, '', $password)
+				|| @$this->invokeLDAPMethod('modReplace', $userDN, $password);
 		} catch (ConstraintViolationException $e) {
 			throw new HintException('Password change rejected.', Util::getL10N('user_ldap')->t('Password change rejected. Hint: %s', $e->getMessage()), (int)$e->getCode());
 		}
@@ -594,7 +596,7 @@ class Access extends LDAPUtility {
 		$this->connection->setConfiguration(['ldapCacheTTL' => 0]);
 		if ($intName !== ''
 			&& (($isUser && !$this->ncUserManager->userExists($intName))
-				|| (!$isUser && !\OC::$server->getGroupManager()->groupExists($intName))
+				|| (!$isUser && !Server::get(IGroupManager::class)->groupExists($intName))
 			)
 		) {
 			$this->connection->setConfiguration(['ldapCacheTTL' => $originalTTL]);
@@ -704,7 +706,7 @@ class Access extends LDAPUtility {
 						continue;
 					}
 					$sndName = $ldapObject[$sndAttribute][0] ?? '';
-					$this->cacheUserDisplayName($ncName, $nameByLDAP, $sndName);
+					$this->applyUserDisplayName($ncName, $nameByLDAP, $sndName);
 				} elseif ($nameByLDAP !== null) {
 					$this->cacheGroupDisplayName($ncName, $nameByLDAP);
 				}
@@ -752,20 +754,16 @@ class Access extends LDAPUtility {
 		$this->connection->writeToCache('groupExists' . $gid, true);
 	}
 
-	/**
-	 * caches the user display name
-	 *
-	 * @param string $ocName the internal Nextcloud username
-	 * @param string $displayName the display name
-	 * @param string $displayName2 the second display name
-	 * @throws \Exception
-	 */
-	public function cacheUserDisplayName(string $ocName, string $displayName, string $displayName2 = ''): void {
-		$user = $this->userManager->get($ocName);
+	public function applyUserDisplayName(string $uid, string $displayName, string $displayName2 = ''): void {
+		$user = $this->userManager->get($uid);
 		if ($user === null) {
 			return;
 		}
-		$displayName = $user->composeAndStoreDisplayName($displayName, $displayName2);
+		$composedDisplayName = $user->composeAndStoreDisplayName($displayName, $displayName2);
+		$this->cacheUserDisplayName($uid, $composedDisplayName);
+	}
+
+	public function cacheUserDisplayName(string $ocName, string $displayName): void {
 		$cacheKeyTrunk = 'getDisplayName';
 		$this->connection->writeToCache($cacheKeyTrunk . $ocName, $displayName);
 	}
@@ -828,7 +826,7 @@ class Access extends LDAPUtility {
 			// Check to be really sure it is unique
 			// while loop is just a precaution. If a name is not generated within
 			// 20 attempts, something else is very wrong. Avoids infinite loop.
-			if (!\OC::$server->getGroupManager()->groupExists($altName)) {
+			if (!Server::get(IGroupManager::class)->groupExists($altName)) {
 				return $altName;
 			}
 			$altName = $name . '_' . ($lastNo + $attempts);
@@ -1570,7 +1568,7 @@ class Access extends LDAPUtility {
 	 * a *
 	 */
 	private function prepareSearchTerm(string $term): string {
-		$config = \OC::$server->getConfig();
+		$config = Server::get(IConfig::class);
 
 		$allowEnum = $config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'yes');
 
@@ -1809,8 +1807,8 @@ class Access extends LDAPUtility {
 			 * user. Instead we write a log message.
 			 */
 			$this->logger->info(
-				'Passed string does not resemble a valid GUID. Known UUID ' .
-				'({uuid}) probably does not match UUID configuration.',
+				'Passed string does not resemble a valid GUID. Known UUID '
+				. '({uuid}) probably does not match UUID configuration.',
 				['app' => 'user_ldap', 'uuid' => $guid]
 			);
 			return $guid;

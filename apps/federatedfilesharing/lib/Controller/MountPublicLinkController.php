@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -17,7 +18,6 @@ use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\Constants;
 use OCP\Federation\ICloudIdManager;
 use OCP\HintException;
 use OCP\Http\Client\IClientService;
@@ -107,9 +107,9 @@ class MountPublicLinkController extends Controller {
 			return $response;
 		}
 
-		if (($share->getPermissions() & Constants::PERMISSION_READ) === 0) {
+		if (!$share->canDownload()) {
 			$response = new JSONResponse(
-				['message' => 'Mounting file drop not supported'],
+				['message' => 'Mounting download restricted share is not allowed'],
 				Http::STATUS_BAD_REQUEST
 			);
 			$response->throttle();
@@ -157,12 +157,11 @@ class MountPublicLinkController extends Controller {
 		try {
 			$response = $httpClient->post($remote . '/index.php/apps/federatedfilesharing/createFederatedShare',
 				[
-					'body' =>
-						[
-							'token' => $token,
-							'shareWith' => rtrim($cloudId->getId(), '/'),
-							'password' => $password
-						],
+					'body' => [
+						'token' => $token,
+						'shareWith' => rtrim($cloudId->getId(), '/'),
+						'password' => $password
+					],
 					'connect_timeout' => 10,
 				]
 			);

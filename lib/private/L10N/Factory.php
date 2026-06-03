@@ -105,9 +105,7 @@ class Factory implements IFactory {
 				$locale = $forceLocale;
 			}
 
-			if ($lang === null || !$this->languageExists($app, $lang)) {
-				$lang = $this->findLanguage($app);
-			}
+			$lang = $this->validateLanguage($app, $lang);
 
 			if ($locale === null || !$this->localeExists($locale)) {
 				$locale = $this->findLocale($lang);
@@ -146,8 +144,31 @@ class Factory implements IFactory {
 		if ($lang === null) {
 			return null;
 		}
-		$lang = preg_replace('/[^a-zA-Z0-9.;,=-]/', '', $lang);
+		$lang = preg_replace('/[^a-zA-Z0-9.;,=_-]/', '', $lang);
 		return str_replace('..', '', $lang);
+	}
+
+	/**
+	 * Check that $lang is an existing language and not null, otherwise return the language to use instead
+	 *
+	 * @psalm-taint-escape callable
+	 * @psalm-taint-escape cookie
+	 * @psalm-taint-escape file
+	 * @psalm-taint-escape has_quotes
+	 * @psalm-taint-escape header
+	 * @psalm-taint-escape html
+	 * @psalm-taint-escape include
+	 * @psalm-taint-escape ldap
+	 * @psalm-taint-escape shell
+	 * @psalm-taint-escape sql
+	 * @psalm-taint-escape unserialize
+	 */
+	private function validateLanguage(string $app, ?string $lang): string {
+		if ($lang === null || !$this->languageExists($app, $lang)) {
+			return $this->findLanguage($app);
+		} else {
+			return $lang;
+		}
 	}
 
 	/**
@@ -417,8 +438,8 @@ class Factory implements IFactory {
 			}
 
 			// Use language from request
-			if ($this->userSession->getUser() instanceof IUser &&
-				$user->getUID() === $this->userSession->getUser()->getUID()) {
+			if ($this->userSession->getUser() instanceof IUser
+				&& $user->getUID() === $this->userSession->getUser()->getUID()) {
 				try {
 					return $this->getLanguageFromRequest();
 				} catch (LanguageNotFoundException $e) {
@@ -497,10 +518,10 @@ class Factory implements IFactory {
 		// use formal version of german ("Sie" instead of "Du") if the default
 		// language is set to 'de_DE' if possible
 		if (
-			is_string($defaultLanguage) &&
-			strtolower($lang) === 'de' &&
-			strtolower($defaultLanguage) === 'de_de' &&
-			$this->languageExists($app, 'de_DE')
+			is_string($defaultLanguage)
+			&& strtolower($lang) === 'de'
+			&& strtolower($defaultLanguage) === 'de_de'
+			&& $this->languageExists($app, 'de_DE')
 		) {
 			$result = 'de_DE';
 		}

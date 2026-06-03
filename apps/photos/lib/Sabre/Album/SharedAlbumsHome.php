@@ -25,8 +25,8 @@ class SharedAlbumsHome extends AlbumsHome {
 		AlbumMapper $albumMapper,
 		string $userId,
 		IRootFolder $rootFolder,
-		private IUserManager $userManager,
-		private IGroupManager $groupManager,
+		IUserManager $userManager,
+		private readonly IGroupManager $groupManager,
 		UserConfigService $userConfigService,
 		LoggerInterface $logger,
 	) {
@@ -37,18 +37,19 @@ class SharedAlbumsHome extends AlbumsHome {
 			$rootFolder,
 			$userConfigService,
 			$logger,
+			$userManager,
 		);
 	}
 
 	/**
 	 * @return never
 	 */
-	public function createDirectory($name) {
-		throw new Forbidden('Not allowed to create folders in this folder');
+	public function createDirectory($name): never {
+		throw new Forbidden('Not allowed to create folders in shared albums home');
 	}
 
 	/**
-	 * @return SharedAlbumRoot[]
+	 * @return AlbumRootBase[]
 	 */
 	public function getChildren(): array {
 		if ($this->children === null) {
@@ -58,21 +59,19 @@ class SharedAlbumsHome extends AlbumsHome {
 			$userGroups = $this->groupManager->getUserGroupIds($user);
 			foreach ($userGroups as $groupId) {
 				$albumsForGroup = $this->albumMapper->getSharedAlbumsForCollaboratorWithFiles($groupId, AlbumMapper::TYPE_GROUP);
-				$albumsForGroup = array_udiff($albumsForGroup, $albums, fn ($a, $b) => $a->getAlbum()->getId() - $b->getAlbum()->getId());
+				$albumsForGroup = array_udiff($albumsForGroup, $albums, fn ($a, $b): int => $a->getAlbum()->getId() - $b->getAlbum()->getId());
 				$albums = array_merge($albums, $albumsForGroup);
 			}
 
-			$this->children = array_map(function (AlbumWithFiles $album) {
-				return new SharedAlbumRoot(
-					$this->albumMapper,
-					$album,
-					$this->rootFolder,
-					$this->userId,
-					$this->userConfigService,
-					$this->logger,
-					$this->userManager,
-				);
-			}, $albums);
+			$this->children = array_map(fn (AlbumWithFiles $album): SharedAlbumRoot => new SharedAlbumRoot(
+				$this->albumMapper,
+				$album,
+				$this->rootFolder,
+				$this->userId,
+				$this->userConfigService,
+				$this->logger,
+				$this->userManager,
+			), $albums);
 		}
 
 		return $this->children;

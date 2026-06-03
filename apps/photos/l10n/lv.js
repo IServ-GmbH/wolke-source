@@ -30,7 +30,7 @@ OC.L10N.register(
     "Public link copied!" : "Publiskā saite nokopēta!",
     "Copy public link" : "Ievietot publisko saiti starpliktuvē",
     "Delete the public link" : "Izdzēst publisko saiti",
-    "Share via public link" : "Kopīgojiet, izmantojot publisko saiti",
+    "Share via public link" : "Kopīgot ar publisku saiti",
     "An error occurred" : "Gadījās kļūda",
     "Favorite" : "Izlasē",
     "Go back" : "Atpakaļ",
@@ -68,7 +68,6 @@ OC.L10N.register(
     "Could not load photos folder" : "Nevarēja ielādēt fotoattēlu mapi",
     "Group" : "Grupa",
     "View" : "Skats",
-    "Choose the folder where photos and albums are uploaded to." : "Izvēlēties mapi, kurā tiek augšupielādēti fotoattēli un albumi.",
-    "Add" : "Pievienot"
+    "Choose the folder where photos and albums are uploaded to." : "Izvēlēties mapi, kurā tiek augšupielādēti fotoattēli un albumi."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

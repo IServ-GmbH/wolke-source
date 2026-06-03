@@ -87,6 +87,7 @@ OC.L10N.register(
     "Fresh installation status" : "Fresh installation status",
     "Building Local Database" : "Building Local Database",
     "Adding local users and moderators" : "Adding local users and moderators",
+    "Files" : "ფაილები",
     "This member is not a moderator" : "This member is not a moderator",
     "Insufficient privileges" : "Insufficient privileges",
     "This member does not exist" : "This member does not exist",
@@ -108,7 +109,6 @@ OC.L10N.register(
     "No entries found in this folder" : "No entries found in this folder",
     "Name" : "Name",
     "Size" : "Size",
-    "Modified" : "Modified",
-    "Shared to Circles" : "Shared to Circles"
+    "Modified" : "Modified"
 },
 "nplurals=2; plural=(n!=1);");

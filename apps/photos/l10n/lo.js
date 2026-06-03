@@ -38,6 +38,7 @@ OC.L10N.register(
     "An error occurred" : "An error occurred",
     "Favorite" : "ລາຍການທີ່ມັກ",
     "Go back" : "Go back",
+    "Date range" : "ຊ່ວງວັນທີ",
     "Add to {destination}" : "Add to {destination}",
     "_{years} year ago_::_{years} years ago_" : ["{years} years ago"],
     "All folders" : "All folders",
@@ -60,8 +61,6 @@ OC.L10N.register(
     "Confirm" : "ຢືນຢັນ",
     "Group" : "Group",
     "Remove {collaboratorLabel} from the collaborators list" : "ລຶບ {collaboratorLabel} ອອກຈາກລາຍຊື່ຜູ້ຮ່ວມມື",
-    "Back to {folder}" : "ກັບໄປທີ່ {folder}",
-    "View" : "ເບິ່ງ",
-    "Add" : "ເພີ່ມ"
+    "View" : "ເບິ່ງ"
 },
 "nplurals=1; plural=0;");

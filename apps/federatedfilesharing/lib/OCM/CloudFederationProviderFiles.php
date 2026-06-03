@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -107,7 +108,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 
 		$token = $share->getShareSecret();
 		$name = $share->getResourceName();
-		$owner = $share->getOwnerDisplayName();
+		$owner = $share->getOwnerDisplayName() ?: $share->getOwner();
 		$sharedBy = $share->getSharedByDisplayName();
 		$shareWith = $share->getShareWith();
 		$remoteId = $share->getProviderId();
@@ -150,13 +151,13 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 
 			try {
 				$this->externalShareManager->addShare($remote, $token, '', $name, $owner, $shareType, false, $shareWith, $remoteId);
-				$shareId = \OC::$server->getDatabaseConnection()->lastInsertId('*PREFIX*share_external');
+				$shareId = Server::get(IDBConnection::class)->lastInsertId('*PREFIX*share_external');
 
 				// get DisplayName about the owner of the share
 				$ownerDisplayName = $this->getUserDisplayName($ownerFederatedId);
 
 				$trustedServers = null;
-				if ($this->appManager->isInstalled('federation')
+				if ($this->appManager->isEnabledForAnyone('federation')
 					&& class_exists(TrustedServers::class)) {
 					try {
 						$trustedServers = Server::get(TrustedServers::class);
@@ -173,7 +174,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 						->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_RECEIVED, [$ownerFederatedId, trim($name, '/'), $ownerDisplayName])
 						->setAffectedUser($shareWith)
 						->setObject('remote_share', $shareId, $name);
-					\OC::$server->getActivityManager()->publish($event);
+					Server::get(IActivityManager::class)->publish($event);
 					$this->notifyAboutNewShare($shareWith, $shareId, $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
 
 					// If auto-accept is enabled, accept the share
@@ -189,7 +190,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 							->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_RECEIVED, [$ownerFederatedId, trim($name, '/'), $ownerDisplayName])
 							->setAffectedUser($user->getUID())
 							->setObject('remote_share', $shareId, $name);
-						\OC::$server->getActivityManager()->publish($event);
+						Server::get(IActivityManager::class)->publish($event);
 						$this->notifyAboutNewShare($user->getUID(), $shareId, $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
 
 						// If auto-accept is enabled, accept the share
@@ -409,8 +410,8 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 	 * @param IShare $share
 	 * @throws ShareNotFound
 	 */
-	protected function executeDeclineShare(IShare $share) {
-		$this->federatedShareProvider->removeShareFromTable($share);
+	protected function executeDeclineShare(IShare $share): void {
+		$this->federatedShareProvider->removeShareFromTable((int)$share->getId());
 
 		try {
 			$fileId = (int)$share->getNode()->getId();
@@ -447,7 +448,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 		$share = $this->federatedShareProvider->getShareById($id);
 
 		$this->verifyShare($share, $token);
-		$this->federatedShareProvider->removeShareFromTable($share);
+		$this->federatedShareProvider->removeShareFromTable((int)$share->getId());
 		return [];
 	}
 
@@ -528,7 +529,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 					->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_UNSHARED, [$owner->getId(), $path, $ownerDisplayName])
 					->setAffectedUser($user)
 					->setObject('remote_share', (int)$share['id'], $path);
-				\OC::$server->getActivityManager()->publish($event);
+				Server::get(IActivityManager::class)->publish($event);
 			}
 		}
 
@@ -705,8 +706,8 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 	 */
 	protected function verifyShare(IShare $share, $token) {
 		if (
-			$share->getShareType() === IShare::TYPE_REMOTE &&
-			$share->getToken() === $token
+			$share->getShareType() === IShare::TYPE_REMOTE
+			&& $share->getToken() === $token
 		) {
 			return true;
 		}
@@ -759,7 +760,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 
 	public function getUserDisplayName(string $userId): string {
 		// check if gss is enabled and available
-		if (!$this->appManager->isInstalled('globalsiteselector')
+		if (!$this->appManager->isEnabledForAnyone('globalsiteselector')
 			|| !class_exists('\OCA\GlobalSiteSelector\Service\SlaveService')) {
 			return '';
 		}

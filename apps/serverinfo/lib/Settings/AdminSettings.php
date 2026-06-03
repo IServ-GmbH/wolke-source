@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace OCA\ServerInfo\Settings;
 
 use OCA\ServerInfo\DatabaseStatistics;
+use OCA\ServerInfo\FpmStatistics;
 use OCA\ServerInfo\Os;
 use OCA\ServerInfo\PhpStatistics;
 use OCA\ServerInfo\SessionStatistics;
@@ -24,46 +25,29 @@ use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
-	private Os $os;
-	private IL10N $l;
-	private IURLGenerator $urlGenerator;
-	private StorageStatistics $storageStatistics;
-	private PhpStatistics $phpStatistics;
-	private DatabaseStatistics $databaseStatistics;
-	private ShareStatistics $shareStatistics;
-	private SessionStatistics $sessionStatistics;
-	private SystemStatistics $systemStatistics;
-
 	public function __construct(
-		Os $os,
-		IL10N $l,
-		IURLGenerator $urlGenerator,
-		StorageStatistics $storageStatistics,
-		PhpStatistics $phpStatistics,
-		DatabaseStatistics $databaseStatistics,
-		ShareStatistics $shareStatistics,
-		SessionStatistics $sessionStatistics,
-		SystemStatistics $systemStatistics,
+		private Os $os,
+		private IL10N $l,
+		private IURLGenerator $urlGenerator,
+		private StorageStatistics $storageStatistics,
+		private PhpStatistics $phpStatistics,
+		private FpmStatistics $fpmStatistics,
+		private DatabaseStatistics $databaseStatistics,
+		private ShareStatistics $shareStatistics,
+		private SessionStatistics $sessionStatistics,
+		private SystemStatistics $systemStatistics,
 		private IConfig $config,
 	) {
-		$this->os = $os;
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
-		$this->storageStatistics = $storageStatistics;
-		$this->phpStatistics = $phpStatistics;
-		$this->databaseStatistics = $databaseStatistics;
-		$this->shareStatistics = $shareStatistics;
-		$this->sessionStatistics = $sessionStatistics;
-		$this->systemStatistics = $systemStatistics;
 	}
 
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		$monitoringEndPoint = $this->urlGenerator->getAbsoluteURL('ocs/v2.php/apps/serverinfo/api/v1/info');
 		$params = [
 			'hostname' => $this->os->getHostname(),
 			'osname' => $this->os->getOSName(),
 			'memory' => $this->os->getMemory(),
-			'cpu' => $this->os->getCpuName(),
+			'cpu' => $this->os->getCPU(),
 			'diskinfo' => $this->os->getDiskInfo(),
 			'networkinfo' => $this->os->getNetworkInfo(),
 			'networkinterfaces' => $this->os->getNetworkInterfaces(),
@@ -71,6 +55,7 @@ class AdminSettings implements ISettings {
 			'storage' => $this->storageStatistics->getStorageStatistics(),
 			'shares' => $this->shareStatistics->getShareStatistics(),
 			'php' => $this->phpStatistics->getPhpStatistics(),
+			'fpm' => $this->fpmStatistics->getFpmStatistics(),
 			'database' => $this->databaseStatistics->getDatabaseStatistics(),
 			'activeUsers' => $this->sessionStatistics->getSessionStatistics(),
 			'system' => $this->systemStatistics->getSystemStatistics(true, true),
@@ -85,6 +70,7 @@ class AdminSettings implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
+	#[\Override]
 	public function getSection(): string {
 		return 'serverinfo';
 	}
@@ -96,6 +82,7 @@ class AdminSettings implements ISettings {
 	 *
 	 * keep the server setting at the top, right after "server settings"
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 0;
 	}

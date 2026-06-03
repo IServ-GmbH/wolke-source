@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -6,14 +7,17 @@
  */
 namespace OCA\Files_External\Lib\Storage;
 
+use Icewind\Streams\CallbackWrapper;
 use Icewind\Streams\CountWrapper;
 use Icewind\Streams\IteratorDirectory;
 use Icewind\Streams\RetryWrapper;
 use OC\Files\Storage\Common;
 use OC\Files\View;
+use OCP\Cache\CappedMemoryCache;
 use OCP\Constants;
 use OCP\Files\FileInfo;
 use OCP\Files\IMimeTypeDetector;
+use OCP\Server;
 use phpseclib\Net\SFTP\Stream;
 
 /**
@@ -32,6 +36,8 @@ class SFTP extends Common {
 	 * @var \phpseclib\Net\SFTP
 	 */
 	protected $client;
+	private CappedMemoryCache $knownMTimes;
+
 	private IMimeTypeDetector $mimeTypeDetector;
 
 	public const COPY_CHUNK_SIZE = 8 * 1024 * 1024;
@@ -62,9 +68,12 @@ class SFTP extends Common {
 		Stream::register();
 
 		$parsedHost = $this->splitHost($parameters['host']);
-
 		$this->host = $parsedHost[0];
-		$this->port = $parameters['port'] ?? $parsedHost[1];
+
+		// Handle empty port parameter to allow host-defined ports
+		// and ensure strictly numeric ports
+		$parsedPort = $parameters['port'] ?? null;
+		$this->port = (int)(is_numeric($parsedPort) ? $parsedPort : $parsedHost[1]);
 
 		if (!isset($parameters['user'])) {
 			throw new \UnexpectedValueException('no authentication parameters specified');
@@ -87,7 +96,10 @@ class SFTP extends Common {
 
 		$this->root = '/' . ltrim($this->root, '/');
 		$this->root = rtrim($this->root, '/') . '/';
-		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
+
+		$this->knownMTimes = new CappedMemoryCache();
+
+		$this->mimeTypeDetector = Server::get(IMimeTypeDetector::class);
 	}
 
 	/**
@@ -297,6 +309,7 @@ class SFTP extends Common {
 	}
 
 	public function fopen(string $path, string $mode) {
+		$path = $this->cleanPath($path);
 		try {
 			$absPath = $this->absPath($path);
 			$connection = $this->getConnection();
@@ -317,7 +330,13 @@ class SFTP extends Common {
 					// the SFTPWriteStream doesn't go through the "normal" methods so it doesn't clear the stat cache.
 					$connection->_remove_from_stat_cache($absPath);
 					$context = stream_context_create(['sftp' => ['session' => $connection]]);
-					return fopen('sftpwrite://' . trim($absPath, '/'), 'w', false, $context);
+					$fh = fopen('sftpwrite://' . trim($absPath, '/'), 'w', false, $context);
+					if ($fh) {
+						$fh = CallbackWrapper::wrap($fh, null, null, function () use ($path): void {
+							$this->knownMTimes->set($path, time());
+						});
+					}
+					return $fh;
 				case 'a':
 				case 'ab':
 				case 'r+':
@@ -343,14 +362,13 @@ class SFTP extends Common {
 				return false;
 			}
 			if (!$this->file_exists($path)) {
-				$this->getConnection()->put($this->absPath($path), '');
+				return $this->getConnection()->put($this->absPath($path), '');
 			} else {
 				return false;
 			}
 		} catch (\Exception $e) {
 			return false;
 		}
-		return true;
 	}
 
 	/**
@@ -379,10 +397,16 @@ class SFTP extends Common {
 	 */
 	public function stat(string $path): array|false {
 		try {
+			$path = $this->cleanPath($path);
 			$stat = $this->getConnection()->stat($this->absPath($path));
 
 			$mtime = isset($stat['mtime']) ? (int)$stat['mtime'] : -1;
 			$size = isset($stat['size']) ? (int)$stat['size'] : 0;
+
+			// the mtime can't be less than when we last touched it
+			if ($knownMTime = $this->knownMTimes->get($path)) {
+				$mtime = max($mtime, $knownMTime);
+			}
 
 			return [
 				'mtime' => $mtime,

@@ -27,6 +27,7 @@ class Capabilities implements ICapability {
 	 *   },
 	 * }
 	 */
+	#[\Override]
 	public function getCapabilities(): array {
 		if (!$this->adapter->hasValidSubscription()) {
 			return [];
@@ -35,7 +36,7 @@ class Capabilities implements ICapability {
 		return [
 			'support' => [
 				'hasValidSubscription' => true,
-				'desktopEnterpriseChannel' => $this->config->getSystemValueString('desktopEnterpriseChannel', 'stable'),
+				'desktopEnterpriseChannel' => $this->config->getSystemValueString('desktopEnterpriseChannel', 'enterprise'),
 			],
 		];
 	}

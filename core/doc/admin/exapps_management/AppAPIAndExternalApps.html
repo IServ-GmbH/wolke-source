@@ -8,21 +8,30 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AppAPI and External Apps &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/exapps_management/AppAPIAndExternalApps.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+      <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+      <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+      <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+      <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
       <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
       <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
     <script src="../_static/js/theme.js"></script>
@@ -57,20 +66,50 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">ExApps management</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">AppAPI and External Apps</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#installing-appapi">Installing AppAPI</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#setup-deploy-daemon">Setup deploy daemon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setup-deploy-daemon">Setup deploy daemon</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#harp">HaRP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#docker-socket-proxy">Docker Socket Proxy</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#installing-exapps">Installing ExApps</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#faq">FAQ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-socket-proxy-vs-harp">Docker Socket Proxy vs HaRP</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="DeployConfigurations.html">Deployment configurations</a></li>
@@ -80,21 +119,39 @@
 <li class="toctree-l2"><a class="reference internal" href="AdvancedDeployOptions.html">Advanced Deploy Options</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -136,12 +193,50 @@ If AppAPI is not installed, you can still install it by simply navigating to the
 </section>
 <section id="setup-deploy-daemon">
 <h2>Setup deploy daemon<a class="headerlink" href="#setup-deploy-daemon" title="Link to this heading"></a></h2>
-<p>A Deploy Daemon is a way for Nextcloud to install, communicate with, and control ExApps.</p>
+<p>A Deploy Daemon is the way for Nextcloud to install, communicate with, and control ExApps.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you are using Nextcloud AIO with the “Docker Socket Proxy” container enabled, a Deploy Daemon will be automatically created and configured to work out-of-the-box.
+<p>If you are using Nextcloud AIO with the “HaRP” or “Docker Socket Proxy” container enabled, a Deploy Daemon will be automatically created and configured to work out-of-the-box.
 Otherwise, follow the steps below to set up a Deploy Daemon from the AppAPI admin settings.</p>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>After registering a Deploy Daemon, use the <strong>Test Deploy</strong> action to verify it is reachable and working.
+In the list of Deploy Daemons, click the <cite>…</cite> (three‑dots) menu beside the daemon you want to verify and choose Test Deploy.
+For details on what this check does and how to interpret the results, see <a class="reference internal" href="TestDeploy.html#test-deploy"><span class="std std-ref">Test Deploy</span></a>.</p>
+</div>
+<section id="harp">
+<span id="ai-app-api-harp"></span><h3>HaRP<a class="headerlink" href="#harp" title="Link to this heading"></a></h3>
+<div class="line-block">
+<div class="line">This is the newer and the <strong>recommended</strong> way to install ExApps.</div>
+<div class="line">It requires changes in the proxy of your Nextcloud instance. If you don’t have access to the proxy, you can use the usual method <a class="reference internal" href="#ai-app-api-dsp"><span class="std std-ref">described below</span></a>.</div>
+</div>
+<ol class="arabic">
+<li><p>Setup a Docker container called <a class="reference external" href="https://github.com/nextcloud/HaRP?tab=readme-ov-file#how-to-install-it">HaRP</a> that proxies access to Docker and to the ExApps for your Nextcloud instance. Be mindful of changing the values of <code class="docutils literal notranslate"><span class="pre">HP_SHARED_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">NC_INSTANCE_URL</span></code>.</p></li>
+<li><p>Go to AppAPI admin settings.</p></li>
+<li><p>Click on the “Register Daemon” button.</p></li>
+<li><div class="line-block">
+<div class="line">A filled form should appear. This default configuration <code class="docutils literal notranslate"><span class="pre">HaRP</span> <span class="pre">Proxy</span> <span class="pre">(Host)</span></code> should work for most setups. For Nextcloud AIO, use <code class="docutils literal notranslate"><span class="pre">HaRP</span> <span class="pre">All-in-One</span></code>.</div>
+<div class="line">If you are using Nextcloud in a custom docker network and would want the HaRP container to be limited to it, use the <code class="docutils literal notranslate"><span class="pre">HaRP</span> <span class="pre">Proxy</span> <span class="pre">(Docker)</span></code> option to have the fields pre-filled with the common options or change them manually.</div>
+<div class="line">Here, you should ensure the HaRP container itself is launched with the same network as your Nextcloud instance optionally with no ports exposed to the host in step 1, and the same docker network is mentioned in the <code class="docutils literal notranslate"><span class="pre">Network</span></code> field in the deploy config.</div>
+</div>
+</li>
+<li><p>Ensure the same shared key is used in the HaRP container and in the AppAPI settings.</p></li>
+<li><p>Click “Check connection” to verify that the configuration is correct.</p></li>
+<li><p>Click “Register” to save the Deploy Daemon configuration.</p></li>
+<li><p>Set up a location redirect in your Nextcloud’s main proxy configuration to redirect requests to the HaRP container. Some examples for popular reverse proxies can be found in <a class="reference external" href="https://github.com/nextcloud/harp?tab=readme-ov-file#configuring-your-reverse-proxy">Configuring Your Reverse Proxy</a> in the HaRP readme.</p></li>
+<li><p>Test the whole setup with “Test deploy” in the 3-dots menu of the Deploy Daemon.</p></li>
+</ol>
+<p>This is suitable for local setups where the Nextcloud server and the ExApps are on the same machine or in the same docker network.
+The ExApps in this configuration or the ExApp server need not expose any ExApp related port (23000-23999) necessarily to the host, nor do they need to be reachable from the host. They should be able to reach the HaRP container at the FRP port and the Nextcloud instance.
+For different/remote setups, see deployment configuration examples <a class="reference internal" href="DeployConfigurations.html"><span class="doc">here</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The existing ExApps can be migrated to use the new HaRP proxy following <a class="reference external" href="https://github.com/nextcloud/harp?tab=readme-ov-file#nextcloud-32-migrating-existing-exapps-from-dsp-to-harp">this guide</a>.</p>
+</div>
+</section>
+<section id="docker-socket-proxy">
+<span id="ai-app-api-dsp"></span><h3>Docker Socket Proxy<a class="headerlink" href="#docker-socket-proxy" title="Link to this heading"></a></h3>
 <ol class="arabic simple">
 <li><p>Setup a Docker container called <a class="reference external" href="https://github.com/nextcloud/docker-socket-proxy#readme">docker-socket-proxy</a> that proxies access to Docker for your Nextcloud instance.</p></li>
 <li><p>Go to the AppAPI admin settings.</p></li>
@@ -179,6 +274,7 @@ Otherwise, follow the steps below to set up a Deploy Daemon from the AppAPI admi
 <img alt="../_images/app_api_3.png" src="../_images/app_api_3.png" />
 <p>Deployment configuration examples can be found <a class="reference internal" href="DeployConfigurations.html"><span class="doc">here</span></a>.</p>
 </section>
+</section>
 <section id="installing-exapps">
 <h2>Installing ExApps<a class="headerlink" href="#installing-exapps" title="Link to this heading"></a></h2>
 <p>You can now install ExApps from the Nextcloud App Store by clicking “Install” on the respective app in the Apps page.
@@ -189,14 +285,14 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
 <h2>FAQ<a class="headerlink" href="#faq" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><dl class="simple">
-<dt>I have two graphics cards XXX with 6/8/Y GB of ram each. How can I run something which does not fit into one graphics card?</dt><dd><ul>
+<dt>I have two graphics cards (e.g. NVIDIA RTX 3060) with 8 GB of VRAM each. How can I run something which does not fit into one graphics card?</dt><dd><ul>
 <li><p>Distributing models across multiple GPUs is currently not supported. You will need a GPU that fits all of the model you are trying to use.</p></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt>I have YYY graphics card that does not supports CUDA - can I use it and how?</dt><dd><ul>
+<dt>I have a graphics card that does not support CUDA - can I use it and how?</dt><dd><ul>
 <li><p>No, our AI apps require GPUs with CUDA support to function at this time.</p></li>
 </ul>
 </dd>
@@ -225,6 +321,53 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
 </li>
 </ul>
 </section>
+<section id="docker-socket-proxy-vs-harp">
+<h2>Docker Socket Proxy vs HaRP<a class="headerlink" href="#docker-socket-proxy-vs-harp" title="Link to this heading"></a></h2>
+<div class="line-block">
+<div class="line">HaRP can be seen as Docker Socket Proxy version 2.0. It does all what Docker Socket Proxy does, but also addresses the main pain point of ExApps not being reachable by the Nextcloud server (or AppAPI).</div>
+<div class="line"><a class="reference external" href="https://github.com/fatedier/frp">FRP</a> is used to create a tunnel between the ExApp and the HaRP container so there is no need for the ExApp containers to expose any ports to the host or to be reachable from the Nextcloud server.</div>
+<div class="line">The Nextcloud server can reach the ExApp containers through the HaRP container.</div>
+</div>
+<p>HaRP has an additional benefit of being able to proxy requests coming from the Web interface or an API to the ExApp container without being proxies through the Nextcloud server, saving resources, improving performance and supporting additional protocols like WebSockets.</p>
+<p>HaRP is the recommended way to run ExApps, but if you are not able to use it, Docker Socket Proxy is still supported.</p>
+<p>Frontend requests in case of Docker Socket Proxy:</p>
+<pre  class="mermaid">
+        graph LR;
+        subgraph Browser
+                A[Frontend]
+        end
+
+        B[Proxy]
+
+        subgraph Services behind the proxy
+                C[Docker Socket Proxy]
+                D[ExApp]
+                E[Nextcloud Server / AppAPI]
+        end
+
+        A --&gt; B
+        B --&gt;|Request to an ExApp| E --Converted to ExApp auth--&gt; D
+        B --&gt;|All other usual requests| E
+    </pre><p>Frontend requests in case of HaRP:</p>
+<pre  class="mermaid">
+        graph LR;
+        subgraph Browser
+                A[Frontend]
+        end
+
+        B[Proxy]
+
+        subgraph Services behind the proxy
+                C[HaRP]
+                D[ExApp]
+                E[Nextcloud Server / AppAPI]
+        end
+
+        B --All other usual requests--&gt; E
+        A --&gt; B
+        B --Direct request to an ExApp--&gt; C --Converted to ExApp auth--&gt; D
+        C --User auth validation--&gt; E
+    </pre></section>
 </section>
 
 
@@ -238,7 +381,7 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -278,26 +421,18 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

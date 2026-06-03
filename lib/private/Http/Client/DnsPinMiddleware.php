@@ -8,28 +8,25 @@ declare(strict_types=1);
  */
 namespace OC\Http\Client;
 
+use OC\Diagnostics\TLogSlowOperation;
 use OC\Net\IpAddressClassifier;
 use OCP\Http\Client\LocalServerException;
 use Psr\Http\Message\RequestInterface;
+use Psr\Log\LoggerInterface;
 
 class DnsPinMiddleware {
-	/** @var NegativeDnsCache */
-	private $negativeDnsCache;
-	private IpAddressClassifier $ipAddressClassifier;
+
+	use TLogSlowOperation;
 
 	public function __construct(
-		NegativeDnsCache $negativeDnsCache,
-		IpAddressClassifier $ipAddressClassifier,
+		private NegativeDnsCache $negativeDnsCache,
+		private IpAddressClassifier $ipAddressClassifier,
+		private LoggerInterface $logger,
 	) {
-		$this->negativeDnsCache = $negativeDnsCache;
-		$this->ipAddressClassifier = $ipAddressClassifier;
 	}
 
 	/**
 	 * Fetch soa record for a target
-	 *
-	 * @param string $target
-	 * @return array|null
 	 */
 	private function soaRecord(string $target): ?array {
 		$labels = explode('.', $target);
@@ -96,10 +93,14 @@ class DnsPinMiddleware {
 	 * Wrapper for dns_get_record
 	 */
 	protected function dnsGetRecord(string $hostname, int $type): array|false {
-		return \dns_get_record($hostname, $type);
+		return $this->monitorAndLog(
+			$this->logger,
+			'dns_get_record',
+			fn () => \dns_get_record($hostname, $type),
+		);
 	}
 
-	public function addDnsPinning() {
+	public function addDnsPinning(): callable {
 		return function (callable $handler) {
 			return function (
 				RequestInterface $request,
@@ -109,7 +110,7 @@ class DnsPinMiddleware {
 					return $handler($request, $options);
 				}
 
-				$hostName = (string)$request->getUri()->getHost();
+				$hostName = $request->getUri()->getHost();
 				$port = $request->getUri()->getPort();
 
 				$ports = [

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -30,6 +31,7 @@ class MonthlyReport extends TimedJob {
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 	}
 
+	#[\Override]
 	protected function run($argument) {
 		$result = $this->collector->sendReport();
 

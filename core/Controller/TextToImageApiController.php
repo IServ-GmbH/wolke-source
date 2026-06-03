@@ -20,6 +20,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
+use OCP\AppFramework\OCSController;
 use OCP\DB\Exception;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
@@ -33,7 +34,7 @@ use OCP\TextToImage\Task;
 /**
  * @psalm-import-type CoreTextToImageTask from ResponseDefinitions
  */
-class TextToImageApiController extends \OCP\AppFramework\OCSController {
+class TextToImageApiController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -79,6 +80,12 @@ class TextToImageApiController extends \OCP\AppFramework\OCSController {
 	public function schedule(string $input, string $appId, string $identifier = '', int $numberOfImages = 8): DataResponse {
 		if (strlen($input) > 64_000) {
 			return new DataResponse(['message' => $this->l->t('Input text is too long')], Http::STATUS_PRECONDITION_FAILED);
+		}
+		if ($numberOfImages > 12) {
+			return new DataResponse(['message' => $this->l->t('Cannot generate more than 12 images')], Http::STATUS_PRECONDITION_FAILED);
+		}
+		if ($numberOfImages < 1) {
+			return new DataResponse(['message' => $this->l->t('Cannot generate less than 1 image')], Http::STATUS_PRECONDITION_FAILED);
 		}
 		$task = new Task($input, $appId, $numberOfImages, $this->userId, $identifier);
 		try {

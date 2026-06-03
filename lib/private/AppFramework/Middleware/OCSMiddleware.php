@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -109,7 +110,10 @@ class OCSMiddleware extends Middleware {
 	 * @return V1Response|V2Response
 	 */
 	private function buildNewResponse(Controller $controller, $code, $message) {
-		$format = $this->getFormat($controller);
+		$format = $this->request->getFormat();
+		if ($format === null || !$controller->isResponderRegistered($format)) {
+			$format = 'xml';
+		}
 
 		$data = new DataResponse();
 		$data->setStatus($code);
@@ -120,22 +124,5 @@ class OCSMiddleware extends Middleware {
 		}
 
 		return $response;
-	}
-
-	/**
-	 * @param Controller $controller
-	 * @return string
-	 */
-	private function getFormat(Controller $controller) {
-		// get format from the url format or request format parameter
-		$format = $this->request->getParam('format');
-
-		// if none is given try the first Accept header
-		if ($format === null) {
-			$headers = $this->request->getHeader('Accept');
-			$format = $controller->getResponderByHTTPHeader($headers, 'xml');
-		}
-
-		return $format;
 	}
 }

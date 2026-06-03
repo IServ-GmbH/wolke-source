@@ -61,10 +61,10 @@ class MailQueueHandler {
 	/**
 	 * Send an email to {$limit} users
 	 *
-	 * @param $limit Number of users we want to send an email to
-	 * @param $sendTime The latest send time
-	 * @param $forceSending Ignores latest send and just sends all emails
-	 * @param $restrictEmails null or one of UserSettings::EMAIL_SEND_*
+	 * @param int $limit Number of users we want to send an email to
+	 * @param int $sendTime The latest send time
+	 * @param bool $forceSending Ignores latest send and just sends all emails
+	 * @param int|null $restrictEmails null or one of UserSettings::EMAIL_SEND_*, will overwrite force send
 	 * @return int Number of users we sent an email to
 	 */
 	public function sendEmails(int $limit, int $sendTime, bool $forceSending = false, ?int $restrictEmails = null): int {
@@ -110,19 +110,18 @@ class MailQueueHandler {
 			$language = (!empty($userLanguages[$user])) ? $userLanguages[$user] : $default_lang;
 			$timezone = (!empty($userTimezones[$user])) ? $userTimezones[$user] : $defaultTimeZone;
 			try {
-				if ($this->sendEmailToUser($user, $email, $language, $timezone, $sendTime)) {
-					$deleteItemsForUsers[] = $user;
-				} else {
-					$this->logger->warning("Failed sending activity email to user '{user}'.", ['user' => $user, 'app' => 'activity']);
+				if (!$this->sendEmailToUser($user, $email, $language, $timezone, $sendTime)) {
+					$this->logger->error('Failed sending activity email to user "{user}", removing queue entries to prevent duplicate notifications.', ['user' => $user, 'email' => $email, 'app' => 'activity']);
 				}
 			} catch (\Exception $e) {
-				$this->logger->error('Failed creating activity email for user "{user}"', [
+				$this->logger->error('Failed creating activity email for user "{user}", removing queue entries to prevent duplicate notifications.', [
 					'exception' => $e,
 					'user' => $user,
+					'email' => $email,
 					'app' => 'activity',
 				]);
-				// continue;
 			}
+			$deleteItemsForUsers[] = $user;
 		}
 		$this->activityManager->setRequirePNG(false);
 
@@ -147,12 +146,6 @@ class MailQueueHandler {
 			$query->setMaxResults($limit);
 		}
 
-		if ($forceSending) {
-			$query->where($query->expr()->lt('amq_timestamp', $query->createNamedParameter($latestSend)));
-		} else {
-			$query->where($query->expr()->lt('amq_latest_send', $query->createNamedParameter($latestSend)));
-		}
-
 		if ($restrictEmails !== null) {
 			if ($restrictEmails === UserSettings::EMAIL_SEND_HOURLY) {
 				$query->where($query->expr()->eq('amq_timestamp', $query->func()->subtract('amq_latest_send', $query->expr()->literal(3600))));
@@ -163,6 +156,22 @@ class MailQueueHandler {
 			} elseif ($restrictEmails === UserSettings::EMAIL_SEND_ASAP) {
 				$query->where($query->expr()->eq('amq_timestamp', 'amq_latest_send'));
 			}
+
+			$result = $query->executeQuery();
+
+			$affectedUsers = [];
+			while ($row = $result->fetch()) {
+				$affectedUsers[] = $row['amq_affecteduser'];
+			}
+			$result->closeCursor();
+
+			return $affectedUsers;
+		}
+
+		if ($forceSending) {
+			$query->where($query->expr()->lt('amq_timestamp', $query->createNamedParameter($latestSend)));
+		} else {
+			$query->where($query->expr()->lt('amq_latest_send', $query->createNamedParameter($latestSend)));
 		}
 
 		$result = $query->executeQuery();
@@ -300,7 +309,7 @@ class MailQueueHandler {
 			function ($event) use ($timezone, $l) {
 				return [
 					'event' => $event,
-					'relativeDateTime' => $this->dateFormatter->formatDateTimeRelativeDay(
+					'dateTime' => $this->dateFormatter->formatDateTime(
 						$event->getTimestamp(),
 						'long', 'short',
 						new \DateTimeZone($timezone), $l
@@ -328,14 +337,19 @@ class MailQueueHandler {
 
 		foreach ($activityEvents as $activity) {
 			$event = $activity['event'];
-			$relativeDateTime = $activity['relativeDateTime'];
+			$activityDateTime = $activity['dateTime'];
 
-			$template->addBodyListItem($this->getHTMLSubject($event), $relativeDateTime, $event->getIcon(), $event->getParsedSubject());
+			$template->addBodyListItem($this->getHTMLSubject($event), $activityDateTime, $event->getIcon(), $event->getParsedSubject());
 		}
 
 		if ($skippedCount) {
 			$template->addBodyListItem($l->n('and %n more ', 'and %n more ', $skippedCount));
 		}
+
+		$template->addBodyText(
+			$l->t('You can change the frequency of these emails or disable them in the <a href="%s">settings</a>.', $this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index', ['section' => 'notifications'])),
+			$l->t('You can change the frequency of these emails or disable them in the settings: %s', $this->urlGenerator->linkToRouteAbsolute('settings.PersonalSettings.index', ['section' => 'notifications']))
+		);
 
 		$template->addFooter('', $lang);
 

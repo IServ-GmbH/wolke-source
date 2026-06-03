@@ -46,7 +46,7 @@ class Agglomerate implements Generator
     /**
      * @param \Rubix\ML\Datasets\Generators\Generator[] $generators
      * @param (int|float)[]|null $weights
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(array $generators = [], ?array $weights = null)
     {
@@ -104,7 +104,7 @@ class Agglomerate implements Generator
         }
 
         $this->generators = $generators;
-        $this->weights = array_combine(array_keys($generators), $weights) ?: [];
+        $this->weights = array_combine(array_keys($generators), $weights);
         $this->dimensions = $dimensions;
     }
 
@@ -134,7 +134,7 @@ class Agglomerate implements Generator
      * Generate n data points.
      *
      * @param int $n
-     * @return \Rubix\ML\Datasets\Labeled
+     * @return Labeled
      */
     public function generate(int $n) : Labeled
     {

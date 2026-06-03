@@ -31,16 +31,16 @@ class Swish implements Hidden, Parametric
     /**
      * The initializer of the beta parameter.
      *
-     * @var \Rubix\ML\NeuralNet\Initializers\Initializer
+     * @var Initializer
      */
-    protected \Rubix\ML\NeuralNet\Initializers\Initializer $initializer;
+    protected Initializer $initializer;
 
     /**
      * The sigmoid activation function.
      *
-     * @var \Rubix\ML\NeuralNet\ActivationFunctions\Sigmoid
+     * @var Sigmoid
      */
-    protected \Rubix\ML\NeuralNet\ActivationFunctions\Sigmoid $sigmoid;
+    protected Sigmoid $sigmoid;
 
     /**
      * The width of the layer.
@@ -52,26 +52,26 @@ class Swish implements Hidden, Parametric
     /**
      * The parameterized scaling factors.
      *
-     * @var \Rubix\ML\NeuralNet\Parameter|null
+     * @var Parameter|null
      */
-    protected ?\Rubix\ML\NeuralNet\Parameter $beta = null;
+    protected ?Parameter $beta = null;
 
     /**
      * The memoized input matrix.
      *
-     * @var \Tensor\Matrix|null
+     * @var Matrix|null
      */
-    protected ?\Tensor\Matrix $input = null;
+    protected ?Matrix $input = null;
 
     /**
      * The memorized activation matrix.
      *
-     * @var \Tensor\Matrix|null
+     * @var Matrix|null
      */
-    protected ?\Tensor\Matrix $output = null;
+    protected ?Matrix $output = null;
 
     /**
-     * @param \Rubix\ML\NeuralNet\Initializers\Initializer|null $initializer
+     * @param Initializer|null $initializer
      */
     public function __construct(?Initializer $initializer = null)
     {
@@ -84,7 +84,7 @@ class Swish implements Hidden, Parametric
      *
      * @internal
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return positive-int
      */
     public function width() : int
@@ -122,8 +122,8 @@ class Swish implements Hidden, Parametric
      *
      * @internal
      *
-     * @param \Tensor\Matrix $input
-     * @return \Tensor\Matrix
+     * @param Matrix $input
+     * @return Matrix
      */
     public function forward(Matrix $input) : Matrix
     {
@@ -140,8 +140,8 @@ class Swish implements Hidden, Parametric
      *
      * @internal
      *
-     * @param \Tensor\Matrix $input
-     * @return \Tensor\Matrix
+     * @param Matrix $input
+     * @return Matrix
      */
     public function infer(Matrix $input) : Matrix
     {
@@ -153,10 +153,10 @@ class Swish implements Hidden, Parametric
      *
      * @internal
      *
-     * @param \Rubix\ML\Deferred $prevGradient
-     * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Rubix\ML\Deferred
+     * @param Deferred $prevGradient
+     * @param Optimizer $optimizer
+     * @throws RuntimeException
+     * @return Deferred
      */
     public function back(Deferred $prevGradient, Optimizer $optimizer) : Deferred
     {
@@ -190,10 +190,10 @@ class Swish implements Hidden, Parametric
      *
      * @internal
      *
-     * @param \Tensor\Matrix $input
-     * @param \Tensor\Matrix $output
-     * @param \Tensor\Matrix $dOut
-     * @return \Tensor\Matrix
+     * @param Matrix $input
+     * @param Matrix $output
+     * @param Matrix $dOut
+     * @return Matrix
      */
     public function gradient($input, $output, $dOut) : Matrix
     {
@@ -233,9 +233,9 @@ class Swish implements Hidden, Parametric
     /**
      * Compute the Swish activation function and return a matrix.
      *
-     * @param \Tensor\Matrix $input
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Tensor\Matrix
+     * @param Matrix $input
+     * @throws RuntimeException
+     * @return Matrix
      */
     protected function activate(Matrix $input) : Matrix
     {
@@ -252,10 +252,10 @@ class Swish implements Hidden, Parametric
     /**
      * Calculate the derivative of the activation function at a given output.
      *
-     * @param \Tensor\Matrix $input
-     * @param \Tensor\Matrix $output
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Tensor\Matrix
+     * @param Matrix $input
+     * @param Matrix $output
+     * @throws RuntimeException
+     * @return Matrix
      */
     protected function differentiate(Matrix $input, Matrix $output) : Matrix
     {

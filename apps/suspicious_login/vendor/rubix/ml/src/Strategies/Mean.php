@@ -28,7 +28,7 @@ class Mean implements Strategy
     /**
      * Return the data type the strategy handles.
      *
-     * @return \Rubix\ML\DataType
+     * @return DataType
      */
     public function type() : DataType
     {
@@ -51,8 +51,8 @@ class Mean implements Strategy
      * Fit the guessing strategy to a set of values.
      *
      * @internal
-     *  @param list<int|float> $values
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param list<int|float> $values
+     * @throws InvalidArgumentException
      */
     public function fit(array $values) : void
     {
@@ -69,7 +69,7 @@ class Mean implements Strategy
      *
      * @internal
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return float
      */
     public function guess() : float

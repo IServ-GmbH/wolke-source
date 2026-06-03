@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -21,6 +22,7 @@ use OCP\Files\Events\InvalidateMountCacheEvent;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorageFactory;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -41,12 +43,9 @@ class Manager {
 	/** @var string|null */
 	private $uid;
 
-	/** @var \OC\Files\Mount\Manager */
-	private $mountManager;
-
 	public function __construct(
 		private IDBConnection $connection,
-		\OC\Files\Mount\Manager $mountManager,
+		private \OC\Files\Mount\Manager $mountManager,
 		private IStorageFactory $storageLoader,
 		private IClientService $clientService,
 		private IManager $notificationManager,
@@ -58,10 +57,10 @@ class Manager {
 		IUserSession $userSession,
 		private IEventDispatcher $eventDispatcher,
 		private LoggerInterface $logger,
+		private IConfig $config,
 		private ISearch $collaboratorSearch
 	) {
 		$user = $userSession->getUser();
-		$this->mountManager = $mountManager;
 		$this->uid = $user ? $user->getUID() : null;
 	}
 
@@ -129,7 +128,8 @@ class Manager {
 			'token' => $token,
 			'password' => $password,
 			'mountpoint' => $mountPoint,
-			'owner' => $owner
+			'owner' => $owner,
+			'verify' => !$this->config->getSystemValueBool('sharing.federation.allowSelfSignedCertificates'),
 		];
 		return $this->mountShare($options, $user);
 	}

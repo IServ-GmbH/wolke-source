@@ -284,7 +284,7 @@ class Node implements INode {
 
 			// Manually fetch the parent if the current node doesn't have a file info yet
 			try {
-				$fileInfo = $this->getFileInfo();
+				$fileInfo = $this->getFileInfo(false);
 			} catch (NotFoundException) {
 				$this->parent = $this->root->get($newPath);
 				/** @var \OCP\Files\Folder $this->parent */
@@ -473,6 +473,10 @@ class Node implements INode {
 
 	public function getUploadTime(): int {
 		return $this->getFileInfo()->getUploadTime();
+	}
+
+	public function getLastActivity(): int {
+		return $this->getFileInfo()->getLastActivity();
 	}
 
 	public function getParentId(): int {

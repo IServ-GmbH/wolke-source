@@ -19,30 +19,22 @@ class Section implements IIconSection {
 	) {
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
+	#[\Override]
 	public function getID(): string {
 		return 'support';
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
+	#[\Override]
 	public function getName(): string {
 		return $this->l->t('Support');
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 1;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
+	#[\Override]
 	public function getIcon(): string {
 		return $this->url->imagePath('support', 'section.svg');
 	}

@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/lib/Controller/WopiController.php apps/richdocuments/lib/Controller/WopiController.php
-index 6575c3cd8..f8cd43b60 100644
+index 169ecdff3..5674dd2fb 100644
 --- apps/richdocuments/lib/Controller/WopiController.php
 +++ apps/richdocuments/lib/Controller/WopiController.php
-@@ -145,6 +145,7 @@ class WopiController extends Controller {
+@@ -175,6 +175,7 @@ class WopiController extends Controller {
  
  		$userId = !$isPublic ? $wopi->getEditorUid() : $guestUserId;
  
@@ -10,7 +10,7 @@ index 6575c3cd8..f8cd43b60 100644
  
  		$response = [
  			'BaseFileName' => $file->getName(),
-@@ -166,11 +167,11 @@ class WopiController extends Controller {
+@@ -196,11 +197,11 @@ class WopiController extends Controller {
  			'EnableShare' => $file->isShareable() && !$isVersion && !$isPublic,
  			'HideUserList' => '',
  			'EnableOwnerTermination' => $wopi->getCanwrite() && !$isPublic,

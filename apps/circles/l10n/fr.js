@@ -148,9 +148,13 @@ OC.L10N.register(
     "Bring cloud-users closer together." : "Permet de rapprocher les utilisateur du cloud ensemble ",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "L'application « Équipes » permet aux personnes de créer leurs propres groupes de personnes / collègues / amis.\nCes groupes de personnes peuvent alors être utilisés par toutes les autres applications à des fins de partage.",
     "Unable to update federated teams config" : "Impossible de mettre à jour la configuration des équipes fédérées",
+    "Invalid URL format. Please provide a valid URL." : "Format d'URL invalide. Veuillez fournir une URL valide.",
+    "Changed frontal cloud URL" : "L'URL cloud frontale a été changée",
     "Federation allows you to share teams with other trusted servers and make them discoverable across instances." : "La fédération vous permet de partager des équipes avec d'autres serveurs de confiance et de les rendre visibles sur toutes les instances.",
     "Enable federated teams" : "Activer les équipes fédérées",
+    "Frontal URL" : "URL frontale",
     "https://…" : "https://…",
+    "The public URL used by other instances to discover and connect to your teams." : "L'URL publique utilisée par les autres instances pour découvrir et se connecter à vos équipes.",
     "Failed to load teams" : "Impossible de charger les équipes",
     "Try again" : "Réessayer",
     "No teams found" : "Aucune équipe trouvée",
@@ -162,7 +166,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Aucune entrée trouvée dans ce dossier",
     "Name" : "Nom",
     "Size" : "Taille",
-    "Modified" : "Modifié",
-    "Shared to Circles" : "Partagé avec les cercles"
+    "Modified" : "Modifié"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

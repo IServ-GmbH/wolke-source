@@ -19,6 +19,8 @@ use OCA\User_LDAP\Mapping\UserMapping;
 use OCP\App\IAppManager;
 use OCP\IDBConnection;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,6 +39,7 @@ class CirclesMaintenance extends Base {
 		private MaintenanceService $maintenanceService,
 		private OutputService $outputService,
 		private IDBConnection $dbConnection,
+		private LoggerInterface $logger,
 		private IAppManager $appManager,
 	) {
 		parent::__construct();
@@ -82,7 +85,7 @@ class CirclesMaintenance extends Base {
 		}
 
 		if ($input->getOption('fix-ldap-users-display-name')) {
-			if (!in_array('user_ldap', $this->appManager->getInstalledApps())) {
+			if (!$this->appManager->isEnabledForAnyone('user_ldap')) {
 				$output->writeln('The "user_ldap" app is not enabled');
 				return 1;
 			}
@@ -107,6 +110,7 @@ class CirclesMaintenance extends Base {
 				'/^(y|Y)/i'
 			);
 
+			/** @var QuestionHelper $helper */
 			$helper = $this->getHelper('question');
 			if (!$helper->ask($input, $output, $question)) {
 				$output->writeln('aborted.');
@@ -122,6 +126,7 @@ class CirclesMaintenance extends Base {
 				. '\'</comment>: ', ''
 			);
 
+			/** @var QuestionHelper $helper */
 			$helper = $this->getHelper('question');
 			$confirmation = $helper->ask($input, $output, $question);
 			if (strtolower($confirmation) !== $action) {
@@ -147,6 +152,8 @@ class CirclesMaintenance extends Base {
 			try {
 				$this->maintenanceService->runMaintenance($i, $input->getOption('force-refresh'));
 			} catch (MaintenanceException $e) {
+				$this->logger->warning('issue while performing maintenance', ['level' => $i, ['exception' => $e]]);
+				$output->writeln('- <error>issue while performing maintenance</error> ' . $e->getMessage() . ' (more details in logs)');
 			}
 		}
 

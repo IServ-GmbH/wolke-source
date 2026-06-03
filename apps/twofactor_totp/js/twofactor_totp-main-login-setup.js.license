@@ -19,21 +19,12 @@ This file is generated from multiple sources. Included packages:
 - @chenfengyuan/vue-qrcode
 	- version: 1.0.2
 	- license: MIT
-- @nextcloud/auth
-	- version: 2.4.0
-	- license: GPL-3.0-or-later
 - @nextcloud/browser-storage
 	- version: 0.4.0
 	- license: GPL-3.0-or-later
 - semver
-	- version: 7.6.2
+	- version: 7.7.2
 	- license: ISC
-- @nextcloud/event-bus
-	- version: 3.3.1
-	- license: GPL-3.0-or-later
-- @nextcloud/logger
-	- version: 2.7.0
-	- license: GPL-3.0-or-later
 - @nextcloud/router
 	- version: 2.2.1
 	- license: GPL-3.0-or-later
@@ -65,5 +56,5 @@ This file is generated from multiple sources. Included packages:
 	- version: 5.95.0
 	- license: MIT
 - twofactor_totp
-	- version: 13.0.0-dev.0
+	- version: 14.0.0
 	- license: AGPL-3.0-only

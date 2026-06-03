@@ -26,7 +26,10 @@ class Base extends Command implements CompletionAwareInterface {
 	private bool $interrupted = false;
 
 	protected function configure() {
+		// Some of our commands do not extend this class; and some of those that do do not call parent::configure()
+		$defaultHelp = 'More extensive and thorough documentation may be found at ' . \OCP\Server::get(\OCP\Defaults::class)->getDocBaseUrl() . PHP_EOL;
 		$this
+			->setHelp($defaultHelp)
 			->addOption(
 				'output',
 				null,
@@ -170,6 +173,8 @@ class Base extends Command implements CompletionAwareInterface {
 			return 'true';
 		} elseif ($value === null) {
 			return $returnNull ? null : 'null';
+		} if ($value instanceof \UnitEnum) {
+			return $value->value;
 		} else {
 			return $value;
 		}

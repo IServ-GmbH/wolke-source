@@ -11,6 +11,8 @@ use OC\Files\ObjectStore\ObjectStoreStorage;
 use OCA\DAV\Connector\Sabre\Directory;
 use OCP\Files\ObjectStore\IObjectStoreMultiPartUpload;
 use OCP\Files\Storage\IStorage;
+use OCP\ICacheFactory;
+use OCP\Server;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\ICollection;
 
@@ -19,6 +21,7 @@ class UploadFolder implements ICollection {
 		private Directory $node,
 		private CleanupService $cleanupService,
 		private IStorage $storage,
+		private string $uid,
 	) {
 	}
 
@@ -60,7 +63,7 @@ class UploadFolder implements ICollection {
 			/** @var ObjectStoreStorage $storage */
 			$objectStore = $this->storage->getObjectStore();
 			if ($objectStore instanceof IObjectStoreMultiPartUpload) {
-				$cache = \OC::$server->getMemCacheFactory()->createDistributed(ChunkingV2Plugin::CACHE_KEY);
+				$cache = Server::get(ICacheFactory::class)->createDistributed(ChunkingV2Plugin::CACHE_KEY);
 				$uploadSession = $cache->get($this->getName());
 				if ($uploadSession) {
 					$uploadId = $uploadSession[ChunkingV2Plugin::UPLOAD_ID];
@@ -87,7 +90,7 @@ class UploadFolder implements ICollection {
 		$this->node->delete();
 
 		// Background cleanup job is not needed anymore
-		$this->cleanupService->removeJob($this->getName());
+		$this->cleanupService->removeJob($this->uid, $this->getName());
 	}
 
 	public function getName() {

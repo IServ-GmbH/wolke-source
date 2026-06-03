@@ -9,15 +9,21 @@ namespace OCA\DAV\Command;
 
 use OC\KnownUser\KnownUserService;
 use OCA\DAV\CalDAV\CalDavBackend;
+use OCA\DAV\CalDAV\Federation\FederatedCalendarMapper;
 use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\CalDAV\Sharing\Backend;
 use OCA\DAV\Connector\Sabre\Principal;
 use OCP\Accounts\IAccountManager;
+use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;
+use OCP\IUserSession;
+use OCP\Security\ISecureRandom;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,19 +59,19 @@ class CreateCalendar extends Command {
 		$principalBackend = new Principal(
 			$this->userManager,
 			$this->groupManager,
-			\OC::$server->get(IAccountManager::class),
-			\OC::$server->getShareManager(),
-			\OC::$server->getUserSession(),
-			\OC::$server->getAppManager(),
-			\OC::$server->query(ProxyMapper::class),
-			\OC::$server->get(KnownUserService::class),
-			\OC::$server->getConfig(),
+			Server::get(IAccountManager::class),
+			Server::get(\OCP\Share\IManager::class),
+			Server::get(IUserSession::class),
+			Server::get(IAppManager::class),
+			Server::get(ProxyMapper::class),
+			Server::get(KnownUserService::class),
+			Server::get(IConfig::class),
 			\OC::$server->getL10NFactory(),
 		);
-		$random = \OC::$server->getSecureRandom();
-		$logger = \OC::$server->get(LoggerInterface::class);
-		$dispatcher = \OC::$server->get(IEventDispatcher::class);
-		$config = \OC::$server->get(IConfig::class);
+		$random = Server::get(ISecureRandom::class);
+		$logger = Server::get(LoggerInterface::class);
+		$dispatcher = Server::get(IEventDispatcher::class);
+		$config = Server::get(IConfig::class);
 		$name = $input->getArgument('name');
 		$caldav = new CalDavBackend(
 			$this->dbConnection,
@@ -75,7 +81,9 @@ class CreateCalendar extends Command {
 			$logger,
 			$dispatcher,
 			$config,
-			\OC::$server->get(Backend::class),
+			Server::get(Backend::class),
+			Server::get(FederatedCalendarMapper::class),
+			Server::get(ICacheFactory::class),
 		);
 		$caldav->createCalendar("principals/users/$user", $name, []);
 		return self::SUCCESS;

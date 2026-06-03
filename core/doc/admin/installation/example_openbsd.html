@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Example installation on OpenBSD &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/installation/example_openbsd.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,14 +58,23 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Installation and server configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="system_requirements.html">System requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment_recommendations.html">Deployment recommendations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">PHP Modules &amp; Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="php_configuration.html">Preparing PHP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="source_installation.html">Installation on Linux</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation_wizard.html">Installation wizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="command_line_installation.html">Installing from command line</a></li>
@@ -88,25 +98,59 @@
 <li class="toctree-l2"><a class="reference internal" href="uninstallation.html">Uninstallation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -146,7 +190,7 @@
 </pre></div>
 </div>
 <p>The extra packages:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># pkg_add postgresql-server redis pecl74-redis php-pdo_pgsql</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># pkg_add postgresql-server redis pecl82-redis php-pdo_pgsql</span>
 </pre></div>
 </div>
 <p>This will take care of your dependencies and give you the options to choose which PHP version do you want.</p>
@@ -155,7 +199,11 @@
 <p>Create a virtualhost in <code class="docutils literal notranslate"><span class="pre">/etc/httpd.conf</span></code> and add the following content to it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">server</span> <span class="s2">&quot;domain.tld&quot;</span> <span class="p">{</span>
       <span class="n">listen</span> <span class="n">on</span> <span class="n">egress</span> <span class="n">tls</span> <span class="n">port</span> <span class="mi">443</span>
-      <span class="n">hsts</span> <span class="nb">max</span><span class="o">-</span><span class="n">age</span> <span class="mi">15768000</span>
+      <span class="n">hsts</span> <span class="p">{</span>
+        <span class="nb">max</span><span class="o">-</span><span class="n">age</span> <span class="mi">15768000</span>
+        <span class="n">preload</span>
+        <span class="n">subdomains</span>
+      <span class="p">}</span>
 
         <span class="n">tls</span> <span class="p">{</span>
                   <span class="n">certificate</span> <span class="s2">&quot;/etc/ssl/domain.tld_fullchain.pem&quot;</span>
@@ -168,59 +216,44 @@
         <span class="n">connection</span> <span class="n">request</span> <span class="n">timeout</span> <span class="mi">3600</span>
         <span class="n">connection</span> <span class="n">timeout</span> <span class="mi">3600</span>
 
-        <span class="n">block</span> <span class="n">drop</span>
+        <span class="n">root</span> <span class="s2">&quot;/nextcloud&quot;</span>
+        <span class="n">directory</span> <span class="n">index</span> <span class="s2">&quot;index.php&quot;</span>
 
         <span class="c1"># Ensure that no &#39;*.php*&#39; files can be fetched from these directories</span>
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud/config/*&quot;</span> <span class="p">{</span>
+        <span class="n">location</span> <span class="s2">&quot;/config/*&quot;</span> <span class="p">{</span>
                 <span class="n">block</span> <span class="n">drop</span>
         <span class="p">}</span>
 
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud/data/*&quot;</span> <span class="p">{</span>
+        <span class="n">location</span> <span class="s2">&quot;/data/*&quot;</span> <span class="p">{</span>
                 <span class="n">block</span> <span class="n">drop</span>
         <span class="p">}</span>
 
         <span class="c1"># Note that this matches &quot;*.php*&quot; anywhere in the request path.</span>
         <span class="n">location</span> <span class="s2">&quot;/nextcloud/*.php*&quot;</span> <span class="p">{</span>
-                <span class="n">root</span> <span class="s2">&quot;/nextcloud&quot;</span>
-                <span class="n">request</span> <span class="n">strip</span> <span class="mi">1</span>
                 <span class="n">fastcgi</span> <span class="n">socket</span> <span class="s2">&quot;/run/php-fpm.sock&quot;</span>
+        <span class="p">}</span>
+
+        <span class="n">location</span> <span class="s2">&quot;/apps/*&quot;</span> <span class="p">{</span>
                 <span class="k">pass</span>
         <span class="p">}</span>
 
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud/apps/*&quot;</span> <span class="p">{</span>
-                <span class="n">root</span> <span class="s2">&quot;/nextcloud&quot;</span>
-                <span class="n">request</span> <span class="n">strip</span> <span class="mi">1</span>
+        <span class="n">location</span> <span class="s2">&quot;/core/*&quot;</span> <span class="p">{</span>
                 <span class="k">pass</span>
-        <span class="p">}</span>
-
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud/core/*&quot;</span> <span class="p">{</span>
-                <span class="n">root</span> <span class="s2">&quot;/nextcloud&quot;</span>
-                <span class="n">request</span> <span class="n">strip</span> <span class="mi">1</span>
-                <span class="k">pass</span>
-        <span class="p">}</span>
-
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud&quot;</span> <span class="p">{</span>
-                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;$DOCUMENT_URI/index.php&quot;</span>
-        <span class="p">}</span>
-
-        <span class="n">location</span> <span class="s2">&quot;/nextcloud/&quot;</span> <span class="p">{</span>
-                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;$DOCUMENT_URI/index.php&quot;</span>
         <span class="p">}</span>
 
         <span class="n">location</span> <span class="s2">&quot;/.well-known/carddav&quot;</span> <span class="p">{</span>
-                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/nextcloud/remote.php/dav&quot;</span>
+                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/remote.php/dav&quot;</span>
         <span class="p">}</span>
 
         <span class="n">location</span> <span class="s2">&quot;/.well-known/caldav&quot;</span> <span class="p">{</span>
-                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/nextcloud/remote.php/dav&quot;</span>
+                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/remote.php/dav&quot;</span>
         <span class="p">}</span>
 
         <span class="n">location</span> <span class="s2">&quot;/.well-known/webfinger&quot;</span> <span class="p">{</span>
-                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/nextcloud/public.php?service=webfinger&quot;</span>
+                <span class="n">block</span> <span class="k">return</span> <span class="mi">301</span> <span class="s2">&quot;https://$SERVER_NAME/public.php?service=webfinger&quot;</span>
         <span class="p">}</span>
 
-        <span class="n">location</span> <span class="n">match</span> <span class="s2">&quot;/nextcloud/ocs-provider/*&quot;</span> <span class="p">{</span>
-                <span class="n">directory</span> <span class="n">index</span> <span class="n">index</span><span class="o">.</span><span class="n">php</span>
+        <span class="n">location</span> <span class="n">match</span> <span class="s2">&quot;/ocs-provider/*&quot;</span> <span class="p">{</span>
                 <span class="k">pass</span>
         <span class="p">}</span>
 <span class="p">}</span>
@@ -234,7 +267,7 @@
 </section>
 <section id="php">
 <h2>PHP<a class="headerlink" href="#php" title="Link to this heading"></a></h2>
-<p>Assuming that you are on OpenBSD -current (or &gt;= 6.8-stable) you could use PHP 7.4 so I will keep this version, but the concept is the same for other version.</p>
+<p>Assuming that you are on OpenBSD -current (or &gt;= 6.8-stable) you could use PHP 8.2 so I will keep this version, but the concept is the same for other version.</p>
 <p>The PHP packages will be available since you installed Nextcloud with pkg_add, so you just need to adjust a bit your php.ini.</p>
 <p>It is recommended to add opcache to it:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">opcache</span><span class="p">]</span>
@@ -252,13 +285,13 @@
 </pre></div>
 </div>
 <p>We can enable the PHP modules with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># cd /etc/php-7.4.sample</span>
-<span class="c1"># for i in *; do ln -sf ../php-7.4.sample/$i ../php-7.4/; done</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># cd /etc/php-8.2.sample</span>
+<span class="c1"># for i in *; do ln -sf ../php-8.2.sample/$i ../php-8.2/; done</span>
 </pre></div>
 </div>
 <p>And then we just enable and start PHP:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rcctl enable php74_fpm</span>
-<span class="c1"># rcctl start php74_fpm</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># rcctl enable php82_fpm</span>
+<span class="c1"># rcctl start php82_fpm</span>
 </pre></div>
 </div>
 </section>
@@ -325,10 +358,15 @@ $ exit
 </section>
 <section id="nextcloud-final-steps">
 <h2>Nextcloud final steps<a class="headerlink" href="#nextcloud-final-steps" title="Link to this heading"></a></h2>
-<p>Now that we have all in place, you should go to your browser with your URL (I am assuming you have an SSL already installed):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">domain</span><span class="o">.</span><span class="n">tld</span>
-</pre></div>
-</div>
+<p>The remaining installation step are completed in the web-based installation wizard.</p>
+<p>To activate this wizard, create a file named CAN_INSTALL inside the installation’s config folder:</p>
+<blockquote>
+<div><p># touch /var/www/nextcloud/config/CAN_INSTALL</p>
+</div></blockquote>
+<p>Use your browser to navigate to the installation’s URL:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://domain.tld">https://domain.tld</a></p>
+</div></blockquote>
 <p>Now you just need to follow the steps and put in place your DB name, usr and passwords.</p>
 <p>Keep in mind that the upgrades for Nextcloud you can do it by running on -current:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># pkg_add -u -Dsnap</span>
@@ -361,7 +399,7 @@ $ exit
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -401,26 +439,18 @@ $ exit
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

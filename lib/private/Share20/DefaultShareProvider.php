@@ -45,9 +45,6 @@ use function str_starts_with;
  * @package OC\Share20
  */
 class DefaultShareProvider implements IShareProviderWithNotification, IShareProviderSupportsAccept, IShareProviderSupportsAllSharesInFolder {
-	// Special share type for user modified group shares
-	public const SHARE_TYPE_USERGROUP = 2;
-
 	public function __construct(
 		private IDBConnection $dbConn,
 		private IUserManager $userManager,
@@ -130,9 +127,7 @@ class DefaultShareProvider implements IShareProviderWithNotification, IShareProv
 				$qb->setValue('expiration', $qb->createNamedParameter($expirationDate, 'datetime'));
 			}
 
-			if (method_exists($share, 'getParent')) {
-				$qb->setValue('parent', $qb->createNamedParameter($share->getParent()));
-			}
+			$qb->setValue('parent', $qb->createNamedParameter($share->getParent()));
 
 			$qb->setValue('hide_download', $qb->createNamedParameter($share->getHideDownload() ? 1 : 0, IQueryBuilder::PARAM_INT));
 		} else {
@@ -287,7 +282,7 @@ class DefaultShareProvider implements IShareProviderWithNotification, IShareProv
 				->set('expiration', $qb->createNamedParameter($expirationDate, IQueryBuilder::PARAM_DATETIME_MUTABLE))
 				->set('note', $qb->createNamedParameter($share->getNote()))
 				->set('label', $qb->createNamedParameter($share->getLabel()))
-				->set('hide_download', $qb->createNamedParameter($share->getHideDownload() ? 1 : 0), IQueryBuilder::PARAM_INT)
+				->set('hide_download', $qb->createNamedParameter($share->getHideDownload() ? 1 : 0, IQueryBuilder::PARAM_INT))
 				->executeStatement();
 		}
 
@@ -361,14 +356,7 @@ class DefaultShareProvider implements IShareProviderWithNotification, IShareProv
 		return $share;
 	}
 
-	/**
-	 * Get all children of this share
-	 * FIXME: remove once https://github.com/owncloud/core/pull/21660 is in
-	 *
-	 * @param \OCP\Share\IShare $parent
-	 * @return \OCP\Share\IShare[]
-	 */
-	public function getChildren(\OCP\Share\IShare $parent) {
+	public function getChildren(IShare $parent): array {
 		$children = [];
 
 		$qb = $this->dbConn->getQueryBuilder();
@@ -999,7 +987,7 @@ class DefaultShareProvider implements IShareProviderWithNotification, IShareProv
 	 * @return \OCP\Share\IShare
 	 * @throws InvalidShare
 	 */
-	private function createShare($data) {
+	private function createShare($data): IShare {
 		$share = new Share($this->rootFolder, $this->userManager);
 		$share->setId((int)$data['id'])
 			->setShareType((int)$data['share_type'])

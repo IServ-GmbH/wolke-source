@@ -18,13 +18,15 @@ use OCA\AppAPI\Service\ExAppService;
  */
 class ManualActions implements IDeployActions {
 
+	public const DEPLOY_ID = 'manual-install';
+
 	public function __construct(
 		private readonly ExAppService		 $exAppService,
 	) {
 	}
 
 	public function getAcceptsDeployId(): string {
-		return 'manual-install';
+		return self::DEPLOY_ID;
 	}
 
 	public function deployExApp(ExApp $exApp, DaemonConfig $daemonConfig, array $params = []): string {
@@ -47,6 +49,14 @@ class ManualActions implements IDeployActions {
 	public function resolveExAppUrl(
 		string $appId, string $protocol, string $host, array $deployConfig, int $port, array &$auth
 	): string {
+		if (boolval($deployConfig['harp'] ?? false)) {
+			$url = rtrim($deployConfig['nextcloud_url'], '/');
+			if (str_ends_with($url, '/index.php')) {
+				$url = substr($url, 0, -10);
+			}
+			return sprintf('%s/exapps/%s', $url, $appId);
+		}
+
 		$auth = [];
 		if (isset($deployConfig['additional_options']['OVERRIDE_APP_HOST']) &&
 			$deployConfig['additional_options']['OVERRIDE_APP_HOST'] !== ''

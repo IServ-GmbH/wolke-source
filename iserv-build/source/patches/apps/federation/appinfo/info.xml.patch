@@ -1,8 +1,8 @@
 diff --git apps/federation/appinfo/info.xml apps/federation/appinfo/info.xml
-index b5bf906..050530c 100644
+index 1c4b816..c3ee1fe 100644
 --- apps/federation/appinfo/info.xml
 +++ apps/federation/appinfo/info.xml
-@@ -27,10 +27,14 @@
+@@ -27,11 +27,15 @@
  
  	<background-jobs>
  		<job>OCA\Federation\SyncJob</job>
@@ -11,6 +11,7 @@ index b5bf906..050530c 100644
  
  	<commands>
  		<command>OCA\Federation\Command\SyncFederationAddressBooks</command>
+ 		<command>OCA\Federation\Command\SyncFederationCalendars</command>
 +		<command>OCA\Federation\Command\AddTrustedServer</command>
 +		<command>OCA\Federation\Command\ListTrustedServer</command>
 +		<command>OCA\Federation\Command\RemoveTrustedServer</command>

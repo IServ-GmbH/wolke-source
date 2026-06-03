@@ -15,6 +15,7 @@ OC.L10N.register(
     "Do you want to help us to improve Nextcloud by providing some anonymized data about your setup and usage? You can disable it at any time in the admin settings again." : "Nextcloudの改善に役立てるため、設定ならびに使用状況の一部を匿名化したデータを、提供していただけないでしょうか？ この設定は、いつでも管理者設定から無効にできます。",
     "Send usage" : "使用状況を送信",
     "Not now" : "あとで",
+    "Never ask again" : "今後確認しない",
     "Never" : "使用しない",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud." : "Nextcloudの改善に役立つ匿名データをNextcloudに送信します。",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud. You\n\t\talways have full control over the content sent to Nextcloud and can disable\n\t\tit again at any time." : "匿名化されたデータを Nextcloud に送信して、Nextcloud の改善に役立てるようにします。あなたが\n\t\tNextcloud に送信されるデータを常に完全に制御でき\n\t\tいつでも無効にすることができます。",
@@ -23,7 +24,7 @@ OC.L10N.register(
     "Send new report now" : "新しい使用状況レポートを送信",
     "Send usage survey monthly" : "使用状況レポートを毎月送信する",
     "Data to send" : "送信データ",
-    "Last report sent on: %s" : "最新のレポート送信時刻: %s",
-    "Last report" : "最新のレポート"
+    "Last report" : "最新のレポート",
+    "Last report sent on: %s" : "最新のレポート送信時刻: %s"
 },
 "nplurals=1; plural=0;");

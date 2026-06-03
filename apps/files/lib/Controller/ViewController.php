@@ -10,6 +10,7 @@ namespace OCA\Files\Controller;
 use OC\Files\FilenameValidator;
 use OC\Files\Filesystem;
 use OCA\Files\AppInfo\Application;
+use OCA\Files\ConfigLexicon;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Files\Event\LoadSearchPlugins;
 use OCA\Files\Event\LoadSidebar;
@@ -25,7 +26,9 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent as ResourcesLoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
@@ -60,6 +63,8 @@ class ViewController extends Controller {
 		private UserConfig $userConfig,
 		private ViewConfig $viewConfig,
 		private FilenameValidator $filenameValidator,
+		private IRegistry $twoFactorRegistry,
+		private IAppConfig $appConfig,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -142,7 +147,8 @@ class ViewController extends Controller {
 		Util::addInitScript('files', 'init');
 		Util::addScript('files', 'main');
 
-		$userId = $this->userSession->getUser()->getUID();
+		$user = $this->userSession->getUser();
+		$userId = $user->getUID();
 
 		// If the file doesn't exists in the folder and
 		// exists in only one occurrence, redirect to that file
@@ -171,6 +177,11 @@ class ViewController extends Controller {
 		$this->initialState->provideInitialState('storageStats', $storageInfo);
 		$this->initialState->provideInitialState('config', $this->userConfig->getConfigs());
 		$this->initialState->provideInitialState('viewConfigs', $this->viewConfig->getConfigs());
+		$this->initialState->provideInitialState('recent_limit', $this->appConfig->getAppValueInt(ConfigLexicon::RECENT_LIMIT, 100));
+		// Not yet consumed by the frontend, provided for future implementation
+		$this->initialState->provideInitialState('group_recent_files', $this->appConfig->getAppValueBool(ConfigLexicon::GROUP_RECENT_FILES, false));
+		$this->initialState->provideInitialState('recent_files_group_mime_types', $this->appConfig->getAppValueArray(ConfigLexicon::RECENT_FILES_GROUP_MIME_TYPES, []));
+		$this->initialState->provideInitialState('recent_files_group_timespan_minutes', $this->appConfig->getAppValueInt(ConfigLexicon::RECENT_FILES_GROUP_TIMESPAN_MINUTES, 2));
 
 		// File sorting user config
 		$filesSortingConfig = json_decode($this->config->getUserValue($userId, 'files', 'files_sorting_configs', '{}'), true);
@@ -194,6 +205,15 @@ class ViewController extends Controller {
 		$this->initialState->provideInitialState('templates_enabled', ($this->config->getSystemValueString('skeletondirectory', \OC::$SERVERROOT . '/core/skeleton') !== '') || ($this->config->getSystemValueString('templatedirectory', \OC::$SERVERROOT . '/core/skeleton/Templates') !== ''));
 		$this->initialState->provideInitialState('templates_path', $this->templateManager->hasTemplateDirectory() ? $this->templateManager->getTemplatePath() : false);
 		$this->initialState->provideInitialState('templates', $this->templateManager->listCreators());
+
+		$isTwoFactorEnabled = false;
+		foreach ($this->twoFactorRegistry->getProviderStates($user) as $providerId => $providerState) {
+			if ($providerId !== 'backup_codes' && $providerState === true) {
+				$isTwoFactorEnabled = true;
+			}
+		}
+
+		$this->initialState->provideInitialState('isTwoFactorEnabled', $isTwoFactorEnabled);
 
 		$response = new TemplateResponse(
 			Application::APP_ID,

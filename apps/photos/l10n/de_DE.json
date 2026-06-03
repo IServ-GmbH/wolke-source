@@ -114,7 +114,7 @@
     "This might take some time depending on the size of your photo library." : "Dies kann je nach Größe Ihrer Fotobibliothek einige Zeit dauern.",
     "Recognized people will show up here" : "Erkannte Menschen werden hier angezeigt werden",
     "This folder does not exist" : "Dieser Ordner existiert nicht",
-    "Loading folders…" : "Lade Ordner…",
+    "Loading folders…" : "Lade Ordner …",
     "No photos in here" : "Keine Fotos vorhanden",
     "Taken on {date} at {time}" : "Aufgenommen am {date} um {time}",
     "This place does not have any photos or videos yet!" : "Dieser Ort enthält noch keine Fotos oder Videos!",
@@ -148,7 +148,7 @@
     "{title}'s face" : "{title}s Gesicht",
     "Last week" : "Letzte Woche",
     "Last Month" : "Letzten Monat",
-    "Custom…" : "Benutzerdefiniert…",
+    "Custom…" : "Benutzerdefiniert …",
     "{startDate} to {endDate}" : "{startDate} bis {endDate}",
     "Details" : "Details",
     "Failed to add {fileBaseName} to collection {collectionFileName}" : "{fileBaseName} konnte nicht der Sammlung {collectionFileName} hinzugefügt werden",
@@ -173,15 +173,11 @@
     "Could not load photos folder" : "Fotos-Ordner konnte nicht geladen werden",
     "Group" : "Gruppe",
     "Remove {collaboratorLabel} from the collaborators list" : "{collaboratorLabel} aus der Liste der Mitarbeitenden entfernen",
-    "Back to {folder}" : "Zurück zu {folder}",
-    "Share this folder" : "Diesen Ordner teilen",
     "Enable squared photos view" : "Quadratische Fotoansicht aktivieren",
     "Choose default Photos upload and Albums location" : "Den Standardspeicherort für das Hochladen von Fotos und Alben wählen",
     "Choose a different folder" : "Anderen Ordner wählen",
     "View" : "Ansicht",
     "Choose the folder where photos and albums are uploaded to." : "Ordner wählen, in den Fotos und Videos hochgeladen werden.",
-    "Loading folders …" : "Ordner werden geladen …",
-    "Add" : "Hinzufügen",
     "Loading folders …" : "Lade Ordner …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

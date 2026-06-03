@@ -12,7 +12,7 @@ use Rubix\ML\Datasets\Generators\Agglomerate;
  */
 class GaussianMixtureBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     protected const TESTING_SIZE = 10000;
 
@@ -27,7 +27,7 @@ class GaussianMixtureBench
     protected $testing;
 
     /**
-     * @var \Rubix\ML\Clusterers\GaussianMixture
+     * @var GaussianMixture
      */
     protected $estimator;
 

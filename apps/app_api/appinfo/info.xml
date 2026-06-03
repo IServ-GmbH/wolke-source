@@ -9,69 +9,59 @@
 	<summary>Nextcloud AppAPI</summary>
 	<description>
 	<![CDATA[
-### Boost your Nextcloud with AppAPI and its specially designed applications.
+### What is AppAPI?
 
+AppAPI is the Nextcloud component that enables **External Apps (ExApps)**.
+ExApps are apps whose backend runs **outside** the Nextcloud PHP process (usually as a Docker container), while still integrating with your Nextcloud users, permissions and web UI.
 
-The AppAPI is a project within the Nextcloud ecosystem designed to streamline and enhance the process of
-application development, deployment, and management.
+### Do I need it?
 
-It introduces a new methodology that allows developers to create
-applications using a variety of programming languages, not limited to PHP, which was traditionally used in Nextcloud development.
+No. If you do not plan to install External Apps, you can disable AppAPI.
 
+If AppAPI is enabled without a configured Deploy Daemon, Nextcloud will show the info message:
 
-### List of applications that require AppAPI:
+> "AppAPI default deploy daemon is not set …"
 
-- [talk_bot_ai_example](https://github.com/cloud-py-api/talk_bot_ai_example)
-- [upscaler_example](https://github.com/cloud-py-api/upscaler_example)
-- [image_to_text_example](https://github.com/cloud-py-api/file_to_text_example)
-- [ai_image_generator_bot](https://github.com/cloud-py-api/ai_image_generator_bot)
-- [SummarAI](https://github.com/nextcloud/sumupbot)
+That warning means: "External Apps are not configured yet".
 
-_If you wish to develop an application, we will gladly help and assist you._
+You can either disable AppAPI, or configure a Deploy Daemon (see below).
 
-### Support
+### How do External Apps get deployed?
 
-We appreciate any support for this project:
+A **Deploy Daemon** is the service Nextcloud talks to in order to install, start, stop and reach ExApps.
 
-- ⭐ Star our work on GitHub
-- ❗ Create an Issue or feature request
-- 💁 Resolve an Issue and create a Pull Request
-- 🧑‍💻 Develop your own application using AppAPI
+Two options are available:
 
-We are genuinely excited about the future of the AppAPI project and its potential to transform
-the way applications are developed and experienced within Nextcloud.
+- **HaRP** (recommended for Nextcloud 32+) — a high-performance reverse proxy with FRP tunneling
+- **Docker Socket Proxy** (legacy) — scheduled for removal in Nextcloud 35
 
-As we embark on this journey, we warmly invite you - developers, thinkers, creators, and visionaries -
-to join us in shaping a more versatile, stable, and secure app landscape.
-
-*Your insights, suggestions, and contributions are invaluable to us.*
-
+See the [admin documentation](https://docs.nextcloud.com/server/latest/admin_manual/exapps_management/DeployConfigurations.html) for setup instructions.
 	]]></description>
-	<version>5.0.2</version>
+	<version>32.0.0</version>
 	<licence>agpl</licence>
 	<author mail="andrey18106x@gmail.com" homepage="https://github.com/andrey18106">Andrey Borysenko</author>
 	<author mail="bigcat88@icloud.com" homepage="https://github.com/bigcat88">Alexander Piskun</author>
 	<namespace>AppAPI</namespace>
 	<documentation>
-		<developer>https://docs.nextcloud.com/server/latest/developer_manual/exapp_development</developer>
+		<admin>https://docs.nextcloud.com/server/latest/admin_manual/exapps_management/AppAPIAndExternalApps.html</admin>
+		<developer>https://docs.nextcloud.com/server/latest/developer_manual/exapp_development/index.html</developer>
 	</documentation>
 	<category>integration</category>
 	<category>tools</category>
-	<website>https://github.com/cloud-py-api/app_api</website>
-	<discussion>https://github.com/cloud-py-api/app_api/discussions</discussion>
-	<bugs>https://github.com/cloud-py-api/app_api/issues</bugs>
-	<repository type="git">https://github.com/cloud-py-api/app_api.git</repository>
-	<screenshot>https://raw.githubusercontent.com/cloud-py-api/app_api/main/screenshots/app_api_1.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/cloud-py-api/app_api/main/screenshots/app_api_2.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/cloud-py-api/app_api/main/screenshots/app_api_3.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/cloud-py-api/app_api/main/screenshots/app_api_4.png</screenshot>
+	<website>https://github.com/nextcloud/app_api</website>
+	<discussion>https://github.com/nextcloud/app_api/discussions</discussion>
+	<bugs>https://github.com/nextcloud/app_api/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/app_api.git</repository>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/app_api/main/screenshots/app_api_1.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/app_api/main/screenshots/app_api_2.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/app_api/main/screenshots/app_api_3.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/app_api/main/screenshots/app_api_4.png</screenshot>
 	<dependencies>
 		<php min-version="8.1"/>
-		<nextcloud min-version="31" max-version="31"/>
+		<nextcloud min-version="32" max-version="32"/>
 	</dependencies>
 	<background-jobs>
 		<job>OCA\AppAPI\BackgroundJob\ExAppInitStatusCheckJob</job>
-		<job>OCA\AppAPI\BackgroundJob\ProvidersAICleanUpJob</job>
 	</background-jobs>
 	<repair-steps>
 		<post-migration>
@@ -84,14 +74,12 @@ to join us in shaping a more versatile, stable, and secure app landscape.
 		</install>
 	</repair-steps>
 	<commands>
-		<command>OCA\AppAPI\Command\ExApp\Deploy</command>
 		<command>OCA\AppAPI\Command\ExApp\Register</command>
 		<command>OCA\AppAPI\Command\ExApp\Unregister</command>
 		<command>OCA\AppAPI\Command\ExApp\Update</command>
 		<command>OCA\AppAPI\Command\ExApp\Enable</command>
 		<command>OCA\AppAPI\Command\ExApp\Disable</command>
 		<command>OCA\AppAPI\Command\ExApp\ListExApps</command>
-		<command>OCA\AppAPI\Command\ExApp\Notify</command>
 		<command>OCA\AppAPI\Command\ExAppConfig\GetConfig</command>
 		<command>OCA\AppAPI\Command\ExAppConfig\SetConfig</command>
 		<command>OCA\AppAPI\Command\ExAppConfig\DeleteConfig</command>
@@ -99,6 +87,9 @@ to join us in shaping a more versatile, stable, and secure app landscape.
 		<command>OCA\AppAPI\Command\Daemon\RegisterDaemon</command>
 		<command>OCA\AppAPI\Command\Daemon\UnregisterDaemon</command>
 		<command>OCA\AppAPI\Command\Daemon\ListDaemons</command>
+		<command>OCA\AppAPI\Command\Daemon\AddRegistry</command>
+		<command>OCA\AppAPI\Command\Daemon\RemoveRegistry</command>
+		<command>OCA\AppAPI\Command\Daemon\ListRegistry</command>
 	</commands>
 	<settings>
 		<admin>OCA\AppAPI\Settings\Admin</admin>

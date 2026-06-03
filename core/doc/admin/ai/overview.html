@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Overview &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/ai/overview.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,21 +58,40 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Artificial Intelligence</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#overview-of-ai-features">Overview of AI features</a></li>
@@ -81,7 +101,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#machine-translation">Machine translation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#speech-to-text">Speech-To-Text</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#image-generation">Image generation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#text-to-speech">Text-To-Speech</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#context-chat">Context Chat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#context-chat-search">Context Chat Search</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#document-generation">Document generation</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#improve-ai-task-pickup-speed">Improve AI task pickup speed</a><ul>
@@ -104,18 +127,44 @@
 <li class="toctree-l2"><a class="reference internal" href="app_context_chat.html">App: Context Chat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_text2speech_kokoro.html">App: Local Text-To-Speech (text2speech_kokoro)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -231,7 +280,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>Yes</p></td>
 </tr>
 <tr class="row-even"><td><p>Text processing using LLMs</p></td>
-<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/llm2">llm2 (ExApp)</a></p></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/llm2">Local large language model 2 (ExApp) (ExApp)</a></p></td>
 <td><p>Green</p></td>
 <td><p>Yes</p></td>
 <td><p>Yes - Llama 3.1 model by Meta</p></td>
@@ -293,6 +342,22 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>Yes</p></td>
 <td><p>No</p></td>
 <td><p>No</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_watsonx">IBM watsonx.ai integration (via IBM watsonx.ai as a Service)</a></p></td>
+<td><p>Orange</p></td>
+<td><p>No</p></td>
+<td><p>Yes - e.g. Granite models by IBM</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_watsonx">IBM watsonx.ai integration (via IBM watsonx.ai software)</a></p></td>
+<td><p>Orange</p></td>
+<td><p>No</p></td>
+<td><p>Yes - e.g. Granite models by IBM</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
 </tr>
 <tr class="row-even"><td><p>Machine translation</p></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/translate2">Local Machine Translation 2 (ExApp)</a></p></td>
@@ -455,14 +520,6 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 </tr>
 <tr class="row-even"><td></td>
-<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/llm2">Local large language model 2 (ExApp)</a></p></td>
-<td><p>Yellow</p></td>
-<td><p>Yes</p></td>
-<td><p>Yes</p></td>
-<td><p>No</p></td>
-<td><p>Yes</p></td>
-</tr>
-<tr class="row-odd"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via OpenAI API)</a></p></td>
 <td><p>Red</p></td>
 <td><p>No</p></td>
@@ -470,7 +527,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td></td>
+<tr class="row-odd"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via LocalAI)</a></p></td>
 <td><p>Green</p></td>
 <td><p>Yes</p></td>
@@ -478,7 +535,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>Yes</p></td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via Ollama)</a></p></td>
 <td><p>Yellow</p></td>
 <td><p>Yes</p></td>
@@ -486,7 +543,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-even"><td></td>
+<tr class="row-odd"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via IONOS AI Model Hub)</a></p></td>
 <td><p>Orange</p></td>
 <td><p>No</p></td>
@@ -494,7 +551,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via Plusserver)</a></p></td>
 <td><p>Orange</p></td>
 <td><p>No</p></td>
@@ -502,7 +559,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td></td>
+<tr class="row-odd"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via Groqcloud)</a></p></td>
 <td><p>Orange</p></td>
 <td><p>No</p></td>
@@ -510,7 +567,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via MistralAI)</a></p></td>
 <td><p>Orange</p></td>
 <td><p>No</p></td>
@@ -518,7 +575,7 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>No</p></td>
 </tr>
-<tr class="row-even"><td><p>Context Chat</p></td>
+<tr class="row-odd"><td><p>Context Chat</p></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/context_chat">Nextcloud Assistant Context Chat</a></p></td>
 <td><p>Yellow</p></td>
 <td><p>Yes</p></td>
@@ -526,8 +583,16 @@ All of these features are completely optional. If you want to have them on your 
 <td><p>No</p></td>
 <td><p>Yes</p></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/context_chat_backend">Nextcloud Assistant Context Chat (Backend)</a></p></td>
+<td><p>Yellow</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Context Chat Search</p></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/context_chat">Nextcloud Assistant Context Chat</a></p></td>
 <td><p>Yellow</p></td>
 <td><p>Yes</p></td>
 <td><p>Yes</p></td>
@@ -536,6 +601,30 @@ All of these features are completely optional. If you want to have them on your 
 </tr>
 <tr class="row-even"><td><p>Context Agent</p></td>
 <td><p><a class="reference external" href="https://apps.nextcloud.com/apps/context_agent">Nextcloud Context Agent</a></p></td>
+<td><p>Green</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Text To Speech</p></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">Open AI Text To Speech</a></p></td>
+<td><p>Red</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/text2speech_kokoro">Local Text To Speech</a></p></td>
+<td><p>Yellow</p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Document generation</p></td>
+<td><p><a class="reference external" href="https://apps.nextcloud.com/apps/richdocuments">Nextcloud Office</a></p></td>
 <td><p>Green</p></td>
 <td><p>Yes</p></td>
 <td><p>Yes</p></td>
@@ -587,6 +676,7 @@ In downstream apps like Context Chat and assistant, users can use the text proce
 <ul class="simple">
 <li><p><a class="reference internal" href="app_llm2.html#ai-app-llm2"><span class="std std-ref">llm2</span></a> - Runs open source AI LLM models on your own server hardware  (Customer support available upon request)</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via OpenAI API)</a> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_watsonx">IBM watsonx.ai integration (via IBM watsonx.ai as a Service)</a> - Integrates with the IBM watsonx.ai API to provide AI functionality from IBM Cloud servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
 </ul>
 </section>
 </section>
@@ -594,16 +684,16 @@ In downstream apps like Context Chat and assistant, users can use the text proce
 <h3>Machine translation<a class="headerlink" href="#machine-translation" title="Link to this heading"></a></h3>
 <p id="mt-consumer-apps">As you can see in the table above we have multiple apps offering machine translation capabilities. Each app brings its own set of supported languages.
 In downstream apps like the Text app, users can use the translation functionality regardless of which app implements it behind the scenes.</p>
-<section id="id27">
-<h4>Frontend apps<a class="headerlink" href="#id27" title="Link to this heading"></a></h4>
+<section id="id29">
+<h4>Frontend apps<a class="headerlink" href="#id29" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><em>Text</em> for offering the translation menu</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> offering a graphical translation UI</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/analytics">Analytics</a> for translating graph labels</p></li>
 </ul>
 </section>
-<section id="id29">
-<h4>Backend apps<a class="headerlink" href="#id29" title="Link to this heading"></a></h4>
+<section id="id31">
+<h4>Backend apps<a class="headerlink" href="#id31" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference internal" href="app_translate2.html#ai-app-translate2"><span class="std std-ref">translate2 (ExApp)</span></a> - Runs open source AI translation models locally on your own server hardware (Customer support available upon request)</p></li>
 <li><p><em>integration_deepl</em> - Integrates with the deepl API to provide translation functionality from Deepl.com servers (Only community supported)</p></li>
@@ -613,15 +703,15 @@ In downstream apps like the Text app, users can use the translation functionalit
 <section id="speech-to-text">
 <h3>Speech-To-Text<a class="headerlink" href="#speech-to-text" title="Link to this heading"></a></h3>
 <p id="stt-consumer-apps">As you can see in the table above we have multiple apps offering Speech-To-Text capabilities. In downstream apps like the Talk app, users can use the transcription functionality regardless of which app implements it behind the scenes.</p>
-<section id="id30">
-<h4>Frontend apps<a class="headerlink" href="#id30" title="Link to this heading"></a></h4>
+<section id="id32">
+<h4>Frontend apps<a class="headerlink" href="#id32" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> offering a graphical translation UI and a smart picker</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/spreed">Talk</a> for transcribing calls (see <a class="reference external" href="https://nextcloud-talk.readthedocs.io/en/latest/settings/#app-configuration">Nextcloud Talk docs</a> for how to enable this)</p></li>
 </ul>
 </section>
-<section id="id33">
-<h4>Backend apps<a class="headerlink" href="#id33" title="Link to this heading"></a></h4>
+<section id="id35">
+<h4>Backend apps<a class="headerlink" href="#id35" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference internal" href="app_stt_whisper2.html#ai-app-stt-whisper2"><span class="std std-ref">stt_whisper2</span></a> - Runs open source AI Speech-To-Text models on your own server hardware  (Customer support available upon request)</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via OpenAI API)</a> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers  (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
@@ -631,14 +721,14 @@ In downstream apps like the Text app, users can use the translation functionalit
 <section id="image-generation">
 <h3>Image generation<a class="headerlink" href="#image-generation" title="Link to this heading"></a></h3>
 <p id="t2i-consumer-apps">As you can see in the table above we have multiple apps offering Image generation capabilities. In downstream apps like the Text-to-Image helper app, users can use the image generation functionality regardless of which app implements it behind the scenes.</p>
-<section id="id35">
-<h4>Frontend apps<a class="headerlink" href="#id35" title="Link to this heading"></a></h4>
+<section id="id37">
+<h4>Frontend apps<a class="headerlink" href="#id37" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> for offering a graphical UI and a smart picker</p></li>
 </ul>
 </section>
-<section id="id37">
-<h4>Backend apps<a class="headerlink" href="#id37" title="Link to this heading"></a></h4>
+<section id="id39">
+<h4>Backend apps<a class="headerlink" href="#id39" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p>text2image_stablediffusion (Customer support available upon request)</p></li>
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via OpenAI API)</a> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
@@ -646,17 +736,34 @@ In downstream apps like the Text app, users can use the translation functionalit
 </ul>
 </section>
 </section>
+<section id="text-to-speech">
+<h3>Text-To-Speech<a class="headerlink" href="#text-to-speech" title="Link to this heading"></a></h3>
+<p id="t2s-consumer-apps">As you can see in the table above we have multiple apps offering speech generation capabilities. In downstream apps like the assistant app, users can use the speech generation functionality regardless of which app implements it behind the scenes.</p>
+<section id="id41">
+<h4>Frontend apps<a class="headerlink" href="#id41" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> for offering a audio chat</p></li>
+</ul>
+</section>
+<section id="id43">
+<h4>Backend apps<a class="headerlink" href="#id43" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/integration_openai">OpenAI and LocalAI integration (via OpenAI API)</a> - Integrates with the OpenAI API to provide AI functionality from OpenAI servers (Customer support available upon request; see <a class="reference internal" href="ai_as_a_service.html#ai-ai-as-a-service"><span class="std std-ref">AI as a Service</span></a>)</p></li>
+<li><p><em>text2speech_kokoro</em> (Runs a local model)</p></li>
+</ul>
+</section>
+</section>
 <section id="context-chat">
 <h3>Context Chat<a class="headerlink" href="#context-chat" title="Link to this heading"></a></h3>
 <p>Our Context Chat feature was introduced in Nextcloud Hub 7 (v28). It allows asking questions to the assistant related to your documents in Nextcloud. You will need to install both the context_chat app as well as the context_chat_backend External App. Be prepared that things might break or be a little rough around the edges. We look forward to your feedback!</p>
-<section id="id39">
-<h4>Frontend apps<a class="headerlink" href="#id39" title="Link to this heading"></a></h4>
+<section id="id45">
+<h4>Frontend apps<a class="headerlink" href="#id45" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> for offering a graphical UI for the context chat tasks</p></li>
 </ul>
 </section>
-<section id="id41">
-<h4>Backend apps<a class="headerlink" href="#id41" title="Link to this heading"></a></h4>
+<section id="id47">
+<h4>Backend apps<a class="headerlink" href="#id47" title="Link to this heading"></a></h4>
 <ul class="simple">
 <li><p><a class="reference internal" href="app_context_chat.html#ai-app-context-chat"><span class="std std-ref">context_chat + context_chat_backend</span></a> -  (Customer support available upon request)</p></li>
 </ul>
@@ -670,21 +777,61 @@ In downstream apps like the Text app, users can use the translation functionalit
 </ul>
 </section>
 </section>
+<section id="context-chat-search">
+<h3>Context Chat Search<a class="headerlink" href="#context-chat-search" title="Link to this heading"></a></h3>
+<p>Our Context Chat Search feature allows searching through your documents using natural language. You will need to install both the context_chat app as well as the context_chat_backend External App. We look forward to your feedback!</p>
+<section id="id49">
+<h4>Frontend apps<a class="headerlink" href="#id49" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> for offering a graphical UI for the context chat search tasks</p></li>
+</ul>
+</section>
+<section id="id51">
+<h4>Backend apps<a class="headerlink" href="#id51" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="app_context_chat.html#ai-app-context-chat"><span class="std std-ref">context_chat + context_chat_backend</span></a> -  (Customer support available upon request)</p></li>
+</ul>
+</section>
+<section id="id52">
+<h4>Provider apps<a class="headerlink" href="#id52" title="Link to this heading"></a></h4>
+<p>See <em>Context Chat</em> section above.</p>
+</section>
+</section>
+<section id="document-generation">
+<h3>Document generation<a class="headerlink" href="#document-generation" title="Link to this heading"></a></h3>
+<p>Since Hub 11 you can let Nextcloud automatically generate Office documents with content.
+This functionality is available in the assistant app and made possible by the Nextcloud Office app.</p>
+<section id="id53">
+<h4>Frontend apps<a class="headerlink" href="#id53" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/assistant">Assistant</a> for offering a graphical UI for the context chat search tasks</p></li>
+</ul>
+</section>
+<section id="id55">
+<h4>Backend apps<a class="headerlink" href="#id55" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><a class="reference external" href="https://apps.nextcloud.com/apps/richdocuments">Nextcloud Office</a></p></li>
+</ul>
+</section>
+</section>
 </section>
 <section id="improve-ai-task-pickup-speed">
 <span id="ai-overview-improve-ai-task-pickup-speed"></span><h2>Improve AI task pickup speed<a class="headerlink" href="#improve-ai-task-pickup-speed" title="Link to this heading"></a></h2>
 <p>Most AI tasks will be run as part of the background job system in Nextcloud which only runs jobs every 5 minutes by default.
 To pick up scheduled jobs faster you can set up background job workers inside your Nextcloud main server/container that process AI tasks as soon as they are scheduled.
 If the PHP code or the Nextcloud settings values are changed while a worker is running, those changes won’t be effective inside the runner. For that reason, the worker needs to be restarted regularly. It is done with a timeout of N seconds which means any changes to the settings or the code will be picked up after N seconds (worst case scenario). This timeout does not, in any way, affect the processing or the timeout of the AI tasks.</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 32.0.7: </span>The command to run the worker has changed from <code class="docutils literal notranslate"><span class="pre">background-job:worker</span></code> to <code class="docutils literal notranslate"><span class="pre">taskprocessing:worker</span></code>. If you are running an older version of Nextcloud, please use the old command.</p>
+</div>
 <section id="screen-or-tmux-session">
 <h3>Screen or tmux session<a class="headerlink" href="#screen-or-tmux-session" title="Link to this heading"></a></h3>
 <p>Run the following occ command inside a screen or a tmux session, preferably 4 or more times for parallel processing of multiple requests by different or the same user (and as a requirement for some apps like context_chat).
 It would be best to run one command per screen session or per tmux window/pane to keep the logs visible and the worker easily restartable.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="o">-</span><span class="n">e</span><span class="p">;</span> <span class="k">while</span> <span class="n">true</span><span class="p">;</span> <span class="n">do</span> <span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">occ</span> <span class="n">background</span><span class="o">-</span><span class="n">job</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span> <span class="s2">&quot;OC\TaskProcessing\SynchronousBackgroundJob&quot;</span><span class="p">;</span> <span class="n">done</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="o">-</span><span class="n">e</span><span class="p">;</span> <span class="k">while</span> <span class="n">true</span><span class="p">;</span> <span class="n">do</span> <span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span><span class="p">;</span> <span class="n">done</span>
 </pre></div>
 </div>
 <p>For Nextcloud-AIO you should use this command on the host server.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="o">-</span><span class="n">e</span><span class="p">;</span> <span class="k">while</span> <span class="n">true</span><span class="p">;</span> <span class="n">do</span> <span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="o">-</span><span class="n">it</span> <span class="n">nextcloud</span><span class="o">-</span><span class="n">aio</span><span class="o">-</span><span class="n">nextcloud</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">background</span><span class="o">-</span><span class="n">job</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span> <span class="s2">&quot;OC\TaskProcessing\SynchronousBackgroundJob&quot;</span><span class="p">;</span> <span class="n">done</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="o">-</span><span class="n">e</span><span class="p">;</span> <span class="k">while</span> <span class="n">true</span><span class="p">;</span> <span class="n">do</span> <span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">nextcloud</span><span class="o">-</span><span class="n">aio</span><span class="o">-</span><span class="n">nextcloud</span> <span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span><span class="p">;</span> <span class="n">done</span>
 </pre></div>
 </div>
 <p>You may want to adjust the number of workers and the timeout (in seconds) to your needs.
@@ -715,7 +862,7 @@ The logs of the worker can be checked by attaching to the screen or tmux session
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
 <span class="n">echo</span> <span class="s2">&quot;Starting Nextcloud AI Worker $1&quot;</span>
 <span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">nextcloud</span>
-<span class="n">sudo</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">background</span><span class="o">-</span><span class="n">job</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span> <span class="s1">&#39;OC\TaskProcessing\SynchronousBackgroundJob&#39;</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">taskprocessing</span><span class="p">:</span><span class="n">worker</span> <span class="o">-</span><span class="n">v</span> <span class="o">-</span><span class="n">t</span> <span class="mi">60</span>
 </pre></div>
 </div>
 <p>You may want to adjust the timeout to your needs (in seconds).</p>
@@ -765,7 +912,7 @@ The logs of the worker can be checked by attaching to the screen or tmux session
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -805,26 +952,18 @@ The logs of the worker can be checked by attaching to the screen or tmux session
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

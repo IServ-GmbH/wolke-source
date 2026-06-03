@@ -28,9 +28,9 @@ class SQLTable implements Extractor
     /**
      * The PDO connection to the database.
      *
-     * @var \PDO
+     * @var PDO
      */
-    protected \PDO $connection;
+    protected PDO $connection;
 
     /**
      * The name of the table to select from.
@@ -47,10 +47,10 @@ class SQLTable implements Extractor
     protected int $batchSize;
 
     /**
-     * @param \PDO $connection
+     * @param PDO $connection
      * @param string $table
      * @param int $batchSize
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(PDO $connection, string $table, int $batchSize = 256)
     {

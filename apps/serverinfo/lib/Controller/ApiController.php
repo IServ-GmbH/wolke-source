@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\ServerInfo\Controller;
 
 use OCA\ServerInfo\DatabaseStatistics;
+use OCA\ServerInfo\FpmStatistics;
 use OCA\ServerInfo\Os;
 use OCA\ServerInfo\PhpStatistics;
 use OCA\ServerInfo\SessionStatistics;
@@ -21,48 +22,28 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 
 class ApiController extends OCSController {
-	private Os $os;
-	private IConfig $config;
-	private IGroupManager $groupManager;
-	private ?IUserSession $userSession;
-	private SystemStatistics $systemStatistics;
-	private StorageStatistics $storageStatistics;
-	private PhpStatistics $phpStatistics;
-	private DatabaseStatistics $databaseStatistics;
-	private ShareStatistics $shareStatistics;
-	private SessionStatistics $sessionStatistics;
-
-	/**
-	 * ApiController constructor.
-	 */
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		IConfig $config,
-		IGroupManager $groupManager,
-		?IUserSession $userSession,
-		Os $os,
-		SystemStatistics $systemStatistics,
-		StorageStatistics $storageStatistics,
-		PhpStatistics $phpStatistics,
-		DatabaseStatistics $databaseStatistics,
-		ShareStatistics $shareStatistics,
-		SessionStatistics $sessionStatistics) {
+		private IConfig $config,
+		private IGroupManager $groupManager,
+		private ?IUserSession $userSession,
+		private Os $os,
+		private SystemStatistics $systemStatistics,
+		private StorageStatistics $storageStatistics,
+		private PhpStatistics $phpStatistics,
+		private FpmStatistics $fpmStatistics,
+		private DatabaseStatistics $databaseStatistics,
+		private ShareStatistics $shareStatistics,
+		private SessionStatistics $sessionStatistics,
+		private IL10N $l10n,
+	) {
 		parent::__construct($appName, $request);
-
-		$this->config = $config;
-		$this->groupManager = $groupManager;
-		$this->userSession = $userSession;
-		$this->os = $os;
-		$this->systemStatistics = $systemStatistics;
-		$this->storageStatistics = $storageStatistics;
-		$this->phpStatistics = $phpStatistics;
-		$this->databaseStatistics = $databaseStatistics;
-		$this->shareStatistics = $shareStatistics;
-		$this->sessionStatistics = $sessionStatistics;
 	}
 
 	/**
@@ -114,6 +95,7 @@ class ApiController extends OCSController {
 			'server' => [
 				'webserver' => $this->getWebserver(),
 				'php' => $this->phpStatistics->getPhpStatistics(),
+				'fpm' => $this->fpmStatistics->getFpmStatistics(),
 				'database' => $this->databaseStatistics->getDatabaseStatistics()
 			],
 			'activeUsers' => $this->sessionStatistics->getSessionStatistics()
@@ -151,19 +133,24 @@ class ApiController extends OCSController {
 	 */
 	private function formatUptime(int $uptime): string {
 		if ($uptime === -1) {
-			return 'Unknown';
+			return $this->l10n->t('Unknown');
 		}
 
 		try {
 			$boot = new \DateTime($uptime . ' seconds ago');
 		} catch (\Exception $e) {
-			return 'Unknown';
+			return $this->l10n->t('Unknown');
 		}
 
 		$interval = $boot->diff(new \DateTime());
-		if ($interval->days > 0) {
-			return $interval->format('%a days, %h hours, %i minutes, %s seconds');
+		$days = $interval->days;
+		$hours = $interval->h;
+		$minutes = $interval->i;
+		$seconds = $interval->s;
+
+		if ($days > 0) {
+			return $this->l10n->t('%1$d days, %2$d hours, %3$d minutes, %4$d seconds', [$days, $hours, $minutes, $seconds]);
 		}
-		return $interval->format('%h hours, %i minutes, %s seconds');
+		return $this->l10n->t('%1$d hours, %2$d minutes, %3$d seconds', [$hours, $minutes, $seconds]);
 	}
 }

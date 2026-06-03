@@ -10,27 +10,41 @@ declare(strict_types=1);
 namespace OCA\AppAPI\Service;
 
 use OCA\AppAPI\AppInfo\Application;
+use OCA\AppAPI\Db\ExApp;
 use OCP\App\IAppManager;
 use OCP\IRequest;
 
 class AppAPICommonService {
 
 	public function __construct(
-		private readonly IAppManager             $appManager,
+		private readonly IAppManager         $appManager,
+		private readonly HarpService         $harpService,
 	) {
 	}
 
-	public function buildAppAPIAuthHeaders(?IRequest $request, ?string $userId, string $appId, string $appVersion, string $appSecret): array {
-		return [
+	public function buildAppAPIAuthHeaders(?IRequest $request, ?string $userId, ExApp $exApp): array {
+		$headers = [
 			'AA-VERSION' => $this->appManager->getAppVersion(Application::APP_ID, false),
-			'EX-APP-ID' => $appId,
-			'EX-APP-VERSION' => $appVersion,
-			'AUTHORIZATION-APP-API' => base64_encode($userId . ':' . $appSecret),
+			'EX-APP-ID' => $exApp->getAppid(),
+			'EX-APP-VERSION' => $exApp->getVersion(),
+			'AUTHORIZATION-APP-API' => base64_encode($userId . ':' . $exApp->getSecret()),
 			'AA-REQUEST-ID' => $request instanceof IRequest ? $request->getId() : 'CLI',
 		];
+
+		if ($this->harpService->isHarp($exApp->getDeployConfig())) {
+			$harpKey = $this->harpService->getHarpSharedKey($exApp->getDeployConfig());
+			$headers['harp-shared-key'] = $harpKey;
+			$headers['ex-app-port'] = $exApp->getPort();
+			$headers['ex-app-host'] = $this->harpService->getExAppHost($exApp);
+		}
+
+		return $headers;
 	}
 
 	public function buildExAppHost(array $deployConfig): string {
+		if (($deployConfig['harp'] ?? false) && !HarpService::isHarpDirectConnect($deployConfig)) {
+			return '127.0.0.1';
+		}
 		if (isset($deployConfig['additional_options']['OVERRIDE_APP_HOST'])) {
 			return $deployConfig['additional_options']['OVERRIDE_APP_HOST'];
 		}

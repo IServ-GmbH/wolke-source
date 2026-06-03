@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Configuration Parameters &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/configuration_server/config_sample_php_parameters.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,11 +58,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Nextcloud configuration</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html">Warnings on admin page</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration Parameters</a><ul>
@@ -80,6 +94,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#passwordsalt">passwordsalt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#secret">secret</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#trusted-domains">trusted_domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cookie-domain">cookie_domain</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#datadirectory">datadirectory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#version">version</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dbtype">dbtype</a></li>
@@ -205,6 +220,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#log-query">log_query</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#log-rotate-size">log_rotate_size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#profiler">profiler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-request">profiling.request</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-request-rate">profiling.request.rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-secret">profiling.secret</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-sample">profiling.sample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-sample-rate">profiling.sample.rate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-sample-rotation">profiling.sample.rotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiling-path">profiling.path</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#alternate-code-locations">Alternate Code Locations</a><ul>
@@ -229,6 +251,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#preview-max-memory">preview_max_memory</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preview-libreoffice-path">preview_libreoffice_path</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preview-ffmpeg-path">preview_ffmpeg_path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preview-ffprobe-path">preview_ffprobe_path</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preview-imaginary-url">preview_imaginary_url</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preview-imaginary-key">preview_imaginary_key</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#enabledpreviewproviders">enabledPreviewProviders</a></li>
@@ -259,12 +282,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#memory-caching-backend-configuration">Memory caching backend configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#memcache-local">memcache.local</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#memcache-distributed">memcache.distributed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#memcache-customprefix">memcache_customprefix</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#redis">redis</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#redis-cluster">redis.cluster</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#memcached-servers">memcached_servers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#memcached-options">memcached_options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cache-path">cache_path</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#cache-chunk-gc-ttl">cache_chunk_gc_ttl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cache-app-config">cache_app_config</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#using-object-store-with-nextcloud">Using Object Store with Nextcloud</a><ul>
@@ -340,6 +365,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#filelocking-debug">filelocking.debug</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#upgrade-disable-web">upgrade.disable-web</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#upgrade-cli-upgrade-link">upgrade.cli-upgrade-link</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#user-ini-additional-lines">user_ini_additional_lines</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#documentation-url-server-logs">documentation_url.server_logs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#debug">debug</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#data-fingerprint">data-fingerprint</a></li>
@@ -348,12 +374,16 @@
 <li class="toctree-l4"><a class="reference internal" href="#gs-enabled">gs.enabled</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#gs-federation">gs.federation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#csrf-optout">csrf.optout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core-login-flow-v2-allowed-user-agents">core.login_flow_v2.allowed_user_agents</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#simplesignuplink-shown">simpleSignUpLink.shown</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#login-form-autocomplete">login_form_autocomplete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#login-form-timeout">login_form_timeout</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#no-unsupported-browser-warning">no_unsupported_browser_warning</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#files-no-background-scan">files_no_background_scan</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#query-log-file">query_log_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#query-log-file-requestid">query_log_file_requestid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#query-log-file-parameters">query_log_file_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#query-log-file-backtrace">query_log_file_backtrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#redis-log-file">redis_log_file</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#diagnostics-logging">diagnostics.logging</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#diagnostics-logging-threshold">diagnostics.logging.threshold</a></li>
@@ -368,6 +398,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#files-chunked-upload-max-size">files.chunked_upload.max_size</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#files-chunked-upload-max-parallel-count">files.chunked_upload.max_parallel_count</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#files-trash-delete">files.trash.delete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#enable-lazy-objects">enable_lazy_objects</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#default-certificates-bundle-path">default_certificates_bundle_path</a></li>
 </ul>
 </li>
@@ -380,6 +411,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="activity_configuration.html">Activity app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="admin_delegation_configuration.html">Administration privileges (Delegation)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="android_deep_link_handling.html">Android Deep Link Handling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="antivirus_configuration.html">Antivirus scanner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_configuration.html">Automatic setup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="background_jobs_configuration.html">Background jobs</a></li>
@@ -398,23 +430,53 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -693,7 +755,7 @@ is created when you install Nextcloud.</p>
 </pre></div>
 </div>
 <p>The salt used to hash all passwords, auto-generated by the Nextcloud
-installer. (There are also per-user salts.) If you lose this salt you lose
+installer. (There are also per-user salts.) If you lose this salt, you lose
 all your passwords. This example is for documentation only, and you should
 never use it.</p>
 <div class="deprecated">
@@ -705,18 +767,17 @@ never use it.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Secret used by Nextcloud for various purposes, e.g. to encrypt data. If you
-lose this string there will be data corruption.</p>
+<p>Secret used by Nextcloud for various purposes, e.g., to encrypt data. If you
+lose this string, there will be data corruption.</p>
 </section>
 <section id="trusted-domains">
 <h3>trusted_domains<a class="headerlink" href="#trusted-domains" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;trusted_domains&#39;</span> <span class="o">=&gt;</span>
-   <span class="p">[</span>
-    <span class="s1">&#39;demo.example.org&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;otherdomain.example.org&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;10.111.112.113&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;[2001:db8::1]&#39;</span>
-  <span class="p">],</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;trusted_domains&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;demo.example.org&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;otherdomain.example.org&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;10.111.112.113&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;[2001:db8::1]&#39;</span>
+<span class="p">],</span>
 </pre></div>
 </div>
 <p>Your list of trusted domains that users can log into. Specifying trusted
@@ -724,14 +785,24 @@ domains prevents host header poisoning. Do not remove this, as it performs
 necessary security checks.</p>
 <p>You can specify:</p>
 <ul class="simple">
-<li><p>the exact hostname of your host or virtual host, e.g. demo.example.org.</p></li>
-<li><p>the exact hostname with permitted port, e.g. demo.example.org:443.
+<li><p>The exact hostname of your host or virtual host, e.g., demo.example.org.</p></li>
+<li><p>The exact hostname with permitted port, e.g., demo.example.org:443.
 This disallows all other ports on this host</p></li>
-<li><p>use * as a wildcard, e.g. ubos-raspberry-pi*.local will allow
+<li><p>Use * as a wildcard, e.g., ubos-raspberry-pi*.local will allow
 ubos-raspberry-pi.local and ubos-raspberry-pi-2.local</p></li>
-<li><p>the IP address with or without permitted port, e.g. [2001:db8::1]:8080
+<li><p>The IP address with or without permitted port, e.g., [2001:db8::1]:8080
 Using TLS certificates where commonName=&lt;IP address&gt; is deprecated</p></li>
 </ul>
+</section>
+<section id="cookie-domain">
+<h3>cookie_domain<a class="headerlink" href="#cookie-domain" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;cookie_domain&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>The validity domain for cookies, for example ‘’ (cookies will be sent only
+the domain that defined it, e.g. ‘demo.example.org’), ‘demo.example.org’
+(cookies will be valid for the domain and all subdomains), …</p>
+<p>Defaults to ‘’ (safe option)</p>
 </section>
 <section id="datadirectory">
 <h3>datadirectory<a class="headerlink" href="#datadirectory" title="Link to this heading"></a></h3>
@@ -774,8 +845,9 @@ during installation and update, so you shouldn’t need to change it.</p>
 </div>
 <p>Your host server name, for example <code class="docutils literal notranslate"><span class="pre">localhost</span></code>, <code class="docutils literal notranslate"><span class="pre">hostname</span></code>,
 <code class="docutils literal notranslate"><span class="pre">hostname.example.com</span></code>, or the IP address.</p>
-<p>To specify a port use <code class="docutils literal notranslate"><span class="pre">hostname:####</span></code>, for IPv6 addresses use the URI notation <code class="docutils literal notranslate"><span class="pre">[ip]:port</span></code>.
-To specify a Unix socket use <code class="docutils literal notranslate"><span class="pre">/path/to/directory/containing/socket</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">/run/postgresql/</span></code>.</p>
+<p>To specify a port, use <code class="docutils literal notranslate"><span class="pre">hostname:####</span></code>; for IPv6 addresses, use the URI notation <code class="docutils literal notranslate"><span class="pre">[ip]:port</span></code>.
+To specify a Unix socket, use <code class="docutils literal notranslate"><span class="pre">localhost:/path/to/directory/containing/socket</span></code> or
+<code class="docutils literal notranslate"><span class="pre">:/path/to/directory/containing/socket</span></code>, e.g., <code class="docutils literal notranslate"><span class="pre">localhost:/run/postgresql/</span></code>.</p>
 </section>
 <section id="dbname">
 <h3>dbname<a class="headerlink" href="#dbname" title="Link to this heading"></a></h3>
@@ -815,9 +887,9 @@ you shouldn’t need to change it.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;dbpersistent&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable persistent connexions to the database.</p>
-<p>This setting uses the “persistent” option from doctrine dbal, which in turn
-uses the PDO::ATTR_PERSISTENT option from the pdo driver.</p>
+<p>Enable persistent connections to the database.</p>
+<p>This setting uses the “persistent” option from Doctrine DBAL, which in turn
+uses the PDO::ATTR_PERSISTENT option from the PDO driver.</p>
 </section>
 <section id="dbreplica">
 <h3>dbreplica<a class="headerlink" href="#dbreplica" title="Link to this heading"></a></h3>
@@ -827,14 +899,14 @@ uses the PDO::ATTR_PERSISTENT option from the pdo driver.</p>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Specify read only replicas to be used by Nextcloud when querying the database</p>
+<p>Specify read-only replicas to be used by Nextcloud when querying the database</p>
 </section>
 <section id="db-log-request-id">
 <h3>db.log_request_id<a class="headerlink" href="#db-log-request-id" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;db.log_request_id&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Add request id to the database query in a comment.</p>
+<p>Add request ID to the database query in a comment.</p>
 <p>This can be enabled to assist in mapping database logs to Nextcloud logs.</p>
 </section>
 <section id="installed">
@@ -859,12 +931,12 @@ values, where present, are shown.</p>
 </div>
 <p>This sets the default language on your Nextcloud server, using ISO_639-1
 language codes such as <code class="docutils literal notranslate"><span class="pre">en</span></code> for English, <code class="docutils literal notranslate"><span class="pre">de</span></code> for German, and <code class="docutils literal notranslate"><span class="pre">fr</span></code> for
-French. The default_language parameter is only used, when the browser does
-not send any language, and the user hasn’t configured own language
+French. The default_language parameter is only used when the browser does
+not send any language, and the user hasn’t configured their own language
 preferences.</p>
 <p>Nextcloud has two distinguished language codes for German, ‘de’ and ‘de_DE’.
 ‘de’ is used for informal German and ‘de_DE’ for formal German. By setting
-this value to ‘de_DE’ you can enforce the formal version of German unless
+this value to ‘de_DE’, you can enforce the formal version of German unless
 the user has chosen something different explicitly.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">en</span></code></p>
 </section>
@@ -873,7 +945,7 @@ the user has chosen something different explicitly.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;force_language&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>With this setting a language can be forced for all users. If a language is
+<p>With this setting, a language can be forced for all users. If a language is
 forced, the users are also unable to change their language in the personal
 settings. If users shall be unable to change their language, but users have
 different languages, this value can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> instead of a language
@@ -898,9 +970,9 @@ login or shared items. User’s locale preferences configured under “personal
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;reduce_to_languages&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
 </pre></div>
 </div>
-<p>With this setting is possible to reduce the languages available in the
+<p>With this setting, it is possible to reduce the languages available in the
 language chooser. The languages have to be set as array values using ISO_639-1
-language codes such as <code class="docutils literal notranslate"><span class="pre">en</span></code> for English, <code class="docutils literal notranslate"><span class="pre">de</span></code> for German etc.</p>
+language codes such as <code class="docutils literal notranslate"><span class="pre">en</span></code> for English, <code class="docutils literal notranslate"><span class="pre">de</span></code> for German, etc.</p>
 <p>For example: Set to [‘de’, ‘fr’] to only allow German and French languages.</p>
 </section>
 <section id="default-phone-region">
@@ -911,7 +983,7 @@ language codes such as <code class="docutils literal notranslate"><span class="p
 <p>This sets the default region for phone numbers on your Nextcloud server,
 using ISO 3166-1 country codes such as <code class="docutils literal notranslate"><span class="pre">DE</span></code> for Germany, <code class="docutils literal notranslate"><span class="pre">FR</span></code> for France, …
 It is required to allow inserting phone numbers in the user profiles starting
-without the country code (e.g. +49 for Germany).</p>
+without the country code (e.g., +49 for Germany).</p>
 <p>No default value!</p>
 </section>
 <section id="force-locale">
@@ -919,7 +991,7 @@ without the country code (e.g. +49 for Germany).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;force_locale&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;en_US&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>With this setting a locale can be forced for all users. If a locale is
+<p>With this setting, a locale can be forced for all users. If a locale is
 forced, the users are also unable to change their locale in the personal
 settings. If users shall be unable to change their locale, but users have
 different languages, this value can be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> instead of a locale
@@ -933,7 +1005,7 @@ code.</p>
 </div>
 <p>This sets the default timezone on your Nextcloud server, using IANA
 identifiers like <code class="docutils literal notranslate"><span class="pre">Europe/Berlin</span></code> or <code class="docutils literal notranslate"><span class="pre">Pacific/Auckland</span></code>. The default
-timezone parameter is only used when the timezone of the user can’t be
+timezone parameter is only used when the timezone of the user cannot be
 determined.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">UTC</span></code></p>
 </section>
@@ -968,10 +1040,10 @@ pages), and <code class="docutils literal notranslate"><span class="pre">false</
 </div>
 <p>The directory where the skeleton files are located. These files will be
 copied to the data directory of new users. Set empty string to not copy any
-skeleton files. If unset and templatedirectory is empty string, shipped
+skeleton files. If unset and templatedirectory is an empty string, shipped
 templates will be used to create a template directory for the user.</p>
 <p><code class="docutils literal notranslate"><span class="pre">{lang}</span></code> can be used as a placeholder for the language of the user.
-If the directory does not exist, it falls back to non dialect (from <code class="docutils literal notranslate"><span class="pre">de_DE</span></code>
+If the directory does not exist, it falls back to non-dialect (from <code class="docutils literal notranslate"><span class="pre">de_DE</span></code>
 to <code class="docutils literal notranslate"><span class="pre">de</span></code>). If that does not exist either, it falls back to <code class="docutils literal notranslate"><span class="pre">default</span></code></p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">core/skeleton</span></code> in the Nextcloud directory.</p>
 </section>
@@ -984,7 +1056,7 @@ to <code class="docutils literal notranslate"><span class="pre">de</span></code>
 copied to the template directory of new users. Set empty string to not copy any
 template files.</p>
 <p><code class="docutils literal notranslate"><span class="pre">{lang}</span></code> can be used as a placeholder for the language of the user.
-If the directory does not exist, it falls back to non dialect (from <code class="docutils literal notranslate"><span class="pre">de_DE</span></code>
+If the directory does not exist, it falls back to non-dialect (from <code class="docutils literal notranslate"><span class="pre">de_DE</span></code>
 to <code class="docutils literal notranslate"><span class="pre">de</span></code>). If that does not exist either, it falls back to <code class="docutils literal notranslate"><span class="pre">default</span></code></p>
 <p>To disable creating a template directory, set both skeletondirectory and
 templatedirectory to empty strings.</p>
@@ -998,7 +1070,7 @@ templatedirectory to empty strings.</p>
 </pre></div>
 </div>
 <p>Lifetime of the remember login cookie. This should be larger than the
-session_lifetime. If it is set to 0 remember me is disabled.</p>
+session_lifetime. If it is set to 0, remember me is disabled.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">60*60*24*15</span></code> seconds (15 days)</p>
 </section>
 <section id="session-lifetime">
@@ -1023,7 +1095,7 @@ which would overwrite this option if it is less than the value in the config.php
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;carddav_sync_request_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mi">30</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The timeout in seconds for synchronizing address books, e.g. federated system address books (as run by <cite>occ federation:sync-addressbooks</cite>).</p>
+<p>The timeout in seconds for synchronizing address books, e.g., federated system address books (as run by <cite>occ federation:sync-addressbooks</cite>).</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">30</span></code> seconds</p>
 </section>
 <section id="carddav-sync-request-truncation">
@@ -1038,9 +1110,9 @@ which would overwrite this option if it is less than the value in the config.php
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;session_relaxed_expiry&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p><cite>true</cite> enabled a relaxed session timeout, where the session timeout would no longer be
+<p><cite>true</cite> enables a relaxed session timeout, where the session timeout would no longer be
 handled by Nextcloud but by either the PHP garbage collection or the expiration of
-potential other session backends like redis.</p>
+potential other session backends like Redis.</p>
 <p>This may lead to sessions being available for longer than what session_lifetime uses but
 comes with performance benefits as sessions are no longer a locking operation for concurrent
 requests.</p>
@@ -1114,7 +1186,7 @@ logged remote addresses and actions.</p>
 </pre></div>
 </div>
 <p>Whether the brute force protection shipped with Nextcloud should be set to testing mode.</p>
-<p>In testing mode brute force attempts are still recorded, but the requests do
+<p>In testing mode, brute force attempts are still recorded, but the requests do
 not sleep/wait for the specified time. They will still abort with
 “429 Too Many Requests” when the maximum delay is reached.
 Enabling this is discouraged for security reasons
@@ -1169,8 +1241,8 @@ the <code class="docutils literal notranslate"><span class="pre">anon</span></co
 </pre></div>
 </div>
 <p>Size of subnet used to normalize IPv6</p>
-<p>For Brute Force Protection and Rate Limiting, IPv6 are truncated using subnet size.
-It defaults to /56 but you can set it between /32 and /64</p>
+<p>For Brute Force Protection and Rate Limiting, IPv6 addresses are truncated using subnet size.
+It defaults to /56, but you can set it between /32 and /64</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">56</span></code></p>
 </section>
 <section id="auth-webauthn-enabled">
@@ -1185,17 +1257,17 @@ It defaults to /56 but you can set it between /32 and /64</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;auth.storeCryptedPassword&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Whether encrypted password should be stored in the database</p>
+<p>Whether encrypted passwords should be stored in the database</p>
 <p>The passwords are only decrypted using the login token stored uniquely in the
-clients and allow to connect to external storages, autoconfigure mail account in
-the mail app and periodically check if the password it still valid.</p>
-<p>This might be desirable to disable this functionality when using one time
+clients and allow connecting to external storages, autoconfiguring mail accounts in
+the mail app, and periodically checking if the password is still valid.</p>
+<p>This might be desirable to disable this functionality when using one-time
 passwords or when having a password policy enforcing long passwords (&gt; 300
 characters).</p>
 <p>By default, the passwords are stored encrypted in the database.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>If disabled, password changes on the user back-end (e.g. on LDAP) no
+<p>If disabled, password changes on the user backend (e.g., on LDAP) no
 longer log connected clients out automatically. Users can still disconnect
 the clients by deleting the app token from the security settings.</p>
 </div>
@@ -1215,11 +1287,11 @@ app is unavailable.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;lost_password_link&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://example.org/link/to/password/reset&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If your user backend does not allow password resets (e.g. when it’s a
+<p>If your user backend does not allow password resets (e.g., when it’s a
 read-only user backend like LDAP), you can specify a custom link, where the
 user is redirected to, when clicking the “reset password” link after a failed
-login-attempt.</p>
-<p>In case you do not want to provide any link, replace the url with ‘disabled’</p>
+login attempt.</p>
+<p>In case you do not want to provide any link, replace the URL with ‘disabled’</p>
 </section>
 <section id="logo-url">
 <h3>logo_url<a class="headerlink" href="#logo-url" title="Link to this heading"></a></h3>
@@ -1250,7 +1322,7 @@ of course.</p>
 </div>
 <p>FROM address that overrides the built-in <code class="docutils literal notranslate"><span class="pre">sharing-noreply</span></code> and
 <code class="docutils literal notranslate"><span class="pre">lostpassword-noreply</span></code> FROM addresses.</p>
-<p>Defaults to different from addresses depending on the feature.</p>
+<p>Defaults to different FROM addresses depending on the feature.</p>
 </section>
 <section id="mail-smtpdebug">
 <h3>mail_smtpdebug<a class="headerlink" href="#mail-smtpdebug" title="Link to this heading"></a></h3>
@@ -1272,11 +1344,11 @@ of course.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;mail_smtpmode&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;smtp&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Which mode to use for sending mail: <code class="docutils literal notranslate"><span class="pre">sendmail</span></code>, <code class="docutils literal notranslate"><span class="pre">smtp</span></code>, <code class="docutils literal notranslate"><span class="pre">qmail</span></code> or <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+<p>Which mode to use for sending mail: <code class="docutils literal notranslate"><span class="pre">sendmail</span></code>, <code class="docutils literal notranslate"><span class="pre">smtp</span></code>, <code class="docutils literal notranslate"><span class="pre">qmail</span></code>, or <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
 <p>If you are using local or remote SMTP, set this to <code class="docutils literal notranslate"><span class="pre">smtp</span></code>.</p>
-<p>For the <code class="docutils literal notranslate"><span class="pre">sendmail</span></code> option you need an installed and working email system on
+<p>For the <code class="docutils literal notranslate"><span class="pre">sendmail</span></code> option, you need an installed and working email system on
 the server, with <code class="docutils literal notranslate"><span class="pre">/usr/sbin/sendmail</span></code> installed on your Unix system.</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">qmail</span></code> the binary is /var/qmail/bin/sendmail, and it must be installed
+<p>For <code class="docutils literal notranslate"><span class="pre">qmail</span></code>, the binary is /var/qmail/bin/sendmail, and it must be installed
 on your Unix system.</p>
 <p>Use the string <code class="docutils literal notranslate"><span class="pre">null</span></code> to send no mails (disable mail delivery). This can be
 useful if mails should be sent via APIs and rendering messages is not necessary.</p>
@@ -1289,7 +1361,7 @@ useful if mails should be sent via APIs and rendering messages is not necessary.
 </div>
 <p>This depends on <code class="docutils literal notranslate"><span class="pre">mail_smtpmode</span></code>. Specify the IP address of your mail
 server host. This may contain multiple hosts separated by a semicolon. If
-you need to specify the port number append it to the IP address separated by
+you need to specify the port number, append it to the IP address separated by
 a colon, like this: <code class="docutils literal notranslate"><span class="pre">127.0.0.1:24</span></code>.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code></p>
 </section>
@@ -1354,8 +1426,8 @@ the SMTP server.</p>
 </pre></div>
 </div>
 <p>Replaces the default mail template layout. This can be utilized if the
-options to modify the mail texts with the theming app is not enough.</p>
-<p>The class must extend  <code class="docutils literal notranslate"><span class="pre">\OC\Mail\EMailTemplate</span></code></p>
+options to modify the mail texts with the theming app are not enough.</p>
+<p>The class must extend <code class="docutils literal notranslate"><span class="pre">\OC\Mail\EMailTemplate</span></code></p>
 </section>
 <section id="mail-send-plaintext-only">
 <h3>mail_send_plaintext_only<a class="headerlink" href="#mail-send-plaintext-only" title="Link to this heading"></a></h3>
@@ -1363,7 +1435,7 @@ options to modify the mail texts with the theming app is not enough.</p>
 </pre></div>
 </div>
 <p>Email will be sent by default with an HTML and a plain text body. This option
-allows to only send plain text emails.</p>
+allows sending only plain text emails.</p>
 </section>
 <section id="mail-smtpstreamoptions">
 <h3>mail_smtpstreamoptions<a class="headerlink" href="#mail-smtpstreamoptions" title="Link to this heading"></a></h3>
@@ -1381,11 +1453,11 @@ will be passed to underlying Swift mailer implementation.</p>
 </div>
 <p>Which mode is used for sendmail/qmail: <code class="docutils literal notranslate"><span class="pre">smtp</span></code> or <code class="docutils literal notranslate"><span class="pre">pipe</span></code>.</p>
 <dl class="simple">
-<dt>For <code class="docutils literal notranslate"><span class="pre">smtp</span></code> the sendmail binary is started with the parameter <code class="docutils literal notranslate"><span class="pre">-bs</span></code>:</dt><dd><ul class="simple">
+<dt>For <code class="docutils literal notranslate"><span class="pre">smtp</span></code>, the sendmail binary is started with the parameter <code class="docutils literal notranslate"><span class="pre">-bs</span></code>:</dt><dd><ul class="simple">
 <li><p>Use the SMTP protocol on standard input and output.</p></li>
 </ul>
 </dd>
-<dt>For <code class="docutils literal notranslate"><span class="pre">pipe</span></code> the binary is started with the parameters <code class="docutils literal notranslate"><span class="pre">-t</span></code>:</dt><dd><ul class="simple">
+<dt>For <code class="docutils literal notranslate"><span class="pre">pipe</span></code>, the binary is started with the parameters <code class="docutils literal notranslate"><span class="pre">-t</span></code>:</dt><dd><ul class="simple">
 <li><p>Read message from STDIN and extract recipients.</p></li>
 </ul>
 </dd>
@@ -1402,7 +1474,7 @@ will be passed to underlying Swift mailer implementation.</p>
 </div>
 <p>The automatic hostname detection of Nextcloud can fail in certain reverse
 proxy and CLI/cron situations. This option allows you to manually override
-the automatic detection; for example <code class="docutils literal notranslate"><span class="pre">www.example.com</span></code>, or specify the port
+the automatic detection; for example, <code class="docutils literal notranslate"><span class="pre">www.example.com</span></code>, or specify the port
 <code class="docutils literal notranslate"><span class="pre">www.example.com:8080</span></code>.</p>
 </section>
 <section id="overwriteprotocol">
@@ -1448,7 +1520,7 @@ are generated within Nextcloud using any kind of command line tools (cron or
 occ). The value should contain the full base URL:
 <code class="docutils literal notranslate"><span class="pre">https://www.example.com/nextcloud</span></code>
 Please make sure to set the value to the URL that your users mainly use to access this Nextcloud.</p>
-<p>Otherwise there might be problems with the URL generation via cron.</p>
+<p>Otherwise, there might be problems with the URL generation via cron.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
 </section>
 <section id="htaccess-rewritebase">
@@ -1456,20 +1528,20 @@ Please make sure to set the value to the URL that your users mainly use to acces
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;htaccess.RewriteBase&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>To have clean URLs without <cite>/index.php</cite> this parameter needs to be configured.</p>
+<p>To have clean URLs without <cite>/index.php</cite>, this parameter needs to be configured.</p>
 <p>This parameter will be written as “RewriteBase” on update and installation of
 Nextcloud to your <cite>.htaccess</cite> file. While this value is often simply the URL
-path of the Nextcloud installation it cannot be set automatically properly in
+path of the Nextcloud installation, it cannot be set automatically properly in
 every scenario and needs thus some manual configuration.</p>
-<p>In a standard Apache setup this usually equals the folder that Nextcloud is
-accessible at. So if Nextcloud is accessible via “<a class="reference external" href="https://mycloud.org/nextcloud">https://mycloud.org/nextcloud</a>”
+<p>In a standard Apache setup, this usually equals the folder that Nextcloud is
+accessible at. So if Nextcloud is accessible via “<a class="reference external" href="https://mycloud.org/nextcloud">https://mycloud.org/nextcloud</a>”,
 the correct value would most likely be “/nextcloud”. If Nextcloud is running
-under “<a class="reference external" href="https://mycloud.org/">https://mycloud.org/</a>” then it would be “/”.</p>
+under “<a class="reference external" href="https://mycloud.org/">https://mycloud.org/</a>”, then it would be “/”.</p>
 <p>Note that the above rule is not valid in every case, as there are some rare setup
-cases where this may not apply. However, to avoid any update problems this
+cases where this may not apply. However, to avoid any update problems, this
 configuration value is explicitly opt-in.</p>
-<p>After setting this value run <cite>occ maintenance:update:htaccess</cite>. Now, when the
-following conditions are met Nextcloud URLs won’t contain <cite>index.php</cite>:</p>
+<p>After setting this value, run <cite>occ maintenance:update:htaccess</cite>. Now, when the
+following conditions are met, Nextcloud URLs won’t contain <cite>index.php</cite>:</p>
 <ul class="simple">
 <li><p><cite>mod_rewrite</cite> is installed</p></li>
 <li><p><cite>mod_env</cite> is installed</p></li>
@@ -1481,11 +1553,11 @@ following conditions are met Nextcloud URLs won’t contain <cite>index.php</cit
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;htaccess.IgnoreFrontController&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>For server setups, that don’t have <cite>mod_env</cite> enabled or restricted (e.g. suEXEC)
+<p>For server setups that don’t have <cite>mod_env</cite> enabled or restricted (e.g., suEXEC),
 this parameter has to be set to true and will assume mod_rewrite.</p>
-<p>Please check, if <cite>mod_rewrite</cite> is active and functional before setting this
+<p>Please check if <cite>mod_rewrite</cite> is active and functional before setting this
 parameter, and you updated your .htaccess with <cite>occ maintenance:update:htaccess</cite>.
-Otherwise, your nextcloud installation might not be reachable anymore.
+Otherwise, your Nextcloud installation might not be reachable anymore.
 For example, try accessing resources by leaving out <cite>index.php</cite> in the URL.</p>
 </section>
 <section id="proxy">
@@ -1493,10 +1565,10 @@ For example, try accessing resources by leaving out <cite>index.php</cite> in th
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;proxy&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The URL of your proxy server, for example <code class="docutils literal notranslate"><span class="pre">proxy.example.com:8081</span></code>.</p>
-<p>Note: Guzzle (the http library used by Nextcloud) is reading the environment
-variables HTTP_PROXY (only for cli request), HTTPS_PROXY, and NO_PROXY by default.</p>
-<p>If you configure proxy with Nextcloud any default configuration by Guzzle
+<p>The URL of your proxy server, for example, <code class="docutils literal notranslate"><span class="pre">proxy.example.com:8081</span></code>.</p>
+<p>Note: Guzzle (the HTTP library used by Nextcloud) reads the environment
+variables HTTP_PROXY (only for CLI requests), HTTPS_PROXY, and NO_PROXY by default.</p>
+<p>If you configure a proxy with Nextcloud, any default configuration by Guzzle
 is overwritten. Make sure to set <code class="docutils literal notranslate"><span class="pre">proxyexclude</span></code> accordingly if necessary.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
 </section>
@@ -1514,7 +1586,7 @@ is overwritten. Make sure to set <code class="docutils literal notranslate"><spa
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;proxyexclude&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
 </pre></div>
 </div>
-<p>List of host names that should not be proxied to.</p>
+<p>List of hostnames that should not be proxied to.</p>
 <p>For example: <code class="docutils literal notranslate"><span class="pre">['.mit.edu',</span> <span class="pre">'foo.com']</span></code>.</p>
 <p>Hint: Use something like <code class="docutils literal notranslate"><span class="pre">explode(',',</span> <span class="pre">getenv('NO_PROXY'))</span></code> to sync this
 value with the global NO_PROXY option.</p>
@@ -1525,7 +1597,7 @@ value with the global NO_PROXY option.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;allow_local_remote_servers&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Allow remote servers with local addresses e.g. in federated shares, webcal services and more</p>
+<p>Allow remote servers with local addresses, e.g., in federated shares, webcal services, and more</p>
 <p>Defaults to false</p>
 </section>
 </section>
@@ -1546,7 +1618,7 @@ the quota requirements are met.</p>
 and a maximum time for trash bin retention.</p>
 <p>Minimum time is the number of days a file will be kept, after which it
 <em>may be</em> deleted. A file may be deleted after the minimum number of days
-is expired if space is needed. The file will not be deleted if space is
+has expired if space is needed. The file will not be deleted if space is
 not needed.</p>
 <p>Whether “space is needed” depends on whether a user quota is defined or not:</p>
 <blockquote>
@@ -1567,7 +1639,7 @@ Nextcloud.</p>
 <p>Available values (D1 and D2 are configurable numbers):</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">auto</span></code></dt><dd><p>default setting. keeps files and folders in the trash bin for 30 days
+<dt><code class="docutils literal notranslate"><span class="pre">auto</span></code></dt><dd><p>default setting. Keeps files and folders in the trash bin for 30 days
 and automatically deletes anytime after that if space is needed (note:
 files may not be deleted if space is not needed).</p>
 </dd>
@@ -1664,8 +1736,8 @@ other versions according to expire rules</p>
 </pre></div>
 </div>
 <p>Checks an app before install whether it uses private APIs instead of the
-proper public APIs. If this is set to true it will only allow to install or
-enable apps that pass this check.</p>
+proper public APIs. If this is set to true, it will only allow installing or
+enabling apps that pass this check.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="updatechecker">
@@ -1674,8 +1746,8 @@ enable apps that pass this check.</p>
 </pre></div>
 </div>
 <p>Check if Nextcloud is up-to-date and shows a notification if a new version is
-available. It sends current version, php version, installation and last update
-time and release channel to the updater server which responds with the latest
+available. It sends current version, PHP version, installation and last update
+time, and release channel to the updater server which responds with the latest
 available version based on those metrics.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
@@ -1763,10 +1835,10 @@ which verifies that it can’t be accessed directly through the Web server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;check_data_directory_permissions&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>In rare setups (e.g. on Openshift or Docker on Windows) the permissions check
+<p>In rare setups (e.g., on OpenShift or Docker on Windows), the permissions check
 might block the installation while the underlying system offers no means to
 “correct” the permissions. In this case, set the value to false.</p>
-<p>In regular cases, if issues with permissions are encountered they should be
+<p>In regular cases, if issues with permissions are encountered, they should be
 adjusted accordingly. Changing the flag is discouraged.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
@@ -1775,10 +1847,10 @@ adjusted accordingly. Changing the flag is discouraged.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;config_is_read_only&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>In certain environments it is desired to have a read-only configuration file.</p>
+<p>In certain environments, it is desired to have a read-only configuration file.</p>
 <p>When this switch is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, writing to the config file will be
 forbidden. Therefore, it will not be possible to configure all options via
-the Web interface. Furthermore, when updating Nextcloud it is required to
+the Web interface. Furthermore, when updating Nextcloud, it is required to
 make the configuration file writable again and to set this switch to <code class="docutils literal notranslate"><span class="pre">false</span></code>
 for the update process.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
@@ -1835,7 +1907,7 @@ must be installed and active.</p>
 </pre></div>
 </div>
 <p>Log file mode for the Nextcloud logging type in octal notation.</p>
-<p>Defaults to 0640 (writeable by user, readable by group).</p>
+<p>Defaults to 0640 (writable by user, readable by group).</p>
 </section>
 <section id="loglevel">
 <h3>loglevel<a class="headerlink" href="#loglevel" title="Link to this heading"></a></h3>
@@ -1852,7 +1924,7 @@ Warning, 3 = Error, and 4 = Fatal. The default value is Warning.</p>
 </pre></div>
 </div>
 <p>Loglevel used by the frontend to start logging at. The same values as
-for <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> can be used. If not set it defaults to the value
+for <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> can be used. If not set, it defaults to the value
 configured for <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> or Warning if that is not set either.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">2</span></code></p>
 </section>
@@ -1873,7 +1945,7 @@ see dirty queries in the logs.</p>
 </div>
 <p>If you maintain different instances and aggregate the logs, you may want
 to distinguish between them. <code class="docutils literal notranslate"><span class="pre">syslog_tag</span></code> can be set per instance
-with a unique id. Only available if <code class="docutils literal notranslate"><span class="pre">log_type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">syslog</span></code> or
+with a unique ID. Only available if <code class="docutils literal notranslate"><span class="pre">log_type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">syslog</span></code> or
 <code class="docutils literal notranslate"><span class="pre">systemd</span></code>.</p>
 <p>The default value is <code class="docutils literal notranslate"><span class="pre">Nextcloud</span></code>.</p>
 </section>
@@ -1884,7 +1956,7 @@ with a unique id. Only available if <code class="docutils literal notranslate"><
 </div>
 <p>If you maintain different instances and aggregate the logs, you may want
 to distinguish between them. <code class="docutils literal notranslate"><span class="pre">syslog_tag_audit</span></code> can be set per instance
-with a unique id. Only available if <code class="docutils literal notranslate"><span class="pre">log_type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">syslog</span></code> or
+with a unique ID. Only available if <code class="docutils literal notranslate"><span class="pre">log_type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">syslog</span></code> or
 <code class="docutils literal notranslate"><span class="pre">systemd</span></code>.</p>
 <p>The default value is the value of <code class="docutils literal notranslate"><span class="pre">syslog_tag</span></code>.</p>
 </section>
@@ -1907,12 +1979,12 @@ with a unique id. Only available if <code class="docutils literal notranslate"><
 </pre></div>
 </div>
 <p>Log condition for log level increase based on conditions. Once one of these
-conditions is met, the required log level is set to debug. This allows to
-debug specific requests, users or apps</p>
+conditions is met, the required log level is set to debug. This allows
+debugging specific requests, users, or apps</p>
 <dl class="simple">
 <dt>Supported conditions:</dt><dd><ul class="simple">
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">shared_secret</span></code>: if a request parameter with the name <cite>log_secret</cite> is set to</dt><dd><p>this value the condition is met</p>
+<dt><code class="docutils literal notranslate"><span class="pre">shared_secret</span></code>: if a request parameter with the name <cite>log_secret</cite> is set to</dt><dd><p>this value, the condition is met</p>
 </dd>
 </dl>
 </li>
@@ -1927,7 +1999,7 @@ debug specific requests, users or apps</p>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">matches</span></code>: if all the conditions inside a group match,</dt><dd><p>this condition is met. This allows to log only entries to an app
+<dt><code class="docutils literal notranslate"><span class="pre">matches</span></code>: if all the conditions inside a group match,</dt><dd><p>this condition is met. This allows logging only entries to an app
 by a few users.</p>
 </dd>
 </dl>
@@ -1943,7 +2015,7 @@ by a few users.</p>
 </pre></div>
 </div>
 <p>Enables logging a backtrace with each log line. Normally, only Exceptions
-are carrying backtrace information which are logged automatically. This
+carry backtrace information, which are logged automatically. This
 switch turns them on for any log message. Enabling this option will lead
 to increased log data size.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
@@ -1980,7 +2052,7 @@ debugging, as your logfile will become huge.</p>
 </pre></div>
 </div>
 <p>Enables log rotation and limits the total size of logfiles. Set it to 0 for
-no rotation. Specify a size in bytes, for example 104857600 (100 megabytes
+no rotation. Specify a size in bytes, for example, 104857600 (100 megabytes
 = 100 * 1024 * 1024 bytes). A new logfile is created with a new name when the
 old logfile reaches your limit. If a rotated log file is already present, it
 will be overwritten.</p>
@@ -1996,6 +2068,69 @@ issues.</p>
 <p>Note that this has a performance impact and shouldn’t be enabled
 on production.</p>
 </section>
+<section id="profiling-request">
+<h3>profiling.request<a class="headerlink" href="#profiling-request" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.request&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable profiling for individual requests if profiling single requests is enabled or the secret is passed.</p>
+<p>This requires the excimer extension to be installed. Be careful with this, as it can generate a lot of data.</p>
+<p>The profile data will be stored as a JSON file in the profiling.path directory that can be analyzed with speedscope.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+</section>
+<section id="profiling-request-rate">
+<h3>profiling.request.rate<a class="headerlink" href="#profiling-request-rate" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.request.rate&#39;</span> <span class="o">=&gt;</span> <span class="mf">0.001</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>The rate at which profiling data is collected for individual requests.</p>
+<p>A lower value means more data points but higher overhead.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">0.001</span></code></p>
+</section>
+<section id="profiling-secret">
+<h3>profiling.secret<a class="headerlink" href="#profiling-secret" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.secret&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>A secret token that can be passed via ?profile_secret=&lt;secret&gt; to enable profiling for a specific request.</p>
+<p>This allows profiling specific requests in production without enabling it globally.</p>
+<p>No default value.</p>
+</section>
+<section id="profiling-sample">
+<h3>profiling.sample<a class="headerlink" href="#profiling-sample" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.sample&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable sampling-based profiling. This collects profiling data periodically rather than per-request.</p>
+<p>This requires the excimer extension to be installed. Be careful with this, as it can generate a lot of data.</p>
+<p>The profile data will be stored as a plain text file in the profiling.path directory that can be analyzed with speedscope.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
+</section>
+<section id="profiling-sample-rate">
+<h3>profiling.sample.rate<a class="headerlink" href="#profiling-sample-rate" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.sample.rate&#39;</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>The rate at which sampling profiling data is collected in seconds.</p>
+<p>A lower value means more frequent samples but higher overhead.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code></p>
+</section>
+<section id="profiling-sample-rotation">
+<h3>profiling.sample.rotation<a class="headerlink" href="#profiling-sample-rotation" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.sample.rotation&#39;</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>How often (in minutes) the sample log files are rotated.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">60</span></code></p>
+</section>
+<section id="profiling-path">
+<h3>profiling.path<a class="headerlink" href="#profiling-path" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profiling.path&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>The directory where profiling data is stored.</p>
+<p>Note that this directory must be writable by the web server user and will not be cleaned up automatically.</p>
+</section>
 </section>
 <section id="alternate-code-locations">
 <h2>Alternate Code Locations<a class="headerlink" href="#alternate-code-locations" title="Link to this heading"></a></h2>
@@ -2003,15 +2138,15 @@ on production.</p>
 <section id="customclient-desktop">
 <h3>customclient_desktop<a class="headerlink" href="#customclient-desktop" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;customclient_desktop&#39;</span> <span class="o">=&gt;</span>
-        <span class="s1">&#39;https://nextcloud.com/install/#install-clients&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;https://nextcloud.com/install/#install-clients&#39;</span><span class="p">,</span>
 <span class="s1">&#39;customclient_android&#39;</span> <span class="o">=&gt;</span>
-        <span class="s1">&#39;https://play.google.com/store/apps/details?id=com.nextcloud.client&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;https://play.google.com/store/apps/details?id=com.nextcloud.client&#39;</span><span class="p">,</span>
 <span class="s1">&#39;customclient_ios&#39;</span> <span class="o">=&gt;</span>
-        <span class="s1">&#39;https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8&#39;</span><span class="p">,</span>
 <span class="s1">&#39;customclient_ios_appid&#39;</span> <span class="o">=&gt;</span>
-                <span class="s1">&#39;1125420102&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;1125420102&#39;</span><span class="p">,</span>
 <span class="s1">&#39;customclient_fdroid&#39;</span> <span class="o">=&gt;</span>
-        <span class="s1">&#39;https://f-droid.org/packages/com.nextcloud.client/&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;https://f-droid.org/packages/com.nextcloud.client/&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
 <p>This section is for configuring the download links for Nextcloud clients, as
@@ -2021,7 +2156,7 @@ seen in the first-run wizard and on Personal pages.</p>
 <li><p>Desktop client: <code class="docutils literal notranslate"><span class="pre">https://nextcloud.com/install/#install-clients</span></code></p></li>
 <li><p>Android client: <code class="docutils literal notranslate"><span class="pre">https://play.google.com/store/apps/details?id=com.nextcloud.client</span></code></p></li>
 <li><p>iOS client: <code class="docutils literal notranslate"><span class="pre">https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8</span></code></p></li>
-<li><p>iOS client app id: <code class="docutils literal notranslate"><span class="pre">1125420102</span></code></p></li>
+<li><p>iOS client app ID: <code class="docutils literal notranslate"><span class="pre">1125420102</span></code></p></li>
 <li><p>F-Droid client: <code class="docutils literal notranslate"><span class="pre">https://f-droid.org/packages/com.nextcloud.client/</span></code></p></li>
 </ul>
 </section>
@@ -2035,10 +2170,10 @@ seen in the first-run wizard and on Personal pages.</p>
 </pre></div>
 </div>
 <p>Set the default app to open on login. The entry IDs can be retrieved from
-the Navigations OCS API endpoint: <a class="reference external" href="https://docs.nextcloud.com/server/latest/develper_manual/_static/openapi.html#/operations/core-navigation-get-apps-navigation">https://docs.nextcloud.com/server/latest/develper_manual/_static/openapi.html#/operations/core-navigation-get-apps-navigation</a>.</p>
+the Navigations OCS API endpoint: <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html#/operations/core-navigation-get-apps-navigation">https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html#/operations/core-navigation-get-apps-navigation</a>.</p>
 <p>You can use a comma-separated list of app names, so if the first
-app is not enabled for a user then Nextcloud will try the second one, and so
-on. If no enabled apps are found it defaults to the dashboard app.</p>
+app is not enabled for a user, then Nextcloud will try the second one, and so
+on. If no enabled apps are found, it defaults to the dashboard app.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">dashboard,files</span></code></p>
 </section>
 <section id="appstoreenabled">
@@ -2055,7 +2190,7 @@ on. If no enabled apps are found it defaults to the dashboard app.</p>
 </pre></div>
 </div>
 <p>Enables the installation of apps from a self-hosted apps store.</p>
-<p>Requires that at least one of the configured apps directories is writeable.</p>
+<p>Requires that at least one of the configured apps directories is writable.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">https://apps.nextcloud.com/api/v1</span></code></p>
 </section>
 <section id="appsallowlist">
@@ -2160,7 +2295,7 @@ Set to <code class="docutils literal notranslate"><span class="pre">-1</span></c
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_max_memory&#39;</span> <span class="o">=&gt;</span> <span class="mi">256</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>max memory for generating image previews with imagegd (default behavior)
+<p>Max memory for generating image previews with imagegd (default behavior)
 Reads the image dimensions from the header and assumes 32 bits per pixel.</p>
 <p>If creating the image would allocate more memory, preview generation will
 be disabled and the default mimetype icon is shown. Set to -1 for no limit.</p>
@@ -2171,7 +2306,7 @@ be disabled and the default mimetype icon is shown. Set to -1 for no limit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_libreoffice_path&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/usr/bin/libreoffice&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>custom path for LibreOffice/OpenOffice binary</p>
+<p>Custom path for LibreOffice/OpenOffice binary</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
 </section>
 <section id="preview-ffmpeg-path">
@@ -2179,9 +2314,19 @@ be disabled and the default mimetype icon is shown. Set to -1 for no limit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_ffmpeg_path&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/usr/bin/ffmpeg&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>custom path for ffmpeg binary</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">null</span></code> and falls back to searching <code class="docutils literal notranslate"><span class="pre">avconv</span></code> and <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code>
+<p>Custom path for ffmpeg binary</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">null</span></code> and falls back to searching <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code>
 in the configured <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment</p>
+</section>
+<section id="preview-ffprobe-path">
+<h3>preview_ffprobe_path<a class="headerlink" href="#preview-ffprobe-path" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_ffprobe_path&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/usr/bin/ffprobe&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Custom path for ffprobe binary</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">null</span></code> and falls back to using the same path as ffmpeg.
+ffprobe is typically packaged with ffmpeg and is required for
+enhanced preview generation for HDR videos.</p>
 </section>
 <section id="preview-imaginary-url">
 <h3>preview_imaginary_url<a class="headerlink" href="#preview-imaginary-url" title="Link to this heading"></a></h3>
@@ -2191,8 +2336,8 @@ in the configured <code class="docutils literal notranslate"><span class="pre">P
 <p>Set the URL of the Imaginary service to send image previews to.</p>
 <p>Also requires the <code class="docutils literal notranslate"><span class="pre">OC\Preview\Imaginary</span></code> provider to be enabled in the
 <code class="docutils literal notranslate"><span class="pre">enabledPreviewProviders</span></code> array, to create previews for these mimetypes: bmp,
-x-bitmap, png, jpeg, gif, heic, heif, svg+xml, tiff, webp and illustrator.</p>
-<p>If you want Imaginary to also create preview images from PDF Documents, you
+x-bitmap, png, jpeg, gif, heic, heif, svg+xml, tiff, webp, and illustrator.</p>
+<p>If you want Imaginary to also create preview images from PDF documents, you
 have to add the <code class="docutils literal notranslate"><span class="pre">OC\Preview\ImaginaryPDF</span></code> provider as well.</p>
 <p>See <a class="reference external" href="https://github.com/h2non/imaginary">https://github.com/h2non/imaginary</a></p>
 </section>
@@ -2201,7 +2346,7 @@ have to add the <code class="docutils literal notranslate"><span class="pre">OC\
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;preview_imaginary_key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;secret&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If you want set a api key for imaginary.</p>
+<p>If you want to set an API key for Imaginary.</p>
 </section>
 <section id="enabledpreviewproviders">
 <h3>enabledPreviewProviders<a class="headerlink" href="#enabledpreviewproviders" title="Link to this heading"></a></h3>
@@ -2283,7 +2428,7 @@ Note: memory equivalent to this size will be used for metadata generation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;ldapUserCleanupInterval&#39;</span> <span class="o">=&gt;</span> <span class="mi">51</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>defines the interval in minutes for the background job that checks user
+<p>Defines the interval in minutes for the background job that checks user
 existence and marks them as ready to be cleaned up. The number is always
 minutes. Setting it to 0 disables the feature.</p>
 <p>See command line (occ) methods <code class="docutils literal notranslate"><span class="pre">ldap:show-remnants</span></code> and <code class="docutils literal notranslate"><span class="pre">user:delete</span></code></p>
@@ -2295,7 +2440,7 @@ minutes. Setting it to 0 disables the feature.</p>
 </pre></div>
 </div>
 <p>Sort groups in the user settings by name instead of the user count</p>
-<p>By enabling this the user count beside the group name is disabled as well.</p>
+<p>By enabling this, the user count beside the group name is disabled as well.</p>
 <div class="deprecated">
 <p><span class="versionmodified deprecated">Deprecated since version since: </span>Nextcloud 29 - Use the frontend instead or set the app config value <cite>group.sortBy</cite> for <cite>core</cite> to <cite>2</cite></p>
 </div>
@@ -2310,7 +2455,7 @@ minutes. Setting it to 0 disables the feature.</p>
 </pre></div>
 </div>
 <p>Replaces the default Comments Manager Factory. This can be utilized if an
-own or 3rdParty CommentsManager should be used that – for instance – uses the
+own or 3rd-party CommentsManager should be used that – for instance – uses the
 filesystem instead of the database to keep the comments.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">\OC\Comments\ManagerFactory</span></code></p>
 </section>
@@ -2320,7 +2465,7 @@ filesystem instead of the database to keep the comments.</p>
 </pre></div>
 </div>
 <p>Replaces the default System Tags Manager Factory. This can be utilized if an
-own or 3rdParty SystemTagsManager should be used that – for instance – uses the
+own or 3rd-party SystemTagsManager should be used that – for instance – uses the
 filesystem instead of the database to keep the tags.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">\OC\SystemTag\ManagerFactory</span></code></p>
 </section>
@@ -2337,7 +2482,7 @@ maintenance.</p>
 <p>Enable maintenance mode to disable Nextcloud</p>
 <p>If you want to prevent users from logging in to Nextcloud before you start
 doing some maintenance work, you need to set the value of the maintenance
-parameter to true. Please keep in mind that users who are already logged-in
+parameter to true. Please keep in mind that users who are already logged in
 are kicked out of Nextcloud instantly.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
@@ -2350,8 +2495,8 @@ are kicked out of Nextcloud instantly.</p>
 <p>Some background jobs only run once a day. When an hour is defined for this config,
 the background jobs which advertise themselves as not time sensitive will be
 delayed during the “working” hours and only run in the 4 hours after the given time.
-This is e.g. used for activity expiration, suspicious login training and update checks.</p>
-<p>A value of 1 e.g. will only run these background jobs between 01:00am UTC and 05:00am UTC.</p>
+This is, e.g., used for activity expiration, suspicious login training, and update checks.</p>
+<p>A value of 1, e.g., will only run these background jobs between 01:00am UTC and 05:00am UTC.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">100</span></code> which disables the feature</p>
 </section>
 <section id="ldap-log-file">
@@ -2401,7 +2546,7 @@ For the local cache (you can configure two) take APCu.</p></li>
 </div>
 <p>Memory caching backend for locally stored data</p>
 <ul class="simple">
-<li><p>Used for host-specific data, e.g. file paths</p></li>
+<li><p>Used for host-specific data, e.g., file paths</p></li>
 </ul>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">none</span></code></p>
 </section>
@@ -2412,22 +2557,34 @@ For the local cache (you can configure two) take APCu.</p></li>
 </div>
 <p>Memory caching backend for distributed data</p>
 <ul class="simple">
-<li><p>Used for installation-specific data, e.g. database caching</p></li>
+<li><p>Used for installation-specific data, e.g., database caching</p></li>
 <li><p>If unset, defaults to the value of memcache.local</p></li>
 </ul>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">none</span></code></p>
 </section>
+<section id="memcache-customprefix">
+<h3>memcache_customprefix<a class="headerlink" href="#memcache-customprefix" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;memcache_customprefix&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;mycustomprefix&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Cache Key Prefix for Redis or Memcached</p>
+<ul class="simple">
+<li><p>Used for avoiding collisions in the cache system</p></li>
+<li><p>May be used for ACL restrictions in Redis</p></li>
+</ul>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
+</section>
 <section id="redis">
 <h3>redis<a class="headerlink" href="#redis" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;redis&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">a</span> <span class="n">unix</span> <span class="n">domain</span> <span class="n">socket</span><span class="p">:</span> <span class="s1">&#39;/tmp/redis.sock&#39;</span>
+        <span class="s1">&#39;host&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">a</span> <span class="n">Unix</span> <span class="n">domain</span> <span class="n">socket</span><span class="p">:</span> <span class="s1">&#39;/tmp/redis.sock&#39;</span>
         <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="mi">6379</span><span class="p">,</span>
         <span class="s1">&#39;timeout&#39;</span> <span class="o">=&gt;</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="s1">&#39;read_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span>  <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">defined</span><span class="p">,</span> <span class="n">no</span> <span class="n">password</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
         <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">defined</span><span class="p">,</span> <span class="n">no</span> <span class="n">password</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
-        <span class="s1">&#39;dbindex&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="n">undefined</span> <span class="n">SELECT</span> <span class="n">will</span> <span class="ow">not</span> <span class="n">run</span> <span class="ow">and</span> <span class="n">will</span> <span class="n">use</span> <span class="n">Redis</span> <span class="n">Server</span><span class="s1">&#39;s default DB Index.</span>
-        <span class="o">//</span> <span class="n">If</span> <span class="n">redis</span> <span class="ow">in</span><span class="o">-</span><span class="n">transit</span> <span class="n">encryption</span> <span class="ow">is</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">provide</span> <span class="n">certificates</span>
+        <span class="s1">&#39;dbindex&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="n">undefined</span><span class="p">,</span> <span class="n">SELECT</span> <span class="n">will</span> <span class="ow">not</span> <span class="n">run</span> <span class="ow">and</span> <span class="n">will</span> <span class="n">use</span> <span class="n">Redis</span> <span class="n">Server</span><span class="s1">&#39;s default DB Index.</span>
+        <span class="o">//</span> <span class="n">If</span> <span class="n">Redis</span> <span class="ow">in</span><span class="o">-</span><span class="n">transit</span> <span class="n">encryption</span> <span class="ow">is</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">provide</span> <span class="n">certificates</span>
         <span class="o">//</span> <span class="n">SSL</span> <span class="n">context</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">php</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">manual</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">context</span><span class="o">.</span><span class="n">ssl</span><span class="o">.</span><span class="n">php</span>
         <span class="s1">&#39;ssl_context&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
                 <span class="s1">&#39;local_cert&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/certs/redis.crt&#39;</span><span class="p">,</span>
@@ -2437,11 +2594,11 @@ For the local cache (you can configure two) take APCu.</p></li>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Connection details for redis to use for memory caching in a single server configuration.</p>
-<p>For enhanced security it is recommended to configure Redis
+<p>Connection details for Redis to use for memory caching in a single server configuration.</p>
+<p>For enhanced security, it is recommended to configure Redis
 to require a password. See <a class="reference external" href="http://redis.io/topics/security">http://redis.io/topics/security</a>
 for more information.</p>
-<p>We also support redis SSL/TLS encryption as of version 6.
+<p>We also support Redis SSL/TLS encryption as of version 6.
 See <a class="reference external" href="https://redis.io/topics/encryption">https://redis.io/topics/encryption</a> for more information.</p>
 </section>
 <section id="redis-cluster">
@@ -2456,7 +2613,7 @@ See <a class="reference external" href="https://redis.io/topics/encryption">http
         <span class="s1">&#39;failover_mode&#39;</span> <span class="o">=&gt;</span> \<span class="n">RedisCluster</span><span class="p">::</span><span class="n">FAILOVER_ERROR</span><span class="p">,</span>
         <span class="s1">&#39;user&#39;</span> <span class="o">=&gt;</span>  <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">defined</span><span class="p">,</span> <span class="n">no</span> <span class="n">password</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
         <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Optional</span><span class="p">:</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">defined</span><span class="p">,</span> <span class="n">no</span> <span class="n">password</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
-        <span class="o">//</span> <span class="n">If</span> <span class="n">redis</span> <span class="ow">in</span><span class="o">-</span><span class="n">transit</span> <span class="n">encryption</span> <span class="ow">is</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">provide</span> <span class="n">certificates</span>
+        <span class="o">//</span> <span class="n">If</span> <span class="n">Redis</span> <span class="ow">in</span><span class="o">-</span><span class="n">transit</span> <span class="n">encryption</span> <span class="ow">is</span> <span class="n">enabled</span><span class="p">,</span> <span class="n">provide</span> <span class="n">certificates</span>
         <span class="o">//</span> <span class="n">SSL</span> <span class="n">context</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">php</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">manual</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">context</span><span class="o">.</span><span class="n">ssl</span><span class="o">.</span><span class="n">php</span>
         <span class="s1">&#39;ssl_context&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
                 <span class="s1">&#39;local_cert&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/certs/redis.crt&#39;</span><span class="p">,</span>
@@ -2467,7 +2624,7 @@ See <a class="reference external" href="https://redis.io/topics/encryption">http
 </pre></div>
 </div>
 <p>Connection details for a Redis Cluster.</p>
-<p>Redis Cluster support requires the php module phpredis in version 3.0.0 or
+<p>Redis Cluster support requires the PHP module phpredis in version 3.0.0 or
 higher.</p>
 <dl class="simple">
 <dt>Available failover modes:</dt><dd><ul class="simple">
@@ -2481,7 +2638,7 @@ higher.</p>
 <p class="admonition-title">Warning</p>
 <p>FAILOVER_DISTRIBUTE is a not recommended setting, and we strongly
 suggest to not use it if you use Redis for file locking. Due to the way Redis
-is synchronized it could happen, that the read for an existing lock is
+is synchronized, it could happen that the read for an existing lock is
 scheduled to a slave that is not fully synchronized with the connected master
 which then causes a FileLocked exception.</p>
 </div>
@@ -2493,7 +2650,7 @@ which then causes a FileLocked exception.</p>
 <h3>memcached_servers<a class="headerlink" href="#memcached-servers" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;memcached_servers&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="o">//</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">port</span> <span class="ow">and</span> <span class="n">optional</span> <span class="n">weight</span>
-        <span class="o">//</span> <span class="ow">or</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">port</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">unix</span> <span class="n">socket</span><span class="o">.</span> <span class="n">Also</span> <span class="n">see</span><span class="p">:</span>
+        <span class="o">//</span> <span class="ow">or</span> <span class="n">path</span> <span class="ow">and</span> <span class="n">port</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">Unix</span> <span class="n">socket</span><span class="o">.</span> <span class="n">Also</span> <span class="n">see</span><span class="p">:</span>
         <span class="o">//</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">php</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">manual</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">memcached</span><span class="o">.</span><span class="n">addservers</span><span class="o">.</span><span class="n">php</span>
         <span class="o">//</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">php</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">manual</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="n">memcached</span><span class="o">.</span><span class="n">addserver</span><span class="o">.</span><span class="n">php</span>
         <span class="p">[</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">11211</span><span class="p">],</span>
@@ -2501,7 +2658,7 @@ which then causes a FileLocked exception.</p>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Server details for one or more memcached servers to use for memory caching.</p>
+<p>Server details for one or more Memcached servers to use for memory caching.</p>
 </section>
 <section id="memcached-options">
 <h3>memcached_options<a class="headerlink" href="#memcached-options" title="Link to this heading"></a></h3>
@@ -2522,12 +2679,12 @@ which then causes a FileLocked exception.</p>
         <span class="o">//</span> <span class="n">Enable</span> <span class="n">Binary</span> <span class="n">Protocol</span>
         \<span class="n">Memcached</span><span class="p">::</span><span class="n">OPT_BINARY_PROTOCOL</span> <span class="o">=&gt;</span>      <span class="n">true</span><span class="p">,</span>
 
-        <span class="o">//</span> <span class="n">Binary</span> <span class="n">serializer</span> <span class="n">vill</span> <span class="n">be</span> <span class="n">enabled</span> <span class="k">if</span> <span class="n">the</span> <span class="n">igbinary</span> <span class="n">PECL</span> <span class="n">module</span> <span class="ow">is</span> <span class="n">available</span>
+        <span class="o">//</span> <span class="n">Binary</span> <span class="n">serializer</span> <span class="n">will</span> <span class="n">be</span> <span class="n">enabled</span> <span class="k">if</span> <span class="n">the</span> <span class="n">igbinary</span> <span class="n">PECL</span> <span class="n">module</span> <span class="ow">is</span> <span class="n">available</span>
         <span class="o">//</span>\<span class="n">Memcached</span><span class="p">::</span><span class="n">OPT_SERIALIZER</span> <span class="o">=&gt;</span> \<span class="n">Memcached</span><span class="p">::</span><span class="n">SERIALIZER_IGBINARY</span><span class="p">,</span>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Connection options for memcached</p>
+<p>Connection options for Memcached</p>
 </section>
 <section id="cache-path">
 <h3>cache_path<a class="headerlink" href="#cache-path" title="Link to this heading"></a></h3>
@@ -2551,6 +2708,16 @@ issues uploading very large files via the Nextcloud Client as upload isn’t
 completed within one day.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">60*60*24</span></code> (1 day)</p>
 </section>
+<section id="cache-app-config">
+<h3>cache_app_config<a class="headerlink" href="#cache-app-config" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;cache_app_config&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable caching of the app config values.</p>
+<p>If enabled the app config will be cached locally for a short TTL,
+reducing database load significantly on larger setups.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+</section>
 </section>
 <section id="using-object-store-with-nextcloud">
 <h2>Using Object Store with Nextcloud<a class="headerlink" href="#using-object-store-with-nextcloud" title="Link to this heading"></a></h2>
@@ -2559,9 +2726,9 @@ completed within one day.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;OC</span><span class="se">\\</span><span class="s1">Files</span><span class="se">\\</span><span class="s1">ObjectStore</span><span class="se">\\</span><span class="s1">Swift&#39;</span><span class="p">,</span>
         <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-                <span class="o">//</span> <span class="n">trystack</span> <span class="n">will</span> <span class="n">use</span> <span class="n">your</span> <span class="n">facebook</span> <span class="nb">id</span> <span class="k">as</span> <span class="n">the</span> <span class="n">username</span>
+                <span class="o">//</span> <span class="n">trystack</span> <span class="n">will</span> <span class="n">use</span> <span class="n">your</span> <span class="n">Facebook</span> <span class="n">ID</span> <span class="k">as</span> <span class="n">the</span> <span class="n">username</span>
                 <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;facebook100000123456789&#39;</span><span class="p">,</span>
-                <span class="o">//</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">trystack</span> <span class="n">dashboard</span> <span class="n">go</span> <span class="n">to</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">settings</span> <span class="o">-&gt;</span> <span class="n">API</span> <span class="n">Password</span> <span class="n">to</span>
+                <span class="o">//</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">trystack</span> <span class="n">dashboard</span><span class="p">,</span> <span class="n">go</span> <span class="n">to</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">settings</span> <span class="o">-&gt;</span> <span class="n">API</span> <span class="n">Password</span> <span class="n">to</span>
                 <span class="o">//</span> <span class="n">generate</span> <span class="n">a</span> <span class="n">password</span>
                 <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Secr3tPaSSWoRdt7&#39;</span><span class="p">,</span>
                 <span class="o">//</span> <span class="n">must</span> <span class="n">already</span> <span class="n">exist</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">objectstore</span><span class="p">,</span> <span class="n">name</span> <span class="n">can</span> <span class="n">be</span> <span class="n">different</span>
@@ -2581,14 +2748,14 @@ completed within one day.</p>
                 <span class="o">//</span> <span class="n">dev</span><span class="o">-/</span><span class="n">trystack</span> <span class="n">uses</span> <span class="n">swift</span> <span class="n">by</span> <span class="n">default</span><span class="p">,</span> <span class="n">the</span> <span class="n">lib</span> <span class="n">defaults</span> <span class="n">to</span> <span class="s1">&#39;cloudFiles&#39;</span>
                 <span class="o">//</span> <span class="k">if</span> <span class="n">omitted</span>
                 <span class="s1">&#39;serviceName&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;swift&#39;</span><span class="p">,</span>
-                <span class="o">//</span> <span class="n">The</span> <span class="n">Interface</span> <span class="o">/</span> <span class="n">url</span> <span class="n">Type</span><span class="p">,</span> <span class="n">optional</span>
+                <span class="o">//</span> <span class="n">The</span> <span class="n">Interface</span> <span class="o">/</span> <span class="n">URL</span> <span class="n">Type</span><span class="p">,</span> <span class="n">optional</span>
                 <span class="s1">&#39;urlType&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;internal&#39;</span>
         <span class="p">],</span>
 <span class="p">],</span>
 </pre></div>
 </div>
 <p>This example shows how to configure Nextcloud to store all files in a
-swift object storage.</p>
+Swift object storage.</p>
 <p>It is important to note that Nextcloud in object store mode will expect
 exclusive access to the object store container because it only stores the
 binary data for each file. The metadata is currently kept in the local
@@ -2596,9 +2763,9 @@ database for performance reasons.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The current implementation is incompatible with any app that uses
-direct file IO and circumvents our virtual filesystem. That includes
+direct file I/O and circumvents our virtual filesystem. That includes
 Encryption and Gallery. Gallery will store thumbnails directly in the
-filesystem and encryption will cause severe overhead because key files need
+filesystem, and encryption will cause severe overhead because key files need
 to be fetched in addition to any requested file.</p>
 </div>
 </section>
@@ -2632,7 +2799,7 @@ to be fetched in addition to any requested file.</p>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>To use swift V3</p>
+<p>To use Swift V3</p>
 </section>
 <section id="id3">
 <h3>objectstore<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
@@ -2649,6 +2816,12 @@ to be fetched in addition to any requested file.</p>
                 <span class="o">//</span> <span class="n">optional</span><span class="p">:</span> <span class="n">Maximum</span> <span class="n">number</span> <span class="n">of</span> <span class="n">retry</span> <span class="n">attempts</span> <span class="k">for</span> <span class="n">failed</span> <span class="n">S3</span> <span class="n">requests</span>
                 <span class="o">//</span> <span class="n">Default</span><span class="p">:</span> <span class="mi">5</span>
                 <span class="s1">&#39;retriesMaxAttempts&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="o">//</span> <span class="n">Data</span> <span class="n">Integrity</span> <span class="n">Protections</span> <span class="k">for</span> <span class="n">Amazon</span> <span class="n">S3</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="o">.</span><span class="n">aws</span><span class="o">.</span><span class="n">amazon</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">sdkref</span><span class="o">/</span><span class="n">latest</span><span class="o">/</span><span class="n">guide</span><span class="o">/</span><span class="n">feature</span><span class="o">-</span><span class="n">dataintegrity</span><span class="o">.</span><span class="n">html</span><span class="p">)</span>
+                <span class="o">//</span> <span class="n">Valid</span> <span class="n">values</span> <span class="n">are</span> <span class="s2">&quot;when_required&quot;</span> <span class="p">(</span><span class="n">default</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;when_supported&quot;</span><span class="o">.</span>
+                <span class="o">//</span> <span class="n">To</span> <span class="n">ensure</span> <span class="n">compatibility</span> <span class="k">with</span> <span class="mi">3</span><span class="n">rd</span> <span class="n">party</span> <span class="n">S3</span> <span class="n">implementations</span><span class="p">,</span> <span class="n">Nextcloud</span> <span class="n">disables</span> <span class="n">it</span> <span class="n">by</span> <span class="n">default</span><span class="o">.</span> <span class="n">However</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">are</span>
+                <span class="o">//</span> <span class="n">using</span> <span class="n">Amazon</span> <span class="n">S3</span> <span class="p">(</span><span class="ow">or</span> <span class="nb">any</span> <span class="n">other</span> <span class="n">implementation</span> <span class="n">that</span> <span class="n">supports</span> <span class="n">it</span><span class="p">)</span> <span class="n">we</span> <span class="n">recommend</span> <span class="n">enabling</span> <span class="n">it</span> <span class="n">by</span> <span class="n">using</span> <span class="s2">&quot;when_supported&quot;</span><span class="o">.</span>
+                <span class="s1">&#39;request_checksum_calculation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;when_required&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;response_checksum_validation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;when_required&#39;</span><span class="p">,</span>
         <span class="p">],</span>
 <span class="p">],</span>
 </pre></div>
@@ -2660,14 +2833,14 @@ to be fetched in addition to any requested file.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore.multibucket.preview-distribution&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If this is set to true and a multibucket object store is configured then
+<p>If this is set to true and a multibucket object store is configured, then
 newly created previews are put into 256 dedicated buckets.</p>
-<p>Those buckets are named like the mulibucket version but with the postfix
+<p>Those buckets are named like the multibucket version but with the postfix
 <code class="docutils literal notranslate"><span class="pre">-preview-NUMBER</span></code> where NUMBER is between 0 and 255.</p>
 <p>Keep in mind that only previews of files are put in there that don’t have
 some already. Otherwise, the old bucket will be used.</p>
-<p>To migrate existing previews to this new multibucket distribution of previews
-use the occ command <code class="docutils literal notranslate"><span class="pre">preview:repair</span></code>. For now this will only migrate
+<p>To migrate existing previews to this new multibucket distribution of previews,
+use the occ command <code class="docutils literal notranslate"><span class="pre">preview:repair</span></code>. For now, this will only migrate
 previews that were generated before Nextcloud 19 in the flat
 <code class="docutils literal notranslate"><span class="pre">appdata_INSTANCEID/previews/FILEID</span></code> folder structure.</p>
 </section>
@@ -2681,7 +2854,7 @@ previews that were generated before Nextcloud 19 in the flat
 </pre></div>
 </div>
 <p>Replaces the default Share Provider Factory. This can be utilized if
-own or 3rdParty Share Providers are used that – for instance – use the
+own or 3rd-party Share Providers are used that – for instance – use the
 filesystem instead of the database to keep the share information.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">\OC\Share20\ProviderFactory</span></code></p>
 </section>
@@ -2691,8 +2864,8 @@ filesystem instead of the database to keep the share information.</p>
 </pre></div>
 </div>
 <p>Enables expiration for link share passwords sent by email (sharebymail).</p>
-<p>The passwords will expire after the configured interval, the users can
-still request a new one in the public link page.</p>
+<p>The passwords will expire after the configured interval; the users can
+still request a new one on the public link page.</p>
 </section>
 <section id="sharing-mail-link-password-expiration-interval">
 <h3>sharing.mail_link_password_expiration_interval<a class="headerlink" href="#sharing-mail-link-password-expiration-interval" title="Link to this heading"></a></h3>
@@ -2708,9 +2881,9 @@ still request a new one in the public link page.</p>
 </div>
 <p>Define max number of results returned by the search for auto-completion of
 users, groups, etc. The value must not be lower than 0 (for unlimited).</p>
-<p>If more, different sources are requested (e.g. different user backends; or
+<p>If more, different sources are requested (e.g., different user backends; or
 both users and groups), the value is applied per source and might not be
-truncated after collecting the results. I.e. more results can appear than
+truncated after collecting the results. I.e., more results can appear than
 configured here.</p>
 <p>Default is 25.</p>
 </section>
@@ -2742,7 +2915,7 @@ Default is no limit (value set to 0)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.allow_custom_share_folder&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, to prevent users from setting a custom share_folder</p>
+<p>Set to <code class="docutils literal notranslate"><span class="pre">false</span></code> to prevent users from setting a custom share_folder</p>
 </section>
 <section id="share-folder">
 <h3>share_folder<a class="headerlink" href="#share-folder" title="Link to this heading"></a></h3>
@@ -2758,7 +2931,7 @@ Default is no limit (value set to 0)</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sharing.enable_share_mail&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, to stop sending a mail when users receive a share</p>
+<p>Set to <code class="docutils literal notranslate"><span class="pre">false</span></code> to stop sending a mail when users receive a share</p>
 </section>
 <section id="sharing-allow-disabled-password-enforcement-groups">
 <h3>sharing.allow_disabled_password_enforcement_groups<a class="headerlink" href="#sharing-allow-disabled-password-enforcement-groups" title="Link to this heading"></a></h3>
@@ -2797,7 +2970,7 @@ by a command line argument.</p>
 </div>
 <p>By default, Nextcloud will use the Argon2 password hashing if available.</p>
 <p>However, if for whatever reason you want to stick with the PASSWORD_DEFAULT
-of your php version. Then set the setting to true.</p>
+of your PHP version, then set the setting to true.</p>
 <p>Nextcloud uses the Argon2 algorithm (with PHP &gt;= 7.2) to create hashes by its
 own and exposes its configuration options as following. More information can
 be found at: <a class="reference external" href="https://www.php.net/manual/en/function.password-hash.php">https://www.php.net/manual/en/function.password-hash.php</a></p>
@@ -2808,7 +2981,7 @@ be found at: <a class="reference external" href="https://www.php.net/manual/en/f
 </pre></div>
 </div>
 <p>The number of CPU threads to be used by the algorithm for computing a hash.</p>
-<p>The value must be an integer, and the minimum value is 1. Rationally it does
+<p>The value must be an integer, and the minimum value is 1. Rationally, it does
 not help to provide a number higher than the available threads on the machine.
 Values that undershoot the minimum will be ignored in favor of the minimum.</p>
 </section>
@@ -2852,12 +3025,12 @@ Using a higher value requires more time and CPU power to calculate the hashes</p
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Additional driver options for the database connection, e.g. to enable SSL
+<p>Additional driver options for the database connection, e.g., to enable SSL
 encryption in MySQL or specify a custom wait timeout on a cheap hoster.</p>
 <p>When setting up TLS/SSL for encrypting the connections, you need to ensure that
 the passed keys and certificates are readable by the PHP process. In addition,
 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT might need to be set to false, if the
-database servers certificates CN does not match with the hostname used to connect.
+database server’s certificate CN does not match with the hostname used to connect.
 The standard behavior here is different from the MySQL/MariaDB CLI client, which
 does not verify the server cert except –ssl-verify-server-cert is passed manually.</p>
 </section>
@@ -2866,8 +3039,8 @@ does not verify the server cert except –ssl-verify-server-cert is passed manua
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;sqlite.journal_mode&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>sqlite3 journal mode can be specified using this configuration parameter -
-can be ‘WAL’ or ‘DELETE’ see for more details <a class="reference external" href="https://www.sqlite.org/wal.html">https://www.sqlite.org/wal.html</a></p>
+<p>SQLite3 journal mode can be specified using this configuration parameter -
+can be ‘WAL’ or ‘DELETE’. See <a class="reference external" href="https://www.sqlite.org/wal.html">https://www.sqlite.org/wal.html</a> for more details.</p>
 </section>
 <section id="mysql-utf8mb4">
 <h3>mysql.utf8mb4<a class="headerlink" href="#mysql-utf8mb4" title="Link to this heading"></a></h3>
@@ -2875,20 +3048,20 @@ can be ‘WAL’ or ‘DELETE’ see for more details <a class="reference extern
 </pre></div>
 </div>
 <p>During setup, if requirements are met (see below), this setting is set to true
-and MySQL can handle 4 byte characters instead of 3 byte characters.</p>
-<p>If you want to convert an existing 3-byte setup into a 4-byte setup please
-set the parameters in MySQL as mentioned below and run the migration command:
+to enable MySQL to handle 4-byte characters instead of 3-byte characters.</p>
+<p>To convert an existing 3-byte setup to a 4-byte setup, configure the MySQL
+parameters as described below and run the migration command:
 ./occ db:convert-mysql-charset
-The config setting will be set automatically after a successful run.</p>
-<p>Consult the documentation for more details.</p>
-<p>MySQL requires a special setup for longer indexes (&gt; 767 bytes) which are
-needed:</p>
+This config setting will be automatically updated after a successful migration.</p>
+<p>Refer to the documentation for more details.</p>
+<p>MySQL requires specific settings for longer indexes (&gt; 767 bytes), which are
+necessary for 4-byte character support:</p>
 <p>[mysqld]
 innodb_large_prefix=ON
 innodb_file_format=Barracuda
 innodb_file_per_table=ON</p>
 <dl class="simple">
-<dt>Tables will be created with</dt><dd><ul class="simple">
+<dt>Tables will be created with:</dt><dd><ul class="simple">
 <li><p>character set: utf8mb4</p></li>
 <li><p>collation:     utf8mb4_bin</p></li>
 <li><p>row_format:    dynamic</p></li>
@@ -2907,16 +3080,15 @@ innodb_file_per_table=ON</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;mysql.collation&#39;</span> <span class="o">=&gt;</span> <span class="n">null</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>For search queries in the database, a default collation – depending on the
-character set – is chosen. In some cases a different behaviour is desired,
-for instances when an accent sensitive search is desired.</p>
-<p>MariaDB and MySQL have an overlap in available collations, but also
-incompatible ones, also depending on the version of the database server.</p>
-<p>This option allows to override the automatic choice. Example:</p>
+<p>For search queries in the database, a default collation is chosen based on the
+character set. In some cases, a different collation is desired, such as for
+accent-sensitive searches.</p>
+<p>MariaDB and MySQL share some collations, but also have incompatible ones,
+depending on the database server version.</p>
+<p>This option allows overriding the automatic collation choice. Example:</p>
 <p>‘mysql.collation’ =&gt; ‘utf8mb4_0900_as_ci’,</p>
-<p>This setting has no effect on setup or creating tables. In those cases
-always utf8[mb4]_bin is being used. This setting is only taken into
-consideration in SQL queries that utilize LIKE comparison operators.</p>
+<p>This setting does not affect table creation or setup, where utf8[mb4]_bin is
+always used. It applies only to SQL queries using LIKE comparison operators.</p>
 </section>
 <section id="pgsql-ssl">
 <h3>pgsql_ssl<a class="headerlink" href="#pgsql-ssl" title="Link to this heading"></a></h3>
@@ -2941,7 +3113,7 @@ consideration in SQL queries that utilize LIKE comparison operators.</p>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Database types that are supported for installation.</p>
+<p>Database types supported for installation.</p>
 <dl class="simple">
 <dt>Available:</dt><dd><ul class="simple">
 <li><p>sqlite (SQLite3)</p></li>
@@ -2950,7 +3122,7 @@ consideration in SQL queries that utilize LIKE comparison operators.</p>
 <li><p>oci (Oracle)</p></li>
 </ul>
 </dd>
-<dt>Defaults to the following databases:</dt><dd><ul class="simple">
+<dt>Defaults to:</dt><dd><ul class="simple">
 <li><p>sqlite (SQLite3)</p></li>
 <li><p>mysql (MySQL)</p></li>
 <li><p>pgsql (PostgreSQL)</p></li>
@@ -2963,100 +3135,101 @@ consideration in SQL queries that utilize LIKE comparison operators.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;tempdirectory&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/tmp/nextcloudtemp&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Override where Nextcloud stores temporary files. Useful in situations where
-the system temporary directory is on a limited space ramdisk or is otherwise
-restricted, or if external storage which do not support streaming are in
-use.</p>
-<p>The Web server user/PHP must have write access to this directory.
-Additionally you have to make sure that your PHP configuration considers this a valid
-tmp directory, by setting the TMP, TMPDIR, and TEMP variables to the required directories.
-On top of that you might be required to grant additional permissions in AppArmor or SELinux.</p>
+<p>Override the location where Nextcloud stores temporary files. Useful in setups
+where the system temporary directory is on a limited-space ramdisk, restricted,
+or when using external storage that does not support streaming.</p>
+<p>The web server user/PHP must have write access to this directory. Ensure that
+PHP configuration recognizes this as a valid temporary directory by setting
+the TMP, TMPDIR, and TEMP environment variables accordingly. Additional
+permissions may be required for AppArmor or SELinux.</p>
 </section>
 <section id="updatedirectory">
 <h3>updatedirectory<a class="headerlink" href="#updatedirectory" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;updatedirectory&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Override where Nextcloud stores update files while updating. Useful in situations
-where the default <cite>datadirectory</cite> is on network disk like NFS, or is otherwise
-restricted. Defaults to the value of <cite>datadirectory</cite> if unset.</p>
-<p>If set, the value MUST be located _outside_ of the installation directory of Nextcloud and
-writable by the Web server user.</p>
+<p>Override the location where Nextcloud stores update files during updates.</p>
+<p>Useful when the default <cite>datadirectory</cite> is on a network disk like NFS or is
+otherwise restricted. Defaults to the value of <cite>datadirectory</cite> if unset.</p>
+<p>If set, the directory must be located outside the Nextcloud installation
+directory and writable by the web server user.</p>
 </section>
 <section id="forbidden-filenames">
 <h3>forbidden_filenames<a class="headerlink" href="#forbidden-filenames" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;forbidden_filenames&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;.htaccess&#39;</span><span class="p">],</span>
 </pre></div>
 </div>
-<p>Block a specific file or files and disallow the upload of files with this name.</p>
-<p>This blocks any access to those files (read and write).
-<code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> is blocked by default.</p>
+<p>Block specific files or filenames, disallowing uploads or access (read and write).</p>
+<p><code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> is blocked by default.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>USE THIS ONLY IF YOU KNOW WHAT YOU ARE DOING.</p>
+<p>Use this only if you understand the implications.</p>
 </div>
-<p>Note that this list is case-insensitive.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">array('.htaccess')</span></code></p>
+<p>Note: This list is case-insensitive.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">['.htaccess']</span></code></p>
 </section>
 <section id="forbidden-filename-basenames">
 <h3>forbidden_filename_basenames<a class="headerlink" href="#forbidden-filename-basenames" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;forbidden_filename_basenames&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
 </pre></div>
 </div>
-<p>Disallow the upload of files with specific basenames.</p>
-<p>Matching existing files can no longer be updated and in matching folders no files can be created anymore.</p>
-<p>The basename is the name of the file without the extension,
-e.g. for “archive.tar.gz” the basename would be “archive”.</p>
-<p>Note that this list is case-insensitive.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">array()</span></code></p>
+<p>Disallow uploads of files with specific basenames. Matching existing files
+cannot be updated, and no new files can be created in matching folders.</p>
+<p>The basename is the filename without the extension, e.g., for “archive.tar.gz”,
+the basename is “archive”.</p>
+<p>Note: This list is case-insensitive.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty array)</p>
 </section>
 <section id="forbidden-filename-characters">
 <h3>forbidden_filename_characters<a class="headerlink" href="#forbidden-filename-characters" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;forbidden_filename_characters&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
 </pre></div>
 </div>
-<p>Block characters from being used in filenames. This is useful if you
-have a filesystem or OS which does not support certain characters like windows.</p>
-<p>Matching existing files can no longer be updated and in matching folders no files can be created anymore.</p>
-<p>The ‘/’ and ‘' characters are always forbidden, as well as all characters in the ASCII range [0-31].</p>
-<p>Example for windows systems: <code class="docutils literal notranslate"><span class="pre">array('?',</span> <span class="pre">'&lt;',</span> <span class="pre">'&gt;',</span> <span class="pre">':',</span> <span class="pre">'*',</span> <span class="pre">'|',</span> <span class="pre">'&quot;')</span></code>
-see <a class="reference external" href="https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits">https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits</a></p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">array()</span></code></p>
+<p>Block specific characters in filenames. Useful for filesystems or operating
+systems (e.g., Windows) that do not support certain characters. Matching
+existing files cannot be updated, and no new files can be created in matching
+folders.</p>
+<p>The ‘/’ and ‘' characters, as well as ASCII characters [0-31], are always
+forbidden.</p>
+<p>Example for Windows: <code class="docutils literal notranslate"><span class="pre">['?',</span> <span class="pre">'&lt;',</span> <span class="pre">'&gt;',</span> <span class="pre">':',</span> <span class="pre">'*',</span> <span class="pre">'|',</span> <span class="pre">'&quot;']</span></code>
+See: <a class="reference external" href="https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits">https://en.wikipedia.org/wiki/Comparison_of_file_systems#Limits</a></p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty array)</p>
 </section>
 <section id="forbidden-filename-extensions">
 <h3>forbidden_filename_extensions<a class="headerlink" href="#forbidden-filename-extensions" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;forbidden_filename_extensions&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;.part&#39;</span><span class="p">,</span> <span class="s1">&#39;.filepart&#39;</span><span class="p">],</span>
 </pre></div>
 </div>
-<p>Deny extensions from being used for filenames.</p>
-<p>Matching existing files can no longer be updated and in matching folders no files can be created anymore.</p>
-<p>The ‘.part’ extension is always forbidden, as this is used internally by Nextcloud.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">array('.filepart',</span> <span class="pre">'.part')</span></code></p>
+<p>Deny specific file extensions. Matching existing files cannot be updated, and
+no new files can be created in matching folders.</p>
+<p>The ‘.part’ extension is always forbidden, as it is used internally by Nextcloud.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">['.filepart',</span> <span class="pre">'.part']</span></code></p>
 </section>
 <section id="theme">
 <h3>theme<a class="headerlink" href="#theme" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;theme&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If you are applying a theme to Nextcloud, enter the name of the theme here.</p>
-<p>The default location for themes is <code class="docutils literal notranslate"><span class="pre">nextcloud/themes/</span></code>.</p>
-<p>Defaults to the theming app which is shipped since Nextcloud 9</p>
+<p>Specify the name of a theme to apply to Nextcloud. Themes are located in
+<code class="docutils literal notranslate"><span class="pre">nextcloud/themes/</span></code> by default.</p>
+<p>Defaults to the theming app, included since Nextcloud 9.</p>
 </section>
 <section id="enforce-theme">
 <h3>enforce_theme<a class="headerlink" href="#enforce-theme" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enforce_theme&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enforce the user theme. This will disable the user theming settings
-This must be a valid ITheme ID.</p>
-<p>E.g. dark, dark-highcontrast, default, light, light-highcontrast, opendyslexic</p>
+<p>Enforce a specific user theme, disabling user theming settings. Must be a
+valid ITheme ID, e.g., dark, dark-highcontrast, default, light,
+light-highcontrast, opendyslexic.</p>
 </section>
 <section id="theming-standalone-window-enabled">
 <h3>theming.standalone_window.enabled<a class="headerlink" href="#theming-standalone-window-enabled" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;theming.standalone_window.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>This setting allows to disable the PWA functionality that allows browsers to open web applications in dedicated windows.</p>
+<p>Enable or disable Progressive Web App (PWA) functionality, which allows
+browsers to open web applications in dedicated windows.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="cipher">
@@ -3065,7 +3238,7 @@ This must be a valid ITheme ID.</p>
 </pre></div>
 </div>
 <dl class="simple">
-<dt>The default cipher for encrypting files. Currently supported are:</dt><dd><ul class="simple">
+<dt>Specify the default cipher for encrypting files. Supported ciphers:</dt><dd><ul class="simple">
 <li><p>AES-256-CTR</p></li>
 <li><p>AES-128-CTR</p></li>
 <li><p>AES-256-CFB</p></li>
@@ -3080,45 +3253,42 @@ This must be a valid ITheme ID.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;encryption.use_legacy_base64_encoding&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Use the legacy base64 format for encrypted files instead of the more space-efficient
-binary format. The option affects only newly written files, existing encrypted files
-will not be touched and will remain readable whether they use the new format or not.</p>
+<p>Use the legacy base64 format for encrypted files instead of the more
+space-efficient binary format. This affects only newly written files; existing
+encrypted files remain readable regardless of the format.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="minimum-supported-desktop-version">
 <h3>minimum.supported.desktop.version<a class="headerlink" href="#minimum-supported-desktop-version" title="Link to this heading"></a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;minimum.supported.desktop.version&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;2.7.0&#39;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;minimum.supported.desktop.version&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;3.1.0&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The minimum Nextcloud desktop client version that will be allowed to sync with
-this server instance. All connections made from earlier clients will be denied
-by the server. Defaults to the minimum officially supported Nextcloud desktop
-client version at the time of release of this server version.</p>
-<p>When changing this, note that older unsupported versions of the Nextcloud desktop
-client may not function as expected, and could lead to permanent data loss for
-clients or other unexpected results.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">2.7.0</span></code></p>
+<p>Specify the minimum Nextcloud desktop client version allowed to sync with this
+server. Connections from earlier clients will be denied. Defaults to the
+minimum officially supported version at the time of this server release.</p>
+<p>Changing this may cause older, unsupported clients to malfunction, potentially
+leading to data loss or unexpected behavior.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">3.1.0</span></code></p>
 </section>
 <section id="maximum-supported-desktop-version">
 <h3>maximum.supported.desktop.version<a class="headerlink" href="#maximum-supported-desktop-version" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;maximum.supported.desktop.version&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;99.99.99&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The maximum Nextcloud desktop client version that will be allowed to sync with
-this server instance. All connections made from later clients will be denied
-by the server.</p>
-<p>Defaults to 99.99.99</p>
+<p>Specify the maximum Nextcloud desktop client version allowed to sync with this
+server. Connections from later clients will be denied.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">99.99.99</span></code></p>
 </section>
 <section id="localstorage-allowsymlinks">
 <h3>localstorage.allowsymlinks<a class="headerlink" href="#localstorage-allowsymlinks" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;localstorage.allowsymlinks&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Option to allow local storage to contain symlinks.</p>
+<p>Allow local storage to contain symlinks.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Not recommended. This would make it possible for Nextcloud to access
-files outside the data directory and could be considered a security risk.</p>
+<p>Not recommended, as this allows Nextcloud to access files outside the
+data directory, posing a potential security risk.</p>
 </div>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
@@ -3127,14 +3297,10 @@ files outside the data directory and could be considered a security risk.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;localstorage.umask&#39;</span> <span class="o">=&gt;</span> <span class="mi">0022</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Nextcloud overrides umask to ensure suitable access permissions
-regardless of webserver/php-fpm configuration and worker state.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Modifying this value has security implications and
-may soft-break the installation.</p>
-</div>
-<p>Most installs shall not modify this value.</p>
+<p>Nextcloud overrides umask to ensure suitable access permissions regardless of
+web server or PHP-FPM configuration. Modifying this value has security
+implications and may cause issues with the installation.</p>
+<p>Most installations should not modify this value.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">0022</span></code></p>
 </section>
 <section id="localstorage-unlink-on-truncate">
@@ -3142,8 +3308,8 @@ may soft-break the installation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;localstorage.unlink_on_truncate&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>This options allows storage systems that don’t allow to modify existing files
-to overcome this limitation by removing the files before overwriting.</p>
+<p>Allow storage systems that do not support modifying existing files to overcome
+this limitation by removing files before overwriting.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="quota-include-external-storage">
@@ -3151,8 +3317,7 @@ to overcome this limitation by removing the files before overwriting.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;quota_include_external_storage&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>EXPERIMENTAL: option whether to include external storage in quota
-calculation, defaults to false.</p>
+<p>EXPERIMENTAL: Include external storage in quota calculations.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="external-storage-auth-availability-delay">
@@ -3160,22 +3325,20 @@ calculation, defaults to false.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;external_storage.auth_availability_delay&#39;</span> <span class="o">=&gt;</span> <span class="mi">1800</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>When an external storage is unavailable for some reasons, it will be flagged
-as such for 10 minutes. When the trigger is a failed authentication attempt
-the delay is higher and can be controlled with this option. The motivation
-is to make account lock outs at Active Directories (and compatible) more
-unlikely.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">1800</span></code> (seconds)</p>
+<p>When an external storage is unavailable (e.g., due to failed authentication),
+it is flagged as such for a specified duration. For authentication failures,
+this delay can be customized to reduce the likelihood of account lockouts in
+systems like Active Directory.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">1800</span></code> seconds (30 minutes)</p>
 </section>
 <section id="files-external-allow-create-new-local">
 <h3>files_external_allow_create_new_local<a class="headerlink" href="#files-external-allow-create-new-local" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;files_external_allow_create_new_local&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Allows to create external storages of type “Local” in the web interface and APIs.</p>
-<p>When disabled, it is still possible to create local storages with occ using
-the following command:</p>
-<p>% php occ files_external:create /mountpoint local null::null -c datadir=/path/to/data</p>
+<p>Allow creation of external storages of type “Local” via the web interface and
+APIs. When disabled, local storages can still be created using the occ command:</p>
+<p>occ files_external:create /mountpoint local null::null -c datadir=/path/to/data</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="filesystem-check-changes">
@@ -3183,14 +3346,15 @@ the following command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;filesystem_check_changes&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Specifies how often the local filesystem (the Nextcloud data/ directory, and
-NFS mounts in data/) is checked for changes made outside Nextcloud. This
-does not apply to external storage.</p>
-<p>0 -&gt; Never check the filesystem for outside changes, provides a performance
-increase when it’s certain that no changes are made directly to the
-filesystem</p>
-<p>1 -&gt; Check each file or folder at most once per request, recommended for
-general use if outside changes might happen.</p>
+<p>Specify how often the local filesystem (Nextcloud data/ directory and NFS
+mounts in data/) is checked for changes made outside Nextcloud. This does not
+apply to external storage.</p>
+<dl class="simple">
+<dt>0 -&gt; Never check the filesystem for outside changes, improving performance</dt><dd><p>when no external changes are expected.</p>
+</dd>
+<dt>1 -&gt; Check each file or folder at most once per request, recommended for</dt><dd><p>general use if outside changes are possible.</p>
+</dd>
+</dl>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code></p>
 </section>
 <section id="part-file-in-storage">
@@ -3198,10 +3362,10 @@ general use if outside changes might happen.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;part_file_in_storage&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>By default, Nextcloud will store the part files created during upload in the
-same storage as the upload target. Setting this to false will store the part
-files in the root of the users folder which might be required to work with certain
-external storage setups that have limited rename capabilities.</p>
+<p>Store part files created during upload in the same storage as the upload
+target. Setting this to false stores part files in the root of the user’s
+folder, which may be necessary for external storage with limited rename
+capabilities.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="mount-file">
@@ -3209,8 +3373,7 @@ external storage setups that have limited rename capabilities.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;mount_file&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/var/www/nextcloud/data/mount.json&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Where <code class="docutils literal notranslate"><span class="pre">mount.json</span></code> file should be stored, defaults to <code class="docutils literal notranslate"><span class="pre">data/mount.json</span></code>
-in the Nextcloud directory.</p>
+<p>Specify the location of the <code class="docutils literal notranslate"><span class="pre">mount.json</span></code> file.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">data/mount.json</span></code> in the Nextcloud directory.</p>
 </section>
 <section id="filesystem-cache-readonly">
@@ -3218,8 +3381,8 @@ in the Nextcloud directory.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;filesystem_cache_readonly&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>When <code class="docutils literal notranslate"><span class="pre">true</span></code>, prevent Nextcloud from changing the cache due to changes in
-the filesystem for all storage.</p>
+<p>Prevent Nextcloud from updating the cache due to filesystem changes for all
+storage.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="trusted-proxies">
@@ -3227,52 +3390,49 @@ the filesystem for all storage.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;trusted_proxies&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;203.0.113.45&#39;</span><span class="p">,</span> <span class="s1">&#39;198.51.100.128&#39;</span><span class="p">,</span> <span class="s1">&#39;192.168.2.0/24&#39;</span><span class="p">],</span>
 </pre></div>
 </div>
-<p>List of trusted proxy servers</p>
-<p>You may set this to an array containing a combination of
-- IPv4 addresses, e.g. <cite>192.168.2.123</cite>
-- IPv4 ranges in CIDR notation, e.g. <cite>192.168.2.0/24</cite>
-- IPv6 addresses, e.g. <cite>fd9e:21a7:a92c:2323::1</cite>
-- IPv6 ranges in CIDR notation, e.g. <cite>2001:db8:85a3:8d3:1319:8a20::/95</cite></p>
-<p>When an incoming request’s <cite>REMOTE_ADDR</cite> matches any of the IP addresses
-specified here, it is assumed to be a proxy instead of a client. Thus, the
-client IP will be read from the HTTP header specified in
-<cite>forwarded_for_headers</cite> instead of from <cite>REMOTE_ADDR</cite>.</p>
-<p>So if you configure <cite>trusted_proxies</cite>, also consider setting
-<cite>forwarded_for_headers</cite> which otherwise defaults to <cite>HTTP_X_FORWARDED_FOR</cite>
-(the <cite>X-Forwarded-For</cite> header).</p>
-<p>Defaults to an empty array.</p>
+<p>List of trusted proxy servers. Supported formats:
+- IPv4 addresses, e.g., <cite>192.168.2.123</cite>
+- IPv4 ranges in CIDR notation, e.g., <cite>192.168.2.0/24</cite>
+- IPv6 addresses, e.g., <cite>fd9e:21a7:a92c:2323::1</cite>
+- IPv6 ranges in CIDR notation, e.g., <cite>2001:db8:85a3:8d3:1319:8a20::/95</cite></p>
+<p>If a request’s <cite>REMOTE_ADDR</cite> matches an address here, it is treated as a proxy,
+and the client IP is read from the HTTP header specified in
+<cite>forwarded_for_headers</cite> instead of <cite>REMOTE_ADDR</cite>.</p>
+<p>Ensure <cite>forwarded_for_headers</cite> is configured if <cite>trusted_proxies</cite> is set.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty array)</p>
 </section>
 <section id="forwarded-for-headers">
 <h3>forwarded_for_headers<a class="headerlink" href="#forwarded-for-headers" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;forwarded_for_headers&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;HTTP_X_FORWARDED&#39;</span><span class="p">,</span> <span class="s1">&#39;HTTP_FORWARDED_FOR&#39;</span><span class="p">],</span>
 </pre></div>
 </div>
-<p>Headers that should be trusted as client IP address in combination with
-<cite>trusted_proxies</cite>. If the HTTP header looks like ‘X-Forwarded-For’, then use
-‘HTTP_X_FORWARDED_FOR’ here.</p>
-<p>If set incorrectly, a client can spoof their IP address as visible to
-Nextcloud, bypassing access controls and making logs useless!</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">'HTTP_X_FORWARDED_FOR'</span></code></p>
+<p>Headers trusted as containing the client IP address when used with
+<cite>trusted_proxies</cite>. For example, use <cite>HTTP_X_FORWARDED_FOR</cite> for the
+<cite>X-Forwarded-For</cite> header.</p>
+<p>Incorrect configuration allows clients to spoof their IP address, bypassing
+access controls and rendering logs unreliable.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">['HTTP_X_FORWARDED_FOR']</span></code></p>
 </section>
 <section id="allowed-admin-ranges">
 <h3>allowed_admin_ranges<a class="headerlink" href="#allowed-admin-ranges" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;allowed_admin_ranges&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s1">&#39;192.0.2.42/32&#39;</span><span class="p">,</span> <span class="s1">&#39;233.252.0.0/24&#39;</span><span class="p">,</span> <span class="s1">&#39;2001:db8::13:37/64&#39;</span><span class="p">],</span>
 </pre></div>
 </div>
-<p>List of trusted IP ranges for admin actions</p>
-<p>If this list is non-empty, all admin actions must be triggered from
-IP addresses inside theses ranges.</p>
-<p>Defaults to an empty array.</p>
+<p>List of trusted IP ranges for admin actions. If non-empty, all admin actions
+must originate from IPs within these ranges.</p>
+<p>Supported formats:
+- IPv4 addresses or ranges, e.g., <cite>192.0.2.42/32</cite>, <cite>233.252.0.0/24</cite>
+- IPv6 addresses or ranges, e.g., <cite>2001:db8::13:37/64</cite></p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty array)</p>
 </section>
 <section id="max-filesize-animated-gifs-public-sharing">
 <h3>max_filesize_animated_gifs_public_sharing<a class="headerlink" href="#max-filesize-animated-gifs-public-sharing" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;max_filesize_animated_gifs_public_sharing&#39;</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>max file size for animating gifs on public-sharing-site.</p>
-<p>If the gif is bigger, it’ll show a static preview</p>
-<p>Value represents the maximum filesize in megabytes. Set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> for
-no limit.</p>
+<p>Maximum file size (in megabytes) for animating GIFs on public sharing pages.</p>
+<p>If a GIF exceeds this size, a static preview is shown.</p>
+<p>Set to <code class="docutils literal notranslate"><span class="pre">-1</span></code> for no limit.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">10</span></code> megabytes</p>
 </section>
 <section id="filelocking-ttl">
@@ -3280,21 +3440,18 @@ no limit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;filelocking.ttl&#39;</span> <span class="o">=&gt;</span> <span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Set the lock’s time-to-live in seconds.</p>
-<p>Any lock older than this will be automatically cleaned up.</p>
-<dl class="simple">
-<dt>Defaults to <code class="docutils literal notranslate"><span class="pre">60*60</span></code> seconds (1 hour) or the php</dt><dd><p>max_execution_time, whichever is higher.</p>
-</dd>
-</dl>
+<p>Set the lock’s time-to-live (TTL) in seconds. Locks older than this are
+automatically cleaned up.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">3600</span></code> seconds (1 hour) or the PHP <cite>max_execution_time</cite>,
+whichever is higher.</p>
 </section>
 <section id="memcache-locking">
 <h3>memcache.locking<a class="headerlink" href="#memcache-locking" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;memcache.locking&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">OC</span><span class="se">\\</span><span class="s1">Memcache</span><span class="se">\\</span><span class="s1">Redis&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Memory caching backend for file locking</p>
-<p>Because most memcache backends can clean values without warning using redis
-is highly recommended to <em>avoid data loss</em>.</p>
+<p>Memory caching backend for file locking. Redis is highly recommended to avoid
+data loss, as many memcache backends may evict values unexpectedly.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">none</span></code></p>
 </section>
 <section id="filelocking-debug">
@@ -3302,41 +3459,51 @@ is highly recommended to <em>avoid data loss</em>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;filelocking.debug&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable locking debug logging</p>
-<p>Note that this can lead to a very large volume of log items being written which can lead
-to performance degradation and large log files on busy instance.</p>
-<p>Thus enabling this in production for longer periods of time is not recommended
-or should be used together with the <code class="docutils literal notranslate"><span class="pre">log.condition</span></code> setting.</p>
+<p>Enable debug logging for file locking. This can generate a large volume of log
+entries, potentially causing performance degradation and large log files on
+busy instances.</p>
+<p>Use with <cite>log.condition</cite> to limit logging in production environments.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="upgrade-disable-web">
 <h3>upgrade.disable-web<a class="headerlink" href="#upgrade-disable-web" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;upgrade.disable-web&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Disable the web based updater</p>
+<p>Disable the web-based updater.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="upgrade-cli-upgrade-link">
 <h3>upgrade.cli-upgrade-link<a class="headerlink" href="#upgrade-cli-upgrade-link" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;upgrade.cli-upgrade-link&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Allows to modify the cli-upgrade link in order to link to a different documentation</p>
+<p>Customize the CLI upgrade documentation link.</p>
+</section>
+<section id="user-ini-additional-lines">
+<h3>user_ini_additional_lines<a class="headerlink" href="#user-ini-additional-lines" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;user_ini_additional_lines&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Additional line(s) (string or array of strings)
+that will be added to .user.ini on each update by the updater.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
 </section>
 <section id="documentation-url-server-logs">
 <h3>documentation_url.server_logs<a class="headerlink" href="#documentation-url-server-logs" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;documentation_url.server_logs&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Allows to modify the exception server logs documentation link in order to link to a different documentation</p>
+<p>Customize the server logs documentation link for exception handling.</p>
 </section>
 <section id="debug">
 <h3>debug<a class="headerlink" href="#debug" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;debug&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Set this Nextcloud instance to debugging mode</p>
-<p>Only enable this for local development and not in production environments
-This will disable the minifier and outputs some additional debug information</p>
+<p>Enable debugging mode for Nextcloud. Only use for local development, not in
+production, as it disables minification and outputs additional debug
+information.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="data-fingerprint">
@@ -3344,13 +3511,11 @@ This will disable the minifier and outputs some additional debug information</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;data-fingerprint&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Sets the data-fingerprint of the current data served</p>
-<p>This is a property used by the clients to find out if a backup has been
-restored on the server. Once a backup is restored run
-./occ maintenance:data-fingerprint
-To set this to a new value.</p>
-<p>Updating/Deleting this value can make connected clients stall until
-the user has resolved conflicts.</p>
+<p>Set the data fingerprint for the current data served. Used by clients to
+detect if a backup has been restored. Update this by running:
+./occ maintenance:data-fingerprint</p>
+<p>Changing or deleting this value may cause connected clients to stall until
+conflicts are resolved.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">''</span></code> (empty string)</p>
 </section>
 <section id="copied-sample-config">
@@ -3358,96 +3523,116 @@ the user has resolved conflicts.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;copied_sample_config&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>This entry is just here to show a warning in case somebody copied the sample
-configuration. DO NOT ADD THIS SWITCH TO YOUR CONFIGURATION!</p>
-<p>If you, brave person, have read until here be aware that you should not
-modify <em>ANY</em> settings in this file without reading the documentation.</p>
+<p>This entry serves as a warning if the sample configuration was copied.</p>
+<p>DO NOT ADD THIS TO YOUR CONFIGURATION!</p>
+<p>Ensure all settings are modified only after consulting the documentation.</p>
 </section>
 <section id="lookup-server">
 <h3>lookup_server<a class="headerlink" href="#lookup-server" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;lookup_server&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://lookup.nextcloud.com&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>use a custom lookup server to publish user data</p>
+<p>Use a custom lookup server to publish user data.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">https://lookup.nextcloud.com</span></code></p>
 </section>
 <section id="gs-enabled">
 <h3>gs.enabled<a class="headerlink" href="#gs-enabled" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;gs.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>set to true if the server is used in a setup based on Nextcloud’s Global Scale architecture</p>
+<p>Enable Nextcloud’s Global Scale architecture.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="gs-federation">
 <h3>gs.federation<a class="headerlink" href="#gs-federation" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;gs.federation&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;internal&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>by default federation is only used internally in a Global Scale setup
-If you want to allow federation outside your environment set it to ‘global’</p>
+<p>Configure federation for Global Scale setups. Set to ‘global’ to allow
+federation outside the environment.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">internal</span></code></p>
 </section>
 <section id="csrf-optout">
 <h3>csrf.optout<a class="headerlink" href="#csrf-optout" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;csrf.optout&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
         <span class="s1">&#39;/^WebDAVFS/&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">OS</span> <span class="n">X</span> <span class="n">Finder</span>
-        <span class="s1">&#39;/^Microsoft-WebDAV-MiniRedir/&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Windows</span> <span class="n">webdav</span> <span class="n">drive</span>
+        <span class="s1">&#39;/^Microsoft-WebDAV-MiniRedir/&#39;</span><span class="p">,</span> <span class="o">//</span> <span class="n">Windows</span> <span class="n">WebDAV</span> <span class="n">drive</span>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>List of incompatible user agents opted out from Same Site Cookie Protection.</p>
-<p>Some user agents are notorious and don’t really properly follow HTTP
-specifications. For those, have an opt-out.</p>
+<p>List of user agents exempt from SameSite cookie protection due to non-standard
+HTTP behavior.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>only use this if you know what you are doing</p>
+<p>Use only if you understand the implications.</p>
 </div>
+<p>Defaults to:
+- /^WebDAVFS/ (OS X Finder)
+- /^Microsoft-WebDAV-MiniRedir/ (Windows WebDAV drive)</p>
+</section>
+<section id="core-login-flow-v2-allowed-user-agents">
+<h3>core.login_flow_v2.allowed_user_agents<a class="headerlink" href="#core-login-flow-v2-allowed-user-agents" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;core.login_flow_v2.allowed_user_agents&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
+</pre></div>
+</div>
+<p>Specify allowed user agents for Login Flow V2 using regular expressions.</p>
+<p>User agents not matching this list are denied access to Login Flow V2.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Use only if you understand the implications.</p>
+</div>
+<p>Example: Allow only the Nextcloud Android app:
+‘core.login_flow_v2.allowed_user_agents’ =&gt; [‘/Nextcloud-android/i’],</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">[]</span></code> (empty array)</p>
 </section>
 <section id="simplesignuplink-shown">
 <h3>simpleSignUpLink.shown<a class="headerlink" href="#simplesignuplink-shown" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;simpleSignUpLink.shown&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>By default, there is on public pages a link shown that allows users to
-learn about the “simple sign up” - see <a class="reference external" href="https://nextcloud.com/signup/">https://nextcloud.com/signup/</a></p>
-<p>If this is set to “false” it will not show the link.</p>
+<p>Show or hide the “simple sign up” link on public pages.</p>
+<p>See: <a class="reference external" href="https://nextcloud.com/signup/">https://nextcloud.com/signup/</a></p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="login-form-autocomplete">
 <h3>login_form_autocomplete<a class="headerlink" href="#login-form-autocomplete" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;login_form_autocomplete&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>By default, autocompletion is enabled for the login form on Nextcloud’s login page.</p>
-<p>While this is enabled, browsers are allowed to “remember” login names and such.
-Some companies require it to be disabled to comply with their security policy.</p>
-<p>Simply set this property to “false”, if you want to turn this feature off.</p>
+<p>Enable or disable autocompletion for the login form. Disabling this prevents
+browsers from remembering login credentials, which may be required for
+compliance with certain security policies.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="login-form-timeout">
 <h3>login_form_timeout<a class="headerlink" href="#login-form-timeout" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;login_form_timeout&#39;</span> <span class="o">=&gt;</span> <span class="mi">300</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Timeout for the login form, after this time the login form is reset.</p>
-<p>This prevents password leaks on public devices if the user forgots to clear the form.</p>
-<p>Default is 5 minutes (300 seconds), a value of 0 means no timeout.</p>
+<p>Set a timeout (in seconds) for the login form. After this period, the form is
+reset to prevent password leaks on public devices if the user forgets to clear
+it.</p>
+<p>A value of 0 disables the timeout.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">300</span></code> seconds (5 minutes)</p>
 </section>
 <section id="no-unsupported-browser-warning">
 <h3>no_unsupported_browser_warning<a class="headerlink" href="#no-unsupported-browser-warning" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;no_unsupported_browser_warning&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>If your user is using an outdated or unsupported browser, a warning will be shown
-to offer some guidance to upgrade or switch and ensure a proper Nextcloud experience.</p>
-<p>They can still bypass it after they have read the warning.</p>
-<p>Simply set this property to “true”, if you want to turn this feature off.</p>
+<p>Suppress warnings for outdated or unsupported browsers. When enabled, users
+can bypass the warning after reading it.</p>
+<p>Set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to disable the warning.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="files-no-background-scan">
 <h3>files_no_background_scan<a class="headerlink" href="#files-no-background-scan" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;files_no_background_scan&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Disable background scanning of files</p>
-<p>By default, a background job runs every 10 minutes and execute a background
-scan to sync filesystem and database. Only users with unscanned files
-(size &lt; 0 in filecache) are included. Maximum 500 users per job.</p>
+<p>Disable background scanning of files. When enabled, a background job runs
+every 10 minutes to sync the filesystem and database for up to 500 users with
+unscanned files (size &lt; 0 in filecache).</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="query-log-file">
@@ -3455,45 +3640,78 @@ scan to sync filesystem and database. Only users with unscanned files
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;query_log_file&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Log all queries into a file</p>
-<p>Warning: This heavily decreases the performance of the server and is only
-meant to debug/profile the query interaction manually.
-Also, it might log sensitive data into a plain text file.</p>
+<p>Log all database queries to a file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This significantly reduces server performance and is intended only
+for debugging or profiling query interactions. Sensitive data may be logged in
+plain text.</p>
+</div>
+</section>
+<section id="query-log-file-requestid">
+<h3>query_log_file_requestid<a class="headerlink" href="#query-log-file-requestid" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;query_log_file_requestid&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Prefix all queries with the request ID when set to <cite>yes</cite>.</p>
+<p>Requires <cite>query_log_file</cite> to be set.</p>
+</section>
+<section id="query-log-file-parameters">
+<h3>query_log_file_parameters<a class="headerlink" href="#query-log-file-parameters" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;query_log_file_parameters&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Include all query parameters in the query log when set to <cite>yes</cite>.</p>
+<p>Requires <cite>query_log_file</cite> to be set.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This may log sensitive data in plain text.</p>
+</div>
+</section>
+<section id="query-log-file-backtrace">
+<h3>query_log_file_backtrace<a class="headerlink" href="#query-log-file-backtrace" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;query_log_file_backtrace&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Include a backtrace in the query log when set to <cite>yes</cite>.</p>
+<p>Requires <cite>query_log_file</cite> to be set.</p>
 </section>
 <section id="redis-log-file">
 <h3>redis_log_file<a class="headerlink" href="#redis-log-file" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;redis_log_file&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Log all redis requests into a file</p>
-<p>Warning: This heavily decreases the performance of the server and is only
-meant to debug/profile the redis interaction manually.
-Also, it might log sensitive data into a plain text file.</p>
+<p>Log all Redis requests to a file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This significantly reduces server performance and is intended only
+for debugging or profiling Redis interactions. Sensitive data may be logged in
+plain text.</p>
+</div>
 </section>
 <section id="diagnostics-logging">
 <h3>diagnostics.logging<a class="headerlink" href="#diagnostics-logging" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;diagnostics.logging&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable diagnostics event logging</p>
-<p>If enabled the timings of common execution steps will be logged to the
-Nextcloud log at debug level. log.condition is useful to enable this on
-production systems to only log under some conditions</p>
+<p>Enable diagnostics event logging. Logs timings of common execution steps at
+debug level. Use with <cite>log.condition</cite> to enable conditionally in production.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="diagnostics-logging-threshold">
 <h3>diagnostics.logging.threshold<a class="headerlink" href="#diagnostics-logging-threshold" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;diagnostics.logging.threshold&#39;</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Limit diagnostics event logging to events longer than the configured threshold in ms</p>
-<p>when set to 0 no diagnostics events will be logged</p>
+<p>Limit diagnostics event logging to events longer than the specified threshold
+(in milliseconds). A value of 0 disables diagnostics event logging.</p>
 </section>
 <section id="profile-enabled">
 <h3>profile.enabled<a class="headerlink" href="#profile-enabled" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;profile.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable profile globally</p>
+<p>Enable profiling globally.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="account-manager-default-property-scope">
@@ -3501,25 +3719,19 @@ production systems to only log under some conditions</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;account_manager.default_property_scope&#39;</span> <span class="o">=&gt;</span> <span class="p">[],</span>
 </pre></div>
 </div>
-<p>Allows to override the default scopes for Account data.</p>
-<p>The list of overridable properties and valid values for scopes are in
-<code class="docutils literal notranslate"><span class="pre">OCP\Accounts\IAccountManager</span></code>. Values added here are merged with
-default values, which are in <code class="docutils literal notranslate"><span class="pre">OC\Accounts\AccountManager</span></code>.</p>
-<p>For instance, if the phone property should default to the private scope
-instead of the local one:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-  \<span class="n">OCP</span>\<span class="n">Accounts</span>\<span class="n">IAccountManager</span><span class="p">::</span><span class="n">PROPERTY_PHONE</span> <span class="o">=&gt;</span> \<span class="n">OCP</span>\<span class="n">Accounts</span>\<span class="n">IAccountManager</span><span class="p">::</span><span class="n">SCOPE_PRIVATE</span>
-<span class="p">]</span>
-</pre></div>
-</div>
+<p>Override default scopes for account data. Valid properties and scopes are
+defined in <code class="docutils literal notranslate"><span class="pre">OCP\Accounts\IAccountManager</span></code>. Values are merged with defaults
+from <code class="docutils literal notranslate"><span class="pre">OC\Accounts\AccountManager</span></code>.</p>
+<p>Example: Set phone property to private scope:
+<code class="docutils literal notranslate"><span class="pre">[\OCP\Accounts\IAccountManager::PROPERTY_PHONE</span> <span class="pre">=&gt;</span> <span class="pre">\OCP\Accounts\IAccountManager::SCOPE_PRIVATE]</span></code></p>
 </section>
 <section id="projects-enabled">
 <h3>projects.enabled<a class="headerlink" href="#projects-enabled" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;projects.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable the deprecated Projects feature,
-superseded by Related resources as of Nextcloud 25</p>
+<p>Enable the deprecated Projects feature, superseded by Related Resources since
+Nextcloud 25.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="bulkupload-enabled">
@@ -3535,7 +3747,7 @@ superseded by Related resources as of Nextcloud 25</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;reference_opengraph&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enables fetching open graph metadata from remote urls</p>
+<p>Enable fetching Open Graph metadata from remote URLs.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="unified-search-enabled">
@@ -3543,7 +3755,7 @@ superseded by Related resources as of Nextcloud 25</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;unified_search.enabled&#39;</span> <span class="o">=&gt;</span> <span class="n">false</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable use of old unified search</p>
+<p>Enable the legacy unified search.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code></p>
 </section>
 <section id="enable-non-accessible-features">
@@ -3551,7 +3763,7 @@ superseded by Related resources as of Nextcloud 25</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enable_non-accessible_features&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Enable features that don’t respect accessibility standards yet.</p>
+<p>Enable features that do not yet comply with accessibility standards.</p>
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="binary-search-paths">
@@ -3567,38 +3779,54 @@ superseded by Related resources as of Nextcloud 25</p>
 <span class="p">],</span>
 </pre></div>
 </div>
-<p>Directories where nextcloud looks for binaries.</p>
-<p>This is used to find external binaries like libreoffice, sendmail, ffmpeg and more.</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">['/usr/local/sbin','/usr/local/bin','/usr/sbin','/usr/bin','/sbin','/bin','/opt/bin']</span></code></p>
+<p>Directories where Nextcloud searches for external binaries (e.g., LibreOffice,
+sendmail, ffmpeg).</p>
+<p>Defaults to:
+- /usr/local/sbin
+- /usr/local/bin
+- /usr/sbin
+- /usr/bin
+- /sbin
+- /bin
+- /opt/bin</p>
 </section>
 <section id="files-chunked-upload-max-size">
 <h3>files.chunked_upload.max_size<a class="headerlink" href="#files-chunked-upload-max-size" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;files.chunked_upload.max_size&#39;</span> <span class="o">=&gt;</span> <span class="mi">100</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The maximum chunk size to use for chunked uploads.</p>
-<p>A bigger chunk size results in higher throughput, but above 100 MiB there are only diminishing returns,
-while services like Cloudflare already limit to 100 MiB.</p>
-<p>Defaults to 100 MiB.</p>
+<p>Maximum chunk size for chunked uploads (in bytes). Larger chunks increase
+throughput but yield diminishing returns above 100 MiB. Services like
+Cloudflare may limit to 100 MiB.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">*</span> <span class="pre">1024</span> <span class="pre">*</span> <span class="pre">1024</span></code> (100 MiB)</p>
 </section>
 <section id="files-chunked-upload-max-parallel-count">
 <h3>files.chunked_upload.max_parallel_count<a class="headerlink" href="#files-chunked-upload-max-parallel-count" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;files.chunked_upload.max_parallel_count&#39;</span> <span class="o">=&gt;</span> <span class="mi">5</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>The maximum number of chunks uploaded in parallel during chunked uploads.</p>
-<p>A bigger count results in higher throughput, but will also consume more server workers,
-while the improvements diminish.</p>
-<p>Defaults to 5.</p>
+<p>Maximum number of chunks uploaded in parallel during chunked uploads. Higher
+counts increase throughput but consume more server resources, with diminishing
+returns. Value must be a positive integer.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">5</span></code></p>
 </section>
 <section id="files-trash-delete">
 <h3>files.trash.delete<a class="headerlink" href="#files-trash-delete" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;files.trash.delete&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>Allow users to manually delete files from their trashbin.</p>
-<p>Automated deletions are not affected and will continue to work in cases like low remaining quota for example.</p>
-<p>Defaults to true.</p>
+<p>Allow users to manually delete files from their trashbin. Automated deletions
+(e.g., due to low quota) are unaffected.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
+</section>
+<section id="enable-lazy-objects">
+<h3>enable_lazy_objects<a class="headerlink" href="#enable-lazy-objects" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;enable_lazy_objects&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+</pre></div>
+</div>
+<p>Enable PHP 8.4 lazy objects for Dependency Injection to improve performance by
+avoiding instantiation of unused objects.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">true</span></code></p>
 </section>
 <section id="default-certificates-bundle-path">
 <h3>default_certificates_bundle_path<a class="headerlink" href="#default-certificates-bundle-path" title="Link to this heading"></a></h3>
@@ -3654,7 +3882,7 @@ normal maintenance change. To disable this specific email the appconfig option
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -3694,26 +3922,18 @@ normal maintenance change. To disable this specific email the appconfig option
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

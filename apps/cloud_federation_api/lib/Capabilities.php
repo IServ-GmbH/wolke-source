@@ -6,6 +6,7 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 namespace OCA\CloudFederationAPI;
 
 use OC\OCM\OCMDiscoveryService;
@@ -22,23 +23,7 @@ class Capabilities implements ICapability, IInitialStateExcludedCapability {
 	/**
 	 * Function an app uses to return the capabilities
 	 *
-	 * @return array{
-	 *     ocm: array{
-	 *     	   apiVersion: '1.0-proposal1',
-	 *         enabled: bool,
-	 *         endPoint: string,
-	 *         publicKey?: array{
-	 *             keyId: string,
-	 *             publicKeyPem: string,
-	 *         },
-	 *         resourceTypes: list<array{
-	 *             name: string,
-	 *             shareTypes: list<string>,
-	 *             protocols: array<string, string>
-	 *         }>,
-	 *         version: string
-	 *     }
-	 * }
+	 * @return array<string, array<string, mixed>>
 	 * @throws OCMArgumentException
 	 */
 	public function getCapabilities() {

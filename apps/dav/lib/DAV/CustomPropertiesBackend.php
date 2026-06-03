@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -8,13 +9,20 @@
 namespace OCA\DAV\DAV;
 
 use Exception;
+use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\Calendar;
+use OCA\DAV\CalDAV\CalendarHome;
 use OCA\DAV\CalDAV\CalendarObject;
 use OCA\DAV\CalDAV\DefaultCalendarValidator;
+use OCA\DAV\CalDAV\Integration\ExternalCalendar;
+use OCA\DAV\CalDAV\Outbox;
+use OCA\DAV\CalDAV\Trashbin\TrashbinHome;
 use OCA\DAV\Connector\Sabre\Directory;
+use OCA\DAV\Db\PropertyMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use Sabre\CalDAV\Schedule\Inbox;
 use Sabre\DAV\Exception as DavException;
 use Sabre\DAV\PropertyStorage\Backend\BackendInterface;
 use Sabre\DAV\PropFind;
@@ -96,11 +104,45 @@ class CustomPropertiesBackend implements BackendInterface {
 	];
 
 	/**
-	 * Properties cache
-	 *
-	 * @var array
+	 * Map of well-known property names to default values
 	 */
-	private $userCache = [];
+	private const PROPERTY_DEFAULT_VALUES = [
+		'{http://owncloud.org/ns}calendar-enabled' => '1',
+	];
+
+	/**
+	 * Allowed classes for deserialization
+	 *
+	 * @var class-string[]
+	 */
+	private const ALLOWED_SERIALIZED_CLASSES = [
+		\Sabre\CalDAV\Xml\Property\AllowedSharingModes::class,
+		\Sabre\CalDAV\Xml\Property\EmailAddressSet::class,
+		\Sabre\CalDAV\Xml\Property\Invite::class,
+		\Sabre\CalDAV\Xml\Property\ScheduleCalendarTransp::class,
+		\Sabre\CalDAV\Xml\Property\SupportedCalendarComponentSet::class,
+		\Sabre\CalDAV\Xml\Property\SupportedCalendarData::class,
+		\Sabre\CalDAV\Xml\Property\SupportedCollationSet::class,
+		\Sabre\CardDAV\Xml\Property\SupportedAddressData::class,
+		\Sabre\CardDAV\Xml\Property\SupportedCollationSet::class,
+		\Sabre\DAV\Xml\Property\Complex::class,
+		\Sabre\DAV\Xml\Property\GetLastModified::class,
+		\Sabre\DAV\Xml\Property\Href::class,
+		\Sabre\DAV\Xml\Property\Invite::class,
+		\Sabre\DAV\Xml\Property\LocalHref::class,
+		\Sabre\DAV\Xml\Property\LockDiscovery::class,
+		\Sabre\DAV\Xml\Property\ResourceType::class,
+		\Sabre\DAV\Xml\Property\ShareAccess::class,
+		\Sabre\DAV\Xml\Property\SupportedLock::class,
+		\Sabre\DAV\Xml\Property\SupportedMethodSet::class,
+		\Sabre\DAV\Xml\Property\SupportedReportSet::class,
+	];
+
+	/**
+	 * Properties cache
+	 */
+	private array $userCache = [];
+	private array $publishedCache = [];
 	private XmlService $xmlService;
 
 	/**
@@ -113,6 +155,7 @@ class CustomPropertiesBackend implements BackendInterface {
 		private Tree $tree,
 		private IDBConnection $connection,
 		private IUser $user,
+		private PropertyMapper $propertyMapper,
 		private DefaultCalendarValidator $defaultCalendarValidator,
 	) {
 		$this->xmlService = new XmlService();
@@ -196,6 +239,13 @@ class CustomPropertiesBackend implements BackendInterface {
 			$this->cacheDirectory($path, $node);
 		}
 
+		if ($node instanceof CalendarHome && $propFind->getDepth() !== 0) {
+			$backend = $node->getCalDAVBackend();
+			if ($backend instanceof CalDavBackend) {
+				$this->cacheCalendars($node, $requestedProps);
+			}
+		}
+
 		if ($node instanceof CalendarObject) {
 			// No custom properties supported on individual events
 			return;
@@ -270,8 +320,8 @@ class CustomPropertiesBackend implements BackendInterface {
 	 */
 	public function move($source, $destination) {
 		$statement = $this->connection->prepare(
-			'UPDATE `*PREFIX*properties` SET `propertypath` = ?' .
-			' WHERE `userid` = ? AND `propertypath` = ?'
+			'UPDATE `*PREFIX*properties` SET `propertypath` = ?'
+			. ' WHERE `userid` = ? AND `propertypath` = ?'
 		);
 		$statement->execute([$this->formatPath($destination), $this->user->getUID(), $this->formatPath($source)]);
 		$statement->closeCursor();
@@ -315,6 +365,10 @@ class CustomPropertiesBackend implements BackendInterface {
 			return [];
 		}
 
+		if (isset($this->publishedCache[$path])) {
+			return $this->publishedCache[$path];
+		}
+
 		$qb = $this->connection->getQueryBuilder();
 		$qb->select('*')
 			->from(self::TABLE_NAME)
@@ -325,6 +379,7 @@ class CustomPropertiesBackend implements BackendInterface {
 			$props[$row['propertyname']] = $this->decodeValueFromDatabase($row['propertyvalue'], $row['valuetype']);
 		}
 		$result->closeCursor();
+		$this->publishedCache[$path] = $props;
 		return $props;
 	}
 
@@ -361,6 +416,62 @@ class CustomPropertiesBackend implements BackendInterface {
 			}
 		}
 		$this->userCache = array_merge($this->userCache, $propsByPath);
+	}
+
+	private function cacheCalendars(CalendarHome $node, array $requestedProperties): void {
+		$calendars = $node->getChildren();
+
+		$users = [];
+		foreach ($calendars as $calendar) {
+			if ($calendar instanceof Calendar) {
+				$user = str_replace('principals/users/', '', $calendar->getPrincipalURI());
+				if (!isset($users[$user])) {
+					$users[$user] = ['calendars/' . $user];
+				}
+				$users[$user][] = 'calendars/' . $user . '/' . $calendar->getUri();
+			} elseif ($calendar instanceof Inbox || $calendar instanceof Outbox || $calendar instanceof TrashbinHome || $calendar instanceof ExternalCalendar) {
+				if ($calendar->getOwner()) {
+					$user = str_replace('principals/users/', '', $calendar->getOwner());
+					if (!isset($users[$user])) {
+						$users[$user] = ['calendars/' . $user];
+					}
+					$users[$user][] = 'calendars/' . $user . '/' . $calendar->getName();
+				}
+			}
+		}
+
+		// user properties
+		$properties = $this->propertyMapper->findPropertiesByPathsAndUsers($users);
+
+		$propsByPath = [];
+		foreach ($users as $paths) {
+			foreach ($paths as $path) {
+				$propsByPath[$path] = [];
+			}
+		}
+
+		foreach ($properties as $property) {
+			$propsByPath[$property->getPropertypath()][$property->getPropertyname()] = $this->decodeValueFromDatabase($property->getPropertyvalue(), $property->getValuetype());
+		}
+		$this->userCache = array_merge($this->userCache, $propsByPath);
+
+		// published properties
+		$allowedProps = array_intersect(self::PUBLISHED_READ_ONLY_PROPERTIES, $requestedProperties);
+		if (empty($allowedProps)) {
+			return;
+		}
+		$paths = [];
+		foreach ($users as $nestedPaths) {
+			$paths = array_merge($paths, $nestedPaths);
+		}
+		$paths = array_unique($paths);
+
+		$propsByPath = array_fill_keys(array_values($paths), []);
+		$properties = $this->propertyMapper->findPropertiesByPaths($paths, $allowedProps);
+		foreach ($properties as $property) {
+			$propsByPath[$property->getPropertypath()][$property->getPropertyname()] = $this->decodeValueFromDatabase($property->getPropertyvalue(), $property->getValuetype());
+		}
+		$this->publishedCache = array_merge($this->publishedCache, $propsByPath);
 	}
 
 	/**
@@ -409,6 +520,14 @@ class CustomPropertiesBackend implements BackendInterface {
 		return $props;
 	}
 
+	private function isPropertyDefaultValue(string $name, mixed $value): bool {
+		if (!isset(self::PROPERTY_DEFAULT_VALUES[$name])) {
+			return false;
+		}
+
+		return self::PROPERTY_DEFAULT_VALUES[$name] === $value;
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -425,8 +544,8 @@ class CustomPropertiesBackend implements BackendInterface {
 					'propertyName' => $propertyName,
 				];
 
-				// If it was null, we need to delete the property
-				if (is_null($propertyValue)) {
+				// If it was null or set to the default value, we need to delete the property
+				if (is_null($propertyValue) || $this->isPropertyDefaultValue($propertyName, $propertyValue)) {
 					if (array_key_exists($propertyName, $existing)) {
 						$deleteQuery = $deleteQuery ?? $this->createDeleteQuery();
 						$deleteQuery
@@ -534,10 +653,7 @@ class CustomPropertiesBackend implements BackendInterface {
 					"Property \"$name\" has an invalid value of type " . gettype($value),
 				);
 			} else {
-				if (!str_starts_with($value::class, 'Sabre\\DAV\\Xml\\Property\\')
-					&& !str_starts_with($value::class, 'Sabre\\CalDAV\\Xml\\Property\\')
-					&& !str_starts_with($value::class, 'Sabre\\CardDAV\\Xml\\Property\\')
-					&& !str_starts_with($value::class, 'OCA\\DAV\\')) {
+				if (!in_array($value::class, self::ALLOWED_SERIALIZED_CLASSES)) {
 					throw new DavException(
 						"Property \"$name\" has an invalid value of class " . $value::class,
 					);
@@ -561,16 +677,10 @@ class CustomPropertiesBackend implements BackendInterface {
 			case self::PROPERTY_TYPE_HREF:
 				return new Href($value);
 			case self::PROPERTY_TYPE_OBJECT:
-				if (preg_match('/^a:/', $value)) {
-					// Array, unserialize only scalar values
-					return unserialize(str_replace('\x00', chr(0), $value), ['allowed_classes' => false]);
-				}
-				if (!preg_match('/^O\:\d+\:\"(OCA\\\\DAV\\\\|Sabre\\\\(Cal|Card)?DAV\\\\Xml\\\\Property\\\\)/', $value)) {
-					throw new \LogicException('Found an object class serialized in DB that is not allowed');
-				}
-				// some databases can not handel null characters, these are custom encoded during serialization
-				// this custom encoding needs to be first reversed before unserializing
-				return unserialize(str_replace('\x00', chr(0), $value));
+				return unserialize(
+					str_replace('\x00', chr(0), $value),
+					['allowed_classes' => self::ALLOWED_SERIALIZED_CLASSES]
+				);
 			default:
 				return $value;
 		};

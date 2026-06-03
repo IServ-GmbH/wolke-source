@@ -53,11 +53,8 @@ use Psr\Log\LoggerInterface;
  * @package OC\User
  */
 class Manager extends PublicEmitter implements IUserManager {
-	/** @see \OC\Config\UserConfig::USER_MAX_LENGTH */
-	public const MAX_USERID_LENGTH = 64;
-
 	/**
-	 * @var \OCP\UserInterface[] $backends
+	 * @var UserInterface[] $backends
 	 */
 	private array $backends = [];
 
@@ -85,37 +82,24 @@ class Manager extends PublicEmitter implements IUserManager {
 
 	/**
 	 * Get the active backends
-	 * @return \OCP\UserInterface[]
+	 * @return UserInterface[]
 	 */
-	public function getBackends() {
+	public function getBackends(): array {
 		return $this->backends;
 	}
 
-	/**
-	 * register a user backend
-	 *
-	 * @param \OCP\UserInterface $backend
-	 */
-	public function registerBackend($backend) {
+	public function registerBackend(UserInterface $backend): void {
 		$this->backends[] = $backend;
 	}
 
-	/**
-	 * remove a user backend
-	 *
-	 * @param \OCP\UserInterface $backend
-	 */
-	public function removeBackend($backend) {
+	public function removeBackend(UserInterface $backend): void {
 		$this->cachedUsers = [];
 		if (($i = array_search($backend, $this->backends)) !== false) {
 			unset($this->backends[$i]);
 		}
 	}
 
-	/**
-	 * remove all user backends
-	 */
-	public function clearBackends() {
+	public function clearBackends(): void {
 		$this->cachedUsers = [];
 		$this->backends = [];
 	}
@@ -134,7 +118,7 @@ class Manager extends PublicEmitter implements IUserManager {
 			return $this->cachedUsers[$uid];
 		}
 
-		if (strlen($uid) > self::MAX_USERID_LENGTH) {
+		if (strlen($uid) > IUser::MAX_USERID_LENGTH) {
 			return null;
 		}
 
@@ -197,7 +181,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @return bool
 	 */
 	public function userExists($uid) {
-		if (strlen($uid) > self::MAX_USERID_LENGTH) {
+		if (strlen($uid) > IUser::MAX_USERID_LENGTH) {
 			return false;
 		}
 
@@ -327,9 +311,9 @@ class Manager extends PublicEmitter implements IUserManager {
 				$users,
 				function (IUser $user) use ($search): bool {
 					try {
-						return mb_stripos($user->getUID(), $search) !== false ||
-						mb_stripos($user->getDisplayName(), $search) !== false ||
-						mb_stripos($user->getEMailAddress() ?? '', $search) !== false;
+						return mb_stripos($user->getUID(), $search) !== false
+						|| mb_stripos($user->getDisplayName(), $search) !== false
+						|| mb_stripos($user->getEMailAddress() ?? '', $search) !== false;
 					} catch (NoUserException $ex) {
 						$this->logger->error('Error while filtering disabled users', ['exception' => $ex, 'userUID' => $user->getUID()]);
 						return false;
@@ -596,7 +580,7 @@ class Manager extends PublicEmitter implements IUserManager {
 			->andWhere($queryBuilder->expr()->eq('configvalue', $queryBuilder->createNamedParameter('false'), IQueryBuilder::PARAM_STR));
 
 
-		$result = $queryBuilder->execute();
+		$result = $queryBuilder->executeQuery();
 		$count = $result->fetchOne();
 		$result->closeCursor();
 
@@ -622,7 +606,7 @@ class Manager extends PublicEmitter implements IUserManager {
 			->where($queryBuilder->expr()->eq('appid', $queryBuilder->createNamedParameter('login')))
 			->andWhere($queryBuilder->expr()->eq('configkey', $queryBuilder->createNamedParameter('lastLogin')));
 
-		$query = $queryBuilder->execute();
+		$query = $queryBuilder->executeQuery();
 
 		$result = (int)$query->fetchOne();
 		$query->closeCursor();
@@ -668,7 +652,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		if ($offset !== null) {
 			$queryBuilder->setFirstResult($offset);
 		}
-		$query = $queryBuilder->execute();
+		$query = $queryBuilder->executeQuery();
 		$result = [];
 
 		while ($row = $query->fetch()) {
@@ -730,8 +714,9 @@ class Manager extends PublicEmitter implements IUserManager {
 		}
 
 		// User ID is too long
-		if (strlen($uid) > self::MAX_USERID_LENGTH) {
-			throw new \InvalidArgumentException($l->t('Login is too long'));
+		if (strlen($uid) > IUser::MAX_USERID_LENGTH) {
+			// TRANSLATORS User ID is too long
+			throw new \InvalidArgumentException($l->t('Username is too long'));
 		}
 
 		if (!$this->verifyUid($uid, $checkDataDirectory)) {

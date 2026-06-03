@@ -11,6 +11,7 @@ use OC\AppFramework\Http\Request;
 use OC\FilesMetadata\Model\FilesMetadata;
 use OC\User\NoUserException;
 use OCA\DAV\Connector\Sabre\Exception\InvalidPath;
+use OCA\Files_Sharing\External\Mount as SharingExternalMount;
 use OCP\Accounts\IAccountManager;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
@@ -65,6 +66,7 @@ class FilesPlugin extends ServerPlugin {
 	public const METADATA_ETAG_PROPERTYNAME = '{http://nextcloud.org/ns}metadata_etag';
 	public const UPLOAD_TIME_PROPERTYNAME = '{http://nextcloud.org/ns}upload_time';
 	public const CREATION_TIME_PROPERTYNAME = '{http://nextcloud.org/ns}creation_time';
+	public const LAST_ACTIVITY_PROPERTYNAME = '{http://nextcloud.org/ns}last_activity';
 	public const SHARE_NOTE = '{http://nextcloud.org/ns}note';
 	public const SHARE_HIDE_DOWNLOAD_PROPERTYNAME = '{http://nextcloud.org/ns}hide-download';
 	public const SUBFOLDER_COUNT_PROPERTYNAME = '{http://nextcloud.org/ns}contained-folder-count';
@@ -256,8 +258,8 @@ class FilesPlugin extends ServerPlugin {
 
 		// adds a 'Content-Disposition: attachment' header in case no disposition
 		// header has been set before
-		if ($this->downloadAttachment &&
-			$response->getHeader('Content-Disposition') === null) {
+		if ($this->downloadAttachment
+			&& $response->getHeader('Content-Disposition') === null) {
 			$filename = $node->getName();
 			if ($this->request->isUserAgent(
 				[
@@ -443,6 +445,10 @@ class FilesPlugin extends ServerPlugin {
 				return $node->getFileInfo()->getCreationTime();
 			});
 
+			$propFind->handle(self::LAST_ACTIVITY_PROPERTYNAME, function () use ($node) {
+				return $node->getFileInfo()->getLastActivity();
+			});
+
 			foreach ($node->getFileInfo()->getMetadata() as $metadataKey => $metadataValue) {
 				$propFind->handle(self::FILE_METADATA_PREFIX . $metadataKey, $metadataValue);
 			}
@@ -465,7 +471,7 @@ class FilesPlugin extends ServerPlugin {
 
 			$propFind->handle(self::IS_FEDERATED_PROPERTYNAME, function () use ($node) {
 				return $node->getFileInfo()->getMountPoint()
-					instanceof \OCA\Files_Sharing\External\Mount;
+					instanceof SharingExternalMount;
 			});
 		}
 
@@ -540,8 +546,8 @@ class FilesPlugin extends ServerPlugin {
 			$ocmPermissions[] = 'read';
 		}
 
-		if (($ncPermissions & Constants::PERMISSION_CREATE) ||
-			($ncPermissions & Constants::PERMISSION_UPDATE)) {
+		if (($ncPermissions & Constants::PERMISSION_CREATE)
+			|| ($ncPermissions & Constants::PERMISSION_UPDATE)) {
 			$ocmPermissions[] = 'write';
 		}
 
@@ -726,15 +732,15 @@ class FilesPlugin extends ServerPlugin {
 	 */
 	public function sendFileIdHeader($filePath, ?\Sabre\DAV\INode $node = null) {
 		// we get the node for the given $filePath here because in case of afterCreateFile $node is the parent folder
-		if (!$this->server->tree->nodeExists($filePath)) {
-			return;
-		}
-		$node = $this->server->tree->getNodeForPath($filePath);
-		if ($node instanceof Node) {
-			$fileId = $node->getFileId();
-			if (!is_null($fileId)) {
-				$this->server->httpResponse->setHeader('OC-FileId', $fileId);
+		try {
+			$node = $this->server->tree->getNodeForPath($filePath);
+			if ($node instanceof Node) {
+				$fileId = $node->getFileId();
+				if (!is_null($fileId)) {
+					$this->server->httpResponse->setHeader('OC-FileId', $fileId);
+				}
 			}
+		} catch (NotFound) {
 		}
 	}
 }

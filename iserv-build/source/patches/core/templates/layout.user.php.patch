@@ -1,5 +1,5 @@
 diff --git core/templates/layout.user.php core/templates/layout.user.php
-index 2998727..0ded796 100644
+index 47cced3..5a77d6c 100644
 --- core/templates/layout.user.php
 +++ core/templates/layout.user.php
 @@ -76,7 +76,6 @@ p($theme->getTitle());

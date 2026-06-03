@@ -1,38 +1,45 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2019-2024 Nextcloud GmbH and Nextcloud contributors/**
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 namespace OCA\Settings\Middleware;
 
 use OC\AppFramework\Http;
 use OC\AppFramework\Middleware\Security\Exceptions\NotAdminException;
 use OC\AppFramework\Utility\ControllerMethodReflector;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Middleware;
+use OCP\Group\ISubAdmin;
 use OCP\IL10N;
+use OCP\IUserSession;
 
 /**
  * Verifies whether an user has at least subadmin rights.
  * To bypass use the `@NoSubAdminRequired` annotation
  */
 class SubadminMiddleware extends Middleware {
-	/** @var ControllerMethodReflector */
-	protected $reflector;
-
-	/**
-	 * @param ControllerMethodReflector $reflector
-	 * @param bool $isSubAdmin
-	 * @param IL10N $l10n
-	 */
 	public function __construct(
-		ControllerMethodReflector $reflector,
-		protected $isSubAdmin,
+		protected ControllerMethodReflector $reflector,
+		protected IUserSession $userSession,
+		protected ISubAdmin $subAdminManager,
 		private IL10N $l10n,
 	) {
-		$this->reflector = $reflector;
+	}
+
+	private function isSubAdmin(): bool {
+		$userObject = $this->userSession->getUser();
+		if ($userObject === null) {
+			return false;
+		}
+		return $this->subAdminManager->isSubAdmin($userObject);
 	}
 
 	/**
@@ -42,9 +49,9 @@ class SubadminMiddleware extends Middleware {
 	 * @throws \Exception
 	 */
 	public function beforeController($controller, $methodName) {
-		if (!$this->reflector->hasAnnotation('NoSubAdminRequired') && !$this->reflector->hasAnnotation('AuthorizedAdminSetting')) {
-			if (!$this->isSubAdmin) {
-				throw new NotAdminException($this->l10n->t('Logged in account must be a subadmin'));
+		if (!$this->reflector->hasAnnotation('NoSubAdminRequired') && !$this->reflector->hasAnnotationOrAttribute('AuthorizedAdminSetting', AuthorizedAdminSetting::class)) {
+			if (!$this->isSubAdmin()) {
+				throw new NotAdminException($this->l10n->t('Logged in account must be a sub admin'));
 			}
 		}
 	}

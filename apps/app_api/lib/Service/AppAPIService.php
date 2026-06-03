@@ -35,20 +35,21 @@ class AppAPIService {
 	private IClient $client;
 
 	public function __construct(
-		private readonly LoggerInterface         $logger,
-		private readonly ILogFactory			 $logFactory,
-		private readonly IThrottler              $throttler,
-		private readonly IConfig 				 $config,
-		IClientService                           $clientService,
-		private readonly IUserSession            $userSession,
-		private readonly ISession                $session,
-		private readonly IUserManager            $userManager,
-		private readonly IFactory                $l10nFactory,
-		private readonly ExAppService            $exAppService,
-		private readonly DockerActions           $dockerActions,
-		private readonly ManualActions           $manualActions,
-		private readonly AppAPICommonService     $commonService,
-		private readonly DaemonConfigService	 $daemonConfigService,
+		private readonly LoggerInterface     $logger,
+		private readonly ILogFactory         $logFactory,
+		private readonly IThrottler          $throttler,
+		private readonly IConfig             $config,
+		IClientService                       $clientService,
+		private readonly IUserSession        $userSession,
+		private readonly ISession            $session,
+		private readonly IUserManager        $userManager,
+		private readonly IFactory            $l10nFactory,
+		private readonly ExAppService        $exAppService,
+		private readonly DockerActions       $dockerActions,
+		private readonly ManualActions       $manualActions,
+		private readonly AppAPICommonService $commonService,
+		private readonly DaemonConfigService $daemonConfigService,
+		private readonly HarpService         $harpService,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -165,9 +166,9 @@ class AppAPIService {
 		}
 
 		if (isset($options['headers']) && is_array($options['headers'])) {
-			$options['headers'] = [...$options['headers'], ...$this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp->getAppid(), $exApp->getVersion(), $exApp->getSecret())];
+			$options['headers'] = [...$options['headers'], ...$this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp)];
 		} else {
-			$options['headers'] = $this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp->getAppid(), $exApp->getVersion(), $exApp->getSecret());
+			$options['headers'] = $this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp);
 		}
 		$lang = $this->l10nFactory->findLanguage($exApp->getAppid());
 		if (!isset($options['headers']['Accept-Language'])) {
@@ -215,9 +216,9 @@ class AppAPIService {
 		}
 
 		if (isset($options['headers']) && is_array($options['headers'])) {
-			$options['headers'] = [...$options['headers'], ...$this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp->getAppid(), $exApp->getVersion(), $exApp->getSecret())];
+			$options['headers'] = [...$options['headers'], ...$this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp)];
 		} else {
-			$options['headers'] = $this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp->getAppid(), $exApp->getVersion(), $exApp->getSecret());
+			$options['headers'] = $this->commonService->buildAppAPIAuthHeaders($request, $userId, $exApp);
 		}
 		$lang = $this->l10nFactory->findLanguage($exApp->getAppid());
 		if (!isset($options['headers']['Accept-Language'])) {
@@ -346,7 +347,6 @@ class AppAPIService {
 			$this->userSession->setUser(null);
 		}
 		$this->session->set('app_api', true);
-		$this->session->set('app_api_system', true); // TODO: Remove after drop support NC29
 
 		if ($delay) {
 			$this->throttler->resetDelay($request->getRemoteAddress(), Application::APP_ID, [
@@ -400,7 +400,7 @@ class AppAPIService {
 		$auth = [];
 		$initUrl = $this->getExAppUrl($exApp, $exApp->getPort(), $auth) . '/init';
 		$options = [
-			'headers' => $this->commonService->buildAppAPIAuthHeaders(null, null, $exApp->getAppid(), $exApp->getVersion(), $exApp->getSecret()),
+			'headers' => $this->commonService->buildAppAPIAuthHeaders(null, null, $exApp),
 			'nextcloud' => [
 				'allow_local_address' => true,
 			],
@@ -447,7 +447,7 @@ class AppAPIService {
 		}
 		$this->logger->info(sprintf('Calling occ(directory=%s): %s', $occDirectory ?? 'null', $args));
 		$process = proc_open('php console.php ' . $args, $descriptors, $pipes, $occDirectory);
-		
+
 		if (!is_resource($process)) {
 			$this->logger->error(sprintf('Error calling occ(directory=%s): %s', $occDirectory ?? 'null', $args));
 			return false;
@@ -468,7 +468,7 @@ class AppAPIService {
 		}
 
 		$this->logger->info(sprintf('OCC command executed successfully. stdout: %s, stderr: %s', $stdout, $stderr));
-		
+
 		return true;
 	}
 
@@ -499,6 +499,19 @@ class AppAPIService {
 			$options['auth'] = $auth;
 		}
 		$this->logger->info(sprintf('Performing heartbeat on: %s', $exAppUrl . '/heartbeat'));
+
+		$exApp = $this->exAppService->getExApp($appId);
+		if ($exApp === null) {
+			$this->logger->error(sprintf('ExApp with appId %s not found.', $appId));
+			return false;
+		}
+		if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+			$exApp = $this->exAppService->getExApp($appId);
+			$options['headers'] = array_merge(
+				$options['headers'],
+				$this->commonService->buildAppAPIAuthHeaders(null, null, $exApp),
+			);
+		}
 
 		$failedHeartbeatCount = 0;
 		while ($heartbeatAttempts < $maxHeartbeatAttempts) {
@@ -576,43 +589,60 @@ class AppAPIService {
 	 * Removes ExApp from cache.
 	 */
 	public function enableExApp(ExApp $exApp): bool {
-		if ($this->exAppService->enableExAppInternal($exApp)) {
-			if ($exApp->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
-				$daemonConfig = $this->daemonConfigService->getDaemonConfigByName($exApp->getDaemonConfigName());
-				$this->dockerActions->initGuzzleClient($daemonConfig);
-				$containerName = $this->dockerActions->buildExAppContainerName($exApp->getAppid());
+		if (!$this->exAppService->enableExAppInternal($exApp)) {
+			return false;
+		}
+
+		$daemonConfig = $this->daemonConfigService->getDaemonConfigByName($exApp->getDaemonConfigName());
+		if ($daemonConfig === null) {
+			$this->logger->error(sprintf('DaemonConfig %s not found.', $exApp->getDaemonConfigName()));
+			return false;
+		}
+
+		if ($exApp->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
+			$this->dockerActions->initGuzzleClient($daemonConfig);
+			$containerName = $this->dockerActions->buildExAppContainerName($exApp->getAppid());
+			if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+				$this->dockerActions->startExApp($this->dockerActions->buildDockerUrl($daemonConfig), $exApp->getAppid(), true);
+				if (!$this->dockerActions->waitExAppStart($this->dockerActions->buildDockerUrl($daemonConfig), $exApp->getAppid())) {
+					$this->logger->error(sprintf('ExApp %s container startup failed.', $exApp->getAppid()));
+					return false;
+				}
+			} else {
 				$this->dockerActions->startContainer($this->dockerActions->buildDockerUrl($daemonConfig), $containerName);
 				if (!$this->dockerActions->waitTillContainerStart($containerName, $daemonConfig)) {
 					$this->logger->error(sprintf('ExApp %s container startup failed.', $exApp->getAppid()));
 					return false;
 				}
-				if (!$this->dockerActions->healthcheckContainer($containerName, $daemonConfig, true)) {
-					$this->logger->error(sprintf('ExApp %s container healthcheck failed.', $exApp->getAppid()));
-					return false;
-				}
 			}
-
-			$auth = [];
-			$exAppRootUrl = $this->getExAppUrl($exApp, $exApp->getPort(), $auth);
-			if (!$this->heartbeatExApp($exAppRootUrl, $auth, $exApp->getAppid())) {
-				$this->logger->error(sprintf('ExApp %s heartbeat failed.', $exApp->getAppid()));
-				return false;
-			}
-
-			$exAppEnabled = $this->requestToExApp($exApp, '/enabled?enabled=1', null, 'PUT', options: ['timeout' => 60]);
-			if ($exAppEnabled instanceof IResponse) {
-				$response = json_decode($exAppEnabled->getBody(), true);
-				if (!empty($response['error'])) {
-					$this->logger->error(sprintf('Failed to enable ExApp %s. Error: %s', $exApp->getAppid(), $response['error']));
-					$this->exAppService->disableExAppInternal($exApp);
-					return false;
-				}
-			} elseif (isset($exAppEnabled['error'])) {
-				$this->logger->error(sprintf('Failed to enable ExApp %s. Error: %s', $exApp->getAppid(), $exAppEnabled['error']));
-				$this->exAppService->disableExAppInternal($exApp);
+			if (!$this->dockerActions->healthcheckContainer($containerName, $daemonConfig, true)) {
+				$this->logger->error(sprintf('ExApp %s container healthcheck failed.', $exApp->getAppid()));
 				return false;
 			}
 		}
+
+		$auth = [];
+		$exAppRootUrl = $this->getExAppUrl($exApp, $exApp->getPort(), $auth);
+		if (!$this->heartbeatExApp($exAppRootUrl, $auth, $exApp->getAppid())) {
+			$this->logger->error(sprintf('ExApp %s heartbeat failed.', $exApp->getAppid()));
+			return false;
+		}
+
+		$exAppEnabled = $this->requestToExApp($exApp, '/enabled?enabled=1', null, 'PUT', options: ['timeout' => 60]);
+		if ($exAppEnabled instanceof IResponse) {
+			$response = json_decode($exAppEnabled->getBody(), true);
+			if (!empty($response['error'])) {
+				$this->logger->error(sprintf('Failed to enable ExApp %s. Error: %s', $exApp->getAppid(), $response['error']));
+				$this->exAppService->disableExAppInternal($exApp);
+				return false;
+			}
+		} elseif (isset($exAppEnabled['error'])) {
+			$this->logger->error(sprintf('Failed to enable ExApp %s. Error: %s', $exApp->getAppid(), $exAppEnabled['error']));
+			$this->exAppService->disableExAppInternal($exApp);
+			return false;
+		}
+
+		$this->harpService->harpExAppUpdate($daemonConfig, $exApp, true);
 		return true;
 	}
 
@@ -633,12 +663,24 @@ class AppAPIService {
 			$this->logger->error(sprintf('Failed to disable ExApp %s. Error: %s', $exApp->getAppid(), $exAppDisabled['error']));
 			$result = false;
 		}
+		$daemonConfig = $this->daemonConfigService->getDaemonConfigByName($exApp->getDaemonConfigName());
+		if ($daemonConfig === null) {
+			$this->logger->error(sprintf('DaemonConfig %s not found.', $exApp->getDaemonConfigName()));
+			return false;
+		}
 		if ($exApp->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
-			$daemonConfig = $this->daemonConfigService->getDaemonConfigByName($exApp->getDaemonConfigName());
 			$this->dockerActions->initGuzzleClient($daemonConfig);
-			$this->dockerActions->stopContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($exApp->getAppid()));
+			if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+				$this->dockerActions->stopExApp($this->dockerActions->buildDockerUrl($daemonConfig), $exApp->getAppid(), true);
+			} else {
+				$this->dockerActions->stopContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($exApp->getAppid()));
+			}
 		}
 		$this->exAppService->disableExAppInternal($exApp);
+
+		if($result) {
+			$this->harpService->harpExAppUpdate($daemonConfig, $exApp, false);
+		}
 		return $result;
 	}
 
@@ -680,10 +722,14 @@ class AppAPIService {
 			}
 			foreach ($targetDaemonExApps as $exApp) {
 				$this->disableExApp($exApp);
-				if ($daemonConfig->getAcceptsDeployId() === 'docker-install') {
+				if ($daemonConfig->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
 					$this->dockerActions->initGuzzleClient($daemonConfig);
-					$this->dockerActions->removeContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($exApp->getAppid()));
-					$this->dockerActions->removeVolume($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppVolumeName($exApp->getAppid()));
+					if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+						$this->dockerActions->removeExApp($this->dockerActions->buildDockerUrl($daemonConfig), $exApp->getAppid(), true);
+					} else {
+						$this->dockerActions->removeContainer($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppContainerName($exApp->getAppid()));
+						$this->dockerActions->removeVolume($this->dockerActions->buildDockerUrl($daemonConfig), $this->dockerActions->buildExAppVolumeName($exApp->getAppid()));
+					}
 				}
 				$this->exAppService->unregisterExApp($exApp->getAppid());
 			}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -55,7 +56,7 @@ interface ILDAPProvider {
 	/**
 	 * Return a new LDAP connection resource for the specified user.
 	 * @param string $uid user id
-	 * @return \LDAP\Connection|resource
+	 * @return \LDAP\Connection
 	 * @since 11.0.0
 	 */
 	public function getLDAPConnection($uid);
@@ -63,7 +64,7 @@ interface ILDAPProvider {
 	/**
 	 * Return a new LDAP connection resource for the specified group.
 	 * @param string $gid group id
-	 * @return \LDAP\Connection|resource
+	 * @return \LDAP\Connection
 	 * @since 13.0.0
 	 */
 	public function getGroupLDAPConnection($gid);

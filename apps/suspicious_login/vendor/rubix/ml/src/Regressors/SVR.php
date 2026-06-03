@@ -48,9 +48,9 @@ class SVR implements Estimator, Learner
     /**
      * The support vector machine instance.
      *
-     * @var \svm
+     * @var svm
      */
-    protected \svm $svm;
+    protected svm $svm;
 
     /**
      * The memoized hyper-parameters of the model.
@@ -62,18 +62,18 @@ class SVR implements Estimator, Learner
     /**
      * The trained model instance.
      *
-     * @var \svmmodel|null
+     * @var svmmodel|null
      */
-    protected ?\svmmodel $model = null;
+    protected ?svmmodel $model = null;
 
     /**
      * @param float $c
      * @param float $epsilon
-     * @param \Rubix\ML\Kernels\SVM\Kernel|null $kernel
+     * @param Kernel|null $kernel
      * @param bool $shrinking
      * @param float $tolerance
      * @param float $cacheSize
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(
         float $c = 1.0,
@@ -142,7 +142,7 @@ class SVR implements Estimator, Learner
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -213,7 +213,7 @@ class SVR implements Estimator, Learner
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<int|float>
      */
     public function predict(Dataset $dataset) : array
@@ -227,7 +227,7 @@ class SVR implements Estimator, Learner
      * @internal
      *
      * @param list<int|float> $sample
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return int|float
      */
     public function predictSample(array $sample)
@@ -235,15 +235,21 @@ class SVR implements Estimator, Learner
         if (!$this->model) {
             throw new RuntimeException('Estimator has not been trained.');
         }
+        //As SVM needs to have the same keys and order between training samples and those to predict we need to put an offset to the keys
+        $sampleWithOffset = [];
 
-        return $this->model->predict($sample);
+        foreach ($sample as $key => $value) {
+            $sampleWithOffset[$key + 1] = $value;
+        }
+
+        return $this->model->predict($sampleWithOffset);
     }
 
     /**
      * Save the model data to the filesystem.
      *
      * @param string $path
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function save(string $path) : void
     {

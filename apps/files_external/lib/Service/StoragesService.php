@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -9,6 +10,7 @@ namespace OCA\Files_External\Service;
 use OC\Files\Cache\Storage;
 use OC\Files\Filesystem;
 use OCA\Files\AppInfo\Application as FilesApplication;
+use OCA\Files\ConfigLexicon;
 use OCA\Files_External\AppInfo\Application;
 use OCA\Files_External\Lib\Auth\AuthMechanism;
 use OCA\Files_External\Lib\Auth\InvalidAuth;
@@ -22,6 +24,7 @@ use OCP\Files\Config\IUserMountCache;
 use OCP\Files\Events\InvalidateMountCacheEvent;
 use OCP\Files\StorageNotAvailableException;
 use OCP\IAppConfig;
+use OCP\Server;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
@@ -80,13 +83,13 @@ abstract class StoragesService {
 			return $config;
 		} catch (\UnexpectedValueException $e) {
 			// don't die if a storage backend doesn't exist
-			\OC::$server->get(LoggerInterface::class)->error('Could not load storage.', [
+			Server::get(LoggerInterface::class)->error('Could not load storage.', [
 				'app' => 'files_external',
 				'exception' => $e,
 			]);
 			return null;
 		} catch (\InvalidArgumentException $e) {
-			\OC::$server->get(LoggerInterface::class)->error('Could not load storage.', [
+			Server::get(LoggerInterface::class)->error('Could not load storage.', [
 				'app' => 'files_external',
 				'exception' => $e,
 			]);
@@ -484,17 +487,17 @@ abstract class StoragesService {
 	}
 
 	public function updateOverwriteHomeFolders(): void {
-		$appIdsList = $this->appConfig->getValueArray(FilesApplication::APP_ID, 'overwrites_home_folders');
+		$appIdsList = $this->appConfig->getValueArray(FilesApplication::APP_ID, ConfigLexicon::OVERWRITES_HOME_FOLDERS);
 
 		if ($this->dbConfig->hasHomeFolderOverwriteMount()) {
 			if (!in_array(Application::APP_ID, $appIdsList)) {
 				$appIdsList[] = Application::APP_ID;
-				$this->appConfig->setValueArray(FilesApplication::APP_ID, 'overwrites_home_folders', $appIdsList);
+				$this->appConfig->setValueArray(FilesApplication::APP_ID, ConfigLexicon::OVERWRITES_HOME_FOLDERS, $appIdsList);
 			}
 		} else {
 			if (in_array(Application::APP_ID, $appIdsList)) {
 				$appIdsList = array_values(array_filter($appIdsList, fn ($v) => $v !== Application::APP_ID));
-				$this->appConfig->setValueArray(FilesApplication::APP_ID, 'overwrites_home_folders', $appIdsList);
+				$this->appConfig->setValueArray(FilesApplication::APP_ID, ConfigLexicon::OVERWRITES_HOME_FOLDERS, $appIdsList);
 			}
 		}
 	}

@@ -27,7 +27,9 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\IManager;
+use OCP\Server;
 use OCP\Settings\ISettings;
+use OCP\Util;
 
 class PersonalInfo implements ISettings {
 
@@ -55,7 +57,7 @@ class PersonalInfo implements ISettings {
 		$lookupServerUploadEnabled = false;
 		if ($federatedFileSharingEnabled) {
 			/** @var FederatedShareProvider $shareProvider */
-			$shareProvider = \OC::$server->query(FederatedShareProvider::class);
+			$shareProvider = Server::get(FederatedShareProvider::class);
 			$lookupServerUploadEnabled = $shareProvider->isLookupServerUploadEnabled();
 		}
 
@@ -70,7 +72,7 @@ class PersonalInfo implements ISettings {
 		if ($storageInfo['quota'] === FileInfo::SPACE_UNLIMITED) {
 			$totalSpace = $this->l->t('Unlimited');
 		} else {
-			$totalSpace = \OC_Helper::humanFileSize($storageInfo['total']);
+			$totalSpace = Util::humanFileSize($storageInfo['total']);
 		}
 
 		$messageParameters = $this->getMessageParameters($account);
@@ -87,7 +89,7 @@ class PersonalInfo implements ISettings {
 			'groups' => $this->getGroups($user),
 			'quota' => $storageInfo['quota'],
 			'totalSpace' => $totalSpace,
-			'usage' => \OC_Helper::humanFileSize($storageInfo['used']),
+			'usage' => Util::humanFileSize($storageInfo['used']),
 			'usageRelative' => round($storageInfo['relative']),
 			'displayName' => $this->getProperty($account, IAccountManager::PROPERTY_DISPLAYNAME),
 			'emailMap' => $this->getEmailMap($account),
@@ -96,6 +98,7 @@ class PersonalInfo implements ISettings {
 			'location' => $this->getProperty($account, IAccountManager::PROPERTY_ADDRESS),
 			'website' => $this->getProperty($account, IAccountManager::PROPERTY_WEBSITE),
 			'twitter' => $this->getProperty($account, IAccountManager::PROPERTY_TWITTER),
+			'bluesky' => $this->getProperty($account, IAccountManager::PROPERTY_BLUESKY),
 			'fediverse' => $this->getProperty($account, IAccountManager::PROPERTY_FEDIVERSE),
 			'languageMap' => $this->getLanguageMap($user),
 			'localeMap' => $this->getLocaleMap($user),
@@ -107,6 +110,7 @@ class PersonalInfo implements ISettings {
 			'biography' => $this->getProperty($account, IAccountManager::PROPERTY_BIOGRAPHY),
 			'birthdate' => $this->getProperty($account, IAccountManager::PROPERTY_BIRTHDATE),
 			'firstDayOfWeek' => $this->config->getUserValue($uid, 'core', AUserDataOCSController::USER_FIELD_FIRST_DAY_OF_WEEK),
+			'timezone' => $this->config->getUserValue($uid, 'core', 'timezone', ''),
 			'pronouns' => $this->getProperty($account, IAccountManager::PROPERTY_PRONOUNS),
 		];
 

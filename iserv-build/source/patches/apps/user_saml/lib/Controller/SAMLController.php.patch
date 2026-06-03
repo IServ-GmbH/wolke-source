@@ -1,8 +1,8 @@
 diff --git apps/user_saml/lib/Controller/SAMLController.php apps/user_saml/lib/Controller/SAMLController.php
-index 30c98063..667bcb52 100644
+index b4cc693b..d6b58b22 100644
 --- apps/user_saml/lib/Controller/SAMLController.php
 +++ apps/user_saml/lib/Controller/SAMLController.php
-@@ -169,7 +169,7 @@ class SAMLController extends Controller {
+@@ -176,7 +176,7 @@ class SAMLController extends Controller {
  
  
  				$returnUrl = $originalUrl ?: $this->urlGenerator->linkToRouteAbsolute('user_saml.SAML.login');

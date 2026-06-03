@@ -8,17 +8,18 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calendar / CalDAV &mdash; Nextcloud latest Administration Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=8ff6e0db" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
       <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/admin_manual/groupware/calendar.html" />
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f4332903"></script>
+      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,18 +58,49 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../release_schedule.html">Maintenance and release schedule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release notes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Critical changes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation/index.html">Installation and server configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Configuration</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_server/index.html">Nextcloud configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../occ_command.html">Using the occ command</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Files</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../configuration_files/index.html">File sharing and management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../file_workflows/index.html">Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Apps</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apps_management.html">Apps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../exapps_management/index.html">ExApps management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Users</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_user/index.html">User management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../desktop/index.html">Desktop Clients</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Groupware</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Groupware</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Calendar / CalDAV</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#calendar-server-settings">Calendar server settings</a></li>
@@ -90,12 +122,18 @@
 <li class="toctree-l4"><a class="reference internal" href="#allow-subscriptions-on-local-network">Allow subscriptions on local network</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#federated-calendar-shares">Federated calendar shares</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#trash-bin">Trash bin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#resources-and-rooms">Resources and rooms</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#known-backends">Known backends</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#rate-limits">Rate limits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-event">Example event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-retention">Data retention</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sync-tokens">Sync tokens</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts / CardDAV</a></li>
@@ -104,17 +142,29 @@
 <li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Office</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../office/index.html">Office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../ai/index.html">Artificial Intelligence</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../windmill_workflows/index.html">Windmill Workflows</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_database/index.html">Database configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../configuration_mimetypes/index.html">Mimetypes management</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gdpr/index.html">GDPR-compliance</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../declarations/index.html">Declarations</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/">Community Help Forum</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">User Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.nextcloud.com/">Developer Manuals</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/install/">Download</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://apps.nextcloud.com">App Store</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://help.nextcloud.com/t/translation-knowledge-valid-for-the-entire-nextcloud-project-wiki/51550">Translations</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/wiki/Maintenance-and-Release-Schedule">Supported versions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/enterprise/">Nextcloud Enterprise</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/nextcloud/server/blob/master/COPYING-README">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a></li>
 </ul>
 
         </div>
@@ -168,7 +218,7 @@ Install and enable an appropriate app to show the section again, e.g.
 <section id="hide-export-buttons">
 <h3>Hide export buttons<a class="headerlink" href="#hide-export-buttons" title="Link to this heading"></a></h3>
 <p>By default users can export their calendar data from the event editor. Admins can disable this feature:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">hideEventExport</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="n">yes</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">hideEventExport</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="n">yes</span>
 </pre></div>
 </div>
 </section>
@@ -210,7 +260,7 @@ more often than the standard <code class="docutils literal notranslate"><span cl
 </div>
 <p>See <a class="reference internal" href="../occ_command.html"><span class="doc">Using the occ command</span></a> section Dav commands.</p>
 <p>You’ll also need to change the sending mode from <code class="docutils literal notranslate"><span class="pre">background-job</span></code> to <code class="docutils literal notranslate"><span class="pre">occ</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">sendEventRemindersMode</span> <span class="o">--</span><span class="n">value</span> <span class="n">occ</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">sendEventRemindersMode</span> <span class="o">--</span><span class="n">value</span> <span class="n">occ</span>
 </pre></div>
 </div>
 <p>If you don’t use this dedicated command, the reminders will just be sent as soon as possible when the background jobs run.</p>
@@ -232,7 +282,7 @@ more often than the standard <code class="docutils literal notranslate"><span cl
 <h2>FreeBusy<a class="headerlink" href="#freebusy" title="Link to this heading"></a></h2>
 <p>When logged-in, Nextcloud can return FreeBusy information for all users of the instance, to know when they are available so that you can schedule an event at the right time.
 If you don’t wish for users to have this capability, you can disable FreeBusy for the whole instance with the following setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">disableFreeBusy</span> <span class="o">--</span><span class="n">value</span> <span class="n">yes</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">disableFreeBusy</span> <span class="o">--</span><span class="n">value</span> <span class="n">yes</span>
 </pre></div>
 </div>
 </section>
@@ -242,7 +292,7 @@ If you don’t wish for users to have this capability, you can disable FreeBusy 
 <h3>Custom public calendars<a class="headerlink" href="#custom-public-calendars" title="Link to this heading"></a></h3>
 <p>In addition to the public holiday calendars, it is possible to define your own calendar.
 They act in the same way as the holiday calendars and can be configured with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">publicCalendars</span> <span class="o">--</span><span class="n">value</span> <span class="s1">&#39;[{&quot;name&quot;:&quot;My custom calendar&quot;,&quot;source&quot;:&quot;http://example.com/example.ics&quot;}]&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">calendar</span> <span class="n">publicCalendars</span> <span class="o">--</span><span class="n">value</span> <span class="s1">&#39;[{&quot;name&quot;:&quot;My custom calendar&quot;,&quot;source&quot;:&quot;http://example.com/example.ics&quot;}]&#39;</span>
 </pre></div>
 </div>
 <p>The setting is specified as a JSON array of objects with the following options:</p>
@@ -260,7 +310,7 @@ They act in the same way as the holiday calendars and can be configured with the
 If the calendar server provides a <a class="reference external" href="https://icalendar.org/New-Properties-for-iCalendar-RFC-7986/5-7-refresh-interval-property.html">refresh interval</a>, it is respected.
 Otherwise the default refresh rate is one day.</p>
 <p>To set up a different default refresh rate for calendars without server side refresh rates, change the <code class="docutils literal notranslate"><span class="pre">calendarSubscriptionRefreshRate</span></code> option:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">calendarSubscriptionRefreshRate</span> <span class="o">--</span><span class="n">value</span> <span class="s2">&quot;PT6H&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">calendarSubscriptionRefreshRate</span> <span class="o">--</span><span class="n">value</span> <span class="s2">&quot;PT6H&quot;</span>
 </pre></div>
 </div>
 <p>Where the value is a <a class="reference external" href="https://www.php.net/manual/dateinterval.construct.php">DateInterval</a>, for instance with the above command all of the Nextcloud instance’s calendars would be refreshed every 6 hours.</p>
@@ -269,17 +319,33 @@ Otherwise the default refresh rate is one day.</p>
 <h3>Allow subscriptions on local network<a class="headerlink" href="#allow-subscriptions-on-local-network" title="Link to this heading"></a></h3>
 <p>Because of security issues, Nextcloud forbids subscriptions from local network hosts.
 If you need to allow this, change the following parameter to:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">webcalAllowLocalAccess</span> <span class="o">--</span><span class="n">value</span> <span class="n">yes</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">webcalAllowLocalAccess</span> <span class="o">--</span><span class="n">value</span> <span class="n">yes</span>
 </pre></div>
 </div>
 </section>
+</section>
+<section id="federated-calendar-shares">
+<h2>Federated calendar shares<a class="headerlink" href="#federated-calendar-shares" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 32.0.0.</span></p>
+</div>
+<p>Nextcloud supports creating read-only federated calendar shares.
+A user is able to share a calendar with a remote user on a federated instance.
+For now, the shares are read-only and remote users are not able to change the events inside the
+shared calendar.</p>
+<p>The feature can be optionally disabled through an app config.
+Run the following command to disable creating new federated calendar shares for all users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">enableCalendarFederation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="nb">bool</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="n">false</span>
+</pre></div>
+</div>
+<p>Note that existing shares will be deleted when the feature is disabled as they will fail to sync.</p>
 </section>
 <section id="trash-bin">
 <h2>Trash bin<a class="headerlink" href="#trash-bin" title="Link to this heading"></a></h2>
 <p>Nextcloud supports a calendar, events and tasks trash bin.</p>
 <p>The default delay before objects are purged from the trash bin is 30 days. A background job runs every 6 hours to clean up expired objects.</p>
 <p>To set up a different retention period, change the <code class="docutils literal notranslate"><span class="pre">calendarRetentionObligation</span></code> option:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">calendarRetentionObligation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">2592000</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">calendarRetentionObligation</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">2592000</span>
 </pre></div>
 </div>
 <p>Where the value is the number of seconds for the period. Setting the value to <code class="docutils literal notranslate"><span class="pre">0</span></code> disables the trash bin.</p>
@@ -300,20 +366,67 @@ If you need to allow this, change the following parameter to:</p>
 <h2>Rate limits<a class="headerlink" href="#rate-limits" title="Link to this heading"></a></h2>
 <p>Nextcloud rate limits the creation of calendars and subscriptions if too many items are created within a short time frame. The default is 10 calendars or subscriptions per hour. This can be customized as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set limit to 15 items per 30 minutes</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">15</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">rateLimitPeriodCalendarCreation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">1800</span>
 </pre></div>
 </div>
 <p>Additionally, the maximum number of calendars and subscriptions a user may create is limited to 30 items. This can be customized too:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create 50 calendars/subscriptions</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">50</span>
 </pre></div>
 </div>
 <p>or:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Allow users to create calendars/subscriptions without restriction</span>
-<span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">maximumCalendarsSubscriptions</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">integer</span> <span class="o">--</span><span class="n">value</span><span class="o">=-</span><span class="mi">1</span>
 </pre></div>
 </div>
+</section>
+<section id="example-event">
+<h2>Example event<a class="headerlink" href="#example-event" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 32.0.0.</span></p>
+</div>
+<p>When a user logs in for the first time an example event is created in their personal calendar.
+As an admin, you can disable the creation of the example event.
+It is also possible to replace the default event with a custom one.</p>
+<p>To disable the creation of the example event for new users:</p>
+<ol class="arabic simple">
+<li><p>Navigate to the Groupware settings in the admin settings.</p></li>
+<li><p>Scroll down to the “Example content” section.</p></li>
+<li><p>Disable the “Add example event …” setting with the checkbox</p></li>
+</ol>
+<p>To replace the built-in default event with a custom one:</p>
+<ol class="arabic simple">
+<li><p>Navigate to the Groupware settings in the admin settings.</p></li>
+<li><p>Press the “Import calendar event” button.</p></li>
+<li><p>Choose an ICS file to be imported.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The start and end date will be overwritten with dates in the future when a custom event
+is supplied to ensure that the user sees the event.</p>
+</div>
+<p>It is also possible to revert to the default built-in event by pressing the “Reset to default”
+button next to the import button.</p>
+</section>
+<section id="data-retention">
+<span id="caldav-data-retention"></span><h2>Data retention<a class="headerlink" href="#data-retention" title="Link to this heading"></a></h2>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 26.0.0.</span></p>
+</div>
+<p>You can configure how long Nextcloud keeps some of the calendar sync tokens.</p>
+<section id="sync-tokens">
+<h3>Sync tokens<a class="headerlink" href="#sync-tokens" title="Link to this heading"></a></h3>
+<p>The CalDAV backend keeps track of any modifications of calendars. That is anything added, modified or removed. The data is used for differential synchronization of offline clients like Thunderbird. At a certain point in time, the data can be considered outdated assuming there will be no more client needing it. This can help keep the database table <cite>calendarchanges</cite> small:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">totalNumberOfSyncTokensToKeep</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">30000</span>
+</pre></div>
+</div>
+<p>The default is keeping 10,000 entries. This option should be set adequate to the number of users. E.g. on an installation with 5000 active synced calendars the system would only keep an average of 10 changes per calendar. This will lead to premature data deletion and synchronization problems.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This setting will also influence <a class="reference internal" href="contacts.html#carddav-data-retention"><span class="std std-ref">CardDAV data retention</span></a>.</p>
+</div>
+</section>
 </section>
 </section>
 
@@ -328,7 +441,7 @@ If you need to allow this, change the following parameter to:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -368,26 +481,18 @@ If you need to allow this, change the following parameter to:</p>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/30/admin_manual"
+          <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
           >
-            30
+            32
           </a>
         </dd>
         
         <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/29/admin_manual"
+          <a href="https://docs.nextcloud.com/server/31/admin_manual"
              
           >
-            29
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/28/admin_manual"
-             
-          >
-            28
+            31
           </a>
         </dd>
         

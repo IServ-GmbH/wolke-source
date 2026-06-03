@@ -26,10 +26,12 @@ class Notifier implements INotifier {
 	) {
 	}
 
+	#[\Override]
 	public function getID(): string {
 		return 'support';
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->l10nFactory->get(Application::APP_ID)->t('Subscription notifications');
 	}
@@ -41,6 +43,7 @@ class Notifier implements INotifier {
 	 * @throws UnknownNotificationException When the notification was not prepared by a notifier
 	 * @since 9.0.0
 	 */
+	#[\Override]
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'support') {
 			throw new UnknownNotificationException();

@@ -15,6 +15,7 @@ OC.L10N.register(
     "Do you want to help us to improve Nextcloud by providing some anonymized data about your setup and usage? You can disable it at any time in the admin settings again." : "Do you want to help us to improve Nextcloud by providing some anonymised data about your setup and usage? You can disable it at any time in the admin settings again.",
     "Send usage" : "Send usage",
     "Not now" : "Not now",
+    "Never ask again" : "Never ask again",
     "Never" : "Never",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud." : "Sends anonymised data to Nextcloud to help us to improve Nextcloud.",
     "Sends anonymized data to Nextcloud to help us to improve Nextcloud. You\n\t\talways have full control over the content sent to Nextcloud and can disable\n\t\tit again at any time." : "Sends anonymized data to Nextcloud to help us to improve Nextcloud. You\n\t\talways have full control over the content sent to Nextcloud and can disable\n\t\tit again at any time.",
@@ -23,7 +24,7 @@ OC.L10N.register(
     "Send new report now" : "Send new report now",
     "Send usage survey monthly" : "Send usage survey monthly",
     "Data to send" : "Data to send",
-    "Last report sent on: %s" : "Last report sent on: %s",
-    "Last report" : "Last report"
+    "Last report" : "Last report",
+    "Last report sent on: %s" : "Last report sent on: %s"
 },
 "nplurals=2; plural=(n != 1);");

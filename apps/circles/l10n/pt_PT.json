@@ -74,6 +74,7 @@
     "Nextcloud Group" : "Grupo Nextcloud",
     "Email address" : "Endereço de email",
     "Contact" : "Contacto",
+    "Team" : "Grupo",
     "Nextcloud App" : "Aplicação Nextcloud",
     "Member" : "membro",
     "Moderator" : "Moderador",
@@ -136,7 +137,6 @@
     "No entries found in this folder" : "Não foram encontradas entradas nesta pasta",
     "Name" : "Nome",
     "Size" : "Tamanho",
-    "Modified" : "Modificado",
-    "Shared to Circles" : "Partilhado com Círculos"
+    "Modified" : "Modificado"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -60,9 +60,9 @@ class WordCountVectorizer implements Transformer, Stateful, Persistable
     /**
      * The tokenizer used to extract features from blobs of text.
      *
-     * @var \Rubix\ML\Tokenizers\Tokenizer
+     * @var Tokenizer
      */
-    protected \Rubix\ML\Tokenizers\Tokenizer $tokenizer;
+    protected Tokenizer $tokenizer;
 
     /**
      * The vocabularies of each categorical feature column of the fitted dataset.
@@ -75,7 +75,7 @@ class WordCountVectorizer implements Transformer, Stateful, Persistable
      * @param int $maxVocabularySize
      * @param int $minDocumentCount
      * @param float $maxDocumentRatio
-     * @param \Rubix\ML\Tokenizers\Tokenizer|null $tokenizer
+     * @param Tokenizer|null $tokenizer
      */
     public function __construct(
         int $maxVocabularySize = PHP_INT_MAX,
@@ -139,8 +139,8 @@ class WordCountVectorizer implements Transformer, Stateful, Persistable
     /**
      * Fit the transformer to a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      */
     public function fit(Dataset $dataset) : void
     {
@@ -207,7 +207,7 @@ class WordCountVectorizer implements Transformer, Stateful, Persistable
      * Transform the dataset in place.
      *
      * @param list<list<mixed>> $samples
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function transform(array &$samples) : void
     {

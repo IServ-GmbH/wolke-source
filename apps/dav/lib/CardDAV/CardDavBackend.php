@@ -161,8 +161,8 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 						// New share can not have more permissions then the old one.
 						continue;
 					}
-					if (isset($addressBooks[$row['id']][$readOnlyPropertyName]) &&
-						$addressBooks[$row['id']][$readOnlyPropertyName] === 0) {
+					if (isset($addressBooks[$row['id']][$readOnlyPropertyName])
+						&& $addressBooks[$row['id']][$readOnlyPropertyName] === 0) {
 						// Old share is already read-write, no more permissions can be gained
 						continue;
 					}
@@ -1245,7 +1245,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 			return (int)$match['cardid'];
 		}, $matches);
 
-		$cards = [];
+		$cardResults = [];
 		$query = $this->db->getQueryBuilder();
 		$query->select('c.addressbookid', 'c.carddata', 'c.uri')
 			->from($this->dbCardsTable, 'c')
@@ -1254,10 +1254,11 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 		foreach (array_chunk($matches, 1000) as $matchesChunk) {
 			$query->setParameter('matches', $matchesChunk, IQueryBuilder::PARAM_INT_ARRAY);
 			$result = $query->executeQuery();
-			$cards = array_merge($cards, $result->fetchAll());
+			$cardResults[] = $result->fetchAll();
 			$result->closeCursor();
 		}
 
+		$cards = array_merge(...$cardResults);
 		return array_map(function ($array) {
 			$array['addressbookid'] = (int)$array['addressbookid'];
 			$modified = false;

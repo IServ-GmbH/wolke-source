@@ -36,6 +36,7 @@ use Generator;
 use function is_nan;
 use function count;
 use function get_object_vars;
+use function number_format;
 
 /**
  * Adaline
@@ -65,9 +66,9 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
     /**
      * The gradient descent optimizer used to update the network parameters.
      *
-     * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
+     * @var Optimizer
      */
-    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
+    protected Optimizer $optimizer;
 
     /**
      * The amount of L2 regularization applied to the weights of the output layer.
@@ -101,16 +102,16 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
      * The function that computes the loss associated with an erroneous
      * activation during training.
      *
-     * @var \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss
+     * @var RegressionLoss
      */
-    protected \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss $costFn;
+    protected RegressionLoss $costFn;
 
     /**
      * The underlying neural network instance.
      *
-     * @var \Rubix\ML\NeuralNet\FeedForward|null
+     * @var FeedForward|null
      */
-    protected ?\Rubix\ML\NeuralNet\FeedForward $network = null;
+    protected ?FeedForward $network = null;
 
     /**
      * The loss at each epoch from the last training session.
@@ -121,13 +122,13 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
 
     /**
      * @param int $batchSize
-     * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer|null $optimizer
+     * @param Optimizer|null $optimizer
      * @param float $l2Penalty
      * @param int $epochs
      * @param float $minChange
      * @param int $window
-     * @param \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss|null $costFn
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param RegressionLoss|null $costFn
+     * @throws InvalidArgumentException
      */
     public function __construct(
         int $batchSize = 128,
@@ -177,7 +178,7 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -260,7 +261,7 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
     /**
      * Return the underlying neural network instance or null if not trained.
      *
-     * @return \Rubix\ML\NeuralNet\FeedForward|null
+     * @return FeedForward|null
      */
     public function network() : ?FeedForward
     {
@@ -311,6 +312,10 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
 
         if ($this->logger) {
             $this->logger->info("Training $this");
+
+            $numParams = number_format($this->network->numParams());
+
+            $this->logger->info("{$numParams} trainable parameters");
         }
 
         $prevLoss = $bestLoss = INF;
@@ -382,8 +387,8 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<int|float>
      */
     public function predict(Dataset $dataset) : array
@@ -404,7 +409,7 @@ class Adaline implements Estimator, Learner, Online, RanksFeatures, Verbose, Per
     /**
      * Return the importance scores of each feature column of the training set.
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return float[]
      */
     public function featureImportances() : array

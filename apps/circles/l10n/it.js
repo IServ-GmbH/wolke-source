@@ -143,10 +143,18 @@ OC.L10N.register(
     "%1$s shared some content with you. You should have already received a separate email with a link to access it." : "%1$s ha condiviso qualcosa con te. Dovresti aver già ricevuto un'email separata con un collegamento per accedervi.",
     "Password to access content shared with you by %1$s" : "Password per accedere ai contenuti condivisi con te da %1$s",
     "Password to access content" : "Password per accedere ai contenuti",
+    "Federated Teams" : "Team federati",
     "This item is already shared with this team" : "Questo elemento è già condiviso con questo team",
     "Bring cloud-users closer together." : "Avvicina gli utenti del cloud",
     "Teams allows people to create their own groups of people/colleagues/friends.\nThose groups of people can then be used by any other app for sharing purpose." : "Teams consente alle persone di creare i propri gruppi di persone/colleghi/amici. Questi gruppi di persone possono poi essere utilizzati da qualsiasi altra app per scopi di condivisione.",
+    "Unable to update federated teams config" : "Impossibile aggiornare la configurazione dei team federati",
+    "Invalid URL format. Please provide a valid URL." : "Formato URL non valido. Inserisci un URL valido.",
+    "Changed frontal cloud URL" : "URL del cloud frontale modificato",
+    "Federation allows you to share teams with other trusted servers and make them discoverable across instances." : "La federazione consente di condividere i team con altri server attendibili e di renderli individuabili tra le istanze.",
+    "Enable federated teams" : "Abilita i team federati",
+    "Frontal URL" : "URL frontale",
     "https://…" : "https://…",
+    "The public URL used by other instances to discover and connect to your teams." : "L'URL pubblico utilizzato da altre istanze per scoprire e connettersi ai tuoi team.",
     "Failed to load teams" : "Impossibile caricare i team",
     "Try again" : "Riprova",
     "No teams found" : "Nessun  team trovato",
@@ -158,7 +166,6 @@ OC.L10N.register(
     "No entries found in this folder" : "Nessuna voce trovata in questa cartella",
     "Name" : "Nome",
     "Size" : "Dimensione",
-    "Modified" : "Modificato",
-    "Shared to Circles" : "Condivisi con cerchie"
+    "Modified" : "Modificato"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

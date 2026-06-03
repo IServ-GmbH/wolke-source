@@ -1,8 +1,8 @@
 diff --git lib/private/AppFramework/DependencyInjection/DIContainer.php lib/private/AppFramework/DependencyInjection/DIContainer.php
-index b6e2df4..2d0df45 100644
+index 76261fe..cf1103f 100644
 --- lib/private/AppFramework/DependencyInjection/DIContainer.php
 +++ lib/private/AppFramework/DependencyInjection/DIContainer.php
-@@ -186,6 +186,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
+@@ -182,6 +182,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
  
  			$dispatcher = new MiddlewareDispatcher();
  
@@ -11,6 +11,6 @@ index b6e2df4..2d0df45 100644
 +				$c->get(\OC\Core\Middleware\BlockClientMiddleware::class)
 +			);
 +
- 			$dispatcher->registerMiddleware(
- 				$c->get(OC\AppFramework\Middleware\CompressionMiddleware::class)
- 			);
+ 			$dispatcher->registerMiddleware($c->get(CompressionMiddleware::class));
+ 			$dispatcher->registerMiddleware($c->get(NotModifiedMiddleware::class));
+ 			$dispatcher->registerMiddleware($c->get(ReloadExecutionMiddleware::class));

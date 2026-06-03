@@ -8,11 +8,13 @@ declare(strict_types=1);
  */
 namespace OCP\Files\ObjectStore\Events;
 
+use OCP\AppFramework\Attribute\Consumable;
 use OCP\EventDispatcher\Event;
 
 /**
  * @since 29.0.16
  */
+#[Consumable(since: '29.0.16')]
 class BucketCreatedEvent extends Event {
 
 	public function __construct(

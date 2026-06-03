@@ -41,6 +41,7 @@ use Generator;
 use function is_nan;
 use function count;
 use function get_object_vars;
+use function number_format;
 
 /**
  * MLP Regressor
@@ -81,9 +82,9 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     /**
      * The gradient descent optimizer used to update the network parameters.
      *
-     * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
+     * @var Optimizer
      */
-    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
+    protected Optimizer $optimizer;
 
     /**
      * The amount of L2 regularization applied to the weights of the output layer.
@@ -123,23 +124,23 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     /**
      * The function that computes the loss associated with an erroneous activation during training.
      *
-     * @var \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss
+     * @var RegressionLoss
      */
-    protected \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss $costFn;
+    protected RegressionLoss $costFn;
 
     /**
      * The metric used to score the generalization performance of the model during training.
      *
-     * @var \Rubix\ML\CrossValidation\Metrics\Metric
+     * @var Metric
      */
-    protected \Rubix\ML\CrossValidation\Metrics\Metric $metric;
+    protected Metric $metric;
 
     /**
      * The underlying neural network instance.
      *
-     * @var \Rubix\ML\NeuralNet\FeedForward|null
+     * @var FeedForward|null
      */
-    protected ?\Rubix\ML\NeuralNet\FeedForward $network = null;
+    protected ?FeedForward $network = null;
 
     /**
      * The validation scores at each epoch from the last training session.
@@ -158,15 +159,15 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     /**
      * @param \Rubix\ML\NeuralNet\Layers\Hidden[] $hiddenLayers
      * @param int $batchSize
-     * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer|null $optimizer
+     * @param Optimizer|null $optimizer
      * @param float $l2Penalty
      * @param int $epochs
      * @param float $minChange
      * @param int $window
      * @param float $holdOut
-     * @param \Rubix\ML\NeuralNet\CostFunctions\RegressionLoss|null $costFn
-     * @param \Rubix\ML\CrossValidation\Metrics\Metric|null $metric
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param RegressionLoss|null $costFn
+     * @param Metric|null $metric
+     * @throws InvalidArgumentException
      */
     public function __construct(
         array $hiddenLayers = [],
@@ -238,7 +239,7 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -335,7 +336,7 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     /**
      * Return the underlying neural network instance or null if not trained.
      *
-     * @return \Rubix\ML\NeuralNet\FeedForward|null
+     * @return FeedForward|null
      */
     public function network() : ?FeedForward
     {
@@ -371,7 +372,7 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
      * Train the network using mini-batch gradient descent with backpropagation.
      *
      * @param \Rubix\ML\Datasets\Labeled $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      */
     public function partial(Dataset $dataset) : void
     {
@@ -391,6 +392,10 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
 
         if ($this->logger) {
             $this->logger->info("Training $this");
+
+            $numParams = number_format($this->network->numParams());
+
+            $this->logger->info("{$numParams} trainable parameters");
         }
 
         [$testing, $training] = $dataset->randomize()->split($this->holdOut);
@@ -492,8 +497,8 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
      * Feed a sample through the network and make a prediction based on the
      * activation of the output neuron.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<int|float>
      */
     public function predict(Dataset $dataset) : array
@@ -514,8 +519,8 @@ class MLPRegressor implements Estimator, Learner, Online, Verbose, Persistable
     /**
      * Export the network architecture as a graph in dot format.
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
-     * @return \Rubix\ML\Encoding
+     * @throws RuntimeException
+     * @return Encoding
      */
     public function exportGraphviz() : Encoding
     {

@@ -11,24 +11,26 @@ namespace OCA\Photos\Jobs;
 use OCA\Photos\AppInfo\Application;
 use OCA\Photos\Service\MediaPlaceManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Mount\IMovableMount;
 use OCP\IConfig;
 use OCP\IUserManager;
 
 class AutomaticPlaceMapperJob extends TimedJob {
 	public function __construct(
 		ITimeFactory $time,
-		private IConfig $config,
-		private IRootFolder $rootFolder,
-		private IUserManager $userManager,
+		private readonly IConfig $config,
+		private readonly IRootFolder $rootFolder,
+		private readonly IUserManager $userManager,
 		private MediaPlaceManager $mediaPlaceManager,
 	) {
 		parent::__construct($time);
 		$this->mediaPlaceManager = $mediaPlaceManager;
 
-		$this->setTimeSensitivity(\OCP\BackgroundJob\IJob::TIME_INSENSITIVE);
+		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
 		$this->setInterval(24 * 3600);
 	}
 
@@ -40,6 +42,10 @@ class AutomaticPlaceMapperJob extends TimedJob {
 		}
 
 		$users = $this->userManager->search('');
+		if ($users === []) {
+			return;
+		}
+
 		$lastMappedUser = $this->config->getAppValue(Application::APP_ID, 'lastPlaceMappedUser', '');
 
 		if ($lastMappedUser === '') {
@@ -77,7 +83,7 @@ class AutomaticPlaceMapperJob extends TimedJob {
 
 	private function scanFolder(Folder $folder): void {
 		// Do not scan share and other moveable mounts.
-		if ($folder->getMountPoint() instanceof \OC\Files\Mount\MoveableMount) {
+		if ($folder->getMountPoint() instanceof IMovableMount) {
 			return;
 		}
 

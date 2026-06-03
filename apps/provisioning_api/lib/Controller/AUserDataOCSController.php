@@ -28,6 +28,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\Server;
 use OCP\User\Backend\ISetDisplayNameBackend;
 use OCP\User\Backend\ISetPasswordBackend;
 use OCP\Util;
@@ -42,6 +43,7 @@ abstract class AUserDataOCSController extends OCSController {
 	public const USER_FIELD_DISPLAYNAME = 'display';
 	public const USER_FIELD_LANGUAGE = 'language';
 	public const USER_FIELD_LOCALE = 'locale';
+	public const USER_FIELD_TIMEZONE = 'timezone';
 	public const USER_FIELD_FIRST_DAY_OF_WEEK = 'first_day_of_week';
 	public const USER_FIELD_PASSWORD = 'password';
 	public const USER_FIELD_QUOTA = 'quota';
@@ -163,6 +165,7 @@ abstract class AUserDataOCSController extends OCSController {
 				IAccountManager::PROPERTY_ADDRESS,
 				IAccountManager::PROPERTY_WEBSITE,
 				IAccountManager::PROPERTY_TWITTER,
+				IAccountManager::PROPERTY_BLUESKY,
 				IAccountManager::PROPERTY_FEDIVERSE,
 				IAccountManager::PROPERTY_ORGANISATION,
 				IAccountManager::PROPERTY_ROLE,
@@ -185,6 +188,7 @@ abstract class AUserDataOCSController extends OCSController {
 		$data['groups'] = $gids;
 		$data[self::USER_FIELD_LANGUAGE] = $this->l10nFactory->getUserLanguage($targetUserObject);
 		$data[self::USER_FIELD_LOCALE] = $this->config->getUserValue($targetUserObject->getUID(), 'core', 'locale');
+		$data[self::USER_FIELD_TIMEZONE] = $this->config->getUserValue($targetUserObject->getUID(), 'core', 'timezone');
 		$data[self::USER_FIELD_NOTIFICATION_EMAIL] = $targetUserObject->getPrimaryEMailAddress();
 
 		$backend = $targetUserObject->getBackend();
@@ -308,7 +312,7 @@ abstract class AUserDataOCSController extends OCSController {
 				'used' => 0
 			];
 		} catch (\Exception $e) {
-			\OC::$server->get(\Psr\Log\LoggerInterface::class)->error(
+			Server::get(\Psr\Log\LoggerInterface::class)->error(
 				'Could not load storage info for {user}',
 				[
 					'app' => 'provisioning_api',

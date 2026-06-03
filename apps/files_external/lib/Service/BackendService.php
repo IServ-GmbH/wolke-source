@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -6,16 +7,17 @@
  */
 namespace OCA\Files_External\Service;
 
+use OCA\Files_External\AppInfo\Application;
 use OCA\Files_External\Config\IConfigHandler;
+use OCA\Files_External\ConfigLexicon;
 use OCA\Files_External\Lib\Auth\AuthMechanism;
-
 use OCA\Files_External\Lib\Backend\Backend;
 use OCA\Files_External\Lib\Config\IAuthMechanismProvider;
 use OCA\Files_External\Lib\Config\IBackendProvider;
-use OCA\Files_External\Lib\MissingDependency;
 use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\IConfig;
+use OCP\IAppConfig;
+use OCP\Server;
 
 /**
  * Service class to manage backend definitions
@@ -33,11 +35,9 @@ class BackendService {
 	/** Priority constants for PriorityTrait */
 	public const PRIORITY_DEFAULT = 100;
 
-	/** @var bool */
-	private $userMountingAllowed = true;
-
+	private ?bool $userMountingAllowed = null;
 	/** @var string[] */
-	private $userMountingBackends = [];
+	private array $userMountingBackends = [];
 
 	/** @var Backend[] */
 	private $backends = [];
@@ -56,24 +56,9 @@ class BackendService {
 
 	private $configHandlers = [];
 
-	/**
-	 * @param IConfig $config
-	 */
 	public function __construct(
-		protected IConfig $config,
+		protected readonly IAppConfig $appConfig,
 	) {
-		// Load config values
-		if ($this->config->getAppValue('files_external', 'allow_user_mounting', 'yes') !== 'yes') {
-			$this->userMountingAllowed = false;
-		}
-		$this->userMountingBackends = explode(',',
-			$this->config->getAppValue('files_external', 'user_mounting_backends', '')
-		);
-
-		// if no backend is in the list an empty string is in the array and user mounting is disabled
-		if ($this->userMountingBackends === ['']) {
-			$this->userMountingAllowed = false;
-		}
 	}
 
 	/**
@@ -89,7 +74,7 @@ class BackendService {
 	private function callForRegistrations() {
 		static $eventSent = false;
 		if (!$eventSent) {
-			\OC::$server->get(IEventDispatcher::class)->dispatch(
+			Server::get(IEventDispatcher::class)->dispatch(
 				'OCA\\Files_External::loadAdditionalBackends',
 				new GenericEvent()
 			);
@@ -193,10 +178,7 @@ class BackendService {
 	 * @return Backend[]
 	 */
 	public function getAvailableBackends() {
-		return array_filter($this->getBackends(), function ($backend) {
-			$missing = array_filter($backend->checkDependencies(), fn (MissingDependency $dependency) => !$dependency->isOptional());
-			return count($missing) === 0;
-		});
+		return array_filter($this->getBackends(), fn (Backend $backend) => $backend->checkRequiredDependencies() === []);
 	}
 
 	/**
@@ -251,9 +233,23 @@ class BackendService {
 	}
 
 	/**
-	 * @return bool
+	 * returns if user mounting is allowed.
+	 * also initiate the list of available backends.
+	 *
+	 * @psalm-assert bool $this->userMountingAllowed
 	 */
-	public function isUserMountingAllowed() {
+	public function isUserMountingAllowed(): bool {
+		if ($this->userMountingAllowed === null) {
+			// Load config values
+			$this->userMountingAllowed = $this->appConfig->getValueBool(Application::APP_ID, ConfigLexicon::ALLOW_USER_MOUNTING);
+			$this->userMountingBackends = explode(',', $this->appConfig->getValueString(Application::APP_ID, ConfigLexicon::USER_MOUNTING_BACKENDS));
+
+			// if no backend is in the list an empty string is in the array and user mounting is disabled
+			if ($this->userMountingBackends === ['']) {
+				$this->userMountingAllowed = false;
+			}
+		}
+
 		return $this->userMountingAllowed;
 	}
 
@@ -263,13 +259,8 @@ class BackendService {
 	 * @param Backend $backend
 	 * @return bool
 	 */
-	protected function isAllowedUserBackend(Backend $backend) {
-		if ($this->userMountingAllowed &&
-			array_intersect($backend->getIdentifierAliases(), $this->userMountingBackends)
-		) {
-			return true;
-		}
-		return false;
+	protected function isAllowedUserBackend(Backend $backend): bool {
+		return ($this->isUserMountingAllowed() && array_intersect($backend->getIdentifierAliases(), $this->userMountingBackends));
 	}
 
 	/**

@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/src/components/AdminSettings.vue apps/richdocuments/src/components/AdminSettings.vue
-index 253e119ef..d6fd5d170 100644
+index 9f8c331ec..7e7f765cc 100644
 --- apps/richdocuments/src/components/AdminSettings.vue
 +++ apps/richdocuments/src/components/AdminSettings.vue
 @@ -483,7 +483,7 @@ export default {

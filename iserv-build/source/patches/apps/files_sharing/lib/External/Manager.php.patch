@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/lib/External/Manager.php apps/files_sharing/lib/External/Manager.php
-index ff7f2dd..a1c3b87 100644
+index 4bc58ab..5a48017 100644
 --- apps/files_sharing/lib/External/Manager.php
 +++ apps/files_sharing/lib/External/Manager.php
-@@ -30,6 +30,7 @@ use OCP\OCS\IDiscoveryService;
+@@ -32,6 +32,7 @@ use OCP\OCS\IDiscoveryService;
  use OCP\Share;
  use OCP\Share\IShare;
  use Psr\Log\LoggerInterface;
@@ -11,13 +11,13 @@ index ff7f2dd..a1c3b87 100644
  /**
   * @psalm-import-type Files_SharingRemoteShare from ResponseDefinitions
 @@ -57,6 +58,7 @@ class Manager {
- 		IUserSession $userSession,
  		private IEventDispatcher $eventDispatcher,
  		private LoggerInterface $logger,
+ 		private IConfig $config,
 +		private ISearch $collaboratorSearch
  	) {
  		$user = $userSession->getUser();
- 		$this->mountManager = $mountManager;
+ 		$this->uid = $user ? $user->getUID() : null;
 @@ -767,7 +769,7 @@ class Manager {
  	 * @return list<Files_SharingRemoteShare> list of open server-to-server shares
  	 */

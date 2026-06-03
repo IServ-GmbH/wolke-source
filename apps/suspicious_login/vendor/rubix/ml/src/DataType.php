@@ -53,7 +53,7 @@ class DataType implements Stringable
     /**
      * The human-readable string representations of the high-level data types.
      *
-     * @var string[]
+     * @var literal-string[]
      */
     protected const TYPE_STRINGS = [
         self::OTHER => 'other',
@@ -179,7 +179,7 @@ class DataType implements Stringable
 
     /**
      * @param int $code
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(int $code)
     {

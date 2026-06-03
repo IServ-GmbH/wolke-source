@@ -21,8 +21,8 @@ class UserConfigService {
 		/** If you add any new configs, make sure to validate the contents in {@see \OCA\Photos\Controller\ApiController::setUserConfig} */
 	];
 
-	private IConfig $config;
-	private IUserSession $userSession;
+	private readonly IConfig $config;
+	private readonly IUserSession $userSession;
 
 	public function __construct(
 		IConfig $config,

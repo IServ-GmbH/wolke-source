@@ -16,9 +16,11 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\ExAppRequired;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\StreamResponse;
+use OCP\AppFramework\OCSController;
 use OCP\Files\File;
 use OCP\Files\IAppData;
 use OCP\Files\IMimeTypeDetector;
@@ -27,7 +29,6 @@ use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\Lock\LockedException;
-use OCP\TaskProcessing\EShapeType;
 use OCP\TaskProcessing\Exception\Exception;
 use OCP\TaskProcessing\Exception\NotFoundException;
 use OCP\TaskProcessing\Exception\PreConditionNotMetException;
@@ -43,7 +44,7 @@ use stdClass;
  * @psalm-import-type CoreTaskProcessingTask from ResponseDefinitions
  * @psalm-import-type CoreTaskProcessingTaskType from ResponseDefinitions
  */
-class TaskProcessingApiController extends \OCP\AppFramework\OCSController {
+class TaskProcessingApiController extends OCSController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -304,7 +305,7 @@ class TaskProcessingApiController extends \OCP\AppFramework\OCSController {
 	 * 404: Task or file not found
 	 */
 	#[NoAdminRequired]
-	#[Http\Attribute\NoCSRFRequired]
+	#[NoCSRFRequired]
 	#[ApiRoute(verb: 'GET', url: '/tasks/{taskId}/file/{fileId}', root: '/taskprocessing')]
 	public function getFileContents(int $taskId, int $fileId): StreamResponse|DataResponse {
 		try {
@@ -386,7 +387,7 @@ class TaskProcessingApiController extends \OCP\AppFramework\OCSController {
 	 * @return StreamResponse<Http::STATUS_OK, array{}>|DataResponse<Http::STATUS_INTERNAL_SERVER_ERROR|Http::STATUS_NOT_FOUND, array{message: string}, array{}>
 	 */
 	private function getFileContentsInternal(Task $task, int $fileId): StreamResponse|DataResponse {
-		$ids = $this->extractFileIdsFromTask($task);
+		$ids = $this->taskProcessingManager->extractFileIdsFromTask($task);
 		if (!in_array($fileId, $ids)) {
 			return new DataResponse(['message' => $this->l->t('Not found')], Http::STATUS_NOT_FOUND);
 		}
@@ -421,45 +422,6 @@ class TaskProcessingApiController extends \OCP\AppFramework\OCSController {
 		);
 		$response->addHeader('Content-Type', $contentType);
 		return $response;
-	}
-
-	/**
-	 * @param Task $task
-	 * @return list<int>
-	 * @throws NotFoundException
-	 */
-	private function extractFileIdsFromTask(Task $task): array {
-		$ids = [];
-		$taskTypes = $this->taskProcessingManager->getAvailableTaskTypes();
-		if (!isset($taskTypes[$task->getTaskTypeId()])) {
-			throw new NotFoundException('Could not find task type');
-		}
-		$taskType = $taskTypes[$task->getTaskTypeId()];
-		foreach ($taskType['inputShape'] + $taskType['optionalInputShape'] as $key => $descriptor) {
-			if (in_array(EShapeType::getScalarType($descriptor->getShapeType()), [EShapeType::File, EShapeType::Image, EShapeType::Audio, EShapeType::Video], true)) {
-				/** @var int|list<int> $inputSlot */
-				$inputSlot = $task->getInput()[$key];
-				if (is_array($inputSlot)) {
-					$ids = array_merge($inputSlot, $ids);
-				} else {
-					$ids[] = $inputSlot;
-				}
-			}
-		}
-		if ($task->getOutput() !== null) {
-			foreach ($taskType['outputShape'] + $taskType['optionalOutputShape'] as $key => $descriptor) {
-				if (in_array(EShapeType::getScalarType($descriptor->getShapeType()), [EShapeType::File, EShapeType::Image, EShapeType::Audio, EShapeType::Video], true)) {
-					/** @var int|list<int> $outputSlot */
-					$outputSlot = $task->getOutput()[$key];
-					if (is_array($outputSlot)) {
-						$ids = array_merge($outputSlot, $ids);
-					} else {
-						$ids[] = $outputSlot;
-					}
-				}
-			}
-		}
-		return $ids;
 	}
 
 	/**

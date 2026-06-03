@@ -15,6 +15,8 @@ use OC\MemCache\ArrayCache;
 use OCP\AppFramework\Http;
 use OCP\Constants;
 use OCP\Diagnostics\IEventLogger;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Events\BeforeRemotePropfindEvent;
 use OCP\Files\FileInfo;
 use OCP\Files\ForbiddenException;
 use OCP\Files\IMimeTypeDetector;
@@ -50,6 +52,7 @@ class DAV extends Common {
 	protected $host;
 	/** @var bool */
 	protected $secure;
+	protected bool $verify;
 	/** @var string */
 	protected $root;
 	/** @var string */
@@ -104,19 +107,21 @@ class DAV extends Common {
 				$this->authType = $parameters['authType'];
 			}
 			if (isset($parameters['secure'])) {
+				$this->verify = $parameters['verify'] ?? true;
 				if (is_string($parameters['secure'])) {
 					$this->secure = ($parameters['secure'] === 'true');
 				} else {
 					$this->secure = (bool)$parameters['secure'];
 				}
 			} else {
+				$this->verify = false;
 				$this->secure = false;
 			}
 			if ($this->secure === true) {
 				// inject mock for testing
 				$this->certManager = \OC::$server->getCertificateManager();
 			}
-			$this->root = $parameters['root'] ?? '/';
+			$this->root = rawurldecode($parameters['root'] ?? '/');
 			$this->root = '/' . ltrim($this->root, '/');
 			$this->root = rtrim($this->root, '/') . '/';
 		} else {
@@ -153,6 +158,9 @@ class DAV extends Common {
 		$this->client->setThrowExceptions(true);
 
 		if ($this->secure === true) {
+			if ($this->verify === false) {
+				$this->client->addCurlSetting(CURLOPT_SSL_VERIFYPEER, false);
+			}
 			$certPath = $this->certManager->getAbsoluteBundlePath();
 			if (file_exists($certPath)) {
 				$this->certPath = $certPath;
@@ -191,7 +199,7 @@ class DAV extends Common {
 		if ($this->secure) {
 			$baseUri .= 's';
 		}
-		$baseUri .= '://' . $this->host . $this->root;
+		$baseUri .= '://' . $this->host . $this->encodePath($this->root);
 		return $baseUri;
 	}
 
@@ -233,6 +241,34 @@ class DAV extends Common {
 	}
 
 	/**
+	 * @return array<string>
+	 */
+	protected function getPropfindProperties(): array {
+		$event = new BeforeRemotePropfindEvent(self::PROPFIND_PROPS);
+		Server::get(IEventDispatcher::class)->dispatchTyped($event);
+		return $event->getProperties();
+	}
+
+	/**
+	 *  Get property value from cached PROPFIND response.
+	 *  For accessing app-specific properties not included in getMetaData().
+	 *
+	 * @param string $path
+	 * @param string $propertyName
+	 * @return mixed
+	 */
+	public function getPropfindPropertyValue(string $path, string $propertyName): mixed {
+		$path = $this->cleanPath($path);
+		$propfindResponse = $this->statCache->get($path);
+
+		if (!is_array($propfindResponse)) {
+			return null;
+		}
+
+		return $propfindResponse[$propertyName] ?? null;
+	}
+
+	/**
 	 * Propfind call with cache handling.
 	 *
 	 * First checks if information is cached.
@@ -254,7 +290,7 @@ class DAV extends Common {
 			try {
 				$response = $this->client->propFind(
 					$this->encodePath($path),
-					self::PROPFIND_PROPS
+					$this->getPropfindProperties()
 				);
 				$this->statCache->set($path, $response);
 			} catch (ClientHttpException $e) {
@@ -331,7 +367,8 @@ class DAV extends Common {
 							'auth' => [$this->user, $this->password],
 							'stream' => true,
 							// set download timeout for users with slow connections or large files
-							'timeout' => $this->timeout
+							'timeout' => $this->timeout,
+							'verify' => $this->verify,
 						]);
 				} catch (\GuzzleHttp\Exception\ClientException $e) {
 					if ($e->getResponse() instanceof ResponseInterface
@@ -350,7 +387,13 @@ class DAV extends Common {
 					}
 				}
 
-				return $response->getBody();
+				$content = $response->getBody();
+
+				if ($content === null || is_string($content)) {
+					return false;
+				}
+
+				return $content;
 			case 'w':
 			case 'wb':
 			case 'a':
@@ -390,6 +433,8 @@ class DAV extends Common {
 					$this->writeBack($tmpFile, $path);
 				});
 		}
+
+		return false;
 	}
 
 	public function writeBack(string $tmpFile, string $path): void {
@@ -473,7 +518,8 @@ class DAV extends Common {
 				'body' => $source,
 				'auth' => [$this->user, $this->password],
 				// set upload timeout for users with slow connections or large files
-				'timeout' => $this->timeout
+				'timeout' => $this->timeout,
+				'verify' => $this->verify,
 			]);
 
 		$this->removeCachedFile($target);
@@ -810,7 +856,7 @@ class DAV extends Common {
 		try {
 			$responses = $this->client->propFind(
 				$this->encodePath($directory),
-				self::PROPFIND_PROPS,
+				$this->getPropfindProperties(),
 				1
 			);
 

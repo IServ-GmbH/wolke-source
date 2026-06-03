@@ -3,7 +3,6 @@
 namespace Rubix\ML\Tests\CrossValidation;
 
 use Rubix\ML\Parallel;
-use Rubix\ML\Backends\Serial;
 use Rubix\ML\Datasets\Generators\Blob;
 use Rubix\ML\CrossValidation\Validator;
 use Rubix\ML\CrossValidation\MonteCarlo;
@@ -21,22 +20,22 @@ class MonteCarloTest extends TestCase
     protected const DATASET_SIZE = 50;
 
     /**
-     * @var \Rubix\ML\Datasets\Generators\Agglomerate
+     * @var Agglomerate
      */
     protected $generator;
 
     /**
-     * @var \Rubix\ML\Classifiers\GaussianNB
+     * @var GaussianNB
      */
     protected $estimator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\MonteCarlo
+     * @var MonteCarlo
      */
     protected $validator;
 
     /**
-     * @var \Rubix\ML\CrossValidation\Metrics\Accuracy
+     * @var Accuracy
      */
     protected $metric;
 
@@ -53,8 +52,6 @@ class MonteCarloTest extends TestCase
         $this->estimator = new GaussianNB();
 
         $this->validator = new MonteCarlo(3, 0.2);
-
-        $this->validator->setBackend(new Serial());
 
         $this->metric = new Accuracy();
     }

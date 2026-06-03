@@ -1,5 +1,5 @@
 diff --git apps/settings/lib/Controller/AuthSettingsController.php apps/settings/lib/Controller/AuthSettingsController.php
-index 8652a49..a07cbfd 100644
+index b507645..20d984a 100644
 --- apps/settings/lib/Controller/AuthSettingsController.php
 +++ apps/settings/lib/Controller/AuthSettingsController.php
 @@ -25,6 +25,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e376a298dd83c10603a5a3472c46fc50",
+    "content-hash": "6756e284b2b8c6730cca5f01e43e3ccc",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -108,16 +108,16 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable31",
+            "version": "dev-stable32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "3ac4be37f04642c663a2fc711f3848f69f3713f1"
+                "reference": "49413ff9bf66f1091928540ecd9af4ebeebf6e32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/3ac4be37f04642c663a2fc711f3848f69f3713f1",
-                "reference": "3ac4be37f04642c663a2fc711f3848f69f3713f1",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/49413ff9bf66f1091928540ecd9af4ebeebf6e32",
+                "reference": "49413ff9bf66f1091928540ecd9af4ebeebf6e32",
                 "shasum": ""
             },
             "require": {
@@ -130,7 +130,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable31": "31.0.0-dev"
+                    "dev-stable32": "32.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -150,9 +150,9 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable31"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable32"
             },
-            "time": "2025-01-23T08:35:12+00:00"
+            "time": "2025-09-04T08:38:43+00:00"
         },
         {
             "name": "php-cs-fixer/shim",

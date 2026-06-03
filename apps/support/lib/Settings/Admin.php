@@ -14,6 +14,7 @@ use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
+use OCP\ServerVersion;
 use OCP\Settings\IDelegatedSettings;
 
 class Admin implements IDelegatedSettings {
@@ -24,9 +25,11 @@ class Admin implements IDelegatedSettings {
 		protected readonly IUserManager $userManager,
 		protected readonly IURLGenerator $urlGenerator,
 		protected readonly SubscriptionService $subscriptionService,
+		protected readonly ServerVersion $serverVersion,
 	) {
 	}
 
+	#[\Override]
 	public function getForm(): TemplateResponse {
 		$userCount = $this->subscriptionService->getUserCount();
 		$activeUserCount = $this->userManager->countSeenUsers();
@@ -145,7 +148,7 @@ class Admin implements IDelegatedSettings {
 				'instanceId' => $this->config->getSystemValueString('instanceid', ''),
 				'userCount' => $userCount,
 				'activeUserCount' => $activeUserCount,
-				'version' => implode('.', \OCP\Util::getVersion())
+				'version' => implode('.', $this->serverVersion->getVersion())
 			],
 
 			'subscriptionEndDate' => $subscriptionEndDate->format('Y-m-d'),
@@ -154,9 +157,7 @@ class Admin implements IDelegatedSettings {
 		return new TemplateResponse('support', 'admin', $params);
 	}
 
-	/**
-	 * @return string the section ID, e.g. 'sharing'
-	 */
+	#[\Override]
 	public function getSection(): string {
 		return 'support';
 	}
@@ -168,14 +169,17 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * keep the server setting at the top, right after "server settings"
 	 */
+	#[\Override]
 	public function getPriority(): int {
 		return 0;
 	}
 
+	#[\Override]
 	public function getName(): ?string {
 		return null; // Only one setting in this section
 	}
 
+	#[\Override]
 	public function getAuthorizedAppConfig(): array {
 		return [
 			'support' => ['.*'],

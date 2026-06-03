@@ -12,7 +12,7 @@ use Rubix\ML\Datasets\Generators\Agglomerate;
  */
 class KNearestNeighborsBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     protected const TESTING_SIZE = 10000;
 
@@ -27,7 +27,7 @@ class KNearestNeighborsBench
     protected $testing;
 
     /**
-     * @var \Rubix\ML\Classifiers\KNearestNeighbors
+     * @var KNearestNeighbors
      */
     protected $estimator;
 

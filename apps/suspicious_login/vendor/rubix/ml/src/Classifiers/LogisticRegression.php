@@ -37,6 +37,7 @@ use Generator;
 use function is_nan;
 use function count;
 use function get_object_vars;
+use function number_format;
 
 /**
  * Logistic Regression
@@ -64,9 +65,9 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * The gradient descent optimizer used to update the network parameters.
      *
-     * @var \Rubix\ML\NeuralNet\Optimizers\Optimizer
+     * @var Optimizer
      */
-    protected \Rubix\ML\NeuralNet\Optimizers\Optimizer $optimizer;
+    protected Optimizer $optimizer;
 
     /**
      * The amount of L2 regularization applied to the weights of the output layer.
@@ -100,16 +101,16 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * The function that computes the loss associated with an erroneous activation during training.
      *
-     * @var \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss
+     * @var ClassificationLoss
      */
-    protected \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss $costFn;
+    protected ClassificationLoss $costFn;
 
     /**
      * The underlying neural network instance.
      *
-     * @var \Rubix\ML\NeuralNet\FeedForward|null
+     * @var FeedForward|null
      */
-    protected ?\Rubix\ML\NeuralNet\FeedForward $network = null;
+    protected ?FeedForward $network = null;
 
     /**
      * The unique class labels.
@@ -127,13 +128,13 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
 
     /**
      * @param int $batchSize
-     * @param \Rubix\ML\NeuralNet\Optimizers\Optimizer|null $optimizer
+     * @param Optimizer|null $optimizer
      * @param float $l2Penalty
      * @param int $epochs
      * @param float $minChange
      * @param int $window
-     * @param \Rubix\ML\NeuralNet\CostFunctions\ClassificationLoss|null $costFn
-     * @throws \Rubix\ML\Exceptions\InvalidArgumentException
+     * @param ClassificationLoss|null $costFn
+     * @throws InvalidArgumentException
      */
     public function __construct(
         int $batchSize = 128,
@@ -183,7 +184,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
      *
      * @internal
      *
-     * @return \Rubix\ML\EstimatorType
+     * @return EstimatorType
      */
     public function type() : EstimatorType
     {
@@ -266,7 +267,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * Return the underlying neural network instance or null if not trained.
      *
-     * @return \Rubix\ML\NeuralNet\FeedForward|null
+     * @return FeedForward|null
      */
     public function network() : ?FeedForward
     {
@@ -325,6 +326,10 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
 
         if ($this->logger) {
             $this->logger->info("Training $this");
+
+            $numParams = number_format($this->network->numParams());
+
+            $this->logger->info("{$numParams} trainable parameters");
         }
 
         $prevLoss = $bestLoss = INF;
@@ -396,7 +401,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * Make predictions from a dataset.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
+     * @param Dataset $dataset
      * @return list<string>
      */
     public function predict(Dataset $dataset) : array
@@ -407,8 +412,8 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * Estimate the joint probabilities for each possible outcome.
      *
-     * @param \Rubix\ML\Datasets\Dataset $dataset
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @param Dataset $dataset
+     * @throws RuntimeException
      * @return list<array<string,float>>
      */
     public function proba(Dataset $dataset) : array
@@ -440,7 +445,7 @@ class LogisticRegression implements Estimator, Learner, Online, Probabilistic, R
     /**
      * Return the importance scores of each feature column of the training set.
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return float[]
      */
     public function featureImportances() : array

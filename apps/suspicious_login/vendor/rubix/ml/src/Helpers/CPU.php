@@ -20,28 +20,28 @@ class CPU
     /**
      * The command to return the number of processor cores on Windows OS.
      *
-     * @var string
+     * @var literal-string
      */
     protected const WIN_CORES = 'wmic cpu get NumberOfCores';
 
     /**
      * The command to return the number of processor cores on Linux.
      *
-     * @var string
+     * @var literal-string
      */
     protected const CPU_INFO = '/proc/cpuinfo';
 
     /**
      * The regular expression used to extract the core count.
      *
-     * @var string
+     * @var literal-string
      */
     protected const CORE_REGEX = '/^processor/m';
 
     /**
      * Return the number of cpu cores or 0 if unable to detect.
      *
-     * @throws \Rubix\ML\Exceptions\RuntimeException
+     * @throws RuntimeException
      * @return int
      */
     public static function cores() : int

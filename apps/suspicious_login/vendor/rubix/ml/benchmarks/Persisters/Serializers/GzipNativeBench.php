@@ -13,10 +13,10 @@ use Rubix\ML\Serializers\GzipNative;
  */
 class GzipNativeBench
 {
-    protected const TRAINING_SIZE = 2500;
+    protected const TRAINING_SIZE = 10000;
 
     /**
-     * @var \Rubix\ML\Serializers\GzipNative
+     * @var GzipNative
      */
     protected $serializer;
 

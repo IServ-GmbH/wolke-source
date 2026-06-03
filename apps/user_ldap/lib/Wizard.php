@@ -11,6 +11,7 @@ namespace OCA\User_LDAP;
 use OC\ServerNotAvailableException;
 use OCP\IL10N;
 use OCP\L10N\IFactory as IL10NFactory;
+use OCP\Server;
 use OCP\Util;
 use Psr\Log\LoggerInterface;
 
@@ -40,10 +41,10 @@ class Wizard extends LDAPUtility {
 	) {
 		parent::__construct($ldap);
 		if (is_null(static::$l)) {
-			static::$l = \OC::$server->get(IL10NFactory::class)->get('user_ldap');
+			static::$l = Server::get(IL10NFactory::class)->get('user_ldap');
 		}
 		$this->result = new WizardResult();
-		$this->logger = \OC::$server->get(LoggerInterface::class);
+		$this->logger = Server::get(LoggerInterface::class);
 	}
 
 	public function __destruct() {
@@ -259,8 +260,8 @@ class Wizard extends LDAPUtility {
 			$this->applyFind('ldap_email_attr', $winner);
 			if ($writeLog) {
 				$this->logger->info(
-					'The mail attribute has automatically been reset, ' .
-					'because the original value did not return any results.',
+					'The mail attribute has automatically been reset, '
+					. 'because the original value did not return any results.',
 					['app' => 'user_ldap']
 				);
 			}
@@ -709,7 +710,7 @@ class Wizard extends LDAPUtility {
 		//this did not help :(
 		//Let's see whether we can parse the Host URL and convert the domain to
 		//a base DN
-		$helper = \OC::$server->get(Helper::class);
+		$helper = Server::get(Helper::class);
 		$domain = $helper->getDomainFromURL($this->configuration->ldapHost);
 		if (!$domain) {
 			return false;
@@ -1208,8 +1209,8 @@ class Wizard extends LDAPUtility {
 		//When looking for objectclasses, testing few entries is sufficient,
 		$dig = 3;
 
-		$availableFeatures =
-			$this->cumulativeSearchOnAttribute($objectclasses, $attr,
+		$availableFeatures
+			= $this->cumulativeSearchOnAttribute($objectclasses, $attr,
 				$dig, $maxEntryObjC);
 		if (is_array($availableFeatures)
 		   && count($availableFeatures) > 0) {

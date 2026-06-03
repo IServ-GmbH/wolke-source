@@ -70,17 +70,17 @@ class PushController extends OCSController {
 		}
 
 		if (
-			!str_starts_with($devicePublicKey, '-----BEGIN PUBLIC KEY-----' . "\n") ||
-			((\strlen($devicePublicKey) !== 450 || strpos($devicePublicKey, "\n" . '-----END PUBLIC KEY-----') !== 425) &&
-				(\strlen($devicePublicKey) !== 451 || strpos($devicePublicKey, "\n" . '-----END PUBLIC KEY-----' . "\n") !== 425))
+			!str_starts_with($devicePublicKey, '-----BEGIN PUBLIC KEY-----' . "\n")
+			|| ((\strlen($devicePublicKey) !== 450 || strpos($devicePublicKey, "\n" . '-----END PUBLIC KEY-----') !== 425)
+				&& (\strlen($devicePublicKey) !== 451 || strpos($devicePublicKey, "\n" . '-----END PUBLIC KEY-----' . "\n") !== 425))
 		) {
 			return new DataResponse(['message' => 'INVALID_DEVICE_KEY'], Http::STATUS_BAD_REQUEST);
 		}
 
 		if (
-			!filter_var($proxyServer, FILTER_VALIDATE_URL) ||
-			\strlen($proxyServer) > 256 ||
-			!preg_match('/^(https\:\/\/|http\:\/\/(localhost|[a-z0-9\.-]*\.(internal|local))(\:\d{0,5})?\/)/', $proxyServer)
+			!filter_var($proxyServer, FILTER_VALIDATE_URL)
+			|| \strlen($proxyServer) > 256
+			|| !preg_match('/^(https\:\/\/|http\:\/\/(localhost|[a-z0-9\.-]*\.(internal|local))(\:\d{0,5})?\/)/', $proxyServer)
 		) {
 			return new DataResponse(['message' => 'INVALID_PROXY_SERVER'], Http::STATUS_BAD_REQUEST);
 		}
@@ -97,7 +97,11 @@ class PushController extends OCSController {
 
 		$key = $this->identityProof->getKey($user);
 
-		$deviceIdentifier = json_encode([$user->getCloudId(), $token->getId()]);
+		try {
+			$deviceIdentifier = json_encode([$user->getCloudId(), $token->getId()], JSON_THROW_ON_ERROR);
+		} catch (\JsonException) {
+			return new DataResponse(['message' => 'INVALID_SESSION_TOKEN'], Http::STATUS_BAD_REQUEST);
+		}
 		openssl_sign($deviceIdentifier, $signature, $key->getPrivate(), OPENSSL_ALGO_SHA512);
 		/**
 		 * For some reason the push proxy's golang code needs the signature

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -13,6 +14,7 @@ use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
 use OCA\Files_Sharing\Event\ShareLinkAccessedEvent;
 use OCP\Accounts\IAccountManager;
 use OCP\AppFramework\AuthPublicShareController;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -28,6 +30,7 @@ use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\HintException;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -256,9 +259,9 @@ class ShareController extends AuthPublicShareController {
 	 * Emit a ShareLinkAccessedEvent event when a share is accessed, downloaded, auth...
 	 */
 	protected function emitShareAccessEvent(IShare $share, string $step = '', int $errorCode = 200, string $errorMessage = ''): void {
-		if ($step !== self::SHARE_ACCESS &&
-			$step !== self::SHARE_AUTH &&
-			$step !== self::SHARE_DOWNLOAD) {
+		if ($step !== self::SHARE_ACCESS
+			&& $step !== self::SHARE_AUTH
+			&& $step !== self::SHARE_DOWNLOAD) {
 			return;
 		}
 		$this->eventDispatcher->dispatchTyped(new ShareLinkAccessedEvent($share, $step, $errorCode, $errorMessage));
@@ -310,7 +313,7 @@ class ShareController extends AuthPublicShareController {
 			throw new NotFoundException($this->l10n->t('This share does not exist or is no longer available'));
 		}
 
-		if ($this->config->getSystemValue('iserv_disable_file_downloads', true)) {
+		if ($this->config->getSystemValueBool('iserv_disable_file_downloads', false)) {
 			$share->setHideDownload(true);
 		}
 		$shareNode = $share->getNode();
@@ -362,38 +365,53 @@ class ShareController extends AuthPublicShareController {
 		$share = $this->shareManager->getShareByToken($token);
 
 		if (!($share->getPermissions() & Constants::PERMISSION_READ)) {
-			return new DataResponse('Share has no read permission');
+			return new DataResponse('Share has no read permission', Http::STATUS_FORBIDDEN);
 		}
 
 		$attributes = $share->getAttributes();
 		if ($attributes?->getAttribute('permissions', 'download') === false) {
-			return new DataResponse('Share has no download permission');
+			return new DataResponse('Share has no download permission', Http::STATUS_FORBIDDEN);
 		}
 
 		if (!$this->validateShare($share)) {
 			throw new NotFoundException();
 		}
 
-		$node = $share->getNode();
-		if ($node instanceof Folder) {
-			// Directory share
+		if ($share->getHideDownload()) {
+			// download API does not work if hidden - use the DAV endpoint for previews
+			throw new NotFoundException();
+		}
 
-			// Try to get the path
-			if ($path !== '') {
+		$node = $share->getNode();
+		if ($path !== '') {
+			if (!$node instanceof Folder) {
+				return new NotFoundResponse();
+			}
+
+			try {
+				$node = $node->get($path);
+			} catch (NotFoundException|NotPermittedException) {
+				$this->emitAccessShareHook($share, 404, 'Share not found');
+				$this->emitShareAccessEvent($share, self::SHARE_DOWNLOAD, 404, 'Share not found');
+				return new NotFoundResponse();
+			}
+		}
+
+		if ($files !== null) {
+			if (!$node instanceof Folder) {
+				return new NotFoundResponse();
+			}
+
+			$filesParam = json_decode($files, true);
+			if (!is_array($filesParam)) {
 				try {
-					$node = $node->get($path);
-				} catch (NotFoundException $e) {
+					// legacy wise this allows also passing the filename
+					$node = $node->get($files);
+					$files = null;
+				} catch (NotFoundException|NotPermittedException) {
 					$this->emitAccessShareHook($share, 404, 'Share not found');
 					$this->emitShareAccessEvent($share, self::SHARE_DOWNLOAD, 404, 'Share not found');
 					return new NotFoundResponse();
-				}
-			}
-
-			if ($node instanceof Folder) {
-				if ($files === null || $files === '') {
-					if ($share->getHideDownload()) {
-						throw new NotFoundException('Downloading a folder');
-					}
 				}
 			}
 		}
@@ -401,10 +419,21 @@ class ShareController extends AuthPublicShareController {
 		$this->emitAccessShareHook($share);
 		$this->emitShareAccessEvent($share, self::SHARE_DOWNLOAD);
 
-		$davUrl = '/public.php/dav/files/' . $token . '/?accept=zip';
-		if ($files !== null) {
-			$davUrl .= '&files=' . $files;
+		$davPath = '';
+		if ($node !== $share->getNode()) {
+			$davPath = substr($node->getPath(), strlen($share->getNode()->getPath()));
 		}
+
+		$params = [];
+		if ($files !== null) {
+			$params['files'] = $files;
+		}
+		if ($node instanceof Folder) {
+			$params['accept'] = 'zip';
+		}
+
+		$davUrl = '/public.php/dav/files/' . $token . $davPath;
+		$davUrl .= '?' . http_build_query($params);
 		return new RedirectResponse($this->urlGenerator->getAbsoluteURL($davUrl));
 	}
 }

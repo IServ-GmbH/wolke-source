@@ -11,14 +11,14 @@ use OCP\Files\Folder;
 /**
  * Allows defining a IShareProvider with support for the getAllSharesInFolder method.
  *
- * @since 31.0.6
+ * @since 32.0.0
  */
 interface IShareProviderSupportsAllSharesInFolder extends IShareProvider {
 	/**
 	 * Get all shares in a folder.
 	 *
 	 * @return array<int, list<IShare>>
-	 * @since 31.0.6
+	 * @since 32.0.0
 	 */
 	public function getAllSharesInFolder(Folder $node): array;
 }

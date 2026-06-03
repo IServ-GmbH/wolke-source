@@ -12,6 +12,7 @@ use Generator;
 use OC\Collaboration\Collaborators\SearchResult;
 use OC\Share\Share;
 use OCA\Files_Sharing\ResponseDefinitions;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
@@ -25,6 +26,7 @@ use OCP\GlobalScale\IConfig as GlobalScaleIConfig;
 use OCP\IConfig;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\Server;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 use function array_slice;
@@ -156,12 +158,16 @@ class ShareesAPIController extends OCSController {
 		}
 
 		// FIXME: DI
-		if (\OC::$server->getAppManager()->isEnabledForUser('circles') && class_exists('\OCA\Circles\ShareByCircleProvider')) {
+		if (Server::get(IAppManager::class)->isEnabledForUser('circles') && class_exists('\OCA\Circles\ShareByCircleProvider')) {
 			$shareTypes[] = IShare::TYPE_CIRCLE;
 		}
 
 		if ($this->shareManager->shareProviderExists(IShare::TYPE_SCIENCEMESH)) {
 			$shareTypes[] = IShare::TYPE_SCIENCEMESH;
+		}
+
+		if ($itemType === 'calendar') {
+			$shareTypes[] = IShare::TYPE_REMOTE;
 		}
 
 		if ($shareType !== null && is_array($shareType)) {
@@ -175,7 +181,7 @@ class ShareesAPIController extends OCSController {
 		$this->offset = $perPage * ($page - 1);
 
 		// In global scale mode we always search the lookup server
-		$this->result['lookupEnabled'] = \OCP\Server::get(GlobalScaleIConfig::class)->isGlobalScaleEnabled();
+		$this->result['lookupEnabled'] = Server::get(GlobalScaleIConfig::class)->isGlobalScaleEnabled();
 		// TODO: Reconsider using lookup server for non-global-scale federation
 
 		[$result, $hasMoreResults] = $this->collaboratorSearch->search($search, $shareTypes, $this->result['lookupEnabled'], $this->limit, $this->offset);
@@ -325,7 +331,7 @@ class ShareesAPIController extends OCSController {
 		}
 
 		// FIXME: DI
-		if (\OC::$server->getAppManager()->isEnabledForUser('circles') && class_exists('\OCA\Circles\ShareByCircleProvider')) {
+		if (Server::get(IAppManager::class)->isEnabledForUser('circles') && class_exists('\OCA\Circles\ShareByCircleProvider')) {
 			$shareTypes[] = IShare::TYPE_CIRCLE;
 		}
 

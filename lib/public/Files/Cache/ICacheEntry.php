@@ -8,6 +8,7 @@
 namespace OCP\Files\Cache;
 
 use ArrayAccess;
+use OCP\AppFramework\Attribute\Consumable;
 
 /**
  * meta data for a file or folder
@@ -19,6 +20,7 @@ use ArrayAccess;
  * implemented it in the private implementation. Hence php would allow using the
  * object as array, while strictly speaking it didn't support this.
  */
+#[Consumable(since: '9.0.0')]
 interface ICacheEntry extends ArrayAccess {
 	/**
 	 * @since 9.0.0
@@ -160,4 +162,12 @@ interface ICacheEntry extends ArrayAccess {
 	 * @since 25.0.0
 	 */
 	public function getUnencryptedSize(): int;
+
+	/**
+	 * Get the file id of the parent folder
+	 *
+	 * @return int
+	 * @since 32.0.0
+	 */
+	public function getParentId(): int;
 }

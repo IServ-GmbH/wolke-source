@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -125,6 +126,18 @@ trait S3ConnectionTrait {
 			$options['endpoint'] = $base_url;
 		}
 
+		if (isset($this->params['request_checksum_calculation'])) {
+			$options['request_checksum_calculation'] = $this->params['request_checksum_calculation'];
+		} else {
+			$options['request_checksum_calculation'] = 'when_required';
+		}
+
+		if (isset($this->params['response_checksum_validation'])) {
+			$options['response_checksum_validation'] = $this->params['response_checksum_validation'];
+		} else {
+			$options['response_checksum_validation'] = 'when_required';
+		}
+
 		if ($this->getProxy()) {
 			$options['http']['proxy'] = $this->getProxy();
 		}
@@ -139,7 +152,7 @@ trait S3ConnectionTrait {
 				$logger->debug('Bucket "' . $this->bucket . '" This bucket name is not dns compatible, it may contain invalid characters.',
 					['app' => 'objectstore']);
 			}
-	
+
 			if ($this->params['verify_bucket_exists'] && !$this->connection->doesBucketExist($this->bucket)) {
 				try {
 					$logger->info('Bucket "' . $this->bucket . '" does not exist - creating it.', ['app' => 'objectstore']);
@@ -203,10 +216,12 @@ trait S3ConnectionTrait {
 		return function () {
 			$key = empty($this->params['key']) ? null : $this->params['key'];
 			$secret = empty($this->params['secret']) ? null : $this->params['secret'];
+			$sessionToken = empty($this->params['session_token']) ? null : $this->params['session_token'];
 
 			if ($key && $secret) {
 				return Create::promiseFor(
-					new Credentials($key, $secret)
+					// a null sessionToken match the default signature of the constructor
+					new Credentials($key, $secret, $sessionToken)
 				);
 			}
 

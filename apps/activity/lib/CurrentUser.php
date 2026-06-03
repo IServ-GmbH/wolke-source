@@ -10,31 +10,26 @@ namespace OCA\Activity;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
 
 class CurrentUser {
 
-	/** @var string */
-	protected $identifier;
 	/** @var string|null */
-	protected $cloudId;
+	protected $identifier = null;
 	/** @var string|false|null */
-	protected $sessionUser;
+	protected $cloudId = false;
+	/** @var string|false|null */
+	protected $sessionUser = false;
 
-	/**
-	 * @param IUserSession $userSession
-	 * @param IRequest $request
-	 * @param IManager $shareManager
-	 */
 	public function __construct(
 		protected IUserSession $userSession,
 		protected IRequest $request,
 		protected IManager $shareManager,
+		protected IFactory $l10nFactory,
 	) {
-		$this->cloudId = false;
-		$this->sessionUser = false;
 	}
 
 	public function getUser(): ?IUser {
@@ -46,19 +41,30 @@ class CurrentUser {
 	 * @return string
 	 */
 	public function getUserIdentifier() {
-		if ($this->identifier === null) {
-			$this->identifier = $this->getUID();
-
-			if ($this->identifier === null) {
-				$this->identifier = $this->getCloudIDFromToken();
-
-				if ($this->identifier === null) {
-					// Nothing worked, fallback to empty string
-					$this->identifier = '';
-				}
-			}
+		if ($this->identifier !== null) {
+			return $this->identifier;
 		}
 
+		$uid = $this->getUID();
+		if ($uid !== null) {
+			$this->identifier = $uid;
+			return $this->identifier;
+		}
+
+		$cloudId = $this->getCloudIDFromToken();
+		if ($cloudId !== null) {
+			$this->identifier = $cloudId;
+			return $this->identifier;
+		}
+
+		$nickname = htmlspecialchars($this->request->getHeader('X-NC-Nickname'));
+		if ($nickname !== '') {
+			$this->identifier = $nickname . ' (' . $this->l10nFactory->get('comments')->t('remote user') . ')';
+			return $this->identifier;
+		}
+
+		// Nothing worked, fallback to empty string
+		$this->identifier = '';
 		return $this->identifier;
 	}
 
@@ -97,10 +103,30 @@ class CurrentUser {
 	}
 
 	/**
+	 * Check if the current request is via a public share link
+	 */
+	public function isPublicShareToken(): bool {
+		/** @psalm-suppress NoInterfaceProperties */
+		if (!empty($this->request->server['PHP_AUTH_USER'])) {
+			$token = $this->request->server['PHP_AUTH_USER'];
+			try {
+				$share = $this->shareManager->getShareByToken($token);
+				return $share->getShareType() === IShare::TYPE_LINK
+					|| $share->getShareType() === IShare::TYPE_EMAIL;
+			} catch (ShareNotFound $e) {
+				// No share found for this token
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get the cloud ID from the sharing token
 	 * @return string|null
 	 */
 	protected function getCloudIDFromToken() {
+		/** @psalm-suppress NoInterfaceProperties */
 		if (!empty($this->request->server['PHP_AUTH_USER'])) {
 			$token = $this->request->server['PHP_AUTH_USER'];
 			/**

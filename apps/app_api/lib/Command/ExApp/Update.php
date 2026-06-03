@@ -93,7 +93,7 @@ class Update extends Command {
 	private function updateExApp(InputInterface $input, OutputInterface $output, string $appId): int {
 		$outputConsole = !$input->getOption('silent');
 		$deployOptions = $this->exAppDeployOptionsService->formatDeployOptions(
-			$this->exAppDeployOptionsService->getDeployOptions()
+			$this->exAppDeployOptionsService->getDeployOptions($appId)
 		);
 		$appInfo = $this->exAppService->getAppInfo(
 			$appId, $input->getOption('info-xml'), $input->getOption('json-info'),
@@ -205,7 +205,11 @@ class Update extends Command {
 		$auth = [];
 		if ($daemonConfig->getAcceptsDeployId() === $this->dockerActions->getAcceptsDeployId()) {
 			$deployParams = $this->dockerActions->buildDeployParams($daemonConfig, $appInfo);
-			$deployResult = $this->dockerActions->deployExApp($exApp, $daemonConfig, $deployParams);
+			if (boolval($exApp->getDeployConfig()['harp'] ?? false)) {
+				$deployResult = $this->dockerActions->deployExAppHarp($exApp, $daemonConfig, $deployParams);
+			} else {
+				$deployResult = $this->dockerActions->deployExApp($exApp, $daemonConfig, $deployParams);
+			}
 			if ($deployResult) {
 				$this->logger->error(sprintf('ExApp %s deployment update failed. Error: %s', $appId, $deployResult));
 				if ($outputConsole) {

@@ -13,11 +13,14 @@ use OCA\DAV\AppInfo\Application;
 use OCA\DAV\Connector\Sabre\Exception\FileLocked;
 use OCA\DAV\Connector\Sabre\Exception\Forbidden;
 use OCA\DAV\Connector\Sabre\Exception\InvalidPath;
+use OCA\DAV\Storage\PublicShareWrapper;
 use OCP\App\IAppManager;
+use OCP\Constants;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\ForbiddenException;
 use OCP\Files\InvalidPathException;
+use OCP\Files\Mount\IMountManager;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\StorageNotAvailableException;
@@ -171,7 +174,20 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 	 * @throws \Sabre\DAV\Exception\ServiceUnavailable
 	 */
 	public function getChild($name, $info = null, ?IRequest $request = null, ?IL10N $l10n = null) {
-		if (!$this->info->isReadable()) {
+		$storage = $this->info->getStorage();
+		$allowDirectory = false;
+
+		// Checking if we're in a file drop
+		// If we are, then only PUT and MKCOL are allowed (see plugin)
+		// so we are safe to return the directory without a risk of
+		// leaking files and folders structure.
+		if ($storage->instanceOfStorage(PublicShareWrapper::class)) {
+			$share = $storage->getShare();
+			$allowDirectory = ($share->getPermissions() & Constants::PERMISSION_READ) !== Constants::PERMISSION_READ;
+		}
+
+		// For file drop we need to be allowed to read the directory with the nickname
+		if (!$allowDirectory && !$this->info->isReadable()) {
 			// avoid detecting files through this way
 			throw new NotFound();
 		}
@@ -197,6 +213,11 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 		if ($info->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
 			$node = new \OCA\DAV\Connector\Sabre\Directory($this->fileView, $info, $this->tree, $this->shareManager);
 		} else {
+			// In case reading a directory was allowed but it turns out the node was a not a directory, reject it now.
+			if (!$this->info->isReadable()) {
+				throw new NotFound();
+			}
+
 			$node = new File($this->fileView, $info, $this->shareManager, $request, $l10n);
 		}
 		if ($this->tree) {
@@ -220,7 +241,7 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 			if (!$this->info->isReadable()) {
 				// return 403 instead of 404 because a 404 would make
 				// the caller believe that the collection itself does not exist
-				if (Server::get(IAppManager::class)->isInstalled('files_accesscontrol')) {
+				if (Server::get(IAppManager::class)->isEnabledForAnyone('files_accesscontrol')) {
 					throw new Forbidden('No read permissions. This might be caused by files_accesscontrol, check your configured rules');
 				} else {
 					throw new Forbidden('No read permissions');
@@ -232,8 +253,8 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 		}
 
 		$nodes = [];
-		$request = \OC::$server->get(IRequest::class);
-		$l10nFactory = \OC::$server->get(IFactory::class);
+		$request = Server::get(IRequest::class);
+		$l10nFactory = Server::get(IFactory::class);
 		$l10n = $l10nFactory->get(Application::APP_ID);
 		foreach ($folderContent as $info) {
 			$node = $this->getChild($info->getName(), $info, $request, $l10n);
@@ -286,7 +307,7 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 	}
 
 	private function getLogger(): LoggerInterface {
-		return \OC::$server->get(LoggerInterface::class);
+		return Server::get(LoggerInterface::class);
 	}
 
 	/**
@@ -380,7 +401,7 @@ class Directory extends Node implements \Sabre\DAV\ICollection, \Sabre\DAV\IQuot
 		$sourcePath = $sourceNode->getPath();
 
 		$isMovableMount = false;
-		$sourceMount = \OC::$server->getMountManager()->find($this->fileView->getAbsolutePath($sourcePath));
+		$sourceMount = Server::get(IMountManager::class)->find($this->fileView->getAbsolutePath($sourcePath));
 		$internalPath = $sourceMount->getInternalPath($this->fileView->getAbsolutePath($sourcePath));
 		if ($sourceMount instanceof MoveableMount && $internalPath === '') {
 			$isMovableMount = true;

@@ -1,5 +1,5 @@
 diff --git apps/files_versions/src/components/Version.vue apps/files_versions/src/components/Version.vue
-index a126f2a..5bc1e68 100644
+index 8e59e8d..4afdcaa 100644
 --- apps/files_versions/src/components/Version.vue
 +++ apps/files_versions/src/components/Version.vue
 @@ -272,6 +272,11 @@ export default defineComponent({

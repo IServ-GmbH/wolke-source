@@ -16,6 +16,7 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\Bruteforce\MaxDelayReached;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
@@ -55,6 +56,7 @@ class PublicAuth extends AbstractBasic {
 
 	/**
 	 * @throws NotAuthenticated
+	 * @throws MaxDelayReached
 	 * @throws ServiceUnavailable
 	 */
 	public function check(RequestInterface $request, ResponseInterface $response): array {
@@ -78,7 +80,8 @@ class PublicAuth extends AbstractBasic {
 			}
 
 			return $this->checkToken();
-		} catch (NotAuthenticated $e) {
+		} catch (NotAuthenticated|MaxDelayReached $e) {
+			$this->throttler->registerAttempt(self::BRUTEFORCE_ACTION, $this->request->getRemoteAddress());
 			throw $e;
 		} catch (PreconditionFailed $e) {
 			$response->setHeader(
@@ -105,7 +108,7 @@ class PublicAuth extends AbstractBasic {
 		$path = $this->request->getPathInfo() ?: '';
 		// ['', 'dav', 'files', 'token']
 		$splittedPath = explode('/', $path);
-		
+
 		if (count($splittedPath) < 4 || $splittedPath[3] === '') {
 			throw new NotFound();
 		}
@@ -184,7 +187,7 @@ class PublicAuth extends AbstractBasic {
 					}
 					return true;
 				}
-				
+
 				// We are already authenticated for this share in the session
 				if ($this->isShareInSession($share)) {
 					return true;

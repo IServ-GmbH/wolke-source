@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -74,7 +75,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function registerTrashBackends(ContainerInterface $serverContainer, LoggerInterface $logger, IAppManager $appManager, ITrashManager $trashManager): void {
-		foreach ($appManager->getInstalledApps() as $app) {
+		foreach ($appManager->getEnabledApps() as $app) {
 			$appInfo = $appManager->getAppInfo($app);
 			if (isset($appInfo['trash'])) {
 				$backends = $appInfo['trash'];

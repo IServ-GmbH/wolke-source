@@ -8,25 +8,26 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Using the Contacts app &mdash; Nextcloud latest User Manual latest documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bad88653" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
-      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=8ff6e0db" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../../_static/dark_mode_css/dark.css?v=70edf1c7" />
 
   
-      <script src="../_static/jquery.js?v=5d32c60e"></script>
-      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=a49d5d77"></script>
-      <script src="../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="../_static/copybutton.js?v=f281be69"></script>
-      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
-      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
-    <script src="../_static/js/theme.js"></script>
-    <script src="../_static/js/versions.js"></script>
+    <link rel="canonical" href="https://docs.nextcloud.com/server/stable/user_manual/groupware/contacts.html" />
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=a49d5d77"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <script src="../../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Using the Calendar app" href="calendar.html" />
@@ -43,7 +44,7 @@
           
           <a href="../contents.html">
             
-              <img src="../_static/logo-white.png" class="logo" alt="Logo"/>
+              <img src="../../_static/logo-white.png" class="logo" alt="Logo"/>
           </a>
               <div class="switch-menus">
                 <div class="version-switch"></div>
@@ -59,7 +60,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud latest user manual introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../whats_new.html">What’s new for users in Nextcloud latest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files &amp; synchronization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Groupware</a><ul class="current">
@@ -71,13 +71,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#contact-picture">Contact Picture</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#managing-multiple-contacts-at-a-time">Managing multiple Contacts at a time</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#merging-duplicate-contacts">Merging duplicate Contacts</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#organize-your-contacts-with-contact-groups">Organize your Contacts with Contact Groups</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#adding-and-managing-address-books">Adding and Managing Address Books</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#circles">Circles</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#create-a-circle">Create a circle</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#circle-roles">Circle roles</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#add-members-to-a-circle">Add members to a circle</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#circle-options">Circle options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#teams">Teams</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-team">Create a team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#team-roles">Team roles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-members-to-a-team">Add members to a team</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#team-options">Team options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#shared-items">Shared items</a></li>
 </ul>
 </li>
@@ -144,7 +148,7 @@ contact picture and manage your address books.</p>
 <p>When you first access the Contacts app, the system address book containing all
 users on the instance you are allowed to see, plus an empty default address book becomes available:</p>
 <figure class="align-default" id="id1">
-<img alt="../_images/contacts_empty.png" src="../_images/contacts_empty.png" />
+<img alt="../../_images/contacts_empty.png" src="../../_images/contacts_empty.png" />
 <figcaption>
 <p><span class="caption-text"><em>Default Address Book (empty)</em></span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
 </figcaption>
@@ -164,14 +168,14 @@ users on the instance you are allowed to see, plus an empty default address book
 <li><p>Find “Settings” at the bottom of the left sidebar, next to the gear button:</p>
 <blockquote>
 <div><figure class="align-default">
-<img alt="Contact settings gear button" src="../_images/contact_bottombar.png" />
+<img alt="Contact settings gear button" src="../../_images/contact_bottombar.png" />
 </figure>
 </div></blockquote>
 </li>
 <li><p>Click the gear button. The Contacts app “Import” button will appear:</p>
 <blockquote>
 <div><figure class="align-default">
-<img alt="Contacts Upload Field" src="../_images/contact_uploadbutton.png" />
+<img alt="Contacts Upload Field" src="../../_images/contact_uploadbutton.png" />
 </figure>
 </div></blockquote>
 </li>
@@ -196,7 +200,7 @@ users on the instance you are allowed to see, plus an empty default address book
 </ol>
 <blockquote>
 <div><figure class="align-default">
-<img alt="../_images/contact_new.png" src="../_images/contact_new.png" />
+<img alt="../../_images/contact_new.png" src="../../_images/contact_new.png" />
 </figure>
 </div></blockquote>
 <ol class="arabic simple" start="2">
@@ -205,7 +209,7 @@ users on the instance you are allowed to see, plus an empty default address book
 </ol>
 <blockquote>
 <div><figure class="align-default">
-<img alt="../_images/contact_view_mode.png" src="../_images/contact_view_mode.png" />
+<img alt="../../_images/contact_view_mode.png" src="../../_images/contact_view_mode.png" />
 </figure>
 </div></blockquote>
 </section>
@@ -226,17 +230,40 @@ someone elses data, only your own. Your own data can also be modified in the <a 
 <h3>Contact Picture<a class="headerlink" href="#contact-picture" title="Link to this heading"></a></h3>
 <p>To add a picture for your new contacts, click on the upload button:</p>
 <figure class="align-default">
-<img alt="Contact picture (upload button)" src="../_images/contact_picture.png" />
+<img alt="Contact picture (upload button)" src="../../_images/contact_picture.png" />
 </figure>
 <p>After you have set a contact picture, it will look like this:</p>
 <figure class="align-default">
-<img alt="Contact picture (set)" src="../_images/contact_picture_set.png" />
+<img alt="Contact picture (set)" src="../../_images/contact_picture_set.png" />
 </figure>
 <p>If you want to upload a new one, remove it, view it in full size or download it,
 click on the contacts picture for the following options to appear:</p>
 <figure class="align-default">
-<img alt="../_images/contact_picture_options.png" src="../_images/contact_picture_options.png" />
+<img alt="../../_images/contact_picture_options.png" src="../../_images/contact_picture_options.png" />
 </figure>
+</section>
+</section>
+<section id="managing-multiple-contacts-at-a-time">
+<h2>Managing multiple Contacts at a time<a class="headerlink" href="#managing-multiple-contacts-at-a-time" title="Link to this heading"></a></h2>
+<p>The Contacts app enables you to select multiple contacts and to perform batch actions on them. To select multiple contacts, either click on each contacts profile picture individually, or click on the profile picture on the first contact then while holding the shift key click on another contact in the list to select all contacts in between the first and second one.</p>
+<p>This will bring up a menu at the top of the contacts list with various actions you can perform on the selected contacts:</p>
+<figure class="align-default">
+<img alt="Contact multiselect actions" src="../../_images/contact_multiselect.png" />
+</figure>
+<p>In batch mode, the cross icon button will unselect all selected contacts, while the trash bin icon button will delete all selected contacts.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You might not be able to modify or delete certain contacts, for example if they are in a read-only address book. In that case, relevant actions will be disabled.</p>
+</div>
+<section id="merging-duplicate-contacts">
+<h3>Merging duplicate Contacts<a class="headerlink" href="#merging-duplicate-contacts" title="Link to this heading"></a></h3>
+<p>To merge contacts, select two contacts then click the “Merge contacts” icon button at the top of the contacts list, this will open a dialog that helps you merge duplicate contacts. The merging dialog will show the details of both contacts side by side, and you can choose which details to keep in the merged contact.</p>
+<p>Any properties with a Radio (circular) button can only have one value, so one of the two values must be selected (like the name of the contact, which can only have one value), meanwhile checkboxes (square buttons) allow you to keep both values if desired (like phone numbers or email addresses, which can have multiple values).</p>
+<p>If either of the contacts are part of a group(s), by default the merged contact will be part of all groups that the two contacts were part of. You can uncheck any groups while merging if you don’t want the merged contact to be part of them.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently you are only able to merge two contacts at a time, and you are naturally only able to merge contacts that can be modified by you. If the merging action is disabled, check that you selected contacts that match those conditions.</p>
+</div>
 </section>
 </section>
 <section id="organize-your-contacts-with-contact-groups">
@@ -255,7 +282,7 @@ provides access to Contacts app settings. This field shows all
 available address books, certain options for each address book, and enables you
 to create new address books, simply by specifying an address books name:</p>
 <figure class="align-default">
-<img alt="Add address book in the contacts settings" src="../_images/contact_manageaddressbook.png" />
+<img alt="Add address book in the contacts settings" src="../../_images/contact_manageaddressbook.png" />
 </figure>
 <p>The Contacts settings is also where you can share, export and delete addressbooks. You will find the CardDAV URLs there.</p>
 <div class="admonition note">
@@ -265,47 +292,51 @@ to create new address books, simply by specifying an address books name:</p>
 <p>See <a class="reference internal" href="index.html"><span class="doc">Groupware</span></a> for more details about syncing your address books
 with iOS, macOS, Thunderbird and other CardDAV clients.</p>
 </section>
-<section id="circles">
-<h2>Circles<a class="headerlink" href="#circles" title="Link to this heading"></a></h2>
+<section id="teams">
+<h2>Teams<a class="headerlink" href="#teams" title="Link to this heading"></a></h2>
 <p>Informal collaboration takes place within organizations: an event to organize for a few weeks, a short ideation session between members from different entities, workshops, a place to joke around and support team building, or simply in very organic organizations where formal structure is kept to a minimum.</p>
-<p>For all these reasons, Nextcloud supports Circles, a feature embedded in the Contacts app, where every user is able to create its own circle, a user-defined aggregate of accounts. Circles can be used later on to share files and folders, added to Talk conversations, like a regular group.</p>
+<p>For all these reasons, Nextcloud supports Teams, a feature embedded in the Contacts app, where every user is able to create its own team, a user-defined aggregate of accounts. Teams can be used later on to share files and folders, added to Talk conversations, like a regular group.</p>
 <figure class="align-default">
-<img alt="Circle in the Contacts app left menu" src="../_images/circle.png" />
+<img alt="Teams in the Contacts app left menu" src="../../_images/circle.png" />
 </figure>
-<section id="create-a-circle">
-<h3>Create a circle<a class="headerlink" href="#create-a-circle" title="Link to this heading"></a></h3>
-<p>In the left menu, click on the + next to Circles.
-Set a circle name
-Landing on the circle configuration screen, you can:
-- add members to your circle
-- clicking on the three dot menu next to a user allow you to modify its role within the circle.</p>
+<section id="create-a-team">
+<h3>Create a team<a class="headerlink" href="#create-a-team" title="Link to this heading"></a></h3>
+<p>In the left menu, click on the + next to Teams.
+Set a team name.
+Landing on the team configuration screen, you can:</p>
+<ul class="simple">
+<li><p>add members to your team</p></li>
+<li><p>clicking on the three dot menu next to a user allow you to modify its role within the team.</p></li>
+</ul>
 </section>
-<section id="circle-roles">
-<h3>Circle roles<a class="headerlink" href="#circle-roles" title="Link to this heading"></a></h3>
-<p>Circles support 4 types of roles:</p>
+<section id="team-roles">
+<h3>Team roles<a class="headerlink" href="#team-roles" title="Link to this heading"></a></h3>
+<p>Teams support 4 types of roles:</p>
 <ul class="simple">
 <li><p>Member</p></li>
 <li><p>Moderator</p></li>
-<li><p>Admin can configure circle options (+moderator permissions)</p></li>
+<li><p>Admin can configure team options (+moderator permissions)</p></li>
 <li><p>Owner</p></li>
 </ul>
 <p><strong>Member</strong></p>
-<p>Member is the role with the lowest permissions. A member can only access the resources shared with the circle, and view the members of the circle.</p>
+<p>Member is the role with the lowest permissions. A member can only access the resources shared with the team, and view the members of the team.</p>
 <p><strong>Moderator</strong></p>
-<p>In addition to member permissions, a moderator can invite, confirm invitations and manage members of the circle.</p>
+<p>In addition to member permissions, a moderator can invite, confirm invitations and manage members of the team.</p>
 <p><strong>Admin</strong></p>
-<p>In addition to moderator permissions, an admin can configure circle options.</p>
+<p>In addition to moderator permissions, an admin can configure team options.</p>
 <p><strong>Owner</strong></p>
-<p>In addition to admin permissions, an owner can transfer the circle ownership to another member of the circle. There can be only one single owner per circle.</p>
+<p>In addition to admin permissions, an owner can transfer the team ownership to another member of the team. There can be only one single owner per team.</p>
 </section>
-<section id="add-members-to-a-circle">
-<h3>Add members to a circle<a class="headerlink" href="#add-members-to-a-circle" title="Link to this heading"></a></h3>
-<p>Local accounts, groups, email addresses or other circles can be added as members to a circle.
-For a group or a circle, the role applies to all members of the group or circle.</p>
+<section id="add-members-to-a-team">
+<h3>Add members to a team<a class="headerlink" href="#add-members-to-a-team" title="Link to this heading"></a></h3>
+<p>Local accounts, groups, email addresses or other teams can be added as members to a team.
+For a group or a team, the role applies to all members of the group or team.</p>
 </section>
-<section id="circle-options">
-<h3>Circle options<a class="headerlink" href="#circle-options" title="Link to this heading"></a></h3>
-<p>Various self-explanatory options are available to configure a circle, to manage invites and membership, visibility of the circle, allowance of other circle membership and password protection.</p>
+<section id="team-options">
+<h3>Team options<a class="headerlink" href="#team-options" title="Link to this heading"></a></h3>
+<p>Various self-explanatory options are available to configure a team, to manage invites and membership, visibility of the team, allowance of other team membership and password protection.</p>
+<p><strong>Prevent teams from being a member of another team</strong></p>
+<p>When this option is enabled, the team can no longer be directly added as a member of another team. However, this restriction only applies to new direct additions. Existing memberships are kept, and inherited memberships are still possible if this team belongs to a parent team that gets added elsewhere.</p>
 </section>
 <section id="shared-items">
 <h3>Shared items<a class="headerlink" href="#shared-items" title="Link to this heading"></a></h3>
@@ -313,7 +344,7 @@ For a group or a circle, the role applies to all members of the group or circle.
 <p><span class="versionmodified added">Added in version 5.5.</span></p>
 </div>
 <figure class="align-default">
-<img alt="../_images/shared-items.png" src="../_images/shared-items.png" />
+<img alt="../../_images/shared-items.png" src="../../_images/shared-items.png" />
 </figure>
 <p>Items that are shared between two contacts will be displayed in the contact app. This includes media, calendar events, chat rooms, and shared deck cards, all of which will be visible in the contact details. This functionality is limited to contacts listed in the system address book. Currently, our system only supports shared items between two contacts.</p>
 </section>
@@ -331,7 +362,7 @@ For a group or a circle, the role applies to all members of the group or circle.
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2026 Nextcloud GmbH.</p>
+    <p>&#169; Copyright 2016-2026 Nextcloud GmbH and Nextcloud contributors.</p>
   </div>
 
    
@@ -342,6 +373,47 @@ For a group or a circle, the role applies to all members of the group or circle.
     </section>
   </div>
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <!-- Here go the languages -->
   
@@ -360,6 +432,418 @@ For a group or a circle, the role applies to all members of the group or circle.
     <div class="rst-other-versions">
       <dl>
         <dt>🌐 Languages</dt>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ar/"
+                 
+              >
+                
+                Arabic
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/br/"
+                 
+              >
+                
+                Breton
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ca/"
+                 
+              >
+                
+                Catalan
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/cs/"
+                 
+              >
+                
+                Czech
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/da/"
+                 
+              >
+                
+                Danish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/de/"
+                 
+              >
+                
+                German
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/el/"
+                 
+              >
+                
+                Greek
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/en/"
+                 
+                 style="color: var(--dark-link-color);"
+                 
+              >
+                
+                English
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/es/"
+                 
+              >
+                
+                Spanish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/eu/"
+                 
+              >
+                
+                eu
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/fi_FI/"
+                 
+              >
+                
+                Finnish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/fr/"
+                 
+              >
+                
+                French
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ga/"
+                 
+              >
+                
+                Irish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/gl/"
+                 
+              >
+                
+                Glacian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/hu_HU/"
+                 
+              >
+                
+                Hungarian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/id/"
+                 
+              >
+                
+                Indonesian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/it/"
+                 
+              >
+                
+                Italian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ja_JP/"
+                 
+              >
+                
+                Japanese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ko/"
+                 
+              >
+                
+                Korean
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/mn/"
+                 
+              >
+                
+                Mongolian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nb_NO/"
+                 
+              >
+                
+                Norwegian (NB)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nl/"
+                 
+              >
+                
+                Dutch
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/nn/"
+                 
+              >
+                
+                Norwegian (NN)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pl/"
+                 
+              >
+                
+                Polish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pt_BR/"
+                 
+              >
+                
+                Portuguese (BR)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/pt_PT/"
+                 
+              >
+                
+                Portuguese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ro/"
+                 
+              >
+                
+                Romanian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ru/"
+                 
+              >
+                
+                Russian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/si/"
+                 
+              >
+                
+                Sinhala
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sk_SK/"
+                 
+              >
+                
+                Slovakian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sr/"
+                 
+              >
+                
+                Slovenian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/sv/"
+                 
+              >
+                
+                Swedish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/ta/"
+                 
+              >
+                
+                Tamil
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/tr/"
+                 
+              >
+                
+                Turkish
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uk/"
+                 
+              >
+                
+                Ukrainian
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uk_UA/"
+                 
+              >
+                
+                uk_UA
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/uz/"
+                 
+              >
+                
+                Uzbek
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/vi/"
+                 
+              >
+                
+                Vietnamese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_CN/"
+                 
+              >
+                
+                Chinese
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_HK/"
+                 
+              >
+                
+                Chinese (HK)
+                
+              </a>
+            </dd>
+          
+            <dd style="width: 32%; vertical-align: top;">
+              <a href="/server/latest/user_manual/zh_TW/"
+                 
+              >
+                
+                Chinese (TW)
+                
+              </a>
+            </dd>
           
       </dl>
     </div>
@@ -386,26 +870,18 @@ For a group or a circle, the role applies to all members of the group or circle.
           </dd>
         
           <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/30/user_manual"
+            <a href="https://docs.nextcloud.com/server/32/user_manual"
                
             >
-              30
+              32
             </a>
           </dd>
         
           <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/29/user_manual"
+            <a href="https://docs.nextcloud.com/server/31/user_manual"
                
             >
-              29
-            </a>
-          </dd>
-        
-          <dd style="width: 32%">
-            <a href="https://docs.nextcloud.com/server/28/user_manual"
-               
-            >
-              28
+              31
             </a>
           </dd>
         

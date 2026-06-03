@@ -75,6 +75,7 @@ class ApiController extends Controller {
 	 * Gets a thumbnail of the specified file
 	 *
 	 * @since API version 1.0
+	 * @deprecated 32.0.0 Use the preview endpoint provided by core instead
 	 *
 	 * @param int $x Width of the thumbnail
 	 * @param int $y Height of the thumbnail
@@ -104,11 +105,12 @@ class ApiController extends Controller {
 			}
 
 			// Validate the user is allowed to download the file (preview is some kind of download)
+			/** @var ISharedStorage $storage */
 			$storage = $file->getStorage();
 			if ($storage->instanceOfStorage(ISharedStorage::class)) {
-				/** @var ISharedStorage $storage */
-				$attributes = $storage->getShare()->getAttributes();
-				if ($attributes !== null && $attributes->getAttribute('permissions', 'download') === false) {
+				/** @var IShare $share */
+				$share = $storage->getShare();
+				if (!$share->canSeeContent()) {
 					throw new NotFoundException();
 				}
 			}

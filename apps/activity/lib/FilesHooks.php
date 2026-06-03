@@ -17,6 +17,7 @@ use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Member;
 use OCA\Files_Sharing\SharedMount;
 use OCP\Activity\IManager;
+use OCP\BackgroundJob\IJobList;
 use OCP\Constants;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\File;
@@ -81,7 +82,7 @@ class FilesHooks {
 			return;
 		}
 
-		if ($this->currentUser->getUserIdentifier() !== '') {
+		if ($this->currentUser->getUserIdentifier() !== '' || !$this->currentUser->isPublicShareToken()) {
 			$this->addNotificationsForFileAction($path, Files::TYPE_SHARE_CREATED, 'created_self', 'created_by');
 		} else {
 			$this->addNotificationsForFileAction($path, Files_Sharing::TYPE_PUBLIC_UPLOAD, '', 'created_public');
@@ -209,7 +210,7 @@ class FilesHooks {
 				$arguments[] = $info['second_path'];
 			}
 
-			\OC::$server->getJobList()->add(RemoteActivity::class, $arguments);
+			\OCP\Server::get(IJobList::class)->add(RemoteActivity::class, $arguments);
 		}
 	}
 
@@ -571,24 +572,29 @@ class FilesHooks {
 	 *
 	 * @param string $path
 	 * @param string $uidOwner
-	 * @return array
+	 * @return array{ownerPath?: string, remotes: array<string, array{node_path: string, token: string}>, users: array<string, string>}
 	 */
 	protected function getUserPathsFromPath($path, $uidOwner) {
+		$emptyResult = ['users' => [], 'remotes' => []];
+
 		try {
 			$node = $this->rootFolder->getUserFolder($uidOwner)->get($path);
 		} catch (NotFoundException $e) {
-			return [];
+			return $emptyResult;
 		}
 
 		if (!$node instanceof Node) {
-			return [];
+			return $emptyResult;
 		}
 
 		$accessList = $this->shareHelper->getPathsForAccessList($node);
 
 		$path = $node->getPath();
-		$accessList['ownerPath'] = $this->getVisiblePath($path);
-		return $accessList;
+		return [
+			'ownerPath' => $this->getVisiblePath($path),
+			'users' => $accessList['users'],
+			'remotes' => $accessList['remotes'],
+		];
 	}
 
 	protected function getVisiblePath(string $absolutePath): string {
@@ -825,7 +831,7 @@ class FilesHooks {
 		if (in_array($share->getNodeType(), ['file', 'folder'], true)) {
 			if ($share->getShareType() === IShare::TYPE_GROUP) {
 				$this->unshareFromSelfGroup($share);
-			} else {
+			} elseif ($share->getShareType() === IShare::TYPE_USER) {
 				$this->unshareFromUser($share);
 			}
 		}
@@ -1061,12 +1067,7 @@ class FilesHooks {
 			return;
 		}
 		if (!$path) {
-			try {
-				$path = $this->getUserRelativePath($sharer, $fileSource->getPath());
-			} catch (NotFoundException $e) {
-				$this->logger->warning('Could not create unsharing notification for user ' . $sharer . ' :' . $e->getMessage(), ['exception' => $e]);
-				return;
-			}
+			$path = $this->getUserRelativePath($sharer, $fileSource->getPath());
 		}
 
 		$this->addNotificationsForUser(
@@ -1101,32 +1102,47 @@ class FilesHooks {
 		$mount = $fileSource->getMountPoint();
 		if ($mount instanceof SharedMount) {
 			$sourceShare = $mount->getShare();
-			try {
-				$sourceNode = $sourceShare->getNode();
-			} catch (NotFoundException) {
-				return;
-			}
+
+			$fileId = $fileSource->getId();
 
 			if ($sourceShare->getShareOwner() !== $sharedBy) {
+				$owner = $sourceShare->getShareOwner();
+				try {
+					$ownerNode = $this->rootFolder->getUserFolder($owner)->getFirstNodeById($fileId);
+				} catch (NotFoundException) {
+					return;
+				}
+				if ($ownerNode === null) {
+					return;
+				}
 				$this->reshareNotificationForSharer(
-					$sourceShare->getShareOwner(),
+					$owner,
 					$subject,
 					$shareWith,
-					$sourceNode->getId(),
-					$this->getUserRelativePath($sourceShare->getShareOwner(), $sourceNode->getPath()),
-					$sourceNode instanceof File,
+					$fileId,
+					$this->getUserRelativePath($owner, $ownerNode->getPath()),
+					$fileSource instanceof File,
 				);
 			}
 
-
 			if ($sourceShare->getSharedBy() && $sourceShare->getSharedBy() !== $sharedBy && $sourceShare->getShareOwner() !== $sourceShare->getSharedBy()) {
+				$sharer = $sourceShare->getSharedBy();
+				try {
+					$sharerNode = $this->rootFolder->getUserFolder($sharer)->getFirstNodeById($fileId);
+				} catch (NotFoundException) {
+					return;
+				}
+				if ($sharerNode === null) {
+					return;
+				}
+
 				$this->reshareNotificationForSharer(
-					$sourceShare->getSharedBy(),
+					$sharer,
 					$subject,
 					$shareWith,
-					$sourceNode->getId(),
-					$sourceShare->getTarget(),
-					$sourceNode instanceof File,
+					$fileId,
+					$this->getUserRelativePath($sharer, $sharerNode->getPath()),
+					$fileSource instanceof File,
 				);
 			}
 		}
@@ -1183,7 +1199,7 @@ class FilesHooks {
 		$activityId = $this->activityData->send($event);
 
 		if ($activityId && !$selfAction && $notificationSetting) {
-			$this->notificationGenerator->sendNotificationForEvent($event, $activityId);
+			$this->notificationGenerator->sendNotificationForEvent($event, $activityId, $notificationSetting);
 		}
 
 		// Add activity to mail queue
@@ -1247,8 +1263,8 @@ class FilesHooks {
 		/** @var \OCA\GroupFolders\ACL\RuleManager $ruleManager */
 		/** @var \OCA\GroupFolders\Folder\FolderManager $folderManager */
 		try {
-			$ruleManager = \OC::$server->get(\OCA\GroupFolders\ACL\RuleManager::class);
-			$folderManager = \OC::$server->get(\OCA\GroupFolders\Folder\FolderManager::class);
+			$ruleManager = \OCP\Server::get(\OCA\GroupFolders\ACL\RuleManager::class);
+			$folderManager = \OCP\Server::get(\OCA\GroupFolders\Folder\FolderManager::class);
 		} catch (\Throwable $e) {
 			return []; // if we have no access to RuleManager, we cannot filter unrelated users
 		}
@@ -1363,6 +1379,12 @@ class FilesHooks {
 		// now that we have a list of eventuals filtered users, we confirm they have no access to the file
 		$filteredUsers = [];
 		foreach ($usersToCheck as $userId) {
+			if (!array_key_exists($userId, $cachedPath) || $cachedPath[$userId] === null) {
+				$this->logger->notice('could not find user in list of cached path', ['cachePath' => $cachedPath, 'usersToCheck' => $usersToCheck, 'current' => $userId]);
+				$filteredUsers[] = $userId;
+				continue;
+			}
+
 			try {
 				$node = $this->rootFolder->get($cachedPath[$userId]);
 				if ($node->isReadable()) {

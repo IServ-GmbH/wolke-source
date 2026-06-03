@@ -1,3 +1,30 @@
+- 2.5.2
+    - Fix bug in One-class SVM inferencing
+
+- 2.5.1
+    - Fix bug in SVM (SVC and SVR) inferencing
+
+- 2.5.0
+    - Added Vantage Point Spatial tree
+    - Blob Generator can now `simulate()` a Dataset object
+    - Added Wrapper interface
+    - Plus Plus added check for min number of sample seeds
+    - LOF prevent div by 0 local reachability density
+
+- 2.4.1
+    - Sentence Tokenizer fix Arabic and Farsi language support
+    - Optimize online variance updating
+
+- 2.4.0
+    - Add GELU activation function
+    - Add numParams() method to Network
+    - Neural Network Learners now report number of trainable parameters
+    - Regex Filter added pattern to match unicode emojis
+    - Custom escape character for CSV Extractor
+    
+- 2.3.4
+    - Add string literal type-hints
+
 - 2.3.3
     - Optimize Adam and AdaMax Optimizers
 

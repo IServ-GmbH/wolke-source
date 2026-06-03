@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace OC\Core\Command\Info;
 
+use OC\User\NoUserException;
 use OCA\Circles\MountManager\CircleMount;
 use OCA\Files_External\Config\ExternalMountPoint;
 use OCA\Files_Sharing\SharedMount;
@@ -22,6 +23,7 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IDBConnection;
 use OCP\Share\IShare;
 use OCP\Util;
@@ -41,8 +43,8 @@ class FileUtils {
 	/**
 	 * @param FileInfo $file
 	 * @return array<string, Node[]>
-	 * @throws \OCP\Files\NotPermittedException
-	 * @throws \OC\User\NoUserException
+	 * @throws NotPermittedException
+	 * @throws NoUserException
 	 */
 	public function getFilesByUser(FileInfo $file): array {
 		$id = $file->getId();
@@ -52,13 +54,12 @@ class FileUtils {
 
 		$mounts = $this->userMountCache->getMountsForFileId($id);
 		$result = [];
-		foreach ($mounts as $mount) {
-			if (isset($result[$mount->getUser()->getUID()])) {
-				continue;
-			}
-
-			$userFolder = $this->rootFolder->getUserFolder($mount->getUser()->getUID());
-			$result[$mount->getUser()->getUID()] = $userFolder->getById($id);
+		foreach ($mounts as $cachedMount) {
+			$mount = $this->rootFolder->getMount($cachedMount->getMountPoint());
+			$cache = $mount->getStorage()->getCache();
+			$cacheEntry = $cache->get($id);
+			$node = $this->rootFolder->getNodeFromCacheEntryAndMount($cacheEntry, $mount);
+			$result[$cachedMount->getUser()->getUID()][] = $node;
 		}
 
 		return $result;

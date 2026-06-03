@@ -25,6 +25,7 @@ use OCP\IDBConnection;
 use OCP\IUserManager;
 use OCP\Server;
 use OCP\ServerVersion;
+use OCP\Support\Subscription\IRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -46,6 +47,7 @@ class ServerSection extends Section {
 		parent::__construct('server-detail', 'Server configuration detail');
 	}
 
+	#[\Override]
 	public function getDetails(): array {
 		$this->createDetail('Operating system', $this->getOsVersion());
 		$this->createDetail('Webserver', $this->getWebserver());
@@ -119,7 +121,7 @@ class ServerSection extends Section {
 
 		try {
 			$result = $this->connection->executeQuery($sql);
-			$version = $result->fetchColumn();
+			$version = $result->fetchOne();
 			$result->closeCursor();
 			if ($version) {
 				return $this->cleanVersion($version);
@@ -186,7 +188,7 @@ class ServerSection extends Section {
 		$apps = $this->getAppList();
 
 		$result = '';
-		if (!empty($apps['supported'])) {
+		if ($apps['supported'] !== []) {
 			$result .= "Supported:\n";
 			foreach ($apps['supported'] as $name => $version) {
 				$result .= ' - ' . $name . ': ' . $version . "\n";
@@ -210,30 +212,35 @@ class ServerSection extends Section {
 	}
 
 	/**
-	 * @return string[][]
+	 * @return array<string, array<string, string|bool>>
 	 */
 	private function getAppList(): array {
-		$appClass = new \OC_App();
-		$apps = $appClass->listAllApps();
-		$supportedAppsIDs = $appClass->getSupportedApps();
+		$apps = $this->appManager->getAllAppsInAppsFolders();
+		$alwaysEnabled = $this->appManager->getAlwaysEnabledApps();
+
+		$subscriptionRegistry = Server::get(IRegistry::class);
+		$supportedAppsIDs = $subscriptionRegistry->delegateGetSupportedApps();
 
 		$supportedApps = $enabledApps = $disabledApps = [];
-		$versions = \OC_App::getAppVersions();
+		$versions = $this->appManager->getAppInstalledVersions();
 
 		// sort enabled apps above disabled apps
 		foreach ($apps as $app) {
-			if ($this->appManager->isInstalled($app['id'])) {
-				if (in_array($app['id'], $supportedAppsIDs)) {
-					$supportedApps[] = $app['id'];
+			if (in_array($app, $alwaysEnabled)) {
+				continue;
+			}
+			if ($this->appManager->isEnabledForAnyone($app)) {
+				if (in_array($app, $supportedAppsIDs)) {
+					$supportedApps[] = $app;
 					continue;
 				}
 
 				// enabled but not ours
-				$enabledApps[] = $app['id'];
+				$enabledApps[] = $app;
 				continue;
 			}
 
-			$disabledApps[] = $app['id'];
+			$disabledApps[] = $app;
 		}
 
 		$apps = [

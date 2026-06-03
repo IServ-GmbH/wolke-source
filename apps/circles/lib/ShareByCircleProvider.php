@@ -2,17 +2,14 @@
 
 declare(strict_types=1);
 
-
 /**
  * SPDX-FileCopyrightText: 2017 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-
 namespace OCA\Circles;
 
 use Exception;
-use OC;
 use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Exceptions\ContactAddressBookNotFoundException;
 use OCA\Circles\Exceptions\ContactFormatException;
@@ -53,11 +50,9 @@ use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\AlreadySharedException;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -75,53 +70,26 @@ class ShareByCircleProvider implements IShareProvider {
 	use TStringTools;
 	use TNCLogger;
 
-
 	public const IDENTIFIER = 'ocCircleShare';
 
-
-	private IUserManager $userManager;
-	private IRootFolder $rootFolder;
-	private IL10N $l10n;
-	private LoggerInterface $logger;
-	private IURLGenerator $urlGenerator;
-	private ShareWrapperService $shareWrapperService;
-	private ShareTokenService $shareTokenService;
-	private FederatedUserService $federatedUserService;
-	private FederatedEventService $federatedEventService;
-	private CircleService $circleService;
-	private EventService $eventService;
-
 	public function __construct(
-		IDBConnection $connection,
-		ISecureRandom $secureRandom,
-		IUserManager $userManager,
-		IRootFolder $rootFolder,
-		IL10N $l10n,
-		mixed $logger, // unused, only kept for compatibility with server
-		IURLGenerator $urlGenerator,
+		private IUserManager $userManager,
+		private IRootFolder $rootFolder,
+		private IL10N $l10n,
+		private LoggerInterface $logger,
+		private IURLGenerator $urlGenerator,
+		private ShareWrapperService $shareWrapperService,
+		private ShareTokenService $shareTokenService,
+		private FederatedUserService $federatedUserService,
+		private FederatedEventService $federatedEventService,
+		private CircleService $circleService,
+		private EventService $eventService,
 	) {
-		$this->userManager = $userManager;
-		$this->rootFolder = $rootFolder;
-		$this->l10n = $l10n;
-		$this->logger = OC::$server->get(LoggerInterface::class);
-		$this->urlGenerator = $urlGenerator;
-
-		$this->federatedUserService = OC::$server->get(FederatedUserService::class);
-		$this->federatedEventService = OC::$server->get(FederatedEventService::class);
-		$this->shareWrapperService = OC::$server->get(ShareWrapperService::class);
-		$this->shareTokenService = OC::$server->get(ShareTokenService::class);
-		$this->circleService = OC::$server->get(CircleService::class);
-		$this->eventService = OC::$server->get(EventService::class);
 	}
 
-
-	/**
-	 * @return string
-	 */
 	public function identifier(): string {
 		return self::IDENTIFIER;
 	}
-
 
 	/**
 	 * @param IShare $share
@@ -172,7 +140,7 @@ class ShareByCircleProvider implements IShareProvider {
 			->add(DataProbe::INITIATOR, [DataProbe::BASED_ON]);
 
 		$circle = $this->circleService->probeCircle($share->getSharedWith(), $circleProbe, $dataProbe);
-		$share->setToken($this->token(15));
+		$share->setMailSend(true);
 		$owner = $circle->getInitiator();
 		$this->shareWrapperService->save($share);
 
@@ -192,7 +160,6 @@ class ShareByCircleProvider implements IShareProvider {
 
 		return $wrappedShare->getShare($this->rootFolder, $this->userManager, $this->urlGenerator);
 	}
-
 
 	/**
 	 * @param IShare $share
@@ -800,7 +767,7 @@ class ShareByCircleProvider implements IShareProvider {
 	 *
 	 * @param IShare $parent
 	 *
-	 * @return array
+	 * @return IShare[]
 	 */
 	public function getChildren(IShare $parent): array {
 		return [];

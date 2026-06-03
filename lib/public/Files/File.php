@@ -10,6 +10,7 @@
 
 namespace OCP\Files;
 
+use OCP\AppFramework\Attribute\Consumable;
 use OCP\Lock\LockedException;
 
 /**
@@ -17,6 +18,7 @@ use OCP\Lock\LockedException;
  *
  * @since 6.0.0
  */
+#[Consumable(since: '6.0.0')]
 interface File extends Node {
 	/**
 	 * Get the content of the file as string

@@ -12,7 +12,7 @@ namespace OCA\AppAPI\Command\Daemon;
 use OCA\AppAPI\AppInfo\Application;
 use OCA\AppAPI\Service\DaemonConfigService;
 
-use OCP\IConfig;
+use OCP\IAppConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,8 +21,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListDaemons extends Command {
 
 	public function __construct(
-		private DaemonConfigService $daemonConfigService,
-		private IConfig $config
+		private readonly DaemonConfigService $daemonConfigService,
+		private readonly IAppConfig          $appConfig
 	) {
 		parent::__construct();
 	}
@@ -39,11 +39,11 @@ class ListDaemons extends Command {
 			return 0;
 		}
 
-		$defaultDaemonName = $this->config->getAppValue(Application::APP_ID, 'default_daemon_config');
+		$defaultDaemonName = $this->appConfig->getValueString(Application::APP_ID, 'default_daemon_config', lazy: true);
 
 		$output->writeln('Registered ExApp daemon configs:');
 		$table = new Table($output);
-		$table->setHeaders(['Def', 'Name', 'Display name', 'Deploy ID', 'Protocol', 'Host', 'NC Url']);
+		$table->setHeaders(['Def', 'Name', 'Display name', 'Deploy ID', 'Protocol', 'Host', 'NC Url', 'Is HaRP', 'HaRP FRP Address', 'HaRP Docker Socket Port']);
 		$rows = [];
 
 		foreach ($daemonConfigs as $daemon) {
@@ -53,7 +53,10 @@ class ListDaemons extends Command {
 				$daemon->getAcceptsDeployId(),
 				$daemon->getProtocol(),
 				$daemon->getHost(),
-				$daemon->getDeployConfig()['nextcloud_url']
+				$daemon->getDeployConfig()['nextcloud_url'],
+				isset($daemon->getDeployConfig()['harp']) ? 'yes' : 'no',
+				$daemon->getDeployConfig()['harp']['frp_address'] ?? '(none)',
+				$daemon->getDeployConfig()['harp']['docker_socket_port'] ?? '(none)',
 			];
 		}
 

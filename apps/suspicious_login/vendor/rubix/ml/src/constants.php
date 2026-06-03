@@ -7,12 +7,12 @@ namespace Rubix\ML
      *
      * @internal
      *
-     * @var string
+     * @var literal-string
      */
-    const VERSION = '2.3';
+    const VERSION = '2.5';
 
     /**
-     * A small number used in substitution of 0.
+     * A very small positive number, sometimes used in substitution of 0.
      *
      * @internal
      *

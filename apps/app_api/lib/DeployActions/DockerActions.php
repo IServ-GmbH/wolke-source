@@ -19,8 +19,10 @@ use OCA\AppAPI\Db\ExApp;
 use OCA\AppAPI\Service\AppAPICommonService;
 use OCA\AppAPI\Service\ExAppDeployOptionsService;
 use OCA\AppAPI\Service\ExAppService;
+use OCA\AppAPI\Service\HarpService;
 use OCP\App\IAppManager;
 
+use OCP\IAppConfig;
 use OCP\ICertificateManager;
 use OCP\IConfig;
 use OCP\ITempManager;
@@ -34,6 +36,7 @@ class DockerActions implements IDeployActions {
 	public const DOCKER_API_VERSION = 'v1.44';
 	public const EX_APP_CONTAINER_PREFIX = 'nc_app_';
 	public const APP_API_HAPROXY_USER = 'app_api_haproxy_user';
+	public const DEPLOY_ID = 'docker-install';
 
 	private Client $guzzleClient;
 	private bool $useSocket = false;  # for `pullImage` function, to detect can be stream used or not.
@@ -41,20 +44,21 @@ class DockerActions implements IDeployActions {
 
 	public function __construct(
 		private readonly LoggerInterface           $logger,
-		private readonly IConfig                   $config,
+		private readonly IAppConfig                $appConfig,
+		private readonly IConfig				   $config,
 		private readonly ICertificateManager       $certificateManager,
 		private readonly IAppManager               $appManager,
 		private readonly IURLGenerator             $urlGenerator,
 		private readonly AppAPICommonService       $service,
-		private readonly ExAppService		       $exAppService,
+		private readonly ExAppService              $exAppService,
 		private readonly ITempManager              $tempManager,
-		private readonly ICrypto			       $crypto,
+		private readonly ICrypto                   $crypto,
 		private readonly ExAppDeployOptionsService $exAppDeployOptionsService,
 	) {
 	}
 
 	public function getAcceptsDeployId(): string {
-		return 'docker-install';
+		return self::DEPLOY_ID;
 	}
 
 	public function deployExApp(ExApp $exApp, DaemonConfig $daemonConfig, array $params = []): string {
@@ -110,6 +114,102 @@ class DockerActions implements IDeployActions {
 		return '';
 	}
 
+	public function deployExAppHarp(ExApp $exApp, DaemonConfig $daemonConfig, array $params = []): string {
+		if (!isset($params['image_params'])) {
+			return 'Missing image_params.';
+		}
+		if (!isset($params['container_params'])) {
+			return 'Missing container_params.';
+		}
+
+		$dockerUrl = $this->buildDockerUrl($daemonConfig);
+		$this->initGuzzleClient($daemonConfig);
+
+		$this->exAppService->setAppDeployProgress($exApp, 0);
+		$imageId = '';
+		$error = $this->pullImage($dockerUrl, $params['image_params'], $exApp, 0, 94, $daemonConfig, $imageId);
+		if ($error) {
+			return $error;
+		}
+
+		$this->exAppService->setAppDeployProgress($exApp, 95);
+
+		$exAppName = $params['container_params']['name'];
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+
+		$error = $this->removeExApp($dockerUrl, $exAppName, ignoreIfNotExists: true);
+		if ($error) {
+			return $error;
+		}
+		$this->exAppService->setAppDeployProgress($exApp, 96);
+
+		$computeDevice = 'cpu';
+		if (isset($params['container_params']['computeDevice']['id'])) {
+			$computeDevice = $params['container_params']['computeDevice']['id'];
+		}
+		$mountPoints = $params['container_params']['mounts'] ?? [];
+		if (!is_array($mountPoints)) {
+			$mountPoints = [];
+		}
+		$createPayload = [
+			'name' => $exAppName,
+			'instance_id' => $instanceId,
+			'image_id' => $imageId,
+			'network_mode' => $params['container_params']['net'] ?? 'bridge',
+			'environment_variables' => $params['container_params']['env'] ?? [],
+			'restart_policy' => $this->appConfig->getValueString(Application::APP_ID, 'container_restart_policy', 'unless-stopped', lazy: true),
+			'compute_device' => $computeDevice,
+			'mount_points' => $mountPoints,
+			'start_container' => true,
+		];
+
+		$this->logger->debug(sprintf('Payload for /docker/exapp/create for %s: %s', $exAppName, json_encode($createPayload)));
+		try {
+			$response = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/create'),
+				['json' => $createPayload],
+			);
+
+			if ($response->getStatusCode() !== 201) {
+				$errorBody = (string) $response->getBody();
+				$this->logger->error(sprintf('Failed to create ExApp container %s. Status: %d, Body: %s', $exAppName, $response->getStatusCode(), $errorBody));
+				return sprintf('Failed to create ExApp container (status %d). Check HaRP logs. Details: %s', $response->getStatusCode(), $errorBody);
+			}
+
+			$responseData = json_decode((string) $response->getBody(), true);
+			if ($responseData === null || !isset($responseData['name']) || !isset($responseData['id'])) {
+				$this->logger->error(sprintf('Invalid JSON response from HaRP /docker/exapp/create for %s: %s', $exAppName, $response->getBody()));
+				return 'Invalid response from HaRP agent after container creation.';
+			}
+			$this->logger->info(sprintf('Container %s (ID: %s) created successfully for ExApp %s.', $responseData['name'], $responseData['id'], $exAppName));
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException during HaRP /docker/exapp/create for %s: %s', $exAppName, $e->getMessage()), ['exception' => $e]);
+			return 'Failed to communicate with HaRP agent for container creation: ' . $e->getMessage();
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Exception during HaRP /docker/exapp/create for %s: %s', $exAppName, $e->getMessage()), ['exception' => $e]);
+			return 'An unexpected error occurred while creating container: ' . $e->getMessage();
+		}
+		$this->exAppService->setAppDeployProgress($exApp, 97);
+
+		$this->updateCertsHarp($daemonConfig, $dockerUrl, $exAppName);
+		$this->exAppService->setAppDeployProgress($exApp, 98);
+
+		$error = $this->startExApp($dockerUrl, $exAppName);
+		if ($error) {
+			return $error;
+		}
+
+		$this->exAppDeployOptionsService->removeExAppDeployOptions($exApp->getAppid());
+		$this->exAppDeployOptionsService->addExAppDeployOptions($exApp->getAppid(), $params['deploy_options']);
+
+		$this->exAppService->setAppDeployProgress($exApp, 99);
+		if (!$this->waitExAppStart($dockerUrl, $exAppName)) {
+			return 'container startup failed';
+		}
+		$this->exAppService->setAppDeployProgress($exApp, 100);
+		return '';
+	}
+
 	private function updateCerts(string $dockerUrl, string $containerName): void {
 		try {
 			$this->startContainer($dockerUrl, $containerName);
@@ -139,6 +239,53 @@ class DockerActions implements IDeployActions {
 			));
 		} finally {
 			$this->stopContainer($dockerUrl, $containerName);
+		}
+	}
+
+	private function updateCertsHarp(DaemonConfig $daemonConfig, string $dockerUrl, string $exAppName): void {
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+		try {
+			$this->logger->info(sprintf('Starting certificate installation process for ExApp "%s" (instance "%s").', $exAppName, $instanceId));
+
+			$payload = [
+				'name' => $exAppName,
+				'instance_id' => $instanceId,
+				'system_certs_bundle' => null,
+				'install_frp_certs' => !HarpService::isHarpDirectConnect($daemonConfig->getDeployConfig()),
+			];
+
+			$bundlePath = $this->certificateManager->getAbsoluteBundlePath();
+			if (file_exists($bundlePath) && is_readable($bundlePath)) {
+				$payload['system_certs_bundle'] = file_get_contents($bundlePath);
+				if ($payload['system_certs_bundle'] === false) {
+					$this->logger->warning(sprintf('Failed to read system CA bundle from "%s" for ExApp "%s". System certs will not be installed.', $bundlePath, $exAppName));
+					$payload['system_certs_bundle'] = null;
+				}
+			} else {
+				$this->logger->warning(sprintf('System CA bundle not found or not readable at "%s" for ExApp "%s". System certs will not be installed.', $bundlePath, $exAppName));
+			}
+
+			$response = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/install_certificates'),
+				[
+					'json' => $payload,
+					'timeout' => 180,
+				]
+			);
+
+			$statusCode = $response->getStatusCode();
+
+			if ($statusCode === 204) {
+				$this->logger->info(sprintf('Successfully installed certificates for ExApp "%s" (instance "%s").', $exAppName, $instanceId));
+			} else {
+				$errorBody = (string) $response->getBody();
+				$this->logger->error(sprintf('Failed to install certificates for ExApp "%s" (instance "%s"). Status: %d, Body: %s', $exAppName, $instanceId, $statusCode, $errorBody));
+			}
+
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException during certificate installation for ExApp "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Unexpected exception during certificate installation for ExApp "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
 		}
 	}
 
@@ -207,6 +354,9 @@ class DockerActions implements IDeployActions {
 
 	private function createTarArchive(string $filePath, string $pathInContainer): string {
 		$tempFile = $this->tempManager->getTemporaryFile('.tar');
+		if ($tempFile === false) {
+			throw new Exception("Failed to create tar archive (getTemporaryFile fails).");
+		}
 
 		try {
 			if (file_exists($tempFile)) {
@@ -268,25 +418,60 @@ class DockerActions implements IDeployActions {
 		return sprintf('%s/%s/%s', $dockerUrl, self::DOCKER_API_VERSION, $route);
 	}
 
-	public function buildBaseImageName(array $imageParams): string {
+	public function buildBaseImageName(array $imageParams, DaemonConfig $daemonConfig): string {
+		$deployConfig = $daemonConfig->getDeployConfig();
+		if (isset($deployConfig['registries'])) { // custom Docker registry, overrides ExApp's image_src
+			foreach ($deployConfig['registries'] as $registry) {
+				if ($registry['from'] === $imageParams['image_src'] && $registry['to'] !== 'local') { // local target skips image pull, imageId should be unchanged
+					$imageParams['image_src'] = rtrim($registry['to'], '/');
+					break;
+				}
+			}
+		}
 		return $imageParams['image_src'] . '/' .
 			$imageParams['image_name'] . ':' . $imageParams['image_tag'];
 	}
 
 	private function buildExtendedImageName(array $imageParams, DaemonConfig $daemonConfig): ?string {
-		if (empty($daemonConfig->getDeployConfig()['computeDevice']['id'])) {
+		$deployConfig = $daemonConfig->getDeployConfig();
+		if (empty($deployConfig['computeDevice']['id'])) {
 			return null;
 		}
-		return $imageParams['image_src'] . '/' .
-			$imageParams['image_name'] . '-' . $daemonConfig->getDeployConfig()['computeDevice']['id'] . ':' . $imageParams['image_tag'];
-	}
-
-	private function buildExtendedImageName2(array $imageParams, DaemonConfig $daemonConfig): ?string {
-		if (empty($daemonConfig->getDeployConfig()['computeDevice']['id'])) {
-			return null;
+		if (isset($deployConfig['registries'])) { // custom Docker registry, overrides ExApp's image_src
+			foreach ($deployConfig['registries'] as $registry) {
+				if ($registry['from'] === $imageParams['image_src'] && $registry['to'] !== 'local') { // local target skips image pull, imageId should be unchanged
+					$imageParams['image_src'] = rtrim($registry['to'], '/');
+					break;
+				}
+			}
 		}
 		return $imageParams['image_src'] . '/' .
 			$imageParams['image_name'] . ':' . $imageParams['image_tag'] . '-' . $daemonConfig->getDeployConfig()['computeDevice']['id'];
+	}
+
+	private function shouldPullImage(array $imageParams, DaemonConfig $daemonConfig): bool {
+		$deployConfig = $daemonConfig->getDeployConfig();
+		if (isset($deployConfig['registries'])) { // custom Docker registry, overrides ExApp's image_src
+			foreach ($deployConfig['registries'] as $registry) {
+				if ($registry['from'] === $imageParams['image_src'] && $registry['to'] === 'local') { // local target skips image pull, imageId should be unchanged
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	public function imageExists(string $dockerUrl, string $imageId): bool {
+		$url = $this->buildApiUrl($dockerUrl, sprintf('images/%s/json', $imageId));
+		try {
+			$response = $this->guzzleClient->get($url);
+			return $response->getStatusCode() === 200;
+		} catch (GuzzleException $e) {
+			if ($e->getCode() !== 404) {
+				$this->logger->error('Failed to check image existence', ['exception' => $e]);
+			}
+			return false;
+		}
 	}
 
 	public function createContainer(string $dockerUrl, string $imageId, DaemonConfig $daemonConfig, array $params = []): array {
@@ -302,7 +487,7 @@ class DockerActions implements IDeployActions {
 				'NetworkMode' => $params['net'],
 				'Mounts' => $this->buildDefaultExAppVolume($params['hostname']),
 				'RestartPolicy' => [
-					'Name' => $this->config->getAppValue(Application::APP_ID, 'container_restart_policy', 'unless-stopped'),
+					'Name' => $this->appConfig->getValueString(Application::APP_ID, 'container_restart_policy', 'unless-stopped', lazy: true),
 				],
 			],
 			'Env' => $params['env'],
@@ -428,45 +613,50 @@ class DockerActions implements IDeployActions {
 	public function pullImage(
 		string $dockerUrl, array $params, ExApp $exApp, int $startPercent, int $maxPercent, DaemonConfig $daemonConfig, string &$imageId
 	): string {
-		$imageId = $this->buildExtendedImageName2($params, $daemonConfig);
+		$shouldPull = $this->shouldPullImage($params, $daemonConfig);
+		$urlToLog = $this->useSocket ? $this->socketAddress : $dockerUrl;
+		$imageId = $this->buildExtendedImageName($params, $daemonConfig);
+
 		if ($imageId) {
 			try {
-				$r = $this->pullImageInternal($dockerUrl, $exApp, $startPercent, $maxPercent, $imageId);
-				if ($r === '') {
-					$this->logger->info(sprintf('Successfully pulled "extended" image in a new name format: %s', $imageId));
+				if ($shouldPull) {
+					$r = $this->pullImageInternal($dockerUrl, $exApp, $startPercent, $maxPercent, $imageId);
+					if ($r === '') {
+						$this->logger->info(sprintf('Successfully pulled "extended" image: %s', $imageId));
+						return '';
+					}
+					$this->logger->info(sprintf('Failed to pull "extended" image(%s): %s', $imageId, $r));
+				} elseif ($this->imageExists($dockerUrl, $imageId)) {
+					$this->logger->info('Daemon registry mapping set to "local", skipping image pull');
+					$this->exAppService->setAppDeployProgress($exApp, $maxPercent);
 					return '';
+				} else {
+					$this->logger->info(sprintf('Image(%s) not found, but daemon registry mapping set to "local", trying base image', $imageId));
 				}
-				$this->logger->info(sprintf('Failed to pull "extended" image(%s): %s', $imageId, $r));
 			} catch (GuzzleException $e) {
 				$this->logger->info(
-					sprintf('Failed to pull "extended" image(%s), GuzzleException occur: %s', $imageId, $e->getMessage())
+					sprintf('Failed to pull "extended" image via "%s", GuzzleException occur: %s', $urlToLog, $e->getMessage())
 				);
 			}
 		}
-		$imageId = $this->buildExtendedImageName($params, $daemonConfig);  // TODO: remove with drop of NC29 support
-		if ($imageId) {
-			try {
-				$r = $this->pullImageInternal($dockerUrl, $exApp, $startPercent, $maxPercent, $imageId);
-				if ($r === '') {
-					$this->logger->info(sprintf('Successfully pulled "extended" image in an old name format: %s', $imageId));
-					return '';
-				}
-				$this->logger->info(sprintf('Failed to pull "extended" image(%s): %s', $imageId, $r));
-			} catch (GuzzleException $e) {
-				$this->logger->info(
-					sprintf('Failed to pull "extended" image(%s), GuzzleException occur: %s', $imageId, $e->getMessage())
-				);
-			}
-		}
-		$imageId = $this->buildBaseImageName($params);
-		$this->logger->info(sprintf('Pulling "base" image: %s', $imageId));
+
+		$imageId = $this->buildBaseImageName($params, $daemonConfig);
 		try {
-			$r = $this->pullImageInternal($dockerUrl, $exApp, $startPercent, $maxPercent, $imageId);
-			if ($r === '') {
-				$this->logger->info(sprintf('Image(%s) pulled successfully.', $imageId));
+			if ($shouldPull) {
+				$this->logger->info(sprintf('Pulling "base" image: %s', $imageId));
+				$r = $this->pullImageInternal($dockerUrl, $exApp, $startPercent, $maxPercent, $imageId);
+				if ($r === '') {
+					$this->logger->info(sprintf('Image(%s) pulled successfully.', $imageId));
+				}
+			} elseif ($this->imageExists($dockerUrl, $imageId)) {
+				$this->logger->info('Daemon registry mapping set to "local", skipping image pull');
+				$this->exAppService->setAppDeployProgress($exApp, $maxPercent);
+				return '';
+			} else {
+				$this->logger->warning(sprintf('Image(%s) not found, but daemon registry mapping set to "local", skipping image pull', $imageId));
+				return '';
 			}
 		} catch (GuzzleException $e) {
-			$urlToLog = $this->useSocket ? $this->socketAddress : $dockerUrl;
 			$r = sprintf('Failed to pull image via "%s", GuzzleException occur: %s', $urlToLog, $e->getMessage());
 		}
 		return $r;
@@ -538,7 +728,7 @@ class DockerActions implements IDeployActions {
 			if (!$disableProgressTracking) {
 				$completedLayers = count(array_filter($layers));
 				$totalLayers = count($layers);
-				$newLastPercent = intval($totalLayers > 0 ? ($completedLayers / $totalLayers) * ($maxPercent - $startPercent) : 0);
+				$newLastPercent = intval($totalLayers > 0 ? (int)($completedLayers / $totalLayers) * ($maxPercent - $startPercent) : 0);
 				if ($lastPercent != $newLastPercent) {
 					$this->exAppService->setAppDeployProgress($exApp, $newLastPercent);
 					$lastPercent = $newLastPercent;
@@ -670,6 +860,202 @@ class DockerActions implements IDeployActions {
 		return false;
 	}
 
+	public function startExApp(string $dockerUrl, string $exAppName, bool $ignoreIfAlready = false): string {
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+		try {
+			$response = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/start'),
+				[
+					'json' => [
+						'name' => $exAppName,
+						'instance_id' => $instanceId,
+					]
+				]
+			);
+			$statusCode = $response->getStatusCode();
+			if ($statusCode === 204) {
+				$this->logger->info(sprintf('ExApp container "%s" (instance "%s") successfully started.', $exAppName, $instanceId));
+				return '';
+			}
+			if ($statusCode === 200) {
+				if ($ignoreIfAlready) {
+					$this->logger->info(sprintf('ExApp container "%s" (instance "%s") was already started.', $exAppName, $instanceId));
+					return '';
+				} else {
+					$errorMsg = sprintf('ExApp container "%s" (instance "%s") was already started.', $exAppName, $instanceId);
+					$this->logger->warning($errorMsg);
+					return $errorMsg;
+				}
+			}
+			$errorBody = (string)$response->getBody();
+			$this->logger->error(sprintf('Failed to start ExApp container "%s" (instance "%s"). Status: %d, Body: %s', $exAppName, $instanceId, $statusCode, $errorBody));
+			return sprintf('Failed to start ExApp container "%s" (Status: %d). Details: %s', $exAppName, $statusCode, $errorBody);
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException while trying to start ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('Failed to communicate with HaRP agent to start ExApp "%s": %s', $exAppName, $e->getMessage());
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Unexpected exception while starting ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('An unexpected error occurred while starting ExApp "%s": %s', $exAppName, $e->getMessage());
+		}
+	}
+
+	public function stopExApp(string $dockerUrl, string $exAppName, bool $ignoreIfAlready = false): string {
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+		try {
+			$response = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/stop'),
+				[
+					'json' => [
+						'name' => $exAppName,
+						'instance_id' => $instanceId,
+					]
+				]
+			);
+			$statusCode = $response->getStatusCode();
+			if ($statusCode === 204) {
+				$this->logger->info(sprintf('ExApp container "%s" (instance "%s") successfully stopped.', $exAppName, $instanceId));
+				return '';
+			}
+			if ($statusCode === 200) {
+				if ($ignoreIfAlready) {
+					$this->logger->info(sprintf('ExApp container "%s" (instance "%s") was already stopped.', $exAppName, $instanceId));
+					return '';
+				} else {
+					$errorMsg = sprintf('ExApp container "%s" (instance "%s") was already stopped.', $exAppName, $instanceId);
+					$this->logger->warning($errorMsg);
+					return $errorMsg;
+				}
+			}
+			$errorBody = (string) $response->getBody();
+			$this->logger->error(sprintf('Failed to stop ExApp container "%s" (instance "%s"). Status: %d, Body: %s', $exAppName, $instanceId, $statusCode, $errorBody));
+			return sprintf('Failed to stop ExApp container "%s" (Status: %d). Details: %s', $exAppName, $statusCode, $errorBody);
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException while trying to stop ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('Failed to communicate with HaRP agent to stop ExApp "%s": %s', $exAppName, $e->getMessage());
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Unexpected exception while stopping ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('An unexpected error occurred while stopping ExApp "%s": %s', $exAppName, $e->getMessage());
+		}
+	}
+
+	public function waitExAppStart(string $dockerUrl, string $exAppName): bool {
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+		try {
+			$response = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/wait_for_start'),
+				[
+					'json' => [
+						'name' => $exAppName,
+						'instance_id' => $instanceId,
+					],
+					'timeout' => 150,
+				]
+			);
+
+			$statusCode = $response->getStatusCode();
+			if ($statusCode === 200) {
+				$responseData = json_decode((string) $response->getBody(), true);
+				if ($responseData === null) {
+					$this->logger->error(sprintf('Invalid JSON response from HaRP /docker/exapp/wait_for_start for ExApp "%s" (instance "%s").', $exAppName, $instanceId));
+					return false;
+				}
+				$started = $responseData['started'] ?? false;
+				$status = $responseData['status'] ?? 'unknown';
+				$health = $responseData['health'] ?? null;
+				$reason = $responseData['reason'] ?? '';
+
+				if ($started === true) {
+					$this->logger->info(sprintf('ExApp container "%s" (instance "%s") started successfully. Final state: status=%s, health=%s.', $exAppName, $instanceId, $status, $health ?: 'N/A'));
+					return true;
+				} else {
+					$this->logger->warning(sprintf('ExApp container "%s" (instance "%s") did not start successfully. Final state: status=%s, health=%s, reason="%s".', $exAppName, $instanceId, $status, $health ?: 'N/A', $reason));
+					return false;
+				}
+			} else {
+				$errorBody = (string) $response->getBody();
+				$this->logger->error(sprintf('Failed to wait for ExApp container "%s" (instance "%s") start. Status: %d, Body: %s', $exAppName, $instanceId, $statusCode, $errorBody));
+				return false;
+			}
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException while waiting for ExApp container "%s" (instance "%s") start: %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return false;
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Unexpected exception while waiting for ExApp container "%s" (instance "%s") start: %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return false;
+		}
+	}
+
+	public function removeExApp(string $dockerUrl, string $exAppName, bool $removeData = false, bool $ignoreIfNotExists = false): string {
+		$instanceId = '';  // $this->config->getSystemValue('instanceid', '');
+		try {
+			$existsResponse = $this->guzzleClient->post(
+				sprintf('%s/%s', $dockerUrl, 'docker/exapp/exists'),
+				[
+					'json' => [
+						'name' => $exAppName,
+						'instance_id' => $instanceId,
+					]
+				]
+			);
+
+			$existsStatusCode = $existsResponse->getStatusCode();
+			if ($existsStatusCode !== 200) {
+				$errorBody = (string) $existsResponse->getBody();
+				$this->logger->error(sprintf('Failed to check existence for ExApp "%s" (instance "%s"). Status: %d, Body: %s', $exAppName, $instanceId, $existsStatusCode, $errorBody));
+				return sprintf('Failed to check existence for ExApp "%s" (Status: %d). Details: %s', $exAppName, $existsStatusCode, $errorBody);
+			}
+
+			$existsData = json_decode((string) $existsResponse->getBody(), true);
+			if ($existsData === null) {
+				$this->logger->error(sprintf('Invalid JSON response from HaRP /docker/exapp/exists for ExApp "%s" (instance "%s").', $exAppName, $instanceId));
+				return sprintf('Invalid JSON response from HaRP /docker/exapp/exists for ExApp "%s".', $exAppName);
+			}
+
+			if (isset($existsData['exists']) && $existsData['exists'] === true) {
+				$this->logger->info(sprintf('Container for ExApp "%s" (instance "%s") exists. Removing it..', $exAppName, $instanceId));
+				$removeResponse = $this->guzzleClient->post(
+					sprintf('%s/%s', $dockerUrl, 'docker/exapp/remove'),
+					[
+						'json' => [
+							'name' => $exAppName,
+							'instance_id' => $instanceId,
+							'remove_data' => $removeData,
+						]
+					]
+				);
+
+				$removeStatusCode = $removeResponse->getStatusCode();
+				if ($removeStatusCode === 204) {
+					$this->logger->info(sprintf('ExApp container "%s" (instance "%s") successfully removed.', $exAppName, $instanceId));
+					return '';
+				}
+				$errorBody = (string) $removeResponse->getBody();
+				$this->logger->error(sprintf('Failed to remove ExApp container "%s" (instance "%s"). Status: %d, Body: %s', $exAppName, $instanceId, $removeStatusCode, $errorBody));
+				return sprintf('Failed to remove ExApp container "%s" (Status: %d). Details: %s', $exAppName, $removeStatusCode, $errorBody);
+			} elseif (isset($existsData['exists']) && $existsData['exists'] === false) {
+				if ($ignoreIfNotExists) {
+					$this->logger->info(sprintf('ExApp container "%s" (instance "%s") does not exist. No removal needed.', $exAppName, $instanceId));
+					return '';
+				} else {
+					$errorMsg = sprintf('ExApp container "%s" (instance "%s") does not exist and cannot be removed.', $exAppName, $instanceId);
+					$this->logger->warning($errorMsg);
+					return $errorMsg;
+				}
+			} else {
+				$errorBody = (string) $existsResponse->getBody();
+				$this->logger->error(sprintf('Unexpected "exists" data from /docker/exapp/exists for ExApp "%s" (instance "%s"). Body: %s', $exAppName, $instanceId, $errorBody));
+				return sprintf('Unexpected "exists" data from HaRP for ExApp "%s".', $exAppName);
+			}
+
+		} catch (GuzzleException $e) {
+			$this->logger->error(sprintf('GuzzleException while trying to remove ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('Failed to communicate with HaRP agent to remove ExApp "%s": %s', $exAppName, $e->getMessage());
+		} catch (Exception $e) {
+			$this->logger->error(sprintf('Unexpected exception while removing ExApp container "%s" (instance "%s"): %s', $exAppName, $instanceId, $e->getMessage()), ['exception' => $e]);
+			return sprintf('An unexpected error occurred while removing ExApp "%s": %s', $exAppName, $e->getMessage());
+		}
+	}
+
 	public function buildDeployParams(DaemonConfig $daemonConfig, array $appInfo): array {
 		$appId = (string) $appInfo['id'];
 		$externalApp = $appInfo['external-app'];
@@ -692,6 +1078,13 @@ class DockerActions implements IDeployActions {
 			'image_tag' => (string) ($externalApp['docker-install']['image-tag'] ?? 'latest'),
 		];
 
+		$harpEnvVars = [];
+		if (isset($deployConfig['harp']) && !HarpService::isHarpDirectConnect($daemonConfig->getDeployConfig())) {
+			$harpEnvVars['HP_FRP_ADDRESS'] = explode(':', $deployConfig['harp']['frp_address'])[0];
+			$harpEnvVars['HP_FRP_PORT'] = explode(':', $deployConfig['harp']['frp_address'])[1];
+			$harpEnvVars['HP_SHARED_KEY'] = $this->crypto->decrypt($deployConfig['haproxy_password']);
+		}
+
 		$envs = $this->buildDeployEnvs([
 			'appid' => $appId,
 			'name' => (string) $appInfo['name'],
@@ -701,6 +1094,7 @@ class DockerActions implements IDeployActions {
 			'storage' => $storage,
 			'secret' => $appInfo['secret'],
 			'environment_variables' => $appInfo['external-app']['environment-variables'] ?? [],
+			'harp_env_vars' => $harpEnvVars,
 		], $deployConfig);
 
 		$containerParams = [
@@ -753,12 +1147,25 @@ class DockerActions implements IDeployActions {
 			$autoEnvs[] = sprintf('%s=%s', $envKey, $params['environment_variables'][$envKey]['value'] ?? '');
 		}
 
+		// HaRP specific environment variables
+		foreach ($params['harp_env_vars'] as $envKey => $envValue) {
+			$autoEnvs[] = sprintf('%s=%s', $envKey, $envValue);
+		}
+
 		return $autoEnvs;
 	}
 
 	public function resolveExAppUrl(
 		string $appId, string $protocol, string $host, array $deployConfig, int $port, array &$auth
 	): string {
+		if (boolval($deployConfig['harp'] ?? false)) {
+			$url = rtrim($deployConfig['nextcloud_url'], '/');
+			if (str_ends_with($url, '/index.php')) {
+				$url = substr($url, 0, -10);
+			}
+			return sprintf('%s/exapps/%s', $url, $appId);
+		}
+
 		$auth = [];
 		if (isset($deployConfig['additional_options']['OVERRIDE_APP_HOST']) &&
 			$deployConfig['additional_options']['OVERRIDE_APP_HOST'] !== ''
@@ -829,7 +1236,14 @@ class DockerActions implements IDeployActions {
 
 	public function buildDockerUrl(DaemonConfig $daemonConfig): string {
 		// When using local socket, we the curl URL needs to be set to http://localhost
-		return $this->isLocalSocket($daemonConfig->getHost()) ? 'http://localhost' : $daemonConfig->getProtocol() . '://' . $daemonConfig->getHost();
+		$url = $this->isLocalSocket($daemonConfig->getHost())
+			? 'http://localhost'
+			: $daemonConfig->getProtocol() . '://' . $daemonConfig->getHost();
+		if (boolval($daemonConfig->getDeployConfig()['harp'] ?? false)) {
+			// if there is a trailling slash, remove it
+			$url = rtrim($url, '/') . '/exapps/app_api';
+		}
+		return $url;
 	}
 
 	public function initGuzzleClient(DaemonConfig $daemonConfig): void {
@@ -848,6 +1262,12 @@ class DockerActions implements IDeployActions {
 		if (isset($daemonConfig->getDeployConfig()['haproxy_password']) && $daemonConfig->getDeployConfig()['haproxy_password'] !== '') {
 			$haproxyPass = $this->crypto->decrypt($daemonConfig->getDeployConfig()['haproxy_password']);
 			$guzzleParams['auth'] = [self::APP_API_HAPROXY_USER, $haproxyPass];
+		}
+		if (boolval($daemonConfig->getDeployConfig()['harp'] ?? false)) {
+			$guzzleParams['headers'] = [
+				'harp-shared-key' => $guzzleParams['auth'][1],
+				'docker-engine-port' => $daemonConfig->getDeployConfig()['harp']['docker_socket_port'],
+			];
 		}
 		$this->guzzleClient = new Client($guzzleParams);
 	}

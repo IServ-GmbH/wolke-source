@@ -25,14 +25,11 @@ class App implements IDeferrableApp {
 	) {
 	}
 
-	public function setOutput(OutputInterface $output): void {
-		$this->push->setOutput($output);
+	public function setOutput(OutputInterface $output, bool $limitedOutput = true): void {
+		$this->push->setOutput($output, $limitedOutput);
 	}
 
-	/**
-	 * @param INotification $notification
-	 * @since 8.2.0
-	 */
+	#[\Override]
 	public function notify(INotification $notification): void {
 		$this->lastInsertedId = $this->handler->add($notification);
 
@@ -47,19 +44,12 @@ class App implements IDeferrableApp {
 		return $this->lastInsertedId;
 	}
 
-	/**
-	 * @param INotification $notification
-	 * @return int
-	 * @since 8.2.0
-	 */
+	#[\Override]
 	public function getCount(INotification $notification): int {
 		return $this->handler->count($notification);
 	}
 
-	/**
-	 * @param INotification $notification
-	 * @since 8.2.0
-	 */
+	#[\Override]
 	public function markProcessed(INotification $notification): void {
 		$deleted = $this->handler->delete($notification);
 
@@ -77,10 +67,12 @@ class App implements IDeferrableApp {
 		}
 	}
 
+	#[\Override]
 	public function defer(): void {
 		$this->push->deferPayloads();
 	}
 
+	#[\Override]
 	public function flush(): void {
 		$this->push->flushPayloads();
 	}

@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace OCA\Notifications\Controller;
 
 use OCA\Notifications\AppInfo\Application;
+use OCA\Notifications\Model\Settings;
 use OCA\Notifications\Model\SettingsMapper;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
@@ -33,7 +35,8 @@ class SettingsController extends OCSController {
 	/**
 	 * Update personal notification settings
 	 *
-	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)
+	 * @param int<0, 4> $batchSetting How often E-mails about missed notifications should be sent (off: 0; hourly: 1; every three hours: 2; daily: 3; weekly: 4)
+	 * @psalm-param Settings::EMAIL_SEND_* $batchSetting
 	 * @param string $soundNotification Enable sound for notifications ('yes' or 'no')
 	 * @param string $soundTalk Enable sound for Talk notifications ('yes' or 'no')
 	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
@@ -42,8 +45,9 @@ class SettingsController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[OpenAPI]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/settings', requirements: ['apiVersion' => '(v2)'])]
 	public function personal(int $batchSetting, string $soundNotification, string $soundTalk): DataResponse {
-		$this->settingsMapper->setBatchSettingForUser($this->userId, $batchSetting);
+		$this->settingsMapper->setBatchSettingForUser($this->settingsMapper->getSettingsByUser($this->userId), $batchSetting);
 
 		$this->config->setUserValue($this->userId, Application::APP_ID, 'sound_notification', $soundNotification !== 'no' ? 'yes' : 'no');
 		$this->config->setUserValue($this->userId, Application::APP_ID, 'sound_talk', $soundTalk !== 'no' ? 'yes' : 'no');
@@ -54,7 +58,8 @@ class SettingsController extends OCSController {
 	/**
 	 * Update default notification settings for new users
 	 *
-	 * @param int $batchSetting How often E-mails about missed notifications should be sent (hourly: 1; every three hours: 2; daily: 3; weekly: 4)
+	 * @param int<0, 4> $batchSetting How often E-mails about missed notifications should be sent (off: 0; hourly: 1; every three hours: 2; daily: 3; weekly: 4)
+	 * @psalm-param Settings::EMAIL_SEND_* $batchSetting
 	 * @param string $soundNotification Enable sound for notifications ('yes' or 'no')
 	 * @param string $soundTalk Enable sound for Talk notifications ('yes' or 'no')
 	 * @return DataResponse<Http::STATUS_OK, list<empty>, array{}>
@@ -62,6 +67,7 @@ class SettingsController extends OCSController {
 	 * 200: Admin settings updated
 	 */
 	#[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
+	#[ApiRoute(verb: 'POST', url: '/api/{apiVersion}/settings/admin', requirements: ['apiVersion' => '(v2)'])]
 	public function admin(int $batchSetting, string $soundNotification, string $soundTalk): DataResponse {
 		$this->config->setAppValue(Application::APP_ID, 'setting_batchtime', (string)$batchSetting);
 		$this->config->setAppValue(Application::APP_ID, 'sound_notification', $soundNotification !== 'no' ? 'yes' : 'no');

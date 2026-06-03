@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39da44b23918a4326dd03fce3d662d8d",
+    "content-hash": "6d9125fcb2afaf0f0750fc5878e29de1",
     "packages": [],
     "packages-dev": [
         {
@@ -66,16 +66,16 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable31",
+            "version": "dev-stable32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "4802291789220903a1b0b27ae8b6b8a99d06e7a8"
+                "reference": "642c8fccf0b65975991a19d4326ab555e20b89e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/4802291789220903a1b0b27ae8b6b8a99d06e7a8",
-                "reference": "4802291789220903a1b0b27ae8b6b8a99d06e7a8",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/642c8fccf0b65975991a19d4326ab555e20b89e7",
+                "reference": "642c8fccf0b65975991a19d4326ab555e20b89e7",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable31": "31.0.0-dev"
+                    "dev-stable32": "32.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -108,9 +108,9 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable31"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable32"
             },
-            "time": "2026-01-22T00:57:41+00:00"
+            "time": "2026-04-16T01:27:28+00:00"
         },
         {
             "name": "psr/clock",
@@ -324,7 +324,7 @@
     "platform": {},
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.1"
+        "php": "8.3"
     },
     "plugin-api-version": "2.9.0"
 }

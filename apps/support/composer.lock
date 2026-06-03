@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f81740756d3ec047b4a0ef4bb23528e7",
+    "content-hash": "c9db322e74d20e2cff10a92a1fe9cd55",
     "packages": [],
     "packages-dev": [
         {
@@ -66,16 +66,16 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable31",
+            "version": "dev-stable32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "abd32429d794ede1d92b7b0a88a1070371c907b5"
+                "reference": "49413ff9bf66f1091928540ecd9af4ebeebf6e32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/abd32429d794ede1d92b7b0a88a1070371c907b5",
-                "reference": "abd32429d794ede1d92b7b0a88a1070371c907b5",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/49413ff9bf66f1091928540ecd9af4ebeebf6e32",
+                "reference": "49413ff9bf66f1091928540ecd9af4ebeebf6e32",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable31": "31.0.0-dev"
+                    "dev-stable32": "32.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -108,9 +108,9 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable31"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable32"
             },
-            "time": "2025-07-31T00:57:37+00:00"
+            "time": "2025-09-04T08:38:43+00:00"
         },
         {
             "name": "psr/clock",

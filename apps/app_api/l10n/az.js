@@ -1,11 +1,13 @@
 OC.L10N.register(
     "app_api",
     {
+    "Cancel" : "Cancel",
     "Delete" : "Sil",
     "Edit" : "Dəyişiklik et",
     "Name" : "Ad",
     "Host" : "Şəbəkədə ünvan",
     "Enabled" : "İşə salınıb",
+    "Disabled" : "Dayandırılıb",
     "Confirm" : "Təsdiq edin",
     "Save" : "Saxla",
     "Update to {version}" : "{version} dək yenilə",

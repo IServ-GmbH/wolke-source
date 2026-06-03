@@ -26,6 +26,7 @@ class TalkSection extends Section {
 		parent::__construct('talk', 'Talk');
 	}
 
+	#[\Override]
 	public function getDetails(): array {
 		$this->createDetail('Talk configuration', $this->getTalkInfo());
 		$this->createDetail('Talk app configuration', $this->getTalkAppConfiguration(), IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
