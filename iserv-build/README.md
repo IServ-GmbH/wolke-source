@@ -24,11 +24,11 @@ This means PHP-only changes skip all JS compilation, and JS changes only rebuild
 
 ## Build the image
 
-The [build_image.sh](build_image.sh) script builds the image from the original nextcloud-server repo and applies the patches. Be aware - it can take up to 20 minutes.
+The [build_image.sh](../../scripts/build_image.sh) script builds the image from the original nextcloud-server repo and applies the patches. Be aware - it can take up to 20 minutes.
 
 ### Locally
 
-* Run `CI=1 docker/cloudfiles/build_image.sh` to build the image.
+* Run `CI=1 scripts/build_image.sh` to build the image.
 * The image will be saved as `./data/image.tar.xz`.
 * You can then transfer the image to your IServ VM and run `iservchk cloudfiles` to restart the container with the new image.
 
@@ -36,8 +36,8 @@ The [build_image.sh](build_image.sh) script builds the image from the original n
 
 * Simply push your changes and wait for the pipeline to finish.
 * The image will be built and pushed to the IServ Docker registry, tagged with your last commit SHA.
-* Run `download_image.sh` to download the image tagged with the current commit SHA from the IServ Docker registry.
-* You can also pass a specific tag to `download_image.sh` to download a particular image version (e.g., `latest`).
+* Run `scripts/download_images.sh` to download the image tagged with the current commit SHA from the IServ Docker registry.
+* You can also pass a specific tag to `scripts/download_images.sh` to download a particular image version (e.g., `latest`).
 
 _To download images from the registry, you must be logged into the `git.iserv.eu:443` and the `registry.git.iserv.eu` Docker registries._
 To log in, create an [Access Token](https://git.iserv.eu/-/user_settings/personal_access_tokens) with the `read_registry` and `write_registry` scope and run 
@@ -54,7 +54,7 @@ You can also build the image directly on your IServ VM.
 
 - SSH into your VM
 - Ensure your automatic deployment (e.g., rsync) does not overwrite the image created in the next step.  
-- Run `./docker/cloudfiles/build_image.sh`  
+- Run `./scripts/build_image.sh`  
 - If building the image fails and you receive a SIGINT, you probably need more memory [-> OpenNebula](https://cloud0.iserv.eu/); 16GB should be sufficient.
 
 ## Manually restarting the container with a new image

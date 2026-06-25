@@ -1,12 +1,18 @@
 #!/bin/sh
 # Fail fast
 set -e
-# status.php is a file from core nextcloud. If it exists, there was a version mismatch => update and the copy already happened
-# otherwise perform a copy ourselves
-if [ ! -f /var/www/html/status.php ]; then
-  echo "No nextcloud update. Copying installation manually"
-  # Taken from https://github.com/nextcloud/docker/blob/111add0e1c8ccf67a35a33d4c0ca85a4c3908270/23/apache/entrypoint.sh#L104
-  rsync -rlD --exclude=/config --exclude=version.php /usr/src/nextcloud/ /var/www/html/
+# Refresh /var/www/html (a persistent bind-mount) from the image's pristine /usr/src/nextcloud when either:
+#   * status.php is absent: a fresh install or an in-progress update
+#   * the baked image identity differs: a newer image was loaded under the
+#     existing install, so patched core/app files must reach /var/www/html.
+SRC_REF="$(cat /usr/src/nextcloud/.iserv-image-ref 2>/dev/null || true)"
+DST_REF="$(cat /var/www/html/.iserv-image-ref 2>/dev/null || true)"
+if [ ! -f /var/www/html/status.php ] || [ "$SRC_REF" != "$DST_REF" ]; then
+  echo "Refreshing nextcloud installation (fresh install or image changed)"
+  # Based on https://github.com/nextcloud/docker/blob/111add0e1c8ccf67a35a33d4c0ca85a4c3908270/23/apache/entrypoint.sh#L104
+  # --delete prunes files removed between image versions
+  # /config and version.php are separate mounts, so they are preserved
+  rsync -rlD --delete --exclude=/config --exclude=version.php --exclude=/.iserv-image-ref /usr/src/nextcloud/ /var/www/html/
 fi
 
 echo "enable provided apps (to allow upgrading)"
@@ -16,6 +22,10 @@ cp -r /iserv-apps/groupfolders /var/www/html/apps/
 cp -r /iserv-apps/user_saml /var/www/html/apps/
 cp -r /iserv-apps/iservlogin /var/www/html/apps/
 cp -r /iserv-apps/richdocuments /var/www/html/apps/
+
+# Record the image identity now that the install (incl. iserv apps) is in place,
+# so the next start skips the refresh unless a new image is loaded.
+cp /usr/src/nextcloud/.iserv-image-ref /var/www/html/.iserv-image-ref
 
 echo "Trying to upgrade apps"
 # execute upgrade to trigger app updates (if required)

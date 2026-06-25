@@ -245,6 +245,10 @@ RUN <<EOF
   rm -rf /patches
 EOF
 
+# Per-build identity. See adds/exitpoint-iserv.sh
+ARG IMAGE_REF=dev
+RUN echo "$IMAGE_REF" > /usr/src/nextcloud/.iserv-image-ref
+
 # Pipe Access Logging from FPM to /dev/null, bc its the same as the nginx logs
 RUN echo '[www] \n\
 access.log = /dev/null' > /usr/local/etc/php-fpm.d/zz-iserv.conf
