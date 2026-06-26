@@ -253,6 +253,13 @@ RUN echo "$IMAGE_REF" > /usr/src/nextcloud/.iserv-image-ref
 RUN echo '[www] \n\
 access.log = /dev/null' > /usr/local/etc/php-fpm.d/zz-iserv.conf
 
+# php-fpm is exec'd as the very last step of exitpoint-iserv.sh, so a successful
+# connect to the fpm pool means init (occ upgrade + app:enable + config) is fully
+# done.
+# `start-period` covers a slow major upgrade without going unhealthy.
+HEALTHCHECK --start-period=15m --interval=10s --timeout=5s --retries=3 \
+  CMD ["/usr/local/bin/php", "-r", "exit(@fsockopen('127.0.0.1', 9000) ? 0 : 1);"]
+
 # Wrap default entrypoint to better suit our needs and reconfigure on every restart
 # This makes config updates easier
 ENTRYPOINT ["/entrypoint-iserv.sh"]
