@@ -1,6 +1,7 @@
 OC.L10N.register(
     "core",
     {
+    "Log out" : "Cerrar sesión",
     "Please select a file." : "Por favor selecciona un archivo.",
     "File is too big" : "El archivo es demasiado grande.",
     "The selected file is not an image." : "El archivo seleccionado no es una imagen.",
@@ -67,9 +68,10 @@ OC.L10N.register(
     "Learn more ↗" : "Más información ↗",
     "Unknown" : "Desconocido",
     "Done" : "Hecho",
-    "Apps" : "Aplicaciones",
-    "More apps" : "Más aplicaciones",
     "_{count} notification_::_{count} notifications_" : ["{count} notificación","{count} notificaciones","{count} notificaciones"],
+    "More apps" : "Más aplicaciones",
+    "Settings" : "Ajustes",
+    "Apps" : "Aplicaciones",
     "No" : "No",
     "Yes" : "Sí",
     "Grant access" : "Conceder acceso",

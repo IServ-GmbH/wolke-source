@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Backup &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Backup &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Restoring backup" href="restore.html" />
-    <link rel="prev" title="Maintenance" href="index.html" /> 
+    <link rel="prev" title="Maintenance" href="index.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -114,7 +117,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#maintenance-mode">Maintenance mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#backup-folders">Backup folders</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#backup-database">Backup database</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#mysql-mariadb">MySQL/MariaDB</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mariadb">MariaDB</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mysql">MySQL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sqlite">SQLite</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#postgresql">PostgreSQL</a></li>
 </ul>
@@ -153,7 +157,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -199,8 +203,7 @@ Change <code class="docutils literal notranslate"><span class="pre">&quot;mainte
 </section>
 <section id="backup-folders">
 <h2>Backup folders<a class="headerlink" href="#backup-folders" title="Link to this heading"></a></h2>
-<p>Simply copy your config, data and theme folders (or even your whole Nextcloud install and data folder) to a place outside of
-your Nextcloud environment. You could use this command:</p>
+<p>Copy your config, data, and theme directories to a location outside your Nextcloud environment. Alternatively, copy your entire Nextcloud installation directory (including the data directory). You could use this command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>rsync -Aavx nextcloud/ nextcloud-dirbkp_`date +&quot;%Y%m%d&quot;`/
 </pre></div>
 </div>
@@ -211,18 +214,27 @@ your Nextcloud environment. You could use this command:</p>
 <p class="admonition-title">Warning</p>
 <p>Before restoring a backup see <a class="reference internal" href="restore.html"><span class="doc">Restoring backup</span></a></p>
 </div>
-<section id="mysql-mariadb">
-<h3>MySQL/MariaDB<a class="headerlink" href="#mysql-mariadb" title="Link to this heading"></a></h3>
-<p>MySQL or MariaDB, which is a drop-in MySQL replacement, is the recommended
-database engine. To backup <strong>MySQL</strong>:</p>
+<section id="mariadb">
+<h3>MariaDB<a class="headerlink" href="#mariadb" title="Link to this heading"></a></h3>
+<p>MariaDB is the recommended database engine. To backup MariaDB using <a class="reference external" href="https://mariadb.com/docs/server/clients-and-utilities/backup-restore-and-import-clients/mariadb-dump">mariadb-dump</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mariadb-dump --single-transaction -h [server] -u [username] -p[password] [db_name] &gt; nextcloud-sqlbkp_`date +&quot;%Y%m%d&quot;`.bak
+</pre></div>
+</div>
+<p>If you have enabled MariaDB 4-byte support (<a class="reference internal" href="../configuration_database/mysql_4byte_support.html"><span class="doc">Enabling MySQL 4-byte support</span></a>, needed for emoji), add <code class="docutils literal notranslate"><span class="pre">--default-character-set=utf8mb4</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mariadb-dump --single-transaction --default-character-set=utf8mb4 -h [server] -u [username] -p[password] [db_name] &gt; nextcloud-sqlbkp_`date +&quot;%Y%m%d&quot;`.bak
+</pre></div>
+</div>
+</section>
+<section id="mysql">
+<h3>MySQL<a class="headerlink" href="#mysql" title="Link to this heading"></a></h3>
+<p>To backup MySQL:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mysqldump --single-transaction -h [server] -u [username] -p[password] [db_name] &gt; nextcloud-sqlbkp_`date +&quot;%Y%m%d&quot;`.bak
 </pre></div>
 </div>
-<p>If you use enabled MySQL/MariaDB 4-byte support (<a class="reference internal" href="../configuration_database/mysql_4byte_support.html"><span class="doc">Enabling MySQL 4-byte support</span></a>, needed for emoji), you will need to add <code class="docutils literal notranslate"><span class="pre">--default-character-set=utf8mb4</span></code> like this:</p>
+<p>If you have enabled MySQL 4-byte support (<a class="reference internal" href="../configuration_database/mysql_4byte_support.html"><span class="doc">Enabling MySQL 4-byte support</span></a>, needed for emoji), add <code class="docutils literal notranslate"><span class="pre">--default-character-set=utf8mb4</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mysqldump --single-transaction --default-character-set=utf8mb4 -h [server] -u [username] -p[password] [db_name] &gt; nextcloud-sqlbkp_`date +&quot;%Y%m%d&quot;`.bak
 </pre></div>
 </div>
-<p>To backup <strong>MariaDB</strong>, replace <cite>mysqldump</cite> with <cite>mariadb-dump</cite> in the above commands.</p>
 </section>
 <section id="sqlite">
 <h3>SQLite<a class="headerlink" href="#sqlite" title="Link to this heading"></a></h3>
@@ -264,7 +276,7 @@ database engine. To backup <strong>MySQL</strong>:</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -274,10 +286,8 @@ database engine. To backup <strong>MySQL</strong>:</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -285,23 +295,25 @@ database engine. To backup <strong>MySQL</strong>:</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

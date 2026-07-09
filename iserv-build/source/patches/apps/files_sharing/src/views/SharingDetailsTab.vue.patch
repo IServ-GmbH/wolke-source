@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing/src/views/SharingDetailsTab.vue
-index 7665b02..57382a2 100644
+index 7d6d1c1..cf78a59 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
 @@ -36,6 +36,7 @@

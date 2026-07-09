@@ -1,5 +1,5 @@
 diff --git apps/federation/lib/Controller/OCSAuthAPIController.php apps/federation/lib/Controller/OCSAuthAPIController.php
-index 733b6b6..801c4a1 100644
+index 1a4cc5d..e6fd789 100644
 --- apps/federation/lib/Controller/OCSAuthAPIController.php
 +++ apps/federation/lib/Controller/OCSAuthAPIController.php
 @@ -7,6 +7,7 @@
@@ -11,7 +11,7 @@ index 733b6b6..801c4a1 100644
  use OCA\Federation\TrustedServers;
  use OCP\AppFramework\Http;
 @@ -112,14 +113,23 @@ class OCSAuthAPIController extends OCSController {
- 			throw new OCSForbiddenException();
+ 			return new DataResponse();
  		}
  
 -		$this->jobList->add(

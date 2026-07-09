@@ -2,6 +2,7 @@ SPDX-License-Identifier: MIT
 SPDX-License-Identifier: ISC
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: BSD-3-Clause
+SPDX-License-Identifier: BSD-2-Clause
 SPDX-License-Identifier: AGPL-3.0-or-later
 SPDX-License-Identifier: (MPL-2.0 OR Apache-2.0)
 SPDX-FileCopyrightText: string_decoder developers
@@ -30,11 +31,11 @@ SPDX-FileCopyrightText: Jordan Harband
 SPDX-FileCopyrightText: John Hiesey
 SPDX-FileCopyrightText: James Halliday
 SPDX-FileCopyrightText: Iskren Ivov Chernev <iskren.chernev@gmail.com> (https://github.com/ichernev)
-SPDX-FileCopyrightText: Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me)
 SPDX-FileCopyrightText: Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)
 SPDX-FileCopyrightText: Guillaume Chau
 SPDX-FileCopyrightText: GitHub Inc.
 SPDX-FileCopyrightText: Feross Aboukhadijeh
+SPDX-FileCopyrightText: Felix Boehm <me@feedic.com>
 SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: Eduardo San Martin Morote
 SPDX-FileCopyrightText: Dylan Piercey <pierceydylan@gmail.com>
@@ -42,6 +43,7 @@ SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (http
 SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Ben Drucker
 SPDX-FileCopyrightText: Arnout Kazemier
+SPDX-FileCopyrightText: Amit Gupta (https://solothought.work/)
 SPDX-FileCopyrightText: Amit Gupta (https://solothought.com)
 
 
@@ -53,7 +55,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.5.0
 	- license: GPL-3.0-or-later
 - semver
-	- version: 7.7.2
+	- version: 7.8.0
 	- license: ISC
 - @nextcloud/event-bus
 	- version: 3.3.3
@@ -73,6 +75,9 @@ This file is generated from multiple sources. Included packages:
 - @nextcloud/router
 	- version: 3.1.0
 	- license: GPL-3.0-or-later
+- @nodable/entities
+	- version: 2.1.0
+	- license: MIT
 - @vue/devtools-api
 	- version: 6.6.4
 	- license: MIT
@@ -89,7 +94,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.5.1
 	- license: MIT
 - brace-expansion
-	- version: 2.0.2
+	- version: 2.1.0
 	- license: MIT
 - buffer
 	- version: 5.7.1
@@ -119,11 +124,14 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.4
 	- license: MIT
 - dompurify
-	- version: 3.4.0
+	- version: 3.4.8
 	- license: (MPL-2.0 OR Apache-2.0)
 - dunder-proto
 	- version: 1.0.1
 	- license: MIT
+- entities
+	- version: 6.0.1
+	- license: BSD-2-Clause
 - es-define-property
 	- version: 1.0.1
 	- license: MIT
@@ -139,8 +147,11 @@ This file is generated from multiple sources. Included packages:
 - events
 	- version: 3.3.0
 	- license: MIT
+- fast-xml-builder
+	- version: 1.2.0
+	- license: MIT
 - fast-xml-parser
-	- version: 5.3.4
+	- version: 5.8.0
 	- license: MIT
 - for-each
 	- version: 0.3.5
@@ -208,9 +219,6 @@ This file is generated from multiple sources. Included packages:
 - md5
 	- version: 2.3.0
 	- license: BSD-3-Clause
-- minimatch
-	- version: 9.0.5
-	- license: ISC
 - moment
 	- version: 2.30.1
 	- license: MIT
@@ -222,6 +230,9 @@ This file is generated from multiple sources. Included packages:
 	- license: MIT
 - object-inspect
 	- version: 1.13.4
+	- license: MIT
+- path-expression-matcher
+	- version: 1.5.0
 	- license: MIT
 - path-posix
 	- version: 1.0.0
@@ -283,6 +294,9 @@ This file is generated from multiple sources. Included packages:
 - string_decoder
 	- version: 1.3.0
 	- license: MIT
+- strnum
+	- version: 2.3.0
+	- license: MIT
 - url-join
 	- version: 5.0.0
 	- license: MIT
@@ -302,13 +316,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.7.16
 	- license: MIT
 - webdav
-	- version: 5.9.0
+	- version: 5.10.0
 	- license: MIT
 - webpack
-	- version: 5.106.2
+	- version: 5.107.2
 	- license: MIT
 - which-typed-array
 	- version: 1.1.19
+	- license: MIT
+- xml-naming
+	- version: 0.1.0
 	- license: MIT
 - xtend
 	- version: 4.0.2

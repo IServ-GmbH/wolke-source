@@ -9,7 +9,6 @@ SPDX-FileCopyrightText: rhysd <lin90162@yahoo.co.jp>
 SPDX-FileCopyrightText: inline-style-parser developers
 SPDX-FileCopyrightText: escape-html developers
 SPDX-FileCopyrightText: atomiks
-SPDX-FileCopyrightText: Victor Felder <victor@draft.li> (https://draft.li)
 SPDX-FileCopyrightText: Tobias Koppers @sokra
 SPDX-FileCopyrightText: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
 SPDX-FileCopyrightText: T. Jameson Little <t.jameson.little@gmail.com>
@@ -64,7 +63,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.6.0
 	- license: GPL-3.0-or-later
 - @nextcloud/axios
-	- version: 2.5.2
+	- version: 2.6.0
 	- license: GPL-3.0-or-later
 - @nextcloud/browser-storage
 	- version: 0.5.0
@@ -73,7 +72,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.1
 	- license: GPL-3.0-or-later
 - semver
-	- version: 7.7.2
+	- version: 7.8.0
 	- license: ISC
 - @nextcloud/event-bus
 	- version: 3.3.3
@@ -100,7 +99,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.37.0
+	- version: 8.39.0
 	- license: AGPL-3.0-or-later
 - @ungap/structured-clone
 	- version: 1.3.0
@@ -115,7 +114,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 11.3.0
 	- license: MIT
 - axios
-	- version: 1.13.4
+	- version: 1.16.1
 	- license: MIT
 - base64-js
 	- version: 1.5.1
@@ -139,13 +138,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.0
 	- license: MIT
 - dompurify
-	- version: 3.4.0
+	- version: 3.4.8
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
 	- license: MIT
 - extend
 	- version: 3.0.2
+	- license: MIT
+- @floating-ui/core
+	- version: 0.3.1
 	- license: MIT
 - floating-vue
 	- version: 1.0.0-beta.19
@@ -174,9 +176,6 @@ This file is generated from multiple sources. Included packages:
 - is-buffer
 	- version: 1.1.6
 	- license: MIT
-- longest-streak
-	- version: 3.1.0
-	- license: MIT
 - md5
 	- version: 2.3.0
 	- license: BSD-3-Clause
@@ -195,14 +194,8 @@ This file is generated from multiple sources. Included packages:
 - mdast-util-newline-to-break
 	- version: 2.0.0
 	- license: MIT
-- mdast-util-phrasing
-	- version: 4.1.0
-	- license: MIT
 - mdast-util-to-hast
 	- version: 13.2.1
-	- license: MIT
-- mdast-util-to-markdown
-	- version: 2.1.2
 	- license: MIT
 - mdast-util-to-string
 	- version: 4.0.0
@@ -288,9 +281,6 @@ This file is generated from multiple sources. Included packages:
 - remark-rehype
 	- version: 11.1.2
 	- license: MIT
-- remark-stringify
-	- version: 11.0.0
-	- license: MIT
 - remark-unlink-protocols
 	- version: 1.0.0
 	- license: MIT
@@ -322,7 +312,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - unist-util-is
-	- version: 6.0.0
+	- version: 6.0.1
 	- license: MIT
 - unist-util-position
 	- version: 5.0.0
@@ -331,7 +321,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - unist-util-visit-parents
-	- version: 6.0.1
+	- version: 6.0.2
 	- license: MIT
 - unist-util-visit
 	- version: 5.1.0
@@ -350,7 +340,4 @@ This file is generated from multiple sources. Included packages:
 	- license: MIT
 - web-namespaces
 	- version: 2.0.1
-	- license: MIT
-- zwitch
-	- version: 2.0.4
 	- license: MIT

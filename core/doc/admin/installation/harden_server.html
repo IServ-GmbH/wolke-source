@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hardening and security guidance &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Hardening and security guidance &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Server tuning" href="server_tuning.html" />
-    <link rel="prev" title="NGINX configuration" href="nginx.html" /> 
+    <link rel="prev" title="NGINX configuration" href="nginx.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -93,6 +96,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#deployment">Deployment</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#place-data-directory-outside-of-the-web-root">Place data directory outside of the web root</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#place-config-directory-outside-of-the-web-root">Place config directory outside of the web root</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#disable-preview-image-generation">Disable preview image generation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#disable-debug-mode">Disable Debug Mode</a></li>
 </ul>
@@ -184,7 +188,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -207,7 +211,7 @@
 <h1>Hardening and security guidance<a class="headerlink" href="#hardening-and-security-guidance" title="Link to this heading"></a></h1>
 <p>Nextcloud aims to ship with secure defaults that do not need to get modified by
 administrators. However, in some cases some additional security hardening can be
-applied in scenarios were the administrator has complete control over
+applied in scenarios where the administrator has complete control over
 the Nextcloud instance. This page assumes that you run Nextcloud Server on Apache2
 in a Linux environment.</p>
 <div class="admonition note">
@@ -267,6 +271,36 @@ SELinux.</p>
 <p>It is highly recommended to place your data directory outside of the Web root
 (i.e. outside of <code class="docutils literal notranslate"><span class="pre">/var/www</span></code>). It is easiest to do this on a new
 installation.</p>
+</section>
+<section id="place-config-directory-outside-of-the-web-root">
+<span id="harden-config-dir"></span><h3>Place config directory outside of the web root<a class="headerlink" href="#place-config-directory-outside-of-the-web-root" title="Link to this heading"></a></h3>
+<p>You can move the <code class="docutils literal notranslate"><span class="pre">config/</span></code> directory outside the web root using the <code class="docutils literal notranslate"><span class="pre">NEXTCLOUD_CONFIG_DIR</span></code>
+environment variable. This ensures <code class="docutils literal notranslate"><span class="pre">config.php</span></code> — which contains database credentials,
+secret keys, and other sensitive values — is not accessible via HTTP even in the event of a
+web server misconfiguration.</p>
+<p>Set the variable in your web server virtual host configuration:</p>
+<div class="highlight-apache notranslate"><div class="highlight"><pre><span></span><span class="c"># Apache</span>
+<span class="nb">SetEnv</span><span class="w"> </span>NEXTCLOUD_CONFIG_DIR<span class="w"> </span><span class="sx">/etc/nextcloud</span>
+</pre></div>
+</div>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="c1"># nginx — set via fastcgi_param or the PHP-FPM pool&#39;s env[] setting</span>
+<span class="k">fastcgi_param</span><span class="w"> </span><span class="s">NEXTCLOUD_CONFIG_DIR</span><span class="w"> </span><span class="s">/etc/nextcloud</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Also set it for CLI work (<code class="docutils literal notranslate"><span class="pre">occ</span></code>, cron):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">NEXTCLOUD_CONFIG_DIR</span><span class="o">=</span>/etc/nextcloud
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The variable must be set for <strong>both</strong> the web server process and CLI invocations.
+Verify with <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">config:list</span> <span class="pre">system</span></code> after changing it.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../configuration_server/config_sample_php_parameters.html"><span class="doc">Configuration Parameters</span></a> for full details on
+<code class="docutils literal notranslate"><span class="pre">NEXTCLOUD_CONFIG_DIR</span></code> and other configuration loading behaviour.</p>
+</div>
 </section>
 <section id="disable-preview-image-generation">
 <h3>Disable preview image generation<a class="headerlink" href="#disable-preview-image-generation" title="Link to this heading"></a></h3>
@@ -619,7 +653,7 @@ you may do so by issuing:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fail2ban</span><span class="o">-</span><span class="n">client</span> <span class="n">unban</span> <span class="mf">1.2.3.4</span>
 </pre></div>
 </div>
-<p>There may be scenarios where you want to more permantently ban certain IP
+<p>There may be scenarios where you want to more permanently ban certain IP
 addresses that repeatedly generate bad login attempts (or other attacks) by
 using fail2ban’s <code class="docutils literal notranslate"><span class="pre">recidive</span></code> feature.</p>
 </section>
@@ -651,7 +685,7 @@ using fail2ban’s <code class="docutils literal notranslate"><span class="pre">
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -661,10 +695,8 @@ using fail2ban’s <code class="docutils literal notranslate"><span class="pre">
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -672,23 +704,25 @@ using fail2ban’s <code class="docutils literal notranslate"><span class="pre">
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

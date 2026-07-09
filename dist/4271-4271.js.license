@@ -6,6 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 SPDX-License-Identifier: (MPL-2.0 OR Apache-2.0)
 SPDX-FileCopyrightText: string_decoder developers
 SPDX-FileCopyrightText: escape-html developers
+SPDX-FileCopyrightText: atomiks
 SPDX-FileCopyrightText: Varun A P
 SPDX-FileCopyrightText: Tobias Koppers @sokra
 SPDX-FileCopyrightText: T. Jameson Little <t.jameson.little@gmail.com>
@@ -35,13 +36,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.1
 	- license: GPL-3.0-or-later
 - semver
-	- version: 7.7.2
+	- version: 7.8.0
 	- license: ISC
 - @nextcloud/event-bus
 	- version: 3.3.3
 	- license: GPL-3.0-or-later
 - @nextcloud/paths
-	- version: 3.0.0
+	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - @nextcloud/files
 	- version: 3.12.2
@@ -62,10 +63,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 6.4.2
 	- license: AGPL-3.0-or-later
 - @nextcloud/paths
-	- version: 3.0.0
+	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.37.0
+	- version: 8.39.0
 	- license: AGPL-3.0-or-later
 - @vueuse/core
 	- version: 11.3.0
@@ -86,10 +87,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 7.1.2
 	- license: MIT
 - dompurify
-	- version: 3.4.0
+	- version: 3.4.8
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
+	- license: MIT
+- @floating-ui/core
+	- version: 0.3.1
 	- license: MIT
 - floating-vue
 	- version: 1.0.0-beta.19
@@ -128,5 +132,5 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.7.16
 	- license: MIT
 - webdav
-	- version: 5.9.0
+	- version: 5.10.0
 	- license: MIT

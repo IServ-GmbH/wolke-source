@@ -25,6 +25,14 @@ OC.L10N.register(
     "Text" : "Teksto",
     "Size" : "Grando",
     "Position" : "Loko",
-    "Extension" : "Dosiersufikso"
+    "Extension" : "Dosiersufikso",
+    "Play" : "Ludi",
+    "Pause" : "Paŭzigi",
+    "Settings" : "Agordoj",
+    "Speed" : "Rapideco",
+    "Start" : "Komenco",
+    "End" : "Fino",
+    "All" : "Ĉiuj",
+    "Disabled" : "Malkapabligita"
 },
 "nplurals=2; plural=(n != 1);");

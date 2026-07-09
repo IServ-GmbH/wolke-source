@@ -10,7 +10,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Escritura impossibla al disc",
     "A PHP extension stopped the file upload" : "Una extension PHP a arrestat lo mandadís de fichièr",
     "Nextcloud Text" : "Nextcloud Text",
-    "text document" : "document tèxt",
     "File not found" : "Fichièr pas trobat",
     "Readme" : "Readme",
     "Text" : "Tèxt",
@@ -48,11 +47,9 @@ OC.L10N.register(
     "Cancel" : "Anullar",
     "URL" : "URL",
     "Save" : "Enregistrar",
+    "Insert" : "Inserir",
     "Translate" : "Translate",
     "Remaining actions" : "Mai d’accions",
-    "Select language" : "Causir lenga",
-    "to" : "a",
-    "Insert" : "Inserir",
     "Edit" : "Modificar",
     "Upload" : "Telecargament",
     "Source code" : "Còdi font",
@@ -67,6 +64,9 @@ OC.L10N.register(
     "Insert link" : "Inserir un ligam",
     "Insert attachment" : "Inserir una pèça junta",
     "Command" : "Comanda",
-    "Choose" : "Causir"
+    "Choose" : "Causir",
+    "text document" : "document tèxt",
+    "Select language" : "Causir lenga",
+    "to" : "a"
 },
 "nplurals=2; plural=(n > 1);");

@@ -5,7 +5,6 @@ OC.L10N.register(
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "ატვირთული ფაილი აჭარბებს HTML ფორამაში მითითებულ MAX_FILE_SIZE დირექტივას",
     "No file was uploaded" : "ფაილი არ აიტვირთა",
     "Missing a temporary folder" : "დროებითი დირექტორია არ არსებობს",
-    "New text file" : "ახალი ტექსტ ფაილი",
     "File not found" : "ფაილი ვერ იქნა ნაპოვნი",
     "Text" : "ტექსტი",
     "Guest" : "სტუმარი",
@@ -22,14 +21,15 @@ OC.L10N.register(
     "Save" : "შენახვა",
     "Formatting help" : "დახმარება ფორმატირებაზე",
     "Translate" : "გადათარგმნეთ",
-    "Select language" : "აირჩიეთ ენა",
-    "to" : "ვის",
-    "Replace" : "ჩანაცვლება",
     "Edit" : "ცვლილება",
     "Upload" : "ატვირთვა",
     "Source code" : "კოდი",
     "Done" : "დასრულდა",
     "Details" : "დეტალები",
-    "Choose" : "აირჩიეთ"
+    "Choose" : "აირჩიეთ",
+    "New text file" : "ახალი ტექსტ ფაილი",
+    "Select language" : "აირჩიეთ ენა",
+    "to" : "ვის",
+    "Replace" : "ჩანაცვლება"
 },
 "nplurals=2; plural=(n!=1);");

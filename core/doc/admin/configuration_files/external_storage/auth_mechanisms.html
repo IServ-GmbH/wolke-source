@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>External Storage authentication mechanisms &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>External Storage authentication mechanisms &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Server-side Encryption" href="../encryption_configuration.html" />
-    <link rel="prev" title="WebDAV" href="webdav.html" /> 
+    <link rel="prev" title="WebDAV" href="webdav.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -157,7 +160,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -245,8 +248,7 @@ destination server to <code class="docutils literal notranslate"><span class="pr
 <section id="considerations-for-shared-storage">
 <span id="considerations-for-shared-storage-label"></span><h2>Considerations for shared storage<a class="headerlink" href="#considerations-for-shared-storage" title="Link to this heading"></a></h2>
 <p>Every external storage, which is using user specific authentication, is connected individually.
-Even if several users connect to the same folder, the files are regarded as separate files per user.
-Nextcloud can not recognize if two users access the very same file if they follow individual connections.</p>
+Nextcloud cannot recognise shared file locks across individual connections, even when accessing the same file.</p>
 <p>This has an influence on e.g. file locking as a locked individual file is not shown as locked to other users or users cannot collaboratively edit documents.</p>
 <p>If collaborative working on external storage is required, the authentication “Global credentials” has to be used.</p>
 </section>
@@ -277,7 +279,7 @@ Nextcloud can not recognize if two users access the very same file if they follo
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -287,10 +289,8 @@ Nextcloud can not recognize if two users access the very same file if they follo
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -298,23 +298,25 @@ Nextcloud can not recognize if two users access the very same file if they follo
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

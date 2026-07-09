@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OAuth2 &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>OAuth2 &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Reverse proxy" href="reverse_proxy_configuration.html" />
-    <link rel="prev" title="Logging" href="logging_configuration.html" /> 
+    <link rel="prev" title="Logging" href="logging_configuration.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -97,6 +100,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#add-an-oauth2-application">Add an OAuth2 Application</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#the-access-token">The access token</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#security-considerations">Security considerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#skipping-pre-login-warning">Skipping pre-login warning</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
@@ -160,7 +164,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -186,7 +190,7 @@ This is done via <code class="docutils literal notranslate"><span class="pre">OA
 OAuth2 specification.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Nextcloud does only support confidential clients.</p>
+<p>Nextcloud supports only confidential clients.</p>
 </div>
 <section id="add-an-oauth2-application">
 <h2>Add an OAuth2 Application<a class="headerlink" href="#add-an-oauth2-application" title="Link to this heading"></a></h2>
@@ -215,6 +219,14 @@ Nextcloud server you will have to send the proper authorization header.</p>
 <p>Nextcloud <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> implementation currently does not support scoped access. This means that every token has full access to the complete account including read and write permission to the stored files. It is essential to store the <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> tokens in a safe way!</p>
 <p>Without scopes and restrictable access it is not recommended to use a Nextcloud instance as a user authentication service.</p>
 </section>
+<section id="skipping-pre-login-warning">
+<h2>Skipping pre-login warning<a class="headerlink" href="#skipping-pre-login-warning" title="Link to this heading"></a></h2>
+<p>In Nextcloud default <code class="docutils literal notranslate"><span class="pre">OAuth2</span></code> flow, a confirmation step is shown before login if the user is not yet logged-in, and a second one is shown after login.
+To skip the pre-login one for a trusted application, the configuration option <code class="docutils literal notranslate"><span class="pre">skipAuthPickerApplications</span></code> can be set through occ:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">oauth2</span> <span class="n">skipAuthPickerApplications</span> <span class="o">--</span><span class="nb">type</span> <span class="n">array</span> <span class="o">--</span><span class="n">value</span> <span class="s1">&#39;[&quot;myapplication&quot;]&#39;</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -242,7 +254,7 @@ Nextcloud server you will have to send the proper authorization header.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -252,10 +264,8 @@ Nextcloud server you will have to send the proper authorization header.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -263,23 +273,25 @@ Nextcloud server you will have to send the proper authorization header.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

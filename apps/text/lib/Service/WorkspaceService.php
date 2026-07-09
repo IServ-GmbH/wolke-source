@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
@@ -8,6 +9,7 @@
 
 namespace OCA\Text\Service;
 
+use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\NotFoundException;
@@ -17,10 +19,13 @@ use OCP\IL10N;
 class WorkspaceService {
 	private IL10N $l10n;
 
+	public const DEFAULT_FILENAME = 'Readme.md';
+
 	private const SUPPORTED_STATIC_FILENAMES = [
-		'Readme.md',
+		self::DEFAULT_FILENAME,
 		'README.md',
-		'readme.md'
+		'readme.md',
+		'.Readme.md',
 	];
 
 	public function __construct(IL10N $l10n) {
@@ -28,16 +33,23 @@ class WorkspaceService {
 	}
 
 	public function getFile(Folder $folder): ?File {
+		try {
+			$cache = $folder->getStorage()->getCache();
+			$internalPath = $folder->getInternalPath();
+		} catch (StorageInvalidException) {
+			return null;
+		}
+
 		foreach ($this->getSupportedFilenames() as $filename) {
 			try {
-				$exists = $folder->getStorage()->getCache()->get($folder->getInternalPath() . '/' . $filename);
-				if ($exists) {
+				$cacheEntry = $cache->get($internalPath . '/' . $filename);
+				if ($cacheEntry !== false && $cacheEntry->getMimeType() !== ICacheEntry::DIRECTORY_MIMETYPE) {
 					$file = $folder->get($filename);
 					if ($file instanceof File) {
 						return $file;
 					}
 				}
-			} catch (NotFoundException|StorageInvalidException) {
+			} catch (NotFoundException) {
 				continue;
 			}
 		}

@@ -30,13 +30,13 @@
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/vue": "^9.0.1",
     "howler": "^2.2.4",
-    "ua-parser-js": "^2.0.9",
+    "ua-parser-js": "^2.0.10",
     "v-click-outside": "^3.2.0",
-    "vue": "^3.5.32",
+    "vue": "^3.5.35",
     "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/browserslist-config": "^3.1.2",
     "@nextcloud/eslint-config": "^9.0.0-rc.9",
     "@nextcloud/stylelint-config": "^3.1.1",
     "@nextcloud/vite-config": "^2.5.2",

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Managing Deploy Daemons &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Managing Deploy Daemons &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Test Deploy Daemon" href="TestDeploy.html" />
-    <link rel="prev" title="Deployment configurations" href="DeployConfigurations.html" /> 
+    <link rel="prev" title="Deployment configurations" href="DeployConfigurations.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -151,7 +154,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -221,7 +224,7 @@
 </div>
 </div></blockquote>
 </li>
-<li><p>Register a HaRP deploy daemon with the <code class="docutils literal notranslate"><span class="pre">localhost</span></code> as the host and the <code class="docutils literal notranslate"><span class="pre">localhost:8782</span></code> as the FRP server address. This can be paired with a HaRP container running in the host network mode or has exposed the ports <code class="docutils literal notranslate"><span class="pre">8780</span></code> and <code class="docutils literal notranslate"><span class="pre">8782</span></code> to the host.</p>
+<li><p>Register a HaRP deploy daemon with the <code class="docutils literal notranslate"><span class="pre">localhost</span></code> as the host and the <code class="docutils literal notranslate"><span class="pre">localhost:8782</span></code> as the FRP server address. This can be paired with a HaRP container running in the host network mode or that has exposed the ports <code class="docutils literal notranslate"><span class="pre">8780</span></code> and <code class="docutils literal notranslate"><span class="pre">8782</span></code> to the host.</p>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>app_api:daemon:register<span class="w"> </span>harp_proxy_host<span class="w"> </span><span class="s2">&quot;Harp Proxy (Host)&quot;</span><span class="w"> </span><span class="s2">&quot;docker-install&quot;</span><span class="w"> </span><span class="s2">&quot;http&quot;</span><span class="w"> </span><span class="s2">&quot;localhost:8780&quot;</span><span class="w"> </span><span class="s2">&quot;http://nextcloud.local&quot;</span><span class="w"> </span>--harp<span class="w"> </span>--harp_frp_address<span class="w"> </span><span class="s2">&quot;localhost:8782&quot;</span><span class="w"> </span>--harp_shared_key<span class="w"> </span><span class="s2">&quot;some_very_secure_password&quot;</span><span class="w"> </span>--set-default<span class="w"> </span>--compute_device<span class="o">=</span>cuda
 </pre></div>
@@ -277,18 +280,18 @@
 <p>DeployConfig is a set of additional options in Daemon config, which are used in deployment algorithms to configure
 ExApp container.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;net&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;nextcloud_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://nextcloud.local&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;haproxy_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some_secure_password&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="nt">&quot;computeDevice&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CUDA (NVIDIA)&quot;</span><span class="p">,</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="nt">&quot;harp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">                </span><span class="nt">&quot;frp_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;localhost:8782&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;docker_socket_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;24000&quot;</span><span class="p">,</span>
-<span class="w">                </span><span class="nt">&quot;exapp_direct&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="nt">&quot;net&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;host&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;nextcloud_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://nextcloud.local&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;haproxy_password&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some_secure_password&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;computeDevice&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CUDA (NVIDIA)&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;harp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;frp_address&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;localhost:8782&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;docker_socket_port&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;24000&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;exapp_direct&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -370,7 +373,7 @@ It is possible to register additional Deploy Daemons using the same methods as d
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -380,10 +383,8 @@ It is possible to register additional Deploy Daemons using the same methods as d
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -391,23 +392,25 @@ It is possible to register additional Deploy Daemons using the same methods as d
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

@@ -11,7 +11,13 @@ OC.L10N.register(
     "Back" : "Tilbake",
     "Apply" : "Anvend",
     "Warning" : "Åtvaring",
+    "Filters" : "Filter",
     "Value" : "Verdi",
-    "Size" : "Storleik"
+    "Size" : "Storleik",
+    "Play" : "Spel",
+    "Pause" : "Pause",
+    "Settings" : "Innstillingar",
+    "All" : "Alle",
+    "Disabled" : "Deaktivert"
 },
 "nplurals=2; plural=(n != 1);");

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User management &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>User management &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Resetting a lost admin password" href="reset_admin_password.html" />
-    <link rel="prev" title="User management" href="index.html" /> 
+    <link rel="prev" title="User management" href="index.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -157,7 +160,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -233,7 +236,7 @@ username, password, email, quota, etc. of members of the group. Group admins
 are not allowed to add existing users to their groups.</p>
 </dd>
 <dt><em>Quota</em></dt><dd><p>The maximum disk space assigned to each user. Any user that exceeds the quota
-cannot upload or sync data. You have the the option to include external
+cannot upload or sync data. You have the option to include external
 storage in user quotas.</p>
 </dd>
 <dt><em>Manager</em></dt><dd><p>Every user can have one organizational manager. The manager property goes into
@@ -262,8 +265,8 @@ lower left sidebar, you may also enter the new user’s email address, and
 Nextcloud will automatically send them a notification with their new login
 information. You may edit this email using the email template editor on your
 Admin page (see <a class="reference internal" href="../configuration_server/email_configuration.html"><span class="doc">Email</span></a>).</p>
-<p>Set the <strong>Send email to new user</strong>-checkbox allows you to leave the <strong>Password</strong>
-field empty. The user will get an activation-email to set their own password.</p>
+<p>If you check the <strong>Send email to new user</strong> checkbox, you can leave the <strong>Password</strong>
+field empty. The user will receive an activation email to set their own password.</p>
 </section>
 <section id="reset-a-user-s-password">
 <h2>Reset a user’s password<a class="headerlink" href="#reset-a-user-s-password" title="Link to this heading"></a></h2>
@@ -360,7 +363,7 @@ files count against that user’s quota.</p>
 settings and files. The user can be activated any time again, without data-loss.</p>
 <p>Hover your cursor over their name on the <strong>Users</strong> page until the “…”-menu icon
 appears at the far right. After clicking on it, you will see the <strong>Disable</strong> option.</p>
-<p>The user will not longer be able to access their Nextcloud until you enable them again.
+<p>The user will no longer be able to access their Nextcloud until you enable them again.
 Also all external shares, via public link or email, will not be accessible.
 Internal shares will still be working, so that other users on Nextcloud can continue working.</p>
 <p>If you wish for internal shares to be disabled as well when a user is disabled,
@@ -416,7 +419,7 @@ persistent file shares that survive user deletions.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -426,10 +429,8 @@ persistent file shares that survive user deletions.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -437,23 +438,25 @@ persistent file shares that survive user deletions.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

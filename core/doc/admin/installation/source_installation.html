@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation on Linux &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Installation on Linux &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Installation wizard" href="installation_wizard.html" />
-    <link rel="prev" title="Preparing PHP" href="php_configuration.html" /> 
+    <link rel="prev" title="Preparing PHP" href="php_configuration.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -182,7 +185,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -223,7 +226,7 @@
 <p>In case you prefer installing from the source tarball, you can setup Nextcloud
 from scratch using a classic LAMP stack (Linux, Apache, MySQL/MariaDB, PHP).
 This document provides a complete walk-through for installing Nextcloud on
-Ubuntu 18.04 LTS Server with Apache and MariaDB, using <a class="reference external" href="https://nextcloud.com/install/">the Nextcloud .tar
+Ubuntu 24.04 LTS Server with Apache and MariaDB, using <a class="reference external" href="https://nextcloud.com/install/">the Nextcloud .tar
 archive</a>. This method is recommended to install Nextcloud.</p>
 <p>This installation guide is giving a general overview of required dependencies and their configuration. For a distribution specific setup guide have a look at the <a class="reference internal" href="example_ubuntu.html"><span class="doc">Example installation on Ubuntu 22.04 LTS</span></a> and <a class="reference internal" href="example_centos.html"><span class="doc">Example installation on CentOS 8</span></a>.</p>
 <div class="admonition note" id="prerequisites-label">
@@ -314,7 +317,7 @@ it by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a2enmod</span> <span class="n">setenvif</span>
 </pre></div>
 </div>
-<p>and apply the following modifications the configuration:</p>
+<p>and apply the following modifications to the configuration:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ProxyFCGIBackendType FPM
 
 &lt;FilesMatch remote.php&gt;
@@ -364,8 +367,17 @@ must be writable by the HTTP user. To enable <code class="docutils literal notra
 <span class="s1">&#39;htaccess.RewriteBase&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
 </pre></div>
 </div>
-<p>if it isn’t installed in a subfolder. Finally run this occ-command to update
-your .htaccess file:</p>
+<p>if it isn’t installed in a subfolder.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">htaccess.RewriteBase</span></code> must match the path relative to Apache’s DocumentRoot
+where Nextcloud is served on the backend, not the public URL prefix. In a direct
+Apache setup these are identical. Behind a reverse proxy that strips the URL
+prefix — for example <code class="docutils literal notranslate"><span class="pre">https://domain.com/nextcloud/</span></code> forwarded to
+<code class="docutils literal notranslate"><span class="pre">http://localhost:8080/</span></code> — the correct value is <code class="docutils literal notranslate"><span class="pre">/</span></code> even though the public
+URL contains <code class="docutils literal notranslate"><span class="pre">/nextcloud</span></code>.</p>
+</div>
+<p>Finally run this occ-command to update your <code class="docutils literal notranslate"><span class="pre">.htaccess</span></code> file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">nextcloud</span><span class="o">/</span><span class="n">occ</span> <span class="n">maintenance</span><span class="p">:</span><span class="n">update</span><span class="p">:</span><span class="n">htaccess</span>
 </pre></div>
 </div>
@@ -413,6 +425,19 @@ your HTTP user:</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">www-data</span></code> is the default web server user on Debian/Ubuntu systems.
+On RHEL/CentOS/Fedora use <code class="docutils literal notranslate"><span class="pre">apache</span></code>. The key requirement is that the web
+server process user has <strong>read and write access</strong> to all Nextcloud directories
+— ownership is not strictly necessary. In environments where changing ownership
+is not possible (shared hosting, Docker bind-mounts, etc.), it is sufficient to
+add the web server user to the group that owns the directories and ensure the
+directories are group-writable, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">vboxsf</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Admins of SELinux-enabled distributions may need to write new SELinux
 rules to complete their Nextcloud installation; see
 <a class="reference internal" href="#selinux-tips-label"><span class="std std-ref">SELinux configuration tips</span></a>.</p>
@@ -452,7 +477,7 @@ problems, unexplained errors, and performance problems. It is a common cause
 of <em>Gateway Timeouts</em>. Having too high of a value in relation to available
 resources (such as memory), however, will also lead to problems. The default
 value is often <code class="docutils literal notranslate"><span class="pre">5</span></code>. This greatly limits simultaneously connections to your
-Nextcloud instance and, unless you are severely resource constraints, will
+Nextcloud instance and, unless you are under severe resource constraints, will
 underutilize your hardware. Check the <a class="reference internal" href="server_tuning.html"><span class="doc">Server tuning</span></a>
 chapter for some guidance and resources for coming up with appropriate values,
 as well as other related parameters.</p>
@@ -717,7 +742,7 @@ spread the deployment of new major releases out over time.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -727,10 +752,8 @@ spread the deployment of new major releases out over time.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -738,23 +761,25 @@ spread the deployment of new major releases out over time.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

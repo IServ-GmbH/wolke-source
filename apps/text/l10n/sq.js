@@ -5,7 +5,6 @@ OC.L10N.register(
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Kartela e ngarkuar tejkalon udhëzimin MAX_FILE_SIZE që qe përcaktuar te formulari HTML",
     "No file was uploaded" : "S’u ngarkua kartelë",
     "Missing a temporary folder" : "Mungon një dosje e përkohshme",
-    "New text file" : "Skedar teksti i ri ",
     "File not found" : "S’u gjet kartelë",
     "Text" : "Tekst",
     "📝 Collaborative document editing" : "Redaktimi i dokumenteve bashkëpunuese",
@@ -32,15 +31,16 @@ OC.L10N.register(
     "Save" : "Ruaje",
     "Formatting help" : "Ndihmë formatimi",
     "Translate" : "Përkthe",
-    "Select language" : "Zgjidh gjuhën",
-    "to" : "te",
-    "Replace" : "Mbishkruaj",
     "Edit" : "Përpuno",
     "Upload" : "Ngarkoni",
     "Insert Table" : "Fut tabelë",
     "Source code" : "Kodi burim",
     "Done" : "U bë",
     "Details" : "Detajet",
-    "Choose" : "Zgjidhni"
+    "Choose" : "Zgjidhni",
+    "New text file" : "Skedar teksti i ri ",
+    "Select language" : "Zgjidh gjuhën",
+    "to" : "te",
+    "Replace" : "Mbishkruaj"
 },
 "nplurals=2; plural=(n != 1);");

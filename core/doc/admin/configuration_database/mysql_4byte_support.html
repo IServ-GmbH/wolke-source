@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enabling MySQL 4-byte support &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Enabling MySQL 4-byte support &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="BigInt (64bit) identifiers" href="bigint_identifiers.html" />
-    <link rel="prev" title="Database configuration" href="linux_database_configuration.html" /> 
+    <link rel="prev" title="Database configuration" href="linux_database_configuration.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -141,7 +144,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -170,11 +173,9 @@
 installation needs to be tweaked a bit.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This manual only covers MySQL 8 or newer and MariaDB 10.2 or newer.
-If you use MariaDB 10.2, please check
-<a class="reference external" href="https://docs.nextcloud.com/server/20/admin_manual/configuration_database/mysql_4byte_support.html#mariadb-10-2-or-earlier">this older version</a>
-of the documentation. If you use an older version of MySQL or MariaDB, please note that they are no longer supported
-by the current Nextcloud version.</p>
+<p>This guide applies only to MySQL 8 or newer and MariaDB 10.6 or newer.
+For a list of supported MySQL and MariaDB versions, see our
+<a class="reference internal" href="../installation/system_requirements.html"><span class="doc">system requirements documentation</span></a>.</p>
 </div>
 <ol class="arabic">
 <li><p>Make sure the following InnoDB settings are set on your MySQL server:</p>
@@ -266,7 +267,7 @@ $ sudo -E -u www-data php occ maintenance:mode --on
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -276,10 +277,8 @@ $ sudo -E -u www-data php occ maintenance:mode --on
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -287,23 +286,25 @@ $ sudo -E -u www-data php occ maintenance:mode --on
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

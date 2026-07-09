@@ -190,6 +190,9 @@ class MemberRequest extends MemberRequestBuilder {
 	 * @param string $singleId
 	 * @param IFederatedUser|null $initiator
 	 * @param MemberProbe|null $probe
+	 * @param int $limit
+	 * @param bool $fullDetails
+	 * @param string $search
 	 *
 	 * @return Member[]
 	 * @throws RequestBuilderException
@@ -200,6 +203,7 @@ class MemberRequest extends MemberRequestBuilder {
 		?MemberProbe $probe = null,
 		int $limit = 0,
 		bool $fullDetails = false,
+		string $search = '',
 	): array {
 		if (is_null($probe)) {
 			$probe = new MemberProbe();
@@ -207,6 +211,11 @@ class MemberRequest extends MemberRequestBuilder {
 
 		$qb = $this->getMemberSelectSql($initiator);
 		$qb->limitToCircleId($singleId);
+
+		if (!empty($search)) {
+			$qb->searchInDBField('user_id', '%' . $search . '%');
+		}
+
 		if ($limit > 0) {
 			$qb->chunk(0, $limit);
 		}
@@ -327,6 +336,19 @@ class MemberRequest extends MemberRequestBuilder {
 		if (!is_null($initiator)) {
 			$qb->leftJoinCircle(CoreQueryBuilder::MEMBER, $initiator);
 		}
+
+		return $this->getItemFromRequest($qb);
+	}
+
+
+	/**
+	 * @throws MemberNotFoundException
+	 * @throws RequestBuilderException
+	 */
+	public function getMemberByUserId(string $circleId, string $userId): Member {
+		$qb = $this->getMemberSelectSql();
+		$qb->limitToCircleId($circleId);
+		$qb->limitToUserId($userId);
 
 		return $this->getItemFromRequest($qb);
 	}

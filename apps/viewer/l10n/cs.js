@@ -130,6 +130,22 @@ OC.L10N.register(
     "Menu" : "Nabídka",
     "Width" : "Šířka",
     "Height" : "Výška",
-    "No preview available for this crop item" : "Pro tuto položku ořezu není k dispozici žádný náhled"
+    "No preview available for this crop item" : "Pro tuto položku ořezu není k dispozici žádný náhled",
+    "Restart" : "Restartovat",
+    "Play" : "Přehrát",
+    "Pause" : "Pozastavit",
+    "Current time" : "Aktuální čas",
+    "Duration" : "Trvání",
+    "Volume" : "Hlasitost",
+    "Mute" : "Ztlumit",
+    "Exit fullscreen" : "Opustit režim celé obrazovky",
+    "Settings" : "Settings",
+    "Speed" : "Rychlost",
+    "Normal" : "Normální",
+    "Start" : "Spustit",
+    "End" : "Konec",
+    "All" : "Vše",
+    "Disabled" : "Vypnuto",
+    "Enabled" : "Zapnuto"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

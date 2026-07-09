@@ -3,7 +3,7 @@
         'name' => 'nextcloud/bruteforcesttings',
         'pretty_version' => 'dev-stable32',
         'version' => 'dev-stable32',
-        'reference' => 'e17b6371d887fb726fba8483dafa6dd560131ba9',
+        'reference' => '721ee0ebd442e3a847d74ecfb0313d87f71b72f5',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'nextcloud/bruteforcesttings' => array(
             'pretty_version' => 'dev-stable32',
             'version' => 'dev-stable32',
-            'reference' => 'e17b6371d887fb726fba8483dafa6dd560131ba9',
+            'reference' => '721ee0ebd442e3a847d74ecfb0313d87f71b72f5',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

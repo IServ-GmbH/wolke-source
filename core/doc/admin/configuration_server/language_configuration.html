@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Language &amp; Locale &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Language &amp; Locale &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Logging" href="logging_configuration.html" />
-    <link rel="prev" title="Linking external sites" href="external_sites.html" /> 
+    <link rel="prev" title="Linking external sites" href="external_sites.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -161,7 +164,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -190,7 +193,8 @@ starts with a given language, you can set a <strong>default_language</strong> pa
 <code class="file docutils literal notranslate"><span class="pre">config/config.php</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The default_language parameter is only used when the browser does not send any language, and the user hasn’t configured their own language preferences. This sets the default language on your Nextcloud server, using ISO_639-1 language codes such as en for English, de for German, and fr for French. Nextcloud has two distinguished language codes for German, de and de_DE. de is used for informal German and de_DE for formal German. By setting this value to de_DE, you can enforce the formal version of German unless the user has chosen something different explicitly.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">default_language</span></code> parameter only applies when the browser sends no language preference and the user has not set their own.
+Accepts ISO 639-1 codes such as <code class="docutils literal notranslate"><span class="pre">en</span></code> (English), <code class="docutils literal notranslate"><span class="pre">fr</span></code> (French), <code class="docutils literal notranslate"><span class="pre">de</span></code> (informal German), or <code class="docutils literal notranslate"><span class="pre">de_DE</span></code> (formal German).</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;default_language&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;en&quot;</span><span class="p">,</span>
 </pre></div>
@@ -270,7 +274,7 @@ locales.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -280,10 +284,8 @@ locales.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -291,23 +293,25 @@ locales.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

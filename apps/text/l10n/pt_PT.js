@@ -10,7 +10,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Não foi possível escrever o ficheiro no disco.",
     "A PHP extension stopped the file upload" : "Uma extensão PHP parou o carregamento do ficheiro",
     "No file uploaded or file size exceeds maximum of %s" : "Nenhum ficheiro carregado ou o tamanho do ficheiro excede o máximo de%s",
-    "New text file" : "Novo ficheiro de texto",
     "File not found" : "Ficheiro não encontrado",
     "Text" : "Texto",
     "📝 Collaborative document editing" : "📝 Edição colaborativa de documento",
@@ -46,8 +45,6 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Translate" : "Traduzir",
     "Delete task" : "Eliminar tarefa",
-    "to" : "Para",
-    "Replace" : "Substitua",
     "Edit" : "Editar",
     "Upload" : "Enviar",
     "Source code" : "Código fonte",
@@ -63,6 +60,9 @@ OC.L10N.register(
     "Formatting" : "Formação ",
     "Choose" : "Escolher",
     "Choose {file}" : "Escolher {file}",
-    "Add folder description" : "Adicionar descrição da pasta"
+    "Add folder description" : "Adicionar descrição da pasta",
+    "New text file" : "Novo ficheiro de texto",
+    "to" : "Para",
+    "Replace" : "Substitua"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

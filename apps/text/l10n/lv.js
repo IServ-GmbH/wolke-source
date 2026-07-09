@@ -9,7 +9,6 @@ OC.L10N.register(
     "Missing a temporary folder" : "Trūkst pagaidu mapes",
     "Could not write file to disk" : "Nevarēja ierakstīt datni diskā",
     "A PHP extension stopped the file upload" : "PHP paplašinājums apturēja datnes augšupielādi",
-    "text document" : "teksta dokuments",
     "Editing session has expired. Please reload the page." : "Labošanas sesija ir beigusies. Lūgums pārlādēt lapu.",
     "{user} has mentioned you in the text document {node}" : "{user} pieminēja Tevi teksta dokumentā {node}",
     "File not found" : "Datne nav atrasta",
@@ -40,9 +39,6 @@ OC.L10N.register(
     "Save" : "Saglabāt",
     "Update link" : "Atjaunināt saiti",
     "Translate" : "Tulkot",
-    "Select language" : "Atlasīt valodu",
-    "to" : "kam",
-    "Replace" : "Aizvietot",
     "Edit" : "Labot",
     "Upload" : "Augšupielādēt",
     "Insert Table" : "Ievietot tabulu",
@@ -52,6 +48,10 @@ OC.L10N.register(
     "Insert link" : "Ievietot saiti",
     "Command" : "Komanda",
     "Choose" : "Izvēlēties",
-    "Add folder description" : "Pievienot mapes aprakstu"
+    "Add folder description" : "Pievienot mapes aprakstu",
+    "text document" : "teksta dokuments",
+    "Select language" : "Atlasīt valodu",
+    "to" : "kam",
+    "Replace" : "Aizvietot"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

@@ -1,5 +1,5 @@
 diff --git apps/settings/lib/Controller/AuthSettingsController.php apps/settings/lib/Controller/AuthSettingsController.php
-index b507645..20d984a 100644
+index 115e65b..39e3b50 100644
 --- apps/settings/lib/Controller/AuthSettingsController.php
 +++ apps/settings/lib/Controller/AuthSettingsController.php
 @@ -25,6 +25,7 @@ use OCP\Authentication\Exceptions\InvalidTokenException;
@@ -46,7 +46,7 @@ index b507645..20d984a 100644
  
 @@ -76,6 +83,12 @@ class AuthSettingsController extends Controller {
  	#[NoAdminRequired]
- 	#[PasswordConfirmationRequired]
+ 	#[PasswordConfirmationRequired(strict: true)]
  	public function create($name) {
 +
 +		// Don't create app auth token if disallowed in configuration.

@@ -207,15 +207,11 @@ class DocumentService {
 	 */
 	public function addStep(Document $document, Session $session, array $steps, int $version, ?int $recoveryAttempt, ?string $shareToken): array {
 		$documentId = $session->getDocumentId();
-		$readOnly = $this->isReadOnlyCached($session, $shareToken);
 		$stepsToInsert = [];
 		$stepsIncludeQuery = false;
 		$documentState = null;
 		foreach ($steps as $step) {
 			$message = YjsMessage::fromBase64($step);
-			if ($readOnly && $message->isUpdate()) {
-				continue;
-			}
 			// Filter out query steps as they would just trigger clients to send their steps again
 			if ($message->getYjsMessageType() === YjsMessage::YJS_MESSAGE_SYNC && $message->getYjsSyncType() === YjsMessage::YJS_MESSAGE_SYNC_STEP1) {
 				$stepsIncludeQuery = true;
@@ -224,10 +220,10 @@ class DocumentService {
 			}
 		}
 		if (count($stepsToInsert) > 0) {
-			if ($readOnly) {
-				throw new NotPermittedException('Read-only client tries to push steps with changes');
+			$file = $this->getFileForSession($session, $shareToken);
+			if (!$this->isReadOnly($file, $shareToken)) {
+				$this->insertSteps($document, $session, $stepsToInsert);
 			}
-			$this->insertSteps($document, $session, $stepsToInsert);
 		}
 
 		// By default, send all steps the user has not received yet.
@@ -372,7 +368,7 @@ class DocumentService {
 		}
 
 		if ($this->isReadOnly($file, $shareToken)) {
-			return $document;
+			throw new NotPermittedException('Read-only permission cannot save document changes. Please reload the page.');
 		}
 
 		$this->assertNoOutsideConflict($document, $file, $force);
@@ -595,29 +591,14 @@ class DocumentService {
 		throw new \InvalidArgumentException('No proper share data');
 	}
 
-	public function isReadOnlyCached(Session $session, ?string $shareToken = null): bool {
-		$cacheKey = 'read-only-' . $session->getId();
-		$isReadOnly = $this->cache->get($cacheKey);
-		if ($isReadOnly === null) {
-			$file = $this->getFileForSession($session, $shareToken);
-			$isReadOnly = $this->isReadOnly($file, $shareToken);
-			$this->cache->set($cacheKey, $isReadOnly, 60 * 5);
-			return $isReadOnly;
-		}
-
-		return $isReadOnly;
-	}
-
 	public function isReadOnly(File $file, ?string $token): bool {
-		$readOnly = true;
+		$readOnly = !$file->isUpdateable();
 		if ($token !== null) {
 			try {
 				$this->checkSharePermissions($token, Constants::PERMISSION_UPDATE);
-				$readOnly = false;
 			} catch (NotFoundException $e) {
+				$readOnly = true;
 			}
-		} else {
-			$readOnly = !$file->isUpdateable();
 		}
 
 		$lockInfo = $this->getLockInfo($file);

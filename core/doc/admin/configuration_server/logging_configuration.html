@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Logging &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Logging &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="OAuth2" href="oauth2.html" />
-    <link rel="prev" title="Language &amp; Locale" href="language_configuration.html" /> 
+    <link rel="prev" title="Language &amp; Locale" href="language_configuration.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -178,7 +181,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -225,7 +228,7 @@
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Until version Nextcloud 25 log entries were prefixed with <code class="docutils literal notranslate"><span class="pre">[owncloud]</span></code>. From 26 onwards messages start with <code class="docutils literal notranslate"><span class="pre">[nextcloud]</span></code>.</p>
+<p>Until Nextcloud 25, log entries were prefixed with <code class="docutils literal notranslate"><span class="pre">[owncloud]</span></code>. From 26 onwards, log entries start with <code class="docutils literal notranslate"><span class="pre">[nextcloud]</span></code>.</p>
 </div>
 </section>
 <section id="file">
@@ -332,7 +335,7 @@ date format in the example below, the date/time format will be written in the fo
 <h3>Log level interaction<a class="headerlink" href="#log-level-interaction" title="Link to this heading"></a></h3>
 <p>If system <code class="docutils literal notranslate"><span class="pre">loglevel</span></code> in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> is set to <code class="docutils literal notranslate"><span class="pre">2</span></code> or higher, audit logging needs to be triggered explicitly by adding the following setting to <code class="docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;log.condition&quot;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s2">&quot;apps&quot;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">&quot;admin_audit&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;apps&quot;</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">&quot;admin_audit&quot;</span><span class="p">],</span>
 <span class="p">],</span>
 </pre></div>
 </div>
@@ -343,7 +346,7 @@ date format in the example below, the date/time format will be written in the fo
 <p>The built-in NC <code class="docutils literal notranslate"><span class="pre">logreader</span></code> app (which is what provides the <em>Administration settings-&gt;Logging</em> interface) only accesses the file-based <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code>. The <strong>admin_audit</strong> app log output, however, can be integrated into the web interface by configuring it to <em>also</em> log to the <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code>.</p>
 <p>Add the following to your <code class="docutils literal notranslate"><span class="pre">config.php</span></code> (adjusting the path to your own <code class="docutils literal notranslate"><span class="pre">nextcloud.log</span></code> path):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;log.condition&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
-        <span class="s1">&#39;apps&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span> <span class="s1">&#39;admin_audit&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;apps&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span> <span class="s1">&#39;admin_audit&#39;</span><span class="p">],</span>
 <span class="p">],</span>
 <span class="s1">&#39;logfile_audit&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/var/www/html/data/nextcloud.log&#39;</span><span class="p">,</span>
 </pre></div>
@@ -397,7 +400,7 @@ date format in the example below, the date/time format will be written in the fo
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -407,10 +410,8 @@ date format in the example below, the date/time format will be written in the fo
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -418,23 +419,25 @@ date format in the example below, the date/time format will be written in the fo
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

@@ -5,7 +5,6 @@ OC.L10N.register(
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "El archivo cargado excede el valor especificado de la directiva MAX_FILE_SIZE en la forma de HTML",
     "No file was uploaded" : "No se cargó el archivo",
     "Missing a temporary folder" : "Falta una carpeta temporal",
-    "New text file" : "Nuevo archivo de texto",
     "Text" : "Texto",
     "Guest" : "Invitado",
     "you" : "tú",
@@ -23,13 +22,14 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Formatting help" : "Ayuda de formato",
     "Translate" : "Traducir",
-    "Select language" : "Seleccionar idioma",
-    "to" : "para",
-    "Replace" : "Reemplazar",
     "Edit" : "Editar",
     "Upload" : "Cargar",
     "Source code" : "Código fuente",
     "Details" : "Detalles",
-    "Choose" : "Seleccionar"
+    "Choose" : "Seleccionar",
+    "New text file" : "Nuevo archivo de texto",
+    "Select language" : "Seleccionar idioma",
+    "to" : "para",
+    "Replace" : "Reemplazar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

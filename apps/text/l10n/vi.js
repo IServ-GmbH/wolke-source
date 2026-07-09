@@ -11,8 +11,6 @@ OC.L10N.register(
     "A PHP extension stopped the file upload" : "Một phần mở rộng của PHP đã dừng tải tệp lên",
     "No file uploaded or file size exceeds maximum of %s" : "Chưa có tệp nào được tải lên hoặc kích thước tệp vượt quá giới hạn của %s",
     "Nextcloud Text" : "Văn bản vWorkspace",
-    "text document" : "tài liệu văn bản",
-    "New text file" : "Tập tin văn bản mới",
     "Create new text file" : "Tạo tập tin văn bản mới",
     "{user} has mentioned you in the text document {node}" : "{user} đã đề cập đến bạn trong tài liệu văn bản {node}",
     "This file cannot be displayed as download is disabled by the share" : "Không thể hiển thị tệp này vì tính năng chia sẻ đã tắt tính năng tải xuống",
@@ -73,8 +71,6 @@ OC.L10N.register(
     "Nextcloud Assistant" : "Trợ lý Nextcloud",
     "Show result" : "Hiển thị kết quả",
     "Delete task" : "Xóa nhiệm vụ",
-    "to" : "đến",
-    "Replace" : "Thay thế",
     "Edit" : "Chỉnh sửa",
     "Upload" : "Tải lên",
     "Source code" : "Mã nguồn",
@@ -94,7 +90,11 @@ OC.L10N.register(
     "Select file or folder to link to" : "Chọn tập tin hoặc thư mục để liên kết đến",
     "Choose" : "Chọn",
     "Choose {file}" : "Chọn {file}",
+    "text document" : "tài liệu văn bản",
+    "New text file" : "Tập tin văn bản mới",
     "Close outline view" : "Đóng chế độ xem phác thảo",
-    "Outline" : "Đường viền"
+    "Outline" : "Đường viền",
+    "to" : "đến",
+    "Replace" : "Thay thế"
 },
 "nplurals=1; plural=0;");

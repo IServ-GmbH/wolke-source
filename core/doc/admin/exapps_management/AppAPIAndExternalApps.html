@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AppAPI and External Apps &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>AppAPI and External Apps &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -39,7 +39,10 @@ window.addEventListener("load", () => mermaid.run());
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Deployment configurations" href="DeployConfigurations.html" />
-    <link rel="prev" title="ExApps management" href="index.html" /> 
+    <link rel="prev" title="ExApps management" href="index.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -160,7 +163,7 @@ window.addEventListener("load", () => mermaid.run());
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -328,45 +331,45 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
 <div class="line"><a class="reference external" href="https://github.com/fatedier/frp">FRP</a> is used to create a tunnel between the ExApp and the HaRP container so there is no need for the ExApp containers to expose any ports to the host or to be reachable from the Nextcloud server.</div>
 <div class="line">The Nextcloud server can reach the ExApp containers through the HaRP container.</div>
 </div>
-<p>HaRP has an additional benefit of being able to proxy requests coming from the Web interface or an API to the ExApp container without being proxies through the Nextcloud server, saving resources, improving performance and supporting additional protocols like WebSockets.</p>
+<p>HaRP has an additional benefit of being able to proxy requests coming from the Web interface or an API to the ExApp container without being proxied through the Nextcloud server, saving resources, improving performance and supporting additional protocols like WebSockets.</p>
 <p>HaRP is the recommended way to run ExApps, but if you are not able to use it, Docker Socket Proxy is still supported.</p>
 <p>Frontend requests in case of Docker Socket Proxy:</p>
 <pre  class="mermaid">
         graph LR;
-        subgraph Browser
-                A[Frontend]
-        end
+    subgraph Browser
+        A[Frontend]
+    end
 
-        B[Proxy]
+    B[Proxy]
 
-        subgraph Services behind the proxy
-                C[Docker Socket Proxy]
-                D[ExApp]
-                E[Nextcloud Server / AppAPI]
-        end
+    subgraph Services behind the proxy
+        C[Docker Socket Proxy]
+        D[ExApp]
+        E[Nextcloud Server / AppAPI]
+    end
 
-        A --&gt; B
-        B --&gt;|Request to an ExApp| E --Converted to ExApp auth--&gt; D
-        B --&gt;|All other usual requests| E
+    A --&gt; B
+    B --&gt;|Request to an ExApp| E --Converted to ExApp auth--&gt; D
+    B --&gt;|All other usual requests| E
     </pre><p>Frontend requests in case of HaRP:</p>
 <pre  class="mermaid">
         graph LR;
-        subgraph Browser
-                A[Frontend]
-        end
+    subgraph Browser
+        A[Frontend]
+    end
 
-        B[Proxy]
+    B[Proxy]
 
-        subgraph Services behind the proxy
-                C[HaRP]
-                D[ExApp]
-                E[Nextcloud Server / AppAPI]
-        end
+    subgraph Services behind the proxy
+        C[HaRP]
+        D[ExApp]
+        E[Nextcloud Server / AppAPI]
+    end
 
-        B --All other usual requests--&gt; E
-        A --&gt; B
-        B --Direct request to an ExApp--&gt; C --Converted to ExApp auth--&gt; D
-        C --User auth validation--&gt; E
+    B --All other usual requests--&gt; E
+    A --&gt; B
+    B --Direct request to an ExApp--&gt; C --Converted to ExApp auth--&gt; D
+    C --User auth validation--&gt; E
     </pre></section>
 </section>
 
@@ -395,7 +398,7 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -405,10 +408,8 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -416,23 +417,25 @@ If successful, the ExApp will be displayed under the “Your apps” list.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

@@ -1,8 +1,8 @@
 diff --git lib/private/AppFramework/DependencyInjection/DIContainer.php lib/private/AppFramework/DependencyInjection/DIContainer.php
-index 76261fe..cf1103f 100644
+index 188234a..2a8fe48 100644
 --- lib/private/AppFramework/DependencyInjection/DIContainer.php
 +++ lib/private/AppFramework/DependencyInjection/DIContainer.php
-@@ -182,6 +182,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
+@@ -181,6 +181,11 @@ class DIContainer extends SimpleContainer implements IAppContainer {
  
  			$dispatcher = new MiddlewareDispatcher();
  

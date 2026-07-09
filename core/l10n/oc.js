@@ -1,6 +1,7 @@
 OC.L10N.register(
     "core",
     {
+    "Log out" : "Se desconnectar",
     "Please select a file." : "Seleccionatz un fichièr.",
     "File is too big" : "Fichièr tròp pesuc",
     "The selected file is not an image." : "Lo fichièr seleccionat es pas un imatge.",
@@ -57,9 +58,10 @@ OC.L10N.register(
     "Due to a security bug we had to remove some of your link shares. Please see the link for more information." : "A causa d’una avaria de seguretat nos calguèt tirar certans de vòstres ligams de partiment. Vejatz lo ligam per mai d’informacions.",
     "Learn more ↗" : "Ne saber mai ↗",
     "Unknown" : "Desconegut",
-    "Apps" : "Aplicacions",
-    "More apps" : "Mai d’aplicacions",
     "_{count} notification_::_{count} notifications_" : ["{count} notificacion","{count} notificacions"],
+    "More apps" : "Mai d’aplicacions",
+    "Settings" : "Paramètres",
+    "Apps" : "Aplicacions",
     "No" : "No",
     "Yes" : "Yes",
     "Grant access" : "Donar accès",

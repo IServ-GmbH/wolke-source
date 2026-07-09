@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Server tuning &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Server tuning &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Example installation on Ubuntu 22.04 LTS" href="example_ubuntu.html" />
-    <link rel="prev" title="Hardening and security guidance" href="harden_server.html" /> 
+    <link rel="prev" title="Hardening and security guidance" href="harden_server.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -173,7 +176,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -296,7 +299,7 @@ more processes to run in parallel to handle the requests.</p>
 </section>
 <section id="enable-php-opcache">
 <h2>Enable PHP OPcache<a class="headerlink" href="#enable-php-opcache" title="Link to this heading"></a></h2>
-<p>The <a class="reference external" href="https://php.net/manual/en/intro.opcache.php">OPcache</a> improves the performance of PHP applications by caching precompiled bytecode.</p>
+<p>The <a class="reference external" href="https://www.php.net/manual/en/book.opcache.php">OPcache</a> improves the performance of PHP applications by caching precompiled bytecode.</p>
 <section id="revalidation">
 <h3>Revalidation<a class="headerlink" href="#revalidation" title="Link to this heading"></a></h3>
 <p>OPcache revalidation in PHP handles changes made to PHP application code stored on disk. Code changes occur whenever:</p>
@@ -386,7 +389,7 @@ Also make sure to add the capability <cite>SYS_NICE</cite> via <cite>–cap-add=
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For large instance, you should follow <cite>Imaginary’s scalability recommendation &lt;https://github.com/h2non/imaginary#scalability&gt;</cite>.</p>
+<p>For large instance, you should follow <a class="reference external" href="https://github.com/h2non/imaginary#scalability">Imaginary’s scalability recommendation</a>.</p>
 </div>
 <section id="settings">
 <h3>Settings<a class="headerlink" href="#settings" title="Link to this heading"></a></h3>
@@ -432,7 +435,7 @@ You can change between jpeg and webp, the default is jpeg:</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -442,10 +445,8 @@ You can change between jpeg and webp, the default is jpeg:</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -453,23 +454,25 @@ You can change between jpeg and webp, the default is jpeg:</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

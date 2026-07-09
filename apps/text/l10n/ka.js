@@ -10,7 +10,6 @@ OC.L10N.register(
     "Could not write file to disk" : "Could not write file to disk",
     "A PHP extension stopped the file upload" : "A PHP extension stopped the file upload",
     "No file uploaded or file size exceeds maximum of %s" : "No file uploaded or file size exceeds maximum of %s",
-    "New text file" : "New text file",
     "File not found" : "File not found",
     "Text" : "Text",
     "Reload" : "Reload",
@@ -36,11 +35,6 @@ OC.L10N.register(
     "Translate" : "Translate",
     "Nextcloud Assistant" : "Nextcloud-ის ასისტენტი",
     "Delete task" : "Delete task",
-    "Translate from" : "Translate from",
-    "Select language" : "Select language",
-    "to" : "to",
-    "Translate to" : "Translate to",
-    "Replace" : "Replace",
     "Edit" : "Edit",
     "Upload" : "Upload",
     "Copy code block" : "Copy code block",
@@ -54,6 +48,12 @@ OC.L10N.register(
     "Formatting" : "Formatting",
     "Select file or folder to link to" : "Select file or folder to link to",
     "Choose" : "Choose",
-    "Choose {file}" : "Choose {file}"
+    "Choose {file}" : "Choose {file}",
+    "New text file" : "New text file",
+    "Translate from" : "Translate from",
+    "Select language" : "Select language",
+    "to" : "to",
+    "Translate to" : "Translate to",
+    "Replace" : "Replace"
 },
 "nplurals=2; plural=(n!=1);");

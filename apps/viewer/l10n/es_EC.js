@@ -110,6 +110,18 @@ OC.L10N.register(
     "Actual size (100%)" : "Tamaño real (100%)",
     "Fit size" : "Ajustar tamaño",
     "Menu" : "Menú",
-    "Height" : "Altura"
+    "Height" : "Altura",
+    "Restart" : "Reiniciar",
+    "Pause" : "Pausar",
+    "Duration" : "Duración",
+    "Volume" : "Volumen",
+    "Mute" : "Silenciar",
+    "Exit fullscreen" : "Salir de la pantalla completa",
+    "Settings" : "Ajustes",
+    "Normal" : "Normal",
+    "End" : "Fin",
+    "All" : "Todos",
+    "Disabled" : "Deshabilitado",
+    "Enabled" : "Habilitado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

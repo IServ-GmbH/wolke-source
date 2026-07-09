@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User authentication with LDAP &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>User authentication with LDAP &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="LDAP user cleanup" href="user_auth_ldap_cleanup.html" />
-    <link rel="prev" title="Two-factor authentication" href="two_factor-auth.html" /> 
+    <link rel="prev" title="Two-factor authentication" href="two_factor-auth.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -121,7 +124,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#expert-settings">Expert settings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#testing-the-configuration">Testing the configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#additional-configuration-options-via-occ">Additional configuration options via occ</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#attribute-update-interval">Attribute update interval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#background-sync-interval">Background sync interval</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#administrative-group-mapping">Administrative Group mapping</a></li>
 </ul>
 </li>
@@ -190,7 +193,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -662,7 +665,7 @@ behavior.</p>
 </ul>
 </dd>
 <dt>User Home Folder Naming Rule:</dt><dd><p>By default, the Nextcloud server creates the user directory in your Nextcloud
-data directory and gives it the Nextcloud username, .e.g <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud/data/alice</span></code>. You may want to override this setting and name it after an LDAP
+data directory and gives it the Nextcloud username, e.g. <code class="docutils literal notranslate"><span class="pre">/var/www/nextcloud/data/alice</span></code>. You may want to override this setting and name it after an LDAP
 attribute value. The attribute can also return an absolute path, e.g.
 <code class="docutils literal notranslate"><span class="pre">/mnt/storage43/alice</span></code>. Leave it empty for default behavior.</p>
 <ul class="simple">
@@ -681,7 +684,7 @@ attribute value. The attribute can also return an absolute path, e.g.
 <figure class="align-default">
 <img alt="User Profile Attributes." src="../_images/ldap-advanced-4-attributes.png" />
 </figure>
-<p>After configuring those attributes, the User Profile data will be overwritten with the according data from LDAP.  The checksum of data from LDAP will be stored in user settings <code class="docutils literal notranslate"><span class="pre">user_ldap</span></code>, <code class="docutils literal notranslate"><span class="pre">lastProfileChecksum</span></code> and profile update is skipped as long as data from LDAP doesn’t change.  If <code class="docutils literal notranslate"><span class="pre">memcache.distributed</span></code> is enabled in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> the checksum will be cached and the checking will be skipped, as long as the cached value exists (expires after <code class="docutils literal notranslate"><span class="pre">ldapCacheTTL</span></code> seconds).</p>
+<p>After configuring those attributes, the User Profile data will be overwritten with the corresponding data from LDAP.  The checksum of data from LDAP will be stored in user settings <code class="docutils literal notranslate"><span class="pre">user_ldap</span></code>, <code class="docutils literal notranslate"><span class="pre">lastProfileChecksum</span></code> and profile update is skipped as long as data from LDAP doesn’t change.  If <code class="docutils literal notranslate"><span class="pre">memcache.distributed</span></code> is enabled in <code class="docutils literal notranslate"><span class="pre">config.php</span></code> the checksum will be cached and the checking will be skipped, as long as the cached value exists (expires after <code class="docutils literal notranslate"><span class="pre">ldapCacheTTL</span></code> seconds).</p>
 <dl class="simple">
 <dt>Please be aware:</dt><dd><ul class="simple">
 <li><p>The user can change the data in profile, but it will get overwritten if changed in LDAP</p></li>
@@ -747,7 +750,7 @@ Multi line postalAddress format will get reformatted, DOLLAR sign delimiter gets
 </dd>
 <dt>Headline Field:</dt><dd><p>The LDAP attribute holding the users headline.</p>
 </dd>
-<dt>Biography Field:</dt><dd><p>The LDAP attribute holding the users about i.e. short biography.
+<dt>Biography Field:</dt><dd><p>The LDAP attribute holding the user’s biography (short description).
 Multi line value with unix LF line ending.
 Windows CRLF and Macintosh CR line endings will be replaced with unix LF line ending.</p>
 </dd>
@@ -773,7 +776,7 @@ configuration should be well-tested before starting production use.</p>
 <dt>Internal Username:</dt><dd><p>The internal username is the identifier in Nextcloud for LDAP users. By default
 it will be created from the UUID attribute. The UUID attribute ensures that
 the username is unique, and that characters do not need to be converted. Only
-these characters are allowed: [a-zA-Z0-9_.&#64;-]. Other characters are
+these characters are allowed: <code class="docutils literal notranslate"><span class="pre">[a-zA-Z0-9_.&#64;-]</span></code>. Other characters are
 replaced with their ASCII equivalents, or are simply omitted.</p>
 <p>The LDAP backend ensures that there are no duplicate internal usernames in
 Nextcloud, i.e. that it is checking all other activated user backends
@@ -841,22 +844,15 @@ users and groups are fetched correctly on the Users page.</p>
 <section id="additional-configuration-options-via-occ">
 <h2>Additional configuration options via occ<a class="headerlink" href="#additional-configuration-options-via-occ" title="Link to this heading"></a></h2>
 <p>Few configuration settings can only be set on command line via <code class="docutils literal notranslate"><span class="pre">occ</span></code>.</p>
-<section id="attribute-update-interval">
-<h3>Attribute update interval<a class="headerlink" href="#attribute-update-interval" title="Link to this heading"></a></h3>
-<p>The LDAP backend will update user information that is used within Nextcloud
-with the values provided by the LDAP server. For instance these are email,
-quota or the avatar. This happens on every login, the first detection of a user
-from LDAP and regularly by a background job.</p>
-<p>The interval value determines the time between updates of the values and is
-used to avoid frequent overhead, including time-expensive write actions to
-the database.</p>
-<p>The interval is described in seconds and it defaults to 86400 equalling a day.
-It is not a per-configuration option.</p>
-<p>The value can be modified by:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">user_ldap</span> <span class="n">updateAttributesInterval</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">86400</span>
-</pre></div>
-</div>
-<p>A value of 0 will update it on every of the named occasions.</p>
+<section id="background-sync-interval">
+<h3>Background sync interval<a class="headerlink" href="#background-sync-interval" title="Link to this heading"></a></h3>
+<p>The LDAP backend updates user attributes (email, quota, avatar, and others) on
+every login, on first detection of a new user, and periodically via a background
+job.</p>
+<p>The background job recalculates its run interval after each cycle. The goal is
+to process every known LDAP user approximately once per day. The interval is
+derived from the total number of mapped users and the smallest configured LDAP
+paging size, then clamped to a minimum of 30 minutes and a maximum of 12 hours.</p>
 </section>
 <section id="administrative-group-mapping">
 <h3>Administrative Group mapping<a class="headerlink" href="#administrative-group-mapping" title="Link to this heading"></a></h3>
@@ -1127,7 +1123,7 @@ technical accounts.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -1137,10 +1133,8 @@ technical accounts.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -1148,23 +1142,25 @@ technical accounts.</p>
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

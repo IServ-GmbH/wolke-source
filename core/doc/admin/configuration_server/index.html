@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nextcloud configuration &mdash; Nextcloud latest Administration Manual latest documentation</title>
+  <title>Nextcloud configuration &mdash; Nextcloud 32 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,10 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Warnings on admin page" href="security_setup_warnings.html" />
-    <link rel="prev" title="Splitting databases" href="../configuration_database/splitting.html" /> 
+    <link rel="prev" title="Splitting databases" href="../configuration_database/splitting.html" />
+   
+  <meta name="robots" content="noindex, follow" />
+
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -155,7 +158,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud latest Administration Manual</a>
+          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -189,6 +192,7 @@
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html#your-web-server-is-not-set-up-properly-to-resolve-well-known-caldav-or-well-known-carddav">Your Web server is not set up properly to resolve /.well-known/caldav/ or /.well-known/carddav/</a></li>
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html#some-files-have-not-passed-the-integrity-check">Some files have not passed the integrity check</a></li>
 <li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html#your-database-does-not-run-with-read-committed-transaction-isolation-level">Your database does not run with “READ COMMITTED” transaction isolation level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="security_setup_warnings.html#the-host-prefix-is-not-used-for-the-cookie-name">The “__Host-” prefix is not used for the cookie name</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a><ul>
@@ -198,6 +202,7 @@
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#modifying">Modifying</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#defaults">Defaults</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#multiple-merged-configuration-files">Multiple/Merged Configuration Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#environment-variables">Environment Variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#examples">Examples</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#default-parameters">Default Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#user-experience">User Experience</a></li>
@@ -271,15 +276,15 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="caching_configuration.html">Memory caching</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#recommendations-based-on-type-of-deployment">Recommendations based on type of deployment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#id1">APCu</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#id2">Redis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#install-redis-label">Memcached</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#apcu">APCu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#redis">Redis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#memcached">Memcached</a></li>
 <li class="toctree-l2"><a class="reference internal" href="caching_configuration.html#cache-directory-location">Cache Directory location</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dashboard_configuration.html">Dashboard app</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html#enabling-the-dashboard-app">Enabling the dashboard app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html#configuring-your-nextcloud-for-the-activity-app">Configuring your Nextcloud for the activity app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dashboard_configuration.html#configuring-your-nextcloud-for-the-dashboard-app">Configuring your Nextcloud for the dashboard app</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="domain_change.html">Domain Change</a></li>
@@ -317,6 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html#add-an-oauth2-application">Add an OAuth2 Application</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html#the-access-token">The access token</a></li>
 <li class="toctree-l2"><a class="reference internal" href="oauth2.html#security-considerations">Security considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oauth2.html#skipping-pre-login-warning">Skipping pre-login warning</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a><ul>
@@ -370,7 +376,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ latest
+      ☁️ 32
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -380,10 +386,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/latest/admin_manual"
              
-             style="color: var(--dark-link-color);"
-             
           >
-            latest
+            35 (latest)
           </a>
         </dd>
         
@@ -391,23 +395,25 @@
           <a href="https://docs.nextcloud.com/server/stable/admin_manual"
              
           >
-            stable
+            34 (stable)
+          </a>
+        </dd>
+        
+        <dd style="width: 32%">
+          <a href="https://docs.nextcloud.com/server/33/admin_manual"
+             
+          >
+            33
           </a>
         </dd>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
              
-          >
-            32
-          </a>
-        </dd>
-        
-        <dd style="width: 32%">
-          <a href="https://docs.nextcloud.com/server/31/admin_manual"
+             style="color: var(--dark-link-color);"
              
           >
-            31
+            32
           </a>
         </dd>
         

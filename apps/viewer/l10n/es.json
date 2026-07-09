@@ -17,6 +17,7 @@
     "Your browser does not support videos." : "Tu navegador no soporta videos.",
     "This file no longer exists" : "Este archivo ya no existe",
     "There is no plugin available to display this file type" : "No hay plugin disponible para mostrar este tipo de archivo",
+    "Failed to save file before download" : "Fallo al guardar el archivo antes de descargar",
     "Edit" : "Editar",
     "Exit full screen" : "Salir de pantalla completa",
     "Full screen" : "Pantalla completa",
@@ -127,6 +128,22 @@
     "Menu" : "Menú",
     "Width" : "Anchura",
     "Height" : "Altura",
-    "No preview available for this crop item" : "Previsualización no disponible para este recorte"
+    "No preview available for this crop item" : "Previsualización no disponible para este recorte",
+    "Restart" : "Reiniciar",
+    "Play" : "Reproducir",
+    "Pause" : "Pausar",
+    "Current time" : "Hora actual",
+    "Duration" : "Duración",
+    "Volume" : "Volumen",
+    "Mute" : "Silenciar",
+    "Exit fullscreen" : "Salir de pantalla completa",
+    "Settings" : "Ajustes",
+    "Speed" : "Velocidad",
+    "Normal" : "Normal",
+    "Start" : "Iniciar",
+    "End" : "Final",
+    "All" : "Todo",
+    "Disabled" : "Deshabilitado",
+    "Enabled" : "Habilitado"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
