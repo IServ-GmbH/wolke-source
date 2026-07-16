@@ -1,0 +1,40 @@
+diff --git apps/dav/lib/CardDAV/Converter.php apps/dav/lib/CardDAV/Converter.php
+index 30dba99..61cae6d 100644
+--- apps/dav/lib/CardDAV/Converter.php
++++ apps/dav/lib/CardDAV/Converter.php
+@@ -10,6 +10,7 @@ namespace OCA\DAV\CardDAV;
+ use DateTimeImmutable;
+ use Exception;
+ use OCP\Accounts\IAccountManager;
++use OCP\IAvatarManager;
+ use OCP\IImage;
+ use OCP\IURLGenerator;
+ use OCP\IUser;
+@@ -25,6 +26,7 @@ class Converter {
+ 		private IUserManager $userManager,
+ 		private IURLGenerator $urlGenerator,
+ 		private LoggerInterface $logger,
++		private IAvatarManager $avatarManager,
+ 	) {
+ 	}
+ 
+@@ -178,7 +180,18 @@ class Converter {
+ 
+ 	private function getAvatarImage(IUser $user): ?IImage {
+ 		try {
+-			return $user->getAvatarImage(512);
++			$avatar = $this->avatarManager->getAvatar($user->getUID());
++			$image = $avatar->get(512);
++			if ($image === false) {
++				return null;
++			}
++			// Skip generated avatars: they only render the initials of the display name, which every consumer can derive from FN locally.
++			// Embedding them bloats the (federated) system address book (#95846).
++			// isCustomAvatar() is only reliable after get() above, which backfills the 'generated' flag for avatars from older versions.
++			if (!$avatar->isCustomAvatar()) {
++				return null;
++			}
++			return $image;
+ 		} catch (Exception $ex) {
+ 			return null;
+ 		}
