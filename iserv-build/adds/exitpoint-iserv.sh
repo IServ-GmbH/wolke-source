@@ -45,6 +45,11 @@ echo "configure options not available in config file"
 # nextcloud should expect cron via normal cronjob
 php /var/www/html/occ config:app:set core backgroundjobs_mode --value cron
 
+# Accept the federation trusted servers as editing peers; without this richdocuments only trusts
+# gs.trustedHosts (unset) plus the own host and an Office document shared from another IServ fails
+# with "Remote is not a trusted server". Kept small by the AppConfig.php patch. (See #98260)
+php /var/www/html/occ config:app:set richdocuments federation_use_trusted_domains --value="yes"
+
 php /var/www/html/occ config:system:set overwrite.cli.url --value="https://$INSTANCE_NAME.$SUBDOMAIN_ROOT" --type=string
 
 # set public_upload

@@ -1,0 +1,36 @@
+diff --git apps/richdocuments/lib/AppConfig.php apps/richdocuments/lib/AppConfig.php
+index 6261afc75..d59c9decb 100644
+--- apps/richdocuments/lib/AppConfig.php
++++ apps/richdocuments/lib/AppConfig.php
+@@ -229,18 +229,20 @@ class AppConfig {
+ 		}
+ 
+ 		$federationService = \OCP\Server::get(FederationService::class);
+-		$trustedNextcloudDomains = array_filter(array_map(fn ($server) => $federationService->isTrustedRemote($server) ? $server : null, $federationService->getTrustedServers()));
+-
+-		$trustedCollaboraDomains = array_filter(array_map(function ($server) use ($federationService) {
+-			try {
+-				return $federationService->getRemoteCollaboraURL($server);
+-			} catch (\Exception) {
+-				// If there is no remote collabora server we can just skip that
+-				return null;
+-			}
+-		}, $trustedNextcloudDomains));
++		if ($federationService->getTrustedServers() === []) {
++			return [];
++		}
+ 
+-		return array_map(fn ($url) => $this->domainOnly($url), array_merge($trustedNextcloudDomains, $trustedCollaboraDomains));
++		// Upstream enumerates every trusted server plus its Collabora host here, and every
++		// entry lands in five policy directives (frame-src, form-action, frame-ancestors,
++		// img-src and Feature-Policy fullscreen). On the IServ federation mesh (~380 servers)
++		// that is a ~150 KB response header, which overruns nginx's fastcgi_buffer_size and
++		// turns every index.php response into a 502; it also costs a serverExists query plus a
++		// 30s-timeout OCS request per trusted server on every page load. A wildcard keeps
++		// federated editing working at constant size: what the remote host actually needs is
++		// form-action (the WOPI form POST), img-src and fullscreen, while frame-src and
++		// frame-ancestors are overridden by the IServ nginx config anyway. (See #98260)
++		return ['https://*'];
+ 	}
+ 
+ 	public function isPreviewGenerationEnabled(): bool {
