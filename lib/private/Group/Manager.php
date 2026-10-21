@@ -170,7 +170,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 	 * @param array<string, string> $displayNames Array containing already know display name for a groupId
 	 * @return array<string, IGroup>
 	 */
-	protected function getGroupsObjects(array $gids, array $displayNames = []): array {
+	public function getGroupsObjects(array $gids, array $displayNames = []): array {
 		$backends = [];
 		$groups = [];
 		foreach ($gids as $gid) {
@@ -287,7 +287,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 
 	/**
 	 * @param IUser|null $user
-	 * @return \OC\Group\Group[]
+	 * @return array<string, \OCP\IGroup>
 	 */
 	public function getUserGroups(?IUser $user = null) {
 		if (!$user instanceof IUser) {
@@ -298,21 +298,11 @@ class Manager extends PublicEmitter implements IGroupManager {
 
 	/**
 	 * @param string $uid the user id
-	 * @return \OC\Group\Group[]
+	 * @return array<string, \OCP\IGroup>
 	 */
 	public function getUserIdGroups(string $uid): array {
-		$groups = [];
-
-		foreach ($this->getUserIdGroupIds($uid) as $groupId) {
-			$aGroup = $this->get($groupId);
-			if ($aGroup instanceof IGroup) {
-				$groups[$groupId] = $aGroup;
-			} else {
-				$this->logger->debug('User "' . $uid . '" belongs to deleted group: "' . $groupId . '"', ['app' => 'core']);
-			}
-		}
-
-		return $groups;
+		$groupIds = $this->getUserIdGroupIds($uid);
+		return $this->getGroupsObjects($groupIds);
 	}
 
 	/**

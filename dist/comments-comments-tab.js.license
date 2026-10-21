@@ -38,7 +38,6 @@ SPDX-FileCopyrightText: Feross Aboukhadijeh
 SPDX-FileCopyrightText: Felix Boehm <me@feedic.com>
 SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: Eduardo San Martin Morote
-SPDX-FileCopyrightText: Dylan Piercey <pierceydylan@gmail.com>
 SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (https://cure53.de/)
 SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Ben Drucker
@@ -94,16 +93,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.5.1
 	- license: MIT
 - brace-expansion
-	- version: 2.1.0
+	- version: 2.1.4
 	- license: MIT
 - buffer
 	- version: 5.7.1
 	- license: MIT
 - builtin-status-codes
 	- version: 3.0.0
-	- license: MIT
-- byte-length
-	- version: 1.0.2
 	- license: MIT
 - call-bind-apply-helpers
 	- version: 1.0.2
@@ -124,7 +120,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.4
 	- license: MIT
 - dompurify
-	- version: 3.4.8
+	- version: 3.4.14
 	- license: (MPL-2.0 OR Apache-2.0)
 - dunder-proto
 	- version: 1.0.1
@@ -178,7 +174,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.2
 	- license: MIT
 - hasown
-	- version: 2.0.2
+	- version: 2.0.4
 	- license: MIT
 - hot-patcher
 	- version: 2.0.1
@@ -250,7 +246,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.4.1
 	- license: MIT
 - qs
-	- version: 6.14.1
+	- version: 6.14.2
 	- license: BSD-3-Clause
 - querystringify
 	- version: 2.2.0
@@ -268,7 +264,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.2
 	- license: MIT
 - side-channel-list
-	- version: 1.0.0
+	- version: 1.0.1
 	- license: MIT
 - side-channel-map
 	- version: 1.0.1
@@ -277,7 +273,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.2
 	- license: MIT
 - side-channel
-	- version: 1.1.0
+	- version: 1.1.1
 	- license: MIT
 - readable-stream
 	- version: 3.6.2
@@ -319,7 +315,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 5.10.0
 	- license: MIT
 - webpack
-	- version: 5.107.2
+	- version: 5.109.2
 	- license: MIT
 - which-typed-array
 	- version: 1.1.19

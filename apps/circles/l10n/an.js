@@ -9,9 +9,20 @@ OC.L10N.register(
     "Invalid image" : "Imachen no valida",
     "Unknown filetype" : "Tipo de fichero esconoxiu",
     "Open %s" : "Ubrir %s",
-    "Loading…" : "Cargando...",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
+    "Actions" : "Acions",
+    "Back" : "Ta zaga",
     "Name" : "Nombre",
     "Size" : "Grandario",
-    "Modified" : "Modificau"
+    "Modified" : "Modificau",
+    "Home" : "Casa",
+    "Pending" : "Pendient",
+    "Group folders" : "Carpetas de grupo",
+    "Loading…" : "Cargando...",
+    "Group" : "Grupo",
+    "Email" : "Correu electronico",
+    "Users" : "Usuarios",
+    "Groups" : "Grupos"
 },
 "nplurals=2; plural=(n != 1);");

@@ -18,13 +18,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.3
 	- license: MIT
 - handlebars
-	- version: 4.7.8
+	- version: 4.7.9
 	- license: MIT
 - style-loader
 	- version: 4.0.0
 	- license: MIT
 - webpack
-	- version: 5.107.2
+	- version: 5.109.2
 	- license: MIT
 - nextcloud
 	- version: 1.0.0

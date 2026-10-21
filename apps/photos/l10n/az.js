@@ -9,12 +9,17 @@ OC.L10N.register(
     "Save" : "Saxla",
     "Shared by" : "Tərəfindən yayımlanıb",
     "Favorite" : "İstəkli",
+    "Remove from favorites" : "Remove from favorites",
+    "Share" : "Yayımla",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Location" : "Yerləşdiyiniz ünvan",
+    "Slideshow" : "Slayd şou",
     "Home" : "Ev",
     "General" : "Ümumi",
-    "Remove from favorites" : "Remove from favorites",
+    "Start slideshow" : "Slayd şouya başlayın",
+    "Group" : "Qrup",
     "Details" : "Detallar",
-    "Cancel" : "Cancel",
-    "Confirm" : "Təsdiq edin",
-    "Group" : "Qrup"
+    "Confirm" : "Təsdiq edin"
 },
 "nplurals=2; plural=(n != 1);");

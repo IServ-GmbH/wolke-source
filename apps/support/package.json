@@ -15,7 +15,7 @@
     "@cypress/browserify-preprocessor": "^3.0.2",
     "@nextcloud/browserslist-config": "^3.0.0",
     "@nextcloud/cypress": "^1.0.0-beta.6",
-    "cypress": "^13.4.0",
+    "cypress": "^13.16.1",
     "eslint-plugin-cypress": "^5.1.1"
   },
   "version": "4.0.0-dev.0"

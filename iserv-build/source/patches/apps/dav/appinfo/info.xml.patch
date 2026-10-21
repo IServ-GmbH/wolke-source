@@ -1,5 +1,5 @@
 diff --git apps/dav/appinfo/info.xml apps/dav/appinfo/info.xml
-index bf0deec..1863c61 100644
+index 58f3d84..0584de0 100644
 --- apps/dav/appinfo/info.xml
 +++ apps/dav/appinfo/info.xml
 @@ -82,30 +82,5 @@

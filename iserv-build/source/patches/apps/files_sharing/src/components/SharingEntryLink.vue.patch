@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/components/SharingEntryLink.vue apps/files_sharing/src/components/SharingEntryLink.vue
-index d354c1d..880f203 100644
+index 893c7b7..6ec2187 100644
 --- apps/files_sharing/src/components/SharingEntryLink.vue
 +++ apps/files_sharing/src/components/SharingEntryLink.vue
 @@ -11,17 +11,13 @@
@@ -21,7 +21,7 @@ index d354c1d..880f203 100644
  			</div>
  
  			<div class="sharing-entry__actions">
-@@ -264,7 +260,6 @@ import CheckIcon from 'vue-material-design-icons/CheckBold.vue'
+@@ -263,7 +259,6 @@ import CheckIcon from 'vue-material-design-icons/CheckBold.vue'
  import CloseIcon from 'vue-material-design-icons/Close.vue'
  import PlusIcon from 'vue-material-design-icons/Plus.vue'
  
@@ -29,7 +29,7 @@ index d354c1d..880f203 100644
  import ShareExpiryTime from './ShareExpiryTime.vue'
  import SidebarTabExternalActionLegacy from './SidebarTabExternal/SidebarTabExternalActionLegacy.vue'
  
-@@ -298,7 +293,6 @@ export default {
+@@ -297,7 +292,6 @@ export default {
  		CheckIcon,
  		CloseIcon,
  		PlusIcon,

@@ -37,6 +37,7 @@ use OCA\Circles\Tools\Traits\TNCLogger;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
@@ -119,6 +120,7 @@ class LocalController extends OCSController {
 
 
 	#[NoAdminRequired]
+	#[UserRateLimit(limit: 10, period: 60)]
 	public function create(string $name, bool $personal = false, bool $local = false): DataResponse {
 		try {
 			if (!$this->configService->isGSAvailable() && $local === true) {
@@ -207,13 +209,12 @@ class LocalController extends OCSController {
 				$this->permissionService->memberMustBeAtLeastModerator($memberUser);
 			}
 
-			// exception in Contact
 			if ($type === Member::TYPE_CONTACT) {
 				$currentUser = $this->federatedUserService->getCurrentUser();
 				if (!$this->configService->isLocalInstance($currentUser->getInstance())) {
 					throw new OCSException('works only from local instance', 404);
 				}
-
+				// prefix with current user id to scope contact lookup to this user
 				$userId = $currentUser->getUserId() . '/' . $userId;
 			}
 
@@ -251,6 +252,15 @@ class LocalController extends OCSController {
 			foreach ($members as $member) {
 				$userId = $this->get('id', $member);
 				$type = $this->getInt('type', $member);
+
+				if ($type === Member::TYPE_CONTACT) {
+					$currentUser = $this->federatedUserService->getCurrentUser();
+					if (!$this->configService->isLocalInstance($currentUser->getInstance())) {
+						throw new OCSException('works only from local instance', 404);
+					}
+					// prefix with current user id to scope contact lookup to this user
+					$userId = $currentUser->getUserId() . '/' . $userId;
+				}
 
 				if ($type === Member::TYPE_CIRCLE) {
 					$this->circleService->getCircle($userId);
@@ -324,7 +334,7 @@ class LocalController extends OCSController {
 			$this->setCurrentFederatedUser();
 
 			$memberUser = $this->permissionService->userMustBeMember($this->userSession->getUser()->getUID(), $circleId);
-			$this->permissionService->memberMustBeAtLeastModerator($memberUser);
+			$this->permissionService->memberMustBeAtLeastAdmin($memberUser);
 
 			if (is_int($level)) {
 				$level = Member::parseLevelInt($level);

@@ -13,17 +13,22 @@
     "Favorite" : "Hacer favorito",
     "Open the full size \"{name}\" image" : "Abrir la imagen \"{name}\" en tamaño completo",
     "Go back" : "Regresar",
+    "Remove from favorites" : "Eliminar de favoritos",
+    "Add to favorites" : "Agregar a favoritos",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Nombre de archivo",
+    "Location" : "Ubicación",
+    "Add" : "Guardar",
     "Dates" : "Fechas",
     "Home" : "Inicio",
     "General" : "General",
-    "Remove from favorites" : "Eliminar de favoritos",
     "No photos in here" : "No hay fotos aquí",
     "No tags yet" : "Aún no hay etiquetas",
     "Photos with tags will show up here" : "Fotos con etiquetas serán mostradas aquí",
     "Tagged photos" : "Fotos etiquetadas",
+    "Group" : "Grupo",
     "Details" : "Detalles",
-    "Cancel" : "Cancel",
-    "Confirm" : "Confirmar",
-    "Group" : "Grupo"
+    "Confirm" : "Confirmar"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

@@ -14,13 +14,16 @@ OC.L10N.register(
     "An error occurred" : "'n Fout het voorgekom",
     "Favorite" : "Gunsteling",
     "Go back" : "Gaan terug",
+    "Remove from favorites" : "Verwyder uit gunstelinge",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Lêernaam",
+    "Add" : "Voeg toe",
     "Add folder" : "Voeg 'n gids by",
     "Home" : "Tuis",
-    "Remove from favorites" : "Verwyder uit gunstelinge",
     "Loading folders…" : "Laai tans gidse...",
+    "View" : "Bekyk",
     "Details" : "Besonderhede",
-    "Cancel" : "Cancel",
-    "Confirm" : "Bevestig",
-    "View" : "Bekyk"
+    "Confirm" : "Bevestig"
 },
 "nplurals=2; plural=(n != 1);");

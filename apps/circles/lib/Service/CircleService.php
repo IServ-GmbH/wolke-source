@@ -14,6 +14,7 @@ namespace OCA\Circles\Service;
 use OCA\Circles\AppInfo\Application;
 use OCA\Circles\Db\CircleRequest;
 use OCA\Circles\Db\MemberRequest;
+use OCA\Circles\Exceptions\CircleNameTooLongException;
 use OCA\Circles\Exceptions\CircleNameTooShortException;
 use OCA\Circles\Exceptions\CircleNotFoundException;
 use OCA\Circles\Exceptions\FederatedEventException;
@@ -186,6 +187,8 @@ class CircleService {
 
 		if (strlen($circle->getName()) < 3) {
 			throw new CircleNameTooShortException('Circle name is too short');
+		} elseif (strlen($circle->getName()) > 127) {
+			throw new CircleNameTooLongException('Circle name is too long');
 		}
 
 		if ($personal) {
@@ -672,15 +675,23 @@ class CircleService {
 
 		$members = $this->memberRequest->getMembers($circle->getSingleId(), null, $probe);
 
-		$limit = $this->getInt('members_limit', $circle->getSettings());
-		if ($limit === 0) {
-			$limit = $this->configService->getAppValueInt(ConfigService::MEMBERS_LIMIT);
-		}
-		if ($limit === -1) {
-			return false;
-		}
+		$instanceLimit = $this->configService->getAppValueInt(ConfigService::MEMBERS_LIMIT);
+		$circleLimit = $this->getInt('members_limit', $circle->getSettings(), $instanceLimit);
+		$memberCount = sizeof($members);
 
-		return (sizeof($members) >= $limit);
+		if ($instanceLimit === -1) {
+			if ($circleLimit === -1) {
+				return false;
+			} else {
+				return $memberCount >= $circleLimit;
+			}
+		} else {
+			if ($circleLimit === -1) {
+				return $memberCount >= $instanceLimit;
+			} else {
+				return $memberCount >= $instanceLimit || $memberCount >= $circleLimit;
+			}
+		}
 	}
 
 

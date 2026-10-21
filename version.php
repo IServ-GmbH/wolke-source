@@ -1,6 +1,6 @@
 <?php 
-$OC_Version = array(32,0,12,1);
-$OC_VersionString = '32.0.12';
+$OC_Version = array(32,0,15,1);
+$OC_VersionString = '32.0.15';
 $OC_Edition = '';
 $OC_Channel = 'stable';
 $OC_VersionCanBeUpgradedFrom = array (
@@ -17,5 +17,5 @@ $OC_VersionCanBeUpgradedFrom = array (
     '10.16' => true,
   ),
 );
-$OC_Build = '2026-06-25T12:14:49+00:00 b3bce93fb915b6aeef04804079488c6e06111442';
+$OC_Build = '2026-09-10T13:51:03+00:00 a26fd864fa148107af6ec14f9a5fb4b7eb8dd022';
 $vendor = 'nextcloud';

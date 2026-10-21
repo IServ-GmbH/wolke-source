@@ -5,11 +5,14 @@ OC.L10N.register(
     "Favorites" : "Սիրվածներ",
     "Shared with you" : "Shared with you",
     "Save" : "Պահպանել",
+    "Remove from favorites" : "Remove from favorites",
+    "Share" : "կիսվել",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Location" : "Տեղակայություն",
     "Home" : "Սկիզբ",
     "General" : "Ընդհանուր",
-    "Remove from favorites" : "Remove from favorites",
-    "Details" : "Մանրամասներ",
-    "Cancel" : "Cancel",
-    "Group" : "Խումբ"
+    "Group" : "Խումբ",
+    "Details" : "Մանրամասներ"
 },
 "nplurals=2; plural=(n != 1);");

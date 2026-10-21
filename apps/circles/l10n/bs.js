@@ -11,8 +11,22 @@ OC.L10N.register(
     "Accept" : "Prihvati",
     "Invalid image" : "Nevažeća datoteka",
     "Unknown filetype" : "Nepoznat tip datoteke",
+    "Unlimited" : "Neograničeno",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
+    "Members" : "Članovi",
+    "Other" : "Ostali",
+    "Advanced" : "Napredno",
     "Name" : "Ime",
     "Size" : "Veličina",
-    "Modified" : "Izmijenjeno"
+    "Modified" : "Izmijenjeno",
+    "Home" : "Početna stranica",
+    "Description" : "Opis",
+    "Pending" : "Na čekanju",
+    "User" : "User",
+    "Group" : "Grupa",
+    "Email" : "E-pošta",
+    "Users" : "Korisnici",
+    "Groups" : "Grupe"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

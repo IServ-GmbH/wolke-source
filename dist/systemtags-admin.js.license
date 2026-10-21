@@ -15,6 +15,7 @@ SPDX-FileCopyrightText: inherits developers
 SPDX-FileCopyrightText: hookable developers
 SPDX-FileCopyrightText: escape-html developers
 SPDX-FileCopyrightText: defunctzombie
+SPDX-FileCopyrightText: debounce developers
 SPDX-FileCopyrightText: atomiks
 SPDX-FileCopyrightText: Varun A P
 SPDX-FileCopyrightText: Tobias Koppers @sokra
@@ -49,7 +50,6 @@ SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: Eugene Sharygin <eush77@gmail.com>
 SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
 SPDX-FileCopyrightText: Eduardo San Martin Morote
-SPDX-FileCopyrightText: Dylan Piercey <pierceydylan@gmail.com>
 SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (https://cure53.de/)
 SPDX-FileCopyrightText: David Clark
 SPDX-FileCopyrightText: Christoph Wurst
@@ -64,13 +64,13 @@ SPDX-FileCopyrightText: @nextcloud/dialogs developers
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 1.7.5
+	- version: 1.8.0
 	- license: MIT
 - @floating-ui/dom
-	- version: 1.7.6
+	- version: 1.8.0
 	- license: MIT
 - @floating-ui/utils
-	- version: 0.2.11
+	- version: 0.2.12
 	- license: MIT
 - @nextcloud/auth
 	- version: 2.6.0
@@ -88,10 +88,28 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 9.8.0
+	- version: 9.9.0
 	- license: AGPL-3.0-or-later
+- @vue/devtools-api
+	- version: 8.2.1
+	- license: MIT
+- @vue/devtools-kit
+	- version: 8.2.1
+	- license: MIT
 - @vue/devtools-shared
-	- version: 8.1.2
+	- version: 8.2.1
+	- license: MIT
+- @vue/reactivity
+	- version: 3.5.40
+	- license: MIT
+- @vue/runtime-core
+	- version: 3.5.40
+	- license: MIT
+- @vue/runtime-dom
+	- version: 3.5.40
+	- license: MIT
+- @vue/shared
+	- version: 3.5.40
 	- license: MIT
 - @vueuse/core
 	- version: 14.3.0
@@ -100,25 +118,19 @@ This file is generated from multiple sources. Included packages:
 	- version: 14.3.0
 	- license: MIT
 - focus-trap
-	- version: 8.2.1
+	- version: 8.2.2
 	- license: MIT
 - perfect-debounce
 	- version: 2.1.0
 	- license: MIT
-- @vue/devtools-api
-	- version: 8.1.2
-	- license: MIT
-- @vue/devtools-kit
-	- version: 8.1.2
-	- license: MIT
 - vue-router
-	- version: 5.0.7
+	- version: 5.2.0
 	- license: MIT
 - vue
-	- version: 3.5.34
+	- version: 3.5.40
 	- license: MIT
 - @nextcloud/dialogs
-	- version: 7.4.0
+	- version: 7.4.1
 	- license: AGPL-3.0-or-later
 - semver
 	- version: 7.8.0
@@ -178,7 +190,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.39.0
+	- version: 8.41.0
 	- license: AGPL-3.0-or-later
 - @nodable/entities
 	- version: 2.1.0
@@ -208,7 +220,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.7
 	- license: MIT
 - axios
-	- version: 1.16.1
+	- version: 1.18.1
 	- license: MIT
 - balanced-match
 	- version: 1.0.2
@@ -223,16 +235,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.9.0
 	- license: MIT
 - brace-expansion
-	- version: 2.1.0
+	- version: 2.1.4
 	- license: MIT
 - buffer
 	- version: 5.7.1
 	- license: MIT
 - builtin-status-codes
 	- version: 3.0.0
-	- license: MIT
-- byte-length
-	- version: 1.0.2
 	- license: MIT
 - call-bind-apply-helpers
 	- version: 1.0.2
@@ -255,11 +264,14 @@ This file is generated from multiple sources. Included packages:
 - css-loader
 	- version: 7.1.2
 	- license: MIT
+- debounce
+	- version: 2.2.0
+	- license: MIT
 - define-data-property
 	- version: 1.1.4
 	- license: MIT
 - dompurify
-	- version: 3.4.8
+	- version: 3.4.14
 	- license: (MPL-2.0 OR Apache-2.0)
 - dunder-proto
 	- version: 1.0.1
@@ -322,7 +334,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.2
 	- license: MIT
 - hasown
-	- version: 2.0.2
+	- version: 2.0.4
 	- license: MIT
 - hookable
 	- version: 5.5.3
@@ -372,6 +384,9 @@ This file is generated from multiple sources. Included packages:
 - buffer
 	- version: 6.0.3
 	- license: MIT
+- nostics
+	- version: 1.2.0
+	- license: MIT
 - object-inspect
 	- version: 1.13.4
 	- license: MIT
@@ -391,7 +406,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.4.1
 	- license: MIT
 - qs
-	- version: 6.14.1
+	- version: 6.14.2
 	- license: BSD-3-Clause
 - querystringify
 	- version: 2.2.0
@@ -409,7 +424,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.2
 	- license: MIT
 - side-channel-list
-	- version: 1.0.0
+	- version: 1.0.1
 	- license: MIT
 - side-channel-map
 	- version: 1.0.1
@@ -418,7 +433,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.2
 	- license: MIT
 - side-channel
-	- version: 1.1.0
+	- version: 1.1.1
 	- license: MIT
 - readable-stream
 	- version: 3.6.2
@@ -445,7 +460,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - tabbable
-	- version: 6.4.0
+	- version: 6.5.0
 	- license: MIT
 - toastify-js
 	- version: 1.12.0
@@ -484,7 +499,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 5.10.0
 	- license: MIT
 - webpack
-	- version: 5.107.2
+	- version: 5.109.2
 	- license: MIT
 - which-typed-array
 	- version: 1.1.19

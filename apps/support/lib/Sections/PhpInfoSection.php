@@ -22,6 +22,10 @@ class PhpInfoSection extends Section {
 
 	#[\Override]
 	public function getDetails(): array {
+		if (!function_exists('phpinfo')) {
+			$this->createDetail('error', 'phpinfo function is disabled.', IDetail::TYPE_SINGLE_LINE);
+			return parent::getDetails();
+		}
 		ob_start();
 		phpinfo(INFO_CONFIGURATION | INFO_MODULES);
 		$phpinfo = ob_get_clean();

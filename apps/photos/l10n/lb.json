@@ -1,6 +1,7 @@
 { "translations": {
     "Photos" : "Photos",
     "Favorites" : "Favoriten",
+    "Memories" : "Memories",
     "Shared with you" : "Mat dir gedeelt",
     "Tags" : "Tags",
     "Back" : "Zeréck",
@@ -8,12 +9,19 @@
     "Shared by" : "Gedeelt vun",
     "Favorite" : "Favorit",
     "Go back" : "Zeréckgoen",
+    "Remove from favorites" : "Remove from favorites",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Fichiernumm",
+    "Location" : "Uert",
+    "Add" : "Dobäisetzen",
     "Home" : "Doheem",
     "General" : "Allgemeng",
-    "Remove from favorites" : "Remove from favorites",
+    "Default" : "Standard",
+    "Camera" : "Kamera",
+    "Group" : "Grupp",
+    "View" : "Usiicht",
     "Details" : "Detailer",
-    "Cancel" : "Cancel",
-    "Confirm" : "Konfirméieren",
-    "Group" : "Grupp"
+    "Confirm" : "Konfirméieren"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

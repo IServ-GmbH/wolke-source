@@ -83,7 +83,7 @@ class UserPlugin implements ISearchPlugin {
 		// Even if normal sharee enumeration is not allowed, full matches are still allowed.
 		$shareeEnumerationFullMatch = $this->appConfig->getValueString('core', 'shareapi_restrict_user_enumeration_full_match', 'yes') === 'yes';
 		if ($shareeEnumerationFullMatch && $search !== '') {
-			$shareeEnumerationFullMatchUserId = $this->appConfig->getValueString('core', 'shareapi_restrict_user_enumeration_full_match_userid', 'yes') === 'yes';
+			$shareeEnumerationFullMatchUserId = $this->appConfig->getValueString('core', 'shareapi_restrict_user_enumeration_full_match_user_id', 'yes') === 'yes';
 			$shareeEnumerationFullMatchEmail = $this->appConfig->getValueString('core', 'shareapi_restrict_user_enumeration_full_match_email', 'yes') === 'yes';
 			$shareeEnumerationFullMatchIgnoreSecondDisplayName = $this->appConfig->getValueString('core', 'shareapi_restrict_user_enumeration_full_match_ignore_second_dn', 'no') === 'yes';
 
@@ -99,7 +99,10 @@ class UserPlugin implements ISearchPlugin {
 
 			if ($shareeEnumerationFullMatchUserId) {
 				$user = $this->userManager->get($search);
-				if ($user !== null) {
+				// User backends may also resolve email addresses or other login names here
+				// (e.g. for login via email). Only an actual user id match counts as user id
+				// full match, everything else is governed by the email setting below.
+				if ($user !== null && $user->isEnabled() && mb_strtolower($user->getUID()) === $lowerSearch) {
 					$users[$user->getUID()] = ['exact', $user];
 				}
 			}
@@ -116,7 +119,10 @@ class UserPlugin implements ISearchPlugin {
 					$uid = $row['uid'];
 					$email = $row['value'];
 					$isAdditional = $row['name'] === 'additional_mail';
-					$users[$uid] = ['exact', $this->userManager->get($uid), $isAdditional ? $email : null];
+					$user = $this->userManager->get($uid);
+					if ($user !== null && $user->isEnabled()) {
+						$users[$uid] = ['exact', $user, $isAdditional ? $email : null];
+					}
 				}
 				$result->closeCursor();
 			}

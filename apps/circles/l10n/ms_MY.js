@@ -8,8 +8,20 @@ OC.L10N.register(
     "Open »%s«" : "Buka %s",
     "Files" : "Fail-fail",
     "Open %s" : "Buka%s",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
+    "Connect" : "Berhubung",
+    "Other" : "Lain",
+    "Advanced" : "Maju",
     "Name" : "Nama",
     "Size" : "Saiz",
-    "Modified" : "Dimodifikasi"
+    "Modified" : "Dimodifikasi",
+    "Home" : "Rumah",
+    "Description" : "Keterangan",
+    "Pending" : "Dalam proses",
+    "User" : "User",
+    "Email" : "Email",
+    "Users" : "Pengguna",
+    "Groups" : "Kumpulan"
 },
 "nplurals=1; plural=0;");

@@ -22,6 +22,7 @@ use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\IPreview;
 use OCP\IUserSession;
 use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\ICollection;
 use Sabre\DAV\INode;
 use Sabre\DAV\PropFind;
@@ -80,9 +81,10 @@ class PropFindPlugin extends ServerPlugin {
 		if ($node instanceof AlbumPhoto || $node instanceof PlacePhoto) {
 			// Checking if the node is truly available and ignoring if not
 			// Should be pre-emptively handled by the NodeDeletedEvent
+			// AlbumPhoto throws the Sabre exception, PlacePhoto the OCP one.
 			try {
 				$fileInfo = $node->getFileInfo();
-			} catch (NotFoundException) {
+			} catch (NotFoundException|NotFound) {
 				return;
 			}
 
@@ -104,7 +106,7 @@ class PropFindPlugin extends ServerPlugin {
 			});
 
 			foreach ($node->getFileInfo()->getMetadata() as $metadataKey => $metadataValue) {
-				$propFind->handle(FilesPlugin::FILE_METADATA_PREFIX . $metadataKey, $metadataValue);
+				$propFind->handle(FilesPlugin::FILE_METADATA_PREFIX . $metadataKey, fn () => $metadataValue);
 			}
 
 			$propFind->handle(FilesPlugin::HIDDEN_PROPERTYNAME, function () use ($node) {

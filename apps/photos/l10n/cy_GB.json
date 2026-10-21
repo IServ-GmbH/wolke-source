@@ -11,14 +11,17 @@
     "An error occurred" : "Digwyddodd gwall",
     "Favorite" : "Ffefryn",
     "Go back" : "Nôl",
+    "Remove from favorites" : "Remove from favorites",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Enw ffeil",
+    "Location" : "Lleoliad",
     "Add folder" : "Ychwanegu ffolder",
     "Home" : "Cartref",
     "General" : "Cyffredinol",
-    "Remove from favorites" : "Remove from favorites",
-    "Details" : "Manylion",
-    "Cancel" : "Cancel",
-    "Confirm" : "Cadarnhau",
     "Group" : "Grŵp",
-    "View" : "Golwg"
+    "View" : "Golwg",
+    "Details" : "Manylion",
+    "Confirm" : "Cadarnhau"
 },"pluralForm" :"nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;"
 }

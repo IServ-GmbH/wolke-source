@@ -10,14 +10,21 @@
     "Shared by" : "Shpërndarë nga",
     "Favorite" : "I/E Preferuar",
     "Go back" : "Shko prapa",
+    "Remove from favorites" : "Remove from favorites",
+    "Add to favorites" : "U shtua te të parapëlqyerat",
+    "Share" : "Ndaj",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Emri i skedarit",
+    "Location" : "Vendndodhje",
+    "Add" : "Shto ",
     "Home" : "Kryefaqja",
     "General" : "Të përgjithshme",
-    "Remove from favorites" : "Remove from favorites",
     "Loading folders…" : "Duke ngarkuar dosjet…",
-    "Details" : "Detajet",
-    "Cancel" : "Cancel",
-    "Confirm" : "Konfirmo",
+    "Default" : "Paraprake",
     "Group" : "Grup",
-    "View" : "Shiko"
+    "View" : "Shiko",
+    "Details" : "Detajet",
+    "Confirm" : "Konfirmo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

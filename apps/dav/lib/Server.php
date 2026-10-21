@@ -147,7 +147,9 @@ class Server {
 		$this->server->httpRequest->setUrl($this->request->getRequestUri());
 		$this->server->setBaseUri($this->baseUri);
 
-		$this->server->addPlugin(new ProfilerPlugin($this->request));
+		if ($this->profiler->isEnabled()) {
+			$this->server->addPlugin(new ProfilerPlugin($this->request));
+		}
 		$this->server->addPlugin(new BlockLegacyClientPlugin(
 			\OCP\Server::get(IConfig::class),
 			\OCP\Server::get(ThemingDefaults::class),
@@ -338,6 +340,7 @@ class Server {
 					$userSession,
 					$userFolder,
 					$shareManager,
+					\OCP\Server::get(IRootFolder::class),
 				));
 				$this->server->addPlugin(new CommentPropertiesPlugin(
 					\OCP\Server::get(ICommentsManager::class),
@@ -353,7 +356,8 @@ class Server {
 						$userSession,
 						\OCP\Server::get(IMipService::class),
 						\OCP\Server::get(EventComparisonService::class),
-						\OCP\Server::get(\OCP\Mail\Provider\IManager::class)
+						\OCP\Server::get(\OCP\Mail\Provider\IManager::class),
+						\OCP\Server::get(IAccountManager::class),
 					));
 				}
 				$this->server->addPlugin(new \OCA\DAV\CalDAV\Search\SearchPlugin());

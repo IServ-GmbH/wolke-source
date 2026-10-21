@@ -29,11 +29,11 @@
     "@nextcloud/l10n": "^3.4.1",
     "@nextcloud/router": "^3.0.1",
     "@nextcloud/vue": "^9.0.1",
-    "vue": "^3.5.34"
+    "vue": "^3.5.39"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.0.1",
-    "@nextcloud/eslint-config": "^9.0.0-rc.9",
+    "@nextcloud/eslint-config": "^9.0.1",
     "@nextcloud/event-bus": "^3.3.3",
     "@nextcloud/stylelint-config": "^3.1.1",
     "@nextcloud/typings": "^1.9.1",
@@ -41,7 +41,7 @@
     "@vue/tsconfig": "^0.8.1",
     "eslint": "^10.3.0",
     "sass": "^1.92.1",
-    "vite": "^7.1.6"
+    "vite": "^7.3.6"
   },
   "engines": {
     "node": "^22.0.0",

@@ -403,10 +403,8 @@ class Session implements IUserSession, Emitter {
 			return false;
 		}
 
-		if (!$isTokenPassword && $this->isTokenAuthEnforced()) {
-			throw new PasswordLoginForbiddenException();
-		}
-		if (!$isTokenPassword && $this->isTwoFactorEnforced($user)) {
+		if (!$isTokenPassword && ($this->isTokenAuthEnforced() || $this->isTwoFactorEnforced($user))) {
+			$this->handleLoginFailed($throttler, $currentDelay, $remoteAddress, $user, $password);
 			throw new PasswordLoginForbiddenException();
 		}
 
@@ -587,7 +585,8 @@ class Session implements IUserSession, Emitter {
 				// If credentials were provided, they need to be valid, otherwise we do boom
 				throw new LoginException();
 			} catch (PasswordLoginForbiddenException $ex) {
-				// Nothing to do
+				// If credentials were provided, they need to be valid, otherwise we do boom
+				throw new LoginException(previous: $ex);
 			}
 		}
 		return false;
@@ -902,6 +901,26 @@ class Session implements IUserSession, Emitter {
 			]);
 			return false;
 		}
+
+		try {
+			$oldToken = $this->tokenProvider->getToken($oldSessionId);
+		} catch (InvalidTokenException $ex) {
+			$this->logger->error('Could not find the session token to renew', [
+				'app' => 'core',
+				'user' => $uid,
+				'exception' => $ex,
+			]);
+			return false;
+		}
+
+		if ($oldToken->getUID() !== $user->getUID()) {
+			$this->logger->warning('Tried to renew a session token belonging to a different user', [
+				'app' => 'core',
+				'user' => $uid,
+			]);
+			return false;
+		}
+
 		// replace successfully used token with a new one
 		$this->config->deleteUserValue($uid, 'login_token', $currentToken);
 		$newToken = $this->random->generate(32);

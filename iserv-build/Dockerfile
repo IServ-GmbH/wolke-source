@@ -4,6 +4,7 @@
 # See: https://hub.docker.com/_/nextcloud/
 # Source: https://github.com/nextcloud/docker
 ARG VERSION=dummy
+ARG DIGEST=dummy
 
 # ============================================================
 # Stage: clone
@@ -151,7 +152,7 @@ EOF
 # ============================================================
 # Stage: production
 # ============================================================
-FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-fpm
+FROM git.iserv.eu:443/iserv/dependency_proxy/containers/nextcloud:${VERSION}-fpm@${DIGEST}
 ARG VERSION
 
 RUN test "$VERSION" != "dummy"

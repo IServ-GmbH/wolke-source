@@ -3,7 +3,7 @@
         'name' => 'nextcloud/related_resources',
         'pretty_version' => 'dev-stable32',
         'version' => 'dev-stable32',
-        'reference' => '95ebcc28f95976cf69aac1237dba7e080444bbfe',
+        'reference' => 'f8eb2080c68bf5c3f700c2ed78bfbb18e586b826',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'nextcloud/related_resources' => array(
             'pretty_version' => 'dev-stable32',
             'version' => 'dev-stable32',
-            'reference' => '95ebcc28f95976cf69aac1237dba7e080444bbfe',
+            'reference' => 'f8eb2080c68bf5c3f700c2ed78bfbb18e586b826',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -9,9 +9,20 @@ OC.L10N.register(
     "Invalid image" : "Անվավեր նկար",
     "Unknown filetype" : "Անհայտ նիշքի տեսակ",
     "Open %s" : "Բացել {նիշքիանուն}",
-    "No files in here" : "Ֆայլեր չկան այստեղ",
+    "Cancel" : "Cancel",
+    "Save" : "Save",
+    "Connect" : "միացնել",
+    "Other" : "Այլ",
     "Name" : "Անուն",
     "Size" : "Չափս",
-    "Modified" : "Փոփոխված"
+    "Modified" : "Փոփոխված",
+    "Home" : "Սկիզբ",
+    "Description" : "Նկարագրություն",
+    "Copy link" : "Պատճենել հղումը",
+    "User" : "User",
+    "Group" : "Խումբ",
+    "Email" : "Էլ․փոստ",
+    "Groups" : "Խմբեր",
+    "No files in here" : "Ֆայլեր չկան այստեղ"
 },
 "nplurals=2; plural=(n != 1);");

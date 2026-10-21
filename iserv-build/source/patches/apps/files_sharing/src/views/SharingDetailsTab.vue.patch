@@ -1,5 +1,5 @@
 diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing/src/views/SharingDetailsTab.vue
-index 7d6d1c1..cf78a59 100644
+index a9e6163..ae05256 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
 @@ -36,6 +36,7 @@
@@ -10,16 +10,16 @@ index 7d6d1c1..cf78a59 100644
  						data-cy-files-sharing-share-permissions-bundle="upload-edit"
  						:checked.sync="sharingPermission"
  						:value="allPermissions"
-@@ -163,7 +164,7 @@
+@@ -162,7 +163,7 @@
  						:placeholder="t('files_sharing', 'Expiration date')"
  						type="date"
  						@input="onExpirationChange" />
 -					<NcCheckboxRadioSwitch v-if="isPublicShare"
 +					<NcCheckboxRadioSwitch v-if="isPublicShare && !downloadDisabled"
  						:disabled="canChangeHideDownload"
- 						:checked.sync="share.hideDownload"
- 						@update:checked="queueUpdate('hideDownload')">
-@@ -217,7 +218,7 @@
+ 						:checked.sync="share.hideDownload">
+ 						{{ t('files_sharing', 'Hide download') }}
+@@ -215,7 +216,7 @@
  							data-cy-files-sharing-share-permissions-checkbox="create">
  							{{ t('files_sharing', 'Create') }}
  						</NcCheckboxRadioSwitch>
@@ -28,7 +28,7 @@ index 7d6d1c1..cf78a59 100644
  							:checked.sync="canEdit"
  							data-cy-files-sharing-share-permissions-checkbox="update">
  							{{ t('files_sharing', 'Edit') }}
-@@ -384,6 +385,63 @@ export default {
+@@ -389,6 +390,63 @@ export default {
  	},
  
  	computed: {
@@ -92,7 +92,7 @@ index 7d6d1c1..cf78a59 100644
  		title() {
  			switch (this.share.type) {
  			case ShareType.User:
-@@ -425,7 +483,7 @@ export default {
+@@ -430,7 +488,7 @@ export default {
  		 */
  		canEdit: {
  			get() {
@@ -101,7 +101,7 @@ index 7d6d1c1..cf78a59 100644
  			},
  			set(checked) {
  				this.updateAtomicPermissions({ isEditChecked: checked })
-@@ -483,7 +541,7 @@ export default {
+@@ -488,7 +546,7 @@ export default {
  		 */
  		canDownload: {
  			get() {

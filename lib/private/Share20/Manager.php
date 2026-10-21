@@ -303,7 +303,7 @@ class Manager implements IManager {
 		if (!$share->getNoExpirationDate() || $isEnforced) {
 			if ($expirationDate !== null) {
 				$expirationDate->setTimezone($this->dateTimeZone->getTimeZone());
-				$expirationDate->setTime(0, 0, 0);
+				$expirationDate->setTime(23, 59, 59);
 
 				$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 				$date->setTime(0, 0, 0);
@@ -322,7 +322,7 @@ class Manager implements IManager {
 
 			if ($fullId === null && $expirationDate === null && $defaultExpireDate) {
 				$expirationDate = new \DateTime('now', $this->dateTimeZone->getTimeZone());
-				$expirationDate->setTime(0, 0, 0);
+				$expirationDate->setTime(23, 59, 59);
 				$days = (int)$this->config->getAppValue('core', $configProp, (string)$defaultExpireDays);
 				if ($days > $defaultExpireDays) {
 					$days = $defaultExpireDays;
@@ -337,7 +337,7 @@ class Manager implements IManager {
 				}
 
 				$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
-				$date->setTime(0, 0, 0);
+				$date->setTime(23, 59, 59);
 				$date->add(new \DateInterval('P' . $defaultExpireDays . 'D'));
 				if ($date < $expirationDate) {
 					throw new GenericShareException($this->l->n('Cannot set expiration date more than %n day in the future', 'Cannot set expiration date more than %n days in the future', $defaultExpireDays), code: 404);
@@ -381,7 +381,7 @@ class Manager implements IManager {
 		if (!($share->getNoExpirationDate() && !$isEnforced)) {
 			if ($expirationDate !== null) {
 				$expirationDate->setTimezone($this->dateTimeZone->getTimeZone());
-				$expirationDate->setTime(0, 0, 0);
+				$expirationDate->setTime(23, 59, 59);
 
 				$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
 				$date->setTime(0, 0, 0);
@@ -400,7 +400,7 @@ class Manager implements IManager {
 
 			if ($fullId === null && $expirationDate === null && $this->shareApiLinkDefaultExpireDate()) {
 				$expirationDate = new \DateTime('now', $this->dateTimeZone->getTimeZone());
-				$expirationDate->setTime(0, 0, 0);
+				$expirationDate->setTime(23, 59, 59);
 
 				$days = (int)$this->config->getAppValue('core', 'link_defaultExpDays', (string)$this->shareApiLinkDefaultExpireDays());
 				if ($days > $this->shareApiLinkDefaultExpireDays()) {
@@ -416,7 +416,7 @@ class Manager implements IManager {
 				}
 
 				$date = new \DateTime('now', $this->dateTimeZone->getTimeZone());
-				$date->setTime(0, 0, 0);
+				$date->setTime(23, 59, 59);
 				$date->add(new \DateInterval('P' . $this->shareApiLinkDefaultExpireDays() . 'D'));
 				if ($date < $expirationDate) {
 					throw new GenericShareException(
@@ -1451,10 +1451,11 @@ class Manager implements IManager {
 	 * @throws ShareNotFound
 	 */
 	public function getShareByToken($token) {
-		// tokens cannot be valid local user names
-		if ($this->userManager->userExists($token)) {
+		// tokens cannot be valid local usernames or empty
+		if ($token === '' || $this->userManager->userExists($token)) {
 			throw new ShareNotFound();
 		}
+
 		$share = null;
 		try {
 			if ($this->config->getAppValue('core', 'shareapi_allow_links', 'yes') === 'yes') {
@@ -1534,8 +1535,8 @@ class Manager implements IManager {
 			$added--;
 			throw new ShareNotFound($this->l->t('The requested share does not exist anymore'));
 		}
-		if ($this->config->getAppValue('files_sharing', 'hide_disabled_user_shares', 'no') === 'yes') {
-			$uids = array_unique([$share->getShareOwner(),$share->getSharedBy()]);
+		if ($this->config->getAppValue('files_sharing', 'hide_disabled_user_shares', 'yes') === 'yes') {
+			$uids = array_unique([$share->getShareOwner(), $share->getSharedBy()]);
 			foreach ($uids as $uid) {
 				$user = $this->userManager->get($uid);
 				if ($user?->isEnabled() === false) {

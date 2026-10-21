@@ -13,14 +13,19 @@ OC.L10N.register(
     "Shared by" : "Compartido por",
     "Favorite" : "Hacer favorito",
     "Go back" : "Regresar",
+    "Remove from favorites" : "Eliminar de favoritos",
+    "Add to favorites" : "Agregar a favoritos",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "Nombre de archivo",
+    "Location" : "Ubicación",
+    "Add" : "Guardar",
     "Dates" : "Fechas",
     "Home" : "Inicio",
     "General" : "General",
-    "Remove from favorites" : "Eliminar de favoritos",
     "Loading folders…" : "Cargando carpetas…",
+    "Group" : "Grupo",
     "Details" : "Detalles",
-    "Cancel" : "Cancel",
-    "Confirm" : "Confirmar",
-    "Group" : "Grupo"
+    "Confirm" : "Confirmar"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -9,6 +9,7 @@ namespace OCA\Text\Middleware;
 
 use OC\User\NoUserException;
 use OCA\Text\Controller\ISessionAwareController;
+use OCA\Text\Exception\AccountDisabledException;
 use OCA\Text\Exception\InvalidDocumentBaseVersionEtagException;
 use OCA\Text\Exception\InvalidSessionException;
 use OCA\Text\Middleware\Attribute\RequireDocumentBaseVersionEtag;
@@ -22,11 +23,14 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\Constants;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
+use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
@@ -43,6 +47,7 @@ class SessionMiddleware extends Middleware {
 		private IRootFolder $rootFolder,
 		private ShareManager $shareManager,
 		private IL10N $l10n,
+		private IUserManager $userManager,
 	) {
 	}
 
@@ -50,6 +55,7 @@ class SessionMiddleware extends Middleware {
 	 * @throws ReflectionException
 	 * @throws InvalidDocumentBaseVersionEtagException
 	 * @throws InvalidSessionException
+	 * @throws AccountDisabledException
 	 */
 	public function beforeController(Controller $controller, string $methodName): void {
 		if (!$controller instanceof ISessionAwareController) {
@@ -90,6 +96,7 @@ class SessionMiddleware extends Middleware {
 
 	/**
 	 * @throws InvalidSessionException
+	 * @throws AccountDisabledException
 	 */
 	private function assertDocumentSession(ISessionAwareController $controller): void {
 		$documentId = (int)$this->request->getParam('documentId');
@@ -100,6 +107,13 @@ class SessionMiddleware extends Middleware {
 		$session = $this->sessionService->getValidSession($documentId, $sessionId, $token);
 		if (!$session) {
 			throw new InvalidSessionException();
+		}
+
+		if (!$session->isGuest()) {
+			$user = $this->userManager->get($session->getUserId());
+			if ($user === null || !$user->isEnabled()) {
+				throw new AccountDisabledException();
+			}
 		}
 
 		$document = $this->documentService->getDocument($documentId);
@@ -134,6 +148,17 @@ class SessionMiddleware extends Middleware {
 			$node = $this->rootFolder->getUserFolder($share->getShareOwner())->getFirstNodeById($documentId);
 			if ($node === null) {
 				throw new InvalidSessionException();
+			}
+
+			if ($share->getNodeType() === 'folder') {
+				$folder = $share->getNode();
+				if (!$folder instanceof Folder) {
+					throw new InvalidSessionException();
+				}
+				$file = $folder->getFirstNodeById($documentId);
+				if (!$file instanceof File) {
+					throw new InvalidSessionException();
+				}
 			}
 
 			if ($share->getPassword() !== null) {
@@ -172,6 +197,10 @@ class SessionMiddleware extends Middleware {
 	public function afterException($controller, $methodName, \Exception $exception): JSONResponse|Response {
 		if ($exception instanceof InvalidDocumentBaseVersionEtagException) {
 			return new JSONResponse(['error' => $this->l10n->t('Editing session has expired. Please reload the page.')], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		if ($exception instanceof AccountDisabledException) {
+			return new JSONResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($exception instanceof InvalidSessionException) {

@@ -7,9 +7,14 @@ OC.L10N.register(
     "Save" : "සුරකින්න",
     "Favorite" : "ප්‍රියතම",
     "Go back" : "ආපසු යන්න",
+    "Share" : "බෙදාගන්න",
+    "Delete" : "Delete",
+    "Cancel" : "Cancel",
+    "Filename" : "ගොනුවේ නම",
+    "Location" : "ස්ථානය",
+    "Add" : "එකතු කරන්න",
     "Home" : "මුල් පිටුව",
     "General" : "සමාන්‍යය",
-    "Cancel" : "Cancel",
     "Confirm" : "තහවුරු කරන්න"
 },
 "nplurals=2; plural=(n != 1);");

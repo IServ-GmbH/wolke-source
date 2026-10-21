@@ -43,7 +43,7 @@ class FilesHooks {
 
 	/** @var string|bool */
 	protected $moveCase = false;
-	/** @var array */
+	/** @var array|null */
 	protected $oldAccessList;
 	/** @var string */
 	protected $oldParentPath;
@@ -166,8 +166,8 @@ class FilesHooks {
 			$affectedUsers = array_merge($affectedUsers, $this->getAffectedUsersFromCachedMounts($fileId));
 		}
 
-		[$filteredEmailUsers, $filteredNotificationUsers] =
-			$this->getFileChangeActivitySettings($fileId, array_keys($affectedUsers), $activityType);
+		[$filteredEmailUsers, $filteredNotificationUsers]
+			= $this->getFileChangeActivitySettings($fileId, array_keys($affectedUsers), $activityType);
 
 		foreach ($affectedUsers as $user => $path) {
 			$user = (string)$user;
@@ -275,24 +275,31 @@ class FilesHooks {
 			$this->moveCase = 'moveCross';
 		}
 
-		[$this->oldParentPath, $this->oldParentOwner, $this->oldParentId] = $this->getSourcePathAndOwner($oldDir);
-		if ($this->oldParentId === 0) {
-			// Could not find the file for the owner ...
+		try {
+			[$this->oldParentPath, $this->oldParentOwner, $this->oldParentId] = $this->getSourcePathAndOwner($oldDir);
+			if ($this->oldParentId === 0) {
+				// Could not find the file for the owner ...
+				$this->moveCase = false;
+				return;
+			}
+
+			$oldAccessList = $this->getUserPathsFromPath($this->oldParentPath, $this->oldParentOwner);
+
+			// file can be shared using GroupFolders, including ACL check
+			if ($this->config->getSystemValueBool('activity_use_cached_mountpoints', false)) {
+				[, , $oldFileId] = $this->getSourcePathAndOwner($oldPath);
+				$oldAccessList['users'] = array_merge($oldAccessList['users'], $this->getAffectedUsersFromCachedMounts($oldFileId));
+			}
+
+			$this->oldAccessList = $oldAccessList;
+		} catch (NotFoundException $e) {
+			// The old location cannot be resolved (e.g. inconsistent mount or file
+			// cache state), so fileMovePost() would have no valid data to build
+			// activities from. Skip it instead of failing the move half-way.
+			$this->logger->warning('Could not resolve the old location of "' . $oldPath . '", no move activities will be created', ['exception' => $e]);
 			$this->moveCase = false;
-			return;
 		}
-
-		$oldAccessList = $this->getUserPathsFromPath($this->oldParentPath, $this->oldParentOwner);
-
-		// file can be shared using GroupFolders, including ACL check
-		if ($this->config->getSystemValueBool('activity_use_cached_mountpoints', false)) {
-			[, , $oldFileId] = $this->getSourcePathAndOwner($oldPath);
-			$oldAccessList['users'] = array_merge($oldAccessList['users'], $this->getAffectedUsersFromCachedMounts($oldFileId));
-		}
-
-		$this->oldAccessList = $oldAccessList;
 	}
-
 
 	/**
 	 * Store the move hook events
@@ -319,7 +326,6 @@ class FilesHooks {
 
 		$this->moveCase = false;
 	}
-
 
 	/**
 	 * Renaming a file inside the same folder (a/b to a/c)
@@ -392,6 +398,12 @@ class FilesHooks {
 	 * @param string $newPath
 	 */
 	protected function fileMoving($oldPath, $newPath) {
+		if (!is_array($this->oldAccessList)) {
+			// fileMove() could not collect the old access list, so there is no
+			// base to compute the activities from
+			return;
+		}
+
 		$dirName = dirname($newPath);
 		$fileName = basename($newPath);
 		$oldFileName = basename($oldPath);
@@ -1221,7 +1233,6 @@ class FilesHooks {
 		$this->connection->commit();
 	}
 
-
 	/**
 	 * @param int $fileId
 	 *
@@ -1249,7 +1260,6 @@ class FilesHooks {
 			return !in_array($userId, $unrelatedUsers);
 		}, ARRAY_FILTER_USE_KEY);
 	}
-
 
 	/**
 	 * returns an array of users that have confirmed no access to fileId
@@ -1374,7 +1384,6 @@ class FilesHooks {
 				$usersToCheck = array_values(array_unique(array_merge($usersToCheck, $userIds)));
 			}
 		}
-
 
 		// now that we have a list of eventuals filtered users, we confirm they have no access to the file
 		$filteredUsers = [];

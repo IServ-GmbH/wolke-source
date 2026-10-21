@@ -85,6 +85,13 @@ OC.L10N.register(
     "Could not copy the URL, please copy manually" : "Tókst ekki að afrita slóðina, afritaðu hana handvirkt",
     "Server address" : "Vistfang þjóns",
     "Use this link to connect your apps and desktop client to this server:" : "Notaðu þessa slóð fyrir forritin þín til að tengjast þessum þjóni:",
+    "Refined design, optimized performance" : "Fínpússað viðmót, bestuð afköst",
+    "Your team’s own space with Nextcloud Teams app" : "Eigið svæði teymisins þíns í Nextcloud Teams-forritinu",
+    "Classified conversations, channels and announcements" : "Flokkuð samtöl, spjallrásir og tilkynningar",
+    "Comments & footnotes in Nextcloud Text" : "Athugasemdir og neðanmálsgreinar í Nextcloud Text-forritinu",
+    "Nextcloud Assistant: skills, OCR, split-second performance" : "Nextcloud Assistant meðhjálpari: hæfileikar, OCR-ljóslestur, afköst í einum grænum",
+    "Photos, reimagined" : "Ljósmyndir, endurhugsaðar",
+    "Nextcloud Office for desktop" : "Nextcloud Office fyrir vinnutölvur",
     "Get to know the new features of Hub {version}" : "Kynntu þér nýja eiginleika í Hub {version}",
     "What's new?" : "Hvað er nýtt á döfinni?",
     "Nextcloud on all your devices" : "Nextcloud á öllum tækjunum þínum",
@@ -102,6 +109,7 @@ OC.L10N.register(
     "Quick presets & many other admin updates" : "Fljótlegar forstillingar og margar aðrar uppfærslur fyrir kerfisstjóra",
     "Vue3, WebSockets and more OpenAPI for devs" : "Vue3, WebSockets og meira OpenAPI fyrir forritara",
     "… and much more!" : "… og margt fleira!",
-    "Nextcloud Hub 25 Autumn – Your digital workspace, ready in no time ⚡" : "Nextcloud Hub 25 Autumn er komið – Stafrænta vinnusvæðið þitt, tilbúið í hvelli  ⚡"
+    "Nextcloud Hub 25 Autumn – Your digital workspace, ready in no time ⚡" : "Nextcloud Hub 25 Autumn er komið – Stafrænta vinnusvæðið þitt, tilbúið í hvelli  ⚡",
+    "Office document comparison" : "Samanburður skrifstofuskjala"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
