@@ -31,14 +31,6 @@ class NotificationGenerator implements INotifier {
 	) {
 	}
 
-	private function sanitizeUrl(string $url): string {
-		if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
-			return $url;
-		}
-
-		return '';
-	}
-
 	public function deferNotifications(): bool {
 		return $this->notificationManager->defer();
 	}
@@ -76,9 +68,8 @@ class NotificationGenerator implements INotifier {
 			$notification->setMessage($event->getMessage(), $event->getMessageParameters());
 		}
 
-		$link = $event->getLink() ? $this->sanitizeUrl($event->getLink()) : '';
-		if ($link !== '') {
-			$notification->setLink($link);
+		if ($event->getLink()) {
+			$notification->setLink($event->getLink());
 		}
 
 		return $notification;
@@ -137,9 +128,8 @@ class NotificationGenerator implements INotifier {
 		$notification->setRichSubject($event->getRichSubject(), $event->getRichSubjectParameters());
 		$notification->setParsedSubject($event->getParsedSubject());
 
-		$icon = $event->getIcon() ? $this->sanitizeUrl($event->getIcon()) : '';
-		if ($icon !== '') {
-			$notification->setIcon($icon);
+		if ($event->getIcon()) {
+			$notification->setIcon($event->getIcon());
 		}
 
 		if ($event->getRichMessage()) {

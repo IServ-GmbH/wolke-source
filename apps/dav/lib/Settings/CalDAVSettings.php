@@ -13,6 +13,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use OCP\Settings\IDelegatedSettings;
+use OCP\Util;
 
 class CalDAVSettings implements IDelegatedSettings {
 
@@ -44,6 +45,9 @@ class CalDAVSettings implements IDelegatedSettings {
 			$value = $this->config->getAppValue(Application::APP_ID, $key, $default);
 			$this->initialState->provideInitialState($key, $value === 'yes');
 		}
+
+		Util::addScript(Application::APP_ID, 'settings-admin-caldav');
+		Util::addStyle(Application::APP_ID, 'settings-admin-caldav');
 		return new TemplateResponse(Application::APP_ID, 'settings-admin-caldav');
 	}
 
@@ -68,7 +72,7 @@ class CalDAVSettings implements IDelegatedSettings {
 
 	public function getAuthorizedAppConfig(): array {
 		return [
-			'dav' => ['/(' . implode('|', array_keys(self::defaults)) . ')/']
+			'dav' => array_keys(self::defaults),
 		];
 	}
 }

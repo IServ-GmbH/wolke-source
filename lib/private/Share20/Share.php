@@ -5,8 +5,10 @@
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 namespace OC\Share20;
 
+use OC\User\NoUserException;
 use OCP\Constants;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\File;
@@ -64,6 +66,8 @@ class Share implements IShare {
 	private ?int $parent = null;
 	/** @var string */
 	private $target;
+	/** @var string */
+	private ?string $originalTarget = null;
 	/** @var \DateTime */
 	private $shareTime;
 	/** @var bool */
@@ -156,20 +160,24 @@ class Share implements IShare {
 				throw new NotFoundException();
 			}
 
-			// for federated shares the owner can be a remote user, in this
-			// case we use the initiator
-			if ($this->userManager->userExists($this->shareOwner)) {
-				$userFolder = $this->rootFolder->getUserFolder($this->shareOwner);
-			} else {
-				$userFolder = $this->rootFolder->getUserFolder($this->sharedBy);
-			}
+			try {
+				// for federated shares the owner can be a remote user, in this
+				// case we use the initiator
+				if ($this->userManager->userExists($this->shareOwner)) {
+					$userFolder = $this->rootFolder->getUserFolder($this->shareOwner);
+				} else {
+					$userFolder = $this->rootFolder->getUserFolder($this->sharedBy);
+				}
 
-			$node = $userFolder->getFirstNodeById($this->fileId);
-			if (!$node) {
-				throw new NotFoundException('Node for share not found, fileid: ' . $this->fileId);
-			}
+				$node = $userFolder->getFirstNodeById($this->fileId);
+				if (!$node) {
+					throw new NotFoundException('Node for share not found, fileid: ' . $this->fileId);
+				}
 
-			$this->node = $node;
+				$this->node = $node;
+			} catch (NoUserException $e) {
+				throw new NotFoundException('Owner for share not found, fileid: ' . $this->fileId, previous:$e);
+			}
 		}
 
 		return $this->node;
@@ -539,8 +547,19 @@ class Share implements IShare {
 	 * @inheritdoc
 	 */
 	public function setTarget($target) {
+		// if the target is changed, save the original target
+		if ($this->target && !$this->originalTarget) {
+			$this->originalTarget = $this->target;
+		}
 		$this->target = $target;
 		return $this;
+	}
+
+	/**
+	 * Return the original target, if this share was moved
+	 */
+	public function getOriginalTarget(): ?string {
+		return $this->originalTarget;
 	}
 
 	/**

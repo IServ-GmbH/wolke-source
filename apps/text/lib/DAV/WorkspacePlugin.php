@@ -12,13 +12,11 @@ use Exception;
 use OC\Files\Node\File;
 use OCA\DAV\Connector\Sabre\Directory;
 use OCA\DAV\Files\FilesHome;
-use OCA\Text\AppInfo\Application;
+use OCA\Text\Service\ConfigService;
 use OCA\Text\Service\WorkspaceService;
 use OCP\Files\GenericFileException;
-use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\ICacheFactory;
-use OCP\IConfig;
 use OCP\Lock\LockedException;
 use Psr\Log\LoggerInterface;
 use Sabre\DAV\INode;
@@ -29,15 +27,15 @@ use Sabre\DAV\ServerPlugin;
 class WorkspacePlugin extends ServerPlugin {
 	public const WORKSPACE_PROPERTY = '{http://nextcloud.org/ns}rich-workspace';
 	public const WORKSPACE_FILE_PROPERTY = '{http://nextcloud.org/ns}rich-workspace-file';
+	public const WORKSPACE_PROPERTY_FLAT = '{http://nextcloud.org/ns}rich-workspace-flat';
+	public const WORKSPACE_FILE_PROPERTY_FLAT = '{http://nextcloud.org/ns}rich-workspace-file-flat';
 
-	/** @var Server */
-	private $server;
+	private Server $server;
 
 	public function __construct(
 		private WorkspaceService $workspaceService,
-		private IRootFolder $rootFolder,
 		private ICacheFactory $cacheFactory,
-		private IConfig $config,
+		private ConfigService $configService,
 		private LoggerInterface $logger,
 		private ?string $userId,
 	) {
@@ -62,8 +60,12 @@ class WorkspacePlugin extends ServerPlugin {
 
 
 	public function propFind(PropFind $propFind, INode $node) {
-		if (!in_array(self::WORKSPACE_PROPERTY, $propFind->getRequestedProperties())
-			&& !in_array(self::WORKSPACE_FILE_PROPERTY, $propFind->getRequestedProperties())) {
+		if (!array_intersect([
+			self::WORKSPACE_PROPERTY,
+			self::WORKSPACE_FILE_PROPERTY,
+			self::WORKSPACE_PROPERTY_FLAT,
+			self::WORKSPACE_FILE_PROPERTY_FLAT
+		], $propFind->getRequestedProperties())) {
 			return;
 		}
 
@@ -71,10 +73,25 @@ class WorkspacePlugin extends ServerPlugin {
 			return;
 		}
 
-		$workspaceAvailable = $this->config->getAppValue(Application::APP_NAME, 'workspace_available', '1') === '1';
-		$workspaceEnabled = $this->config->getUserValue($this->userId, Application::APP_NAME, 'workspace_enabled', '1') === '1';
+		$workspaceAvailable = $this->configService->isRichWorkspaceAvailable();
+		$workspaceEnabled = $this->configService->isRichWorkspaceEnabledForUser($this->userId);
 
 		if (!$workspaceAvailable || !$workspaceEnabled) {
+			return;
+		}
+
+		$shouldFetchChildren = array_intersect([
+			self::WORKSPACE_PROPERTY,
+			self::WORKSPACE_FILE_PROPERTY,
+		], $propFind->getRequestedProperties());
+
+		// In most cases we only need the workspace property for the root node
+		// So we can skip the propFind for further nodes for performance reasons
+		// Fetching the workspace property for all children is still required for mobile apps
+
+		if ($propFind->getDepth() !== $this->server->getHTTPDepth() && !$shouldFetchChildren) {
+			$propFind->handle(self::WORKSPACE_PROPERTY_FLAT, fn () => '');
+			$propFind->handle(self::WORKSPACE_FILE_PROPERTY_FLAT, fn () => '');
 			return;
 		}
 
@@ -84,9 +101,7 @@ class WorkspacePlugin extends ServerPlugin {
 		} catch (\Exception $e) {
 			$file = null;
 		}
-
-		// Only return the property for the parent node and ignore it for further in depth nodes
-		$propFind->handle(self::WORKSPACE_PROPERTY, function () use ($file) {
+		$workspaceContentCallback = function () use ($file) {
 			$cachedContent = '';
 			if ($file instanceof File) {
 				$cache = $this->cacheFactory->createDistributed('text_workspace');
@@ -110,12 +125,18 @@ class WorkspacePlugin extends ServerPlugin {
 				}
 			}
 			return $cachedContent;
-		});
-		$propFind->handle(self::WORKSPACE_FILE_PROPERTY, function () use ($file) {
+		};
+
+		$workspaceFileCallback = function () use ($file) {
 			if ($file instanceof File) {
 				return $file->getFileInfo()->getId();
 			}
 			return '';
-		});
+		};
+
+		$propFind->handle(self::WORKSPACE_PROPERTY, $workspaceContentCallback);
+		$propFind->handle(self::WORKSPACE_PROPERTY_FLAT, $workspaceContentCallback);
+		$propFind->handle(self::WORKSPACE_FILE_PROPERTY, $workspaceFileCallback);
+		$propFind->handle(self::WORKSPACE_FILE_PROPERTY_FLAT, $workspaceFileCallback);
 	}
 }

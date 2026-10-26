@@ -1,5 +1,5 @@
 diff --git lib/private/Mail/Mailer.php lib/private/Mail/Mailer.php
-index 08efdd2..39ce8d7 100644
+index bd10f25..ee9d7ff 100644
 --- lib/private/Mail/Mailer.php
 +++ lib/private/Mail/Mailer.php
 @@ -164,6 +164,7 @@ class Mailer implements IMailer {

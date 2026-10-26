@@ -7,6 +7,7 @@
 namespace OC\Files\ObjectStore;
 
 use Aws\Command;
+use Aws\Exception\AwsException;
 use Aws\Exception\MultipartUploadException;
 use Aws\S3\Exception\S3MultipartUploadException;
 use Aws\S3\MultipartCopy;
@@ -141,10 +142,10 @@ trait S3ObjectTrait {
 		$exception = null;
 		$state = null;
 		$size = $stream->getSize();
-		$totalWritten = 0;
 
 		// retry multipart upload once with concurrency at half on failure
 		while (!$uploaded && $attempts <= 1) {
+			$totalWritten = 0;
 			$uploader = new MultipartUploader($this->getConnection(), $stream, [
 				'bucket' => $this->bucket,
 				'concurrency' => $concurrency,
@@ -293,6 +294,25 @@ trait S3ObjectTrait {
 				'params' => $this->getSSECParameters() + $this->getSSECParameters(true),
 				'mup_threshold' => PHP_INT_MAX,
 			], $options));
+		}
+	}
+
+	public function preSignedUrl(string $urn, \DateTimeInterface $expiration): ?string {
+		if (!$this->isUsePresignedUrl()) {
+			return null;
+		}
+
+		$command = $this->getConnection()->getCommand('GetObject', [
+			'Bucket' => $this->getBucket(),
+			'Key' => $urn,
+		]);
+
+		try {
+			return (string)$this->getConnection()->createPresignedRequest($command, $expiration, [
+				'signPayload' => true,
+			])->getUri();
+		} catch (AwsException) {
+			return null;
 		}
 	}
 }

@@ -8,7 +8,6 @@ use JsonSerializable;
 use Webauthn\Exception\MetadataStatementLoadingException;
 use Webauthn\MetadataService\ValueFilter;
 use function array_key_exists;
-use function sprintf;
 
 class DisplayPNGCharacteristicsDescriptor implements JsonSerializable
 {

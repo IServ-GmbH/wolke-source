@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mail &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Mail &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Out-of-office feature" href="out_of_office.html" />
-    <link rel="prev" title="Contacts / CardDAV" href="contacts.html" />
+    <link rel="prev" title="Contacts Interaction" href="contactsinteraction.html" />
    
   <meta name="robots" content="noindex, follow" />
 
@@ -107,6 +107,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Groupware</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="calendar.html">Calendar / CalDAV</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts / CardDAV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contactsinteraction.html">Contacts Interaction</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Mail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#anti-abuse-alerts">Anti-abuse alerts</a></li>
@@ -142,6 +143,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -166,7 +168,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -362,7 +364,7 @@ Currently IMAP defaults to 5 seconds and SMTP defaults to 20 seconds. They can b
 <section id="user-interface-preference-defaults">
 <span id="mail-ui-defaults"></span><h2>User Interface Preference Defaults<a class="headerlink" href="#user-interface-preference-defaults" title="Link to this heading"></a></h2>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 5.2.</span></p>
+<p><span class="versionmodified added">Added in version 5.2: </span>Nextcloud 30 or newer</p>
 </div>
 <p>The Mail app allows administrators to set default user interface preferences for all users, these preferences can be changed by the user afterwards. This can be useful to ensure a consistent experience across the application.</p>
 <figure class="align-default">
@@ -386,7 +388,8 @@ Currently IMAP defaults to 5 seconds and SMTP defaults to 20 seconds. They can b
 <section id="thread-summary">
 <span id="mail-thread-summary"></span><h2>Thread Summary<a class="headerlink" href="#thread-summary" title="Link to this heading"></a></h2>
 <div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 3.6.0: </span>This configuration option was merged into <a class="reference internal" href="#mail-llm-processing"><span class="std std-ref">LLM Processing</span></a></p>
+<p><span class="versionmodified changed">Changed in version 3.6.0: </span>Nextcloud 26 or newer
+This configuration option was merged into <a class="reference internal" href="#mail-llm-processing"><span class="std std-ref">LLM Processing</span></a></p>
 </div>
 <p>The mail app supports summarizing message threads that contain 3 or more messages.</p>
 <div class="admonition warning">
@@ -399,7 +402,7 @@ Currently IMAP defaults to 5 seconds and SMTP defaults to 20 seconds. They can b
 <section id="follow-up-reminders">
 <h2>Follow-up reminders<a class="headerlink" href="#follow-up-reminders" title="Link to this heading"></a></h2>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 4.0.</span></p>
+<p><span class="versionmodified added">Added in version 4.0: </span>Nextcloud 30 or newer</p>
 </div>
 <p>The Mail app will automatically remind users when their outgoing emails remain unanswered for
 multiple days.
@@ -409,14 +412,14 @@ Each sent email will be analyzed by an AI to check whether a reply is expected.<
 <section id="translation">
 <h2>Translation<a class="headerlink" href="#translation" title="Link to this heading"></a></h2>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 4.2.</span></p>
+<p><span class="versionmodified added">Added in version 4.2: </span>Nextcloud 30 or newer</p>
 </div>
 <p>The mail app can optionally provide translations for messages if the <a class="reference internal" href="../ai/app_assistant.html#machine-translation"><span class="std std-ref">translation API</span></a> is enabled.</p>
 </section>
 <section id="user-migration">
 <h2>User migration<a class="headerlink" href="#user-migration" title="Link to this heading"></a></h2>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 5.9.</span></p>
+<p><span class="versionmodified added">Added in version 5.9: </span>Nextcloud 30 or newer</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -450,7 +453,7 @@ information.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="contacts.html" class="btn btn-neutral float-left" title="Contacts / CardDAV" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contactsinteraction.html" class="btn btn-neutral float-left" title="Contacts Interaction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="out_of_office.html" class="btn btn-neutral float-right" title="Out-of-office feature" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -471,7 +474,7 @@ information.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -497,6 +500,8 @@ information.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -504,8 +509,6 @@ information.</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

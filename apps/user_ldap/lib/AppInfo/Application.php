@@ -21,6 +21,7 @@ use OCA\User_LDAP\LoginListener;
 use OCA\User_LDAP\Notification\Notifier;
 use OCA\User_LDAP\SetupChecks\LdapConnection;
 use OCA\User_LDAP\SetupChecks\LdapInvalidUuids;
+use OCA\User_LDAP\Support\SystemReportSection;
 use OCA\User_LDAP\User\Manager;
 use OCA\User_LDAP\User_Proxy;
 use OCA\User_LDAP\UserPluginManager;
@@ -29,13 +30,17 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\IAppContainer;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\AppFramework\Services\IInitialState;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAvatarManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\Image;
-use OCP\IServerContainer;
+use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Share\IManager as IShareManager;
@@ -45,34 +50,32 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class Application extends App implements IBootstrap {
+	public const APP_ID = 'user_ldap';
+
 	public function __construct() {
-		parent::__construct('user_ldap');
+		parent::__construct(self::APP_ID);
 		$container = $this->getContainer();
 
 		/**
 		 * Controller
 		 */
-		$container->registerService('RenewPasswordController', function (IAppContainer $appContainer) {
-			/** @var IServerContainer $server */
-			$server = $appContainer->get(IServerContainer::class);
-
+		$container->registerService('RenewPasswordController', function (ContainerInterface $appContainer) {
 			return new RenewPasswordController(
 				$appContainer->get('AppName'),
-				$server->getRequest(),
-				$appContainer->get('UserManager'),
-				$server->getConfig(),
+				$appContainer->get(IRequest::class),
+				$appContainer->get(IUserManager::class),
+				$appContainer->get(IConfig::class),
+				$appContainer->get(IUserConfig::class),
 				$appContainer->get(IL10N::class),
 				$appContainer->get('Session'),
-				$server->getURLGenerator()
+				$appContainer->get(IURLGenerator::class),
+				$appContainer->get(IInitialState::class),
 			);
 		});
 
-		$container->registerService(ILDAPWrapper::class, function (IAppContainer $appContainer) {
-			/** @var IServerContainer $server */
-			$server = $appContainer->get(IServerContainer::class);
-
+		$container->registerService(ILDAPWrapper::class, function (ContainerInterface $appContainer) {
 			return new LDAP(
-				$server->getConfig()->getSystemValueString('ldap_log_file')
+				$appContainer->get(IConfig::class)->getSystemValueString('ldap_log_file')
 			);
 		});
 	}
@@ -85,6 +88,8 @@ class Application extends App implements IBootstrap {
 			function (ContainerInterface $c) {
 				return new Manager(
 					$c->get(IConfig::class),
+					$c->get(IUserConfig::class),
+					$c->get(IAppConfig::class),
 					$c->get(LoggerInterface::class),
 					$c->get(IAvatarManager::class),
 					$c->get(Image::class),
@@ -99,6 +104,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(PostLoginEvent::class, LoginListener::class);
 		$context->registerSetupCheck(LdapInvalidUuids::class);
 		$context->registerSetupCheck(LdapConnection::class);
+		$context->registerSystemReportSection(SystemReportSection::class);
 	}
 
 	public function boot(IBootContext $context): void {

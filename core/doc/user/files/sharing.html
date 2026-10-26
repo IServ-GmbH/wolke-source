@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File Sharing &mdash; Nextcloud 32 User Manual</title>
+  <title>File Sharing &mdash; Nextcloud 33 User Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -31,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Making anonymous uploads" href="file_drop.html" />
-    <link rel="prev" title="Encrypting your Nextcloud files on the server" href="encrypting_files.html" />
+    <link rel="prev" title="Using end-to-end encryption" href="using_e2ee.html" />
    
   <meta name="robots" content="noindex, follow" />
 
@@ -62,7 +62,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 32 user manual introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 33 user manual introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Files &amp; synchronization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="access_webgui.html">Accessing your files using the Nextcloud Web interface</a></li>
@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="deleted_file_management.html">Managing deleted files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="desktop_mobile_sync.html">Desktop and mobile synchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="encrypting_files.html">Encrypting your Nextcloud files on the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_e2ee.html">Using end-to-end encryption</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">File Sharing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#public-link-shares">Public link shares</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#internal-shares-with-users-and-groups">Internal shares with users and groups</a></li>
@@ -106,7 +107,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 User Manual</a>
+          <a href="../contents.html">Nextcloud 33 User Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -139,7 +140,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Some options may not be available due to administrative configuration.
-See <a class="reference external" href="https://docs.nextcloud.com/server/32/admin_manual/configuration_files/file_sharing_configuration.html">administrator documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/33/admin_manual/configuration_files/file_sharing_configuration.html">administrator documentation</a> for details.</p>
 </div>
 <section id="public-link-shares">
 <h2>Public link shares<a class="headerlink" href="#public-link-shares" title="Link to this heading"></a></h2>
@@ -247,7 +248,7 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="encrypting_files.html" class="btn btn-neutral float-left" title="Encrypting your Nextcloud files on the server" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="using_e2ee.html" class="btn btn-neutral float-left" title="Using end-to-end encryption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="file_drop.html" class="btn btn-neutral float-right" title="Making anonymous uploads" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -266,47 +267,6 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
   </div>
   
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- Here go the languages -->
 
   
@@ -393,17 +353,13 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
   
     
   
-    
-  
-    
-  
   
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       🌐 English
       <span class="fa fa-caret-down"></span>
-       ☁️ 32
+       ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -415,14 +371,6 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
                
             >
               Arabic
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/eu/"
-               
-            >
-              Basque
             </a>
           </dd>
         
@@ -709,14 +657,6 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
           </dd>
         
           <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/uk/"
-               
-            >
-              uk
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
             <a href="/server/latest/user_manual/uk_UA/"
                
             >
@@ -765,6 +705,8 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/33/user_manual"
                
+               style="color: var(--dark-link-color);"
+               
             >
               33
             </a>
@@ -772,8 +714,6 @@ Just enter your <code class="docutils literal notranslate"><span class="pre">&lt
         
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/32/user_manual"
-               
-               style="color: var(--dark-link-color);"
                
             >
               32

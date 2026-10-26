@@ -22,7 +22,6 @@ use Webauthn\Exception\AuthenticatorResponseVerificationException;
 use Webauthn\MetadataService\CanLogData;
 use Webauthn\TokenBinding\TokenBindingHandler;
 use function is_string;
-use function sprintf;
 
 class AuthenticatorAssertionResponseValidator implements CanLogData, CanDispatchEvents
 {

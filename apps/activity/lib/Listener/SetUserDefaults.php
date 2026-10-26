@@ -8,8 +8,10 @@ declare(strict_types=1);
 
 namespace OCA\Activity\Listener;
 
+use OCP\Config\Exceptions\UnknownKeyException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\User\Events\PostLoginEvent;
@@ -18,11 +20,11 @@ use OCP\User\Events\PostLoginEvent;
  * @template-implements IEventListener<Event>
  */
 class SetUserDefaults implements IEventListener {
-	/** @var IConfig */
-	private $config;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+		private IAppConfig $appConfig,
+	) {
 	}
 
 	#[\Override]
@@ -41,8 +43,8 @@ class SetUserDefaults implements IEventListener {
 			return;
 		}
 
-		foreach ($this->config->getAppKeys('activity') as $key) {
-			if (strpos($key, 'notify_') !== 0) {
+		foreach ($this->appConfig->getKeys('activity') as $key) {
+			if (!str_starts_with($key, 'notify_')) {
 				continue;
 			}
 
@@ -51,12 +53,16 @@ class SetUserDefaults implements IEventListener {
 				continue;
 			}
 
-			$this->config->setUserValue(
-				$user->getUID(),
-				'activity',
-				$key,
-				$this->config->getAppValue('activity', $key)
-			);
+			try {
+				$this->config->setUserValue(
+					$user->getUID(),
+					'activity',
+					$key,
+					$this->appConfig->getValueString('activity', $key)
+				);
+			} catch (UnknownKeyException) {
+				// ignore
+			}
 		}
 
 		// Mark settings as configured

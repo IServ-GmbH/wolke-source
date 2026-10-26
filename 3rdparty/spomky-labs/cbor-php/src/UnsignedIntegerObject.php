@@ -58,21 +58,17 @@ final class UnsignedIntegerObject extends AbstractCBORObject implements Normaliz
         return self::MAJOR_TYPE;
     }
 
-    /**
-     * @return numeric-string
-     */
     public function getValue(): string
     {
         if ($this->data === null) {
             return (string) $this->additionalInformation;
         }
 
-        return BigInteger::fromBase(bin2hex($this->data), 16)->toBase(10);
+        $integer = BigInteger::fromBase(bin2hex($this->data), 16);
+
+        return $integer->toBase(10);
     }
 
-    /**
-     * @return numeric-string
-     */
     public function normalize(): string
     {
         return $this->getValue();

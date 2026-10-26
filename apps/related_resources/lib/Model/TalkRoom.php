@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Model;
 
@@ -24,6 +26,7 @@ class TalkRoom implements IQueryRow, JsonSerializable {
 	public function __construct() {
 	}
 
+
 	/**
 	 * @param int $roomId
 	 *
@@ -41,6 +44,7 @@ class TalkRoom implements IQueryRow, JsonSerializable {
 	public function getRoomId(): int {
 		return $this->roomId;
 	}
+
 
 	/**
 	 * @param string $roomName
@@ -78,6 +82,7 @@ class TalkRoom implements IQueryRow, JsonSerializable {
 		return $this->roomType;
 	}
 
+
 	/**
 	 * @param string $token
 	 */
@@ -93,6 +98,7 @@ class TalkRoom implements IQueryRow, JsonSerializable {
 	public function getToken(): string {
 		return $this->token;
 	}
+
 
 	/**
 	 * @param array $data

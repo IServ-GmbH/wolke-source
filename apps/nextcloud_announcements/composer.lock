@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e527390f0742ceae2a44fce5a271848",
+    "content-hash": "0242e5793f45e7164d782aafdab8aad1",
     "packages": [],
     "packages-dev": [
         {
@@ -106,20 +106,20 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-stable32",
+            "version": "dev-stable33",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "de6afa1f730d92792886fcdf7eacb09323fbe0bd"
+                "reference": "43727c5a1a74040945700b4c34056f7729fe87f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/de6afa1f730d92792886fcdf7eacb09323fbe0bd",
-                "reference": "de6afa1f730d92792886fcdf7eacb09323fbe0bd",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/43727c5a1a74040945700b4c34056f7729fe87f3",
+                "reference": "43727c5a1a74040945700b4c34056f7729fe87f3",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4",
+                "php": "~8.2 || ~8.3 || ~8.4 || ~8.5",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
@@ -128,7 +128,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-stable32": "32.0.0-dev"
+                    "dev-stable33": "33.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -148,9 +148,9 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/stable32"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable33"
             },
-            "time": "2026-08-30T02:15:57+00:00"
+            "time": "2026-09-02T01:51:47+00:00"
         },
         {
             "name": "php-cs-fixer/shim",
@@ -206,20 +206,20 @@
         },
         {
             "name": "psalm/phar",
-            "version": "6.5.1",
+            "version": "6.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "f7ecaf8740f32d58695cee5ac11663e02b44b223"
+                "reference": "11c6b55449667837fc07bb2a456c45a137c05ecd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/f7ecaf8740f32d58695cee5ac11663e02b44b223",
-                "reference": "f7ecaf8740f32d58695cee5ac11663e02b44b223",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/11c6b55449667837fc07bb2a456c45a137c05ecd",
+                "reference": "11c6b55449667837fc07bb2a456c45a137c05ecd",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1 || ^8.0"
+                "php": "^8.2"
             },
             "conflict": {
                 "vimeo/psalm": "*"
@@ -235,9 +235,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/6.5.1"
+                "source": "https://github.com/psalm/phar/tree/6.16.1"
             },
-            "time": "2025-02-10T10:05:10+00:00"
+            "time": "2026-03-19T11:11:23+00:00"
         },
         {
             "name": "psr/clock",
@@ -451,7 +451,7 @@
     "platform": {},
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.1"
+        "php": "8.2.27"
     },
     "plugin-api-version": "2.9.0"
 }

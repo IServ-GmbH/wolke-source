@@ -502,7 +502,7 @@ class AppManager implements IAppManager {
 		}
 
 		if (!empty($info['settings'])) {
-			$settingsManager = \OC::$server->get(ISettingsManager::class);
+			$settingsManager = \OCP\Server::get(ISettingsManager::class);
 			if (!empty($info['settings']['admin'])) {
 				foreach ($info['settings']['admin'] as $setting) {
 					$settingsManager->registerSetting('admin', $setting);
@@ -521,6 +521,16 @@ class AppManager implements IAppManager {
 			if (!empty($info['settings']['personal-section'])) {
 				foreach ($info['settings']['personal-section'] as $section) {
 					$settingsManager->registerSection('personal', $section);
+				}
+			}
+			if (!empty($info['settings']['admin-delegation'])) {
+				foreach ($info['settings']['admin-delegation'] as $setting) {
+					$settingsManager->registerSetting(ISettingsManager::SETTINGS_DELEGATION, $setting);
+				}
+			}
+			if (!empty($info['settings']['admin-delegation-section'])) {
+				foreach ($info['settings']['admin-delegation-section'] as $section) {
+					$settingsManager->registerSection(ISettingsManager::SETTINGS_DELEGATION, $section);
 				}
 			}
 		}
@@ -1021,7 +1031,13 @@ class AppManager implements IAppManager {
 	 */
 	public function cleanAppId(string $app): string {
 		/* Only lowercase alphanumeric is allowed */
-		return preg_replace('/(^[0-9_-]+|[^a-z0-9_-]+|[_-]+$)/', '', $app);
+		$cleanAppId = preg_replace('/(^[0-9_-]+|[^a-z0-9_-]+|[_-]+$)/', '', $app, -1, $count);
+		if ($count > 0) {
+			$this->logger->debug('Only lowercase alphanumeric characters are allowed in appIds; check paths of installed app [' . $count . ' characters replaced]', [
+				'app' => $cleanAppId, // safer to log $cleanAppId even if it makes more challenging to troubleshooting (part of why character count is at least logged)
+			]);
+		}
+		return $cleanAppId;
 	}
 
 	/**
@@ -1105,6 +1121,13 @@ class AppManager implements IAppManager {
 		if ($currentVersion && isset($versions[$appId])) {
 			$installedVersion = $versions[$appId];
 			if (!version_compare($currentVersion, $installedVersion, '=')) {
+				$this->logger->info('{appId} needs and upgrade from {from} to {to}',
+					[
+						'appId' => $appId,
+						'from' => $installedVersion,
+						'to' => $currentVersion,
+					]
+				);
 				return true;
 			}
 		}

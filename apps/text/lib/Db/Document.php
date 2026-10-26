@@ -38,7 +38,6 @@ class Document extends Entity implements \JsonSerializable {
 	protected ?string $checksum = null;
 
 	public function __construct() {
-		$this->addType('id', 'integer');
 		$this->addType('currentVersion', 'integer');
 		$this->addType('lastSavedVersion', 'integer');
 		$this->addType('lastSavedVersionTime', 'integer');
@@ -48,7 +47,7 @@ class Document extends Entity implements \JsonSerializable {
 
 	public function jsonSerialize(): array {
 		return [
-			'id' => $this->id,
+			'id' => $this->getId(),
 			'lastSavedVersion' => $this->lastSavedVersion,
 			'lastSavedVersionTime' => $this->lastSavedVersionTime,
 			'baseVersionEtag' => $this->baseVersionEtag,

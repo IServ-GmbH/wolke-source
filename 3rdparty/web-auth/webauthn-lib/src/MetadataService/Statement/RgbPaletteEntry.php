@@ -8,7 +8,6 @@ use JsonSerializable;
 use Webauthn\Exception\MetadataStatementLoadingException;
 use function array_key_exists;
 use function is_int;
-use function sprintf;
 
 class RgbPaletteEntry implements JsonSerializable
 {

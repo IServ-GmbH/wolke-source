@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nextcloud configuration &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Nextcloud configuration &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -134,6 +134,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -158,7 +159,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -214,6 +215,7 @@
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#nextcloud-verifications">Nextcloud Verifications</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#logging">Logging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#alternate-code-locations">Alternate Code Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#activity">Activity</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#apps">Apps</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#previews">Previews</a></li>
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html#ldap">LDAP</a></li>
@@ -272,6 +274,7 @@
 <li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html#how-it-works">How it works</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html#troubleshooting">Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bruteforce_configuration.html#brute-force-protection-vs-fail2ban">Brute force protection vs fail2ban</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="caching_configuration.html">Memory caching</a><ul>
@@ -337,13 +340,12 @@
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html#default-file-extension">Default file extension</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html#disable-rich-text-editing">Disable rich text editing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html#file-encodings">File encodings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="text_configuration.html#websocket-support-with-notify-push">Websocket support with notify_push</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="theming.html">Theming</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="theming.html#modify-the-appearance-of-nextcloud">Modify the appearance of Nextcloud</a></li>
-<li class="toctree-l2"><a class="reference internal" href="theming.html#configure-theming-through-cli">Configure theming through CLI</a></li>
-<li class="toctree-l2"><a class="reference internal" href="theming.html#theming-of-icons">Theming of icons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theming.html#customize-the-appearance-of-nextcloud">Customize the appearance of Nextcloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theming.html#configure-theming-via-cli">Configure theming via CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theming.html#icon-theming">Icon theming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html#branded-clients">Branded clients</a></li>
 </ul>
 </li>
@@ -376,7 +378,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -402,6 +404,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -409,8 +413,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -4,7 +4,7 @@ OC.L10N.register(
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Le file incargate excede le directiva MAX_FILE_SIZE que esseva specificate in le formulario HTML",
     "No file was uploaded" : "Nulle file esseva incargate",
     "Missing a temporary folder" : "Il manca un dossier temporari",
-    "Comments" : "Commentarios",
+    "Comment" : "Commentario",
     "Close" : "Clauder",
     "Guest" : "Invitato",
     "guest" : "hospite",
@@ -12,9 +12,7 @@ OC.L10N.register(
     "Delete" : "Delete",
     "Save" : "Salveguardar",
     "Cancel" : "Cancel",
-    "Comment" : "Commentario",
     "Reply" : "Responde",
-    "Details" : "Detalios",
     "Previous" : "Previe",
     "Next" : "Proxime",
     "you" : "Tu",
@@ -29,6 +27,7 @@ OC.L10N.register(
     "Translate" : "Translate",
     "Upload" : "Incargar",
     "Done" : "Preste",
+    "Details" : "Detalios",
     "to" : "a"
 },
 "nplurals=2; plural=(n != 1);");

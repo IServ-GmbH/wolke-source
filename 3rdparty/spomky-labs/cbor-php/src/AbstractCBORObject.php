@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace CBOR;
 
+use Stringable;
 use function chr;
 
-abstract class AbstractCBORObject implements CBORObject
+abstract class AbstractCBORObject implements CBORObject, Stringable
 {
     public function __construct(
         private int $majorType,

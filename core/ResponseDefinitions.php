@@ -211,6 +211,8 @@ namespace OC\Core;
  *     startedAt: ?int,
  *     endedAt: ?int,
  *     allowCleanup: bool,
+ *     includeWatermark: bool,
+ *     userFacingErrorMessage: ?string,
  * }
  *
  * @psalm-type CoreProfileAction = array{

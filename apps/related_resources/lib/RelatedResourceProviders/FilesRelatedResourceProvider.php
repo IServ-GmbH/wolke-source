@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\RelatedResourceProviders;
 
@@ -48,9 +50,11 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 		return self::PROVIDER_ID;
 	}
 
+
 	public function loadWeightCalculator(): array {
 		return [];
 	}
+
 
 	public function getRelatedFromItem(CirclesManager $circlesManager, string $itemId): ?IRelatedResource {
 		$itemId = (int)$itemId;
@@ -89,6 +93,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 		return $related;
 	}
 
+
 	public function getItemsAvailableToEntity(FederatedUser $entity): array {
 		switch ($entity->getBasedOn()->getSource()) {
 			case Member::TYPE_USER:
@@ -102,6 +107,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 			case Member::TYPE_CIRCLE:
 				// We skip circle shares for related resources as they are covered by team resources
 				return [];
+
 			default:
 				return [];
 		}
@@ -110,6 +116,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 			return (string)$share->getFileId();
 		}, $shares);
 	}
+
 
 	public function improveRelatedResource(CirclesManager $circlesManager, IRelatedResource $entry): void {
 		$current = $circlesManager->getCurrentFederatedUser();
@@ -124,6 +131,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 			$entry->setTitle($paths[0]->getName());
 		}
 	}
+
 
 	private function convertToRelatedResource(FilesShare $share): IRelatedResource {
 		$related = new RelatedResource(self::PROVIDER_ID, (string)$share->getFileId());
@@ -165,6 +173,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 		return $related;
 	}
 
+
 	/**
 	 * @param list<array{id:int,type?:string}> $itemEntries
 	 */
@@ -196,6 +205,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 
 		return $related;
 	}
+
 
 	/**
 	 * @param int $itemId
@@ -238,6 +248,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 		return $itemEntries;
 	}
 
+
 	/**
 	 * @param RelatedResource $related
 	 * @param FilesShare $share
@@ -274,6 +285,7 @@ class FilesRelatedResourceProvider implements IRelatedResourceProvider {
 		} catch (Exception $e) {
 		}
 	}
+
 
 	/**
 	 * @param int $shareType

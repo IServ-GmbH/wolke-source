@@ -9,17 +9,18 @@ namespace OC\Files\Storage\Wrapper;
 
 use OC\Files\Storage\FailedStorage;
 use OC\Files\Storage\Storage;
+use OCP\Files;
 use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\IPropagator;
 use OCP\Files\Cache\IScanner;
 use OCP\Files\Cache\IUpdater;
 use OCP\Files\Cache\IWatcher;
-use OCP\Files\GenericFileException;
 use OCP\Files\Storage\ILockingStorage;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 use OCP\Lock\ILockingProvider;
 use OCP\Server;
+use Override;
 use Psr\Log\LoggerInterface;
 
 class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStreamStorage {
@@ -227,7 +228,7 @@ class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStrea
 			// FIXME Temporary fix to keep existing checks working
 			$class = '\OCA\Files_Sharing\SharedStorage';
 		}
-		return is_a($this, $class) or $this->getWrapperStorage()->instanceOfStorage($class);
+		return is_a($this, $class) || $this->getWrapperStorage()->instanceOfStorage($class);
 	}
 
 	/**
@@ -258,8 +259,14 @@ class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStrea
 		return call_user_func_array([$this->getWrapperStorage(), $method], $args);
 	}
 
+	#[Override]
 	public function getDirectDownload(string $path): array|false {
 		return $this->getWrapperStorage()->getDirectDownload($path);
+	}
+
+	#[Override]
+	public function getDirectDownloadById(string $fileId): array|false {
+		return $this->getWrapperStorage()->getDirectDownloadById($fileId);
 	}
 
 	public function getAvailability(): array {
@@ -321,28 +328,13 @@ class Wrapper implements \OC\Files\Storage\Storage, ILockingStorage, IWriteStrea
 		if ($storage->instanceOfStorage(IWriteStreamStorage::class)) {
 			/** @var IWriteStreamStorage $storage */
 			return $storage->writeStream($path, $stream, $size);
+		} else {
+			$target = $this->fopen($path, 'w');
+			$count = Files::streamCopy($stream, $target);
+			fclose($stream);
+			fclose($target);
+			return $count;
 		}
-
-		return $this->writeStreamFallback($path, $stream);
-	}
-
-	/**
-	 * @param resource $stream
-	 */
-	protected function writeStreamFallback(string $path, $stream): int {
-		$target = $this->fopen($path, 'w');
-		if ($target === false) {
-			throw new GenericFileException('Failed to open ' . $path);
-		}
-
-		$count = stream_copy_to_stream($stream, $target);
-		fclose($stream);
-		fclose($target);
-		if ($count === false) {
-			throw new GenericFileException('Failed to copy stream.');
-		}
-
-		return $count;
 	}
 
 	public function getDirectoryContent(string $directory): \Traversable {

@@ -60,6 +60,7 @@ class PageController extends Controller {
 		private readonly LoggerInterface $logger,
 		private readonly IConfig $config,
 		IL10N $l10n,
+		private ?\OCA\Recognize\Public\ApiKeyManager $apiKeyManager,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 
@@ -94,6 +95,14 @@ class PageController extends Controller {
 		$this->initialState->provideInitialState('showPeopleMenuEntry', $this->config->getAppValue('photos', 'showPeopleMenuEntry', 'true') === 'true');
 		$this->initialState->provideInitialState('appStoreEnabled', $this->config->getSystemValueBool('appstoreenabled', true));
 
+		if ($this->apiKeyManager !== null) {
+			try {
+				$this->initialState->provideInitialState('recognizeApiKey', $this->apiKeyManager->generateApiKey());
+			} catch (\JsonException $e) {
+				$this->logger->error('Failed to generate recognized api key', ['exception' => $e]);
+			}
+		}
+
 		// Provide user config
 		foreach (array_keys(UserConfigService::DEFAULT_CONFIGS) as $key) {
 			$this->initialState->provideInitialState($key, $this->userConfig->getUserConfig($key));
@@ -105,10 +114,18 @@ class PageController extends Controller {
 			$key = $user->getUID() . ':' . $userFolder->getEtag();
 			$paths = $this->nomediaPathsCache->get($key);
 			if ($paths === null) {
-				$search = $userFolder->search(new SearchQuery(new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
+				$nameCondition = new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_OR, [
 					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.nomedia'),
 					new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'name', '.noimage')
-				]), 0, 0, [], $user));
+				]);
+				// Optimisation: This will speed up the search as the size column has an index.
+				$sizeCondition = new SearchComparison(ISearchComparison::COMPARE_EQUAL, 'size', 0);
+				$search = $userFolder->search(
+					new SearchQuery(
+						new SearchBinaryOperator(ISearchBinaryOperator::OPERATOR_AND, [$nameCondition, $sizeCondition]),
+						0, 0, [], $user
+					),
+				);
 				$paths = array_map(fn (Node $node): string => substr(dirname($node->getPath()), strlen((string)$userFolder->getPath())), $search);
 				$this->nomediaPathsCache->set($key, $paths, 60 * 60 * 24 * 28); // 28 days
 			}

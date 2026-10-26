@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'nextcloud/related_resources',
-        'pretty_version' => 'dev-stable32',
-        'version' => 'dev-stable32',
-        'reference' => 'f8eb2080c68bf5c3f700c2ed78bfbb18e586b826',
+        'pretty_version' => 'dev-stable33',
+        'version' => 'dev-stable33',
+        'reference' => '1a2ede5a3da4744321c4ca76fce6463846e7b3e3',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'nextcloud/related_resources' => array(
-            'pretty_version' => 'dev-stable32',
-            'version' => 'dev-stable32',
-            'reference' => 'f8eb2080c68bf5c3f700c2ed78bfbb18e586b826',
+            'pretty_version' => 'dev-stable33',
+            'version' => 'dev-stable33',
+            'reference' => '1a2ede5a3da4744321c4ca76fce6463846e7b3e3',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

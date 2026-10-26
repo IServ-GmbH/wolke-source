@@ -178,7 +178,9 @@ class BackendService {
 	 * @return Backend[]
 	 */
 	public function getAvailableBackends() {
-		return array_filter($this->getBackends(), fn (Backend $backend) => $backend->checkRequiredDependencies() === []);
+		$backends = array_filter($this->getBackends(), fn (Backend $backend) => $backend->checkRequiredDependencies() === [] && $backend->getDeprecateTo() === null);
+		uasort($backends, [Backend::class, 'lexicalCompare']);
+		return $backends;
 	}
 
 	/**
@@ -259,7 +261,7 @@ class BackendService {
 	 * @param Backend $backend
 	 * @return bool
 	 */
-	protected function isAllowedUserBackend(Backend $backend): bool {
+	public function isAllowedUserBackend(Backend $backend): bool {
 		return ($this->isUserMountingAllowed() && array_intersect($backend->getIdentifierAliases(), $this->userMountingBackends));
 	}
 

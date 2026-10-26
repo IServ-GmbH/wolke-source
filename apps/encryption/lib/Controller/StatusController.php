@@ -25,13 +25,13 @@ class StatusController extends Controller {
 	 * @param IManager $encryptionManager
 	 */
 	public function __construct(
-		$AppName,
+		$appName,
 		IRequest $request,
 		private IL10N $l,
 		private Session $session,
 		private IManager $encryptionManager,
 	) {
-		parent::__construct($AppName, $request);
+		parent::__construct($appName, $request);
 	}
 
 	/**
@@ -68,8 +68,10 @@ class StatusController extends Controller {
 		return new DataResponse(
 			[
 				'status' => $status,
+				'initStatus' => $this->session->getStatus(),
 				'data' => [
-					'message' => $message]
+					'message' => $message,
+				],
 			]
 		);
 	}

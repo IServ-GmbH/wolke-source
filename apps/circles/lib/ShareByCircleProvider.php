@@ -57,8 +57,10 @@ use OCP\IUserManager;
 use OCP\Share\Exceptions\AlreadySharedException;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IPartialShareProvider;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
+use OCP\Share\IShareProviderGetUsers;
 use OCP\Share\IShareProviderSupportsAllSharesInFolder;
 use Psr\Log\LoggerInterface;
 
@@ -67,7 +69,7 @@ use Psr\Log\LoggerInterface;
  *
  * @package OCA\Circles
  */
-class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAllSharesInFolder {
+class ShareByCircleProvider implements IShareProvider, IPartialShareProvider, IShareProviderGetUsers, IShareProviderSupportsAllSharesInFolder {
 	use TArrayTools;
 	use TStringTools;
 	use TNCLogger;
@@ -142,6 +144,7 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 			->add(DataProbe::INITIATOR, [DataProbe::BASED_ON]);
 
 		$circle = $this->circleService->probeCircle($share->getSharedWith(), $circleProbe, $dataProbe);
+		$share->setToken($this->token(15));
 		$share->setMailSend(true);
 		$owner = $circle->getInitiator();
 		$this->shareWrapperService->save($share);
@@ -535,7 +538,12 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 			return [];
 		}
 
-		$federatedUser = $this->federatedUserService->getLocalFederatedUser($userId);
+		try {
+			$federatedUser = $this->federatedUserService->getLocalFederatedUser($userId);
+		} catch (FederatedUserNotFoundException) {
+			return [];
+		}
+
 		$probe = new CircleProbe();
 		$probe->includePersonalCircles()
 			->includeSystemCircles()
@@ -549,6 +557,12 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 			$probe
 		);
 
+		// exclude shares leading to deleted files or to the trashbin
+		$wrappedShares = array_filter(
+			$wrappedShares,
+			fn (ShareWrapper $wrapper): bool => $wrapper->hasFileCache() && $wrapper->getFileCache()->isAccessible()
+		);
+
 		return array_filter(
 			array_map(
 				function (ShareWrapper $wrapper) {
@@ -560,6 +574,50 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 		);
 	}
 
+	public function getSharedWithByPath(
+		string $userId,
+		int $shareType,
+		string $path,
+		bool $forChildren,
+		int $limit,
+		int $offset,
+	): iterable {
+		if ($shareType !== IShare::TYPE_CIRCLE) {
+			return [];
+		}
+
+		$federatedUser = $this->federatedUserService->getLocalFederatedUser($userId);
+		$probe = new CircleProbe();
+		$probe->includePersonalCircles()
+			->includeSystemCircles()
+			->mustBeMember()
+			->setItemsLimit($limit)
+			->setItemsOffset($offset);
+
+		$wrappedShares = $this->shareWrapperService->getSharedWithByPath(
+			$federatedUser,
+			$path,
+			$forChildren,
+			$probe,
+		);
+
+		// exclude shares leading to deleted files or to the trashbin
+		$wrappedShares = array_filter(
+			$wrappedShares,
+			fn (ShareWrapper $wrapper): bool => $wrapper->hasFileCache() && $wrapper->getFileCache()->isAccessible()
+		);
+
+		/** @var array<string, IShare> */
+		return array_filter(
+			array_map(
+				function (ShareWrapper $wrapper) {
+					return $wrapper->getShare(
+						$this->rootFolder, $this->userManager, $this->urlGenerator, true
+					);
+				}, $wrappedShares
+			)
+		);
+	}
 
 	/**
 	 * @param string $token
@@ -829,7 +887,7 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 		//				  )
 		//		   );
 		//
-		//		$cursor = $qb->execute();
+		//		$cursor = $qb->executeQuery();
 		//		while ($data = $cursor->fetch()) {
 		//			try {
 		//				yield $this->createShareObject($data);
@@ -838,5 +896,14 @@ class ShareByCircleProvider implements IShareProvider, IShareProviderSupportsAll
 		//		}
 		//		$cursor->closeCursor();
 		return [];
+	}
+
+	public function getUsersForShare(IShare $share): iterable {
+		$members = $this->shareWrapperService->getShareById((int)$share->getId())->getCircle()->getInheritedMembers();
+		foreach ($members as $member) {
+			if ($member->getUserType() === Member::TYPE_USER) {
+				yield $this->userManager->getExistingUser($member->getUserId());
+			}
+		}
 	}
 }

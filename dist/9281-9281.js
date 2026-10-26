@@ -1,2 +1,2 @@
-"use strict";(globalThis.webpackChunknextcloud||=[]).push([[9281],{9281(e,i,l){const s=(0,l(85471).$V)(()=>Promise.all([l.e(4208),l.e(9165),l.e(9906)]).then(l.bind(l,49906)));l.d(i,["FilePickerVue",0,s])}}]);
-//# sourceMappingURL=9281-9281.js.map?v=c43bfab06ab4a5d070fe
+"use strict";(globalThis.webpackChunknextcloud_ui_legacy||=[]).push([[9281],{9281(e,l,c){const i=(0,c(85471).$V)(()=>Promise.all([c.e(4208),c.e(9906)]).then(()=>c(49906)));c.d(l,["FilePickerVue",0,i])}}]);
+//# sourceMappingURL=9281-9281.js.map?v=fe6b2ef0fac4a7e91af9

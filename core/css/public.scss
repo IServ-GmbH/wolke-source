@@ -70,7 +70,7 @@
 	/* public footer */
 	footer {
 		position: fixed;
-		inset-inline-start: 50%;
+		left: 50%;
 		bottom: var(--body-container-margin);
 		transform: translateX(-50%);
 		width: 90vw;

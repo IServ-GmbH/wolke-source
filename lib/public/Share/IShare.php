@@ -98,6 +98,7 @@ interface IShare {
 
 	/**
 	 * @since 26.0.0
+	 * @deprecated 33.0.0 The app is abandonned.
 	 */
 	public const TYPE_SCIENCEMESH = 15;
 
@@ -553,6 +554,13 @@ interface IShare {
 	public function setTarget($target);
 
 	/**
+	 * Return the original target, if this share was moved
+	 *
+	 * @since 33.0.0
+	 */
+	public function getOriginalTarget(): ?string;
+
+	/**
 	 * Get the target path of this share relative to the recipients user folder.
 	 *
 	 * @return string
@@ -660,7 +668,7 @@ interface IShare {
 	/**
 	 * Check if it is allowed to download this share.
 	 *
-	 * @since 32.0.7
+	 * @since 33.0.1
 	 */
 	public function canDownload(): bool;
 }

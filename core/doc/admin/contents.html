@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Table of contents &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Table of contents &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -111,6 +111,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -135,7 +136,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Nextcloud 32 Administration Manual</a>
+          <a href="#">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -161,8 +162,11 @@
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="index.html#videos-and-blogs">Videos and blogs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#target-audience">Target audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#target-audience">Target Audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-components">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#editions">Editions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#further-resources">Further Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release_schedule.html">Maintenance and release schedule</a><ul>
@@ -207,6 +211,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="release_notes/index.html">Critical changes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="release_notes/index.html#critical-changes">Critical changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="release_notes/upgrade_to_33.html">Upgrade to Nextcloud 33</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#system-requirements">System requirements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#previews">Previews</a></li>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#snowflake-ids">Snowflake IDs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#openmetrics-endpoint">OpenMetrics endpoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#default-user-agent-for-outgoing-requests-changed">Default user agent for outgoing requests changed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_33.html#taskprocessing-worker-command">TaskProcessing worker command</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="release_notes/upgrade_to_32.html">Upgrade to Nextcloud 32</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_32.html#system-requirements">System requirements</a></li>
 <li class="toctree-l4"><a class="reference internal" href="release_notes/upgrade_to_32.html#web-server-configuration">Web server configuration</a></li>
@@ -346,7 +359,12 @@
 <li class="toctree-l2"><a class="reference internal" href="installation/installation_wizard.html">Installation wizard</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="installation/installation_wizard.html#quick-start">Quick start</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/installation_wizard.html#data-directory-location">Data directory location</a></li>
-<li class="toctree-l3"><a class="reference internal" href="installation/installation_wizard.html#database-choice">Database choice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation/installation_wizard.html#database-choice">Database choice</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="installation/installation_wizard.html#automatic-database-user-creation">Automatic database user creation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/installation_wizard.html#autoconfig">Autoconfig</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/installation_wizard.html#completing-installation">Completing Installation</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="installation/installation_wizard.html#trusted-domains">Trusted domains</a></li>
 </ul>
 </li>
@@ -380,8 +398,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="installation/harden_server.html">Hardening and security guidance</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="installation/harden_server.html#passwords">Passwords</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#storage-of-access-tokens">Storage of access tokens</a></li>
-<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#limit-on-password-length">Limit on password length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#storage-of-account-passwords">Storage of account passwords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#storage-of-authentication-tokens">Storage of authentication tokens</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#token-associated-storage-of-login-passwords">Token-associated storage of login passwords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#security-consequences">Security consequences</a></li>
+<li class="toctree-l4"><a class="reference internal" href="installation/harden_server.html#password-length-limits">Password Length Limits</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="installation/harden_server.html#operating-system">Operating system</a><ul>
@@ -422,7 +443,8 @@
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#debug-mode">Debug Mode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#id1">Caching</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#compression">Compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#using-mariadb-mysql-instead-of-sqlite">Using MariaDB/MySQL instead of SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#replacing-sqlite">Replacing SQLite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#tuning-your-database">Tuning your database</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#using-redis-based-transactional-file-locking">Using Redis-based transactional file locking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#tls-encryption-app">TLS / encryption app</a></li>
 <li class="toctree-l3"><a class="reference internal" href="installation/server_tuning.html#enable-http-2-for-faster-loading">Enable HTTP/2 for faster loading</a></li>
@@ -547,6 +569,7 @@
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#examples">Examples</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#default-parameters">Default Parameters</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#instanceid">instanceid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#serverid">serverid</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#passwordsalt">passwordsalt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#secret">secret</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#trusted-domains">trusted_domains</a></li>
@@ -687,6 +710,11 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#alternate-code-locations">Alternate Code Locations</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#customclient-desktop">customclient_desktop</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#activity">Activity</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#activity-expire-days">activity_expire_days</a></li>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#activity-use-cached-mountpoints">activity_use_cached_mountpoints</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#apps">Apps</a><ul>
@@ -857,10 +885,11 @@
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#files-trash-delete">files.trash.delete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#enable-lazy-objects">enable_lazy_objects</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#default-certificates-bundle-path">default_certificates_bundle_path</a></li>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#openmetrics-skipped-classes">openmetrics_skipped_classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#openmetrics-allowed-clients">openmetrics_allowed_clients</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#app-config-options">App config options</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#activity-app">Activity app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/config_sample_php_parameters.html#settings-app">Settings app</a></li>
 </ul>
 </li>
@@ -868,7 +897,10 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/activity_configuration.html">Activity app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#enabling-the-activity-app">Enabling the activity app</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#configuring-your-nextcloud-for-the-activity-app">Configuring your Nextcloud for the activity app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#configuring-your-nextcloud-for-the-activity-app">Configuring your Nextcloud for the activity app</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/activity_configuration.html#admin-settings">Admin settings</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#activities-in-groupfolders-or-external-storages">Activities in groupfolders or external storages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#better-scheduling-of-activity-emails">Better scheduling of activity emails</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/activity_configuration.html#excluding-users-from-the-activity-expiration">Excluding users from the activity expiration</a></li>
@@ -896,6 +928,7 @@
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/antivirus_configuration.html#configuring-clamav-on-nextcloud">Configuring ClamAV on Nextcloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/antivirus_configuration.html#confirm-everything-is-working">Confirm everything is working</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/antivirus_configuration.html#manage-the-background-scanner">Manage the background scanner</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="configuration_server/antivirus_configuration.html#how-the-background-scanner-works">How the background scanner works</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/antivirus_configuration.html#get-info-about-files-in-the-scan-queue">Get info about files in the scan queue</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/antivirus_configuration.html#manually-trigger-the-background-scan">Manually trigger the background scan</a></li>
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/antivirus_configuration.html#manually-scan-a-single-file">Manually scan a single file</a></li>
@@ -951,6 +984,7 @@
 <li class="toctree-l4"><a class="reference internal" href="configuration_server/bruteforce_configuration.html#excluding-ip-addresses-from-brute-force-protection">Excluding IP addresses from brute force protection</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/bruteforce_configuration.html#brute-force-protection-vs-fail2ban">Brute force protection vs fail2ban</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/caching_configuration.html">Memory caching</a><ul>
@@ -1077,13 +1111,12 @@
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/text_configuration.html#default-file-extension">Default file extension</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/text_configuration.html#disable-rich-text-editing">Disable rich text editing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/text_configuration.html#file-encodings">File encodings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration_server/text_configuration.html#websocket-support-with-notify-push">Websocket support with notify_push</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_server/theming.html">Theming</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#modify-the-appearance-of-nextcloud">Modify the appearance of Nextcloud</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#configure-theming-through-cli">Configure theming through CLI</a></li>
-<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#theming-of-icons">Theming of icons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#customize-the-appearance-of-nextcloud">Customize the appearance of Nextcloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#configure-theming-via-cli">Configure theming via CLI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#icon-theming">Icon theming</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_server/theming.html#branded-clients">Branded clients</a></li>
 </ul>
 </li>
@@ -1194,6 +1227,7 @@
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#system-tags">System Tags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#antivirus">Antivirus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#setupchecks">Setupchecks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="occ_command.html#snowflake-ids">Snowflake IDs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="occ_command.html#share-operations">Share operations</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="occ_command.html#list">List</a></li>
 </ul>
@@ -1216,6 +1250,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="webhook_listeners/index.html">Webhook Listeners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="webhook_listeners/index.html#listening-to-events">Listening to events</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="webhook_listeners/index.html#filters">Filters</a></li>
@@ -1231,12 +1267,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="windmill_workflows/index.html">Windmill Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#selecting-the-right-workspace">Selecting the right Workspace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#setting-up-the-correct-nextcloud-url">Setting up the Correct Nextcloud URL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#building-a-workflow">Building a workflow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="windmill_workflows/index.html#the-magic-listener-script">The magic listener script</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#setting-up-the-workspace-connection">Setting up the workspace connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#building-a-workflow">Building a workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="windmill_workflows/index.html#nextcloud-scripts">Nextcloud Scripts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="windmill_workflows/index.html#authentication">Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="windmill_workflows/index.html#passing-values-between-blocks">Passing values between blocks</a></li>
@@ -1306,6 +1338,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_files/primary_storage.html#multibucket-object-store">Multibucket Object Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_files/primary_storage.html#multibucket-object-store-with-per-bucket-configuration-overrides">Multibucket Object Store with per Bucket configuration overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_files/primary_storage.html#multi-instance-object-store">Multi-instance Object Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_files/primary_storage.html#s3-sse-c-encryption-support">S3 SSE-C encryption support</a></li>
 </ul>
 </li>
@@ -1468,6 +1501,8 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="configuration_files/file_versioning.html">Controlling file versions and aging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="configuration_files/file_versioning.html#during-version-creation">During Version Creation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_files/file_versioning.html#during-the-regular-background-job">During the Regular Background Job</a></li>
 <li class="toctree-l3"><a class="reference internal" href="configuration_files/file_versioning.html#background-job">Background job</a></li>
 </ul>
 </li>
@@ -1650,40 +1685,52 @@
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="ai/overview.html#machine-translation">Machine translation</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id29">Frontend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id31">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id30">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id33">Backend apps</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="ai/overview.html#speech-to-text">Speech-To-Text</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id32">Frontend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id35">Backend apps</a></li>
-</ul>
-</li>
-<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#image-generation">Image generation</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id37">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id35">Frontend apps</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id39">Backend apps</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#text-to-speech">Text-To-Speech</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#image-generation">Image generation</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id41">Frontend apps</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id43">Backend apps</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#text-to-speech">Text-To-Speech</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id46">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id48">Backend apps</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="ai/overview.html#context-chat">Context Chat</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id45">Frontend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id47">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id51">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id53">Backend apps</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ai/overview.html#provider-apps">Provider apps</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="ai/overview.html#context-chat-search">Context Chat Search</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id49">Frontend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id51">Backend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id52">Provider apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id56">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id58">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id59">Provider apps</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#context-agent">Context Agent</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id60">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id62">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id64">Provider apps</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="ai/overview.html#document-generation">Document generation</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id53">Frontend apps</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id55">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id66">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id68">Backend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id70">Provider apps</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ai/overview.html#live-transcription">Live transcription</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id73">Frontend apps</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ai/overview.html#id75">Backend apps</a></li>
 </ul>
 </li>
 </ul>
@@ -1709,6 +1756,8 @@
 <li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#text-processing">Text processing</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#text-to-image">Text-To-Image</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#context-chat">Context Chat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#chat">Chat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#voice-chat">Voice Chat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#context-agent">Context Agent</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ai/app_assistant.html#text-to-speech">Text-To-Speech</a></li>
 </ul>
@@ -1877,12 +1926,13 @@
 <li class="toctree-l3"><a class="reference internal" href="ai/app_text2speech_kokoro.html#known-limitations">Known Limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="ai/app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ai/app_live_transcription.html">App: Live Transcription and Translation in Nextcloud Talk (live_transcription)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#installation">Installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#requirements">Requirements</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#logs">Logs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#app-store">App store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#repository">Repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai/app_live_transcription.html#limitations">Limitations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ai/ai_as_a_service.html">AI as a Service</a><ul>
@@ -1895,6 +1945,14 @@
 <li class="toctree-l2"><a class="reference internal" href="ai/insight_and_debugging.html">Insight and debugging</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ai/insight_and_debugging.html#get-a-task-by-id">Get a task by id</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ai/insight_and_debugging.html#list-and-filter-tasks">List and filter tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ai/eu_ai_act.html">Legal: Compliance with EU AI Act</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ai/eu_ai_act.html#implementation-of-the-transparency-requirements">Implementation of the transparency requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai/eu_ai_act.html#reliability-and-robustness">Reliability and robustness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai/eu_ai_act.html#interoperability">Interoperability</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai/eu_ai_act.html#cybersecurity-and-physical-security-of-the-hardware">Cybersecurity and physical security of the hardware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ai/eu_ai_act.html#additional-requirements-when-using-large-ai-models">Additional requirements when using large AI models</a></li>
 </ul>
 </li>
 </ul>
@@ -2250,6 +2308,13 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="groupware/contactsinteraction.html">Contacts Interaction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="groupware/contactsinteraction.html#how-interactions-are-tracked">How interactions are tracked</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupware/contactsinteraction.html#the-recently-contacted-address-book">The recently contacted address book</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupware/contactsinteraction.html#data-retention">Data retention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="groupware/contactsinteraction.html#user-deletion">User deletion</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="groupware/mail.html">Mail</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="groupware/mail.html#configuration">Configuration</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="groupware/mail.html#anti-abuse-alerts">Anti-abuse alerts</a></li>
@@ -2351,6 +2416,10 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="configuration_monitoring/index.html">Monitoring</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration_monitoring/index.html#openmetrics">OpenMetrics</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="maintenance/backup.html">Backup</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="maintenance/backup.html#maintenance-mode">Maintenance mode</a></li>
@@ -2512,7 +2581,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -2538,6 +2607,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -2545,8 +2616,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

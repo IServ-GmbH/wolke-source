@@ -94,6 +94,7 @@ use OCP\ISession;
 use OCP\ITagManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use OCP\Profiler\IProfiler;
 use OCP\SabrePluginEvent;
@@ -201,7 +202,7 @@ class Server {
 
 		// calendar plugins
 		if ($this->requestIsForSubtree(['calendars', 'public-calendars', 'system-calendars', 'principals'])) {
-			$this->server->addPlugin(new DAV\Sharing\Plugin($authBackend, \OCP\Server::get(IRequest::class), \OCP\Server::get(IConfig::class), \OCP\Server::get(RateLimiting::class)));
+			$this->server->addPlugin(new DAV\Sharing\Plugin($authBackend, \OCP\Server::get(IRequest::class), \OCP\Server::get(RateLimiting::class)));
 			$this->server->addPlugin(new \OCA\DAV\CalDAV\Plugin());
 			$this->server->addPlugin(new ICSExportPlugin(\OCP\Server::get(IConfig::class), $logger));
 			$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OCP\Server::get(IConfig::class), \OCP\Server::get(LoggerInterface::class), \OCP\Server::get(DefaultCalendarValidator::class)));
@@ -214,7 +215,6 @@ class Server {
 
 			$this->server->addPlugin(new \Sabre\CalDAV\Notifications\Plugin());
 			$this->server->addPlugin(new PublishPlugin(
-				\OCP\Server::get(IConfig::class),
 				\OCP\Server::get(IURLGenerator::class)
 			));
 
@@ -224,7 +224,7 @@ class Server {
 
 		// addressbook plugins
 		if ($this->requestIsForSubtree(['addressbooks', 'principals'])) {
-			$this->server->addPlugin(new DAV\Sharing\Plugin($authBackend, \OCP\Server::get(IRequest::class), \OCP\Server::get(IConfig::class), \OCP\Server::get(RateLimiting::class)));
+			$this->server->addPlugin(new DAV\Sharing\Plugin($authBackend, \OCP\Server::get(IRequest::class), \OCP\Server::get(RateLimiting::class)));
 			$this->server->addPlugin(new \OCA\DAV\CardDAV\Plugin());
 			$this->server->addPlugin(new VCFExportPlugin());
 			$this->server->addPlugin(new MultiGetExportPlugin());
@@ -338,7 +338,6 @@ class Server {
 				$this->server->addPlugin(new SharesPlugin(
 					$this->server->tree,
 					$userSession,
-					$userFolder,
 					$shareManager,
 					\OCP\Server::get(IRootFolder::class),
 				));
@@ -357,6 +356,7 @@ class Server {
 						\OCP\Server::get(IMipService::class),
 						\OCP\Server::get(EventComparisonService::class),
 						\OCP\Server::get(\OCP\Mail\Provider\IManager::class),
+						\OCP\Server::get(IEmailValidator::class),
 						\OCP\Server::get(IAccountManager::class),
 					));
 				}

@@ -99,6 +99,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 		return $items;
 	}
 
+
 	public function improveRelatedResource(CirclesManager $circlesManager, IRelatedResource $entry): void {
 	}
 
@@ -159,6 +160,7 @@ class GroupFoldersRelatedResourceProvider implements IRelatedResourceProvider {
 				->setAsGroupShared();
 		}
 	}
+
 
 	/**
 	 * @param int $folderId

@@ -12,13 +12,13 @@ use OCP\AppFramework\Attribute\Consumable;
 use OCP\EventDispatcher\Event;
 
 /**
- * @since 32.0.3
+ * @since 33.0.0
  */
-#[Consumable(since: '32.0.3')]
+#[Consumable(since: '33.0.0')]
 class BucketCreatedEvent extends Event {
 
 	/**
-	 * @since 32.0.3
+	 * @since 33.0.0
 	 */
 	public function __construct(
 		private readonly string $bucket,
@@ -30,28 +30,28 @@ class BucketCreatedEvent extends Event {
 	}
 
 	/**
-	 * @since 32.0.3
+	 * @since 33.0.0
 	 */
 	public function getBucket(): string {
 		return $this->bucket;
 	}
 
 	/**
-	 * @since 32.0.3
+	 * @since 33.0.0
 	 */
 	public function getEndpoint(): string {
 		return $this->endpoint;
 	}
 
 	/**
-	 * @since 32.0.3
+	 * @since 33.0.0
 	 */
 	public function getRegion(): string {
 		return $this->region;
 	}
 
 	/**
-	 * @since 32.0.3
+	 * @since 33.0.0
 	 */
 	public function getVersion(): string {
 		return $this->version;

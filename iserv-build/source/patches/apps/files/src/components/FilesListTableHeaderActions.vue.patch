@@ -1,32 +1,32 @@
 diff --git apps/files/src/components/FilesListTableHeaderActions.vue apps/files/src/components/FilesListTableHeaderActions.vue
-index 4c17243..a01ebbd 100644
+index 66b6376..1dbca27 100644
 --- apps/files/src/components/FilesListTableHeaderActions.vue
 +++ apps/files/src/components/FilesListTableHeaderActions.vue
-@@ -14,7 +14,7 @@
- 			:open.sync="openedMenu"
+@@ -16,7 +16,7 @@
  			@close="openedSubmenu = null">
  			<!-- Default actions list-->
--			<NcActionButton v-for="(action, idx) in enabledMenuActions"
-+			<NcActionButton v-for="(action, idx) in customIServActions"
- 				:id="idx === 0 ? FILE_LIST_HEAD_FIRST_BATCH_ACTION_ID : undefined"
+ 			<NcActionButton
+-				v-for="(action) in enabledMenuActions"
++				v-for="(action) in customIServActions"
  				:key="action.id"
  				:ref="`action-batch-${action.id}`"
-@@ -261,6 +261,18 @@ export default defineComponent({
- 			}
- 			return 3
+ 				:class="{
+@@ -267,6 +267,18 @@ export default defineComponent({
+ 				this.actionsMenuStore.opened = opened ? 'global' : null
+ 			},
  		},
 +
 +		// Configuration option to disable download buttons
-+		enabledMenuActionsWithoutDownload() {
++		enabledMenuActionsWithoutDownload(): IFileAction[] {
 +			// Filter out download from enabledMenuActions
-+			return this.enabledMenuActions.filter(action => action.id !== 'download')
++			return this.enabledMenuActions.filter((action) => action.id !== 'download')
 +		},
 +
 +		// Configuration option to disable download buttons
-+		customIServActions() {
++		customIServActions(): IFileAction[] {
 +			// Checks deactivation of the file download
 +			return OC.appConfig.core.disableFileDownloads ? this.enabledMenuActionsWithoutDownload : this.enabledMenuActions
 +		},
  	},
  
- 	mounted() {
+ 	methods: {

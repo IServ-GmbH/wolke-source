@@ -37,7 +37,7 @@ class PhpInfoSection extends Section {
 
 		if (str_contains($phpinfo, '<!DOCTYPE html') === false) {
 			// If phpinfo output is not HTML, we dump the raw output
-			$this->createDetail('phpifo', $phpinfo, IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
+			$this->createDetail('phpinfo', $phpinfo, IDetail::TYPE_COLLAPSIBLE_PREFORMAT);
 			return parent::getDetails();
 		}
 

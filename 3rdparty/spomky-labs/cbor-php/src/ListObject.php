@@ -46,7 +46,9 @@ class ListObject extends AbstractCBORObject implements Countable, IteratorAggreg
     public function __toString(): string
     {
         $result = parent::__toString();
-        $result .= $this->length ?? '';
+        if ($this->length !== null) {
+            $result .= $this->length;
+        }
         foreach ($this->data as $object) {
             $result .= (string) $object;
         }

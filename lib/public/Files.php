@@ -98,7 +98,7 @@ class Files {
 	 * @deprecated 14.0.0
 	 */
 	public static function streamCopy($source, $target, ?bool $includeResult = null) {
-		if (!$source or !$target) {
+		if (!$source || !$target) {
 			return $includeResult ? [0, false] : 0;
 		}
 
@@ -125,17 +125,5 @@ class Files {
 			}
 		}
 		return $includeResult ? [$count, $result] : $count;
-	}
-
-	/**
-	 * Adds a suffix to the name in case the file exists
-	 * @param string $path
-	 * @param string $filename
-	 * @return string
-	 * @since 5.0.0
-	 * @deprecated 14.0.0 use getNonExistingName of the OCP\Files\Folder object
-	 */
-	public static function buildNotExistingFileName($path, $filename) {
-		return \OC_Helper::buildNotExistingFileName($path, $filename);
 	}
 }

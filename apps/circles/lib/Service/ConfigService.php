@@ -13,6 +13,7 @@ namespace OCA\Circles\Service;
 
 use OC;
 use OCA\Circles\AppInfo\Application;
+use OCA\Circles\ConfigLexicon;
 use OCA\Circles\Exceptions\GSStatusException;
 use OCA\Circles\IFederatedUser;
 use OCA\Circles\Model\Circle;
@@ -21,6 +22,8 @@ use OCA\Circles\Tools\Model\NCRequest;
 use OCA\Circles\Tools\Traits\TArrayTools;
 use OCA\Circles\Tools\Traits\TNCLogger;
 use OCA\Circles\Tools\Traits\TStringTools;
+use OCP\AppFramework\Services\IAppConfig;
+use OCP\Config\IUserConfig;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 
@@ -191,23 +194,19 @@ class ConfigService {
 	public const DISPLAY_PARENTHESIS = 2;
 
 
-	/** @var IConfig */
-	private $config;
-
-	/** @var IURLGenerator */
-	private $urlGenerator;
-
-
 	/**
 	 * ConfigService constructor.
 	 *
 	 * @param IConfig $config
 	 * @param IURLGenerator $urlGenerator
 	 */
-	public function __construct(IConfig $config, IURLGenerator $urlGenerator) {
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-
+	public function __construct(
+		private readonly IConfig $config,
+		private readonly IAppConfig $appConfig,
+		private readonly IUserConfig $userConfig,
+		private readonly \OCP\IAppConfig $globalAppConfig,
+		private readonly IURLGenerator $urlGenerator,
+	) {
 		$this->setup('app', Application::APP_ID);
 	}
 
@@ -220,7 +219,7 @@ class ConfigService {
 	 * @return string
 	 */
 	public function getAppValue(string $key): string {
-		if (($value = $this->config->getAppValue(Application::APP_ID, $key, '')) !== '') {
+		if (($value = $this->appConfig->getAppValueString($key)) !== '') {
 			return $value;
 		}
 
@@ -259,7 +258,7 @@ class ConfigService {
 	 * @return void
 	 */
 	public function setAppValue(string $key, string $value): void {
-		$this->config->setAppValue(Application::APP_ID, $key, $value);
+		$this->appConfig->setAppValueString($key, $value);
 	}
 
 
@@ -267,7 +266,7 @@ class ConfigService {
 	 *
 	 */
 	public function unsetAppConfig(): void {
-		$this->config->deleteAppValues(Application::APP_ID);
+		$this->appConfig->deleteAppValues();
 	}
 
 
@@ -293,7 +292,7 @@ class ConfigService {
 	 * @return string
 	 */
 	public function getCoreValueForUser($userId, $key, $default = '') {
-		return $this->config->getUserValue($userId, 'core', $key, $default);
+		return $this->userConfig->getValueString($userId, 'core', $key, $default);
 	}
 
 
@@ -365,11 +364,7 @@ class ConfigService {
 	 * @return bool
 	 */
 	public function enforcePasswordOnSharedFile(Circle $circle): bool {
-		if ($this->config->getAppValue(
-			'core',
-			'shareapi_enforce_links_password',
-			'no'
-		) === 'yes') {
+		if ($this->globalAppConfig->getValueBool('core', 'shareapi_enforce_links_password')) {
 			return true;
 		}
 
@@ -590,7 +585,7 @@ class ConfigService {
 
 		// using old settings local_cloud_id from NC20, deprecated in NC25
 		if ($frontalCloudId === '') {
-			$frontalCloudId = $this->config->getAppValue(Application::APP_ID, 'local_cloud_id', '');
+			$frontalCloudId = $this->appConfig->getAppValueString('local_cloud_id');
 			if ($frontalCloudId !== '') {
 				$this->setAppValue(self::FRONTAL_CLOUD_ID, $frontalCloudId);
 			}
@@ -776,5 +771,10 @@ class ConfigService {
 		$config |= $this->getAppValueInt(ConfigService::CIRCLE_TYPES_FORCE);
 		$config &= ~$this->getAppValueInt(ConfigService::CIRCLE_TYPES_BLOCK);
 		$circle->setConfig($config);
+	}
+
+	public function isFederatedTeamsEnabled(): bool {
+		return $this->appConfig->getAppValueBool(ConfigLexicon::FEDERATED_TEAMS_ENABLED) &&
+			$this->appConfig->hasAppKey(ConfigLexicon::FEDERATED_TEAMS_FRONTAL, true);
 	}
 }

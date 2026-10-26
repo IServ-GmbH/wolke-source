@@ -20,6 +20,7 @@ use OCP\ICacheFactory;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Security\Ip\IRemoteAddress;
 use Psr\Log\LoggerInterface;
 use function is_string;
@@ -62,6 +63,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 		private LoggerInterface $logger,
 		ICacheFactory $cacheFactory,
 		private IRemoteAddress $remoteAddress,
+		private IUserSession $userSession,
 	) {
 		$this->displayNameCache = new DisplayNameCache($cacheFactory, $this);
 
@@ -264,12 +266,6 @@ class Manager extends PublicEmitter implements IGroupManager {
 		}
 	}
 
-	/**
-	 * @param string $search
-	 * @param ?int $limit
-	 * @param ?int $offset
-	 * @return \OC\Group\Group[]
-	 */
 	public function search(string $search, ?int $limit = null, ?int $offset = 0) {
 		$groups = [];
 		foreach ($this->backends as $backend) {
@@ -278,7 +274,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 			foreach ($newGroups as $groupId => $group) {
 				$groups[$groupId] = $group;
 			}
-			if (!is_null($limit) and $limit <= 0) {
+			if (!is_null($limit) && $limit <= 0) {
 				return array_values($groups);
 			}
 		}
@@ -287,7 +283,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 
 	/**
 	 * @param IUser|null $user
-	 * @return array<string, \OCP\IGroup>
+	 * @return \OC\Group\Group[]
 	 */
 	public function getUserGroups(?IUser $user = null) {
 		if (!$user instanceof IUser) {
@@ -298,7 +294,7 @@ class Manager extends PublicEmitter implements IGroupManager {
 
 	/**
 	 * @param string $uid the user id
-	 * @return array<string, \OCP\IGroup>
+	 * @return \OC\Group\Group[]
 	 */
 	public function getUserIdGroups(string $uid): array {
 		$groupIds = $this->getUserIdGroupIds($uid);
@@ -312,7 +308,8 @@ class Manager extends PublicEmitter implements IGroupManager {
 	 * @return bool if admin
 	 */
 	public function isAdmin($userId) {
-		if (!$this->remoteAddress->allowsAdminActions()) {
+		if (!$this->remoteAddress->allowsAdminActions()
+			&& ($userId === $this->userSession->getUser()?->getUID())) {
 			return false;
 		}
 
@@ -347,12 +344,6 @@ class Manager extends PublicEmitter implements IGroupManager {
 		return in_array($group, $this->getUserIdGroupIds($userId));
 	}
 
-	/**
-	 * get a list of group ids for a user
-	 *
-	 * @param IUser $user
-	 * @return list<string> with group ids
-	 */
 	public function getUserGroupIds(IUser $user): array {
 		return $this->getUserIdGroupIds($user->getUID());
 	}

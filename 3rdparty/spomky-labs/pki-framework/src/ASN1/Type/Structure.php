@@ -182,7 +182,10 @@ abstract class Structure extends Element implements Countable, IteratorAggregate
     public function elements(): array
     {
         if (! isset($this->unspecifiedTypes)) {
-            $this->unspecifiedTypes = array_map(UnspecifiedType::create(...), $this->elements);
+            $this->unspecifiedTypes = array_map(
+                static fn (Element $el) => UnspecifiedType::create($el),
+                $this->elements
+            );
         }
         return $this->unspecifiedTypes;
     }

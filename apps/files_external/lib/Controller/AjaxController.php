@@ -13,12 +13,14 @@ use OCA\Files_External\Lib\Auth\PublicKey\RSA;
 use OCA\Files_External\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PasswordConfirmationRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUserManager;
 use OCP\IUserSession;
 
 class AjaxController extends Controller {
@@ -37,10 +39,36 @@ class AjaxController extends Controller {
 		private GlobalAuth $globalAuth,
 		private IUserSession $userSession,
 		private IGroupManager $groupManager,
+		private IUserManager $userManager,
 		private IL10N $l10n,
 		private AuthorizedGroupMapper $authorizedGroupMapper,
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	/**
+	 * Returns a list of users and groups that match the given pattern.
+	 * Used for user and group picker in the admin settings.
+	 *
+	 * @param string $pattern The search pattern
+	 * @param int|null $limit The maximum number of results to return
+	 * @param int|null $offset The offset from which to start returning results
+	 * @return JSONResponse
+	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
+	public function getApplicableEntities(string $pattern = '', ?int $limit = null, ?int $offset = null): JSONResponse {
+		$groups = [];
+		foreach ($this->groupManager->search($pattern, $limit, $offset) as $group) {
+			$groups[$group->getGID()] = $group->getDisplayName();
+		}
+
+		$users = [];
+		foreach ($this->userManager->searchDisplayName($pattern, $limit, $offset) as $user) {
+			$users[$user->getUID()] = $user->getDisplayName();
+		}
+
+		$results = ['groups' => $groups, 'users' => $users];
+		return new JSONResponse($results);
 	}
 
 	/**

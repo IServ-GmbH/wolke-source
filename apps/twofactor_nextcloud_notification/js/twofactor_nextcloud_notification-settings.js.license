@@ -6,7 +6,9 @@ SPDX-FileCopyrightText: Tobias Koppers @sokra
 SPDX-FileCopyrightText: Roman Shtylman <shtylman@gmail.com>
 SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
 SPDX-FileCopyrightText: Joas Schilling <coding@schilljs.com>
+SPDX-FileCopyrightText: Guillaume Chau
 SPDX-FileCopyrightText: GitHub Inc.
+SPDX-FileCopyrightText: Evan You
 
 
 This file is generated from multiple sources. Included packages:
@@ -14,8 +16,23 @@ This file is generated from multiple sources. Included packages:
 	- version: 7.7.3
 	- license: ISC
 - @nextcloud/vue
-	- version: 8.41.0
+	- version: 9.5.0
 	- license: AGPL-3.0-or-later
+- @vue/devtools-api
+	- version: 6.6.4
+	- license: MIT
+- @vue/reactivity
+	- version: 3.5.43
+	- license: MIT
+- @vue/runtime-core
+	- version: 3.5.43
+	- license: MIT
+- @vue/runtime-dom
+	- version: 3.5.43
+	- license: MIT
+- @vue/shared
+	- version: 3.5.43
+	- license: MIT
 - css-loader
 	- version: 7.1.2
 	- license: MIT
@@ -28,9 +45,15 @@ This file is generated from multiple sources. Included packages:
 - style-loader
 	- version: 4.0.0
 	- license: MIT
+- vue-loader
+	- version: 17.4.2
+	- license: MIT
+- vue
+	- version: 3.5.43
+	- license: MIT
 - webpack
 	- version: 5.105.2
 	- license: MIT
 - twofactor_nextcloud_notification
-	- version: 6.0.0-dev.0
+	- version: 7.0.0-dev.0
 	- license: AGPL-3.0-or-later

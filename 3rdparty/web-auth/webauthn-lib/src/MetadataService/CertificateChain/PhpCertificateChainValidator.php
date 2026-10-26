@@ -29,7 +29,6 @@ use Webauthn\Exception\InvalidCertificateException;
 use function count;
 use function in_array;
 use function parse_url;
-use function sprintf;
 use const PHP_EOL;
 use const PHP_URL_SCHEME;
 

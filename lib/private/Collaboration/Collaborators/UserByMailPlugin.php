@@ -11,8 +11,9 @@ use OCP\Contacts\IManager;
 use OCP\Federation\ICloudIdManager;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Mail\IMailer;
+use OCP\Mail\IEmailValidator;
 use OCP\Share\IShare;
 
 /**
@@ -27,7 +28,8 @@ class UserByMailPlugin extends MailPlugin {
 		IGroupManager $groupManager,
 		KnownUserService $knownUserService,
 		IUserSession $userSession,
-		IMailer $mailer,
+		IEmailValidator $emailValidator,
+		IUserManager $userManager,
 		mixed $shareWithGroupOnlyExcludeGroupsList = [],
 	) {
 		parent::__construct(
@@ -37,7 +39,8 @@ class UserByMailPlugin extends MailPlugin {
 			$groupManager,
 			$knownUserService,
 			$userSession,
-			$mailer,
+			$emailValidator,
+			$userManager,
 			$shareWithGroupOnlyExcludeGroupsList,
 			IShare::TYPE_USER,
 		);

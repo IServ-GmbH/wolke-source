@@ -26,7 +26,7 @@ final class MapObject extends AbstractCBORObject implements Countable, IteratorA
      */
     private array $data;
 
-    private ?string $length;
+    private ?string $length = null;
 
     /**
      * @param MapItem[] $data
@@ -34,6 +34,12 @@ final class MapObject extends AbstractCBORObject implements Countable, IteratorA
     public function __construct(array $data = [])
     {
         [$additionalInformation, $length] = LengthCalculator::getLengthOfArray($data);
+        array_map(static function ($item): void {
+            if (! $item instanceof MapItem) {
+                throw new InvalidArgumentException('The list must contain only MapItem objects.');
+            }
+        }, $data);
+
         parent::__construct(self::MAJOR_TYPE, $additionalInformation);
         $this->data = $data;
         $this->length = $length;
@@ -42,10 +48,16 @@ final class MapObject extends AbstractCBORObject implements Countable, IteratorA
     public function __toString(): string
     {
         $result = parent::__toString();
-        $result .= $this->length ?? '';
+        if ($this->length !== null) {
+            $result .= $this->length;
+        }
         foreach ($this->data as $object) {
-            $result .= (string) $object->getKey();
-            $result .= (string) $object->getValue();
+            $result .= $object->getKey()
+                ->__toString()
+            ;
+            $result .= $object->getValue()
+                ->__toString()
+            ;
         }
 
         return $result;

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calendar / CalDAV &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Calendar / CalDAV &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -140,6 +140,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="contacts.html">Contacts / CardDAV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contactsinteraction.html">Contacts Interaction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mail.html">Mail</a></li>
 <li class="toctree-l2"><a class="reference internal" href="out_of_office.html">Out-of-office feature</a></li>
 <li class="toctree-l2"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
@@ -152,6 +153,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -176,7 +178,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -207,7 +209,7 @@ calendar, and sending email notifications about upcoming events.</p>
 </a>
 </figure>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 30: </span>The section will be hidden if no app makes use of the CalDAV backend.</p>
+<p><span class="versionmodified added">Added in version 30.0.0: </span>The section will be hidden if no app makes use of the CalDAV backend.</p>
 </div>
 <p>Starting from Nextcloud 30, the calendar server settings section will be hidden if no app uses the
 CalDAV backend.
@@ -332,10 +334,13 @@ If you need to allow this, change the following parameter to:</p>
 <div class="versionadded">
 <p><span class="versionmodified added">Added in version 32.0.0.</span></p>
 </div>
-<p>Nextcloud supports creating read-only federated calendar shares.
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 33.0.0: </span>Federated calendar shares are now read/write.</p>
+</div>
+<p>Nextcloud supports creating federated calendar shares.
 A user is able to share a calendar with a remote user on a federated instance.
-For now, the shares are read-only and remote users are not able to change the events inside the
-shared calendar.</p>
+Starting with Nextcloud 33, remote users are able to create, edit, and delete events inside the
+shared calendar. In Nextcloud 32, shares were read-only.</p>
 <p>The feature can be optionally disabled through an app config.
 Run the following command to disable creating new federated calendar shares for all users:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">dav</span> <span class="n">enableCalendarFederation</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="nb">bool</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="n">false</span>
@@ -463,7 +468,7 @@ button next to the import button.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -489,6 +494,8 @@ button next to the import button.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -496,8 +503,6 @@ button next to the import button.</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

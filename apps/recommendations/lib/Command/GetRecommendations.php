@@ -28,6 +28,7 @@ class GetRecommendations extends Command {
 		$this->recommendationService = $recommendationService;
 	}
 
+	#[\Override]
 	protected function configure() {
 		$this->setName('files:recommendations:recommend');
 		$this->setDescription('Shows recommended files for an account');
@@ -43,18 +44,19 @@ class GetRecommendations extends Command {
 		);
 	}
 
-	public function execute(InputInterface $input, OutputInterface $output) {
+	#[\Override]
+	public function execute(InputInterface $input, OutputInterface $output): int {
 		$user = $this->userManager->get(
 			$input->getArgument('uid')
 		);
 
 		if (is_null($user)) {
-			$output->writeln("user does not exist");
+			$output->writeln('user does not exist');
 			return 1;
 		}
 
 		if ($input->getArgument('max')) {
-			$recommendations = $this->recommendationService->getRecommendations($user, (int) $input->getArgument('max'));
+			$recommendations = $this->recommendationService->getRecommendations($user, (int)$input->getArgument('max'));
 		} else {
 			$recommendations = $this->recommendationService->getRecommendations($user);
 		}

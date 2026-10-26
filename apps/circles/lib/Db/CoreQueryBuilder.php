@@ -350,6 +350,30 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		$this->limitInt('file_source', $nodeId);
 	}
 
+	public function limitToFileTarget(string $target, string $alias): void {
+		$this->andWhere(
+			$this->expr()->orX(
+				$this->exprLimit('file_target', $target, $alias),
+				$this->expr()->andX(
+					$this->exprLimitNull('file_target', false, $alias),
+					$this->exprLimit('file_target', $target),
+				),
+			),
+		);
+	}
+
+	public function limitToFileTargetLike(string $target, string $alias): void {
+		$this->andWhere(
+			$this->expr()->orX(
+				$this->exprLike('file_target', $target, $alias),
+				$this->expr()->andX(
+					$this->exprLimitNull('file_target', false, $alias),
+					$this->exprLike('file_target', $target),
+				),
+			),
+		);
+	}
+
 	/**
 	 * @param array $files
 	 */
@@ -1470,9 +1494,11 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 	 * @param string $aliasShare
 	 * @param string $aliasShareMemberships
 	 *
+	 * @return string the alias generated for the join
+	 *
 	 * @throws RequestBuilderException
 	 */
-	public function leftJoinShareChild(string $aliasShare, string $aliasShareMemberships = '') {
+	public function leftJoinShareChild(string $aliasShare, string $aliasShareMemberships = ''): string {
 		$expr = $this->expr();
 
 		$aliasShareChild = $this->generateAlias($aliasShare, self::SHARE);
@@ -1496,6 +1522,7 @@ class CoreQueryBuilder extends ExtendedQueryBuilder {
 		);
 
 		//		$this->selectAlias($aliasShareParent . '.permissions', 'parent_perms');
+		return $aliasShareChild;
 	}
 
 

@@ -25,6 +25,7 @@ use OCP\Security\Ip\IRemoteAddress;
 use OCP\Session\Exceptions\SessionNotAvailableException;
 use OCP\User\Backend\IPasswordConfirmationBackend;
 use Psr\Log\LoggerInterface;
+use ReflectionAttribute;
 use ReflectionMethod;
 
 class PasswordConfirmationMiddleware extends Middleware {
@@ -109,6 +110,7 @@ class PasswordConfirmationMiddleware extends Middleware {
 	}
 
 	private function isPasswordConfirmationStrict(ReflectionMethod $reflectionMethod): bool {
+		/** @var ReflectionAttribute<PasswordConfirmationRequired>[] $attributes */
 		$attributes = $reflectionMethod->getAttributes(PasswordConfirmationRequired::class);
 		return !empty($attributes) && ($attributes[0]->newInstance()->getStrict());
 	}

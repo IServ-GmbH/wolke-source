@@ -44,7 +44,7 @@ abstract class ARateLimit {
 	}
 
 	/**
-	 * @since 32.0.13
+	 * @since 33.0.7
 	 */
 	public function shouldApply(IRequest $request): bool {
 		return true;

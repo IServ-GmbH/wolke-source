@@ -33,14 +33,9 @@ final class IndefiniteLengthTextStringObject extends AbstractCBORObject implemen
         return $result . "\xFF";
     }
 
-    public static function create(string ...$chunks): self
+    public static function create(): self
     {
-        $object = new self();
-        foreach ($chunks as $chunk) {
-            $object->append($chunk);
-        }
-
-        return $object;
+        return new self();
     }
 
     public function add(TextStringObject $chunk): self

@@ -393,9 +393,9 @@ class Session implements IUserSession, Emitter {
 			$dbToken = $this->getTokenFromPassword($password);
 			$isTokenPassword = $dbToken !== null;
 			if (($dbToken instanceof PublicKeyToken)
-				&& ($dbToken->getType() !== IToken::PERMANENT_TOKEN)
+				&& !in_array($dbToken->getType(), [IToken::PERMANENT_TOKEN,IToken::ONETIME_TOKEN])
 			) {
-				// Refuse session tokens here, only app tokens are handled
+				// Refuse session tokens here, only app tokens and onetime tokens are handled
 				return false;
 			}
 		} catch (ExpiredTokenException) {
@@ -417,6 +417,7 @@ class Session implements IUserSession, Emitter {
 			}
 
 			if ($isTokenPassword) {
+				$dbToken = $this->tokenProvider->getToken($password);
 				$userFromToken = $this->manager->get($dbToken->getUID());
 				$isValidEmailLogin = $userFromToken->getEMailAddress() === $user
 					&& $this->validateTokenLoginName($userFromToken->getEMailAddress(), $dbToken);
@@ -432,7 +433,16 @@ class Session implements IUserSession, Emitter {
 		}
 
 		if ($isTokenPassword) {
-			$this->session->set('app_password', $password);
+			if ($dbToken instanceof PublicKeyToken && $dbToken->getType() === IToken::ONETIME_TOKEN) {
+				$this->tokenProvider->invalidateTokenById($dbToken->getUID(), $dbToken->getId());
+				if ($request->getPathInfo() !== '/core/getapppassword-onetime') {
+					return false;
+				}
+
+				$this->session->set('one_time_token', $password);
+			} else {
+				$this->session->set('app_password', $password);
+			}
 		} else {
 			$this->session->set('last-password-confirm', $this->timeFactory->getTime());
 			if ($this->supportsCookies($request)) {
@@ -486,27 +496,6 @@ class Session implements IUserSession, Emitter {
 		}
 		// DI not possible due to cyclic dependencies :'-/
 		return OC::$server->get(TwoFactorAuthManager::class)->isTwoFactorAuthenticated($user);
-	}
-
-	/**
-	 * Check if the given 'password' is actually a device token
-	 *
-	 * @param string $password
-	 * @return boolean
-	 * @throws ExpiredTokenException
-	 */
-	public function isTokenPassword($password) {
-		try {
-			$this->tokenProvider->getToken($password);
-			return true;
-		} catch (ExpiredTokenException $e) {
-			throw $e;
-		} catch (InvalidTokenException $ex) {
-			$this->logger->debug('Token is not valid: ' . $ex->getMessage(), [
-				'exception' => $ex,
-			]);
-			return false;
-		}
 	}
 
 	/**
@@ -869,6 +858,13 @@ class Session implements IUserSession, Emitter {
 		// Set the session variable so we know this is an app password
 		if ($dbToken instanceof PublicKeyToken && $dbToken->getType() === IToken::PERMANENT_TOKEN) {
 			$this->session->set('app_password', $token);
+		} elseif ($dbToken instanceof PublicKeyToken && $dbToken->getType() === IToken::ONETIME_TOKEN) {
+			$this->tokenProvider->invalidateTokenById($dbToken->getUID(), $dbToken->getId());
+			if ($request->getPathInfo() !== '/core/getapppassword-onetime') {
+				return false;
+			}
+
+			$this->session->set('one_time_token', $token);
 		}
 
 		return true;
@@ -883,7 +879,6 @@ class Session implements IUserSession, Emitter {
 	 * @return bool
 	 */
 	public function loginWithCookie($uid, $currentToken, $oldSessionId) {
-		$this->session->regenerateId();
 		$this->manager->emit('\OC\User', 'preRememberedLogin', [$uid]);
 		$user = $this->manager->get($uid);
 		if (is_null($user)) {
@@ -920,6 +915,10 @@ class Session implements IUserSession, Emitter {
 			]);
 			return false;
 		}
+
+		// Only rotate the session once the cookie is known to be valid; failed attempts must not
+		// fork the session, as concurrent requests would otherwise lose its data.
+		$this->session->regenerateId();
 
 		// replace successfully used token with a new one
 		$this->config->deleteUserValue($uid, 'login_token', $currentToken);
@@ -1056,6 +1055,21 @@ class Session implements IUserSession, Emitter {
 		} catch (SessionNotAvailableException $ex) {
 			// ignore
 		}
+	}
+
+	/**
+	 * Point the remember-me cookie at the regenerated session id, so cookie
+	 * login can still find the token that was renewed along with it.
+	 */
+	public function renewMagicSessionId(string $oldSessionId): void {
+		$request = Server::get(IRequest::class);
+		$username = $request->getCookie('nc_username');
+		$token = $request->getCookie('nc_token');
+		$sessionId = $request->getCookie('nc_session_id');
+		if ($username === null || $token === null || $sessionId !== $oldSessionId) {
+			return;
+		}
+		$this->setMagicInCookie($username, $token);
 	}
 
 	/**

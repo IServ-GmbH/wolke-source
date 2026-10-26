@@ -137,6 +137,18 @@ class TeamManager implements ITeamManager {
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public function getMembersOfTeam(string $teamId, string $userId): array {
+		$team = $this->getTeam($teamId, $userId);
+		if ($team === null) {
+			return [];
+		}
+		$members = $team->getInheritedMembers();
+		return array_map(fn ($member) => $member->getUserId(), $members);
+	}
+
+	/**
 	 * @return Circle[]
 	 */
 	private function getTeams(array $teams, string $userId): array {
@@ -147,5 +159,24 @@ class TeamManager implements ITeamManager {
 		$federatedUser = $this->circlesManager->getFederatedUser($userId, Member::TYPE_USER);
 		$this->circlesManager->startSession($federatedUser);
 		return $this->circlesManager->getCirclesByIds($teams);
+	}
+
+	public function getTeamsForUser(string $userId): array {
+		if (!$this->hasTeamSupport()) {
+			return [];
+		}
+
+		$federatedUser = $this->circlesManager->getFederatedUser($userId, Member::TYPE_USER);
+		$this->circlesManager->startSession($federatedUser);
+		$teams = [];
+		foreach ($this->circlesManager->probeCircles() as $team) {
+			$teams[] = new Team(
+				$team->getSingleId(),
+				$team->getDisplayName(),
+				$this->urlGenerator->linkToRouteAbsolute('contacts.contacts.directcircle', ['singleId' => $team->getSingleId()]),
+			);
+		}
+
+		return $teams;
 	}
 }

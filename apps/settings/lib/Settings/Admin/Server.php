@@ -69,8 +69,8 @@ class Server implements IDelegatedSettings {
 			->orderBy('last_checked', 'ASC')
 			->setMaxResults(1);
 
-		$result = $query->execute();
-		if ($row = $result->fetch()) {
+		$result = $query->executeQuery();
+		if ($row = $result->fetchAssociative()) {
 			$maxAge = (int)$row['last_checked'];
 		} else {
 			$maxAge = $this->timeFactory->getTime();
@@ -103,10 +103,6 @@ class Server implements IDelegatedSettings {
 	}
 
 	public function getAuthorizedAppConfig(): array {
-		return [
-			'core' => [
-				'/mail_general_settings/',
-			],
-		];
+		return [];
 	}
 }

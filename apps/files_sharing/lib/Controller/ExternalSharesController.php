@@ -7,10 +7,16 @@
  */
 namespace OCA\Files_Sharing\Controller;
 
+use OCA\Files_Sharing\BackgroundJob\ExternalShareScanJob;
+use OCA\Files_Sharing\External\ExternalShare;
+use OCA\Files_Sharing\External\Manager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\BackgroundJob\IJobList;
+use OCP\Collaboration\Collaborators\ISearch;
 use OCP\IRequest;
+use OCP\Share\IShare;
 
 /**
  * Class ExternalSharesController
@@ -21,42 +27,55 @@ class ExternalSharesController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private \OCA\Files_Sharing\External\Manager $externalManager,
+		private readonly Manager $externalManager,
+		private IJobList $jobList,
+		private ISearch $collaboratorSearch,
 	) {
 		parent::__construct($appName, $request);
 	}
 
 	/**
 	 * @NoOutgoingFederatedSharingRequired
-	 *
-	 * @return JSONResponse
 	 */
 	#[NoAdminRequired]
-	public function index() {
-		return new JSONResponse($this->externalManager->getOpenShares());
+	public function index(): JSONResponse {
+		return new JSONResponse(array_map($this->addOwnerDisplayName(...), $this->externalManager->getOpenShares()));
+	}
+
+	/**
+	 * The incoming share dialog shows the owner's display name instead of the uid.
+	 */
+	private function addOwnerDisplayName(ExternalShare $share): array {
+		$shareData = $share->jsonSerialize();
+		[$ownerResults,] = $this->collaboratorSearch->search($share->getOwner(), [IShare::TYPE_REMOTE], false, 1, 0);
+		if (isset($ownerResults['remotes'][0]['name'])) {
+			$shareData['ownerDisplayName'] = $ownerResults['remotes'][0]['name'];
+		}
+		return $shareData;
 	}
 
 	/**
 	 * @NoOutgoingFederatedSharingRequired
-	 *
-	 * @param int $id
-	 * @return JSONResponse
 	 */
 	#[NoAdminRequired]
-	public function create($id) {
-		$this->externalManager->acceptShare($id);
+	public function create(string $id): JSONResponse {
+		$externalShare = $this->externalManager->getShare($id);
+		if ($externalShare !== false) {
+			$this->externalManager->acceptShare($externalShare);
+			$this->jobList->add(ExternalShareScanJob::class, [$externalShare->getUser(), $externalShare->getMountpoint()]);
+		}
 		return new JSONResponse();
 	}
 
 	/**
 	 * @NoOutgoingFederatedSharingRequired
-	 *
-	 * @param integer $id
-	 * @return JSONResponse
 	 */
 	#[NoAdminRequired]
-	public function destroy($id) {
-		$this->externalManager->declineShare($id);
+	public function destroy(string $id): JSONResponse {
+		$externalShare = $this->externalManager->getShare($id);
+		if ($externalShare !== false) {
+			$this->externalManager->declineShare($externalShare);
+		}
 		return new JSONResponse();
 	}
 }

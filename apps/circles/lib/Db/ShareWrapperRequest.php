@@ -15,6 +15,7 @@ use JsonException;
 use OCA\Circles\Exceptions\RequestBuilderException;
 use OCA\Circles\Exceptions\ShareWrapperNotFoundException;
 use OCA\Circles\Model\FederatedUser;
+use OCA\Circles\Model\FileCacheWrapper;
 use OCA\Circles\Model\Membership;
 use OCA\Circles\Model\Probes\CircleProbe;
 use OCA\Circles\Model\ShareWrapper;
@@ -24,6 +25,7 @@ use OCP\Files\NotFoundException;
 use OCP\Share\Exceptions\IllegalIDChangeException;
 use OCP\Share\IAttributes;
 use OCP\Share\IShare;
+use function strlen;
 
 /**
  * Class ShareWrapperRequest
@@ -62,7 +64,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			$qb->setValue('parent', $qb->createNamedParameter($parentId));
 		}
 
-		$qb->execute();
+		$qb->executeStatement();
 		$id = $qb->getLastInsertId();
 		try {
 			$share->setId((string)$id);
@@ -92,7 +94,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 
 		$qb->limitToId((int)$shareWrapper->getId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 	/**
@@ -108,7 +110,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb->limitToShareParent((int)$shareWrapper->getId());
 		$qb->gt('permissions', 0);
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -120,7 +122,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb->limitToShareWith($membership->getCircleId());
 		$qb->limit('uid_initiator', $membership->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -316,6 +318,36 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 
 
 	/**
+	 * returns current file cache entries, not cached, indexed by file id
+	 *
+	 * @param int[] $fileIds
+	 *
+	 * @return array<int, FileCacheWrapper>
+	 */
+	public function getFileCaches(array $fileIds): array {
+		$fileCaches = [];
+		foreach (array_chunk(array_values(array_unique($fileIds)), 1000) as $chunk) {
+			$qb = $this->getQueryBuilder();
+			$qb->select('f.fileid', 'f.path', 's.id')
+				->from(self::TABLE_FILE_CACHE, 'f')
+				->leftJoin('f', self::TABLE_STORAGES, 's', $qb->expr()->eq('f.storage', 's.numeric_id'))
+				->where($qb->expr()->in('f.fileid', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)));
+
+			$result = $qb->executeQuery();
+			while ($row = $result->fetch()) {
+				$fileCache = new FileCacheWrapper();
+				$fileCache->setId((int)$row['fileid'])
+					->setPath((string)$row['path'])
+					->setStorage((string)$row['id']);
+				$fileCaches[$fileCache->getId()] = $fileCache;
+			}
+			$result->closeCursor();
+		}
+
+		return $fileCaches;
+	}
+
+	/**
 	 * @param FederatedUser $federatedUser
 	 * @param int $nodeId
 	 * @param int $offset
@@ -357,6 +389,50 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		return $this->getItemsFromRequest($qb);
 	}
 
+	public function getSharedWithByPath(
+		FederatedUser $federatedUser,
+		string $path,
+		bool $forChildren,
+		CircleProbe $probe,
+	): array {
+		$qb = $this->getShareSelectSql();
+		$qb->setOptions(
+			[CoreQueryBuilder::SHARE],
+			array_merge(
+				$probe->getAsOptions(),
+				['getData' => true]
+			)
+		);
+
+		$qb->leftJoinCircle(CoreQueryBuilder::SHARE, null, 'share_with');
+
+		$aliasCircle = $qb->generateAlias(CoreQueryBuilder::SHARE, CoreQueryBuilder::CIRCLE);
+		$qb->limitToFederatedUserMemberships(CoreQueryBuilder::SHARE, $aliasCircle, $federatedUser);
+
+		$qb->leftJoinFileCache(CoreQueryBuilder::SHARE);
+		$qb->limitNull('parent', false);
+		$childAlias = $qb->leftJoinShareChild(CoreQueryBuilder::SHARE);
+
+		$userId = $federatedUser->getUserId();
+		$prefix = '/' . $userId . '/files';
+		if (str_starts_with($path, $prefix)) {
+			$path = substr($path, strlen($prefix));
+		}
+		$path = rtrim($path, '/');
+
+		if ($forChildren) {
+			$childPathTemplate = $this->getQueryBuilder()->getConnection()->escapeLikeParameter($path) . '/_%';
+
+			$qb->limitToFileTargetLike($childPathTemplate, $childAlias);
+		} else {
+			$nonChildPath = $path === '' ? '/' : $path;
+			$qb->limitToFileTarget($nonChildPath, $childAlias);
+		}
+
+		$qb->chunk($probe->getItemsOffset(), $probe->getItemsLimit());
+
+		return $this->getItemsFromRequest($qb);
+	}
 
 	/**
 	 * @param FederatedUser $federatedUser
@@ -479,7 +555,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			)
 		);
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 	/**
@@ -516,7 +592,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 		$qb->limitNull('id', false, 'p');
 
 		$ids = [];
-		$cursor = $qb->execute();
+		$cursor = $qb->executeQuery();
 		while ($data = $cursor->fetch()) {
 			$ids[] = $data['id'];
 		}
@@ -538,7 +614,7 @@ class ShareWrapperRequest extends ShareWrapperRequestBuilder {
 			)
 		);
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 

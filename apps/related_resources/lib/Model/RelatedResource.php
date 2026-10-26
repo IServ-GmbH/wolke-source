@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Model;
 
@@ -87,6 +89,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 		return $this->title;
 	}
 
+
 	public function setSubtitle(string $subtitle): IRelatedResource {
 		$this->subtitle = $subtitle;
 
@@ -97,6 +100,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 		return $this->subtitle;
 	}
 
+
 	public function setTooltip(string $tooltip): self {
 		$this->tooltip = $tooltip;
 
@@ -106,6 +110,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 	public function getTooltip(): string {
 		return $this->tooltip;
 	}
+
 
 	public function setIcon(string $icon): self {
 		$this->icon = $icon;
@@ -126,6 +131,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 	public function getPreview(): string {
 		return $this->preview;
 	}
+
 
 	public function setUrl(string $url): IRelatedResource {
 		$this->url = $url;
@@ -226,6 +232,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 		return $this->groupShared;
 	}
 
+
 	public function getImprovements(): array {
 		return $this->improvements;
 	}
@@ -245,6 +252,7 @@ class RelatedResource implements IRelatedResource, IDeserializable, JsonSerializ
 	public function getCurrentQuality(): array {
 		return $this->currentQuality;
 	}
+
 
 	public function import(array $data): IDeserializable {
 		$this->setProviderId($this->get('providerId', $data));

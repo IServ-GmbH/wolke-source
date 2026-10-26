@@ -12,6 +12,7 @@ use OC\Files\Mount\MoveableMount;
 use OC\Files\Utils\PathHelper;
 use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\FileInfo;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -404,7 +405,7 @@ class Node implements INode {
 	public function copy($targetPath) {
 		$targetPath = $this->normalizePath($targetPath);
 		$parent = $this->root->get(dirname($targetPath));
-		if ($parent instanceof Folder and $this->isValidPath($targetPath) and $parent->isCreatable()) {
+		if ($parent instanceof Folder && $this->isValidPath($targetPath) && $parent->isCreatable()) {
 			$nonExisting = $this->createNonExistingNode($targetPath);
 			$this->sendHooks(['preCopy'], [$this, $nonExisting]);
 			$this->sendHooks(['preWrite'], [$nonExisting]);
@@ -489,5 +490,9 @@ class Node implements INode {
 	 */
 	public function getMetadata(): array {
 		return $this->fileInfo->getMetadata();
+	}
+
+	public function getData(): ICacheEntry {
+		return $this->fileInfo->getData();
 	}
 }

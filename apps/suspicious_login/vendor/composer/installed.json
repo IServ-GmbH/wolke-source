@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "amphp/amp",
-            "version": "v2.6.4",
-            "version_normalized": "2.6.4.0",
+            "version": "v2.6.5",
+            "version_normalized": "2.6.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/amp.git",
-                "reference": "ded3d9be08f526089eb7ee8d9f16a9768f9dec2d"
+                "reference": "d7dda98dae26e56f3f6fcfbf1c1f819c9a993207"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/amp/zipball/ded3d9be08f526089eb7ee8d9f16a9768f9dec2d",
-                "reference": "ded3d9be08f526089eb7ee8d9f16a9768f9dec2d",
+                "url": "https://api.github.com/repos/amphp/amp/zipball/d7dda98dae26e56f3f6fcfbf1c1f819c9a993207",
+                "reference": "d7dda98dae26e56f3f6fcfbf1c1f819c9a993207",
                 "shasum": ""
             },
             "require": {
@@ -27,13 +27,8 @@
                 "react/promise": "^2",
                 "vimeo/psalm": "^3.12"
             },
-            "time": "2024-03-21T18:52:26+00:00",
+            "time": "2025-09-03T19:41:28+00:00",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
             "installation-source": "dist",
             "autoload": {
                 "files": [
@@ -82,7 +77,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/amphp",
                 "issues": "https://github.com/amphp/amp/issues",
-                "source": "https://github.com/amphp/amp/tree/v2.6.4"
+                "source": "https://github.com/amphp/amp/tree/v2.6.5"
             },
             "funding": [
                 {
@@ -576,17 +571,17 @@
         },
         {
             "name": "bamarni/composer-bin-plugin",
-            "version": "1.8.2",
-            "version_normalized": "1.8.2.0",
+            "version": "1.8.3",
+            "version_normalized": "1.8.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bamarni/composer-bin-plugin.git",
-                "reference": "92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880"
+                "reference": "e7ef9e012667327516c24e5fad9903a3bc91389d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bamarni/composer-bin-plugin/zipball/92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880",
-                "reference": "92fd7b1e6e9cdae19b0d57369d8ad31a37b6a880",
+                "url": "https://api.github.com/repos/bamarni/composer-bin-plugin/zipball/e7ef9e012667327516c24e5fad9903a3bc91389d",
+                "reference": "e7ef9e012667327516c24e5fad9903a3bc91389d",
                 "shasum": ""
             },
             "require": {
@@ -599,12 +594,12 @@
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan": "^1.8",
                 "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^8.5 || ^9.5",
+                "phpunit/phpunit": "^8.5 || ^9.6 || ^10.0",
                 "symfony/console": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0",
                 "symfony/finder": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0",
                 "symfony/process": "^2.8.52 || ^3.4.35 || ^4.4 || ^5.0 || ^6.0"
             },
-            "time": "2022-10-31T08:38:03+00:00",
+            "time": "2025-11-24T19:20:55+00:00",
             "type": "composer-plugin",
             "extra": {
                 "class": "Bamarni\\Composer\\Bin\\BamarniBinPlugin"
@@ -630,7 +625,7 @@
             ],
             "support": {
                 "issues": "https://github.com/bamarni/composer-bin-plugin/issues",
-                "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.8.2"
+                "source": "https://github.com/bamarni/composer-bin-plugin/tree/1.8.3"
             },
             "install-path": "../bamarni/composer-bin-plugin"
         },
@@ -771,17 +766,17 @@
         },
         {
             "name": "rubix/ml",
-            "version": "2.5.2",
-            "version_normalized": "2.5.2.0",
+            "version": "2.5.3",
+            "version_normalized": "2.5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RubixML/ML.git",
-                "reference": "59782a24bd09f0faa00e7df335fd58ca288d1eab"
+                "reference": "e0960dcb19c9722ccbc4826f5b9417a75fa01613"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RubixML/ML/zipball/59782a24bd09f0faa00e7df335fd58ca288d1eab",
-                "reference": "59782a24bd09f0faa00e7df335fd58ca288d1eab",
+                "url": "https://api.github.com/repos/RubixML/ML/zipball/e0960dcb19c9722ccbc4826f5b9417a75fa01613",
+                "reference": "e0960dcb19c9722ccbc4826f5b9417a75fa01613",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +790,7 @@
                 "symfony/polyfill-php80": "^1.17",
                 "symfony/polyfill-php82": "^1.27",
                 "symfony/polyfill-php83": "^1.27",
-                "wamania/php-stemmer": "^3.0"
+                "wamania/php-stemmer": "^4.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.0",
@@ -811,7 +806,7 @@
                 "ext-svm": "For Support Vector Machine engine (libsvm)",
                 "ext-tensor": "For fast Matrix/Vector computing"
             },
-            "time": "2024-11-09T23:02:27+00:00",
+            "time": "2025-10-01T17:52:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -838,7 +833,7 @@
                 }
             ],
             "description": "A high-level machine learning and deep learning library for the PHP language.",
-            "homepage": "https://rubixml.com",
+            "homepage": "https://rubixml.github.io/ML/latest/",
             "keywords": [
                 "Algorithm",
                 "Deep learning",
@@ -921,7 +916,7 @@
             ],
             "support": {
                 "chat": "https://t.me/RubixML",
-                "docs": "https://docs.rubixml.com",
+                "docs": "https://rubixml.github.io/ML/latest/",
                 "issues": "https://github.com/RubixML/ML/issues",
                 "source": "https://github.com/RubixML/ML"
             },

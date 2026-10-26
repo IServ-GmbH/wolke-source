@@ -6,10 +6,26 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitPhotos
 {
+    public static $files = array (
+        '9d2b9fc6db0f153a0a149fefb182415e' => __DIR__ . '/..' . '/symfony/polyfill-php84/bootstrap.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
+        'W' => 
+        array (
+            'WoltLab\\WebpExif\\' => 17,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Php84\\' => 23,
+        ),
         'O' => 
         array (
             'OCA\\Photos\\' => 11,
+        ),
+        'N' => 
+        array (
+            'Nelexa\\Buffer\\' => 14,
         ),
         'H' => 
         array (
@@ -18,9 +34,21 @@ class ComposerStaticInitPhotos
     );
 
     public static $prefixDirsPsr4 = array (
+        'WoltLab\\WebpExif\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/woltlab/webp-exif/src',
+        ),
+        'Symfony\\Polyfill\\Php84\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php84',
+        ),
         'OCA\\Photos\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib',
+        ),
+        'Nelexa\\Buffer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer',
         ),
         'Hexogen\\KDTree\\' => 
         array (
@@ -30,6 +58,7 @@ class ComposerStaticInitPhotos
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Deprecated' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',
         'Hexogen\\KDTree\\Exception\\ValidationException' => __DIR__ . '/..' . '/hexogen/kdtree/src/Exception/ValidationException.php',
         'Hexogen\\KDTree\\FSKDTree' => __DIR__ . '/..' . '/hexogen/kdtree/src/FSKDTree.php',
         'Hexogen\\KDTree\\FSNode' => __DIR__ . '/..' . '/hexogen/kdtree/src/FSNode.php',
@@ -49,6 +78,14 @@ class ComposerStaticInitPhotos
         'Hexogen\\KDTree\\NearestSearch' => __DIR__ . '/..' . '/hexogen/kdtree/src/NearestSearch.php',
         'Hexogen\\KDTree\\Node' => __DIR__ . '/..' . '/hexogen/kdtree/src/Node.php',
         'Hexogen\\KDTree\\Point' => __DIR__ . '/..' . '/hexogen/kdtree/src/Point.php',
+        'Nelexa\\Buffer\\Buffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/Buffer.php',
+        'Nelexa\\Buffer\\BufferException' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/BufferException.php',
+        'Nelexa\\Buffer\\Cast' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/Cast.php',
+        'Nelexa\\Buffer\\FileBuffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/FileBuffer.php',
+        'Nelexa\\Buffer\\MemoryResourceBuffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/MemoryResourceBuffer.php',
+        'Nelexa\\Buffer\\ResourceBuffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/ResourceBuffer.php',
+        'Nelexa\\Buffer\\StringBuffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/StringBuffer.php',
+        'Nelexa\\Buffer\\TempBuffer' => __DIR__ . '/..' . '/nelexa/buffer/src/Nelexa/Buffer/TempBuffer.php',
         'OCA\\Photos\\Album\\AlbumFile' => __DIR__ . '/../..' . '/lib/Album/AlbumFile.php',
         'OCA\\Photos\\Album\\AlbumInfo' => __DIR__ . '/../..' . '/lib/Album/AlbumInfo.php',
         'OCA\\Photos\\Album\\AlbumMapper' => __DIR__ . '/../..' . '/lib/Album/AlbumMapper.php',
@@ -110,6 +147,52 @@ class ComposerStaticInitPhotos
         'OCA\\Photos\\Service\\MediaPlaceManager' => __DIR__ . '/../..' . '/lib/Service/MediaPlaceManager.php',
         'OCA\\Photos\\Service\\ReverseGeoCoderService' => __DIR__ . '/../..' . '/lib/Service/ReverseGeoCoderService.php',
         'OCA\\Photos\\Service\\UserConfigService' => __DIR__ . '/../..' . '/lib/Service/UserConfigService.php',
+        'Pdo\\Dblib' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Dblib.php',
+        'Pdo\\Firebird' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Firebird.php',
+        'Pdo\\Mysql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Mysql.php',
+        'Pdo\\Odbc' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Odbc.php',
+        'Pdo\\Pgsql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Pgsql.php',
+        'Pdo\\Sqlite' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Sqlite.php',
+        'ReflectionConstant' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/ReflectionConstant.php',
+        'RoundingMode' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/RoundingMode.php',
+        'Symfony\\Polyfill\\Php84\\Php84' => __DIR__ . '/..' . '/symfony/polyfill-php84/Php84.php',
+        'WoltLab\\WebpExif\\ChunkType' => __DIR__ . '/..' . '/woltlab/webp-exif/src/ChunkType.php',
+        'WoltLab\\WebpExif\\Chunk\\Alph' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Alph.php',
+        'WoltLab\\WebpExif\\Chunk\\Anim' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Anim.php',
+        'WoltLab\\WebpExif\\Chunk\\Anmf' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Anmf.php',
+        'WoltLab\\WebpExif\\Chunk\\Chunk' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Chunk.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\AnimationFrameWithoutBitstream' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/AnimationFrameWithoutBitstream.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\DimensionsExceedInt32' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/DimensionsExceedInt32.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\EmptyAnimationFrame' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/EmptyAnimationFrame.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\ExpectedKeyFrame' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/ExpectedKeyFrame.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\MissingExifExtension' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/MissingExifExtension.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\MissingMagicByte' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/MissingMagicByte.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\UnknownChunkWithKnownFourCC' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/UnknownChunkWithKnownFourCC.php',
+        'WoltLab\\WebpExif\\Chunk\\Exception\\UnsupportedVersion' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exception/UnsupportedVersion.php',
+        'WoltLab\\WebpExif\\Chunk\\Exif' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Exif.php',
+        'WoltLab\\WebpExif\\Chunk\\Iccp' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Iccp.php',
+        'WoltLab\\WebpExif\\Chunk\\UnknownChunk' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/UnknownChunk.php',
+        'WoltLab\\WebpExif\\Chunk\\Vp8' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Vp8.php',
+        'WoltLab\\WebpExif\\Chunk\\Vp8l' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Vp8l.php',
+        'WoltLab\\WebpExif\\Chunk\\Vp8x' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Vp8x.php',
+        'WoltLab\\WebpExif\\Chunk\\Xmp' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Chunk/Xmp.php',
+        'WoltLab\\WebpExif\\Decoder' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Decoder.php',
+        'WoltLab\\WebpExif\\Encoder' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Encoder.php',
+        'WoltLab\\WebpExif\\Exception\\ExtraChunksInSimpleFormat' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/ExtraChunksInSimpleFormat.php',
+        'WoltLab\\WebpExif\\Exception\\ExtraVp8xChunk' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/ExtraVp8xChunk.php',
+        'WoltLab\\WebpExif\\Exception\\FileSizeMismatch' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/FileSizeMismatch.php',
+        'WoltLab\\WebpExif\\Exception\\LengthOutOfBounds' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/LengthOutOfBounds.php',
+        'WoltLab\\WebpExif\\Exception\\MissingChunks' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/MissingChunks.php',
+        'WoltLab\\WebpExif\\Exception\\NotEnoughData' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/NotEnoughData.php',
+        'WoltLab\\WebpExif\\Exception\\UnexpectedChunk' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/UnexpectedChunk.php',
+        'WoltLab\\WebpExif\\Exception\\UnexpectedEndOfFile' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/UnexpectedEndOfFile.php',
+        'WoltLab\\WebpExif\\Exception\\UnrecognizedFileFormat' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/UnrecognizedFileFormat.php',
+        'WoltLab\\WebpExif\\Exception\\Vp8xAbsentChunk' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/Vp8xAbsentChunk.php',
+        'WoltLab\\WebpExif\\Exception\\Vp8xHeaderLengthMismatch' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/Vp8xHeaderLengthMismatch.php',
+        'WoltLab\\WebpExif\\Exception\\Vp8xMissingImageData' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/Vp8xMissingImageData.php',
+        'WoltLab\\WebpExif\\Exception\\Vp8xWithoutChunks' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/Vp8xWithoutChunks.php',
+        'WoltLab\\WebpExif\\Exception\\WebpExifException' => __DIR__ . '/..' . '/woltlab/webp-exif/src/Exception/WebpExifException.php',
+        'WoltLab\\WebpExif\\WebP' => __DIR__ . '/..' . '/woltlab/webp-exif/src/WebP.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

@@ -1,5 +1,5 @@
 diff --git apps/federation/appinfo/info.xml apps/federation/appinfo/info.xml
-index 1c4b816..c3ee1fe 100644
+index 4de9d97..36a959b 100644
 --- apps/federation/appinfo/info.xml
 +++ apps/federation/appinfo/info.xml
 @@ -27,11 +27,15 @@

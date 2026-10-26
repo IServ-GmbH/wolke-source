@@ -5,6 +5,7 @@
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 namespace OC\Files\Node;
 
 use OC\Files\FileInfo;
@@ -19,6 +20,8 @@ use OCA\Files\ConfigLexicon;
 use OCP\Cache\CappedMemoryCache;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Cache\ICacheEntry;
+use OCP\Files\Config\ICachedMountFileInfo;
+use OCP\Files\Config\ICachedMountInfo;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\Events\Node\FilesystemTornDownEvent;
 use OCP\Files\IRootFolder;
@@ -82,10 +85,8 @@ class Root extends Folder implements IRootFolder {
 
 	/**
 	 * Get the user for which the filesystem is setup
-	 *
-	 * @return \OC\User\User
 	 */
-	public function getUser() {
+	public function getUser(): ?IUser {
 		return $this->user;
 	}
 
@@ -405,17 +406,18 @@ class Root extends Folder implements IRootFolder {
 	 */
 	public function getByIdInPath(int $id, string $path): array {
 		$mountCache = $this->getUserMountCache();
+		$setupManager = $this->mountManager->getSetupManager();
 		if ($path !== '' && strpos($path, '/', 1) > 0) {
 			[, $user] = explode('/', $path);
 		} else {
 			$user = null;
 		}
-		$mountsContainingFile = $mountCache->getMountsForFileId($id, $user);
+		$mountInfosContainingFiles = $mountCache->getMountsForFileId($id, $user);
 
 		// if the mount isn't in the cache yet, perform a setup first, then try again
-		if (count($mountsContainingFile) === 0) {
-			$this->mountManager->getSetupManager()->setupForPath($path, true);
-			$mountsContainingFile = $mountCache->getMountsForFileId($id, $user);
+		if (count($mountInfosContainingFiles) === 0) {
+			$setupManager->setupForPath($path, true);
+			$mountInfosContainingFiles = $mountCache->getMountsForFileId($id, $user);
 		}
 
 		// when a user has access through the same storage through multiple paths
@@ -427,20 +429,31 @@ class Root extends Folder implements IRootFolder {
 
 		$mountRootIds = array_map(function ($mount) {
 			return $mount->getRootId();
-		}, $mountsContainingFile);
+		}, $mountInfosContainingFiles);
 		$mountRootPaths = array_map(function ($mount) {
 			return $mount->getRootInternalPath();
-		}, $mountsContainingFile);
+		}, $mountInfosContainingFiles);
 		$mountProviders = array_unique(array_map(function ($mount) {
 			return $mount->getMountProvider();
-		}, $mountsContainingFile));
+		}, $mountInfosContainingFiles));
+		$mountPoints = array_map(fn (ICachedMountInfo $mountInfo) => $mountInfo->getMountPoint(), $mountInfosContainingFiles);
 		$mountRoots = array_combine($mountRootIds, $mountRootPaths);
 
 		$mounts = $this->mountManager->getMountsByMountProvider($path, $mountProviders);
+		$mountsContainingFile = array_filter($mounts, fn (IMountPoint $mount) => in_array($mount->getMountPoint(), $mountPoints));
 
-		$mountsContainingFile = array_filter($mounts, function ($mount) use ($mountRoots) {
-			return isset($mountRoots[$mount->getStorageRootId()]);
-		});
+		if (count($mountsContainingFile) == 0 && count($mountInfosContainingFiles) > 0) {
+			if (!$user) {
+				$user = $this->getUser()?->getUID();
+			}
+			if (!$user) {
+				/** @var ICachedMountFileInfo $firstMount */
+				$firstMount = current($mountInfosContainingFiles);
+				$user = $firstMount->getUser()->getUID();
+			}
+			$mountInfosContainingFiles = array_filter($mountInfosContainingFiles, fn (ICachedMountInfo $mountInfo) => $mountInfo->getUser()->getUID() === $user);
+			$mountsContainingFile = array_filter(array_map($this->mountManager->getMountFromMountInfo(...), $mountInfosContainingFiles));
+		}
 
 		if (count($mountsContainingFile) === 0) {
 			if ($user === $this->getAppDataDirectoryName()) {

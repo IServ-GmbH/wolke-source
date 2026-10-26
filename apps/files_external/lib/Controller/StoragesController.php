@@ -42,7 +42,7 @@ abstract class StoragesController extends Controller {
 	 * @param LoggerInterface $logger
 	 */
 	public function __construct(
-		$AppName,
+		$appName,
 		IRequest $request,
 		protected IL10N $l10n,
 		protected StoragesService $service,
@@ -52,7 +52,7 @@ abstract class StoragesController extends Controller {
 		protected IConfig $config,
 		private BackendService $backendService,
 	) {
-		parent::__construct($AppName, $request);
+		parent::__construct($appName, $request);
 	}
 
 	/**
@@ -70,14 +70,14 @@ abstract class StoragesController extends Controller {
 	 * @return StorageConfig|DataResponse
 	 */
 	protected function createStorage(
-		$mountPoint,
-		$backend,
-		$authMechanism,
-		$backendOptions,
-		$mountOptions = null,
-		$applicableUsers = null,
-		$applicableGroups = null,
-		$priority = null,
+		string $mountPoint,
+		string $backend,
+		string $authMechanism,
+		array $backendOptions,
+		?array $mountOptions = null,
+		?array $applicableUsers = null,
+		?array $applicableGroups = null,
+		?int $priority = null,
 	) {
 		$canCreateNewLocalStorage = $this->config->getSystemValue('files_external_allow_create_new_local', true);
 		if (!$canCreateNewLocalStorage && $this->backendService->getBackend($backend) instanceof Local) {
@@ -239,7 +239,7 @@ abstract class StoragesController extends Controller {
 		} catch (StorageNotAvailableException $e) {
 			$storage->setStatus(
 				(int)$e->getCode(),
-				$this->l10n->t('%s', [$e->getMessage()])
+				$e->getMessage(),
 			);
 		} catch (\Exception $e) {
 			// FIXME: convert storage exceptions to StorageNotAvailableException

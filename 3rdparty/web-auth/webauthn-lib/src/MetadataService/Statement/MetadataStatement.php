@@ -11,7 +11,6 @@ use Webauthn\MetadataService\ValueFilter;
 use function array_key_exists;
 use function is_array;
 use function is_string;
-use function sprintf;
 use const JSON_THROW_ON_ERROR;
 
 class MetadataStatement implements JsonSerializable

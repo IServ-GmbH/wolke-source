@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/src/components/SharingEntryLink.vue apps/files_sharing/src/components/SharingEntryLink.vue
-index 893c7b7..6ec2187 100644
+index e67b344..8e49a7f 100644
 --- apps/files_sharing/src/components/SharingEntryLink.vue
 +++ apps/files_sharing/src/components/SharingEntryLink.vue
-@@ -11,17 +11,13 @@
+@@ -13,18 +13,13 @@
  			class="sharing-entry__avatar" />
  
  		<div class="sharing-entry__summary">
@@ -14,22 +14,23 @@ index 893c7b7..6ec2187 100644
  				<p v-if="subtitle">
  					{{ subtitle }}
  				</p>
--				<SharingEntryQuickShareSelect v-if="share && share.permissions !== undefined"
+-				<SharingEntryQuickShareSelect
+-					v-if="share && share.permissions !== undefined"
 -					:share="share"
 -					:file-info="fileInfo"
 -					@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  			</div>
  
  			<div class="sharing-entry__actions">
-@@ -263,7 +259,6 @@ import CheckIcon from 'vue-material-design-icons/CheckBold.vue'
- import CloseIcon from 'vue-material-design-icons/Close.vue'
- import PlusIcon from 'vue-material-design-icons/Plus.vue'
- 
--import SharingEntryQuickShareSelect from './SharingEntryQuickShareSelect.vue'
+@@ -273,7 +268,6 @@ import PlusIcon from 'vue-material-design-icons/Plus.vue'
+ import IconQr from 'vue-material-design-icons/Qrcode.vue'
+ import Tune from 'vue-material-design-icons/Tune.vue'
  import ShareExpiryTime from './ShareExpiryTime.vue'
+-import SharingEntryQuickShareSelect from './SharingEntryQuickShareSelect.vue'
  import SidebarTabExternalActionLegacy from './SidebarTabExternal/SidebarTabExternalActionLegacy.vue'
- 
-@@ -297,7 +292,6 @@ export default {
+ import ShareDetails from '../mixins/ShareDetails.js'
+ import SharesMixin from '../mixins/SharesMixin.js'
+@@ -304,7 +298,6 @@ export default {
  		CheckIcon,
  		CloseIcon,
  		PlusIcon,

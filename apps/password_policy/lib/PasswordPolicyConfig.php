@@ -200,7 +200,7 @@ class PasswordPolicyConfig {
 
 	/**
 	 * Get a PasswordContext enum from a string
-	 * @since 4.0.1
+	 * @since 5.0.1
 	 */
 	public static function getPasswordContext(string $context): PasswordContext {
 		return match ($context) {
@@ -237,7 +237,7 @@ class PasswordPolicyConfig {
 		if ($context === null || $this->hasConfigurationContext($context) === false) {
 			$context = PasswordContext::ACCOUNT;
 		}
- 
+
 		if ($context === PasswordContext::ACCOUNT) {
 			return $key;
 		}

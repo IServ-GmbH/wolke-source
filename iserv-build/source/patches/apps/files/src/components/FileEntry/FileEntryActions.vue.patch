@@ -1,22 +1,22 @@
 diff --git apps/files/src/components/FileEntry/FileEntryActions.vue apps/files/src/components/FileEntry/FileEntryActions.vue
-index 9ed8de1..7afee04 100644
+index bd45e44..037289a 100644
 --- apps/files/src/components/FileEntry/FileEntryActions.vue
 +++ apps/files/src/components/FileEntry/FileEntryActions.vue
-@@ -243,11 +243,11 @@ export default defineComponent({
+@@ -255,11 +255,11 @@ export default defineComponent({
  		},
  
  		renderedNonDestructiveActions() {
--			return this.enabledMenuActions.filter(action => !action.destructive)
-+			return this.menuActions.filter(action => !action.destructive)
+-			return this.enabledMenuActions.filter((action) => !action.destructive)
++			return this.menuActions.filter((action) => !action.destructive)
  		},
  
  		renderedDestructiveActions() {
--			return this.enabledMenuActions.filter(action => action.destructive)
-+			return this.menuActions.filter(action => action.destructive)
+-			return this.enabledMenuActions.filter((action) => action.destructive)
++			return this.menuActions.filter((action) => action.destructive)
  		},
  
  		openedMenu: {
-@@ -267,6 +267,18 @@ export default defineComponent({
+@@ -280,6 +280,18 @@ export default defineComponent({
  		getBoundariesElement() {
  			return document.querySelector('.app-content > .files-list')
  		},

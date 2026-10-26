@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace CBOR;
 
-use Stringable;
-
-interface CBORObject extends Stringable
+interface CBORObject
 {
     public const MAJOR_TYPE_UNSIGNED_INTEGER = 0b000;
 
@@ -87,6 +85,8 @@ interface CBORObject extends Stringable
     public const TAG_MIME = 36;
 
     public const TAG_CBOR = 55799;
+
+    public function __toString(): string;
 
     public function getMajorType(): int;
 

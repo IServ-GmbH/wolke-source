@@ -26,7 +26,7 @@ trait DependencyTrait {
 	 *
 	 * @return MissingDependency[] Unsatisfied required dependencies
 	 */
-	public function checkRequiredDependencies(): array {
+	public function checkRequiredDependencies() {
 		return array_filter(
 			$this->checkDependencies(),
 			fn (MissingDependency $dependency) => !$dependency->isOptional()

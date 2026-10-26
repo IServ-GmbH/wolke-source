@@ -1,6 +1,7 @@
 OC.L10N.register(
     "text",
     {
+    "File not found" : "Fajl nije nađen",
     "The file was uploaded" : "Fajl je otpremljen",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "Fajl za otpremljivanje premašuje upload_max_filesize direktivu u php.ini",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "Fajl za otpremanje premašuje MAX_FILE_SIZE navedenu u HTML obrascu",
@@ -9,7 +10,7 @@ OC.L10N.register(
     "Missing a temporary folder" : "Nedostaje privremena fascikla",
     "Could not write file to disk" : "Ne mogu da upišem fajl na disk",
     "A PHP extension stopped the file upload" : "PHP ekstenzija je zaustavila otpremanje fajla",
-    "File not found" : "Fajl nije nađen",
+    "Comment" : "Komentar",
     "Close" : "Zatvori",
     "Guest" : "Gost",
     "guest" : "gost",
@@ -17,8 +18,6 @@ OC.L10N.register(
     "Delete" : "Obriši",
     "Save" : "Sačuvaj",
     "Cancel" : "Poništi",
-    "Comment" : "Komentar",
-    "Details" : "Detalji",
     "Reload" : "Ponovo učitaj",
     "edit" : "izmeni",
     "Copy link" : "Kopiraj vezu",
@@ -32,6 +31,7 @@ OC.L10N.register(
     "Upload" : "Otpremi",
     "Source code" : "Izvorni kôd",
     "Done" : "Gotovo",
+    "Details" : "Detalji",
     "Choose" : "Odaberi",
     "Replace" : "Zameni postojeću"
 },

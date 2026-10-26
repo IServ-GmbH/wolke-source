@@ -29,8 +29,12 @@ class Application extends App implements IBootstrap {
 		parent::__construct(self::APP_ID, $urlParams);
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		include_once __DIR__ . '/../../vendor/autoload.php';
+		// Make sure rubix's free functions and constants are defined regardless of
+		// Composer's "files" autoloader dedupe (see the file for details).
+		require_once __DIR__ . '/../RubixBootstrap.php';
 
 		$context->registerEventListener(SuspiciousLoginEvent::class, LoginNotificationListener::class);
 		$context->registerEventListener(SuspiciousLoginEvent::class, LoginMailListener::class);
@@ -39,6 +43,7 @@ class Application extends App implements IBootstrap {
 		$context->registerNotifierService(Notifier::class);
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
 		$context->injectFn(function (IEventDispatcher $dispatcher) {
 			$loginHookAdapter = new class($dispatcher) {

@@ -35,7 +35,6 @@ use CBOR\Tag\UriTag;
 use InvalidArgumentException;
 use RuntimeException;
 use function ord;
-use function sprintf;
 use const STR_PAD_LEFT;
 
 final class Decoder implements DecoderInterface
@@ -151,7 +150,7 @@ final class Decoder implements DecoderInterface
                 }
 
                 return $object;
-            case CBORObject::MAJOR_TYPE_TEXT_STRING: //3
+            case CBORObject::MAJOR_TYPE_TEXT_STRING : //3
                 $object = IndefiniteLengthTextStringObject::create();
                 while (! ($it = $this->process($stream, true)) instanceof BreakObject) {
                     if (! $it instanceof TextStringObject) {
@@ -163,7 +162,7 @@ final class Decoder implements DecoderInterface
                 }
 
                 return $object;
-            case CBORObject::MAJOR_TYPE_LIST: //4
+            case CBORObject::MAJOR_TYPE_LIST : //4
                 $object = IndefiniteLengthListObject::create();
                 $it = $this->process($stream, true);
                 while (! $it instanceof BreakObject) {
@@ -172,23 +171,23 @@ final class Decoder implements DecoderInterface
                 }
 
                 return $object;
-            case CBORObject::MAJOR_TYPE_MAP: //5
+            case CBORObject::MAJOR_TYPE_MAP : //5
                 $object = IndefiniteLengthMapObject::create();
                 while (! ($it = $this->process($stream, true)) instanceof BreakObject) {
                     $object->add($it, $this->process($stream, false));
                 }
 
                 return $object;
-            case CBORObject::MAJOR_TYPE_OTHER_TYPE: //7
+            case CBORObject::MAJOR_TYPE_OTHER_TYPE : //7
                 if (! $breakable) {
                     throw new InvalidArgumentException('Cannot parse the data. No enclosing indefinite.');
                 }
 
                 return BreakObject::create();
-            case CBORObject::MAJOR_TYPE_UNSIGNED_INTEGER: //0
-            case CBORObject::MAJOR_TYPE_NEGATIVE_INTEGER: //1
-            case CBORObject::MAJOR_TYPE_TAG: //6
-            default:
+            case CBORObject::MAJOR_TYPE_UNSIGNED_INTEGER : //0
+            case CBORObject::MAJOR_TYPE_NEGATIVE_INTEGER : //1
+            case CBORObject::MAJOR_TYPE_TAG : //6
+            default :
                 throw new InvalidArgumentException(sprintf(
                     'Cannot parse the data. Found infinite length for Major Type "%s" (%d).',
                     str_pad(decbin($mt), 5, '0', STR_PAD_LEFT),
@@ -199,28 +198,28 @@ final class Decoder implements DecoderInterface
 
     private function generateTagManager(): TagManagerInterface
     {
-        return TagManager::create([
-            DatetimeTag::class,
-            TimestampTag::class,
+        return TagManager::create()
+            ->add(DatetimeTag::class)
+            ->add(TimestampTag::class)
 
-            UnsignedBigIntegerTag::class,
-            NegativeBigIntegerTag::class,
+            ->add(UnsignedBigIntegerTag::class)
+            ->add(NegativeBigIntegerTag::class)
 
-            DecimalFractionTag::class,
-            BigFloatTag::class,
+            ->add(DecimalFractionTag::class)
+            ->add(BigFloatTag::class)
 
-            Base64UrlEncodingTag::class,
-            Base64EncodingTag::class,
-            Base16EncodingTag::class,
-            CBOREncodingTag::class,
+            ->add(Base64UrlEncodingTag::class)
+            ->add(Base64EncodingTag::class)
+            ->add(Base16EncodingTag::class)
+            ->add(CBOREncodingTag::class)
 
-            UriTag::class,
-            Base64UrlTag::class,
-            Base64Tag::class,
-            MimeTag::class,
+            ->add(UriTag::class)
+            ->add(Base64UrlTag::class)
+            ->add(Base64Tag::class)
+            ->add(MimeTag::class)
 
-            CBORTag::class,
-        ]);
+            ->add(CBORTag::class)
+        ;
     }
 
     private function generateOtherObjectManager(): OtherObjectManagerInterface

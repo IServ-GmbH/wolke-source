@@ -46,9 +46,6 @@ final class NegativeIntegerObject extends AbstractCBORObject implements Normaliz
         return self::createBigInteger($integer);
     }
 
-    /**
-     * @return numeric-string
-     */
     public function getValue(): string
     {
         if ($this->data === null) {
@@ -63,9 +60,6 @@ final class NegativeIntegerObject extends AbstractCBORObject implements Normaliz
         ;
     }
 
-    /**
-     * @return numeric-string
-     */
     public function normalize(): string
     {
         return $this->getValue();

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Text app &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Text app &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -103,7 +103,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#default-file-extension">Default file extension</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#disable-rich-text-editing">Disable rich text editing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-encodings">File encodings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#websocket-support-with-notify-push">Websocket support with notify_push</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="theming.html">Theming</a></li>
@@ -141,6 +140,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -165,7 +165,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -214,14 +214,6 @@
 </pre></div>
 </div>
 </section>
-<section id="websocket-support-with-notify-push">
-<h2>Websocket support with notify_push<a class="headerlink" href="#websocket-support-with-notify-push" title="Link to this heading"></a></h2>
-<p>Text can use the notify_push app to get real-time updates when a file is changed by another user. To enable this, make sure that the notify_push app is installed and enabled.</p>
-<p>You can then enable the integration with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">text</span> <span class="n">notify_push</span> <span class="o">--</span><span class="nb">type</span><span class="o">=</span><span class="n">boolean</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="n">true</span>
-</pre></div>
-</div>
-</section>
 </section>
 
 
@@ -249,7 +241,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -275,6 +267,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -282,8 +276,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

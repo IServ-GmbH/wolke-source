@@ -13,13 +13,9 @@ use OCP\Files\Cache\ICacheEntry;
  * meta data for a file or folder
  */
 class CacheEntry implements ICacheEntry {
-	/**
-	 * @var array
-	 */
-	private $data;
-
-	public function __construct(array $data) {
-		$this->data = $data;
+	public function __construct(
+		private array $data,
+	) {
 	}
 
 	public function offsetSet($offset, $value): void {
@@ -90,7 +86,7 @@ class CacheEntry implements ICacheEntry {
 		return $this->data['etag'];
 	}
 
-	public function getPermissions() {
+	public function getPermissions(): int {
 		return $this->data['permissions'];
 	}
 
@@ -123,7 +119,7 @@ class CacheEntry implements ICacheEntry {
 	}
 
 	public function getUnencryptedSize(): int {
-		if ($this->data['encrypted'] && isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] > 0) {
+		if ($this->data['encrypted'] && isset($this->data['unencrypted_size'])) {
 			return $this->data['unencrypted_size'];
 		} else {
 			return $this->data['size'] ?? 0;

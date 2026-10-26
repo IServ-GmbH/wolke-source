@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace OCA\Circles\Service;
 
 use OC;
+use OCA\Circles\ConfigLexicon;
 use OCA\Circles\Db\EventWrapperRequest;
 use OCA\Circles\Db\MemberRequest;
 use OCA\Circles\Db\RemoteRequest;
@@ -54,7 +55,10 @@ use OCA\Circles\Tools\Model\NCRequest;
 use OCA\Circles\Tools\Model\Request;
 use OCA\Circles\Tools\Traits\TNCRequest;
 use OCA\Circles\Tools\Traits\TStringTools;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Services\IAppConfig;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 
@@ -67,63 +71,18 @@ class FederatedEventService extends NCSignature {
 	use TNCRequest;
 	use TStringTools;
 
-
-	/** @var EventWrapperRequest */
-	private $eventWrapperRequest;
-
-	/** @var RemoteRequest */
-	private $remoteRequest;
-
-	/** @var ShareLockRequest */
-	private $shareLockRequest;
-
-	/** @var MemberRequest */
-	private $memberRequest;
-
-	/** @var RemoteUpstreamService */
-	private $remoteUpstreamService;
-
-	/** @var EventService */
-	private $eventService;
-
-	/** @var InterfaceService */
-	private $interfaceService;
-
-	/** @var ConfigService */
-	private $configService;
-
-
-	/**
-	 * FederatedEventService constructor.
-	 *
-	 * @param EventWrapperRequest $eventWrapperRequest
-	 * @param RemoteRequest $remoteRequest
-	 * @param MemberRequest $memberRequest
-	 * @param ShareLockRequest $shareLockRequest
-	 * @param RemoteUpstreamService $remoteUpstreamService
-	 * @param InterfaceService $interfaceService
-	 * @param ConfigService $configService
-	 */
 	public function __construct(
-		EventWrapperRequest $eventWrapperRequest,
-		RemoteRequest $remoteRequest,
-		MemberRequest $memberRequest,
-		ShareLockRequest $shareLockRequest,
-		RemoteUpstreamService $remoteUpstreamService,
-		EventService $eventService,
-		InterfaceService $interfaceService,
-		ConfigService $configService,
+		private readonly IAppConfig $appConfig,
+		private readonly EventWrapperRequest $eventWrapperRequest,
+		private readonly RemoteRequest $remoteRequest,
+		private readonly MemberRequest $memberRequest,
+		private readonly ShareLockRequest $shareLockRequest,
+		private readonly RemoteUpstreamService $remoteUpstreamService,
+		private readonly EventService $eventService,
+		private readonly InterfaceService $interfaceService,
+		private readonly ConfigService $configService,
 	) {
-		$this->eventWrapperRequest = $eventWrapperRequest;
-		$this->remoteRequest = $remoteRequest;
-		$this->shareLockRequest = $shareLockRequest;
-		$this->memberRequest = $memberRequest;
-		$this->remoteUpstreamService = $remoteUpstreamService;
-		$this->eventService = $eventService;
-		$this->interfaceService = $interfaceService;
-		$this->configService = $configService;
 	}
-
 
 	/**
 	 * Called when creating a new Event.
@@ -423,6 +382,11 @@ class FederatedEventService extends NCSignature {
 				break;
 			}
 
+			if ($instance->getInterface() === InterfaceService::IFACE_FRONTAL &&
+				!$this->appConfig->getAppValueBool(ConfigLexicon::FEDERATED_TEAMS_ENABLED)) {
+				break;
+			}
+
 			if (in_array($instance->getInstance(), $avoidDuplicate, true)) {
 				Server::get(\Psr\Log\LoggerInterface::class)->warning('duplicate instance, please verify the setup of Federated Teams', ['duplicate' => $avoidDuplicate, 'loopback' => $this->configService->getLoopbackInstance(), 'instance' => $instance->getInstance(), 'interface' => $instance->getInterface()]);
 				continue;
@@ -449,9 +413,43 @@ class FederatedEventService extends NCSignature {
 			$this->e($e);
 		}
 
+		if (!$isLoopbackTest && !$this->isLoopbackSuccessful($request)) {
+			Server::get(LoggerInterface::class)->warning(
+				'Loopback request failed, processing event synchronously. Please check the loopback setup with occ circles:check',
+				['url' => $request->getCompleteUrl(), 'status' => $request->hasResult() ? $request->getResult()->getStatusCode() : 0]
+			);
+			$this->manageWrappersSynchronously($wrapper->getToken());
+		}
+
 		return true;
 	}
 
+
+	/**
+	 * asyncBroadcast() closes the connection with an empty 200 before processing the event
+	 */
+	private function isLoopbackSuccessful(NCRequest $request): bool {
+		if (!$request->hasResult() || $request->getResult()->hasException()) {
+			return false;
+		}
+
+		$result = $request->getResult();
+
+		return $result->getStatusCode() === Http::STATUS_OK && $result->getContent() === '';
+	}
+
+	/**
+	 * same process as EventWrapperController::asyncBroadcast()
+	 */
+	private function manageWrappersSynchronously(string $token): void {
+		// EventWrapperService depends on this service
+		$eventWrapperService = Server::get(EventWrapperService::class);
+		foreach ($this->eventWrapperRequest->getByToken($token) as $wrapper) {
+			$eventWrapperService->manageWrapper($wrapper);
+		}
+
+		$eventWrapperService->confirmStatus($token);
+	}
 
 	/**
 	 * @param FederatedEvent $event

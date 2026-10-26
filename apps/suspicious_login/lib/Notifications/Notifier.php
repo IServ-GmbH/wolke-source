@@ -40,14 +40,17 @@ class Notifier implements INotifier {
 		$this->url = $urlGenerator;
 	}
 
+	#[\Override]
 	public function getID(): string {
 		return Application::APP_ID;
 	}
 
+	#[\Override]
 	public function getName(): string {
 		return $this->factory->get(Application::APP_ID)->t('Suspicious Login');
 	}
 
+	#[\Override]
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
 			// Not my app => throw
@@ -70,7 +73,7 @@ class Notifier implements INotifier {
 
 				$additionalText = '';
 				// Add button for more information about the IP-address
-				if ($this->config->getAppValue('suspicious_login', 'show_more_info_button', '1') === "1") {
+				if ($this->config->getAppValue('suspicious_login', 'show_more_info_button', '1') === '1') {
 					$action = $notification->createAction();
 					$label = $l->t('Open %s ↗', ['iplookup.flagfox.net']);
 					$link = 'https://iplookup.flagfox.net/?ip=' . $suspiciousIp;

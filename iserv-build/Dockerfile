@@ -176,27 +176,27 @@ RUN <<EOF
   set -e
   mkdir /iserv-apps
 
-  curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v3.0.0/files_retention-v3.0.0.tar.gz"
+  curl -sLo files_retention.tar.gz "https://github.com/nextcloud-releases/files_retention/releases/download/v4.0.1/files_retention-v4.0.1.tar.gz"
   tar -xf files_retention.tar.gz
   mv files_retention /iserv-apps
   rm files_retention.tar.gz
 
-  curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.24/files_linkeditor.tar.gz"
+  curl -sLo files_linkeditor.tar.gz "https://github.com/te-online/nextcloud-app-releases/raw/main/files_linkeditor/v1.1.27/files_linkeditor.tar.gz"
   tar -xf files_linkeditor.tar.gz
   mv files_linkeditor /iserv-apps
   rm files_linkeditor.tar.gz
 
-  curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v20.1.13/groupfolders-v20.1.13.tar.gz"
+  curl -sLo groupfolders.tar.gz "https://github.com/nextcloud-releases/groupfolders/releases/download/v21.0.15/groupfolders-v21.0.15.tar.gz"
   tar -xf groupfolders.tar.gz
   mv groupfolders /iserv-apps
   rm groupfolders.tar.gz
 
-  curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v8.0.1/user_saml-v8.0.1.tar.gz"
+  curl -sLo user_saml.tar.gz "https://github.com/nextcloud-releases/user_saml/releases/download/v8.4.0/user_saml-v8.4.0.tar.gz"
   tar -xf user_saml.tar.gz
   mv user_saml /iserv-apps
   rm user_saml.tar.gz
 
-  curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v9.0.6/richdocuments-v9.0.6.tar.gz"
+  curl -sLo richdocuments.tar.gz "https://github.com/nextcloud-releases/richdocuments/releases/download/v10.3.2/richdocuments-v10.3.2.tar.gz"
   tar -xf richdocuments.tar.gz
   mv richdocuments /iserv-apps
   rm richdocuments.tar.gz

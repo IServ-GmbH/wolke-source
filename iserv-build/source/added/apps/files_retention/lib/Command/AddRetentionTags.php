@@ -70,7 +70,7 @@ class AddRetentionTags extends Command
                     ->where('tag_id = :id')
                     ->setParameter('id', $currentTag->getId());
 
-                $retention = $qb->execute()->fetch();
+                $retention = $qb->executeQuery()->fetch();
 
                 if (!$retention) {
                     $tagId = $this->createRetentionTag($currentTag->getId(), $requiredTag, $io);

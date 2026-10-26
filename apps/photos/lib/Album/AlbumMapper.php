@@ -353,6 +353,7 @@ class AlbumMapper {
 		return array_values(array_filter($collaborators, fn ($c): bool => $c !== null));
 	}
 
+
 	public function isCollaborator(int $albumId, string $userId): bool {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('collaborator_id', 'collaborator_type')
@@ -448,10 +449,9 @@ class AlbumMapper {
 		$rows = $query
 			->select('a.album_id', 'name', 'user', 'location', 'created', 'last_added_photo', 'filters')
 			->from('photos_albums_collabs', 'c')
-			->leftJoin('c', 'photos_albums', 'a', $query->expr()->eq('a.album_id', 'c.album_id'))
+			->innerJoin('c', 'photos_albums', 'a', $query->expr()->eq('a.album_id', 'c.album_id'))
 			->where($query->expr()->eq('collaborator_id', $query->createNamedParameter($collaboratorId)))
 			->andWhere($query->expr()->eq('collaborator_type', $query->createNamedParameter($collaboratorType, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('a.album_id'))
 			->executeQuery()
 			->fetchAll();
 
@@ -477,7 +477,7 @@ class AlbumMapper {
 			->selectAlias('a.name', 'album_name')
 			->selectAlias('a.user', 'album_user')
 			->from('photos_albums_collabs', 'c')
-			->leftJoin('c', 'photos_albums', 'a', $query->expr()->eq('a.album_id', 'c.album_id'))
+			->innerJoin('c', 'photos_albums', 'a', $query->expr()->eq('a.album_id', 'c.album_id'))
 			->leftJoin('a', 'photos_albums_files', 'p', $query->expr()->eq('a.album_id', 'p.album_id'))
 			->leftJoin('p', 'filecache', 'f', $query->expr()->eq('p.file_id', 'f.fileid'))
 			->where($query->expr()->eq('collaborator_id', $query->createNamedParameter($collaboratorId)))
@@ -577,6 +577,7 @@ class AlbumMapper {
 			->groupBy('a.album_id')
 			->executeQuery()
 			->fetchAll();
+
 
 		return array_map(fn (array $row): AlbumInfo => new AlbumInfo(
 			(int)$row['album_id'],

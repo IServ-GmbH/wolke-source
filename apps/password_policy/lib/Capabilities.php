@@ -44,6 +44,7 @@ class Capabilities implements ICapability {
 	 * @since 12.0.0
 	 * @since 31.0.0 new policies per context
 	 */
+	#[\Override]
 	public function getCapabilities(): array {
 		/* Get an array [['context' => [policies]], ...] */
 		$policies = [];
@@ -60,8 +61,8 @@ class Capabilities implements ICapability {
 		}
 
 		return [
-			'password_policy' =>
-				[
+			'password_policy'
+				=> [
 					'api' => [
 						'generate' => $this->urlGenerator->linkToOCSRouteAbsolute('password_policy.API.generate'),
 						'validate' => $this->urlGenerator->linkToOCSRouteAbsolute('password_policy.API.validate'),

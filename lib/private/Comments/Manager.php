@@ -8,7 +8,12 @@
 namespace OC\Comments;
 
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Cache\CappedMemoryCache;
 use OCP\Comments\CommentsEvent;
+use OCP\Comments\Events\BeforeCommentUpdatedEvent;
+use OCP\Comments\Events\CommentAddedEvent;
+use OCP\Comments\Events\CommentDeletedEvent;
+use OCP\Comments\Events\CommentUpdatedEvent;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsEventHandler;
 use OCP\Comments\ICommentsManager;
@@ -29,8 +34,7 @@ use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class Manager implements ICommentsManager {
-	/** @var IComment[] */
-	protected array $commentsCache = [];
+	protected CappedMemoryCache $commentsCache;
 
 	/** @var \Closure[] */
 	protected array $eventHandlerClosures = [];
@@ -51,6 +55,7 @@ class Manager implements ICommentsManager {
 		protected IRootFolder $rootFolder,
 		protected IEventDispatcher $eventDispatcher,
 	) {
+		$this->commentsCache = new CappedMemoryCache(256);
 	}
 
 	/**
@@ -902,7 +907,7 @@ class Manager implements ICommentsManager {
 			if ($comment->getVerb() === 'reaction_deleted') {
 				$this->deleteReaction($comment);
 			}
-			$this->sendEvent(CommentsEvent::EVENT_DELETE, $comment);
+			$this->sendEvent(new CommentDeletedEvent($comment));
 		}
 
 		return ($affectedRows > 0);
@@ -1147,7 +1152,7 @@ class Manager implements ICommentsManager {
 			if ($comment->getVerb() === 'reaction') {
 				$this->addReaction($comment);
 			}
-			$this->sendEvent(CommentsEvent::EVENT_ADD, $comment);
+			$this->sendEvent(new CommentAddedEvent($comment));
 		}
 
 		return $affectedRows > 0;
@@ -1233,11 +1238,11 @@ class Manager implements ICommentsManager {
 	 * @return bool
 	 * @throws NotFoundException
 	 */
-	protected function update(IComment $comment) {
+	protected function update(IComment $comment): bool {
 		// for properly working preUpdate Events we need the old comments as is
 		// in the DB and overcome caching. Also avoid that outdated information stays.
 		$this->uncache($comment->getId());
-		$this->sendEvent(CommentsEvent::EVENT_PRE_UPDATE, $this->get($comment->getId()));
+		$this->sendEvent(new BeforeCommentUpdatedEvent($this->get($comment->getId())));
 		$this->uncache($comment->getId());
 
 		$result = $this->updateQuery($comment);
@@ -1246,7 +1251,7 @@ class Manager implements ICommentsManager {
 			$this->deleteReaction($comment);
 		}
 
-		$this->sendEvent(CommentsEvent::EVENT_UPDATE, $comment);
+		$this->sendEvent(new CommentUpdatedEvent($comment));
 
 		return $result;
 	}
@@ -1295,7 +1300,7 @@ class Manager implements ICommentsManager {
 			->setParameter('id', $actorId);
 
 		$affectedRows = $qb->executeStatement();
-		$this->commentsCache = [];
+		$this->commentsCache->clear();
 		return true;
 	}
 
@@ -1314,7 +1319,7 @@ class Manager implements ICommentsManager {
 			->setParameter('id', $objectId);
 
 		$affectedRows = $qb->executeStatement();
-		$this->commentsCache = [];
+		$this->commentsCache->clear();
 		return true;
 	}
 
@@ -1528,14 +1533,10 @@ class Manager implements ICommentsManager {
 	}
 
 	/**
-	 * sends notifications to the registered entities
-	 *
-	 * @param $eventType
-	 * @param IComment $comment
+	 * Sends notifications to the registered entities
 	 */
-	private function sendEvent($eventType, IComment $comment) {
+	private function sendEvent(CommentsEvent $event): void {
 		$entities = $this->getEventHandlers();
-		$event = new CommentsEvent($eventType, $comment);
 		foreach ($entities as $entity) {
 			$entity->handle($event);
 		}
@@ -1568,7 +1569,7 @@ class Manager implements ICommentsManager {
 
 		$affectedRows = $qb->executeStatement();
 
-		$this->commentsCache = [];
+		$this->commentsCache->clear();
 
 		return $affectedRows > 0;
 	}

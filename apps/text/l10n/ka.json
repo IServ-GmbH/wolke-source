@@ -1,4 +1,5 @@
 { "translations": {
+    "File not found" : "File not found",
     "The file was uploaded" : "The file was uploaded",
     "The uploaded file exceeds the upload_max_filesize directive in php.ini" : "The uploaded file exceeds the upload_max_filesize directive in php.ini",
     "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form" : "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form",
@@ -8,9 +9,8 @@
     "Could not write file to disk" : "Could not write file to disk",
     "A PHP extension stopped the file upload" : "A PHP extension stopped the file upload",
     "No file uploaded or file size exceeds maximum of %s" : "No file uploaded or file size exceeds maximum of %s",
-    "File not found" : "File not found",
     "Text" : "Text",
-    "Comments" : "კომენტარები",
+    "Comment" : "კომენტარი",
     "Close" : "Close",
     "Guest" : "Guest",
     "guest" : "guest",
@@ -18,12 +18,7 @@
     "Delete" : "წაშლა",
     "Save" : "დამახსოვრება",
     "Cancel" : "Cancel",
-    "Comment" : "კომენტარი",
     "Reply" : "Reply",
-    "Heading" : "Heading",
-    "Image" : "Image",
-    "Details" : "Details",
-    "Changed" : "Changed",
     "Previous" : "წინა",
     "Next" : "Next",
     "Reload" : "Reload",
@@ -42,7 +37,6 @@
     "Save changes" : "Save changes",
     "URL" : "URL",
     "Changes" : "Changes",
-    "Retry" : "თავიდან ცდა",
     "Formatting help" : "Formatting help",
     "Translate" : "Translate",
     "Nextcloud Assistant" : "Nextcloud-ის ასისტენტი",
@@ -53,6 +47,7 @@
     "Done" : "Done",
     "Headings" : "Headings",
     "Lists" : "Lists",
+    "Details" : "Details",
     "Command" : "Command",
     "Ctrl" : "Ctrl",
     "Suggestions" : "Suggestions",
@@ -66,6 +61,10 @@
     "Select language" : "Select language",
     "to" : "to",
     "Translate to" : "Translate to",
-    "Replace" : "Replace"
+    "Replace" : "Replace",
+    "Heading" : "Heading",
+    "Image" : "Image",
+    "Changed" : "Changed",
+    "Retry" : "თავიდან ცდა"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }

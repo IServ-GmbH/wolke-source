@@ -8,6 +8,7 @@
 namespace OCA\Files_Sharing;
 
 use OC\Core\AppInfo\ConfigLexicon;
+use OCA\Files_Sharing\Config\ConfigLexicon as SharingConfigLexicon;
 use OCP\App\IAppManager;
 use OCP\Capabilities\ICapability;
 use OCP\Constants;
@@ -45,6 +46,7 @@ class Capabilities implements ICapability {
 	 *             expire_date?: array{
 	 *                 enabled: bool,
 	 *                 days?: int,
+	 *                 default_days?: int,
 	 *                 enforced?: bool,
 	 *             },
 	 *             expire_date_internal?: array{
@@ -77,6 +79,7 @@ class Capabilities implements ICapability {
 	 *             },
 	 *         },
 	 *         default_permissions?: int,
+	 *         exclude_reshare_from_edit?: bool,
 	 *         federation: array{
 	 *             outgoing: bool,
 	 *             incoming: bool,
@@ -121,7 +124,13 @@ class Capabilities implements ICapability {
 				$public['multiple_links'] = true;
 				$public['expire_date']['enabled'] = $this->shareManager->shareApiLinkDefaultExpireDate();
 				if ($public['expire_date']['enabled']) {
-					$public['expire_date']['days'] = $this->shareManager->shareApiLinkDefaultExpireDays();
+					$maxDays = $this->shareManager->shareApiLinkDefaultExpireDays();
+					$defaultDays = (int)$this->config->getAppValue('core', 'link_defaultExpDays', (string)$maxDays);
+					if ($defaultDays > $maxDays) {
+						$defaultDays = $maxDays;
+					}
+					$public['expire_date']['days'] = $maxDays;
+					$public['expire_date']['default_days'] = $defaultDays;
 					$public['expire_date']['enforced'] = $this->shareManager->shareApiLinkDefaultExpireDateEnforced();
 				}
 
@@ -159,6 +168,7 @@ class Capabilities implements ICapability {
 			$res['group']['enabled'] = $this->shareManager->allowGroupSharing();
 			$res['group']['expire_date']['enabled'] = true;
 			$res['default_permissions'] = (int)$this->config->getAppValue('core', 'shareapi_default_permissions', (string)Constants::PERMISSION_ALL);
+			$res['exclude_reshare_from_edit'] = $this->appConfig->getValueBool('files_sharing', SharingConfigLexicon::EXCLUDE_RESHARE_FROM_EDIT);
 		}
 
 		//Federated sharing

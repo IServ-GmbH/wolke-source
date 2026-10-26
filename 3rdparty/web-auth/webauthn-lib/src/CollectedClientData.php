@@ -10,7 +10,6 @@ use Webauthn\TokenBinding\TokenBinding;
 use function array_key_exists;
 use function is_array;
 use function is_string;
-use function sprintf;
 use const JSON_THROW_ON_ERROR;
 
 class CollectedClientData

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Basics of Nextcloud Talk &mdash; Nextcloud 32 User Manual</title>
+  <title>Basics of Nextcloud Talk &mdash; Nextcloud 33 User Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -62,7 +62,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 32 user manual introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 33 user manual introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files &amp; synchronization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../groupware/index.html">Groupware</a></li>
@@ -89,6 +89,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#setting-reminder-on-messages">Setting reminder on messages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#replying-to-messages-and-more">Replying to messages and more</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#silent-messages">Silent messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scheduling-messages">Scheduling messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pinning-messages">Pinning messages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#managing-a-conversation">Managing a conversation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ban-participants">Ban participants</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#messages-expiration">Messages expiration</a></li>
@@ -96,7 +98,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#starting-a-screen-share">Starting a screen share</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#changing-view-in-a-call">Changing view in a call</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#download-call-participants-list">Download call participants list</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#compact-view-of-conversations-list">Compact view of conversations list</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#appearance">Appearance</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#compact-view-of-conversations-list">Compact view of conversations list</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chat-messages">Chat messages</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#messages-search-in-a-conversation">Messages search in a conversation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#threaded-messages">Threaded messages</a></li>
 </ul>
@@ -119,7 +125,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 User Manual</a>
+          <a href="../contents.html">Nextcloud 33 User Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -263,7 +269,7 @@ An archived conversation will not appear in your main conversation list, but it 
 <p>You can add more files until you are done and decide to share the files. You can also add a text caption to your shared files, providing a brief description or context.</p>
 <a class="reference internal image-reference" href="../../_images/talk-upload-files.png"><img alt="../../_images/talk-upload-files.png" src="../../_images/talk-upload-files.png" style="width: 500px;" />
 </a>
-<p>All users will be able to click the files to view, edit or download them, irrespective of them having a user account. Users with an account will have the file automatically shared with them while external guest users will get them shared as a public link.</p>
+<p>All users will be able to click the files to view, edit or download them, regardless of whether they have a Nextcloud account. Users with an account will have the file automatically shared with them while external guest users will get them shared as a public link.</p>
 <a class="reference internal image-reference" href="../../_images/editing-document-in-chat-room.png"><img alt="../../_images/editing-document-in-chat-room.png" src="../../_images/editing-document-in-chat-room.png" style="width: 600px;" />
 </a>
 </section>
@@ -391,6 +397,24 @@ While it is enabled, other participants will not receive notifications from your
 <a class="reference internal image-reference" href="../../_images/message-silent.png"><img alt="../../_images/message-silent.png" src="../../_images/message-silent.png" style="width: 600px;" />
 </a>
 </section>
+<section id="scheduling-messages">
+<h2>Scheduling messages<a class="headerlink" href="#scheduling-messages" title="Link to this heading"></a></h2>
+<p>If you want to send a message not right now, but at a specific time, you can schedule it. Just select the desired date and time in the quick actions next to the input field.</p>
+<a class="reference internal image-reference" href="../../_images/message-schedule-action.png"><img alt="../../_images/message-schedule-action.png" src="../../_images/message-schedule-action.png" style="width: 600px;" />
+</a>
+<p>You can find all your scheduled messages by clicking on the clock icon next to the input field. There you can edit, reschedule or delete currently prepared messages.</p>
+<a class="reference internal image-reference" href="../../_images/message-schedule-toggle.png"><img alt="../../_images/message-schedule-toggle.png" src="../../_images/message-schedule-toggle.png" style="width: 400px;" />
+</a>
+</section>
+<section id="pinning-messages">
+<h2>Pinning messages<a class="headerlink" href="#pinning-messages" title="Link to this heading"></a></h2>
+<p>A moderator can pin important messages in a conversation, for certain period of time or until it’s no longer relevant.</p>
+<a class="reference internal image-reference" href="../../_images/message-pin-action.png"><img alt="../../_images/message-pin-action.png" src="../../_images/message-pin-action.png" style="width: 400px;" />
+</a>
+<p>Pinned messages are highlighted and accessible above the chat or in the <code class="docutils literal notranslate"><span class="pre">Shared</span> <span class="pre">items</span></code> tab of the content sidebar. If you no longer need a pinned message, you can unpin it for everyone or only yourself from quick actions.</p>
+<a class="reference internal image-reference" href="../../_images/message-pin-in-chat.png"><img alt="../../_images/message-pin-in-chat.png" src="../../_images/message-pin-in-chat.png" style="width: 700px;" />
+</a>
+</section>
 <section id="managing-a-conversation">
 <h2>Managing a conversation<a class="headerlink" href="#managing-a-conversation" title="Link to this heading"></a></h2>
 <p>You are always moderator in your new conversation. In the participant list you can promote other participants to moderators using the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu to the right of their user name, assign them custom permissions or remove them from the conversation.</p>
@@ -398,7 +422,7 @@ While it is enabled, other participants will not receive notifications from your
 <a class="reference internal image-reference" href="../../_images/participant-menu.png"><img alt="../../_images/participant-menu.png" src="../../_images/participant-menu.png" style="width: 400px;" />
 </a>
 <p>Moderators can configure the conversation. Select <code class="docutils literal notranslate"><span class="pre">Conversation</span> <span class="pre">settings</span></code> from the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu of the conversation on the top to access the settings.</p>
-<a class="reference internal image-reference" href="../../_images/open-settings.png"><img alt="../../_images/open-settings.png" src="../../_images/open-settings.png" style="width: 400px;" />
+<a class="reference internal image-reference" href="../../_images/open-settings.png"><img alt="../../_images/open-settings.png" src="../../_images/open-settings.png" style="width: 500px;" />
 </a>
 <p>Here you can configure the description, guest access, if the conversation is visible to others on the server and more.</p>
 <a class="reference internal image-reference" href="../../_images/conversation-settings-dialog.png"><img alt="../../_images/conversation-settings-dialog.png" src="../../_images/conversation-settings-dialog.png" style="width: 600px;" />
@@ -434,13 +458,13 @@ The available expiration durations are 1 hour, 8 hours, 1 day, 1 week, 4 weeks, 
 <p>If somebody else has started a call already, the button will change in a green <code class="docutils literal notranslate"><span class="pre">Join</span> <span class="pre">call</span></code> button.</p>
 <a class="reference internal image-reference" href="../../_images/join-call.png"><img alt="../../_images/join-call.png" src="../../_images/join-call.png" style="width: 600px;" />
 </a>
-<p>During a call, you can mute your microphone and disable your video with the buttons on the right side of the top bar, or using the shortcuts <code class="docutils literal notranslate"><span class="pre">M</span></code> to mute audio and <code class="docutils literal notranslate"><span class="pre">V</span></code> to disable video. You can also use the space bar to toggle mute. When you are muted, pressing space will unmute you so you can speak until you let go of the space bar. If you are unmuted, pressing space will mute you until you let go.</p>
+<p>During a call, you can mute your microphone and disable your video with the buttons on the right side of the top bar, or using the shortcuts <code class="docutils literal notranslate"><span class="pre">M</span></code> to mute audio and <code class="docutils literal notranslate"><span class="pre">V</span></code> to disable video. You can also use the space bar for push-to-talk: holding space temporarily unmutes you while muted, or temporarily mutes you while unmuted.</p>
 <p>You can hide your video (useful during a screen share) with the little arrow just above the video stream. Bring it back with the little arrow again.</p>
 <p>You can access your settings and choose a different webcam, microphone and other settings in the <code class="docutils literal notranslate"><span class="pre">...</span></code> menu in the top bar.</p>
 <a class="reference internal image-reference" href="../../_images/media-settings.png"><img alt="../../_images/media-settings.png" src="../../_images/media-settings.png" style="width: 300px;" />
 </a>
 <p>From media settings dialog, you can also change the background of your video.</p>
-<a class="reference internal image-reference" href="../../_images/background-settings-in-call.png"><img alt="../../_images/background-settings-in-call.png" src="../../_images/background-settings-in-call.png" style="width: 400px;" />
+<a class="reference internal image-reference" href="../../_images/background-settings-in-call.png"><img alt="../../_images/background-settings-in-call.png" src="../../_images/background-settings-in-call.png" style="width: 500px;" />
 </a>
 <p>All these settings are also available as direct actions in the bottom bar.</p>
 <a class="reference internal image-reference" href="../../_images/call-bottom-bar.png"><img alt="../../_images/call-bottom-bar.png" src="../../_images/call-bottom-bar.png" style="width: 300px;" />
@@ -482,12 +506,22 @@ If video from your camera is also available, other participants will see it in a
 <li><p><strong>Identifier</strong>: Unique identifier for the participant.</p></li>
 </ul>
 </section>
+<section id="appearance">
+<h2>Appearance<a class="headerlink" href="#appearance" title="Link to this heading"></a></h2>
 <section id="compact-view-of-conversations-list">
-<h2>Compact view of conversations list<a class="headerlink" href="#compact-view-of-conversations-list" title="Link to this heading"></a></h2>
-<p>Compact view allows to hide last message preview in the conversation list, providing a more focused interface.
-You can enable it from the <code class="docutils literal notranslate"><span class="pre">Talk</span> <span class="pre">settings</span></code> dialog  in <code class="docutils literal notranslate"><span class="pre">Appearance</span></code> section.</p>
+<h3>Compact view of conversations list<a class="headerlink" href="#compact-view-of-conversations-list" title="Link to this heading"></a></h3>
+<p>Compact view allows to hide last message preview in the conversation list, providing a more focused interface.</p>
 <a class="reference internal image-reference" href="../../_images/talk-compact-view.png"><img alt="../../_images/talk-compact-view.png" src="../../_images/talk-compact-view.png" style="width: 200px;" />
 </a>
+</section>
+<section id="chat-messages">
+<h3>Chat messages<a class="headerlink" href="#chat-messages" title="Link to this heading"></a></h3>
+<p>Chat appearance settings allow you to customize the look of your conversation chats.
+You can choose between classic list or message bubbles, with your own messages on the side.</p>
+<p>You can change both settings from the <code class="docutils literal notranslate"><span class="pre">Talk</span> <span class="pre">settings</span></code> dialog  in <code class="docutils literal notranslate"><span class="pre">Appearance</span></code> section.</p>
+<a class="reference internal image-reference" href="../../_images/talk-appearance-settings.png"><img alt="../../_images/talk-appearance-settings.png" src="../../_images/talk-appearance-settings.png" style="width: 600px;" />
+</a>
+</section>
 </section>
 <section id="messages-search-in-a-conversation">
 <h2>Messages search in a conversation<a class="headerlink" href="#messages-search-in-a-conversation" title="Link to this heading"></a></h2>
@@ -501,10 +535,10 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
 <section id="threaded-messages">
 <h2>Threaded messages<a class="headerlink" href="#threaded-messages" title="Link to this heading"></a></h2>
 <p>You can create threads in conversations to keep discussions organized. The thread creation option is available in the new message additional actions.</p>
-<a class="reference internal image-reference" href="../../_images/thread-create-action.png"><img alt="../../_images/thread-create-action.png" src="../../_images/thread-create-action.png" style="width: 500px;" />
+<a class="reference internal image-reference" href="../../_images/thread-create-action.png"><img alt="../../_images/thread-create-action.png" src="../../_images/thread-create-action.png" style="width: 400px;" />
 </a>
 <p>Then, you can add a title and description for the thread and start the discussion.</p>
-<a class="reference internal image-reference" href="../../_images/thread-example.png"><img alt="../../_images/thread-example.png" src="../../_images/thread-example.png" style="width: 500px;" />
+<a class="reference internal image-reference" href="../../_images/thread-example.png"><img alt="../../_images/thread-example.png" src="../../_images/thread-example.png" style="width: 600px;" />
 </a>
 <p>You can view all replies in a thread either from the replies button on the message or from <code class="docutils literal notranslate"><span class="pre">Shared</span> <span class="pre">items</span></code> tab in the content sidebar.</p>
 <a class="reference internal image-reference" href="../../_images/threads-list-shared-items.png"><img alt="../../_images/threads-list-shared-items.png" src="../../_images/threads-list-shared-items.png" style="width: 500px;" />
@@ -544,47 +578,6 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
   </div>
   
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- Here go the languages -->
 
   
@@ -671,17 +664,13 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
   
     
   
-    
-  
-    
-  
   
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       🌐 English
       <span class="fa fa-caret-down"></span>
-       ☁️ 32
+       ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -693,14 +682,6 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
                
             >
               Arabic
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/eu/"
-               
-            >
-              Basque
             </a>
           </dd>
         
@@ -987,14 +968,6 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
           </dd>
         
           <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/uk/"
-               
-            >
-              uk
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
             <a href="/server/latest/user_manual/uk_UA/"
                
             >
@@ -1043,6 +1016,8 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/33/user_manual"
                
+               style="color: var(--dark-link-color);"
+               
             >
               33
             </a>
@@ -1050,8 +1025,6 @@ You can enable it from the <code class="docutils literal notranslate"><span clas
         
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/32/user_manual"
-               
-               style="color: var(--dark-link-color);"
                
             >
               32

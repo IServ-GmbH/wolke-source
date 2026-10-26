@@ -5,10 +5,10 @@
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 namespace OC;
 
 use bantu\IniGetWrapper\IniGetWrapper;
-use NCU\Security\Signature\ISignatureManager;
 use OC\Accounts\AccountManager;
 use OC\App\AppManager;
 use OC\App\AppStore\Bundles\BundleFetcher;
@@ -51,7 +51,6 @@ use OC\Files\Lock\LockManager;
 use OC\Files\Mount\CacheMountProvider;
 use OC\Files\Mount\LocalHomeMountProvider;
 use OC\Files\Mount\ObjectHomeMountProvider;
-use OC\Files\Mount\ObjectStorePreviewCacheMountProvider;
 use OC\Files\Mount\RootMountProvider;
 use OC\Files\Node\HookConnector;
 use OC\Files\Node\LazyRoot;
@@ -85,9 +84,11 @@ use OC\Notification\Manager;
 use OC\OCM\Model\OCMProvider;
 use OC\OCM\OCMDiscoveryService;
 use OC\OCS\DiscoveryService;
+use OC\Preview\Db\PreviewMapper;
 use OC\Preview\GeneratorHelper;
 use OC\Preview\IMagickSupport;
 use OC\Preview\MimeIconProvider;
+use OC\Preview\Watcher;
 use OC\Profile\ProfileManager;
 use OC\Profiler\Profiler;
 use OC\Remote\Api\ApiFactory;
@@ -115,7 +116,13 @@ use OC\Settings\DeclarativeManager;
 use OC\SetupCheck\SetupCheckManager;
 use OC\Share20\ProviderFactory;
 use OC\Share20\ShareHelper;
+use OC\Snowflake\APCuSequence;
+use OC\Snowflake\FileSequence;
+use OC\Snowflake\ISequence;
+use OC\Snowflake\SnowflakeDecoder;
+use OC\Snowflake\SnowflakeGenerator;
 use OC\SpeechToText\SpeechToTextManager;
+use OC\SystemReport\SystemReportManager;
 use OC\SystemTag\ManagerFactory as SystemTagManagerFactory;
 use OC\Talk\Broker;
 use OC\Teams\TeamManager;
@@ -165,6 +172,7 @@ use OCP\Files\Storage\IStorageFactory;
 use OCP\Files\Template\ITemplateManager;
 use OCP\FilesMetadata\IFilesMetadataManager;
 use OCP\FullTextSearch\IFullTextSearchManager;
+use OCP\GlobalScale\IGlobalScaleService;
 use OCP\Group\ISubAdmin;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -173,6 +181,7 @@ use OCP\IBinaryFinder;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\ICertificateManager;
+use OCP\IConfig;
 use OCP\IDateTimeFormatter;
 use OCP\IDateTimeZone;
 use OCP\IDBConnection;
@@ -199,9 +208,7 @@ use OCP\Lockdown\ILockdownManager;
 use OCP\Log\ILogFactory;
 use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
-use OCP\OCM\ICapabilityAwareOCMProvider;
 use OCP\OCM\IOCMDiscoveryService;
-use OCP\OCM\IOCMProvider;
 use OCP\Preview\IMimeIconProvider;
 use OCP\Profile\IProfileManager;
 use OCP\Profiler\IProfiler;
@@ -218,13 +225,17 @@ use OCP\Security\Ip\IRemoteAddress;
 use OCP\Security\ISecureRandom;
 use OCP\Security\ITrustedDomainHelper;
 use OCP\Security\RateLimiting\ILimiter;
+use OCP\Security\Signature\ISignatureManager;
 use OCP\Security\VerificationToken\IVerificationToken;
 use OCP\ServerVersion;
 use OCP\Settings\IDeclarativeManager;
 use OCP\SetupCheck\ISetupCheckManager;
 use OCP\Share\IProviderFactory;
 use OCP\Share\IShareHelper;
+use OCP\Snowflake\ISnowflakeDecoder;
+use OCP\Snowflake\ISnowflakeGenerator;
 use OCP\SpeechToText\ISpeechToTextManager;
+use OCP\SystemReport\ISystemReportManager;
 use OCP\SystemTag\ISystemTagManager;
 use OCP\SystemTag\ISystemTagObjectMapper;
 use OCP\Talk\IBroker;
@@ -295,10 +306,6 @@ class Server extends ServerContainer implements IServerContainer {
 			return new PreviewManager(
 				$c->get(\OCP\IConfig::class),
 				$c->get(IRootFolder::class),
-				new \OC\Preview\Storage\Root(
-					$c->get(IRootFolder::class),
-					$c->get(SystemConfig::class)
-				),
 				$c->get(IEventDispatcher::class),
 				$c->get(GeneratorHelper::class),
 				$c->get(ISession::class)->get('user_id'),
@@ -310,12 +317,11 @@ class Server extends ServerContainer implements IServerContainer {
 		});
 		$this->registerAlias(IMimeIconProvider::class, MimeIconProvider::class);
 
-		$this->registerService(\OC\Preview\Watcher::class, function (ContainerInterface $c) {
-			return new \OC\Preview\Watcher(
-				new \OC\Preview\Storage\Root(
-					$c->get(IRootFolder::class),
-					$c->get(SystemConfig::class)
-				)
+		$this->registerService(Watcher::class, function (ContainerInterface $c): Watcher {
+			return new Watcher(
+				$c->get(\OC\Preview\Storage\StorageFactory::class),
+				$c->get(PreviewMapper::class),
+				$c->get(IDBConnection::class),
 			);
 		});
 
@@ -445,6 +451,7 @@ class Server extends ServerContainer implements IServerContainer {
 				$this->get(LoggerInterface::class),
 				$this->get(ICacheFactory::class),
 				$this->get(IRemoteAddress::class),
+				$this->get(IUserSession::class),
 			);
 			return $groupManager;
 		});
@@ -792,7 +799,6 @@ class Server extends ServerContainer implements IServerContainer {
 			$manager->registerHomeProvider(new LocalHomeMountProvider());
 			$manager->registerHomeProvider(new ObjectHomeMountProvider($objectStoreConfig));
 			$manager->registerRootProvider(new RootMountProvider($objectStoreConfig, $config));
-			$manager->registerRootProvider(new ObjectStorePreviewCacheMountProvider($logger, $config));
 
 			return $manager;
 		});
@@ -930,7 +936,7 @@ class Server extends ServerContainer implements IServerContainer {
 			$ini = $c->get(IniGetWrapper::class);
 			$config = $c->get(\OCP\IConfig::class);
 			$ttl = $config->getSystemValueInt('filelocking.ttl', max(3600, $ini->getNumeric('max_execution_time')));
-			if ($config->getSystemValueBool('filelocking.enabled', true) or (defined('PHPUNIT_RUN') && PHPUNIT_RUN)) {
+			if ($config->getSystemValueBool('filelocking.enabled', true) || (defined('PHPUNIT_RUN') && PHPUNIT_RUN)) {
 				/** @var \OC\Memcache\Factory $memcacheFactory */
 				$memcacheFactory = $c->get(ICacheFactory::class);
 				$memcache = $memcacheFactory->createLocking('lock');
@@ -1030,19 +1036,14 @@ class Server extends ServerContainer implements IServerContainer {
 					$c->get(LoggerInterface::class),
 					$c->get(ITempManager::class),
 					$backgroundService,
-					new AppConfig(
-						$c->get(\OCP\IConfig::class),
-						$c->get(IAppConfig::class),
-						'theming',
-					),
 				);
 				return new ThemingDefaults(
-					$c->get(\OCP\IConfig::class),
 					new AppConfig(
 						$c->get(\OCP\IConfig::class),
 						$c->get(\OCP\IAppConfig::class),
 						'theming',
 					),
+					$c->get(IUserConfig::class),
 					$c->get(IFactory::class)->get('theming'),
 					$c->get(IUserSession::class),
 					$c->get(IURLGenerator::class),
@@ -1067,7 +1068,7 @@ class Server extends ServerContainer implements IServerContainer {
 				$c->getAppDataDir('js'),
 				$c->get(IURLGenerator::class),
 				$this->get(ICacheFactory::class),
-				$c->get(SystemConfig::class),
+				$c->get(\OCP\IConfig::class),
 				$c->get(LoggerInterface::class)
 			);
 		});
@@ -1247,11 +1248,12 @@ class Server extends ServerContainer implements IServerContainer {
 
 		$this->registerAlias(IPhoneNumberUtil::class, PhoneNumberUtil::class);
 
-		// there is no reason for having OCMProvider as a Service
-		$this->registerDeprecatedAlias(ICapabilityAwareOCMProvider::class, OCMProvider::class);
-		$this->registerDeprecatedAlias(IOCMProvider::class, OCMProvider::class);
+		// there is no reason for having OCMProvider as a Service (marked as deprecated since 32.0.0)
+		$this->registerDeprecatedAlias(\OCP\OCM\ICapabilityAwareOCMProvider::class, OCMProvider::class);
+		$this->registerDeprecatedAlias(\OCP\OCM\IOCMProvider::class, OCMProvider::class);
 
 		$this->registerAlias(ISetupCheckManager::class, SetupCheckManager::class);
+		$this->registerAlias(ISystemReportManager::class, SystemReportManager::class);
 
 		$this->registerAlias(IProfileManager::class, ProfileManager::class);
 
@@ -1268,6 +1270,30 @@ class Server extends ServerContainer implements IServerContainer {
 		$this->registerAlias(IRichTextFormatter::class, \OC\RichObjectStrings\RichTextFormatter::class);
 
 		$this->registerAlias(ISignatureManager::class, SignatureManager::class);
+
+		$this->registerAlias(ISnowflakeGenerator::class, SnowflakeGenerator::class);
+		$this->registerService(ISequence::class, function (ContainerInterface $c): ISequence {
+			if (PHP_SAPI !== 'cli') {
+				$sequence = $c->get(APCuSequence::class);
+				if ($sequence->isAvailable()) {
+					return $sequence;
+				}
+			}
+
+			return $c->get(FileSequence::class);
+		}, false);
+		$this->registerAlias(ISnowflakeDecoder::class, SnowflakeDecoder::class);
+
+		$this->registerService(IGlobalScaleService::class, function (ContainerInterface $c): IGlobalScaleService {
+			/** @var Coordinator $coordinator */
+			$coordinator = $c->get(Coordinator::class);
+			$registrationContext = $coordinator->getRegistrationContext();
+			$globalScaleServiceClass = $registrationContext->getGlobalScaleService();
+			if ($globalScaleServiceClass === null) {
+				throw new ServiceUnavailableException('The app providing the global scale service is not enabled');
+			}
+			return $c->get($globalScaleServiceClass);
+		});
 
 		$this->connectDispatcher();
 	}

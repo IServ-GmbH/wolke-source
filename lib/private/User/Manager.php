@@ -7,16 +7,18 @@
  */
 namespace OC\User;
 
-use Doctrine\DBAL\Platforms\OraclePlatform;
 use OC\Hooks\PublicEmitter;
 use OC\KnownUser\KnownUserService;
 use OC\Memcache\WithLocalCache;
+use OCP\Config\IUserConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Federation\ICloudId;
 use OCP\HintException;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IUser;
 use OCP\IUserBackend;
@@ -71,6 +73,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	// These services cannot be injected through DI because user manager is used early in install process
 	private ?KnownUserService $knownUserService = null;
 
+	// This constructor can't autoload any class requiring a DB connection.
 	public function __construct(
 		private IConfig $config,
 		ICacheFactory $cacheFactory,
@@ -165,6 +168,10 @@ class Manager extends PublicEmitter implements IUserManager {
 	}
 
 	public function getDisplayName(string $uid): ?string {
+		if (isset($this->cachedUsers[$uid])) {
+			return $this->cachedUsers[$uid]->getDisplayName();
+		}
+
 		return $this->displayNameCache->getDisplayName($uid);
 	}
 
@@ -287,14 +294,6 @@ class Manager extends PublicEmitter implements IUserManager {
 		return $users;
 	}
 
-	/**
-	 * Search by displayName
-	 *
-	 * @param string $pattern
-	 * @param int $limit
-	 * @param int $offset
-	 * @return IUser[]
-	 */
 	public function searchDisplayName($pattern, $limit = null, $offset = null) {
 		$users = [];
 		foreach ($this->backends as $backend) {
@@ -479,22 +478,23 @@ class Manager extends PublicEmitter implements IUserManager {
 	/**
 	 * returns how many users per backend exist (if supported by backend)
 	 *
-	 * @param boolean $hasLoggedIn when true only users that have a lastLogin
-	 *                             entry in the preferences table will be affected
 	 * @return array<string, int> an array of backend class as key and count number as value
 	 */
-	public function countUsers() {
+	public function countUsers(bool $onlyMappedUsers = false) {
 		$userCountStatistics = [];
 		foreach ($this->backends as $backend) {
+			$name = $backend instanceof IUserBackend
+				? $backend->getBackendName()
+				: get_class($backend);
+
+			if ($onlyMappedUsers && $backend instanceof ICountMappedUsersBackend) {
+				$userCountStatistics[$name] = $backend->countMappedUsers();
+				continue;
+			}
 			if ($backend instanceof ICountUsersBackend || $backend->implementsActions(Backend::COUNT_USERS)) {
 				/** @var ICountUsersBackend|IUserBackend $backend */
 				$backendUsers = $backend->countUsers();
 				if ($backendUsers !== false) {
-					if ($backend instanceof IUserBackend) {
-						$name = $backend->getBackendName();
-					} else {
-						$name = get_class($backend);
-					}
 					if (isset($userCountStatistics[$name])) {
 						$userCountStatistics[$name] += $backendUsers;
 					} else {
@@ -503,6 +503,7 @@ class Manager extends PublicEmitter implements IUserManager {
 				}
 			}
 		}
+
 		return $userCountStatistics;
 	}
 
@@ -602,7 +603,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @since 12.0.0
 	 */
 	public function countDisabledUsers(): int {
-		$queryBuilder = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+		$queryBuilder = Server::get(IDBConnection::class)->getQueryBuilder();
 		$queryBuilder->select($queryBuilder->func()->count('*'))
 			->from('preferences')
 			->where($queryBuilder->expr()->eq('appid', $queryBuilder->createNamedParameter('core')))
@@ -630,7 +631,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @since 11.0.0
 	 */
 	public function countSeenUsers() {
-		$queryBuilder = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+		$queryBuilder = Server::get(IDBConnection::class)->getQueryBuilder();
 		$queryBuilder->select($queryBuilder->func()->count('*'))
 			->from('preferences')
 			->where($queryBuilder->expr()->eq('appid', $queryBuilder->createNamedParameter('login')))
@@ -664,7 +665,7 @@ class Manager extends PublicEmitter implements IUserManager {
 	 * @return string[] with user ids
 	 */
 	private function getSeenUserIds($limit = null, $offset = null) {
-		$queryBuilder = \OC::$server->getDatabaseConnection()->getQueryBuilder();
+		$queryBuilder = Server::get(IDBConnection::class)->getQueryBuilder();
 		$queryBuilder->select(['userid'])
 			->from('preferences')
 			->where($queryBuilder->expr()->eq(
@@ -695,21 +696,29 @@ class Manager extends PublicEmitter implements IUserManager {
 	}
 
 	/**
+	 * @internal Only for mocks it in unit tests.
+	 */
+	public function getUserConfig(): IUserConfig {
+		return \OCP\Server::get(IUserConfig::class);
+	}
+
+	/**
 	 * @param string $email
 	 * @return IUser[]
 	 * @since 9.1.0
 	 */
-	public function getByEmail($email) {
+	public function getByEmail($email): array {
+		$users = [];
+		$userConfig = $this->getUserConfig();
 		// looking for 'email' only (and not primary_mail) is intentional
-		$userIds = $this->config->getUsersForUserValueCaseInsensitive('settings', 'email', $email);
-
-		$users = array_map(function ($uid) {
-			return $this->get($uid);
-		}, $userIds);
-
-		return array_values(array_filter($users, function ($u) {
-			return ($u instanceof IUser);
-		}));
+		$userIds = $userConfig->searchUsersByValueString('settings', 'email', $email, caseInsensitive: true);
+		foreach ($userIds as $userId) {
+			$user = $this->get($userId);
+			if ($user !== null) {
+				$users[] = $user;
+			}
+		}
+		return $users;
 	}
 
 	/**
@@ -766,7 +775,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		// We can't load all users who already logged in
 		$limit = min(100, $limit ?: 25);
 
-		$connection = \OC::$server->getDatabaseConnection();
+		$connection = Server::get(IDBConnection::class);
 		$queryBuilder = $connection->getQueryBuilder();
 		$queryBuilder->select('pref_login.userid')
 			->from('preferences', 'pref_login')
@@ -777,7 +786,7 @@ class Manager extends PublicEmitter implements IUserManager {
 		;
 
 		// Oracle don't want to run ORDER BY on CLOB column
-		$loginOrder = $connection->getDatabasePlatform() instanceof OraclePlatform
+		$loginOrder = $connection->getDatabaseProvider() === IDBConnection::PLATFORM_ORACLE
 			? $queryBuilder->expr()->castColumn('pref_login.configvalue', IQueryBuilder::PARAM_INT)
 			: 'pref_login.configvalue';
 		$queryBuilder
@@ -852,11 +861,19 @@ class Manager extends PublicEmitter implements IUserManager {
 				foreach ($this->backends as $backend) {
 					if ($backend->userExists($userId)) {
 						$user = new LazyUser($userId, $this, null, $backend);
-						yield $user;
+						yield $userId => $user;
 						break;
 					}
 				}
 			}
 		} while (count($userIds) === $batchSize && $limit !== 0);
+	}
+
+	public function getExistingUser(string $userId, ?string $displayName = null): IUser {
+		return new LazyUser($userId, $this, $displayName);
+	}
+
+	public function getFederatedUser(ICloudId $cloudId): IUser {
+		return new LazyUser($cloudId->getDisplayId(), $this, $cloudId->getDisplayId());
 	}
 }

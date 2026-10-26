@@ -11,6 +11,7 @@ namespace OCA\DAV\CalDAV\Federation;
 
 use OCA\DAV\BackgroundJob\FederatedCalendarSyncJob;
 use OCA\DAV\CalDAV\Federation\Protocol\CalendarFederationProtocolV1;
+use OCA\DAV\CalDAV\Federation\Protocol\CalendarProtocolParseException;
 use OCA\DAV\CalDAV\Federation\Protocol\ICalendarFederationProtocol;
 use OCA\DAV\DAV\Sharing\Backend as DavSharingBackend;
 use OCP\AppFramework\Http;
@@ -73,11 +74,18 @@ class CalendarFederationProvider implements ICloudFederationProvider {
 		}
 
 		$rawProtocol = $share->getProtocol();
+		if (!isset($rawProtocol[ICalendarFederationProtocol::PROP_VERSION])) {
+			throw new ProviderCouldNotAddShareException(
+				'No protocol version',
+				'',
+				Http::STATUS_BAD_REQUEST,
+			);
+		}
 		switch ($rawProtocol[ICalendarFederationProtocol::PROP_VERSION]) {
 			case CalendarFederationProtocolV1::VERSION:
 				try {
 					$protocol = CalendarFederationProtocolV1::parse($rawProtocol);
-				} catch (Protocol\CalendarProtocolParseException $e) {
+				} catch (CalendarProtocolParseException $e) {
 					throw new ProviderCouldNotAddShareException(
 						'Invalid protocol data (v1)',
 						'',
@@ -106,9 +114,10 @@ class CalendarFederationProvider implements ICloudFederationProvider {
 			);
 		}
 
-		// TODO: implement read-write sharing
+		// convert access to permissions
 		$permissions = match ($access) {
 			DavSharingBackend::ACCESS_READ => Constants::PERMISSION_READ,
+			DavSharingBackend::ACCESS_READ_WRITE => Constants::PERMISSION_READ | Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE | Constants::PERMISSION_DELETE,
 			default => throw new ProviderCouldNotAddShareException(
 				"Unsupported access value: $access",
 				'',

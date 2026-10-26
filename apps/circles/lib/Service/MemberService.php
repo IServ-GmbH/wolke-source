@@ -44,6 +44,10 @@ use OCA\Circles\Tools\Model\SimpleDataStore;
 use OCA\Circles\Tools\Traits\TArrayTools;
 use OCA\Circles\Tools\Traits\TNCLogger;
 use OCA\Circles\Tools\Traits\TStringTools;
+use OCA\Files_Sharing\Event\UserShareAccessUpdatedEvent;
+use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IUser;
+use OCP\IUserManager;
 
 /**
  * Class MemberService
@@ -91,6 +95,8 @@ class MemberService {
 		MembershipService $membershipService,
 		FederatedEventService $federatedEventService,
 		RemoteStreamService $remoteStreamService,
+		private readonly IEventDispatcher $eventDispatcher,
+		private readonly IUserManager $userManager,
 	) {
 		$this->circleRequest = $circleRequest;
 		$this->memberRequest = $memberRequest;
@@ -149,12 +155,13 @@ class MemberService {
 	 * @param bool $fullDetails
 	 * @param int $limit
 	 * @param string $search
+	 * @param ?int $role
 	 *
 	 * @return Member[]
 	 * @throws InitiatorNotFoundException
 	 * @throws RequestBuilderException
 	 */
-	public function getMembers(string $circleId, bool $fullDetails = false, int $limit = 0, string $search = ''): array {
+	public function getMembers(string $circleId, bool $fullDetails = false, int $limit = 0, string $search = '', ?int $role = null): array {
 		$this->federatedUserService->mustHaveCurrentUser();
 
 		$probe = new MemberProbe();
@@ -170,7 +177,8 @@ class MemberService {
 			$probe,
 			$limit,
 			$fullDetails,
-			$search
+			$search,
+			$role,
 		);
 	}
 
@@ -213,6 +221,8 @@ class MemberService {
 		$event->forceSync($forceSync);
 
 		$this->federatedEventService->newEvent($event);
+
+		$this->eventDispatcher->dispatchTyped(new UserShareAccessUpdatedEvent($this->collectShareAccessUpdateUsers($member)));
 
 		return $event->getOutcome();
 	}
@@ -262,6 +272,8 @@ class MemberService {
 
 		$this->federatedEventService->newEvent($event);
 
+		$this->eventDispatcher->dispatchTyped(new UserShareAccessUpdatedEvent(array_merge(...array_map(fn (Member $member) => $this->collectShareAccessUpdateUsers($member), array_values($members)))));
+
 		return $event->getOutcome();
 	}
 
@@ -296,7 +308,28 @@ class MemberService {
 
 		$this->federatedEventService->newEvent($event);
 
+		$this->eventDispatcher->dispatchTyped(new UserShareAccessUpdatedEvent($this->collectShareAccessUpdateUsers($member)));
+
 		return $event->getOutcome();
+	}
+
+
+	/**
+	 * @return list<IUser>
+	 */
+	public function collectShareAccessUpdateUsers(Member|FederatedUser $member): array {
+		if ($member->getUserType() === Member::TYPE_USER) {
+			return [$this->userManager->getExistingUser($member->getUserId())];
+		}
+
+		if ($member->getUserType() === Member::TYPE_CIRCLE) {
+			$circle = $this->circleRequest->getCircle($member->getSingleId());
+			$members = $circle->getInheritedMembers();
+			$userMembers = array_filter($members, static fn (Member $inheritedMember) => $inheritedMember->getUserType() === Member::TYPE_USER);
+			return array_map(fn (Member $inheritedMember) => $this->userManager->getExistingUser($inheritedMember->getUserId()), $userMembers);
+		}
+
+		return [];
 	}
 
 	/**

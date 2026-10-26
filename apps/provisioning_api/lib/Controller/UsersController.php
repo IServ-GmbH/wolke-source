@@ -37,6 +37,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Group\ISubAdmin;
 use OCP\HintException;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -83,6 +84,7 @@ class UsersController extends AUserDataOCSController {
 		private IEventDispatcher $eventDispatcher,
 		private IPhoneNumberUtil $phoneNumberUtil,
 		private IAppManager $appManager,
+		private IAppConfig $appConfig,
 		GroupDisplayNameCache $groupDisplayNameCache,
 	) {
 		parent::__construct(
@@ -596,7 +598,7 @@ class UsersController extends AUserDataOCSController {
 			// Send new user mail only if a mail is set
 			if ($email !== '') {
 				$newUser->setSystemEMailAddress($email);
-				if ($this->config->getAppValue('core', 'newUser.sendEmail', 'yes') === 'yes') {
+				if ($this->appConfig->getValueBool('core', 'newUser.sendEmail', true)) {
 					try {
 						$emailTemplate = $this->newUserMailHelper->generateTemplate($newUser, $generatePasswordResetToken);
 						$this->newUserMailHelper->sendMail($newUser, $emailTemplate);
@@ -850,7 +852,7 @@ class UsersController extends AUserDataOCSController {
 			$permittedFields[] = IAccountManager::COLLECTION_EMAIL . self::SCOPE_SUFFIX;
 		} else {
 			// Check if admin / subadmin
-			if ($isAdminOrSubadmin || $isDelegatedAdmin && !$this->groupManager->isInGroup($targetUser->getUID(), 'admin')) {
+			if ($isAdminOrSubadmin || $isDelegatedAdmin && !$this->groupManager->isAdmin($targetUser->getUID())) {
 				// They have permissions over the user
 				$permittedFields[] = IAccountManager::COLLECTION_EMAIL;
 			} else {
@@ -1018,7 +1020,7 @@ class UsersController extends AUserDataOCSController {
 			$subAdminManager = $this->groupManager->getSubAdmin();
 			if (
 				$this->groupManager->isAdmin($currentLoggedInUser->getUID())
-				|| $this->groupManager->isDelegatedAdmin($currentLoggedInUser->getUID()) && !$this->groupManager->isInGroup($targetUser->getUID(), 'admin')
+				|| $this->groupManager->isDelegatedAdmin($currentLoggedInUser->getUID()) && !$this->groupManager->isAdmin($targetUser->getUID())
 				|| $subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)
 			) {
 				// They have permissions over the user
@@ -1130,7 +1132,8 @@ class UsersController extends AUserDataOCSController {
 				$this->config->setUserValue($targetUser->getUID(), 'core', 'locale', $value);
 				break;
 			case self::USER_FIELD_TIMEZONE:
-				if (!in_array($value, \DateTimeZone::listIdentifiers())) {
+				// Older browsers still report deprecated aliases like Europe/Kiev.
+				if (!in_array($value, \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC))) {
 					throw new OCSException($this->l10n->t('Invalid timezone'), 101);
 				}
 				$this->config->setUserValue($targetUser->getUID(), 'core', 'timezone', $value);
@@ -1301,7 +1304,7 @@ class UsersController extends AUserDataOCSController {
 		$subAdminManager = $this->groupManager->getSubAdmin();
 		$isAdmin = $this->groupManager->isAdmin($currentLoggedInUser->getUID());
 		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($currentLoggedInUser->getUID());
-		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isInGroup($targetUser->getUID(), 'admin')) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
+		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isAdmin($targetUser->getUID())) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
 			throw new OCSException('', OCSController::RESPOND_NOT_FOUND);
 		}
 
@@ -1338,7 +1341,7 @@ class UsersController extends AUserDataOCSController {
 		$subAdminManager = $this->groupManager->getSubAdmin();
 		$isAdmin = $this->groupManager->isAdmin($currentLoggedInUser->getUID());
 		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($currentLoggedInUser->getUID());
-		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isInGroup($targetUser->getUID(), 'admin')) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
+		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isAdmin($targetUser->getUID())) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
 			throw new OCSException('', OCSController::RESPOND_NOT_FOUND);
 		}
 
@@ -1398,7 +1401,7 @@ class UsersController extends AUserDataOCSController {
 		$subAdminManager = $this->groupManager->getSubAdmin();
 		$isAdmin = $this->groupManager->isAdmin($currentLoggedInUser->getUID());
 		$isDelegatedAdmin = $this->groupManager->isDelegatedAdmin($currentLoggedInUser->getUID());
-		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isInGroup($targetUser->getUID(), 'admin')) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
+		if (!$isAdmin && !($isDelegatedAdmin && !$this->groupManager->isAdmin($targetUser->getUID())) && !$subAdminManager->isUserAccessible($currentLoggedInUser, $targetUser)) {
 			throw new OCSException('', OCSController::RESPOND_NOT_FOUND);
 		}
 

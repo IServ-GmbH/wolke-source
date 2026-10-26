@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App: Local large language model (llm2) &mdash; Nextcloud 32 Administration Manual</title>
+  <title>App: Local large language model (llm2) &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -125,9 +125,10 @@
 <li class="toctree-l2"><a class="reference internal" href="app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_text2speech_kokoro.html">App: Local Text-To-Speech (text2speech_kokoro)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription and Translation in Nextcloud Talk (live_transcription)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eu_ai_act.html">Legal: Compliance with EU AI Act</a></li>
 </ul>
 </li>
 </ul>
@@ -146,6 +147,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -170,7 +172,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -319,7 +321,7 @@ If you would like to scale up your language model usage, we recommend using an <
 <h2>Addendum: Running with a fully open model<a class="headerlink" href="#addendum-running-with-a-fully-open-model" title="Link to this heading"></a></h2>
 <p>If you would like to use a fully open model that scores a green score on our Ethical AI rating, we recommend the following model:</p>
 <ul class="simple">
-<li><p>OLMo 2 (either in 7B or 13B): <a class="reference external" href="https://huggingface.co/allenai/OLMo-2-1124-7B-Instruct-GGUF">https://huggingface.co/allenai/OLMo-2-1124-7B-Instruct-GGUF</a></p></li>
+<li><p>Olmo 3 (either in 7B or 32B): <a class="reference external" href="https://huggingface.co/allenai/Olmo-3-7B-Instruct">https://huggingface.co/allenai/Olmo-3-7B-Instruct</a></p></li>
 </ul>
 <section id="what-makes-olmo-a-fully-open-model">
 <h3>What makes OLMo a fully open model?<a class="headerlink" href="#what-makes-olmo-a-fully-open-model" title="Link to this heading"></a></h3>
@@ -367,7 +369,7 @@ If you would like to scale up your language model usage, we recommend using an <
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -393,6 +395,8 @@ If you would like to scale up your language model usage, we recommend using an <
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -400,8 +404,6 @@ If you would like to scale up your language model usage, we recommend using an <
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

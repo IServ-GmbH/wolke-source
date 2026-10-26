@@ -19,6 +19,8 @@ use GuzzleHttp\Psr7\Utils;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\ObjectStore\Events\BucketCreatedEvent;
 use OCP\Files\StorageNotAvailableException;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\ICertificateManager;
 use OCP\Server;
 use Psr\Http\Message\RequestInterface;
@@ -32,6 +34,8 @@ trait S3ConnectionTrait {
 	protected bool $test;
 
 	protected ?S3Client $connection = null;
+	private ?ICache $existingBucketsCache = null;
+	private bool $usePresignedUrl = false;
 
 	protected function parseParams($params) {
 		if (empty($params['bucket'])) {
@@ -59,6 +63,7 @@ trait S3ConnectionTrait {
 		$this->retriesMaxAttempts = $params['retriesMaxAttempts'] ?? 5;
 		$params['region'] = empty($params['region']) ? 'eu-west-1' : $params['region'];
 		$params['hostname'] = empty($params['hostname']) ? 's3.' . $params['region'] . '.amazonaws.com' : $params['hostname'];
+		$params['key'] = $params['key'] ?? '';
 		$params['s3-accelerate'] = $params['hostname'] === 's3-accelerate.amazonaws.com' || $params['hostname'] === 's3-accelerate.dualstack.amazonaws.com';
 		if (!isset($params['port']) || $params['port'] === '') {
 			$params['port'] = (isset($params['use_ssl']) && $params['use_ssl'] === false) ? 80 : 443;
@@ -70,6 +75,7 @@ trait S3ConnectionTrait {
 		}
 
 		$this->params = $params;
+		$this->usePresignedUrl = $params['use_presigned_url'] ?? false;
 	}
 
 	public function getBucket() {
@@ -91,6 +97,11 @@ trait S3ConnectionTrait {
 			return $this->connection;
 		}
 
+		if ($this->existingBucketsCache === null) {
+			$this->existingBucketsCache = Server::get(ICacheFactory::class)
+				->createLocal('s3-bucket-exists-cache');
+		}
+
 		$scheme = (isset($this->params['use_ssl']) && $this->params['use_ssl'] === false) ? 'http' : 'https';
 		$base_url = $scheme . '://' . $this->params['hostname'] . ':' . $this->params['port'] . '/';
 
@@ -109,6 +120,7 @@ trait S3ConnectionTrait {
 			'endpoint' => $base_url,
 			'region' => $this->params['region'],
 			'use_path_style_endpoint' => isset($this->params['use_path_style']) ? $this->params['use_path_style'] : false,
+			'proxy' => isset($this->params['proxy']) ? $this->params['proxy'] : false,
 			'signature_provider' => \Aws\or_chain([self::class, 'legacySignatureProvider'], ClientResolver::_default_signature_provider()),
 			'csm' => false,
 			'use_arn_region' => false,
@@ -158,29 +170,37 @@ trait S3ConnectionTrait {
 					['app' => 'objectstore']);
 			}
 
-			if ($this->params['verify_bucket_exists'] && !$this->connection->doesBucketExist($this->bucket)) {
-				try {
-					$logger->info('Bucket "' . $this->bucket . '" does not exist - creating it.', ['app' => 'objectstore']);
-					if (!$this->connection::isBucketDnsCompatible($this->bucket)) {
-						throw new StorageNotAvailableException('The bucket will not be created because the name is not dns compatible, please correct it: ' . $this->bucket);
+			if ($this->params['verify_bucket_exists']) {
+				$cacheKey = $this->params['hostname'] . $this->bucket;
+				$exist = $this->existingBucketsCache->get($cacheKey) === 1;
+
+				if (!$exist) {
+					if (!$this->connection->doesBucketExist($this->bucket)) {
+						try {
+							$logger->info('Bucket "' . $this->bucket . '" does not exist - creating it.', ['app' => 'objectstore']);
+							if (!$this->connection::isBucketDnsCompatible($this->bucket)) {
+								throw new StorageNotAvailableException('The bucket will not be created because the name is not dns compatible, please correct it: ' . $this->bucket);
+							}
+							$this->connection->createBucket(['Bucket' => $this->bucket]);
+							Server::get(IEventDispatcher::class)
+								->dispatchTyped(new BucketCreatedEvent(
+									$this->bucket,
+									$options['endpoint'],
+									$options['region'],
+									$options['version']
+								));
+							$this->testTimeout();
+						} catch (S3Exception $e) {
+							$logger->debug('Invalid remote storage.', [
+								'exception' => $e,
+								'app' => 'objectstore',
+							]);
+							if ($e->getAwsErrorCode() !== 'BucketAlreadyOwnedByYou') {
+								throw new StorageNotAvailableException('Creation of bucket "' . $this->bucket . '" failed. ' . $e->getMessage());
+							}
+						}
 					}
-					$this->connection->createBucket(['Bucket' => $this->bucket]);
-					Server::get(IEventDispatcher::class)
-						->dispatchTyped(new BucketCreatedEvent(
-							$this->bucket,
-							$options['endpoint'],
-							$options['region'],
-							$options['version']
-						));
-					$this->testTimeout();
-				} catch (S3Exception $e) {
-					$logger->debug('Invalid remote storage.', [
-						'exception' => $e,
-						'app' => 'objectstore',
-					]);
-					if ($e->getAwsErrorCode() !== 'BucketAlreadyOwnedByYou') {
-						throw new StorageNotAvailableException('Creation of bucket "' . $this->bucket . '" failed. ' . $e->getMessage());
-					}
+					$this->existingBucketsCache->set($cacheKey, 1);
 				}
 			}
 
@@ -313,5 +333,9 @@ trait S3ConnectionTrait {
 			'SSECustomerKey' => $rawKey,
 			'SSECustomerKeyMD5' => md5($rawKey, true)
 		];
+	}
+
+	public function isUsePresignedUrl(): bool {
+		return $this->usePresignedUrl;
 	}
 }

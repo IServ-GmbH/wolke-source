@@ -149,41 +149,54 @@ class Cache implements ICache {
 
 	/**
 	 * Create a CacheEntry from database row
-	 *
-	 * @param array $data
-	 * @param IMimeTypeLoader $mimetypeLoader
-	 * @return CacheEntry
 	 */
-	public static function cacheEntryFromData($data, IMimeTypeLoader $mimetypeLoader) {
-		//fix types
-		$data['name'] = (string)$data['name'];
-		$data['path'] = (string)$data['path'];
-		$data['fileid'] = (int)$data['fileid'];
-		$data['parent'] = (int)$data['parent'];
-		$data['size'] = Util::numericToNumber($data['size']);
-		$data['unencrypted_size'] = Util::numericToNumber($data['unencrypted_size'] ?? 0);
-		$data['mtime'] = (int)$data['mtime'];
-		$data['storage_mtime'] = (int)$data['storage_mtime'];
-		$data['encryptedVersion'] = (int)$data['encrypted'];
-		$data['encrypted'] = (bool)$data['encrypted'];
-		$data['storage_id'] = $data['storage'];
-		$data['storage'] = (int)$data['storage'];
-		$data['mimetype'] = $mimetypeLoader->getMimetypeById($data['mimetype']);
-		$data['mimepart'] = $mimetypeLoader->getMimetypeById($data['mimepart']);
-		if ($data['storage_mtime'] == 0) {
-			$data['storage_mtime'] = $data['mtime'];
+	public static function cacheEntryFromData(array $data, IMimeTypeLoader $mimetypeLoader): CacheEntry {
+		$normalized = [
+			'name' => (string)$data['name'],
+			'etag' => (string)$data['etag'],
+			'path' => (string)$data['path'],
+			'path_hash' => isset($data['path_hash']) ? (string)$data['path_hash'] : null,
+			'checksum' => isset($data['checksum']) ? (string)$data['checksum'] : null,
+			'fileid' => (int)$data['fileid'],
+			'parent' => (int)$data['parent'],
+			'size' => Util::numericToNumber($data['size']),
+			'unencrypted_size' => Util::numericToNumber($data['unencrypted_size'] ?? 0),
+			'mtime' => (int)$data['mtime'],
+			'storage_mtime' => (int)($data['storage_mtime'] ?: $data['mtime']),
+			'encryptedVersion' => (int)$data['encrypted'],
+			'encrypted' => (bool)$data['encrypted'],
+			'storage_id' => (int)$data['storage'],
+			'storage_string_id' => isset($data['storage_string_id']) ? (string)$data['storage_string_id'] : null,
+			'storage' => (int)$data['storage'],
+			'mimetype' => $mimetypeLoader->getMimetypeById($data['mimetype']),
+			'mimepart' => $mimetypeLoader->getMimetypeById($data['mimepart']),
+			'permissions' => (int)$data['permissions'],
+			'creation_time' => isset($data['creation_time']) ? (int)$data['creation_time'] : null,
+			'upload_time' => isset($data['upload_time']) ? (int)$data['upload_time'] : null,
+			'metadata_etag' => isset($data['metadata_etag']) ? (string)$data['metadata_etag'] : null,
+			'scan_permissions' => $data['scan_permissions'] ?? ($data['f_permissions'] ?? null),
+			'metadata' => $data['metadata'] ?? null,
+			'meta_json' => $data['meta_json'] ?? null,
+			'meta_sync_token' => $data['meta_sync_token'] ?? null,
+		];
+
+		if (isset($data['folder_id'])) {
+			// groupfolders and collectives specific fields
+			$normalized['folder_id'] = (int)$data['folder_id'];
+
+			if (isset($data['storage_id'])) {
+				// groupfolders specific fields
+				$normalized['mount_point'] = (string)$data['mount_point'];
+				$normalized['quota'] = $data['quota'];
+				$normalized['acl'] = (int)$data['acl'];
+				$normalized['acl_default_no_permission'] = (int)$data['acl_default_no_permission'];
+				$normalized['storage_id'] = (int)$data['storage_id'];
+				$normalized['root_id'] = (int)$data['root_id'];
+				$normalized['options'] = (string)$data['options'];
+			}
 		}
-		if (isset($data['f_permissions'])) {
-			$data['scan_permissions'] ??= $data['f_permissions'];
-		}
-		$data['permissions'] = (int)$data['permissions'];
-		if (isset($data['creation_time'])) {
-			$data['creation_time'] = (int)$data['creation_time'];
-		}
-		if (isset($data['upload_time'])) {
-			$data['upload_time'] = (int)$data['upload_time'];
-		}
-		return new CacheEntry($data);
+
+		return new CacheEntry($normalized);
 	}
 
 	/**
@@ -1009,11 +1022,12 @@ class Cache implements ICache {
 		if (is_null($entry) || !isset($entry['fileid'])) {
 			$entry = $this->get($path);
 		}
-		if (isset($entry['mimetype']) && $entry['mimetype'] === FileInfo::MIMETYPE_FOLDER) {
+		// partial entries are not stored in the database yet and have no fileid
+		if (isset($entry['mimetype'], $entry['fileid']) && $entry['mimetype'] === FileInfo::MIMETYPE_FOLDER) {
 			$id = $entry['fileid'];
 
 			$query = $this->getQueryBuilder();
-			$query->select('size', 'unencrypted_size')
+			$query->select('size', 'unencrypted_size', 'encrypted')
 				->from('filecache')
 				->whereStorageId($this->getNumericStorageId())
 				->whereParent($id);
@@ -1033,7 +1047,7 @@ class Cache implements ICache {
 					return Util::numericToNumber($row['unencrypted_size']);
 				}, $rows);
 				$unencryptedSizes = array_map(function (array $row) {
-					return Util::numericToNumber(($row['unencrypted_size'] > 0) ? $row['unencrypted_size'] : $row['size']);
+					return Util::numericToNumber($row['encrypted'] ? $row['unencrypted_size'] : $row['size']);
 				}, $rows);
 
 				$sum = array_sum($sizes);
@@ -1224,6 +1238,14 @@ class Cache implements ICache {
 			// normalizeData() prefers 'encryptedVersion' over 'encrypted' when both are
 			// set, so it has to be cleared too or the mark above gets ignored
 			unset($data['encryptedVersion']);
+		} elseif (isset($data['encryptedVersion'])) {
+			// The storage re-encrypts the content it writes to the target, so the target
+			// is at its own version - the one recorded for it while it was written - and
+			// not at the version of the source.
+			$targetEntry = $this->get($targetPath);
+			if ($targetEntry !== false && !empty($targetEntry['encryptedVersion'])) {
+				$data['encryptedVersion'] = $targetEntry['encryptedVersion'];
+			}
 		}
 
 		$fileId = $this->put($targetPath, $data);

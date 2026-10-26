@@ -22,6 +22,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
+use Override;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,17 +31,9 @@ use Psr\Log\LoggerInterface;
 class UserStoragesController extends StoragesController {
 	/**
 	 * Creates a new user storages controller.
-	 *
-	 * @param string $AppName application name
-	 * @param IRequest $request request object
-	 * @param IL10N $l10n l10n service
-	 * @param UserStoragesService $userStoragesService storage service
-	 * @param LoggerInterface $logger
-	 * @param IUserSession $userSession
-	 * @param IGroupManager $groupManager
 	 */
 	public function __construct(
-		$AppName,
+		string $appName,
 		IRequest $request,
 		IL10N $l10n,
 		UserStoragesService $userStoragesService,
@@ -51,7 +44,7 @@ class UserStoragesController extends StoragesController {
 		BackendService $backendService,
 	) {
 		parent::__construct(
-			$AppName,
+			$appName,
 			$request,
 			$l10n,
 			$userStoragesService,
@@ -63,7 +56,7 @@ class UserStoragesController extends StoragesController {
 		);
 	}
 
-	protected function manipulateStorageConfig(StorageConfig $storage) {
+	protected function manipulateStorageConfig(StorageConfig $storage): void {
 		/** @var AuthMechanism */
 		$authMechanism = $storage->getAuthMechanism();
 		$authMechanism->manipulateStorageConfig($storage, $this->userSession->getUser());
@@ -74,21 +67,19 @@ class UserStoragesController extends StoragesController {
 
 	/**
 	 * Get all storage entries
-	 *
-	 * @return DataResponse
 	 */
+	#[Override]
 	#[NoAdminRequired]
-	public function index() {
+	public function index(): DataResponse {
 		return parent::index();
 	}
 
 	/**
 	 * Return storage
-	 *
-	 * {@inheritdoc}
 	 */
+	#[Override]
 	#[NoAdminRequired]
-	public function show(int $id) {
+	public function show(int $id): DataResponse {
 		return parent::show($id);
 	}
 
@@ -100,18 +91,16 @@ class UserStoragesController extends StoragesController {
 	 * @param string $authMechanism authentication mechanism identifier
 	 * @param array $backendOptions backend-specific options
 	 * @param array $mountOptions backend-specific mount options
-	 *
-	 * @return DataResponse
 	 */
 	#[NoAdminRequired]
 	#[PasswordConfirmationRequired(strict: true)]
 	public function create(
-		$mountPoint,
-		$backend,
-		$authMechanism,
-		$backendOptions,
-		$mountOptions,
-	) {
+		string $mountPoint,
+		string $backend,
+		string $authMechanism,
+		array $backendOptions,
+		?array $mountOptions,
+	): DataResponse {
 		$newStorage = $this->createStorage(
 			$mountPoint,
 			$backend,
@@ -131,6 +120,7 @@ class UserStoragesController extends StoragesController {
 		$newStorage = $this->service->addStorage($newStorage);
 		$this->updateStorageStatus($newStorage);
 
+		$newStorage->setType(StorageConfig::MOUNT_TYPE_PERSONAL);
 		return new DataResponse(
 			$newStorage->jsonSerialize(true),
 			Http::STATUS_CREATED
@@ -145,20 +135,18 @@ class UserStoragesController extends StoragesController {
 	 * @param string $backend backend identifier
 	 * @param string $authMechanism authentication mechanism identifier
 	 * @param array $backendOptions backend-specific options
-	 * @param array $mountOptions backend-specific mount options
-	 *
-	 * @return DataResponse
+	 * @param ?array $mountOptions backend-specific mount options
 	 */
 	#[NoAdminRequired]
 	#[PasswordConfirmationRequired(strict: true)]
 	public function update(
-		$id,
-		$mountPoint,
-		$backend,
-		$authMechanism,
-		$backendOptions,
-		$mountOptions,
-	) {
+		int $id,
+		string $mountPoint,
+		string $backend,
+		string $authMechanism,
+		array $backendOptions,
+		?array $mountOptions,
+	): DataResponse {
 		$storage = $this->createStorage(
 			$mountPoint,
 			$backend,
@@ -197,12 +185,11 @@ class UserStoragesController extends StoragesController {
 
 	/**
 	 * Delete storage
-	 *
-	 * {@inheritdoc}
 	 */
+	#[Override]
 	#[NoAdminRequired]
 	#[PasswordConfirmationRequired(strict: true)]
-	public function destroy(int $id) {
+	public function destroy(int $id): DataResponse {
 		return parent::destroy($id);
 	}
 }

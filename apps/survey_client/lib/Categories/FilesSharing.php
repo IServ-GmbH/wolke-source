@@ -41,12 +41,12 @@ class FilesSharing implements ICategory {
 	#[\Override]
 	public function getData(): array {
 		$query = $this->connection->getQueryBuilder();
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_entries')
+		$query->select($query->func()->count('*', 'num_entries'))
 			->addSelect(['permissions', 'share_type'])
 			->from('share')
 			->addGroupBy('permissions')
 			->addGroupBy('share_type');
-		$result = $query->execute();
+		$result = $query->executeQuery();
 
 		$data = [
 			'num_shares' => $this->countEntries('share'),
@@ -67,9 +67,9 @@ class FilesSharing implements ICategory {
 
 	protected function countEntries(string $tableName): int {
 		$query = $this->connection->getQueryBuilder();
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_entries')
+		$query->select($query->func()->count('*', 'num_entries'))
 			->from($tableName);
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 
@@ -78,7 +78,7 @@ class FilesSharing implements ICategory {
 
 	protected function countShares(int $type, bool $noShareWith = false): int {
 		$query = $this->connection->getQueryBuilder();
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_entries')
+		$query->select($query->func()->count('*', 'num_entries'))
 			->from('share')
 			->where($query->expr()->eq('share_type', $query->createNamedParameter($type)));
 
@@ -86,7 +86,7 @@ class FilesSharing implements ICategory {
 			$query->andWhere($query->expr()->isNull('share_with'));
 		}
 
-		$result = $query->execute();
+		$result = $query->executeQuery();
 		$row = $result->fetch();
 		$result->closeCursor();
 

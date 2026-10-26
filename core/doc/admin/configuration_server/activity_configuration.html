@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Activity app &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Activity app &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -84,7 +84,10 @@
 <li class="toctree-l2"><a class="reference internal" href="config_sample_php_parameters.html">Configuration Parameters</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Activity app</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#enabling-the-activity-app">Enabling the activity app</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configuring-your-nextcloud-for-the-activity-app">Configuring your Nextcloud for the activity app</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-your-nextcloud-for-the-activity-app">Configuring your Nextcloud for the activity app</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#admin-settings">Admin settings</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#activities-in-groupfolders-or-external-storages">Activities in groupfolders or external storages</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#better-scheduling-of-activity-emails">Better scheduling of activity emails</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#excluding-users-from-the-activity-expiration">Excluding users from the activity expiration</a></li>
@@ -141,6 +144,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -165,7 +169,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -208,8 +212,21 @@ simply go to your Nextcloud Apps page to enable it.</p>
 <p>Furthermore it is recommended to configure the background job <code class="docutils literal notranslate"><span class="pre">Webcron</span></code> or
 <code class="docutils literal notranslate"><span class="pre">Cron</span></code> as described in <a class="reference internal" href="background_jobs_configuration.html"><span class="doc">Background jobs</span></a>.</p>
 <p>There is also a configuration option <code class="docutils literal notranslate"><span class="pre">activity_expire_days</span></code> available in your
-<code class="docutils literal notranslate"><span class="pre">config.php</span></code> (See <a class="reference internal" href="config_sample_php_parameters.html#label-activity-app-config"><span class="std std-ref">Activity app</span></a>) which allows
-you to clean-up older activities from the database.</p>
+<code class="docutils literal notranslate"><span class="pre">config.php</span></code> which allows you to clean-up older activities from the database.</p>
+<section id="admin-settings">
+<h3>Admin settings<a class="headerlink" href="#admin-settings" title="Link to this heading"></a></h3>
+<p>As an administrator, you can:</p>
+<ul>
+<li><p>Configure the maximum number of activities fully displayed in notification emails
+using the <code class="docutils literal notranslate"><span class="pre">mail_max_items</span></code> setting. Activities beyond this limit are summarised
+as <em>“and X more”</em> at the bottom of the email. The default is <code class="docutils literal notranslate"><span class="pre">200</span></code> and the
+maximum allowed value is <code class="docutils literal notranslate"><span class="pre">1000</span></code>. For example, to set it to <code class="docutils literal notranslate"><span class="pre">500</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">activity</span> <span class="n">mail_max_items</span> <span class="o">--</span><span class="n">value</span><span class="o">=</span><span class="mi">500</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
 </section>
 <section id="activities-in-groupfolders-or-external-storages">
 <span id="label-activities-groupfolders"></span><h2>Activities in groupfolders or external storages<a class="headerlink" href="#activities-in-groupfolders-or-external-storages" title="Link to this heading"></a></h2>
@@ -289,7 +306,7 @@ exclude these users from expiration:</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -315,6 +332,8 @@ exclude these users from expiration:</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -322,8 +341,6 @@ exclude these users from expiration:</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

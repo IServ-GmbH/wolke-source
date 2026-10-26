@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Theming &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Theming &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -100,9 +100,9 @@
 <li class="toctree-l2"><a class="reference internal" href="reverse_proxy_configuration.html">Reverse proxy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="text_configuration.html">Text app</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Theming</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#modify-the-appearance-of-nextcloud">Modify the appearance of Nextcloud</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configure-theming-through-cli">Configure theming through CLI</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#theming-of-icons">Theming of icons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#customize-the-appearance-of-nextcloud">Customize the appearance of Nextcloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-theming-via-cli">Configure theming via CLI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#icon-theming">Icon theming</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#branded-clients">Branded clients</a></li>
 </ul>
 </li>
@@ -140,6 +140,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -164,7 +165,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -185,87 +186,77 @@
              
   <section id="theming">
 <h1>Theming<a class="headerlink" href="#theming" title="Link to this heading"></a></h1>
-<p>With our theming feature, you are able to customize the look and feel of your
-Nextcloud instance according to the corporate design of your organization by
-replacing the Nextcloud logo and color with your own assets.</p>
-<p>The theming app is enabled by default so the section should appear by default in
-your admin-settings. If not, check in the apps management that this app is enabled.</p>
-<section id="modify-the-appearance-of-nextcloud">
-<h2>Modify the appearance of Nextcloud<a class="headerlink" href="#modify-the-appearance-of-nextcloud" title="Link to this heading"></a></h2>
-<p>You can change the following parameters of the look and feel on your instance:</p>
+<p>The theming feature lets you customize the look and feel of your Nextcloud instance to match your organization’s design (or - if for personal use - your own style). You can replace the Nextcloud logo and background images with your own assets, customize colors and slogans, and add dedicated legal and privacy links.</p>
+<p>Theme customization is provided by the shipped and always-enabled <code class="docutils literal notranslate"><span class="pre">theming</span></code> app. Use the <strong>Theming</strong> section within the <em>Administration settings</em> menu to access all theming-related settings.</p>
+<section id="customize-the-appearance-of-nextcloud">
+<h2>Customize the appearance of Nextcloud<a class="headerlink" href="#customize-the-appearance-of-nextcloud" title="Link to this heading"></a></h2>
+<p>You can change the following aspects of your instance’s appearance:</p>
 <figure class="align-default">
 <img alt="../_images/theming1.png" src="../_images/theming1.png" />
 </figure>
 <ul class="simple">
-<li><p>Name (e.g. ACME Inc. Cloud)</p></li>
-<li><p>Web link (e.g. <a class="reference external" href="https://acme.inc/">https://acme.inc/</a>)</p></li>
-<li><p>Slogan</p></li>
-<li><p>Primary color: The color used for important buttons, checkboxes, and folder icon</p></li>
-<li><p>Background color: The background color if no image is used, the color of header bar icons is also generated from this</p></li>
-<li><p>Logo: The logo will appear in the header and on the login page. The default has 62/34 px.</p></li>
-<li><p>Background and login image: The background image</p></li>
+<li><p><strong>Name</strong> (e.g., ACME Inc. Cloud).</p></li>
+<li><p><strong>Web link</strong> (e.g., <a class="reference external" href="https://acme.inc/">https://acme.inc/</a>).</p></li>
+<li><p><strong>Slogan</strong>.</p></li>
+<li><p><strong>Primary color</strong>: Used for important buttons, checkboxes, and folder icons.</p></li>
+<li><p><strong>Background color</strong>: Used when no image is set; header bar icon color is also derived from this.</p></li>
+<li><p><strong>Logo</strong>: Appears in the header and on the login page (default size: 62x34 px).</p></li>
+<li><p><strong>Background and login image</strong>: Sets the page background.</p></li>
 </ul>
 <figure class="align-default">
 <img alt="../_images/theming2.png" src="../_images/theming2.png" />
 </figure>
 <ul class="simple">
-<li><p>Additional legal links (Legal notice and Privacy policy link)</p></li>
-<li><p>Custom header logo and favicon as an alternative to auto-generation based on logo</p></li>
-<li><p>Disable user theming: Although you can select and customize your instance, users can change their backgrounds and colors. If you want to enforce your customization, you can toggle this on.</p></li>
+<li><p><strong>Additional legal links</strong>: Legal notice and privacy policy.</p></li>
+<li><p><strong>Custom header logo and favicon</strong>: Optionally override the auto-generated favicon based on your logo.</p></li>
+<li><p><strong>Disable user theming</strong>: Prevent users from changing backgrounds and colors. Toggle this to enforce your custom theme.</p></li>
 </ul>
 </section>
-<section id="configure-theming-through-cli">
-<h2>Configure theming through CLI<a class="headerlink" href="#configure-theming-through-cli" title="Link to this heading"></a></h2>
-<p>Theming configuration can also be adjusted through the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span></code> command.</p>
-<p>The following values are available to be set through this:</p>
+<section id="configure-theming-via-cli">
+<h2>Configure theming via CLI<a class="headerlink" href="#configure-theming-via-cli" title="Link to this heading"></a></h2>
+<p>You can also configure theming using the <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span></code> command.</p>
+<p>Available settings include:</p>
 <ul class="simple">
-<li><p>name, url, imprintUrl, privacyUrl, slogan, color, primary_color <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">name</span> <span class="pre">&quot;My</span> <span class="pre">Example</span> <span class="pre">Cloud&quot;</span></code></p></li>
-<li><p>background, logo, favicon, logoheader <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">logo</span> <span class="pre">/tmp/mylogo.png</span></code></p></li>
-<li><p>disable-user-theming (yes/no) <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">disable-user-theming</span> <span class="pre">yes</span></code></p></li>
+<li><p><cite>name</cite>, <cite>url</cite>, <cite>imprintUrl</cite>, <cite>privacyUrl</cite>, <cite>slogan</cite>, <cite>background_color</cite>, <cite>primary_color</cite>.
+Example: <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">name</span> <span class="pre">&quot;My</span> <span class="pre">Example</span> <span class="pre">Cloud&quot;</span></code></p></li>
+<li><p><cite>background</cite>, <cite>logo</cite>, <cite>favicon</cite>, <cite>logoheader</cite>.
+Example: <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">logo</span> <span class="pre">/tmp/mylogo.png</span></code></p></li>
+<li><p><cite>disable-user-theming</cite> (yes/no).
+Example: <code class="docutils literal notranslate"><span class="pre">occ</span> <span class="pre">theming:config</span> <span class="pre">disable-user-theming</span> <span class="pre">yes</span></code></p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Images require to be read from a local file on the Nextcloud server</p>
+<p>Images must be read from a local file on the Nextcloud server.</p>
 </div>
-<p>Use a color instead of an image as a background:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">theming</span><span class="p">:</span><span class="n">config</span> <span class="n">color</span> <span class="s2">&quot;#0082c9&quot;</span>
+<p>To use a color (instead of an image) for the background:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">theming</span><span class="p">:</span><span class="n">config</span> <span class="n">background_color</span> <span class="s2">&quot;#0082c9&quot;</span>
 <span class="n">occ</span> <span class="n">theming</span><span class="p">:</span><span class="n">config</span> <span class="n">background</span> <span class="n">backgroundColor</span>
 </pre></div>
 </div>
 </section>
-<section id="theming-of-icons">
-<h2>Theming of icons<a class="headerlink" href="#theming-of-icons" title="Link to this heading"></a></h2>
-<p>According to the parameters you have set, Nextcloud will automatically generate
-favicons and a header logo depending on the current logo and theming color.</p>
-<p>This requires the following additional dependencies:</p>
+<section id="icon-theming">
+<h2>Icon theming<a class="headerlink" href="#icon-theming" title="Link to this heading"></a></h2>
+<p>Based on your settings, Nextcloud will automatically generate favicons and a header logo using your logo and theme color.</p>
+<p>This requires:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p>PHP module <code class="docutils literal notranslate"><span class="pre">imagick</span></code></p></li>
-<li><p>SVG support for imagick (e.g. <code class="docutils literal notranslate"><span class="pre">libmagickcore-6.q16-3-extra</span></code> on Debian 9 and Ubuntu 18.04)</p></li>
+<li><p>The PHP <code class="docutils literal notranslate"><span class="pre">imagick</span></code> module.</p></li>
+<li><p>SVG support for imagick (e.g., <code class="docutils literal notranslate"><span class="pre">libmagickcore-7.q16-10-extra</span></code> on Debian 13 and <code class="docutils literal notranslate"><span class="pre">libmagickcore-6.q16-7-extra</span></code> on Ubuntu 24.04).</p></li>
 </ul>
 </div></blockquote>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In the advanced options of the theming app you are able to set a custom
-favicon in case you do not want to use the same logo resources you have set above
-or you do not want to install the mentioned dependencies.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In the advanced options of the theming app, you can set a custom favicon if you do not want to use auto-generated resources or install the above dependencies.</p>
 </div>
 </section>
 <section id="branded-clients">
 <h2>Branded clients<a class="headerlink" href="#branded-clients" title="Link to this heading"></a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Nextcloud GmbH provides branding services, delivering sync clients (mobile
-and desktop) which use your corporate identity and are pre-configured to help your
-users get up and running in no time. If you are interested in our advanced branding &amp;
-support subscription, <a class="reference external" href="https://nextcloud.com/enterprise/">contact our sales team</a>.</p>
+<p>Nextcloud GmbH - the company that employs Nextcloud’s core maintainers - offers branding services, providing sync clients (mobile and desktop) that use your corporate identity and are pre-configured for your users. For more information on advanced branding and enterprise support offerings, <a class="reference external" href="https://nextcloud.com/enterprise/">contact Nextcloud GmbH</a>.</p>
 </div>
-<p>The theming app supports changing the URLs to the mobile apps (Android &amp; iOS) that
-are shown when the web interface is opened on one of those devices. Then there was a
-header shown, that redirects the user to the app in the app store. By default,
-this redirects to the Nextcloud apps. In some cases, it is wanted that this
-links to branded versions of those apps. In those cases the IDs and URLs can be
-set via the <code class="docutils literal notranslate"><span class="pre">occ</span></code>-command:</p>
+<p>The theming app supports changing the URLs for the mobile apps (Android and iOS) that appear when users access the web interface from mobile devices. By default, these links point to the official Nextcloud apps, but you can set them to branded versions.</p>
+<p>Set custom app links using the <code class="docutils literal notranslate"><span class="pre">occ</span></code> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">theming</span> <span class="n">AndroidClientUrl</span> <span class="o">--</span><span class="n">value</span> <span class="s2">&quot;https://play.google.com/store/apps/details?id=com.nextcloud.client&quot;</span>
 <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">theming</span> <span class="n">iTunesAppId</span> <span class="o">--</span><span class="n">value</span> <span class="s2">&quot;1125420102&quot;</span>
 <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="n">app</span><span class="p">:</span><span class="nb">set</span> <span class="n">theming</span> <span class="n">iOSClientUrl</span> <span class="o">--</span><span class="n">value</span> <span class="s2">&quot;https://itunes.apple.com/us/app/nextcloud/id1125420102?mt=8&quot;</span>
@@ -299,7 +290,7 @@ set via the <code class="docutils literal notranslate"><span class="pre">occ</sp
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -325,6 +316,8 @@ set via the <code class="docutils literal notranslate"><span class="pre">occ</sp
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -332,8 +325,6 @@ set via the <code class="docutils literal notranslate"><span class="pre">occ</sp
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

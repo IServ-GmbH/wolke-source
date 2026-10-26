@@ -8,6 +8,7 @@
 namespace OCP\Files;
 
 use OCP\AppFramework\Attribute\Consumable;
+use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Storage\IStorage;
 
 /**
@@ -288,7 +289,7 @@ interface FileInfo {
 	 * Last activity is the more recent of the upload time and the modification time
 	 *
 	 * @return int
-	 * @since 32.0.7
+	 * @since 33.0.1
 	 */
 	public function getLastActivity(): int;
 
@@ -308,4 +309,12 @@ interface FileInfo {
 	 * @since 28.0.0
 	 */
 	public function getMetadata(): array;
+
+	/**
+	 * Get the filecache data for the file
+	 *
+	 * @return ICacheEntry
+	 * @since 34.0.0
+	 */
+	public function getData(): ICacheEntry;
 }

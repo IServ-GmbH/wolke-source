@@ -12,9 +12,10 @@ use SpomkyLabs\Pki\CryptoTypes\AlgorithmIdentifier\SpecificAlgorithmIdentifier;
 use UnexpectedValueException;
 
 /*
- * Per RFC 2898 this algorithm identifier has no parameters:
- * algid-hmacWithSHA1 AlgorithmIdentifier {{PBKDF2-PRFs}} ::=
- * {algorithm id-hmacWithSHA1, parameters NULL : NULL}
+Per RFC 2898 this algorithm identifier has no parameters:
+
+algid-hmacWithSHA1 AlgorithmIdentifier {{PBKDF2-PRFs}} ::=
+    {algorithm id-hmacWithSHA1, parameters NULL : NULL}
  */
 
 /**

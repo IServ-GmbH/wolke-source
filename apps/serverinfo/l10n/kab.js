@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "System" : "Anagraw",
     "Unknown" : "Arussin",
+    "Background jobs" : "Imahilen n ugilal",
     "Mode" : "Askar",
     "Never" : "Weṛǧin",
     "Threads" : "Asqerdec",
@@ -44,6 +45,7 @@ OC.L10N.register(
     "Temperature" : "Lḥamu",
     "All" : "Akk",
     "Try again" : "Ɛreḍ tikkelt nniḍen.",
+    "{duration} s" : "{duration} tsn",
     "Copied!" : "Yenɣel!",
     "Not supported!" : "Ur yettusefrak ara!",
     "Press ⌘-C to copy." : "Senned ɣef ⌘-C akken ad tneɣleḍ.",

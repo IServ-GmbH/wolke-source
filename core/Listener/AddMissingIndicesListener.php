@@ -107,14 +107,6 @@ class AddMissingIndicesListener implements IEventListener {
 		);
 
 		$event->addMissingIndex(
-			'whats_new',
-			'version',
-			['version'],
-			[],
-			true
-		);
-
-		$event->addMissingIndex(
 			'cards',
 			'cards_abiduri',
 			['addressbookid', 'uri'],
@@ -216,6 +208,28 @@ class AddMissingIndicesListener implements IEventListener {
 			'vcategory',
 			'unique_category_per_user',
 			['uid', 'type', 'category']
+		);
+
+		$event->addMissingIndex(
+			'share',
+			'share_with_file_target_index',
+			['share_with', 'file_target'],
+			['lengths' => [null, 128]]
+		);
+
+		$event->addMissingIndex(
+			'share_external',
+			'user_mountpoint_index',
+			['user', 'mountpoint'],
+			['lengths' => [null, 128]]
+		);
+
+		$event->replaceIndex(
+			'mounts',
+			['mounts_user_root_path_index'],
+			'mounts_user_path_root_index',
+			['user_id', 'mount_point_hash', 'root_id'],
+			true,
 		);
 	}
 }

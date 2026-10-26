@@ -1,26 +1,27 @@
 diff --git apps/files_sharing/src/components/SharingEntry.vue apps/files_sharing/src/components/SharingEntry.vue
-index b326751..cb0f529 100644
+index 28ad1d4..34c4fd4 100644
 --- apps/files_sharing/src/components/SharingEntry.vue
 +++ apps/files_sharing/src/components/SharingEntry.vue
-@@ -25,9 +25,6 @@
+@@ -27,10 +27,6 @@
  					<small v-if="hasStatus && share.status.message">({{ share.status.message }})</small>
  				</span>
  			</component>
--			<SharingEntryQuickShareSelect :share="share"
+-			<SharingEntryQuickShareSelect
+-				:share="share"
 -				:file-info="fileInfo"
 -				@open-sharing-details="openShareDetailsForCustomSettings(share)" />
  		</div>
  		<ShareExpiryTime v-if="share && share.expireDate" :share="share" />
- 		<NcButton v-if="share.canEdit"
-@@ -52,7 +49,6 @@ import NcAvatar from '@nextcloud/vue/components/NcAvatar'
+ 		<NcButton
+@@ -54,7 +50,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
+ import NcSelect from '@nextcloud/vue/components/NcSelect'
  import DotsHorizontalIcon from 'vue-material-design-icons/DotsHorizontal.vue'
- 
  import ShareExpiryTime from './ShareExpiryTime.vue'
 -import SharingEntryQuickShareSelect from './SharingEntryQuickShareSelect.vue'
- 
- import SharesMixin from '../mixins/SharesMixin.js'
  import ShareDetails from '../mixins/ShareDetails.js'
-@@ -66,7 +62,6 @@ export default {
+ import SharesMixin from '../mixins/SharesMixin.js'
+ 
+@@ -67,7 +62,6 @@ export default {
  		DotsHorizontalIcon,
  		NcSelect,
  		ShareExpiryTime,

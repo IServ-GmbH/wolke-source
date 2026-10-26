@@ -65,7 +65,7 @@ class MemberRequest extends MemberRequestBuilder {
 			$qb->setValue('invited_by', $qb->createNamedParameter($member->getInvitedBy()->getSingleId()));
 		}
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -89,7 +89,7 @@ class MemberRequest extends MemberRequestBuilder {
 		$qb->limitToCircleId($member->getCircleId());
 		$qb->limitToSingleId($member->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -124,7 +124,7 @@ class MemberRequest extends MemberRequestBuilder {
 			$qb->limitToCircleId($circleId);
 		}
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -136,7 +136,7 @@ class MemberRequest extends MemberRequestBuilder {
 		$qb->limitToCircleId($member->getCircleId());
 		$qb->limitToSingleId($member->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -149,7 +149,7 @@ class MemberRequest extends MemberRequestBuilder {
 		$qb->limitToMemberId($federatedUser->getSingleId());
 		$qb->limitToCircleId($federatedUser->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -162,7 +162,7 @@ class MemberRequest extends MemberRequestBuilder {
 		$qb->limitToSingleId($federatedUser->getSingleId());
 		$qb->limitToCircleId($circle->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -179,7 +179,7 @@ class MemberRequest extends MemberRequestBuilder {
 			)
 		);
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -194,7 +194,7 @@ class MemberRequest extends MemberRequestBuilder {
 		$qb->limitToCircleId($member->getCircleId());
 		$qb->limitToSingleId($member->getSingleId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -205,12 +205,16 @@ class MemberRequest extends MemberRequestBuilder {
 		try {
 			$this->db->beginTransaction();
 
-			$qb = $this->getMemberSelectSql();
+			$qb = $this->getMemberSelectSql(null, false);
 			$qb->limitToCircleId($member->getCircleId());
 			$qb->limitInt('level', Member::LEVEL_OWNER);
-			// forUpdate locks the owner row until transaction is commited, forcing concurrent
+
+			// forUpdate() locks the owner row until transaction is commited, forcing concurrent
 			// requests to wait and read the updated current owner, preventing multiple owners
-			$qb->forUpdate();
+			// Not needed/supported on SQLite, which only allows one writer at a time anyway
+			if ($this->db->getDatabaseProvider() !== IDBConnection::PLATFORM_SQLITE) {
+				$qb->forUpdate();
+			}
 
 			try {
 				$oldOwner = $this->getItemFromRequest($qb);
@@ -252,6 +256,7 @@ class MemberRequest extends MemberRequestBuilder {
 		int $limit = 0,
 		bool $fullDetails = false,
 		string $search = '',
+		?int $role = null,
 	): array {
 		if (is_null($probe)) {
 			$probe = new MemberProbe();
@@ -303,6 +308,10 @@ class MemberRequest extends MemberRequestBuilder {
 
 		if ($probe->hasFilterMember()) {
 			$qb->filterDirectMembership(CoreQueryBuilder::MEMBER, $probe->getFilterMember());
+		}
+
+		if ($role !== null) {
+			$qb->andWhere($qb->expr()->eq($qb->getDefaultSelectAlias() . '.level', $qb->createNamedParameter($role)));
 		}
 
 		$qb->orderBy($qb->getDefaultSelectAlias() . '.level', 'desc');

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the occ command &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Using the occ command &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -185,6 +185,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#system-tags">System Tags</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#antivirus">Antivirus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setupchecks">Setupchecks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#snowflake-ids">Snowflake IDs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#share-operations">Share operations</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#list">List</a></li>
 </ul>
@@ -223,6 +224,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -247,7 +249,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -307,6 +309,7 @@ on your Nextcloud files and directories.</p>
 <li><p><a class="reference internal" href="#system-tags-commands-label"><span class="std std-ref">System Tags</span></a></p></li>
 <li><p><a class="reference internal" href="#antivirus-commands-label"><span class="std std-ref">Antivirus</span></a></p></li>
 <li><p><a class="reference internal" href="#setupchecks-commands-label"><span class="std std-ref">Setupchecks</span></a></p></li>
+<li><p><a class="reference internal" href="#snowflakes-commands-label"><span class="std std-ref">Snowflake IDs</span></a></p></li>
 <li><p><a class="reference internal" href="#share-operations-label"><span class="std std-ref">Share operations</span></a></p></li>
 <li><p><a class="reference internal" href="#debugging">Debugging</a></p></li>
 </ul>
@@ -531,7 +534,7 @@ enabled or disabled:</p>
 <span class="n">files_external</span> <span class="n">enabled</span>
 </pre></div>
 </div>
-<p>Enable an app for specific groups of users:</p>
+<p>Enable an app for specific groups of users (i.e. restrict an app so only specific groups can see and use them):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">app</span><span class="p">:</span><span class="n">enable</span> <span class="o">--</span><span class="n">groups</span> <span class="n">admin</span> <span class="o">--</span><span class="n">groups</span> <span class="n">sales</span> <span class="n">files_external</span>
 <span class="n">files_external</span> <span class="n">enabled</span> <span class="k">for</span> <span class="n">groups</span><span class="p">:</span> <span class="n">admin</span><span class="p">,</span> <span class="n">sales</span>
 </pre></div>
@@ -630,7 +633,7 @@ the <strong>Cron</strong> section on your Nextcloud Admin page:</p>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>See <a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/digging_deeper/config/appconfig.html#concept-overview">Appconfig Concepts</a> to learn more about <cite>typed value</cite>, <cite>lazy</cite> and <cite>sensitive</cite> flag.</p>
+<p>See <a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/digging_deeper/config/appconfig.html#concept-overview">Appconfig Concepts</a> to learn more about <cite>typed value</cite>, <cite>lazy</cite> and <cite>sensitive</cite> flag.</p>
 </div>
 <p>You can list all configuration values with one command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">config</span><span class="p">:</span><span class="nb">list</span>
@@ -1321,7 +1324,7 @@ before removing a user:</p>
 </pre></div>
 </div>
 <p>Users may also transfer files or folders selectively by themselves.
-See <a class="reference external" href="https://docs.nextcloud.com/server/32/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
+See <a class="reference external" href="https://docs.nextcloud.com/server/33/user_manual/en/files/transfer_ownership.html">user documentation</a> for details.</p>
 </section>
 <section id="toggle-windows-compatibility">
 <span id="occ-files-windows-filenames"></span><h3>Toggle Windows compatibility<a class="headerlink" href="#toggle-windows-compatibility" title="Link to this heading"></a></h3>
@@ -1400,7 +1403,7 @@ and to copy external mount configurations to another Nextcloud server.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">integrity</span><span class="p">:</span><span class="n">check</span><span class="o">-</span><span class="n">app</span> <span class="o">--</span><span class="n">path</span><span class="o">=/</span><span class="n">pathto</span><span class="o">/</span><span class="n">app</span> <span class="n">appname</span>
 </pre></div>
 </div>
-<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
+<p>When it returns nothing, your app is signed correctly. When it returns a message then there is an error. See <a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/app_publishing_maintenance/code_signing.html#how-to-get-your-app-signed">Code Signing</a> in the Developer manual for more detailed information.</p>
 <p><code class="docutils literal notranslate"><span class="pre">integrity:sign-core</span></code> is for Nextcloud core developers only.</p>
 <p>See <a class="reference internal" href="issues/code_signing.html"><span class="doc">Code signing</span></a> to learn more.</p>
 </section>
@@ -1861,8 +1864,9 @@ variable. This prevents the password from being exposed to all users via the
 process list, and will only be visible in the history of the user (root)
 running the command. This also permits creating scripts for adding multiple new
 users.</p>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">sudo</span></code> strips environment variables by default; the <code class="docutils literal notranslate"><span class="pre">-E</span></code> flag preserves
-them, as shown in the example below:</p>
+<p>To use <code class="docutils literal notranslate"><span class="pre">password-from-env</span></code>, note that <code class="docutils literal notranslate"><span class="pre">sudo</span></code> strips environment variables
+by default; the <code class="docutils literal notranslate"><span class="pre">-E</span></code> flag preserves them, as shown in this example which adds
+new user Fred Jones:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">OC_PASS</span><span class="o">=</span><span class="n">newpassword</span>
 <span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">user</span><span class="p">:</span><span class="n">add</span> <span class="o">--</span><span class="n">password</span><span class="o">-</span><span class="n">from</span><span class="o">-</span><span class="n">env</span> <span class="o">--</span><span class="n">display</span><span class="o">-</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Fred Jones&quot;</span> <span class="o">--</span><span class="n">group</span><span class="o">=</span><span class="s2">&quot;users&quot;</span> <span class="n">fred</span>
 <span class="n">The</span> <span class="n">user</span> <span class="s2">&quot;fred&quot;</span> <span class="n">was</span> <span class="n">created</span> <span class="n">successfully</span>
@@ -2403,6 +2407,26 @@ network:
 </pre></div>
 </div>
 </section>
+<section id="snowflake-ids">
+<span id="snowflakes-commands-label"></span><h2>Snowflake IDs<a class="headerlink" href="#snowflake-ids" title="Link to this heading"></a></h2>
+<p>You can decode Snowflake IDs with occ:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="o">-</span><span class="n">E</span> <span class="o">-</span><span class="n">u</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span> <span class="n">php</span> <span class="n">occ</span> <span class="n">decode</span><span class="o">-</span><span class="n">snowflake</span> <span class="o">&lt;</span><span class="n">snowflake_id</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">+--------------------+-------------------------+</span>
+<span class="o">|</span> <span class="n">Snowflake</span> <span class="n">ID</span>       <span class="o">|</span> <span class="mi">6768789079123765868</span>     <span class="o">|</span>
+<span class="o">|</span> <span class="n">Seconds</span>            <span class="o">|</span> <span class="mi">1575981518</span>              <span class="o">|</span>
+<span class="o">|</span> <span class="n">Milliseconds</span>       <span class="o">|</span> <span class="mi">50</span>                      <span class="o">|</span>
+<span class="o">|</span> <span class="n">Created</span> <span class="kn">from</span><span class="w"> </span><span class="nn">CLI</span>   <span class="o">|</span> <span class="n">no</span>                      <span class="o">|</span>
+<span class="o">|</span> <span class="n">Server</span> <span class="n">ID</span>          <span class="o">|</span> <span class="mi">441</span>                     <span class="o">|</span>
+<span class="o">|</span> <span class="n">Sequence</span> <span class="n">ID</span>        <span class="o">|</span> <span class="mi">2668</span>                    <span class="o">|</span>
+<span class="o">|</span> <span class="n">Creation</span> <span class="n">timestamp</span> <span class="o">|</span> <span class="mf">3335258318.050</span>          <span class="o">|</span>
+<span class="o">|</span> <span class="n">Creation</span> <span class="n">date</span>      <span class="o">|</span> <span class="mi">2075</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">09</span> <span class="mi">12</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mf">38.050</span> <span class="o">|</span>
+<span class="o">+--------------------+-------------------------+</span>
+</pre></div>
+</div>
+</section>
 <section id="share-operations">
 <span id="share-operations-label"></span><h2>Share operations<a class="headerlink" href="#share-operations" title="Link to this heading"></a></h2>
 <p>Available <code class="docutils literal notranslate"><span class="pre">occ</span></code> commands for the <code class="docutils literal notranslate"><span class="pre">share</span></code> namespace:</p>
@@ -2449,7 +2473,7 @@ sharee, shared file and more.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -2475,6 +2499,8 @@ sharee, shared file and more.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -2482,8 +2508,6 @@ sharee, shared file and more.</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

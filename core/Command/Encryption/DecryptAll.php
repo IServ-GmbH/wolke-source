@@ -5,10 +5,10 @@
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 namespace OC\Core\Command\Encryption;
 
 use OCP\App\IAppManager;
-use OCP\Encryption\IManager;
 use OCP\IConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -22,7 +22,6 @@ class DecryptAll extends Command {
 	protected bool $wasMaintenanceModeEnabled = false;
 
 	public function __construct(
-		protected IManager $encryptionManager,
 		protected IAppManager $appManager,
 		protected IConfig $config,
 		protected \OC\Encryption\DecryptAll $decryptAll,
@@ -88,14 +87,14 @@ class DecryptAll extends Command {
 			return 1;
 		}
 
+		$originallyEnabled = $this->config->getAppValue('core', 'encryption_enabled', 'no') === 'yes';
 		try {
-			if ($this->encryptionManager->isEnabled() === true) {
+			if ($originallyEnabled) {
 				$output->write('Disable server side encryption... ');
 				$this->config->setAppValue('core', 'encryption_enabled', 'no');
 				$output->writeln('done.');
 			} else {
 				$output->writeln('Server side encryption not enabled. Nothing to do.');
-				return 0;
 			}
 
 			$uid = $input->getArgument('user');
@@ -118,23 +117,29 @@ class DecryptAll extends Command {
 				$result = $this->decryptAll->decryptAll($input, $output, $user);
 				if ($result === false) {
 					$output->writeln(' aborted.');
-					$output->writeln('Server side encryption remains enabled');
-					$this->config->setAppValue('core', 'encryption_enabled', 'yes');
-				} elseif ($uid !== '') {
+					if ($originallyEnabled) {
+						$output->writeln('Server side encryption remains enabled');
+						$this->config->setAppValue('core', 'encryption_enabled', 'yes');
+					}
+				} elseif (($uid !== '') && $originallyEnabled) {
 					$output->writeln('Server side encryption remains enabled');
 					$this->config->setAppValue('core', 'encryption_enabled', 'yes');
 				}
 				$this->resetMaintenanceAndTrashbin();
 				return 0;
 			}
-			$output->write('Enable server side encryption... ');
-			$this->config->setAppValue('core', 'encryption_enabled', 'yes');
-			$output->writeln('done.');
+			if ($originallyEnabled) {
+				$output->write('Enable server side encryption... ');
+				$this->config->setAppValue('core', 'encryption_enabled', 'yes');
+				$output->writeln('done.');
+			}
 			$output->writeln('aborted');
 			return 1;
 		} catch (\Exception $e) {
 			// enable server side encryption again if something went wrong
-			$this->config->setAppValue('core', 'encryption_enabled', 'yes');
+			if ($originallyEnabled) {
+				$this->config->setAppValue('core', 'encryption_enabled', 'yes');
+			}
 			$this->resetMaintenanceAndTrashbin();
 			throw $e;
 		}

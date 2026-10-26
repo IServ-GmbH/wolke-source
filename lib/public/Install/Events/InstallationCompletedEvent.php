@@ -27,11 +27,11 @@ use OCP\EventDispatcher\Event;
  * - Initializing app-specific data
  * - Setting up integrations
  *
- * @since 32.0.6
+ * @since 33.0.0
  */
 class InstallationCompletedEvent extends Event {
 	/**
-	 * @since 32.0.6
+	 * @since 33.0.0
 	 */
 	public function __construct(
 		private string $dataDirectory,
@@ -44,7 +44,7 @@ class InstallationCompletedEvent extends Event {
 	/**
 	 * Get the configured data directory path
 	 *
-	 * @since 32.0.6
+	 * @since 33.0.0
 	 */
 	public function getDataDirectory(): string {
 		return $this->dataDirectory;
@@ -53,7 +53,7 @@ class InstallationCompletedEvent extends Event {
 	/**
 	 * Get the admin username if an admin user was created
 	 *
-	 * @since 32.0.6
+	 * @since 33.0.0
 	 */
 	public function getAdminUsername(): ?string {
 		return $this->adminUsername;
@@ -62,7 +62,7 @@ class InstallationCompletedEvent extends Event {
 	/**
 	 * Get the admin email if configured
 	 *
-	 * @since 32.0.6
+	 * @since 33.0.0
 	 */
 	public function getAdminEmail(): ?string {
 		return $this->adminEmail;
@@ -71,7 +71,7 @@ class InstallationCompletedEvent extends Event {
 	/**
 	 * Check if an admin user was created during installation
 	 *
-	 * @since 32.0.6
+	 * @since 33.0.0
 	 */
 	public function hasAdminUser(): bool {
 		return $this->adminUsername !== null;

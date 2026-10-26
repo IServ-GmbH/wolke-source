@@ -26,6 +26,10 @@ interface IToken extends JsonSerializable {
 	 */
 	public const WIPE_TOKEN = 2;
 	/**
+	 * @since 33.0.0
+	 */
+	public const ONETIME_TOKEN = 3;
+	/**
 	 * @since 28.0.0
 	 */
 	public const DO_NOT_REMEMBER = 0;
@@ -126,4 +130,10 @@ interface IToken extends JsonSerializable {
 	 * @since 28.0.0
 	 */
 	public function setExpires(?int $expires): void;
+
+	/**
+	 * Get the type of the token
+	 * @since 32.0.0
+	 */
+	public function getType(): int;
 }

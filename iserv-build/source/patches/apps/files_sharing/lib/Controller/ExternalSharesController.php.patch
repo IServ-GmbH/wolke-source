@@ -1,0 +1,49 @@
+diff --git apps/files_sharing/lib/Controller/ExternalSharesController.php apps/files_sharing/lib/Controller/ExternalSharesController.php
+index 8760c01..5aa6a7e 100644
+--- apps/files_sharing/lib/Controller/ExternalSharesController.php
++++ apps/files_sharing/lib/Controller/ExternalSharesController.php
+@@ -8,12 +8,15 @@
+ namespace OCA\Files_Sharing\Controller;
+ 
+ use OCA\Files_Sharing\BackgroundJob\ExternalShareScanJob;
++use OCA\Files_Sharing\External\ExternalShare;
+ use OCA\Files_Sharing\External\Manager;
+ use OCP\AppFramework\Controller;
+ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+ use OCP\AppFramework\Http\JSONResponse;
+ use OCP\BackgroundJob\IJobList;
++use OCP\Collaboration\Collaborators\ISearch;
+ use OCP\IRequest;
++use OCP\Share\IShare;
+ 
+ /**
+  * Class ExternalSharesController
+@@ -26,6 +29,7 @@ class ExternalSharesController extends Controller {
+ 		IRequest $request,
+ 		private readonly Manager $externalManager,
+ 		private IJobList $jobList,
++		private ISearch $collaboratorSearch,
+ 	) {
+ 		parent::__construct($appName, $request);
+ 	}
+@@ -35,7 +39,19 @@ class ExternalSharesController extends Controller {
+ 	 */
+ 	#[NoAdminRequired]
+ 	public function index(): JSONResponse {
+-		return new JSONResponse($this->externalManager->getOpenShares());
++		return new JSONResponse(array_map($this->addOwnerDisplayName(...), $this->externalManager->getOpenShares()));
++	}
++
++	/**
++	 * The incoming share dialog shows the owner's display name instead of the uid.
++	 */
++	private function addOwnerDisplayName(ExternalShare $share): array {
++		$shareData = $share->jsonSerialize();
++		[$ownerResults,] = $this->collaboratorSearch->search($share->getOwner(), [IShare::TYPE_REMOTE], false, 1, 0);
++		if (isset($ownerResults['remotes'][0]['name'])) {
++			$shareData['ownerDisplayName'] = $ownerResults['remotes'][0]['name'];
++		}
++		return $shareData;
+ 	}
+ 
+ 	/**

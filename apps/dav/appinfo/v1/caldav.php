@@ -12,6 +12,7 @@ use OCA\DAV\CalDAV\CalendarRoot;
 use OCA\DAV\CalDAV\DefaultCalendarValidator;
 use OCA\DAV\CalDAV\Federation\FederatedCalendarFactory;
 use OCA\DAV\CalDAV\Federation\FederatedCalendarMapper;
+use OCA\DAV\CalDAV\Principal\Collection as PrincipalCollection;
 use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\CalDAV\Schedule\IMipPlugin;
 use OCA\DAV\CalDAV\Security\RateLimitingPlugin;
@@ -24,6 +25,8 @@ use OCA\DAV\Connector\Sabre\Principal;
 use OCP\Accounts\IAccountManager;
 use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IAppConfig;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
@@ -55,7 +58,7 @@ $principalBackend = new Principal(
 	Server::get(ProxyMapper::class),
 	Server::get(KnownUserService::class),
 	Server::get(IConfig::class),
-	\OC::$server->getL10NFactory(),
+	Server::get(IL10NFactory::class),
 	'principals/'
 );
 $db = Server::get(IDBConnection::class);
@@ -78,15 +81,15 @@ $calDavBackend = new CalDavBackend(
 	$config,
 	Server::get(\OCA\DAV\CalDAV\Sharing\Backend::class),
 	Server::get(FederatedCalendarMapper::class),
-	Server::get(\OCP\ICacheFactory::class),
+	Server::get(ICacheFactory::class),
 	true
 );
 
 $debugging = Server::get(IConfig::class)->getSystemValue('debug', false);
-$sendInvitations = Server::get(IConfig::class)->getAppValue('dav', 'sendInvitations', 'yes') === 'yes';
+$sendInvitations = Server::get(IAppConfig::class)->getValueBool('dav', 'sendInvitations', true);
 
 // Root nodes
-$principalCollection = new \Sabre\CalDAV\Principal\Collection($principalBackend);
+$principalCollection = new PrincipalCollection($principalBackend);
 $principalCollection->disableListing = !$debugging; // Disable listing
 
 $addressBookRoot = new CalendarRoot($principalBackend, $calDavBackend, 'principals', $logger, $davL10n, $config, $federatedCalendarFactory);
@@ -101,6 +104,7 @@ $nodes = [
 $server = new \Sabre\DAV\Server($nodes);
 $server::$exposeVersion = false;
 $server->httpRequest->setUrl(Server::get(IRequest::class)->getRequestUri());
+/** @var string $baseuri defined in remote.php */
 $server->setBaseUri($baseuri);
 
 // Add plugins
@@ -125,4 +129,4 @@ $server->addPlugin(Server::get(RateLimitingPlugin::class));
 $server->addPlugin(Server::get(CalDavValidatePlugin::class));
 
 // And off we go!
-$server->exec();
+$server->start();

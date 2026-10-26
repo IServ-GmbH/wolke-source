@@ -7,11 +7,9 @@ SPDX-License-Identifier: (MPL-2.0 OR Apache-2.0)
 SPDX-FileCopyrightText: vuedraggable developers
 SPDX-FileCopyrightText: sortablejs developers
 SPDX-FileCopyrightText: escape-html developers
-SPDX-FileCopyrightText: debounce developers
 SPDX-FileCopyrightText: atomiks
 SPDX-FileCopyrightText: Tobias Koppers @sokra
 SPDX-FileCopyrightText: Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)
-SPDX-FileCopyrightText: T. Jameson Little <t.jameson.little@gmail.com>
 SPDX-FileCopyrightText: Roman Shtylman <shtylman@gmail.com>
 SPDX-FileCopyrightText: Rob Cresswell <robcresswell@pm.me>
 SPDX-FileCopyrightText: Paul Vorbach <paul@vorba.ch> (http://paul.vorba.ch)
@@ -30,17 +28,18 @@ SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (http
 SPDX-FileCopyrightText: David Clark
 SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Anthony Fu <https://github.com/antfu>
+SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 1.8.0
+	- version: 1.7.5
 	- license: MIT
 - @floating-ui/dom
-	- version: 1.8.0
+	- version: 1.7.6
 	- license: MIT
 - @floating-ui/utils
-	- version: 0.2.12
+	- version: 0.2.11
 	- license: MIT
 - @nextcloud/auth
 	- version: 2.6.0
@@ -55,7 +54,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.1
 	- license: GPL-3.0-or-later
 - semver
-	- version: 7.8.0
+	- version: 7.7.2
 	- license: ISC
 - @nextcloud/event-bus
 	- version: 3.3.3
@@ -70,7 +69,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.0.3
 	- license: GPL-3.0-or-later
 - @nextcloud/router
-	- version: 3.1.0
+	- version: 3.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
@@ -79,7 +78,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.41.0
+	- version: 8.40.0
 	- license: AGPL-3.0-or-later
 - @vueuse/components
 	- version: 11.3.0
@@ -91,10 +90,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 11.3.0
 	- license: MIT
 - axios
-	- version: 1.18.1
-	- license: MIT
-- base64-js
-	- version: 1.5.1
+	- version: 1.20.0
 	- license: MIT
 - charenc
 	- version: 0.0.2
@@ -105,11 +101,8 @@ This file is generated from multiple sources. Included packages:
 - css-loader
 	- version: 7.1.2
 	- license: MIT
-- debounce
-	- version: 2.2.0
-	- license: MIT
 - dompurify
-	- version: 3.4.14
+	- version: 3.4.16
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
@@ -123,18 +116,12 @@ This file is generated from multiple sources. Included packages:
 - focus-trap
 	- version: 7.8.0
 	- license: MIT
-- ieee754
-	- version: 1.2.1
-	- license: BSD-3-Clause
 - is-buffer
 	- version: 1.1.6
 	- license: MIT
 - md5
 	- version: 2.3.0
 	- license: BSD-3-Clause
-- buffer
-	- version: 6.0.3
-	- license: MIT
 - process
 	- version: 0.11.10
 	- license: MIT
@@ -154,10 +141,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.0.0
 	- license: MIT
 - unist-util-is
-	- version: 6.0.1
+	- version: 6.0.0
 	- license: MIT
 - unist-util-visit-parents
 	- version: 6.0.2
+	- license: MIT
+- vue-demi
+	- version: 0.14.10
 	- license: MIT
 - vue-loader
 	- version: 15.11.1
@@ -172,7 +162,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.24.3
 	- license: MIT
 - webpack
-	- version: 5.109.2
+	- version: 5.111.1
 	- license: MIT
 - nextcloud
 	- version: 1.0.0

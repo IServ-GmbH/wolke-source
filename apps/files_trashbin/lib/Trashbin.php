@@ -16,7 +16,6 @@ use OC\Files\Node\NonExistingFolder;
 use OC\Files\View;
 use OC\User\NoUserException;
 use OC_User;
-use OCA\Files_Trashbin\AppInfo\Application;
 use OCA\Files_Trashbin\Command\Expire;
 use OCA\Files_Trashbin\Events\BeforeNodeRestoredEvent;
 use OCA\Files_Trashbin\Events\NodeRestoredEvent;
@@ -25,6 +24,7 @@ use OCA\Files_Versions\Storage;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Command\IBus;
+use OCP\Config\IUserConfig;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
@@ -40,6 +40,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\Storage\ILockingStorage;
 use OCP\Files\Storage\IStorage;
 use OCP\FilesMetadata\IFilesMetadataManager;
+use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -118,7 +119,7 @@ class Trashbin implements IEventListener {
 			->where($query->expr()->eq('user', $query->createNamedParameter($user)));
 		$result = $query->executeQuery();
 		$array = [];
-		while ($row = $result->fetch()) {
+		foreach ($result->iterateAssociative() as $row) {
 			$array[$row['id']][$row['timestamp']] = [
 				'location' => (string)$row['location'],
 				'deletedBy' => (string)$row['deleted_by'],
@@ -145,7 +146,7 @@ class Trashbin implements IEventListener {
 			->andWhere($query->expr()->eq('timestamp', $query->createNamedParameter($timestamp)));
 
 		$result = $query->executeQuery();
-		$row = $result->fetch();
+		$row = $result->fetchAssociative();
 		$result->closeCursor();
 
 		if (isset($row['location'])) {
@@ -424,12 +425,14 @@ class Trashbin implements IEventListener {
 	}
 
 	private static function getConfiguredTrashbinSize(string $user): int|float {
-		$config = Server::get(IConfig::class);
-		$userTrashbinSize = $config->getUserValue($user, 'files_trashbin', 'trashbin_size', '-1');
+		$userConfig = Server::get(IUserConfig::class);
+		$userTrashbinSize = $userConfig->getValueString($user, 'files_trashbin', 'trashbin_size', '-1');
 		if (is_numeric($userTrashbinSize) && ($userTrashbinSize > -1)) {
 			return Util::numericToNumber($userTrashbinSize);
 		}
-		$systemTrashbinSize = $config->getAppValue('files_trashbin', 'trashbin_size', '-1');
+
+		$appConfig = Server::get(IAppConfig::class);
+		$systemTrashbinSize = $appConfig->getValueString('files_trashbin', 'trashbin_size', '-1');
 		if (is_numeric($systemTrashbinSize)) {
 			return Util::numericToNumber($systemTrashbinSize);
 		}
@@ -931,9 +934,7 @@ class Trashbin implements IEventListener {
 	 */
 	private static function scheduleExpire($user) {
 		// let the admin disable auto expire
-		/** @var Application $application */
-		$application = Server::get(Application::class);
-		$expiration = $application->getContainer()->query('Expiration');
+		$expiration = Server::get(Expiration::class);
 		if ($expiration->isEnabled()) {
 			Server::get(IBus::class)->push(new Expire($user));
 		}
@@ -949,14 +950,12 @@ class Trashbin implements IEventListener {
 	 * @return int|float size of deleted files
 	 */
 	protected static function deleteFiles(array $files, string $user, int|float $availableSpace): int|float {
-		/** @var Application $application */
-		$application = Server::get(Application::class);
-		$expiration = $application->getContainer()->query('Expiration');
+		$expiration = Server::get(Expiration::class);
 		$size = 0;
 
-		if ($availableSpace < 0) {
+		if ($availableSpace <= 0) {
 			foreach ($files as $file) {
-				if ($availableSpace < 0 && $expiration->isExpired($file['mtime'], true)) {
+				if ($availableSpace <= 0 && $expiration->isExpired($file['mtime'], true)) {
 					$tmp = self::delete($file['name'], $user, $file['mtime']);
 					Server::get(LoggerInterface::class)->info(
 						'remove "' . $file['name'] . '" (' . $tmp . 'B) to meet the limit of trash bin size (50% of available quota) for user "{user}"',
@@ -983,7 +982,6 @@ class Trashbin implements IEventListener {
 	 * @return array{int|float, int} size of deleted files and number of deleted files
 	 */
 	public static function deleteExpiredFiles($files, $user) {
-		/** @var Expiration $expiration */
 		$expiration = Server::get(Expiration::class);
 		$size = 0;
 		$count = 0;
@@ -1097,7 +1095,7 @@ class Trashbin implements IEventListener {
 			->andWhere($query->expr()->iLike('name', $query->createNamedParameter($pattern)));
 
 		$result = $query->executeQuery();
-		$entries = $result->fetchAll();
+		$entries = $result->fetchAllAssociative();
 		$result->closeCursor();
 
 		/** @var CacheEntry[] $matches */

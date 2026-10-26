@@ -20,7 +20,6 @@ use function count;
 use function is_int;
 use function mb_strlen;
 use function ord;
-use function sprintf;
 
 /**
  * Implements *OBJECT IDENTIFIER* type.

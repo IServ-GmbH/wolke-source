@@ -33,9 +33,9 @@ final class Time
         $this->type = $type ?? self::determineType($dt);
     }
 
-    public static function create(DateTimeImmutable $dt, ?int $time = null): self
+    public static function create(DateTimeImmutable $dt): self
     {
-        return new self($dt, $time);
+        return new self($dt, null);
     }
 
     /**
@@ -43,15 +43,7 @@ final class Time
      */
     public static function fromASN1(TimeType $el): self
     {
-        // Pass the type of the original ASN.1 primitive
-        if ($el instanceof UTCTime) {
-            return self::create($el->dateTime(), Element::TYPE_UTC_TIME);
-        }
-        if ($el instanceof GeneralizedTime) {
-            return self::create($el->dateTime(), Element::TYPE_GENERALIZED_TIME);
-        }
-
-        return self::create($el->dateTime());  // TODO: should never happen?
+        return self::create($el->dateTime());
     }
 
     /**

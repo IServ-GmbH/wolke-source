@@ -23,9 +23,11 @@ use OCP\Config\ValueType;
 use OCP\DB\Exception as DBException;
 use OCP\DB\IResult;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Security\ICrypto;
+use OCP\User\Events\UserConfigChangedEvent;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -85,6 +87,7 @@ class UserConfig implements IUserConfig {
 		private readonly PresetManager $presetManager,
 		protected LoggerInterface $logger,
 		protected ICrypto $crypto,
+		protected IEventDispatcher $dispatcher,
 	) {
 	}
 
@@ -1141,6 +1144,7 @@ class UserConfig implements IUserConfig {
 			}
 		}
 
+		$oldValue = null;
 		$updateReason = '';
 		if ($this->hasKey($userId, $app, $key, $lazy)) {
 			$updateReason = 'key exists';
@@ -1149,7 +1153,8 @@ class UserConfig implements IUserConfig {
 			 * no update if key is already known with set lazy status and value is
 			 * not different, unless sensitivity is switched from false to true.
 			 */
-			if ($origValue === $this->getTypedValue($userId, $app, $key, $value, $lazy, $type)
+			$oldValue = $this->getTypedValue($userId, $app, $key, $value, $lazy, $type);
+			if ($origValue === $oldValue
 				&& (!$sensitive || $this->isSensitive($userId, $app, $key, $lazy))) {
 				return false;
 			}
@@ -1239,6 +1244,8 @@ class UserConfig implements IUserConfig {
 
 			$update->executeStatement();
 		}
+
+		$this->dispatcher->dispatchTyped(new UserConfigChangedEvent($userId, $app, $key, $value, $oldValue));
 
 		if ($refreshCache) {
 			$this->clearCache($userId);

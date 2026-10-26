@@ -25,10 +25,10 @@ class Authtokens implements ISettings {
 
 	public function __construct(
 		private IAuthTokenProvider $tokenProvider,
-		private IConfig $config,
 		private ISession $session,
 		private IUserSession $userSession,
 		private IInitialState $initialState,
+		private IConfig $serverConfig,
 		private ?string $userId,
 	) {
 	}
@@ -41,7 +41,8 @@ class Authtokens implements ISettings {
 
 		$this->initialState->provideInitialState(
 			'can_create_app_token',
-			($this->userSession->getImpersonatingUserID() === null) && !($this->config->getSystemValueBool('iserv_disable_app_passwords'))
+			$this->userSession->getImpersonatingUserID() === null
+			&& $this->serverConfig->getSystemValueBool('auth_can_create_app_token', true)
 		);
 
 		return new TemplateResponse('settings', 'settings/personal/security/authtokens');

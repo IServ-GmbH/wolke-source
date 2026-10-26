@@ -19,6 +19,8 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 	private array $types = [];
 	private array $parameters = [];
 	private array $ranges = [];
+	private int $startLine = 0;
+	private string $file = '';
 	private ?\ReflectionMethod $reflectionMethod = null;
 
 	public function __construct(
@@ -36,6 +38,9 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 		$this->parameters = [];
 		$this->ranges = [];
 		$this->reflectionMethod = new \ReflectionMethod($object, $method);
+		$this->startLine = $this->reflectionMethod->getStartLine();
+		$this->file = $this->reflectionMethod->getFileName();
+
 		$docs = $this->reflectionMethod->getDocComment();
 
 		if ($docs !== false) {
@@ -162,5 +167,13 @@ class ControllerMethodReflector implements IControllerMethodReflector {
 		}
 
 		return '';
+	}
+
+	public function getStartLine(): int {
+		return $this->startLine;
+	}
+
+	public function getFile(): string {
+		return $this->file;
 	}
 }

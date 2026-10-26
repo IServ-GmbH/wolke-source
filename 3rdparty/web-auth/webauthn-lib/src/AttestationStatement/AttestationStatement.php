@@ -9,7 +9,6 @@ use Webauthn\Exception\InvalidDataException;
 use Webauthn\TrustPath\TrustPath;
 use Webauthn\TrustPath\TrustPathLoader;
 use function array_key_exists;
-use function sprintf;
 
 class AttestationStatement implements JsonSerializable
 {

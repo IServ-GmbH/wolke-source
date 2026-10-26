@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/src/document.js apps/richdocuments/src/document.js
-index 351886b1d..450353ce7 100644
+index 55794ff3d..1c9a8f630 100644
 --- apps/richdocuments/src/document.js
 +++ apps/richdocuments/src/document.js
 @@ -167,8 +167,6 @@ const documentsMain = {

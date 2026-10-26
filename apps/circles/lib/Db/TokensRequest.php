@@ -8,10 +8,10 @@
 
 namespace OCA\Circles\Db;
 
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCA\Circles\Exceptions\TokenDoesNotExistException;
 use OCA\Circles\Model\DeprecatedMember;
 use OCA\Circles\Model\SharesToken;
+use OCP\DB\Exception;
 use OCP\Security\IHasher;
 use OCP\Server;
 
@@ -32,7 +32,7 @@ class TokensRequest extends TokensRequestBuilder {
 		$qb = $this->getTokensSelectSql();
 		$this->limitToToken($qb, $token);
 
-		$cursor = $qb->execute();
+		$cursor = $qb->executeQuery();
 		$data = $cursor->fetch();
 		$cursor->closeCursor();
 		if ($data === false) {
@@ -57,7 +57,7 @@ class TokensRequest extends TokensRequestBuilder {
 		$this->limitToUserId($qb, $email);
 		$this->limitToCircleId($qb, $circleId);
 
-		$cursor = $qb->execute();
+		$cursor = $qb->executeQuery();
 		$data = $cursor->fetch();
 		$cursor->closeCursor();
 		if ($data === false) {
@@ -79,7 +79,7 @@ class TokensRequest extends TokensRequestBuilder {
 		$this->limitToCircleId($qb, $member->getCircleId());
 
 		$shares = [];
-		$cursor = $qb->execute();
+		$cursor = $qb->executeQuery();
 		while ($data = $cursor->fetch()) {
 			$shares[] = $this->parseTokensSelectSql($data);
 		}
@@ -114,8 +114,11 @@ class TokensRequest extends TokensRequestBuilder {
 				->setValue('token', $qb->createNamedParameter($token))
 				->setValue('password', $qb->createNamedParameter($password));
 
-			$qb->execute();
-		} catch (UniqueConstraintViolationException $e) {
+			$qb->executeStatement();
+		} catch (Exception $e) {
+			if ($e->getReason() !== Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+				throw $e;
+			}
 		}
 
 		return $this->getTokenFromMember($shareId, $member->getCircleId(), $member->getUserId());
@@ -129,7 +132,7 @@ class TokensRequest extends TokensRequestBuilder {
 		$qb = $this->getTokensDeleteSql();
 		$this->limitToShareId($qb, $shareId);
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -141,7 +144,7 @@ class TokensRequest extends TokensRequestBuilder {
 		$this->limitToCircleId($qb, $member->getCircleId());
 		$this->limitToUserId($qb, $member->getUserId());
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 
@@ -156,6 +159,6 @@ class TokensRequest extends TokensRequestBuilder {
 		$this->limitToCircleId($qb, $circleId);
 		$qb->set('password', $qb->createNamedParameter($password));
 
-		$qb->execute();
+		$qb->executeStatement();
 	}
 }

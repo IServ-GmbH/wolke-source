@@ -50,6 +50,7 @@ class FilesPlugin extends ServerPlugin {
 	public const OCM_SHARE_PERMISSIONS_PROPERTYNAME = '{http://open-cloud-mesh.org/ns}share-permissions';
 	public const SHARE_ATTRIBUTES_PROPERTYNAME = '{http://nextcloud.org/ns}share-attributes';
 	public const DOWNLOADURL_PROPERTYNAME = '{http://owncloud.org/ns}downloadURL';
+	public const DOWNLOADURL_EXPIRATION_PROPERTYNAME = '{http://nextcloud.org/ns}download-url-expiration';
 	public const SIZE_PROPERTYNAME = '{http://owncloud.org/ns}size';
 	public const GETETAG_PROPERTYNAME = '{DAV:}getetag';
 	public const LASTMODIFIED_PROPERTYNAME = '{DAV:}lastmodified';
@@ -121,6 +122,7 @@ class FilesPlugin extends ServerPlugin {
 		$server->protectedProperties[] = self::SHARE_ATTRIBUTES_PROPERTYNAME;
 		$server->protectedProperties[] = self::SIZE_PROPERTYNAME;
 		$server->protectedProperties[] = self::DOWNLOADURL_PROPERTYNAME;
+		$server->protectedProperties[] = self::DOWNLOADURL_EXPIRATION_PROPERTYNAME;
 		$server->protectedProperties[] = self::OWNER_ID_PROPERTYNAME;
 		$server->protectedProperties[] = self::OWNER_DISPLAY_NAME_PROPERTYNAME;
 		$server->protectedProperties[] = self::CHECKSUMS_PROPERTYNAME;
@@ -205,10 +207,19 @@ class FilesPlugin extends ServerPlugin {
 		// First check copyable (move only needs additional delete permission)
 		$this->checkCopy($source, $target);
 
-		// The source needs to be deletable for moving
-		$sourceNodeFileInfo = $sourceNode->getFileInfo();
-		if (!$sourceNodeFileInfo->isDeletable()) {
-			throw new Forbidden($source . ' cannot be deleted');
+		[$sourceDir] = \Sabre\Uri\split($source);
+		[$destinationDir, ] = \Sabre\Uri\split($target);
+
+		if ($sourceDir === $destinationDir) {
+			if (!$sourceNode->canRename()) {
+				throw new Forbidden($source . ' cannot be renamed');
+			}
+		} else {
+			// The source needs to be deletable for moving
+			$sourceNodeFileInfo = $sourceNode->getFileInfo();
+			if (!$sourceNodeFileInfo->isDeletable()) {
+				throw new Forbidden($source . ' cannot be deleted');
+			}
 		}
 
 		// The source is not allowed to be the parent of the target
@@ -476,19 +487,30 @@ class FilesPlugin extends ServerPlugin {
 		}
 
 		if ($node instanceof File) {
-			$propFind->handle(self::DOWNLOADURL_PROPERTYNAME, function () use ($node) {
+			$requestProperties = $propFind->getRequestedProperties();
+
+			if (in_array(self::DOWNLOADURL_PROPERTYNAME, $requestProperties, true)
+				|| in_array(self::DOWNLOADURL_EXPIRATION_PROPERTYNAME, $requestProperties, true)) {
 				try {
 					$directDownloadUrl = $node->getDirectDownload();
-					if (isset($directDownloadUrl['url'])) {
+				} catch (StorageNotAvailableException|ForbiddenException) {
+					$directDownloadUrl = null;
+				}
+
+				$propFind->handle(self::DOWNLOADURL_PROPERTYNAME, function () use ($node, $directDownloadUrl) {
+					if ($directDownloadUrl && isset($directDownloadUrl['url'])) {
 						return $directDownloadUrl['url'];
 					}
-				} catch (StorageNotAvailableException $e) {
 					return false;
-				} catch (ForbiddenException $e) {
+				});
+
+				$propFind->handle(self::DOWNLOADURL_EXPIRATION_PROPERTYNAME, function () use ($node, $directDownloadUrl) {
+					if ($directDownloadUrl && isset($directDownloadUrl['expiration'])) {
+						return $directDownloadUrl['expiration'];
+					}
 					return false;
-				}
-				return false;
-			});
+				});
+			}
 
 			$propFind->handle(self::CHECKSUMS_PROPERTYNAME, function () use ($node) {
 				$checksum = $node->getChecksum();
@@ -568,34 +590,42 @@ class FilesPlugin extends ServerPlugin {
 			return;
 		}
 
-		$propPatch->handle(self::LASTMODIFIED_PROPERTYNAME, function ($time) use ($node) {
-			if (empty($time)) {
-				return false;
-			}
-			$node->touch($time);
-			return true;
-		});
-		$propPatch->handle(self::GETETAG_PROPERTYNAME, function ($etag) use ($node) {
-			if (empty($etag)) {
-				return false;
-			}
-			return $node->setEtag($etag) !== -1;
-		});
-		$propPatch->handle(self::CREATIONDATE_PROPERTYNAME, function ($time) use ($node) {
-			if (empty($time)) {
-				return false;
-			}
-			$dateTime = new \DateTimeImmutable($time);
-			$node->setCreationTime($dateTime->getTimestamp());
-			return true;
-		});
-		$propPatch->handle(self::CREATION_TIME_PROPERTYNAME, function ($time) use ($node) {
-			if (empty($time)) {
-				return false;
-			}
-			$node->setCreationTime((int)$time);
-			return true;
-		});
+		// The mtime, etag and creation time are written straight to the file
+		// cache, bypassing the storage permission wrappers that guard content
+		// writes. Only register the handlers when the caller has update rights,
+		// otherwise a read-only share (including anonymous public links) could
+		// corrupt the owner's metadata. Sabre reports 403 for the properties
+		// that are left without a handler.
+		if ($node->getFileInfo()->isUpdateable()) {
+			$propPatch->handle(self::LASTMODIFIED_PROPERTYNAME, function ($time) use ($node) {
+				if (empty($time)) {
+					return false;
+				}
+				$node->touch($time);
+				return true;
+			});
+			$propPatch->handle(self::GETETAG_PROPERTYNAME, function ($etag) use ($node) {
+				if (empty($etag)) {
+					return false;
+				}
+				return $node->setEtag($etag) !== -1;
+			});
+			$propPatch->handle(self::CREATIONDATE_PROPERTYNAME, function ($time) use ($node) {
+				if (empty($time)) {
+					return false;
+				}
+				$dateTime = new \DateTimeImmutable($time);
+				$node->setCreationTime($dateTime->getTimestamp());
+				return true;
+			});
+			$propPatch->handle(self::CREATION_TIME_PROPERTYNAME, function ($time) use ($node) {
+				if (empty($time)) {
+					return false;
+				}
+				$node->setCreationTime((int)$time);
+				return true;
+			});
+		}
 
 		$this->handleUpdatePropertiesMetadata($propPatch, $node);
 

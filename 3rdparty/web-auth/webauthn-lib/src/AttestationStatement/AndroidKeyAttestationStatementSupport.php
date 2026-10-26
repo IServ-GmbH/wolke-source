@@ -29,7 +29,6 @@ use function count;
 use function is_array;
 use function openssl_pkey_get_public;
 use function openssl_verify;
-use function sprintf;
 
 final class AndroidKeyAttestationStatementSupport implements AttestationStatementSupport, CanDispatchEvents
 {

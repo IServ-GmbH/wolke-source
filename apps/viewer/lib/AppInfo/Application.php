@@ -15,6 +15,9 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 
+/**
+ * @psalm-api
+ */
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'viewer';
 
@@ -22,10 +25,12 @@ class Application extends App implements IBootstrap {
 		parent::__construct(self::APP_ID);
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		$context->registerEventListener(LoadViewer::class, LoadViewerScript::class);
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
 	}
 }

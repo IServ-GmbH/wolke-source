@@ -18,7 +18,6 @@ use OCA\User_LDAP\User\OfflineUser;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IAppConfig;
-use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUserManager;
 use OCP\Server;
@@ -55,7 +54,6 @@ class Access extends LDAPUtility {
 		public Connection $connection,
 		public Manager $userManager,
 		private Helper $helper,
-		private IConfig $config,
 		private IUserManager $ncUserManager,
 		private LoggerInterface $logger,
 		private IAppConfig $appConfig,
@@ -1568,16 +1566,14 @@ class Access extends LDAPUtility {
 	 * a *
 	 */
 	private function prepareSearchTerm(string $term): string {
-		$config = Server::get(IConfig::class);
-
-		$allowEnum = $config->getAppValue('core', 'shareapi_allow_share_dialog_user_enumeration', 'yes');
+		$allowEnum = $this->appConfig->getValueBool('core', 'shareapi_allow_share_dialog_user_enumeration', true);
 
 		$result = $term;
 		if ($term === '') {
 			$result = '*';
-		} elseif ($allowEnum !== 'no') {
-			$activeDirectoryCompat = $this->appConfig->getValueBool('user_ldap', 'partial_search_active_directory_compatibility', false);
-			if ($activeDirectoryCompat) {
+		} elseif ($allowEnum) {
+			$usePrefixWildcard = $this->appConfig->getValueBool('user_ldap', 'partial_search_with_prefix_wildcard', false);
+			if ($usePrefixWildcard) {
 				$result = '*' . $term . '*';
 			} else {
 				$result = $term . '*';

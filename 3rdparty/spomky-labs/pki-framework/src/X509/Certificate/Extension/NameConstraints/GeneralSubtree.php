@@ -57,8 +57,7 @@ final class GeneralSubtree
         // or rfc822Name [1]. As minimum and maximum are also implicitly tagged,
         // we have to iterate the remaining elements instead of just checking
         // for tagged types.
-        $count = count($seq);
-        for ($i = 1; $i < $count; ++$i) {
+        for ($i = 1; $i < count($seq); ++$i) {
             $el = $seq->at($i)
                 ->expectTagged();
             switch ($el->tag()) {
@@ -88,7 +87,7 @@ final class GeneralSubtree
     public function toASN1(): Sequence
     {
         $elements = [$this->base->toASN1()];
-        if ($this->min !== 0) {
+        if (isset($this->min) && $this->min !== 0) {
             $elements[] = ImplicitlyTaggedType::create(0, Integer::create($this->min));
         }
         if (isset($this->max)) {

@@ -18,7 +18,6 @@ use UnexpectedValueException;
 use function chr;
 use function is_int;
 use function ord;
-use function sprintf;
 
 /**
  * Implements *RELATIVE-OID* type.

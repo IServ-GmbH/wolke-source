@@ -158,7 +158,7 @@ class Log implements ILogger, IDataLogger {
 			return; // no crash reporter, no listeners, we can stop for lower log level
 		}
 
-		array_walk($context, [$this->normalizer, 'format']);
+		$context = array_map($this->normalizer->format(...), $context);
 
 		$app = $context['app'] ?? 'no app in context';
 		$entry = $this->interpolateMessage($context, $message);
@@ -339,13 +339,15 @@ class Log implements ILogger, IDataLogger {
 			$this->error('Failed to load ExceptionSerializer serializer while trying to log ' . $exception->getMessage());
 			return;
 		}
+
+		unset($context['exception']);
+
+		$context = array_map($this->normalizer->format(...), $context);
 		$data = $context;
-		unset($data['app']);
-		unset($data['level']);
+		unset($data['app'], $data['level']);
+
 		$data = array_merge($serializer->serializeException($exception), $data);
 		$data = $this->interpolateMessage($data, isset($context['message']) && $context['message'] !== '' ? $context['message'] : ('Exception thrown: ' . get_class($exception)), 'CustomMessage');
-
-		array_walk($context, [$this->normalizer, 'format']);
 
 		$this->eventDispatcher?->dispatchTyped(new BeforeMessageLoggedEvent($app, $level, $data));
 
@@ -372,18 +374,15 @@ class Log implements ILogger, IDataLogger {
 
 		$minLevel = $this->getLogLevel($context, $message);
 
-		array_walk($context, [$this->normalizer, 'format']);
-
 		try {
 			if ($level >= $minLevel) {
+				$data = array_map($this->normalizer->format(...), $data);
 				$data['message'] = $message;
 				if (!$this->logger instanceof IFileBased) {
 					$data = json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_SLASHES);
 				}
 				$this->writeLog($app, $data, $level);
 			}
-
-			$context['level'] = $level;
 		} catch (Throwable $e) {
 			// make sure we dont hard crash if logging fails
 			error_log('Error when trying to log exception: ' . $e->getMessage() . ' ' . $e->getTraceAsString());

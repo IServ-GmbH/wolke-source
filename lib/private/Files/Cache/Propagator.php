@@ -30,11 +30,8 @@ class Propagator implements IPropagator {
 	private array $batch = [];
 	private ClockInterface $clock;
 
-	/**
-	 * @param IStorage $storage
-	 */
 	public function __construct(
-		protected $storage,
+		protected readonly IStorage $storage,
 		private readonly IDBConnection $connection,
 		private readonly array $ignore = [],
 	) {
@@ -42,7 +39,7 @@ class Propagator implements IPropagator {
 	}
 
 	#[Override]
-	public function propagateChange($internalPath, $time, $sizeDifference = 0) {
+	public function propagateChange(string $internalPath, int $time, int $sizeDifference = 0): void {
 		// Do not propagate changes in ignored paths
 		foreach ($this->ignore as $ignore) {
 			if (str_starts_with($internalPath, $ignore)) {
@@ -234,7 +231,7 @@ class Propagator implements IPropagator {
 						->where($queryWithSize->expr()->eq('storage', $queryWithSize->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
 						->andWhere($queryWithSize->expr()->eq('fileid', $queryWithSize->createParameter('fileid')));
 
-					while ($row = $result->fetch()) {
+					while ($row = $result->fetchAssociative()) {
 						$item = $this->batch[$row['path']];
 						if ($item['size'] && $row['size'] > -1) {
 							$queryWithSize->setParameter('fileid', $row['fileid'], IQueryBuilder::PARAM_INT)

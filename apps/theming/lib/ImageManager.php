@@ -8,7 +8,6 @@ namespace OCA\Theming;
 
 use OCA\Theming\AppInfo\Application;
 use OCA\Theming\Service\BackgroundService;
-use OCP\AppFramework\Services\IAppConfig;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
@@ -31,7 +30,6 @@ class ImageManager {
 		private LoggerInterface $logger,
 		private ITempManager $tempManager,
 		private BackgroundService $backgroundService,
-		private IAppConfig $appConfig,
 	) {
 	}
 
@@ -42,7 +40,7 @@ class ImageManager {
 	 * @return string the image url
 	 */
 	public function getImageUrl(string $key): string {
-		$cacheBusterCounter = (string)$this->appConfig->getAppValueInt(ConfigLexicon::CACHE_BUSTER);
+		$cacheBusterCounter = $this->config->getAppValue(Application::APP_ID, 'cachebuster', '0');
 		if ($this->hasImage($key)) {
 			return $this->urlGenerator->linkToRoute('theming.Theming.getImage', [ 'key' => $key ]) . '?v=' . $cacheBusterCounter;
 		} elseif ($key === 'backgroundDark' && $this->hasImage('background')) {
@@ -91,26 +89,25 @@ class ImageManager {
 		if ($mime === '' || !$folder->fileExists($key)) {
 			throw new NotFoundException();
 		}
-		// only convert SVG originals to PNG when SVG output is not desired;
-		// converting raster images to SVG produces broken output and is not useful
-		$isOriginalSvg = ($mime === 'image/svg+xml' || $mime === 'image/svg');
-		if ($isOriginalSvg && !$useSvg && $this->canConvert('SVG') && $this->canConvert('PNG')) {
+
+		if (!$useSvg && $this->shouldReplaceIcons()) {
 			if (!$folder->fileExists($key . '.png')) {
 				try {
 					$finalIconFile = new \Imagick();
 					$finalIconFile->setBackgroundColor('none');
 					$finalIconFile->readImageBlob($folder->getFile($key)->getContent());
-					$finalIconFile->setImageFormat('PNG32');
+					$finalIconFile->setImageFormat('png32');
 					$pngFile = $folder->newFile($key . '.png');
 					$pngFile->putContent($finalIconFile->getImageBlob());
 					return $pngFile;
 				} catch (\ImagickException $e) {
-					$this->logger->info('Converting SVG to PNG failed: ' . $e->getMessage());
+					$this->logger->info('The image was requested to be no SVG file, but converting it to PNG failed: ' . $e->getMessage());
 				}
 			} else {
 				return $folder->getFile($key . '.png');
 			}
 		}
+
 		return $folder->getFile($key);
 	}
 
@@ -141,7 +138,7 @@ class ImageManager {
 	 * @throws NotPermittedException
 	 */
 	public function getCacheFolder(): ISimpleFolder {
-		$cacheBusterValue = (string)$this->appConfig->getAppValueInt(ConfigLexicon::CACHE_BUSTER);
+		$cacheBusterValue = $this->config->getAppValue('theming', 'cachebuster', '0');
 		try {
 			$folder = $this->getRootFolder()->getFolder($cacheBusterValue);
 		} catch (NotFoundException $e) {
@@ -194,12 +191,6 @@ class ImageManager {
 		}
 		try {
 			$file = $this->getRootFolder()->getFolder('images')->getFile($key . '.png');
-			$file->delete();
-		} catch (NotFoundException $e) {
-		} catch (NotPermittedException $e) {
-		}
-		try {
-			$file = $this->getRootFolder()->getFolder('images')->getFile($key . '.svg');
 			$file->delete();
 		} catch (NotFoundException $e) {
 		} catch (NotPermittedException $e) {
@@ -337,7 +328,7 @@ class ImageManager {
 	public function getSupportedUploadImageFormats(string $key): array {
 		$supportedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
-		if ($key !== 'favicon' || $this->canConvert('SVG') === true) {
+		if ($key !== 'favicon' || $this->shouldReplaceIcons() === true) {
 			$supportedFormats[] = 'image/svg+xml';
 			$supportedFormats[] = 'image/svg';
 		}
@@ -373,26 +364,17 @@ class ImageManager {
 	 * @return bool
 	 */
 	public function shouldReplaceIcons() {
-		return $this->canConvert('SVG');
-	}
-
-	/**
-	 * Check if Imagemagick is enabled and if format is supported
-	 *
-	 * @return bool
-	 */
-	public function canConvert(string $format): bool {
 		$cache = $this->cacheFactory->createDistributed('theming-' . $this->urlGenerator->getBaseUrl());
-		if ($value = $cache->get('convert-' . $format)) {
+		if ($value = $cache->get('shouldReplaceIcons')) {
 			return (bool)$value;
 		}
 		$value = false;
 		if (extension_loaded('imagick')) {
-			if (count(\Imagick::queryFormats($format)) >= 1) {
+			if (count(\Imagick::queryFormats('SVG')) >= 1) {
 				$value = true;
 			}
 		}
-		$cache->set('convert-' . $format, $value);
+		$cache->set('shouldReplaceIcons', $value);
 		return $value;
 	}
 

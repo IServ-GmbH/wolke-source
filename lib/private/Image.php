@@ -839,7 +839,6 @@ class Image implements IImage {
 			return false;
 		}
 		$result = $this->resizeNew($maxSize);
-		imagedestroy($this->resource);
 		$this->resource = $result;
 		return $this->valid();
 	}
@@ -875,7 +874,6 @@ class Image implements IImage {
 			return false;
 		}
 		$result = $this->preciseResizeNew($width, $height);
-		imagedestroy($this->resource);
 		$this->resource = $result;
 		return $this->valid();
 	}
@@ -898,7 +896,7 @@ class Image implements IImage {
 		}
 
 		// preserve transparency
-		if ($this->imageType == IMAGETYPE_GIF or $this->imageType == IMAGETYPE_PNG) {
+		if ($this->imageType === IMAGETYPE_GIF || $this->imageType === IMAGETYPE_PNG) {
 			$alpha = imagecolorallocatealpha($process, 0, 0, 0, 127);
 			if ($alpha === false) {
 				$alpha = null;
@@ -930,7 +928,7 @@ class Image implements IImage {
 		}
 		$widthOrig = imagesx($this->resource);
 		$heightOrig = imagesy($this->resource);
-		if ($widthOrig === $heightOrig and $size == 0) {
+		if ($widthOrig === $heightOrig && $size == 0) {
 			return true;
 		}
 		$ratioOrig = $widthOrig / $heightOrig;
@@ -957,7 +955,7 @@ class Image implements IImage {
 		}
 
 		// preserve transparency
-		if ($this->imageType == IMAGETYPE_GIF or $this->imageType == IMAGETYPE_PNG) {
+		if ($this->imageType === IMAGETYPE_GIF || $this->imageType === IMAGETYPE_PNG) {
 			$alpha = imagecolorallocatealpha($process, 0, 0, 0, 127);
 			if ($alpha === false) {
 				$alpha = null;
@@ -1018,7 +1016,7 @@ class Image implements IImage {
 		}
 
 		// preserve transparency
-		if ($this->imageType == IMAGETYPE_GIF or $this->imageType == IMAGETYPE_PNG) {
+		if ($this->imageType === IMAGETYPE_GIF || $this->imageType === IMAGETYPE_PNG) {
 			$alpha = imagecolorallocatealpha($process, 0, 0, 0, 127);
 			if ($alpha === false) {
 				$alpha = null;
@@ -1139,9 +1137,6 @@ class Image implements IImage {
 	 * Destroys the current image and resets the object
 	 */
 	public function destroy(): void {
-		if ($this->valid()) {
-			imagedestroy($this->resource);
-		}
 		$this->resource = false;
 	}
 

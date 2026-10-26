@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Db;
 
@@ -25,6 +27,7 @@ class FilesShareRequest extends FilesShareRequestBuilder {
 		return $this->getItemsFromRequest($qb);
 	}
 
+
 	/**
 	 * @param array $itemIds
 	 *
@@ -36,6 +39,7 @@ class FilesShareRequest extends FilesShareRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
+
 
 	/**
 	 * @param string $singleId
@@ -62,6 +66,7 @@ class FilesShareRequest extends FilesShareRequestBuilder {
 
 		return $this->getItemsFromRequest($qb);
 	}
+
 
 	/**
 	 * @param string $userId

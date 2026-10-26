@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>System requirements &mdash; Nextcloud 32 Administration Manual</title>
+  <title>System requirements &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -144,6 +144,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -168,7 +169,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -209,11 +210,13 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <td><ul class="simple">
 <li><p><strong>Ubuntu 24.04 LTS</strong> (recommended)</p></li>
 <li><p>Ubuntu 22.04 LTS</p></li>
-<li><p><strong>Red Hat Enterprise Linux 9</strong> (recommended)</p></li>
-<li><p>Red Hat Enterprise Linux 8</p></li>
+<li><p><strong>Red Hat Enterprise Linux 10</strong> (recommended)</p></li>
+<li><p>Red Hat Enterprise Linux 9</p></li>
+<li><p>Debian 13 (Trixie)</p></li>
 <li><p>Debian 12 (Bookworm)</p></li>
-<li><p>SUSE Linux Enterprise Server 15</p></li>
-<li><p>openSUSE Leap 15.6</p></li>
+<li><p>SUSE Linux Enterprise Server 16</p></li>
+<li><p>SUSE Linux Enterprise Server 15 SP6 (or later)</p></li>
+<li><p>openSUSE Leap 16</p></li>
 <li><p>CentOS Stream</p></li>
 <li><p>Alpine Linux</p></li>
 </ul>
@@ -221,10 +224,11 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </tr>
 <tr class="row-odd"><td><p>Database</p></td>
 <td><ul class="simple">
-<li><p>MySQL 8.0 / <strong>8.4</strong> or MariaDB 10.6/ <strong>10.11</strong> (recommended) / 11.4</p></li>
-<li><p>Oracle Database 11g, 19c, 21c, 23ai
+<li><p>MySQL 8.0 / 8.4</p></li>
+<li><p>MariaDB 10.6 / 10.11 / 11.4 / <strong>11.8</strong> (recommended)</p></li>
+<li><p>Oracle Database 19c, 21c, 23ai
 (<em>only as part of an enterprise subscription</em>)</p></li>
-<li><p>PostgreSQL 13/14/15/16/17</p></li>
+<li><p>PostgreSQL 14 / 15 / 16 / 17 / <strong>18</strong> (recommended)</p></li>
 <li><p>SQLite 3.24+ (<em>only recommended for testing and minimal-instances</em>)</p></li>
 </ul>
 </td>
@@ -238,10 +242,10 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 </tr>
 <tr class="row-odd"><td><p>PHP Runtime</p></td>
 <td><ul class="simple">
-<li><p>8.1 (<em>deprecated</em>)</p></li>
-<li><p>8.2</p></li>
-<li><p><strong>8.3</strong> (<em>recommended</em>)</p></li>
-<li><p>8.4</p></li>
+<li><p>8.2 (<em>deprecated</em>)</p></li>
+<li><p>8.3</p></li>
+<li><p><strong>8.4</strong> (<em>recommended</em>)</p></li>
+<li><p>8.5</p></li>
 </ul>
 </td>
 </tr>
@@ -256,6 +260,7 @@ reliable scaling) and support, we strongly recommend you to check out our <a cla
 <ul class="simple">
 <li><p>Dates before Unix Epoch (1970-01-01) are not supported</p></li>
 <li><p>Dates after 2038 are not supported</p></li>
+<li><p>Some external apps may not work with 32-bit systems</p></li>
 </ul>
 </section>
 <section id="memory">
@@ -320,14 +325,14 @@ of our mobile apps.</p>
 <section id="files-app">
 <h3>Files App<a class="headerlink" href="#files-app" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>iOS</strong> 15.0+</p></li>
+<li><p><strong>iOS</strong> 17.0+</p></li>
 <li><p><strong>Android</strong> 8.1+</p></li>
 </ul>
 </section>
 <section id="talk-app">
 <h3>Talk App<a class="headerlink" href="#talk-app" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>iOS</strong> 15.0+</p></li>
+<li><p><strong>iOS</strong> 16.0+</p></li>
 <li><p><strong>Android</strong> 8.0+</p></li>
 <li><p><strong>Nextcloud Server</strong> 19.0+</p></li>
 <li><p><strong>Nextcloud Talk</strong> 9.0+</p></li>
@@ -378,7 +383,7 @@ screensharing.</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -404,6 +409,8 @@ screensharing.</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -411,8 +418,6 @@ screensharing.</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Tools\Traits;
 
@@ -23,6 +25,7 @@ trait TArrayTools {
 	public static $TYPE_BOOLEAN = 'Boolean';
 	public static $TYPE_INTEGER = 'Integer';
 	public static $TYPE_SERIALIZABLE = 'Serializable';
+
 
 	/**
 	 * @param string $k
@@ -57,6 +60,7 @@ trait TArrayTools {
 		return (string)$arr[$k];
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param array $arr
@@ -90,6 +94,7 @@ trait TArrayTools {
 		return intval($arr[$k]);
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param array $arr
@@ -122,6 +127,7 @@ trait TArrayTools {
 
 		return intval($arr[$k]);
 	}
+
 
 	/**
 	 * @param string $k
@@ -164,6 +170,7 @@ trait TArrayTools {
 		return $default;
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param array $arr
@@ -187,6 +194,7 @@ trait TArrayTools {
 
 		return $arr[$k];
 	}
+
 
 	/**
 	 * @param string $k
@@ -230,6 +238,7 @@ trait TArrayTools {
 		return $r;
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param array $arr
@@ -258,6 +267,7 @@ trait TArrayTools {
 		return false;
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param array $arr
@@ -284,6 +294,7 @@ trait TArrayTools {
 		return $r;
 	}
 
+
 	/**
 	 * @param string $k
 	 * @param string $value
@@ -305,6 +316,7 @@ trait TArrayTools {
 
 		throw new ArrayNotFoundException();
 	}
+
 
 	/**
 	 * @param string $key
@@ -361,6 +373,7 @@ trait TArrayTools {
 		throw new ItemNotFoundException();
 	}
 
+
 	/**
 	 * @param array $keys
 	 * @param array $arr
@@ -376,6 +389,7 @@ trait TArrayTools {
 			}
 		}
 	}
+
 
 	/**
 	 * @param array $arr

@@ -465,13 +465,13 @@ class LocalController extends OCSController {
 
 	#[NoAdminRequired]
 	#[BruteForceProtection(action: 'members')]
-	public function members(string $circleId, bool $fullDetails = false, int $limit = 0, string $search = ''): DataResponse {
+	public function members(string $circleId, bool $fullDetails = false, int $limit = 0, string $search = '', ?int $role = null): DataResponse {
 		try {
 			$this->setCurrentFederatedUser();
 
 			$this->permissionService->userMustBeMember($this->userSession->getUser()->getUID(), $circleId);
 
-			return new DataResponse($this->serializeArray($this->memberService->getMembers($circleId, $fullDetails, $limit, $search)));
+			return new DataResponse($this->serializeArray($this->memberService->getMembers($circleId, $fullDetails, $limit, $search, $role)));
 		} catch (InsufficientPermissionException $e) {
 			$response = new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 			$response->throttle();

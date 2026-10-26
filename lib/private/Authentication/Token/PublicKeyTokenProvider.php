@@ -511,6 +511,10 @@ class PublicKeyTokenProvider implements IProvider {
 
 		if ($expires !== null) {
 			$dbToken->setExpires($expires);
+		} elseif ($type === OCPIToken::ONETIME_TOKEN) {
+			// Minimum duration is 2 minutes as shown in the UI
+			$expirationDuration = max(120, $this->config->getSystemValueInt('auth_onetime_token_validity', 120));
+			$dbToken->setExpires($this->time->getTime() + $expirationDuration);
 		}
 
 		return $dbToken;

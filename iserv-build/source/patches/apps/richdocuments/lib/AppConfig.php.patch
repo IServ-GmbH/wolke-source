@@ -1,8 +1,8 @@
 diff --git apps/richdocuments/lib/AppConfig.php apps/richdocuments/lib/AppConfig.php
-index 6261afc75..d59c9decb 100644
+index e03021de9..b89252ead 100644
 --- apps/richdocuments/lib/AppConfig.php
 +++ apps/richdocuments/lib/AppConfig.php
-@@ -229,18 +229,20 @@ class AppConfig {
+@@ -234,18 +234,20 @@ class AppConfig {
  		}
  
  		$federationService = \OCP\Server::get(FederationService::class);

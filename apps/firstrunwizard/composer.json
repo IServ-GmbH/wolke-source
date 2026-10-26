@@ -3,13 +3,19 @@
 	"description": "The Nextcloud firstrunwizard",
 	"license": "AGPL",
 	"config": {
-		"allow-plugins": {
-			"bamarni/composer-bin-plugin": true
-		},
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "8.1"
+			"php": "8.2"
+		},
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
+		}
+	},
+	 "extra": {
+		"bamarni-bin": {
+			"bin-links": true,
+			"forward-command": true
 		}
 	},
 	"require-dev": {
@@ -21,6 +27,7 @@
 		"cs:fix": "php-cs-fixer fix",
 		"psalm": "psalm --no-cache --threads=$(nproc)",
 		"test:unit": "vendor/bin/phpunit --color --fail-on-warning -c tests/phpunit.xml",
+		"rector": "rector && composer cs:fix",
 		"post-install-cmd": [
 			"[ $COMPOSER_DEV_MODE -eq 0 ] || composer bin all install --ansi",
 			"composer dump-autoload"

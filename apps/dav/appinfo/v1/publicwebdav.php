@@ -15,6 +15,7 @@ use OCA\DAV\Files\Sharing\FilesDropPlugin;
 use OCA\DAV\Files\Sharing\PublicLinkCheckPlugin;
 use OCA\DAV\Storage\PublicOwnerWrapper;
 use OCA\FederatedFileSharing\FederatedShareProvider;
+use OCP\App\IAppManager;
 use OCP\BeforeSabrePubliclyLoadedEvent;
 use OCP\Constants;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -28,16 +29,19 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\ITagManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory as IL10nFactory;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 // load needed apps
 $RUNTIME_APPTYPES = ['filesystem', 'authentication', 'logging'];
+Server::get(IAppManager::class)->loadApps($RUNTIME_APPTYPES);
 
-OC_App::loadApps($RUNTIME_APPTYPES);
-
-OC_Util::obEnd();
+// Turn off output buffering to prevent memory problems
+while (ob_get_level()) {
+	ob_end_clean();
+}
 Server::get(ISession::class)->close();
 
 // Backends
@@ -62,7 +66,7 @@ $serverFactory = new ServerFactory(
 	Server::get(IRequest::class),
 	Server::get(IPreview::class),
 	$eventDispatcher,
-	\OC::$server->getL10N('dav')
+	Server::get(IL10nFactory::class)->get('dav')
 );
 
 $requestUri = Server::get(IRequest::class)->getRequestUri();
@@ -70,6 +74,7 @@ $requestUri = Server::get(IRequest::class)->getRequestUri();
 $linkCheckPlugin = new PublicLinkCheckPlugin();
 $filesDropPlugin = new FilesDropPlugin();
 
+/** @var string $baseuri defined in public.php */
 $server = $serverFactory->createServer(
 	true,
 	$baseuri,
@@ -101,7 +106,7 @@ $server = $serverFactory->createServer(
 				return new DirPermissionsMask([
 					'storage' => $storage,
 					'mask' => $mask,
-					'path' => 'files'
+					'path' => 'files',
 				]);
 			} else {
 				return new PermissionsMask(['storage' => $storage, 'mask' => $mask]);
@@ -113,7 +118,10 @@ $server = $serverFactory->createServer(
 		Filesystem::logWarningWhenAddingStorageWrapper($previousLog);
 
 		$rootFolder = Server::get(IRootFolder::class);
-		$userFolder = $rootFolder->getUserFolder($share->getSharedBy());
+		$userId = $share->getShareType() === \OCP\Share\IShare::TYPE_REMOTE
+			? $share->getShareOwner()
+			: $share->getSharedBy();
+		$userFolder = $rootFolder->getUserFolder($userId);
 		$node = $userFolder->getFirstNodeById($fileId);
 		if (!$node) {
 			throw new \Sabre\DAV\Exception\NotFound();
@@ -147,4 +155,4 @@ $event = new BeforeSabrePubliclyLoadedEvent($server);
 $eventDispatcher->dispatchTyped($event);
 
 // And off we go!
-$server->exec();
+$server->start();

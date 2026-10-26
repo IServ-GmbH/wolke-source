@@ -15,24 +15,22 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
+use Override;
 
 class Personal implements ISettings {
 
 	public function __construct(
-		private IConfig $config,
-		private IURLGenerator $urlGenerator,
-		private Defaults $defaults,
-		private IInitialState $initialState,
-		private IL10N $l,
-		private IRequest $request,
+		private readonly IConfig $config,
+		private readonly IURLGenerator $urlGenerator,
+		private readonly Defaults $defaults,
+		private readonly IInitialState $initialState,
+		private readonly IL10N $l,
+		private readonly IRequest $request,
 	) {
 	}
 
-	/**
-	 * @return TemplateResponse returns the instance with all parameters set, ready to be rendered
-	 * @since 9.1
-	 */
-	public function getForm() {
+	#[Override]
+	public function getForm(): TemplateResponse {
 		$apps = [
 			'calendar' => [
 				'label' => $this->l->t('Connect your calendar'),
@@ -69,33 +67,18 @@ class Personal implements ISettings {
 		return new TemplateResponse('firstrunwizard', 'personal-settings');
 	}
 
-	/**
-	 * @return string the section ID, e.g. 'sharing'
-	 * @since 9.1
-	 */
-	public function getSection() {
+	#[Override]
+	public function getSection(): string {
 		return 'sync-clients';
 	}
 
-	/**
-	 * @return int whether the form should be rather on the top or bottom of
-	 *             the admin section. The forms are arranged in ascending order of the
-	 *             priority values. It is required to return a value between 0 and 100.
-	 *
-	 * E.g.: 70
-	 * @since 9.1
-	 */
-	public function getPriority() {
+	#[Override]
+	public function getPriority(): int {
 		return 20;
 	}
 
-	/**
-	 * returns an array containing links to the various clients
-	 *
-	 * @return array
-	 */
-	private function getClientLinks() {
-		$clients = [
+	private function getClientLinks(): array {
+		return [
 			'desktop' => [
 				'href' => $this->config->getSystemValue('customclient_desktop', $this->defaults->getSyncClientUrl()),
 				'name' => $this->l->t('Desktop client'),
@@ -117,6 +100,5 @@ class Personal implements ISettings {
 				'image' => $this->urlGenerator->imagePath('core', 'appstore.svg'),
 			],
 		];
-		return $clients;
 	}
 }

@@ -1,38 +1,38 @@
 diff --git apps/files_sharing/src/views/SharingDetailsTab.vue apps/files_sharing/src/views/SharingDetailsTab.vue
-index a9e6163..ae05256 100644
+index de10018..e1339a0 100644
 --- apps/files_sharing/src/views/SharingDetailsTab.vue
 +++ apps/files_sharing/src/views/SharingDetailsTab.vue
-@@ -36,6 +36,7 @@
+@@ -38,6 +38,7 @@
  						</template>
  					</NcCheckboxRadioSwitch>
- 					<NcCheckboxRadioSwitch :button-variant="true"
-+					    v-if="canEditFileType"
+ 					<NcCheckboxRadioSwitch
++						v-if="canEditFileType"
+ 						v-model="sharingPermission"
+ 						:button-variant="true"
  						data-cy-files-sharing-share-permissions-bundle="upload-edit"
- 						:checked.sync="sharingPermission"
- 						:value="allPermissions"
-@@ -162,7 +163,7 @@
- 						:placeholder="t('files_sharing', 'Expiration date')"
+@@ -175,7 +176,7 @@
  						type="date"
  						@input="onExpirationChange" />
--					<NcCheckboxRadioSwitch v-if="isPublicShare"
-+					<NcCheckboxRadioSwitch v-if="isPublicShare && !downloadDisabled"
- 						:disabled="canChangeHideDownload"
- 						:checked.sync="share.hideDownload">
+ 					<NcCheckboxRadioSwitch
+-						v-if="isPublicShare"
++						v-if="isPublicShare && !downloadDisabled"
+ 						v-model="share.hideDownload"
+ 						:disabled="canChangeHideDownload">
  						{{ t('files_sharing', 'Hide download') }}
-@@ -215,7 +216,7 @@
- 							data-cy-files-sharing-share-permissions-checkbox="create">
- 							{{ t('files_sharing', 'Create') }}
+@@ -237,7 +238,7 @@
  						</NcCheckboxRadioSwitch>
--						<NcCheckboxRadioSwitch :disabled="!canSetEdit"
-+						<NcCheckboxRadioSwitch :disabled="!canSetEdit || !canEditFileType"
- 							:checked.sync="canEdit"
+ 						<NcCheckboxRadioSwitch
+ 							v-model="canEdit"
+-							:disabled="!canSetEdit"
++							:disabled="!canSetEdit || !canEditFileType"
  							data-cy-files-sharing-share-permissions-checkbox="update">
  							{{ t('files_sharing', 'Edit') }}
-@@ -389,6 +390,63 @@ export default {
+ 						</NcCheckboxRadioSwitch>
+@@ -413,6 +414,65 @@ export default {
  	},
  
  	computed: {
-+		canEditFileType () {
++		canEditFileType() {
 +			// Taken from https://github.com/nextcloud/text/blob/81f3256c03ebf2692e803486c0dcb6a8b442ce67/lib/DirectEditing/TextDirectEditor.php#L86
 +			const supportedMimeTypes = [
 +				'text/markdown',
@@ -83,30 +83,32 @@ index a9e6163..ae05256 100644
 +				'application/vnd.oasis.opendocument.formula',
 +				'application/vnd.oasis.opendocument.database',
 +				'application/vnd.oasis.opendocument.image',
-+			];
-+			return this.isFolder || supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase());
++			]
++			return this.isFolder || supportedMimeTypes.includes(this.fileInfo.mimetype?.toLowerCase())
 +		},
++
 +		downloadDisabled() {
-+			return OC.appConfig.core.disableFileDownloads === true;
++			return OC.appConfig.core.disableFileDownloads === true
 +		},
++
  		title() {
  			switch (this.share.type) {
- 			case ShareType.User:
-@@ -430,7 +488,7 @@ export default {
+ 				case ShareType.User:
+@@ -473,7 +533,7 @@ export default {
  		 */
  		canEdit: {
  			get() {
 -				return this.share.hasUpdatePermission
 +				return this.share.hasUpdatePermission && this.canEditFileType
  			},
+ 
  			set(checked) {
- 				this.updateAtomicPermissions({ isEditChecked: checked })
-@@ -488,7 +546,7 @@ export default {
+@@ -539,7 +599,7 @@ export default {
  		 */
  		canDownload: {
  			get() {
 -				return this.getShareAttribute('permissions', 'download', true)
 +				return !this.downloadDisabled && this.getShareAttribute('permissions', 'download', true)
  			},
+ 
  			set(checked) {
- 				this.setShareAttribute('permissions', 'download', checked)

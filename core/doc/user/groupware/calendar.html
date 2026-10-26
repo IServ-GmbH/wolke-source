@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the Calendar app &mdash; Nextcloud 32 User Manual</title>
+  <title>Using the Calendar app &mdash; Nextcloud 33 User Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -62,7 +62,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 32 user manual introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 33 user manual introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files &amp; synchronization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Groupware</a><ul class="current">
@@ -75,6 +75,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#edit-export-or-delete-a-calendar">Edit, Export or Delete a Calendar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#calendar-transparency">Calendar Transparency</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sharing-calendars">Sharing calendars</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calendar-delegation">Calendar delegation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#federated-calendar-sharing">Federated calendar sharing</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#publishing-a-calendar">Publishing a calendar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#calendar-widget">Calendar Widget</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#subscribe-to-a-calendar">Subscribe to a Calendar</a></li>
@@ -144,7 +146,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 User Manual</a>
+          <a href="../contents.html">Nextcloud 33 User Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -203,12 +205,12 @@ and colleagues.</p></li>
 <p>If you want to transfer your calendar and their respective events to your Nextcloud
 instance, importing is the best way to do so.</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="../../_images/calendar_settings_sidebar.png"><img alt="../../_images/calendar_settings_sidebar.png" src="../../_images/calendar_settings_sidebar.png" style="width: 604.0px; height: 446.40000000000003px;" />
+<a class="reference internal image-reference" href="../../_images/calendar_importing.png"><img alt="../../_images/calendar_importing.png" src="../../_images/calendar_importing.png" style="width: 697.5px; height: 225.0px;" />
 </a>
 </figure>
 <ol class="arabic simple">
 <li><p>Click on the settings-icon labeled with <code class="docutils literal notranslate"><span class="pre">Calendar</span> <span class="pre">settings</span></code> at the bottom-left.</p></li>
-<li><p>After clicking on <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Calendar</span></code> you can select one or more calendar files
+<li><p>After clicking on <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">Calendar</span></code>, found in the <code class="docutils literal notranslate"><span class="pre">General</span></code> section, you can select one or more calendar files
 from your local device to upload.</p></li>
 <li><p>Select a <code class="docutils literal notranslate"><span class="pre">Calendar</span> <span class="pre">to</span> <span class="pre">import</span> <span class="pre">into</span></code>.</p></li>
 <li><p>The upload can take some time and depends on how big the calendar you import
@@ -268,8 +270,7 @@ always be free, regardless of an events’ settings.</p>
 </section>
 <section id="sharing-calendars">
 <h3>Sharing calendars<a class="headerlink" href="#sharing-calendars" title="Link to this heading"></a></h3>
-<p>You may share your calendar with local users, groups or read-only with remote users on federated
-servers.</p>
+<p>You may share your calendar with local users, groups or with remote users on federated servers.</p>
 <figure class="align-default">
 <img alt="../../_images/calendar_sharing_1.png" src="../../_images/calendar_sharing_1.png" />
 </figure>
@@ -281,6 +282,27 @@ servers.</p>
 <p class="admonition-title">Note</p>
 <p>Calendar shares currently cannot be accepted or rejected. If you want to stop having a calendar that someone shared with you, you can click on the 3-dot menu next to the calendar in the calendar list and click on “Unshare from me”. To restore a share, the calendar can be reshared again, either for the whole group, resetting all unshares, or for a single user.</p>
 </div>
+</section>
+<section id="calendar-delegation">
+<h3>Calendar delegation<a class="headerlink" href="#calendar-delegation" title="Link to this heading"></a></h3>
+<p>In the app settings, you can delegate your calendars to other users so they can manage them for you.
+You can grant read access if they should only view the calendar, or write access if they should create,
+edit and delete events.</p>
+<p>Calendar delegation also works with other clients that support calendar delegation.</p>
+</section>
+<section id="federated-calendar-sharing">
+<h3>Federated calendar sharing<a class="headerlink" href="#federated-calendar-sharing" title="Link to this heading"></a></h3>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 32.0.0.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 33.0.0: </span>Federated calendar shares support read/write access.</p>
+</div>
+<p>Sharing a calendar with a user on another Nextcloud instance works just like sharing with a local user.
+The difference is that you need to use the federated user identifier as the recipient, which has the format
+<code class="docutils literal notranslate"><span class="pre">&lt;username&gt;&#64;&lt;instance&gt;</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">alice&#64;cloud.example.com</span></code>).</p>
+<p>Starting with Nextcloud 33, federated shares support full read/write access, allowing remote users to
+create, edit, and delete events in the shared calendar. In Nextcloud 32, federated shares were read-only.</p>
 </section>
 <section id="publishing-a-calendar">
 <h3>Publishing a calendar<a class="headerlink" href="#publishing-a-calendar" title="Link to this heading"></a></h3>
@@ -323,7 +345,7 @@ you can exchange your calendars with, including subscription links from calendar
 <section id="subscribe-to-a-holiday-calendar">
 <h3>Subscribe to a Holiday Calendar<a class="headerlink" href="#subscribe-to-a-holiday-calendar" title="Link to this heading"></a></h3>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 4.4.</span></p>
+<p><span class="versionmodified added">Added in version 4.4: </span>Nextcloud 25 or newer</p>
 </div>
 <p>You can subscribe to a read-only holiday calendar provided by <a class="reference external" href="https://www.thunderbird.net/calendar/holidays/">Thunderbird</a>.</p>
 <ol class="arabic simple">
@@ -397,7 +419,7 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 </a>
 </figure>
 <div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 25: </span>Attendee email response links no longer offer inputs to add a comment or invite additional guests to the event.</p>
+<p><span class="versionmodified changed">Changed in version 25.0.0: </span>Attendee email response links no longer offer inputs to add a comment or invite additional guests to the event.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -437,7 +459,7 @@ Attendees may be other users on your Nextcloud instances, contacts in your addre
 <section id="room-availability">
 <h3>Room availability<a class="headerlink" href="#room-availability" title="Link to this heading"></a></h3>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 5.0.</span></p>
+<p><span class="versionmodified added">Added in version 5.0: </span>Nextcloud 30 or newer</p>
 </div>
 <p>If the “Calendar Rooms and Resources” app is installed on your instance, you can now find <code class="docutils literal notranslate"><span class="pre">Room</span> <span class="pre">availability</span></code>  the <code class="docutils literal notranslate"><span class="pre">Resources</span></code> section. It lists all the existing rooms. You can check the availability of each room in a manner similar to checking the free/busy status of event attendees.</p>
 <figure class="align-default">
@@ -645,7 +667,7 @@ The system will detect the conflict and offer to pick a new time slot.</p>
 <section id="proposals">
 <h2>Proposals<a class="headerlink" href="#proposals" title="Link to this heading"></a></h2>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 6.0.0.</span></p>
+<p><span class="versionmodified added">Added in version 6.0: </span>Nextcloud 32 or newer</p>
 </div>
 <p>Finding a meeting time for a group of participants can be challenging. As of Calendar v6, a new feature was introduced that allows users to create proposals for meeting times.
 This means that instead of just booking a time, or searching for a available time in the free busy view, participants can vote on a set of proposed times for a meeting.
@@ -728,47 +750,6 @@ The organizer can then review the participants’ preferences and choose the mos
   </div>
   
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- Here go the languages -->
 
   
@@ -855,17 +836,13 @@ The organizer can then review the participants’ preferences and choose the mos
   
     
   
-    
-  
-    
-  
   
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       🌐 English
       <span class="fa fa-caret-down"></span>
-       ☁️ 32
+       ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -877,14 +854,6 @@ The organizer can then review the participants’ preferences and choose the mos
                
             >
               Arabic
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/eu/"
-               
-            >
-              Basque
             </a>
           </dd>
         
@@ -1171,14 +1140,6 @@ The organizer can then review the participants’ preferences and choose the mos
           </dd>
         
           <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/uk/"
-               
-            >
-              uk
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
             <a href="/server/latest/user_manual/uk_UA/"
                
             >
@@ -1227,6 +1188,8 @@ The organizer can then review the participants’ preferences and choose the mos
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/33/user_manual"
                
+               style="color: var(--dark-link-color);"
+               
             >
               33
             </a>
@@ -1234,8 +1197,6 @@ The organizer can then review the participants’ preferences and choose the mos
         
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/32/user_manual"
-               
-               style="color: var(--dark-link-color);"
                
             >
               32

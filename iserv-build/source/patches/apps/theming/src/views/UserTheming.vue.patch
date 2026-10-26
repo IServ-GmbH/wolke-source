@@ -1,0 +1,60 @@
+diff --git apps/theming/src/views/UserTheming.vue apps/theming/src/views/UserTheming.vue
+index fe3be2a..bcb2153 100644
+--- apps/theming/src/views/UserTheming.vue
++++ apps/theming/src/views/UserTheming.vue
+@@ -7,11 +7,6 @@
+ 	<NcSettingsSection
+ 		:name="t('theming', 'Appearance and accessibility settings')"
+ 		class="theming">
+-		<!-- eslint-disable-next-line vue/no-v-html -->
+-		<p v-html="description" />
+-		<!-- eslint-disable-next-line vue/no-v-html -->
+-		<p v-html="descriptionDetail" />
+-
+ 		<div class="theming__preview-list">
+ 			<ThemePreviewItem
+ 				v-for="theme in themes"
+@@ -51,7 +46,6 @@
+ 
+ 	<template v-else>
+ 		<UserSectionPrimaryColor ref="primaryColor" @refreshStyles="refreshGlobalStyles" />
+-		<UserSectionBackground @refreshStyles="refreshGlobalStyles" />
+ 	</template>
+ 
+ 	<UserSectionHotkeys />
+@@ -72,7 +66,6 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+ import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
+ import ThemePreviewItem from '../components/ThemePreviewItem.vue'
+ import UserSectionAppMenu from '../components/UserSectionAppMenu.vue'
+-import UserSectionBackground from '../components/UserSectionBackground.vue'
+ import UserSectionHotkeys from '../components/UserSectionHotkeys.vue'
+ import UserSectionPrimaryColor from '../components/UserSectionPrimaryColor.vue'
+ import { logger } from '../utils/logger.ts'
+@@ -91,27 +84,6 @@ const selectedTheme = computed(() => themes.value.find((theme) => theme.enabled)
+ 
+ const primaryColorSection = useTemplateRef('primaryColor')
+ 
+-const description = t(
+-	'theming',
+-	'Universal access is very important to us. We follow web standards and check to make everything usable also without mouse, and assistive software such as screenreaders. We aim to be compliant with the {linkstart}Web Content Accessibility Guidelines{linkend} 2.1 on AA level, with the high contrast theme even on AAA level.',
+-	{
+-		linkstart: '<a target="_blank" href="https://www.w3.org/WAI/standards-guidelines/wcag/" rel="noreferrer nofollow">',
+-		linkend: '</a>',
+-	},
+-	{ escape: false },
+-)
+-
+-const descriptionDetail = t(
+-	'theming',
+-	'If you find any issues, do not hesitate to report them on {issuetracker}our issue tracker{linkend}. And if you want to get involved, come join {designteam}our design team{linkend}!',
+-	{
+-		issuetracker: '<a target="_blank" href="https://github.com/nextcloud/server/issues/" rel="noreferrer nofollow">',
+-		designteam: '<a target="_blank" href="https://nextcloud.com/design" rel="noreferrer nofollow">',
+-		linkend: '</a>',
+-	},
+-	{ escape: false },
+-)
+-
+ /**
+  * Refresh server-side generated theming CSS
+  */

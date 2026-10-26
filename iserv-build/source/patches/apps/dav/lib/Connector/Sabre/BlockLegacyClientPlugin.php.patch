@@ -1,5 +1,5 @@
 diff --git apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
-index 2135840..a2996d2 100644
+index 3b0a78d..3ca448b 100644
 --- apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
 +++ apps/dav/lib/Connector/Sabre/BlockLegacyClientPlugin.php
 @@ -70,5 +70,32 @@ class BlockLegacyClientPlugin extends ServerPlugin {

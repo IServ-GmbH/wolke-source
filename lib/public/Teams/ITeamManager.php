@@ -45,8 +45,16 @@ interface ITeamManager {
 	 * Returns all team resources for the given teams, user and resource
 	 *
 	 * @return array<string, list<TeamResource>>
-	 * @since 32.0.2
-	 * @since 32.0.9 Added $resourceId param
+	 * @since 33.0.0
+	 * @since 33.0.3 Added $resourceId param
 	 */
 	public function getSharedWithList(array $teams, string $userId, string $resourceId): array;
+
+	/**
+	 * Returns all teams that a given user is a member of
+	 *
+	 * @return list<Team>
+	 * @since 33.0.0
+	 */
+	public function getTeamsForUser(string $userId): array;
 }

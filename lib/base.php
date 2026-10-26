@@ -17,7 +17,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Events\BeforeFileSystemSetupEvent;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\Group\Events\UserRemovedEvent;
+use OCP\IAppConfig;
 use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -83,7 +85,7 @@ class OC {
 	public static function initPaths(): void {
 		if (defined('PHPUNIT_CONFIG_DIR')) {
 			self::$configDir = OC::$SERVERROOT . '/' . PHPUNIT_CONFIG_DIR . '/';
-		} elseif (defined('PHPUNIT_RUN') and PHPUNIT_RUN and is_dir(OC::$SERVERROOT . '/tests/config/')) {
+		} elseif (defined('PHPUNIT_RUN') && PHPUNIT_RUN && is_dir(OC::$SERVERROOT . '/tests/config/')) {
 			self::$configDir = OC::$SERVERROOT . '/tests/config/';
 		} elseif ($dir = getenv('NEXTCLOUD_CONFIG_DIR')) {
 			self::$configDir = rtrim($dir, '/') . '/';
@@ -290,47 +292,49 @@ class OC {
 		$ignoreTooBigWarning = isset($_GET['IKnowThatThisIsABigInstanceAndTheUpdateRequestCouldRunIntoATimeoutAndHowToRestoreABackup'])
 			&& $_GET['IKnowThatThisIsABigInstanceAndTheUpdateRequestCouldRunIntoATimeoutAndHowToRestoreABackup'] === 'IAmSuperSureToDoThis';
 
+		Util::addTranslations('core');
+		Util::addScript('core', 'common');
+		Util::addScript('core', 'main');
+		Util::addScript('core', 'update');
+
+		$initialState = Server::get(IInitialStateService::class);
+		$serverVersion = \OCP\Server::get(\OCP\ServerVersion::class);
 		if ($disableWebUpdater || ($tooBig && !$ignoreTooBigWarning)) {
 			// send http status 503
 			http_response_code(503);
 			header('Retry-After: 120');
 
-			$serverVersion = \OCP\Server::get(\OCP\ServerVersion::class);
+			$urlGenerator = Server::get(IURLGenerator::class);
+			$initialState->provideInitialState('core', 'updaterView', 'adminCli');
+			$initialState->provideInitialState('core', 'updateInfo', [
+				'cliUpgradeLink' => $cliUpgradeLink ?: $urlGenerator->linkToDocs('admin-cli-upgrade'),
+				'productName' => self::getProductName(),
+				'version' => $serverVersion->getVersionString(),
+				'tooBig' => $tooBig,
+			]);
 
 			// render error page
-			$template = Server::get(ITemplateManager::class)->getTemplate('', 'update.use-cli', 'guest');
-			$template->assign('productName', 'nextcloud'); // for now
-			$template->assign('version', $serverVersion->getVersionString());
-			$template->assign('tooBig', $tooBig);
-			$template->assign('cliUpgradeLink', $cliUpgradeLink);
-
-			$template->printPage();
+			Server::get(ITemplateManager::class)
+				->getTemplate('', 'update', 'guest')
+				->printPage();
 			die();
 		}
 
 		// check whether this is a core update or apps update
 		$installedVersion = $systemConfig->getValue('version', '0.0.0');
-		$currentVersion = implode('.', \OCP\Util::getVersion());
+		$currentVersion = implode('.', $serverVersion->getVersion());
 
 		// if not a core upgrade, then it's apps upgrade
 		$isAppsOnlyUpgrade = version_compare($currentVersion, $installedVersion, '=');
 
 		$oldTheme = $systemConfig->getValue('theme');
 		$systemConfig->setValue('theme', '');
-		\OCP\Util::addScript('core', 'common');
-		\OCP\Util::addScript('core', 'main');
-		\OCP\Util::addTranslations('core');
-		\OCP\Util::addScript('core', 'update');
 
 		/** @var \OC\App\AppManager $appManager */
 		$appManager = Server::get(\OCP\App\IAppManager::class);
 
-		$tmpl = Server::get(ITemplateManager::class)->getTemplate('', 'update.admin', 'guest');
-		$tmpl->assign('version', \OCP\Server::get(\OCP\ServerVersion::class)->getVersionString());
-		$tmpl->assign('isAppsOnlyUpgrade', $isAppsOnlyUpgrade);
-
 		// get third party apps
-		$ocVersion = \OCP\Util::getVersion();
+		$ocVersion = $serverVersion->getVersion();
 		$ocVersion = implode('.', $ocVersion);
 		$incompatibleApps = $appManager->getIncompatibleApps($ocVersion);
 		$incompatibleOverwrites = $systemConfig->getValue('app_install_overwrite', []);
@@ -351,16 +355,41 @@ class OC {
 			throw new \OCP\HintException('Application ' . implode(', ', $incompatibleShippedApps) . ' is not present or has a non-compatible version with this server. Please check the apps directory.', $hint);
 		}
 
-		$tmpl->assign('appsToUpgrade', $appManager->getAppsNeedingUpgrade($ocVersion));
-		$tmpl->assign('incompatibleAppsList', $incompatibleDisabledApps);
+		$appConfig = Server::get(IAppConfig::class);
+		$appsToUpgrade = array_map(function ($app) use (&$appConfig) {
+			return [
+				'id' => $app['id'],
+				'name' => $app['name'],
+				'version' => $app['version'],
+				'oldVersion' => $appConfig->getValueString($app['id'], 'installed_version'),
+			];
+		}, $appManager->getAppsNeedingUpgrade($ocVersion));
+
+		$params = [
+			'appsToUpgrade' => $appsToUpgrade,
+			'incompatibleAppsList' => $incompatibleDisabledApps,
+			'isAppsOnlyUpgrade' => $isAppsOnlyUpgrade,
+			'oldTheme' => $oldTheme,
+			'productName' => self::getProductName(),
+			'version' => $serverVersion->getVersionString(),
+		];
+
+		$initialState->provideInitialState('core', 'updaterView', 'admin');
+		$initialState->provideInitialState('core', 'updateInfo', $params);
+		Server::get(ITemplateManager::class)
+			->getTemplate('', 'update', 'guest')
+			->printPage();
+	}
+
+	private static function getProductName(): string {
+		$productName = 'Nextcloud';
 		try {
 			$defaults = new \OC_Defaults();
-			$tmpl->assign('productName', $defaults->getName());
+			$productName = $defaults->getName();
 		} catch (Throwable $error) {
-			$tmpl->assign('productName', 'Nextcloud');
+			// ignore
 		}
-		$tmpl->assign('oldTheme', $oldTheme);
-		$tmpl->printPage();
+		return $productName;
 	}
 
 	public static function initSession(): void {
@@ -447,14 +476,14 @@ class OC {
 	}
 
 	private static function getSessionLifeTime(): int {
-		return Server::get(\OC\AllConfig::class)->getSystemValueInt('session_lifetime', 60 * 60 * 24);
+		return Server::get(IConfig::class)->getSystemValueInt('session_lifetime', 60 * 60 * 24);
 	}
 
 	/**
 	 * @return bool true if the session expiry should only be done by gc instead of an explicit timeout
 	 */
 	public static function hasSessionRelaxedExpiry(): bool {
-		return Server::get(\OC\AllConfig::class)->getSystemValueBool('session_relaxed_expiry', false);
+		return Server::get(IConfig::class)->getSystemValueBool('session_relaxed_expiry', false);
 	}
 
 	/**
@@ -576,6 +605,41 @@ class OC {
 			}
 		} elseif (!isset($_COOKIE['nc_sameSiteCookielax']) || !isset($_COOKIE['nc_sameSiteCookiestrict'])) {
 			self::sendSameSiteCookies();
+		}
+	}
+
+	/**
+	 * This function adds some security related headers to all requests served via base.php
+	 * The implementation of this function has to happen here to ensure that all third-party
+	 * components (e.g. SabreDAV) also benefit from this headers.
+	 */
+	private static function addSecurityHeaders(): void {
+		/**
+		 * FIXME: Content Security Policy for legacy components. This
+		 * can be removed once \OCP\AppFramework\Http\Response from the AppFramework
+		 * is used everywhere.
+		 * @see \OCP\AppFramework\Http\Response::getHeaders
+		 */
+		$policy = 'default-src \'self\'; '
+			. 'script-src \'self\' \'nonce-' . \OC::$server->getContentSecurityPolicyNonceManager()->getNonce() . '\'; '
+			. 'style-src \'self\' \'unsafe-inline\'; '
+			. 'frame-src *; '
+			. 'img-src * data: blob:; '
+			. 'font-src \'self\' data:; '
+			. 'media-src *; '
+			. 'connect-src *; '
+			. 'object-src \'none\'; '
+			. 'base-uri \'self\'; ';
+		header('Content-Security-Policy:' . $policy);
+
+		// Send fallback headers for installations that don't have the possibility to send
+		// custom headers on the webserver side
+		if (getenv('modHeadersAvailable') !== 'true') {
+			header('Referrer-Policy: no-referrer'); // https://www.w3.org/TR/referrer-policy/
+			header('X-Content-Type-Options: nosniff'); // Disable sniffing the content type for IE
+			header('X-Frame-Options: SAMEORIGIN'); // Disallow iFraming from other domains
+			header('X-Permitted-Cross-Domain-Policies: none'); // https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
+			header('X-Robots-Tag: noindex, nofollow'); // https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
 		}
 	}
 
@@ -702,7 +766,7 @@ class OC {
 		self::checkConfig();
 		self::checkInstalled($systemConfig);
 
-		OC_Response::addSecurityHeaders();
+		self::addSecurityHeaders();
 
 		self::performSameSiteCookieProtection($config);
 

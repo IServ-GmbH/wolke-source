@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuring Object Storage as Primary Storage &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Configuring Object Storage as Primary Storage &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -106,6 +106,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#multibucket-object-store">Multibucket Object Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#multibucket-object-store-with-per-bucket-configuration-overrides">Multibucket Object Store with per Bucket configuration overrides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-instance-object-store">Multi-instance Object Store</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#s3-sse-c-encryption-support">S3 SSE-C encryption support</a></li>
 </ul>
 </li>
@@ -146,6 +147,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -170,7 +172,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -401,11 +403,12 @@ virtual filesystem.</p>
 <h2>Multibucket Object Store<a class="headerlink" href="#multibucket-object-store" title="Link to this heading"></a></h2>
 <p>It’s possible to configure Nextcloud to distribute the data over multiple buckets
 for scalability purposes.</p>
-<p>To setup multiple buckets, use <code class="code docutils literal notranslate"><span class="pre">'objectstore_multibucket'</span></code> storage backend
-in <code class="code docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore_multibucket&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+<p>To setup multiple buckets, set <code class="code docutils literal notranslate"><span class="pre">'multibucket</span> <span class="pre">=&gt;</span> <span class="pre">true'</span></code> in the object store
+configuration in <code class="code docutils literal notranslate"><span class="pre">config.php</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
     <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Object</span><span class="se">\\</span><span class="s1">Storage</span><span class="se">\\</span><span class="s1">Backend</span><span class="se">\\</span><span class="s1">Class&#39;</span><span class="p">,</span>
     <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;multibucket&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
         <span class="o">//</span> <span class="n">optional</span><span class="p">,</span> <span class="n">defaults</span> <span class="n">to</span> <span class="mi">64</span>
         <span class="s1">&#39;num_buckets&#39;</span> <span class="o">=&gt;</span> <span class="mi">64</span><span class="p">,</span>
         <span class="o">//</span> <span class="n">will</span> <span class="n">be</span> <span class="n">postfixed</span> <span class="n">by</span> <span class="n">an</span> <span class="n">integer</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">range</span> <span class="kn">from</span><span class="w"> </span><span class="mi">0</span> <span class="n">to</span> <span class="p">(</span><span class="n">num_nuckets</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -451,6 +454,54 @@ A script for provisioning new Team folders this way could look like this (first 
 </pre></div>
 </div>
 <p>The credentials must be set before the new Team folder is created.</p>
+</section>
+<section id="multi-instance-object-store">
+<h2>Multi-instance Object Store<a class="headerlink" href="#multi-instance-object-store" title="Link to this heading"></a></h2>
+<p>It’s possible to configure Nextcloud to distribute the data over multiple object store
+instances for further scaling and gradual migration.</p>
+<p>To setup multiple buckets, set <code class="code docutils literal notranslate"><span class="pre">'objectstore'</span></code> to an array of named configurations
+configuration in <code class="code docutils literal notranslate"><span class="pre">config.php</span></code> and set the <code class="code docutils literal notranslate"><span class="pre">'default'</span></code> to the name of the
+configuration to use for newly created users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;objectstore&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;default&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;server2&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;root&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;server1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;server1&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Object</span><span class="se">\\</span><span class="s1">Storage</span><span class="se">\\</span><span class="s1">Backend</span><span class="se">\\</span><span class="s1">Class&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;hostname&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;s3-server1.example.com&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;bucket&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;s1_nextcloud&#39;</span><span class="p">,</span>
+            <span class="o">...</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;server2&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Object</span><span class="se">\\</span><span class="s1">Storage</span><span class="se">\\</span><span class="s1">Backend</span><span class="se">\\</span><span class="s1">Class&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;arguments&#39;</span> <span class="o">=&gt;</span> <span class="p">[</span>
+            <span class="s1">&#39;multibucket&#39;</span> <span class="o">=&gt;</span> <span class="n">true</span><span class="p">,</span>
+            <span class="s1">&#39;hostname&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;s3-server2.example.com&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;bucket&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;s2_nextcloud_&#39;</span><span class="p">,</span>
+            <span class="o">...</span>
+        <span class="p">],</span>
+    <span class="p">],</span>
+<span class="p">],</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Bucket names must be unique between all configured object store instances.</p>
+</div>
+<p>Newly created users will be mapped to the object store instance set in <code class="code docutils literal notranslate"><span class="pre">default</span></code>.
+Files that are not part of the users storage are put in the <code class="code docutils literal notranslate"><span class="pre">root</span></code> instance, or
+in the <code class="code docutils literal notranslate"><span class="pre">default</span></code> instance if no <code class="code docutils literal notranslate"><span class="pre">root</span></code> instance is configured.</p>
+<p>In the above example, if <code class="code docutils literal notranslate"><span class="pre">server2</span></code> is starting to run low on capacity, an admin can
+setup and configure a new <code class="code docutils literal notranslate"><span class="pre">server3</span></code> and change the <code class="code docutils literal notranslate"><span class="pre">default</span></code> to <code class="code docutils literal notranslate"><span class="pre">server3</span></code>.
+Than any newly created user will have their files put on <code class="code docutils literal notranslate"><span class="pre">server3</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As with multibucket object store, the user-to-instance mapping is only created once,
+so only newly created users will be mapped to the new default instance.</p>
+</div>
+<p>It is possible to mix different object store backends and multibucket and non-multibucket in
+a multi-instance configuration.</p>
 </section>
 <section id="s3-sse-c-encryption-support">
 <h2>S3 SSE-C encryption support<a class="headerlink" href="#s3-sse-c-encryption-support" title="Link to this heading"></a></h2>
@@ -508,7 +559,7 @@ A script for provisioning new Team folders this way could look like this (first 
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -534,6 +585,8 @@ A script for provisioning new Team folders this way could look like this (first 
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -541,8 +594,6 @@ A script for provisioning new Team folders this way could look like this (first 
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

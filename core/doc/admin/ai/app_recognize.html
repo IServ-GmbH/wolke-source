@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App: Recognize &mdash; Nextcloud 32 Administration Manual</title>
+  <title>App: Recognize &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -126,9 +126,10 @@
 <li class="toctree-l2"><a class="reference internal" href="app_context_agent.html">App: Context Agent (context_agent)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_summary_bot.html">App: Summary Bot (Talk chat summarize bot)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_text2speech_kokoro.html">App: Local Text-To-Speech (text2speech_kokoro)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription and Translation in Nextcloud Talk (live_transcription)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eu_ai_act.html">Legal: Compliance with EU AI Act</a></li>
 </ul>
 </li>
 </ul>
@@ -147,6 +148,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -171,7 +173,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -192,10 +194,10 @@
              
   <section id="app-recognize">
 <h1>App: Recognize<a class="headerlink" href="#app-recognize" title="Link to this heading"></a></h1>
-<p id="ai-app-recognize">The <em>recognize</em> app provides media tagging and face recognition functionality for the photos app. <em>Recognize</em> can group similar faces on user’s photos (“face recognition”); it can add fitting tags to photos detecting landscapes, food, vehicles, buildings animals and other objects, as well as known landmarks and monuments; it can recognize music genres in user’s audio files and adds tags for those; it can recognize human actions on user’s video files and add tags for them. It specifically runs only open source models and does so entirely on-premises. Nextcloud can provide customer support upon request, please talk to your account manager for the possibilities.</p>
+<p id="ai-app-recognize">The <em>recognize</em> app provides media tagging and face recognition functionality for the memories app. <em>Recognize</em> can group similar faces on user’s photos (“face recognition”); it can add fitting tags to photos detecting landscapes, food, vehicles, buildings animals and other objects, as well as known landmarks and monuments; it can recognize music genres in user’s audio files and adds tags for those; it can recognize human actions on user’s video files and add tags for them. It specifically runs only open source models and does so entirely on-premises. Nextcloud can provide customer support upon request, please talk to your account manager for the possibilities.</p>
 <section id="front-end">
 <h2>Front-end<a class="headerlink" href="#front-end" title="Link to this heading"></a></h2>
-<p>Tagged files will appear in the Photos app under the “Tags” section as well as in the normal Files app. Face recognition results will appear under the “People” section in the Photos app.</p>
+<p>Tagged files will appear in the Memories app under the “Tags” section as well as in the normal Files app. Face recognition results will appear under the “People” section in the Memories app.</p>
 </section>
 <section id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h2>
@@ -358,7 +360,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -384,6 +386,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -391,8 +395,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -65,7 +65,7 @@ class RemoveClassifiedEventActivity implements IRepairStep {
 			->where($query->expr()->eq('o.classification', $query->createNamedParameter(CalDavBackend::CLASSIFICATION_PRIVATE)));
 		$result = $query->executeQuery();
 
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['principaluri'] === null) {
 				continue;
 			}
@@ -99,7 +99,7 @@ class RemoveClassifiedEventActivity implements IRepairStep {
 			->where($query->expr()->eq('o.classification', $query->createNamedParameter(CalDavBackend::CLASSIFICATION_CONFIDENTIAL)));
 		$result = $query->executeQuery();
 
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			if ($row['principaluri'] === null) {
 				continue;
 			}

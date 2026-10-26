@@ -52,7 +52,7 @@ class BackupCodeMapper extends QBMapper {
 
 		$qb->delete('twofactor_backupcodes')
 			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($uid)));
-		$qb->execute();
+		$qb->executeStatement();
 	}
 
 	/**

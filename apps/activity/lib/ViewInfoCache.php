@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -13,23 +15,14 @@ use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 
 class ViewInfoCache {
-	/** @var array */
-	protected $cachePath;
-	/** @var array */
-	protected $cacheId;
+	protected array $cacheId = [];
 
 	public function __construct(
 		protected IRootFolder $rootFolder,
 	) {
 	}
 
-	/**
-	 * @param string $user
-	 * @param int $fileId
-	 * @param string $path
-	 * @return array
-	 */
-	public function getInfoById($user, $fileId, $path) {
+	public function getInfoById(string $user, int $fileId, string $path): array {
 		if (isset($this->cacheId[$user][$fileId])) {
 			$cache = $this->cacheId[$user][$fileId];
 			if ($cache['path'] === null) {
@@ -42,12 +35,9 @@ class ViewInfoCache {
 	}
 
 	/**
-	 * @param string $user
-	 * @param int $fileId
-	 * @param string $filePath
-	 * @return array
+	 * @return array{path: string, exists: bool, is_dir: bool, view: string, node?: Node}
 	 */
-	protected function findInfoById($user, $fileId, $filePath) {
+	protected function findInfoById(string $user, int $fileId, string $filePath): array {
 		$cache = [
 			'path' => $filePath,
 			'exists' => false,
@@ -55,51 +45,45 @@ class ViewInfoCache {
 			'view' => '',
 		];
 
-		$notFound = false;
 		try {
 			$userFolder = $this->rootFolder->getUserFolder($user);
-			$entries = $userFolder->getById($fileId);
-			if (empty($entries)) {
+			$entry = $userFolder->getFirstNodeById($fileId);
+			if ($entry === null) {
 				throw new NotFoundException('No entries returned');
 			}
-			/** @var Node $entry */
-			$entry = array_shift($entries);
-
 			$cache['path'] = $userFolder->getRelativePath($entry->getPath());
 			$cache['is_dir'] = $entry instanceof Folder;
 			$cache['exists'] = true;
 			$cache['node'] = $entry;
-		} catch (NotFoundException $e) {
-			// The file was not found in the normal view,
-			// maybe it is in the trashbin?
-			try {
-				/** @var Folder $userTrashBin */
-				$userTrashBin = $this->rootFolder->get('/' . $user . '/files_trashbin');
-				$entries = $userTrashBin->getById($fileId);
-				if (empty($entries)) {
-					throw new NotFoundException('No entries returned');
-				}
+			$this->cacheId[$user][$fileId] = $cache;
+			return $cache;
+		} catch (NotFoundException) {
+			// The file was not found in the normal view, maybe it is in the trashbin?
+		}
 
-				/** @var Node $entry */
-				$entry = array_shift($entries);
-
-				$cache = [
-					'path' => $userTrashBin->getRelativePath($entry->getPath()),
-					'exists' => true,
-					'is_dir' => $entry instanceof Folder,
-					'view' => 'trashbin',
-					'node' => $entry,
-				];
-			} catch (NotFoundException $e) {
-				$notFound = true;
+		try {
+			$userTrashBin = $this->rootFolder->get('/' . $user . '/files_trashbin');
+			if (!$userTrashBin instanceof Folder) {
+				throw new NotFoundException('No trash bin found for user: ' . $user);
 			}
+			$entry = $userTrashBin->getFirstNodeById($fileId);
+			if ($entry === null) {
+				throw new NotFoundException('No entries returned');
+			}
+			$cache = [
+				'path' => $userTrashBin->getRelativePath($entry->getPath()),
+				'exists' => true,
+				'is_dir' => $entry instanceof Folder,
+				'view' => 'trashbin',
+				'node' => $entry,
+			];
+		} catch (NotFoundException) {
+			// Not found anywhere — cache path as null but return original filePath
+			$this->cacheId[$user][$fileId] = array_merge($cache, ['path' => null]);
+			return $cache;
 		}
 
 		$this->cacheId[$user][$fileId] = $cache;
-		if ($notFound) {
-			$this->cacheId[$user][$fileId]['path'] = null;
-		}
-
 		return $cache;
 	}
 }

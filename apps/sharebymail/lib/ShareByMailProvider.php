@@ -25,6 +25,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use OCP\Security\Events\GenerateSecurePasswordEvent;
 use OCP\Security\IHasher;
@@ -70,6 +71,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 		private IHasher $hasher,
 		private IEventDispatcher $eventDispatcher,
 		private IShareManager $shareManager,
+		private IEmailValidator $emailValidator,
 	) {
 	}
 
@@ -162,8 +164,11 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 		if ($share->getShareOwner() !== $share->getSharedBy()) {
 			$ownerFolder = $this->rootFolder->getUserFolder($share->getShareOwner());
 			$fileId = $share->getNode()->getId();
-			$nodes = $ownerFolder->getById($fileId);
-			$ownerPath = $nodes[0]->getPath();
+			$node = $ownerFolder->getFirstNodeById($fileId);
+			if ($node === null) {
+				throw new \LogicException("Unable to find node $fileId asociated with the share");
+			}
+			$ownerPath = $node->getPath();
 			$this->publishActivity(
 				$type === 'share' ? Activity::SUBJECT_SHARED_EMAIL_BY : Activity::SUBJECT_UNSHARED_EMAIL_BY,
 				[$ownerFolder->getRelativePath($ownerPath), $share->getSharedWith(), $share->getSharedBy()],
@@ -246,7 +251,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 		$emails = $this->getSharedWithEmails($share);
 		$validEmails = array_filter($emails, function (string $email) {
-			return $this->mailer->validateMailAddress($email);
+			return $this->emailValidator->isValid($email);
 		});
 
 		if (count($validEmails) === 0) {
@@ -264,17 +269,19 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 			// If we have a password set, we send it to the recipient
 			if ($share->getPassword() !== null) {
-				// If share-by-talk password is enabled, we do not send the notification
-				// to the recipient. They will have to request it to the owner after opening the link.
-				// Secondly, if the password expiration is disabled, we send the notification to the recipient
-				// Lastly, if the mail to recipient failed, we send the password to the owner as a fallback.
-				// If a password expires, the recipient will still be able to request a new one via talk.
-				$passwordExpire = $this->config->getSystemValue('sharing.enable_mail_link_password_expiration', false);
-				$passwordEnforced = $this->shareManager->shareApiLinkEnforcePassword();
-				if ($passwordExpire === false || $share->getSendPasswordByTalk()) {
+				// If sending the password by mail is disabled, we send the password to the owner.
+				// If share-by-talk password is enabled, we do not send the password to the recipient.
+				// They can request it from the owner after opening the link.
+				// Otherwise, we send the password to the recipient.
+				// If sending the password to the recipient fails, we send the password to the owner as a fallback.
+				// Password expiration does not affect this flow: the password is either sent to the recipient
+				// or, if sending fails, sent to the owner as a fallback.
+				if ($this->settingsManager->sendPasswordByMail() === false || $share->getSendPasswordByTalk()) {
+					$this->trySendPasswordToOwner($share);
+				} else {
 					$send = $this->sendPassword($share, $share->getPassword(), $validEmails);
-					if ($passwordEnforced && $send === false) {
-						$this->sendPasswordToOwner($share, $share->getPassword());
+					if ($send === false) {
+						$this->trySendPasswordToOwner($share);
 					}
 				}
 			}
@@ -301,6 +308,21 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			);
 		}
 		return false;
+	}
+
+	/**
+	 * Notifying the owner of the password must not abort an otherwise
+	 * successful share creation, e.g. when the owner has no email address set.
+	 */
+	private function trySendPasswordToOwner(IShare $share): void {
+		try {
+			$this->sendPasswordToOwner($share, $share->getPassword());
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to send password to the owner of the share.', [
+				'app' => 'sharebymail',
+				'exception' => $e,
+			]);
+		}
 	}
 
 	/**
@@ -647,7 +669,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_EMAIL)));
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$children[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -723,7 +745,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 								|| ($originalShare->getSendPasswordByTalk() && !$share->getSendPasswordByTalk()))) {
 			$emails = $this->getSharedWithEmails($share);
 			$validEmails = array_filter($emails, function ($email) {
-				return $this->mailer->validateMailAddress($email);
+				return $this->emailValidator->isValid($email);
 			});
 			$this->sendPassword($share, $plainTextPassword, $validEmails);
 		}
@@ -851,7 +873,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -871,7 +893,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_EMAIL)));
 
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		if ($data === false) {
@@ -902,7 +924,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			->executeQuery();
 
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -943,7 +965,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 		$cursor = $qb->executeQuery();
 
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -966,7 +988,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			->andWhere($qb->expr()->eq('token', $qb->createNamedParameter($token)))
 			->executeQuery();
 
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 
 		if ($data === false) {
 			throw new ShareNotFound('Share not found', $this->l->t('Could not find share'));
@@ -999,7 +1021,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 	 */
 	protected function createShareObject(array $data): IShare {
 		$share = new Share($this->rootFolder, $this->userManager);
-		$share->setId((int)$data['id'])
+		$share->setId($data['id'])
 			->setShareType((int)$data['share_type'])
 			->setPermissions((int)$data['permissions'])
 			->setTarget($data['file_target'])
@@ -1107,7 +1129,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
 
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+		$data = $cursor->fetchAssociative();
 		$cursor->closeCursor();
 
 		if ($data === false) {
@@ -1159,7 +1181,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			$shares[$data['fileid']][] = $this->createShareObject($data);
 		}
 		$cursor->closeCursor();
@@ -1186,7 +1208,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 
 		$public = false;
 		$mail = [];
-		while ($row = $cursor->fetch()) {
+		while ($row = $cursor->fetchAssociative()) {
 			$public = true;
 			if ($currentAccess === false) {
 				$mail[] = $row['share_with'];
@@ -1214,7 +1236,7 @@ class ShareByMailProvider extends DefaultShareProvider implements IShareProvider
 			);
 
 		$cursor = $qb->executeQuery();
-		while ($data = $cursor->fetch()) {
+		while ($data = $cursor->fetchAssociative()) {
 			try {
 				$share = $this->createShareObject($data);
 			} catch (InvalidShare $e) {

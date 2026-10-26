@@ -16,13 +16,15 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\Teams\ITeamManager;
 
 class ContactsMenuController extends Controller {
 	public function __construct(
 		IRequest $request,
 		private IUserSession $userSession,
 		private Manager $manager,
-        private IAppManager $appManager,
+		private ITeamManager $teamManager,
+		private IAppManager $appManager,
 	) {
 		parent::__construct('core', $request);
 	}
@@ -33,14 +35,11 @@ class ContactsMenuController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[FrontpageRoute(verb: 'POST', url: '/contactsmenu/contacts')]
-	public function index(?string $filter = null): array {
-        $user = $this->userSession->getUser();
-        $contactsEnabled = $this->appManager->isEnabledForUser('contacts', $user);
-
-        return [
-            'contacts' => [],
-            'contactsAppEnabled' => $contactsEnabled,
-        ];
+	public function index(?string $filter = null, ?string $teamId = null): array {
+		return [
+			'contacts' => [],
+			'contactsAppEnabled' => $this->appManager->isEnabledForUser('contacts', $this->userSession->getUser()),
+		];
 	}
 
 	/**
@@ -51,5 +50,14 @@ class ContactsMenuController extends Controller {
 	#[FrontpageRoute(verb: 'POST', url: '/contactsmenu/findOne')]
 	public function findOne(int $shareType, string $shareWith) {
 		return new JSONResponse([], Http::STATUS_NOT_FOUND);
+	}
+
+	/**
+	 * @return \JsonSerializable[]
+	 */
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/contactsmenu/teams')]
+	public function getTeams(): array {
+		return $this->teamManager->getTeamsForUser($this->userSession->getUser()->getUID());
 	}
 }

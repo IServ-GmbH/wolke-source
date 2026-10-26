@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Memory caching &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Memory caching &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -158,6 +158,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -182,7 +183,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -224,12 +225,12 @@ caching backends, so you can choose the type of memcache that best fits your
 needs. The supported caching backends are:</p>
 <ul class="simple">
 <li><dl class="simple">
-<dt><a class="reference external" href="https://pecl.php.net/package/APCu">APCu</a> (APCu 4.0.6 and up required).</dt><dd><p>A local cache for systems.</p>
+<dt><a class="reference external" href="https://pecl.php.net/package/APCu">APCu</a>, APCu 4.0.6 and up required.</dt><dd><p>A local cache for systems.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="simple">
-<dt><a class="reference external" href="http://redis.io/">Redis</a> (4.0.0 and up required).</dt><dd><p>For local and distributed caching, as well as transactional file locking.</p>
+<dt><a class="reference external" href="http://redis.io/">Redis</a>, server 4.0.0 and up required.</dt><dd><p>For local and distributed caching, as well as transactional file locking.</p>
 </dd>
 </dl>
 </li>
@@ -591,7 +592,7 @@ current user. You may use the <code class="docutils literal notranslate"><span c
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -617,6 +618,8 @@ current user. You may use the <code class="docutils literal notranslate"><span c
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -624,8 +627,6 @@ current user. You may use the <code class="docutils literal notranslate"><span c
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

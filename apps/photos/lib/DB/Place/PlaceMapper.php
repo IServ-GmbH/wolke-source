@@ -33,6 +33,7 @@ class PlaceMapper {
 			->getMountPoint()
 			->getNumericStorageId();
 
+
 		$mimetypes = array_map(fn ($mimetype) => $this->mimeTypeLoader->getId($mimetype), Application::IMAGE_MIMES);
 
 		$qb = $this->connection->getQueryBuilder();
@@ -40,10 +41,9 @@ class PlaceMapper {
 		$qb->selectDistinct('meta_value_string')
 			->from('filecache', 'file');
 		$metadataQuery = $this->filesMetadataManager->getMetadataQuery($qb, 'file', 'fileid');
-		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY);
+		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY, true);
 		$rows = $qb->where($qb->expr()->eq('file.storage', $qb->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->in('file.mimetype', $qb->createNamedParameter($mimetypes, IQueryBuilder::PARAM_INT_ARRAY)))
-			->andWhere($qb->expr()->isNotNull('meta_value_string'))
 			->executeQuery()
 			->fetchAll();
 
@@ -64,11 +64,10 @@ class PlaceMapper {
 		$qb->selectDistinct('meta_value_string')
 			->from('filecache', 'file');
 		$metadataQuery = $this->filesMetadataManager->getMetadataQuery($qb, 'file', 'fileid');
-		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY);
+		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY, true);
 		$rows = $qb->where($qb->expr()->eq('file.storage', $qb->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->in('file.mimetype', $qb->createNamedParameter($mimetypes, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->eq('meta_value_string', $qb->createNamedParameter($place)))
-			->andWhere($qb->expr()->isNotNull('meta_value_string'))
 			->executeQuery()
 			->fetchAll();
 
@@ -93,11 +92,10 @@ class PlaceMapper {
 		$rows = $qb->select('file.fileid', 'file.name', 'file.mimetype', 'file.size', 'file.mtime', 'file.etag', 'meta_value_string')
 			->from('filecache', 'file');
 		$metadataQuery = $this->filesMetadataManager->getMetadataQuery($qb, 'file', 'fileid');
-		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY);
+		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY, true);
 		$rows = $qb->where($qb->expr()->eq('file.storage', $qb->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->in('file.mimetype', $qb->createNamedParameter($mimetypes, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->eq('meta_value_string', $qb->createNamedParameter($place)))
-			->andWhere($qb->expr()->isNotNull('meta_value_string'))
 			->executeQuery()
 			->fetchAll();
 
@@ -128,13 +126,12 @@ class PlaceMapper {
 		$rows = $qb->select('file.fileid', 'file.name', 'file.mimetype', 'file.size', 'file.mtime', 'file.etag', 'meta_value_string')
 			->from('filecache', 'file');
 		$metadataQuery = $this->filesMetadataManager->getMetadataQuery($qb, 'file', 'fileid');
-		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY);
+		$metadataQuery->joinIndex(PlaceMetadataProvider::METADATA_KEY, true);
 		$rows = $qb->where($qb->expr()->eq('file.storage', $qb->createNamedParameter($storageId, IQueryBuilder::PARAM_INT)))
 			->andWhere($qb->expr()->eq('file.fileid', $qb->createNamedParameter($fileId)))
 			->andWhere($qb->expr()->eq('file.name', $qb->createNamedParameter($fileName)))
 			->andWhere($qb->expr()->in('file.mimetype', $qb->createNamedParameter($mimetypes, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->eq('meta_value_string', $qb->createNamedParameter($place)))
-			->andWhere($qb->expr()->isNotNull('meta_value_string'))
 			->executeQuery()
 			->fetchAll();
 

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Upgrade manually &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Upgrade manually &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -112,6 +112,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Maintenance</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="backup.html">Backup</a></li>
 <li class="toctree-l2"><a class="reference internal" href="restore.html">Restoring backup</a></li>
@@ -152,7 +153,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -179,7 +180,7 @@
 timeouts) and running it in command-line mode is not an option (such as in some shared hosting environments).
 In these cases a manual upgrade may be the best approach.</p>
 <p>A manual upgrade consists of downloading and unpacking the Nextcloud Archive file either to your PC or host. Then
-deleting your existing Nextcloud Server installation files and folders, <strong>except ``data/`` and ``config/``</strong>, on
+deleting your existing Nextcloud Server installation files and folders, <strong>except</strong> <code class="docutils literal notranslate"><span class="pre">data/</span></code> and <code class="docutils literal notranslate"><span class="pre">config/</span></code>, on
 your host. Then moving the new Nextcloud Server installation files into the appropriate place on your host,
 again preserving your existing <code class="docutils literal notranslate"><span class="pre">data/</span></code> and <code class="docutils literal notranslate"><span class="pre">config/</span></code> files. And doing a few other housekeeping items, such as
 making sure your installed apps are transferred into the new installation and adjusting permissions. That may sound
@@ -341,7 +342,7 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -367,6 +368,8 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -374,8 +377,6 @@ encountering a PHP time-out. Stop the upgrade process this way:</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -17,9 +18,11 @@ use OCA\RelatedResources\Tools\Traits\TArrayTools;
 class AncienShareWeightCalculator implements ILinkWeightCalculator {
 	use TArrayTools;
 
+
 	private static float $RATIO_5Y = 0.4;
 	private static float $RATIO_3Y = 0.7;
 	private static float $RATIO_1Y = 0.85;
+
 
 	/**
 	 * @inheritDoc

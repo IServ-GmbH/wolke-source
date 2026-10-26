@@ -412,7 +412,7 @@ final class AttributeType
      * @param string $_oid OID in dotted format
      */
     private function __construct(
-        private readonly string $_oid
+        protected string $_oid
     ) {
     }
 

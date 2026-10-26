@@ -64,6 +64,7 @@ class PropFindPlugin extends ServerPlugin {
 	 *
 	 * @return string
 	 */
+	#[\Override]
 	public function getPluginName() {
 		return 'photosDavPlugin';
 	}
@@ -71,6 +72,7 @@ class PropFindPlugin extends ServerPlugin {
 	/**
 	 * @return void
 	 */
+	#[\Override]
 	public function initialize(Server $server) {
 		$this->tree = $server->tree;
 		$server->on('propFind', $this->propFind(...));

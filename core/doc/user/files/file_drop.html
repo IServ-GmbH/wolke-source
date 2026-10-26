@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Making anonymous uploads &mdash; Nextcloud 32 User Manual</title>
+  <title>Making anonymous uploads &mdash; Nextcloud 33 User Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -62,7 +62,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 32 user manual introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 33 user manual introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Files &amp; synchronization</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="access_webgui.html">Accessing your files using the Nextcloud Web interface</a></li>
@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="deleted_file_management.html">Managing deleted files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="desktop_mobile_sync.html">Desktop and mobile synchronization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="encrypting_files.html">Encrypting your Nextcloud files on the server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_e2ee.html">Using end-to-end encryption</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sharing.html">File Sharing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sharing.html#federated-shares">Federated Shares</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Making anonymous uploads</a><ul>
@@ -101,7 +102,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 User Manual</a>
+          <a href="../contents.html">Nextcloud 33 User Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -133,7 +134,7 @@ using an FTP server, or using commercial file-sharing services.</p>
 <p>Go to Files and create or choose the folder, the anonymous upload should be
 made to:</p>
 <img alt="../../_images/anonym_click_sharing.png" src="../../_images/anonym_click_sharing.png" />
-<p>Check Share Link, Allow editing, Hide file listing:</p>
+<p>Enable <strong>Share Link</strong>, <strong>Allow editing</strong>, and <strong>Hide file listing</strong>:</p>
 <img alt="../../_images/anonym_hide_file_listing.png" src="../../_images/anonym_hide_file_listing.png" />
 <p>Now you can send the link to the upload folder manually or by using the
 Nextcloud send function, if your administrator has enabled it.</p>
@@ -174,47 +175,6 @@ upload. You’re also able to just drop files into the window.</p>
   </div>
   
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- Here go the languages -->
 
   
@@ -301,17 +261,13 @@ upload. You’re also able to just drop files into the window.</p>
   
     
   
-    
-  
-    
-  
   
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       🌐 English
       <span class="fa fa-caret-down"></span>
-       ☁️ 32
+       ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -323,14 +279,6 @@ upload. You’re also able to just drop files into the window.</p>
                
             >
               Arabic
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/eu/"
-               
-            >
-              Basque
             </a>
           </dd>
         
@@ -617,14 +565,6 @@ upload. You’re also able to just drop files into the window.</p>
           </dd>
         
           <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/uk/"
-               
-            >
-              uk
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
             <a href="/server/latest/user_manual/uk_UA/"
                
             >
@@ -673,6 +613,8 @@ upload. You’re also able to just drop files into the window.</p>
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/33/user_manual"
                
+               style="color: var(--dark-link-color);"
+               
             >
               33
             </a>
@@ -680,8 +622,6 @@ upload. You’re also able to just drop files into the window.</p>
         
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/32/user_manual"
-               
-               style="color: var(--dark-link-color);"
                
             >
               32

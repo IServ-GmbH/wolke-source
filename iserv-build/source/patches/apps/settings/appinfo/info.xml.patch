@@ -1,5 +1,5 @@
 diff --git apps/settings/appinfo/info.xml apps/settings/appinfo/info.xml
-index 87ec7d4..09db7ef 100644
+index 69489e8..8135913 100644
 --- apps/settings/appinfo/info.xml
 +++ apps/settings/appinfo/info.xml
 @@ -24,6 +24,7 @@
@@ -10,17 +10,18 @@ index 87ec7d4..09db7ef 100644
  	</commands>
  
  	<settings>
-@@ -38,23 +39,16 @@
- 		<admin>OCA\Settings\Settings\Admin\Users</admin>
+@@ -37,7 +38,6 @@
+ 		<admin>OCA\Settings\Settings\Admin\Delegation</admin>
  		<admin-section>OCA\Settings\Sections\Admin\Additional</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Delegation</admin-section>
 -		<admin-section>OCA\Settings\Sections\Admin\Groupware</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Overview</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\Presets</admin-section>
  		<admin-section>OCA\Settings\Sections\Admin\ArtificialIntelligence</admin-section>
- 		<admin-section>OCA\Settings\Sections\Admin\Security</admin-section>
- 		<admin-section>OCA\Settings\Sections\Admin\Server</admin-section>
+@@ -46,16 +46,10 @@
  		<admin-section>OCA\Settings\Sections\Admin\Sharing</admin-section>
+ 		<admin-delegation>OCA\Settings\Settings\Admin\Users</admin-delegation>
+ 		<admin-delegation-section>OCA\Settings\Sections\Admin\Users</admin-delegation-section>
 -		<personal>OCA\Settings\Settings\Personal\Additional</personal>
 -		<personal>OCA\Settings\Settings\Personal\PersonalInfo</personal>
 -		<personal>OCA\Settings\Settings\Personal\ServerDevNotice</personal>

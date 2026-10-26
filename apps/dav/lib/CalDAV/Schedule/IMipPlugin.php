@@ -16,6 +16,7 @@ use OCP\Defaults;
 use OCP\IAppConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use OCP\Mail\Provider\Address;
 use OCP\Mail\Provider\Attachment;
@@ -65,6 +66,7 @@ class IMipPlugin extends SabreIMipPlugin {
 		private IMipService $imipService,
 		private EventComparisonService $eventComparisonService,
 		private IMailManager $mailManager,
+		private IEmailValidator $emailValidator,
 		private IAccountManager $accountManager,
 	) {
 		parent::__construct('');
@@ -122,7 +124,7 @@ class IMipPlugin extends SabreIMipPlugin {
 
 		// Strip off mailto:
 		$recipient = substr($iTipMessage->recipient, 7);
-		if (!$this->mailer->validateMailAddress($recipient)) {
+		if (!$this->emailValidator->isValid($recipient)) {
 			// Nothing to send if the recipient doesn't have a valid email address
 			$iTipMessage->scheduleStatus = '5.0; EMail delivery failed';
 			return;

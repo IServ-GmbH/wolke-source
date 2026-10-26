@@ -8,7 +8,12 @@
 use bantu\IniGetWrapper\IniGetWrapper;
 use OC\Files\FilenameValidator;
 use OC\Files\Filesystem;
+use OC\Files\ObjectStore\HomeObjectStoreStorage;
+use OC\Files\Storage\Home;
+use OC\Files\Storage\Wrapper\Quota;
+use OCP\Files\FileInfo;
 use OCP\Files\Mount\IMountPoint;
+use OCP\Files\Storage\ISharedStorage;
 use OCP\IBinaryFinder;
 use OCP\ICacheFactory;
 use OCP\IUser;
@@ -32,7 +37,6 @@ use Psr\Log\LoggerInterface;
  * }
  */
 class OC_Helper {
-	private static $templateManager;
 	private static ?ICacheFactory $cacheFactory = null;
 	private static ?bool $quotaIncludeExternalStorage = null;
 
@@ -67,17 +71,6 @@ class OC_Helper {
 	}
 
 	/**
-	 * @deprecated 18.0.0
-	 * @return \OC\Files\Type\TemplateManager
-	 */
-	public static function getFileTemplateManager() {
-		if (!self::$templateManager) {
-			self::$templateManager = new \OC\Files\Type\TemplateManager();
-		}
-		return self::$templateManager;
-	}
-
-	/**
 	 * detect if a given program is found in the search PATH
 	 *
 	 * @param string $name
@@ -101,7 +94,7 @@ class OC_Helper {
 		$obd = OC::$server->get(IniGetWrapper::class)->getString('open_basedir');
 		if ($obd != 'none') {
 			$obd_values = explode(PATH_SEPARATOR, $obd);
-			if (count($obd_values) > 0 and $obd_values[0]) {
+			if (count($obd_values) > 0 && $obd_values[0]) {
 				// open_basedir is in effect !
 				// We need to check if the program is in one of these dirs :
 				$dirs = $obd_values;
@@ -115,77 +108,6 @@ class OC_Helper {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * copy the contents of one stream to another
-	 *
-	 * @param resource $source
-	 * @param resource $target
-	 * @return array the number of bytes copied and result
-	 * @deprecated 5.0.0 - Use \OCP\Files::streamCopy
-	 */
-	public static function streamCopy($source, $target) {
-		return \OCP\Files::streamCopy($source, $target, true);
-	}
-
-	/**
-	 * Adds a suffix to the name in case the file exists
-	 *
-	 * @param string $path
-	 * @param string $filename
-	 * @return string
-	 */
-	public static function buildNotExistingFileName($path, $filename) {
-		$view = \OC\Files\Filesystem::getView();
-		return self::buildNotExistingFileNameForView($path, $filename, $view);
-	}
-
-	/**
-	 * Adds a suffix to the name in case the file exists
-	 *
-	 * @param string $path
-	 * @param string $filename
-	 * @return string
-	 */
-	public static function buildNotExistingFileNameForView($path, $filename, \OC\Files\View $view) {
-		if ($path === '/') {
-			$path = '';
-		}
-		if ($pos = strrpos($filename, '.')) {
-			$name = substr($filename, 0, $pos);
-			$ext = substr($filename, $pos);
-		} else {
-			$name = $filename;
-			$ext = '';
-		}
-
-		$newpath = $path . '/' . $filename;
-		if ($view->file_exists($newpath)) {
-			if (preg_match_all('/\((\d+)\)/', $name, $matches, PREG_OFFSET_CAPTURE)) {
-				//Replace the last "(number)" with "(number+1)"
-				$last_match = count($matches[0]) - 1;
-				$counter = $matches[1][$last_match][0] + 1;
-				$offset = $matches[0][$last_match][1];
-				$match_length = strlen($matches[0][$last_match][0]);
-			} else {
-				$counter = 2;
-				$match_length = 0;
-				$offset = false;
-			}
-			do {
-				if ($offset) {
-					//Replace the last "(number)" with "(number+1)"
-					$newname = substr_replace($name, '(' . $counter . ')', $offset, $match_length);
-				} else {
-					$newname = $name . ' (' . $counter . ')';
-				}
-				$newpath = $path . '/' . $newname . $ext;
-				$counter++;
-			} while ($view->file_exists($newpath));
-		}
-
-		return $newpath;
 	}
 
 	/**
@@ -264,16 +186,23 @@ class OC_Helper {
 			self::$quotaIncludeExternalStorage = false;
 		}
 		if (self::$quotaIncludeExternalStorage) {
-			if ($storage->instanceOfStorage('\OC\Files\Storage\Home')
+			if ($storage->instanceOfStorage(ISharedStorage::class)) {
+				// we must use the shared nodes owner,
+				// because if user A shared a file with user B and B shares this again,
+				// then the share initiator is user B but the quota that this counts in is user A's quota.
+				/** @var ISharedStorage $storage */
+				$user = $storage->getShare()->getNode()->getOwner();
+			} elseif (
+				$storage->instanceOfStorage('\OC\Files\Storage\Home')
 				|| $storage->instanceOfStorage('\OC\Files\ObjectStore\HomeObjectStoreStorage')
 			) {
-				/** @var \OC\Files\Storage\Home $storage */
+				/** @var Home|HomeObjectStoreStorage $storage */
 				$user = $storage->getUser();
 			} else {
 				$user = \OC::$server->getUserSession()->getUser();
 			}
-			$quota = $user?->getQuotaBytes() ?? \OCP\Files\FileInfo::SPACE_UNKNOWN;
-			if ($quota !== \OCP\Files\FileInfo::SPACE_UNLIMITED) {
+			$quota = $user?->getQuotaBytes() ?? FileInfo::SPACE_UNKNOWN;
+			if ($user !== null && $quota !== FileInfo::SPACE_UNLIMITED) {
 				// always get free space / total space from root + mount points
 				return self::getGlobalStorageInfo($quota, $user, $mount);
 			}
@@ -281,7 +210,7 @@ class OC_Helper {
 
 		// TODO: need a better way to get total space from storage
 		if ($sourceStorage->instanceOfStorage('\OC\Files\Storage\Wrapper\Quota')) {
-			/** @var \OC\Files\Storage\Wrapper\Quota $storage */
+			/** @var Quota $sourceStorage */
 			$quota = $sourceStorage->getQuota();
 		}
 		try {

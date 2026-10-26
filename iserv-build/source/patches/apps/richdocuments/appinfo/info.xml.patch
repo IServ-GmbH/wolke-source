@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/appinfo/info.xml apps/richdocuments/appinfo/info.xml
-index 6a42888ec..e903a0d68 100644
+index 3c9d0d2fc..d24a513b4 100644
 --- apps/richdocuments/appinfo/info.xml
 +++ apps/richdocuments/appinfo/info.xml
 @@ -52,7 +52,5 @@ You can also edit your documents off-line with the Collabora Office app from the

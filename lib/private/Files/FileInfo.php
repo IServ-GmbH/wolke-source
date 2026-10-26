@@ -7,8 +7,8 @@
  */
 namespace OC\Files;
 
+use OC\Files\Cache\CacheEntry;
 use OC\Files\Mount\HomeMountPoint;
-use OCA\Files_Sharing\External\Mount;
 use OCA\Files_Sharing\ISharedMountPoint;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Mount\IMountPoint;
@@ -73,11 +73,32 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		$this->data = $data;
 		$this->mount = $mount;
 		$this->owner = $owner;
-		if (isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] !== 0) {
+		if (self::hasPlaintextSize($this->data)) {
 			$this->rawSize = $this->data['unencrypted_size'];
 		} else {
 			$this->rawSize = $this->data['size'] ?? 0;
 		}
+	}
+
+	/**
+	 * Whether `unencrypted_size` holds the plaintext size of a cache entry.
+	 *
+	 * Server side encryption only marks files as encrypted, so on a folder the `encrypted`
+	 * flag comes from end-to-end encryption, which does not maintain `unencrypted_size`.
+	 * There the propagated value is only meaningful once a child entry contributed one.
+	 *
+	 * @param array|ICacheEntry $data
+	 */
+	private static function hasPlaintextSize($data): bool {
+		if (empty($data['encrypted']) || !isset($data['unencrypted_size'])) {
+			return false;
+		}
+
+		if (($data['mimetype'] ?? null) === self::MIMETYPE_FOLDER) {
+			return $data['unencrypted_size'] > 0;
+		}
+
+		return true;
 	}
 
 	public function offsetSet($offset, $value): void {
@@ -174,7 +195,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		if ($includeMounts) {
 			$this->updateEntryFromSubMounts();
 
-			if ($this->isEncrypted() && isset($this->data['unencrypted_size']) && $this->data['unencrypted_size'] > 0) {
+			if (self::hasPlaintextSize($this->data)) {
 				return $this->data['unencrypted_size'];
 			} else {
 				return isset($this->data['size']) ? 0 + $this->data['size'] : 0;
@@ -223,8 +244,12 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		return $this->data['type'];
 	}
 
-	public function getData() {
-		return $this->data;
+	public function getData(): ICacheEntry {
+		if ($this->data instanceof ICacheEntry) {
+			return $this->data;
+		} else {
+			return new CacheEntry($this->data);
+		}
 	}
 
 	/**
@@ -338,7 +363,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 		if (!$data) {
 			return;
 		}
-		$hasUnencryptedSize = isset($data['unencrypted_size']) && $data['unencrypted_size'] > 0;
+		$hasUnencryptedSize = self::hasPlaintextSize($data);
 		if ($hasUnencryptedSize) {
 			$subSize = $data['unencrypted_size'];
 		} else {
@@ -364,7 +389,7 @@ class FileInfo implements \OCP\Files\FileInfo, \ArrayAccess {
 	 * @inheritdoc
 	 */
 	public function getChecksum() {
-		return $this->data['checksum'];
+		return $this->data['checksum'] ?? '';
 	}
 
 	public function getExtension(): string {

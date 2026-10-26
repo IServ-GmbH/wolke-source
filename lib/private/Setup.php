@@ -15,6 +15,7 @@ use InvalidArgumentException;
 use OC\Authentication\Token\PublicKeyTokenProvider;
 use OC\Authentication\Token\TokenCleanupJob;
 use OC\Core\BackgroundJobs\GenerateMetadataJob;
+use OC\Core\BackgroundJobs\PreviewMigrationJob;
 use OC\Log\Rotate;
 use OC\Preview\BackgroundCleanupJob;
 use OC\TextProcessing\RemoveOldTasksBackgroundJob;
@@ -188,11 +189,11 @@ class Setup {
 			}
 		}
 
-		if (\OC_Util::runningOnMac()) {
+		// Check if running directly on macOS (note: Linux containers on macOS will not trigger this)
+		if (!getenv('CI') && PHP_OS_FAMILY === 'Darwin') {
 			$errors[] = [
 				'error' => $this->l10n->t(
-					'Mac OS X is not supported and %s will not work properly on this platform. '
-					. 'Use it at your own risk!',
+					'macOS is not supported and %s will not work properly on this platform.',
 					[$this->defaults->getProductName()]
 				),
 				'hint' => $this->l10n->t('For the best results, please consider using a GNU/Linux server instead.'),
@@ -520,6 +521,7 @@ class Setup {
 		$jobList->add(CleanupDeletedUsers::class);
 		$jobList->add(CleanupLoginTokens::class);
 		$jobList->add(GenerateMetadataJob::class);
+		$jobList->add(PreviewMigrationJob::class);
 	}
 
 	/**

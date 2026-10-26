@@ -46,7 +46,7 @@ class LoginClassifier {
 			// This most likely means there is no trained model yet, so we return early here
 			return;
 		} catch (ServiceException $ex) {
-			$this->logger->warning("Could not predict suspiciousness: " . $ex->getMessage());
+			$this->logger->warning('Could not predict suspiciousness: ' . $ex->getMessage());
 			// There was an error loading the model, so we return early here
 			return;
 		}

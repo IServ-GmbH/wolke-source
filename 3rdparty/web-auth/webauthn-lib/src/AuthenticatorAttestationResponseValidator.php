@@ -24,7 +24,6 @@ use Webauthn\MetadataService\MetadataStatementRepository;
 use Webauthn\MetadataService\StatusReportRepository;
 use Webauthn\TokenBinding\TokenBindingHandler;
 use function is_string;
-use function sprintf;
 
 class AuthenticatorAttestationResponseValidator implements CanLogData, CanDispatchEvents
 {

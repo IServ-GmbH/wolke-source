@@ -43,10 +43,12 @@ class EdDSA implements Signature
             throw new InvalidArgumentException('Unsupported curve');
         }
         try {
-            return sodium_crypto_sign_verify_detached($signature, $data, $key->x());
+            sodium_crypto_sign_verify_detached($signature, $data, $key->x());
         } catch (Throwable) {
             return false;
         }
+
+        return true;
     }
 
     public static function identifier(): int

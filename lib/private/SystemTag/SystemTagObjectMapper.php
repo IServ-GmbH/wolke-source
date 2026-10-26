@@ -292,8 +292,8 @@ class SystemTagObjectMapper implements ISystemTagObjectMapper {
 	 */
 	public function setObjectIdsForTag(string $tagId, string $objectType, array $objectIds): void {
 		$currentObjectIds = $this->getObjectIdsForTags($tagId, $objectType);
-		$removedObjectIds = array_diff($currentObjectIds, $objectIds);
-		$addedObjectIds = array_diff($objectIds, $currentObjectIds);
+		$removedObjectIds = array_values(array_diff($currentObjectIds, $objectIds));
+		$addedObjectIds = array_values(array_diff($objectIds, $currentObjectIds));
 
 		$this->connection->beginTransaction();
 		$query = $this->connection->getQueryBuilder();
@@ -347,16 +347,6 @@ class SystemTagObjectMapper implements ISystemTagObjectMapper {
 		}
 		if (!empty($addedObjectIds)) {
 			$this->dispatcher->dispatchTyped(new TagAssignedEvent($objectType, array_map(fn ($objectId) => (string)$objectId, $addedObjectIds), [(int)$tagId]));
-		}
-
-		// Dispatch unassign events for removed object ids
-		foreach ($removedObjectIds as $objectId) {
-			$this->dispatcher->dispatch(MapperEvent::EVENT_UNASSIGN, new MapperEvent(
-				MapperEvent::EVENT_UNASSIGN,
-				$objectType,
-				(string)$objectId,
-				[(int)$tagId]
-			));
 		}
 	}
 

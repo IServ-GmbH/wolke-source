@@ -206,38 +206,30 @@ class Util {
 	 * @param string $app app name
 	 * @return string|ISimpleFile path to app icon / file of logo
 	 */
-	public function getAppIcon($app, $useSvg = true) {
+	public function getAppIcon($app) {
 		$app = $this->appManager->cleanAppId($app);
 		try {
-			// find app specific icon
 			$appPath = $this->appManager->getAppPath($app);
-			$extension = ($useSvg ? '.svg' : '.png');
-
-			$icon = $appPath . '/img/' . $app . $extension;
+			$icon = $appPath . '/img/' . $app . '.svg';
 			if (file_exists($icon)) {
 				return $icon;
 			}
-
-			$icon = $appPath . '/img/app' . $extension;
+			$icon = $appPath . '/img/app.svg';
 			if (file_exists($icon)) {
 				return $icon;
 			}
 		} catch (AppPathNotFoundException $e) {
 		}
-		// fallback to custom instance logo
+
 		if ($this->config->getAppValue('theming', 'logoMime', '') !== '') {
+			$logoFile = null;
 			try {
 				$folder = $this->appData->getFolder('global/images');
 				return $folder->getFile('logo');
 			} catch (NotFoundException $e) {
 			}
 		}
-		// fallback to core logo
-		if ($useSvg) {
-			return \OC::$SERVERROOT . '/core/img/logo/logo.svg';
-		} else {
-			return \OC::$SERVERROOT . '/core/img/logo/logo.png';
-		}
+		return \OC::$SERVERROOT . '/core/img/logo/logo.svg';
 	}
 
 	/**

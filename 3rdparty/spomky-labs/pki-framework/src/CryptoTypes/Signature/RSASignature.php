@@ -21,6 +21,10 @@ final class RSASignature extends Signature
      */
     private ?string $_signature = null;
 
+    protected function __construct()
+    {
+    }
+
     /**
      * Initialize from RSA signature *S*.
      *

@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInitDAV
 {
     public static $prefixLengthsPsr4 = array (
-        'O' => 
+        'O' =>
         array (
             'OCA\\DAV\\' => 8,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'OCA\\DAV\\' => 
+        'OCA\\DAV\\' =>
         array (
             0 => __DIR__ . '/..' . '/../lib',
         ),
@@ -94,6 +94,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\CalDAV\\Federation\\FederatedCalendarInvitationService' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederatedCalendarInvitationService.php',
         'OCA\\DAV\\CalDAV\\Federation\\FederatedCalendarInviteNotifier' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederatedCalendarInviteNotifier.php',
         'OCA\\DAV\\CalDAV\\Federation\\FederatedCalendarMapper' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederatedCalendarMapper.php',
+        'OCA\\DAV\\CalDAV\\Federation\\FederatedCalendarObject' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederatedCalendarObject.php',
         'OCA\\DAV\\CalDAV\\Federation\\FederatedCalendarSyncService' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederatedCalendarSyncService.php',
         'OCA\\DAV\\CalDAV\\Federation\\FederationSharingService' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/FederationSharingService.php',
         'OCA\\DAV\\CalDAV\\Federation\\Protocol\\CalendarFederationProtocolV1' => __DIR__ . '/..' . '/../lib/CalDAV/Federation/Protocol/CalendarFederationProtocolV1.php',
@@ -103,6 +104,9 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\CalDAV\\FreeBusy\\FreeBusyGenerator' => __DIR__ . '/..' . '/../lib/CalDAV/FreeBusy/FreeBusyGenerator.php',
         'OCA\\DAV\\CalDAV\\ICSExportPlugin\\ICSExportPlugin' => __DIR__ . '/..' . '/../lib/CalDAV/ICSExportPlugin/ICSExportPlugin.php',
         'OCA\\DAV\\CalDAV\\IRestorable' => __DIR__ . '/..' . '/../lib/CalDAV/IRestorable.php',
+        'OCA\\DAV\\CalDAV\\Import\\ImportCountEvent' => __DIR__ . '/..' . '/../lib/CalDAV/Import/ImportCountEvent.php',
+        'OCA\\DAV\\CalDAV\\Import\\ImportDisposition' => __DIR__ . '/..' . '/../lib/CalDAV/Import/ImportDisposition.php',
+        'OCA\\DAV\\CalDAV\\Import\\ImportObjectEvent' => __DIR__ . '/..' . '/../lib/CalDAV/Import/ImportObjectEvent.php',
         'OCA\\DAV\\CalDAV\\Import\\ImportService' => __DIR__ . '/..' . '/../lib/CalDAV/Import/ImportService.php',
         'OCA\\DAV\\CalDAV\\Import\\TextImporter' => __DIR__ . '/..' . '/../lib/CalDAV/Import/TextImporter.php',
         'OCA\\DAV\\CalDAV\\Import\\XmlImporter' => __DIR__ . '/..' . '/../lib/CalDAV/Import/XmlImporter.php',
@@ -184,9 +188,16 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\CardDAV\\Converter' => __DIR__ . '/..' . '/../lib/CardDAV/Converter.php',
         'OCA\\DAV\\CardDAV\\HasPhotoPlugin' => __DIR__ . '/..' . '/../lib/CardDAV/HasPhotoPlugin.php',
         'OCA\\DAV\\CardDAV\\ImageExportPlugin' => __DIR__ . '/..' . '/../lib/CardDAV/ImageExportPlugin.php',
+        'OCA\\DAV\\CardDAV\\Import\\ImportCountEvent' => __DIR__ . '/..' . '/../lib/CardDAV/Import/ImportCountEvent.php',
+        'OCA\\DAV\\CardDAV\\Import\\ImportDisposition' => __DIR__ . '/..' . '/../lib/CardDAV/Import/ImportDisposition.php',
+        'OCA\\DAV\\CardDAV\\Import\\ImportEvent' => __DIR__ . '/..' . '/../lib/CardDAV/Import/ImportEvent.php',
+        'OCA\\DAV\\CardDAV\\Import\\ImportObjectEvent' => __DIR__ . '/..' . '/../lib/CardDAV/Import/ImportObjectEvent.php',
+        'OCA\\DAV\\CardDAV\\Import\\ImportService' => __DIR__ . '/..' . '/../lib/CardDAV/Import/ImportService.php',
+        'OCA\\DAV\\CardDAV\\Import\\TextImporter' => __DIR__ . '/..' . '/../lib/CardDAV/Import/TextImporter.php',
         'OCA\\DAV\\CardDAV\\Integration\\ExternalAddressBook' => __DIR__ . '/..' . '/../lib/CardDAV/Integration/ExternalAddressBook.php',
         'OCA\\DAV\\CardDAV\\Integration\\IAddressBookProvider' => __DIR__ . '/..' . '/../lib/CardDAV/Integration/IAddressBookProvider.php',
         'OCA\\DAV\\CardDAV\\MultiGetExportPlugin' => __DIR__ . '/..' . '/../lib/CardDAV/MultiGetExportPlugin.php',
+        'OCA\\DAV\\CardDAV\\Notification\\Notifier' => __DIR__ . '/..' . '/../lib/CardDAV/Notification/Notifier.php',
         'OCA\\DAV\\CardDAV\\PhotoCache' => __DIR__ . '/..' . '/../lib/CardDAV/PhotoCache.php',
         'OCA\\DAV\\CardDAV\\Plugin' => __DIR__ . '/..' . '/../lib/CardDAV/Plugin.php',
         'OCA\\DAV\\CardDAV\\Security\\CardDavRateLimitingPlugin' => __DIR__ . '/..' . '/../lib/CardDAV/Security/CardDavRateLimitingPlugin.php',
@@ -224,6 +235,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\Comments\\EntityCollection' => __DIR__ . '/..' . '/../lib/Comments/EntityCollection.php',
         'OCA\\DAV\\Comments\\EntityTypeCollection' => __DIR__ . '/..' . '/../lib/Comments/EntityTypeCollection.php',
         'OCA\\DAV\\Comments\\RootCollection' => __DIR__ . '/..' . '/../lib/Comments/RootCollection.php',
+        'OCA\\DAV\\ConfigLexicon' => __DIR__ . '/..' . '/../lib/ConfigLexicon.php',
         'OCA\\DAV\\Connector\\LegacyDAVACL' => __DIR__ . '/..' . '/../lib/Connector/LegacyDAVACL.php',
         'OCA\\DAV\\Connector\\LegacyPublicAuth' => __DIR__ . '/..' . '/../lib/Connector/LegacyPublicAuth.php',
         'OCA\\DAV\\Connector\\Sabre\\AnonymousOptionsPlugin' => __DIR__ . '/..' . '/../lib/Connector/Sabre/AnonymousOptionsPlugin.php',
@@ -274,6 +286,9 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\Connector\\Sabre\\UserIdHeaderPlugin' => __DIR__ . '/..' . '/../lib/Connector/Sabre/UserIdHeaderPlugin.php',
         'OCA\\DAV\\Connector\\Sabre\\ZipFolderPlugin' => __DIR__ . '/..' . '/../lib/Connector/Sabre/ZipFolderPlugin.php',
         'OCA\\DAV\\Controller\\BirthdayCalendarController' => __DIR__ . '/..' . '/../lib/Controller/BirthdayCalendarController.php',
+        'OCA\\DAV\\Controller\\CalendarExportController' => __DIR__ . '/..' . '/../lib/Controller/CalendarExportController.php',
+        'OCA\\DAV\\Controller\\CalendarImportController' => __DIR__ . '/..' . '/../lib/Controller/CalendarImportController.php',
+        'OCA\\DAV\\Controller\\ContactsImportController' => __DIR__ . '/..' . '/../lib/Controller/ContactsImportController.php',
         'OCA\\DAV\\Controller\\DirectController' => __DIR__ . '/..' . '/../lib/Controller/DirectController.php',
         'OCA\\DAV\\Controller\\ExampleContentController' => __DIR__ . '/..' . '/../lib/Controller/ExampleContentController.php',
         'OCA\\DAV\\Controller\\FederatedCalendarController' => __DIR__ . '/..' . '/../lib/Controller/FederatedCalendarController.php',
@@ -289,6 +304,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\DAV\\Sharing\\IShareable' => __DIR__ . '/..' . '/../lib/DAV/Sharing/IShareable.php',
         'OCA\\DAV\\DAV\\Sharing\\Plugin' => __DIR__ . '/..' . '/../lib/DAV/Sharing/Plugin.php',
         'OCA\\DAV\\DAV\\Sharing\\SharingMapper' => __DIR__ . '/..' . '/../lib/DAV/Sharing/SharingMapper.php',
+        'OCA\\DAV\\DAV\\Sharing\\SharingPrivilegeSetTrait' => __DIR__ . '/..' . '/../lib/DAV/Sharing/SharingPrivilegeSetTrait.php',
         'OCA\\DAV\\DAV\\Sharing\\SharingService' => __DIR__ . '/..' . '/../lib/DAV/Sharing/SharingService.php',
         'OCA\\DAV\\DAV\\Sharing\\Xml\\Invite' => __DIR__ . '/..' . '/../lib/DAV/Sharing/Xml/Invite.php',
         'OCA\\DAV\\DAV\\Sharing\\Xml\\ShareRequest' => __DIR__ . '/..' . '/../lib/DAV/Sharing/Xml/ShareRequest.php',
@@ -368,6 +384,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\Migration\\ChunkCleanup' => __DIR__ . '/..' . '/../lib/Migration/ChunkCleanup.php',
         'OCA\\DAV\\Migration\\CreateSystemAddressBookStep' => __DIR__ . '/..' . '/../lib/Migration/CreateSystemAddressBookStep.php',
         'OCA\\DAV\\Migration\\DeleteSchedulingObjects' => __DIR__ . '/..' . '/../lib/Migration/DeleteSchedulingObjects.php',
+        'OCA\\DAV\\Migration\\DisableSystemAddressBook' => __DIR__ . '/..' . '/../lib/Migration/DisableSystemAddressBook.php',
         'OCA\\DAV\\Migration\\FixBirthdayCalendarComponent' => __DIR__ . '/..' . '/../lib/Migration/FixBirthdayCalendarComponent.php',
         'OCA\\DAV\\Migration\\RefreshWebcalJobRegistrar' => __DIR__ . '/..' . '/../lib/Migration/RefreshWebcalJobRegistrar.php',
         'OCA\\DAV\\Migration\\RegenerateBirthdayCalendars' => __DIR__ . '/..' . '/../lib/Migration/RegenerateBirthdayCalendars.php',
@@ -406,6 +423,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\Migration\\Version1031Date20240610134258' => __DIR__ . '/..' . '/../lib/Migration/Version1031Date20240610134258.php',
         'OCA\\DAV\\Migration\\Version1034Date20250605132605' => __DIR__ . '/..' . '/../lib/Migration/Version1034Date20250605132605.php',
         'OCA\\DAV\\Migration\\Version1034Date20250813093701' => __DIR__ . '/..' . '/../lib/Migration/Version1034Date20250813093701.php',
+        'OCA\\DAV\\Migration\\Version1036Date20251202000000' => __DIR__ . '/..' . '/../lib/Migration/Version1036Date20251202000000.php',
         'OCA\\DAV\\Migration\\Version1040Date20260805000000' => __DIR__ . '/..' . '/../lib/Migration/Version1040Date20260805000000.php',
         'OCA\\DAV\\Model\\ExampleEvent' => __DIR__ . '/..' . '/../lib/Model/ExampleEvent.php',
         'OCA\\DAV\\Paginate\\LimitedCopyIterator' => __DIR__ . '/..' . '/../lib/Paginate/LimitedCopyIterator.php',
@@ -431,6 +449,7 @@ class ComposerStaticInitDAV
         'OCA\\DAV\\Settings\\CalDAVSettings' => __DIR__ . '/..' . '/../lib/Settings/CalDAVSettings.php',
         'OCA\\DAV\\Settings\\ExampleContentSettings' => __DIR__ . '/..' . '/../lib/Settings/ExampleContentSettings.php',
         'OCA\\DAV\\SetupChecks\\NeedsSystemAddressBookSync' => __DIR__ . '/..' . '/../lib/SetupChecks/NeedsSystemAddressBookSync.php',
+        'OCA\\DAV\\SetupChecks\\SystemAddressBookSize' => __DIR__ . '/..' . '/../lib/SetupChecks/SystemAddressBookSize.php',
         'OCA\\DAV\\SetupChecks\\WebdavEndpoint' => __DIR__ . '/..' . '/../lib/SetupChecks/WebdavEndpoint.php',
         'OCA\\DAV\\Storage\\PublicOwnerWrapper' => __DIR__ . '/..' . '/../lib/Storage/PublicOwnerWrapper.php',
         'OCA\\DAV\\Storage\\PublicShareWrapper' => __DIR__ . '/..' . '/../lib/Storage/PublicShareWrapper.php',

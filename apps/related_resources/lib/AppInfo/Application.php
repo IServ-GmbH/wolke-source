@@ -28,12 +28,14 @@ use Throwable;
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'related_resources';
 
+
 	/**
 	 * @param array $params
 	 */
 	public function __construct(array $params = []) {
 		parent::__construct(self::APP_ID, $params);
 	}
+
 
 	/**
 	 * @param IRegistrationContext $context
@@ -43,6 +45,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(ShareCreatedEvent::class, FileShareUpdate::class);
 		$context->registerEventListener(ShareDeletedEvent::class, FileShareUpdate::class);
 	}
+
 
 	/**
 	 * @param IBootContext $context

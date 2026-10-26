@@ -30,7 +30,7 @@ final class StringPreparer
         /**
          * Preparation steps.
          */
-        private array $_steps
+        protected array $_steps
     ) {
     }
 

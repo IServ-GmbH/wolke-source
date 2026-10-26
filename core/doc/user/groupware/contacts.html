@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Using the Contacts app &mdash; Nextcloud 32 User Manual</title>
+  <title>Using the Contacts app &mdash; Nextcloud 33 User Manual</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -62,7 +62,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 32 user manual introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Nextcloud 33 user manual introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../webinterface.html">The Nextcloud Web interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../files/index.html">Files &amp; synchronization</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Groupware</a><ul class="current">
@@ -118,7 +118,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 User Manual</a>
+          <a href="../contents.html">Nextcloud 33 User Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -139,7 +139,7 @@
              
   <section id="using-the-contacts-app">
 <h1>Using the Contacts app<a class="headerlink" href="#using-the-contacts-app" title="Link to this heading"></a></h1>
-<p>The Contacts app is not enabled by default in Nextcloud 32 and needs to
+<p>The Contacts app is not enabled by default in Nextcloud 33 and needs to
 be installed separately from our App Store.</p>
 <p>The Nextcloud Contacts app is similar to other mobile contact applications, but
 with more functionality.
@@ -245,6 +245,25 @@ click on the contacts picture for the following options to appear:</p>
 <figure class="align-default">
 <img alt="../../_images/contact_picture_options.png" src="../../_images/contact_picture_options.png" />
 </figure>
+<p>If the administrator allows updates from social media in the admin groupware settings,
+users can also retrieve contact pictures directly from social networks.
+In that case the contact needs to have stored a user name in the social media section.
+Each entry of a supported social network adds a download entry for the respective
+network. Currently, the following social networks are supported:</p>
+<ul class="simple">
+<li><p>Instagram</p></li>
+<li><p>Mastodon</p></li>
+<li><p>Tumblr</p></li>
+<li><p>Diaspora</p></li>
+<li><p>Xing</p></li>
+<li><p>Telegram</p></li>
+<li><p>Gravatar</p></li>
+</ul>
+<p>Social avatars are only retrieved if publicly available without login to the
+respective social network. In the contact user settings on the contacts page,
+you can activate auto-updates from social media. This will update avatars
+with social profile data on a weekly basis. Social networks are checked in the
+order listed above.</p>
 </section>
 </section>
 <section id="managing-multiple-contacts-at-a-time">
@@ -345,7 +364,7 @@ For a group or a team, the role applies to all members of the group or team.</p>
 <section id="shared-items">
 <h3>Shared items<a class="headerlink" href="#shared-items" title="Link to this heading"></a></h3>
 <div class="versionadded">
-<p><span class="versionmodified added">Added in version 5.5.</span></p>
+<p><span class="versionmodified added">Added in version 5.5: </span>Nextcloud 25 or newer</p>
 </div>
 <figure class="align-default">
 <img alt="../../_images/shared-items.png" src="../../_images/shared-items.png" />
@@ -378,47 +397,6 @@ For a group or a team, the role applies to all members of the group or team.</p>
   </div>
   
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   <!-- Here go the languages -->
 
   
@@ -505,17 +483,13 @@ For a group or a team, the role applies to all members of the group or team.</p>
   
     
   
-    
-  
-    
-  
   
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       🌐 English
       <span class="fa fa-caret-down"></span>
-       ☁️ 32
+       ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -527,14 +501,6 @@ For a group or a team, the role applies to all members of the group or team.</p>
                
             >
               Arabic
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/eu/"
-               
-            >
-              Basque
             </a>
           </dd>
         
@@ -821,14 +787,6 @@ For a group or a team, the role applies to all members of the group or team.</p>
           </dd>
         
           <dd style="width: 32%; vertical-align: top;">
-            <a href="/server/latest/user_manual/uk/"
-               
-            >
-              uk
-            </a>
-          </dd>
-        
-          <dd style="width: 32%; vertical-align: top;">
             <a href="/server/latest/user_manual/uk_UA/"
                
             >
@@ -877,6 +835,8 @@ For a group or a team, the role applies to all members of the group or team.</p>
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/33/user_manual"
                
+               style="color: var(--dark-link-color);"
+               
             >
               33
             </a>
@@ -884,8 +844,6 @@ For a group or a team, the role applies to all members of the group or team.</p>
         
           <dd style="width: 32%">
             <a href="https://docs.nextcloud.com/server/32/user_manual"
-               
-               style="color: var(--dark-link-color);"
                
             >
               32

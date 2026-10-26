@@ -13,7 +13,6 @@ use SpomkyLabs\Pki\ASN1\Type\Constructed\Set;
 use SpomkyLabs\Pki\ASN1\Type\UnspecifiedType;
 use SpomkyLabs\Pki\X501\ASN1\AttributeValue\AttributeValue;
 use function count;
-use function sprintf;
 
 /**
  * Implements *Attribute* ASN.1 type.

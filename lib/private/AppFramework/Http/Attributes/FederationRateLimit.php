@@ -10,8 +10,7 @@ declare(strict_types=1);
 namespace OC\AppFramework\Http\Attributes;
 
 use Attribute;
-use NCU\Security\Signature\ISignatureManager;
-use OC\OCM\OCMSignatoryManager;
+use OC\OCM\OCMDiscoveryService;
 use OCA\Federation\TrustedServers;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\IRequest;
@@ -25,15 +24,13 @@ use OCP\Server;
  */
 #[Attribute(Attribute::TARGET_METHOD)]
 class FederationRateLimit extends AnonRateLimit {
-	private ?TrustedServers $trustedServers;
-	private ISignatureManager $signatureManager;
-	private OCMSignatoryManager $signatoryManager;
+	private readonly OCMDiscoveryService $discoveryService;
+	private readonly ?TrustedServers $trustedServers;
 
 	public function __construct(int $limit, int $period) {
 		parent::__construct($limit, $period);
 
-		$this->signatureManager = Server::get(ISignatureManager::class);
-		$this->signatoryManager = Server::get(OCMSignatoryManager::class);
+		$this->discoveryService = Server::get(OCMDiscoveryService::class);
 		$this->trustedServers = Server::get(TrustedServers::class);
 	}
 
@@ -44,7 +41,10 @@ class FederationRateLimit extends AnonRateLimit {
 		}
 
 		try {
-			$signedRequest = $this->signatureManager->getIncomingSignedRequest($this->signatoryManager);
+			$signedRequest = $this->discoveryService->getIncomingSignedRequest();
+			if (!$signedRequest) {
+				return true;
+			}
 			$signedRequest->verify();
 			return !$this->trustedServers->isTrustedServer($signedRequest->getOrigin());
 		} catch (\Exception) {

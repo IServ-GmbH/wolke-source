@@ -136,6 +136,9 @@
                                         "type": "string"
                                     }
                                 }
+                            },
+                            "can-create-app-token": {
+                                "type": "boolean"
                             }
                         }
                     }
@@ -659,7 +662,9 @@
                     "scheduledAt",
                     "startedAt",
                     "endedAt",
-                    "allowCleanup"
+                    "allowCleanup",
+                    "includeWatermark",
+                    "userFacingErrorMessage"
                 ],
                 "properties": {
                     "id": {
@@ -733,6 +738,13 @@
                     },
                     "allowCleanup": {
                         "type": "boolean"
+                    },
+                    "includeWatermark": {
+                        "type": "boolean"
+                    },
+                    "userFacingErrorMessage": {
+                        "type": "string",
+                        "nullable": true
                     }
                 }
             },
@@ -1688,6 +1700,138 @@
                     },
                     "403": {
                         "description": "Password confirmation failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/core/getapppassword-onetime": {
+            "get": {
+                "operationId": "app_password-get-app-password-with-one-time-password",
+                "summary": "Get app password with one-time password",
+                "tags": [
+                    "app_password"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "user-agent",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "App password returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "apppassword"
+                                                    ],
+                                                    "properties": {
+                                                        "apppassword": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Creating app password is not allowed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4944,6 +5088,11 @@
                                         "nullable": true,
                                         "default": null,
                                         "description": "Method used for the webhook request (HTTP:GET, HTTP:POST, HTTP:PUT, HTTP:DELETE or AppAPI:APP_ID:GET, AppAPI:APP_ID:POST...)"
+                                    },
+                                    "includeWatermark": {
+                                        "type": "boolean",
+                                        "default": true,
+                                        "description": "Whether to include a watermark in the output file or not"
                                     }
                                 }
                             }
@@ -8852,249 +9001,6 @@
                 }
             }
         },
-        "/ocs/v2.php/core/whatsnew": {
-            "get": {
-                "operationId": "whats_new-get",
-                "summary": "Get the changes",
-                "tags": [
-                    "whats_new"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "parameters": [
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Changes returned",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "changelogURL",
-                                                        "product",
-                                                        "version"
-                                                    ],
-                                                    "properties": {
-                                                        "changelogURL": {
-                                                            "type": "string"
-                                                        },
-                                                        "product": {
-                                                            "type": "string"
-                                                        },
-                                                        "version": {
-                                                            "type": "string"
-                                                        },
-                                                        "whatsNew": {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "regular",
-                                                                "admin"
-                                                            ],
-                                                            "properties": {
-                                                                "regular": {
-                                                                    "type": "array",
-                                                                    "items": {
-                                                                        "type": "string"
-                                                                    }
-                                                                },
-                                                                "admin": {
-                                                                    "type": "array",
-                                                                    "items": {
-                                                                        "type": "string"
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "204": {
-                        "description": "No changes"
-                    },
-                    "401": {
-                        "description": "Current user is not logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "operationId": "whats_new-dismiss",
-                "summary": "Dismiss the changes",
-                "tags": [
-                    "whats_new"
-                ],
-                "security": [
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "required": [
-                                    "version"
-                                ],
-                                "properties": {
-                                    "version": {
-                                        "type": "string",
-                                        "description": "Version to dismiss the changes for"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "parameters": [
-                    {
-                        "name": "OCS-APIRequest",
-                        "in": "header",
-                        "description": "Required to be true for the API request to pass",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean",
-                            "default": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Changes dismissed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "",
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Current user is not logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "ocs"
-                                    ],
-                                    "properties": {
-                                        "ocs": {
-                                            "type": "object",
-                                            "required": [
-                                                "meta",
-                                                "data"
-                                            ],
-                                            "properties": {
-                                                "meta": {
-                                                    "$ref": "#/components/schemas/OCSMeta"
-                                                },
-                                                "data": {}
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/index.php/avatar/{userId}/{size}/dark": {
             "get": {
                 "operationId": "avatar-get-avatar-dark",
@@ -10356,6 +10262,10 @@
     },
     "tags": [
         {
+            "name": "ocs",
+            "description": "If you are here because you can't extend the OCSController class, you got the wrong one. Please use {@see \\OCP\\AppFramework\\OCSController}!"
+        },
+        {
             "name": "avatar",
             "description": "Class AvatarController"
         },
@@ -10366,6 +10276,10 @@
         {
             "name": "ocm",
             "description": "Controller about the endpoint /ocm-provider/"
+        },
+        {
+            "name": "open_metrics",
+            "description": "OpenMetrics controller Gather and display metrics"
         }
     ]
 }

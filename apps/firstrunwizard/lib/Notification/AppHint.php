@@ -8,26 +8,27 @@
 namespace OCA\FirstRunWizard\Notification;
 
 use OCP\App\IAppManager;
-use OCP\IConfig;
+use OCP\Config\IUserConfig;
 use OCP\IGroupManager;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Notification\INotification;
 
 class AppHint {
-	public const APP_HINT_VERSION = '19';
+	public const APP_HINT_VERSION = 19;
 
 	public function __construct(
-		private INotificationManager $notificationManager,
-		private IGroupManager $groupManager,
-		private IAppManager $appManager,
-		private IConfig $config,
-		private ?string $userId,
+		private readonly INotificationManager $notificationManager,
+		private readonly IGroupManager $groupManager,
+		private readonly IAppManager $appManager,
+		private readonly IUserConfig $userConfig,
+		private readonly ?string $userId,
 	) {
 	}
 
 	public function sendAppHintNotifications(): void {
 		if ($this->userId !== null
 			&& $this->groupManager->isAdmin($this->userId)
-			&& $this->config->getUserValue($this->userId, 'firstrunwizard', 'apphint') !== self::APP_HINT_VERSION
+			&& $this->userConfig->getValueInt($this->userId, 'firstrunwizard', 'apphint') !== self::APP_HINT_VERSION
 		) {
 			$this->sendNotification('recognize', $this->userId);
 			$this->sendNotification('groupfolders', $this->userId);
@@ -35,26 +36,23 @@ class AppHint {
 			$this->sendNotification('deck', $this->userId);
 			$this->sendNotification('tasks', $this->userId);
 			$this->sendNotification('whiteboard', $this->userId);
-			$this->config->setUserValue($this->userId, 'firstrunwizard', 'apphint', self::APP_HINT_VERSION);
+			$this->userConfig->setValueInt($this->userId, 'firstrunwizard', 'apphint', self::APP_HINT_VERSION);
 		}
 	}
 
 	protected function sendNotification(string $app, string $user): void {
 		$notification = $this->generateNotification($app, $user);
 		if (
-			$this->config->getUserValue($this->userId, 'firstrunwizard', 'apphint') !== self::APP_HINT_VERSION
+			$this->userConfig->getValueInt($user, 'firstrunwizard', 'apphint') !== self::APP_HINT_VERSION
 			&& $this->notificationManager->getCount($notification) === 0
 			&& !$this->appManager->isEnabledForUser($app)
 		) {
 			$notification->setDateTime(new \DateTime());
 			$this->notificationManager->notify($notification);
 		}
-		if ($this->notificationManager->getCount($notification) === 0) {
-			return;
-		}
 	}
 
-	public function dismissNotification(string $app) {
+	public function dismissNotification(string $app): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('firstrunwizard')
 			->setSubject('apphint-' . $app)
@@ -62,7 +60,7 @@ class AppHint {
 		$this->notificationManager->markProcessed($notification);
 	}
 
-	protected function generateNotification(string $app, string $user) {
+	protected function generateNotification(string $app, string $user): INotification {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('firstrunwizard')
 			->setSubject('apphint-' . $app)

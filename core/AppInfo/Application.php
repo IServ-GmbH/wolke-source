@@ -24,6 +24,7 @@ use OC\Core\Listener\PasswordUpdatedListener;
 use OC\Core\Notification\CoreNotifier;
 use OC\DirectEditing\Listeners\UserDeletedTokenCleanupListener as UserDeletedDirectEditingTokenCleanupListener;
 use OC\DirectEditing\Listeners\UserDisabledTokenCleanupListener as UserDisabledDirectEditingTokenCleanupListener;
+use OC\OCM\OCMDiscoveryHandler;
 use OC\TagManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -88,6 +89,7 @@ class Application extends App implements IBootstrap {
 		// config lexicon
 		$context->registerConfigLexicon(ConfigLexicon::class);
 
+		$context->registerWellKnownHandler(OCMDiscoveryHandler::class);
 		$context->registerCapability(Capabilities::class);
 
 		// Direct Editing

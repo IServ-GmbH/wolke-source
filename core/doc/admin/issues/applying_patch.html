@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patching Nextcloud &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Patching Nextcloud &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -112,6 +112,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Issues and troubleshooting</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="general_troubleshooting.html">General troubleshooting</a></li>
@@ -151,7 +152,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -220,7 +221,7 @@
 <h2>Reverting a patch<a class="headerlink" href="#reverting-a-patch" title="Link to this heading"></a></h2>
 <ol class="arabic">
 <li><p>Navigate to the directory where you applied the patch.</p></li>
-<li><p>Now revert the patch with the <code class="docutils literal notranslate"><span class="pre">-R</span></code> option:</p>
+<li><p>Revert the patch with the <code class="docutils literal notranslate"><span class="pre">-R</span></code> option:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">patch</span> <span class="o">-</span><span class="n">R</span> <span class="o">-</span><span class="n">p</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="o">./</span><span class="mf">26396.</span><span class="n">diff</span>
 </pre></div>
 </div>
@@ -234,17 +235,10 @@
 </section>
 <section id="notes-and-troubleshooting">
 <h2>Notes and troubleshooting<a class="headerlink" href="#notes-and-troubleshooting" title="Link to this heading"></a></h2>
-<p>If you found a related pull request on GitHub that solves your issue, or you want to help developers and verify a fix works, you can get a patch for the pull request.</p>
-<ol class="arabic simple">
-<li><p>Using <a class="reference external" href="https://github.com/nextcloud/server/pull/26396">https://github.com/nextcloud/server/pull/26396</a> as an example.</p></li>
-<li><p>Append <code class="docutils literal notranslate"><span class="pre">.patch</span></code> to the URL: <a class="reference external" href="https://github.com/nextcloud/server/pull/26396.patch">https://github.com/nextcloud/server/pull/26396.patch</a></p></li>
-<li><p>Download the patch to your server and follow the <a class="reference internal" href="#applying-a-patch">Applying a patch</a> steps.</p></li>
-<li><p>In case you are on an older version, you might first need to go the the correct version of the patch.</p></li>
-</ol>
-<img alt="backportbot-nextcloud linking to the pull request for an older version." src="../_images/getting-a-patch-from-github.png" />
-<ol class="arabic simple" start="5">
-<li><p>You can find it by looking for a link by the <code class="docutils literal notranslate"><span class="pre">backportbot-nextcloud</span></code> or a developer will leave a manual comment about the backport to an older Nextcloud version. For the example above you the pull request for Nextcloud 21 is at <a class="reference external" href="https://github.com/nextcloud/server/pull/26406">https://github.com/nextcloud/server/pull/26406</a> and the patch at <a class="reference external" href="https://github.com/nextcloud/server/pull/26406.patch">https://github.com/nextcloud/server/pull/26406.patch</a></p></li>
-</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may see errors about files not being found, especially when applying patches from GitHub. Patches can include development or test files (for example, files under <code class="docutils literal notranslate"><span class="pre">build/</span></code> or <code class="docutils literal notranslate"><span class="pre">tests/</span></code>) that are not present on your installation. These messages are expected and can be ignored if they refer only to such files.</p>
+</div>
 </section>
 </section>
 
@@ -273,7 +267,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -299,6 +293,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -306,8 +302,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Tools\Traits;
 
@@ -14,6 +16,7 @@ use Exception;
 
 trait TStringTools {
 	use TArrayTools;
+
 
 	/**
 	 * @param int $length
@@ -34,6 +37,7 @@ trait TStringTools {
 
 		return $str;
 	}
+
 
 	/**
 	 * Generate uuid: 2b5a7a87-8db1-445f-a17b-405790f91c80
@@ -59,6 +63,7 @@ trait TStringTools {
 
 		return $uuid;
 	}
+
 
 	/**
 	 * @param string $line
@@ -99,6 +104,7 @@ trait TStringTools {
 		return substr($str1, 0, $i);
 	}
 
+
 	/**
 	 * @param string $line
 	 * @param array $params
@@ -114,6 +120,7 @@ trait TStringTools {
 		return $line;
 	}
 
+
 	/**
 	 * @param int $words
 	 *
@@ -127,6 +134,7 @@ trait TStringTools {
 
 		return implode(' ', $sentence);
 	}
+
 
 	/**
 	 * @param int $length
@@ -146,6 +154,7 @@ trait TStringTools {
 		return implode('', $word);
 	}
 
+
 	/**
 	 * @param int $bytes
 	 *
@@ -161,6 +170,7 @@ trait TStringTools {
 
 		return round($bytes / pow(1024, $e), 2) . ' ' . $s[$e];
 	}
+
 
 	/**
 	 * @param int $first

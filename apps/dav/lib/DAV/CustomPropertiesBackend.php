@@ -22,6 +22,7 @@ use OCA\DAV\Db\PropertyMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use Override;
 use Sabre\CalDAV\Schedule\Inbox;
 use Sabre\DAV\Exception as DavException;
 use Sabre\DAV\PropertyStorage\Backend\BackendInterface;
@@ -102,6 +103,7 @@ class CustomPropertiesBackend implements BackendInterface {
 	/**
 	 * Map of custom XML elements to parse when trying to deserialize an instance of
 	 * \Sabre\DAV\Xml\Property\Complex to find a more specialized PROPERTY_TYPE_*
+	 * @var array<string, class-string>
 	 */
 	private const COMPLEX_XML_ELEMENT_MAP = [
 		'{urn:ietf:params:xml:ns:caldav}schedule-default-calendar-URL' => Href::class,
@@ -109,6 +111,7 @@ class CustomPropertiesBackend implements BackendInterface {
 
 	/**
 	 * Map of well-known property names to default values
+	 * @var array<string, string>
 	 */
 	private const PROPERTY_DEFAULT_VALUES = [
 		'{http://owncloud.org/ns}calendar-enabled' => '1',
@@ -150,17 +153,15 @@ class CustomPropertiesBackend implements BackendInterface {
 	private XmlService $xmlService;
 
 	/**
-	 * @param Tree $tree node tree
-	 * @param IDBConnection $connection database connection
 	 * @param IUser $user owner of the tree and properties
 	 */
 	public function __construct(
-		private Server $server,
-		private Tree $tree,
-		private IDBConnection $connection,
-		private IUser $user,
-		private PropertyMapper $propertyMapper,
-		private DefaultCalendarValidator $defaultCalendarValidator,
+		private readonly Server $server,
+		private readonly Tree $tree,
+		private readonly IDBConnection $connection,
+		private readonly IUser $user,
+		private readonly PropertyMapper $propertyMapper,
+		private readonly DefaultCalendarValidator $defaultCalendarValidator,
 	) {
 		$this->xmlService = new XmlService();
 		$this->xmlService->elementMap = array_merge(
@@ -174,9 +175,9 @@ class CustomPropertiesBackend implements BackendInterface {
 	 *
 	 * @param string $path
 	 * @param PropFind $propFind
-	 * @return void
 	 */
-	public function propFind($path, PropFind $propFind) {
+	#[Override]
+	public function propFind($path, PropFind $propFind): void {
 		$requestedProps = $propFind->get404Properties();
 
 		$requestedProps = array_filter(
@@ -289,12 +290,10 @@ class CustomPropertiesBackend implements BackendInterface {
 	 * Updates properties for a path
 	 *
 	 * @param string $path
-	 * @param PropPatch $propPatch
-	 *
-	 * @return void
 	 */
-	public function propPatch($path, PropPatch $propPatch) {
-		$propPatch->handleRemaining(function ($changedProps) use ($path) {
+	#[Override]
+	public function propPatch($path, PropPatch $propPatch): void {
+		$propPatch->handleRemaining(function (array $changedProps) use ($path) {
 			return $this->updateProperties($path, $changedProps);
 		});
 	}
@@ -304,13 +303,13 @@ class CustomPropertiesBackend implements BackendInterface {
 	 *
 	 * @param string $path path of node for which to delete properties
 	 */
-	public function delete($path) {
-		$statement = $this->connection->prepare(
-			'DELETE FROM `*PREFIX*properties` WHERE `userid` = ? AND `propertypath` = ?'
-		);
-		$statement->execute([$this->user->getUID(), $this->formatPath($path)]);
-		$statement->closeCursor();
-
+	#[Override]
+	public function delete($path): void {
+		$qb = $this->connection->getQueryBuilder();
+		$qb->delete('properties')
+			->where($qb->expr()->eq('userid', $qb->createNamedParameter($this->user->getUID())))
+			->andWhere($qb->expr()->eq('propertypath', $qb->createNamedParameter($this->formatPath($path))));
+		$qb->executeStatement();
 		unset($this->userCache[$path]);
 	}
 
@@ -319,16 +318,15 @@ class CustomPropertiesBackend implements BackendInterface {
 	 *
 	 * @param string $source
 	 * @param string $destination
-	 *
-	 * @return void
 	 */
-	public function move($source, $destination) {
-		$statement = $this->connection->prepare(
-			'UPDATE `*PREFIX*properties` SET `propertypath` = ?'
-			. ' WHERE `userid` = ? AND `propertypath` = ?'
-		);
-		$statement->execute([$this->formatPath($destination), $this->user->getUID(), $this->formatPath($source)]);
-		$statement->closeCursor();
+	#[Override]
+	public function move($source, $destination): void {
+		$qb = $this->connection->getQueryBuilder();
+		$qb->update('properties')
+			->set('propertypath', $qb->createNamedParameter($this->formatPath($destination)))
+			->where($qb->expr()->eq('userid', $qb->createNamedParameter($this->user->getUID())))
+			->andWhere($qb->expr()->eq('propertypath', $qb->createNamedParameter($this->formatPath($source))));
+		$qb->executeStatement();
 	}
 
 	/**
@@ -357,10 +355,10 @@ class CustomPropertiesBackend implements BackendInterface {
 	}
 
 	/**
-	 * @param string $path
 	 * @param string[] $requestedProperties
 	 *
-	 * @return array
+	 * @return array<string, mixed|Complex|Href|string>
+	 * @throws \OCP\DB\Exception
 	 */
 	private function getPublishedProperties(string $path, array $requestedProperties): array {
 		$allowedProps = array_intersect(self::PUBLISHED_READ_ONLY_PROPERTIES, $requestedProperties);
@@ -379,7 +377,7 @@ class CustomPropertiesBackend implements BackendInterface {
 			->where($qb->expr()->eq('propertypath', $qb->createNamedParameter($path)));
 		$result = $qb->executeQuery();
 		$props = [];
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$props[$row['propertyname']] = $this->decodeValueFromDatabase($row['propertyvalue'], $row['valuetype']);
 		}
 		$result->closeCursor();
@@ -388,7 +386,7 @@ class CustomPropertiesBackend implements BackendInterface {
 	}
 
 	/**
-	 * prefetch all user properties in a directory
+	 * Prefetch all user properties in a directory
 	 */
 	private function cacheDirectory(string $path, Directory $node): void {
 		$prefix = ltrim($path . '/', '/');
@@ -410,7 +408,7 @@ class CustomPropertiesBackend implements BackendInterface {
 
 		$propsByPath = [];
 
-		while ($row = $result->fetch()) {
+		while ($row = $result->fetchAssociative()) {
 			$childPath = $prefix . $row['name'];
 			if (!isset($propsByPath[$childPath])) {
 				$propsByPath[$childPath] = [];
@@ -481,44 +479,43 @@ class CustomPropertiesBackend implements BackendInterface {
 	/**
 	 * Returns a list of properties for the given path and current user
 	 *
-	 * @param string $path
 	 * @param array $requestedProperties requested properties or empty array for "all"
-	 * @return array
+	 * @return array<string, mixed>
 	 * @note The properties list is a list of propertynames the client
 	 * requested, encoded as xmlnamespace#tagName, for example:
 	 * http://www.example.org/namespace#author If the array is empty, all
 	 * properties should be returned
 	 */
-	private function getUserProperties(string $path, array $requestedProperties) {
+	private function getUserProperties(string $path, array $requestedProperties): array {
 		if (isset($this->userCache[$path])) {
 			return $this->userCache[$path];
 		}
 
-		// TODO: chunking if more than 1000 properties
-		$sql = 'SELECT * FROM `*PREFIX*properties` WHERE `userid` = ? AND `propertypath` = ?';
+		$props = [];
 
-		$whereValues = [$this->user->getUID(), $this->formatPath($path)];
-		$whereTypes = [null, null];
+		$qb = $this->connection->getQueryBuilder();
+		$qb->select('*')
+			->from('properties')
+			->where($qb->expr()->eq('userid', $qb->createNamedParameter($this->user->getUID(), IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->eq('propertypath', $qb->createNamedParameter($this->formatPath($path), IQueryBuilder::PARAM_STR)));
 
 		if (!empty($requestedProperties)) {
 			// request only a subset
-			$sql .= ' AND `propertyname` in (?)';
-			$whereValues[] = $requestedProperties;
-			$whereTypes[] = IQueryBuilder::PARAM_STR_ARRAY;
+			$qb->andWhere($qb->expr()->in('propertyname', $qb->createParameter('requestedProperties')));
+			$chunks = array_chunk($requestedProperties, 1000);
+			foreach ($chunks as $chunk) {
+				$qb->setParameter('requestedProperties', $chunk, IQueryBuilder::PARAM_STR_ARRAY);
+				$result = $qb->executeQuery();
+				while ($row = $result->fetchAssociative()) {
+					$props[$row['propertyname']] = $this->decodeValueFromDatabase($row['propertyvalue'], $row['valuetype']);
+				}
+			}
+		} else {
+			$result = $qb->executeQuery();
+			while ($row = $result->fetchAssociative()) {
+				$props[$row['propertyname']] = $this->decodeValueFromDatabase($row['propertyvalue'], $row['valuetype']);
+			}
 		}
-
-		$result = $this->connection->executeQuery(
-			$sql,
-			$whereValues,
-			$whereTypes
-		);
-
-		$props = [];
-		while ($row = $result->fetch()) {
-			$props[$row['propertyname']] = $this->decodeValueFromDatabase($row['propertyvalue'], $row['valuetype']);
-		}
-
-		$result->closeCursor();
 
 		$this->userCache[$path] = $props;
 		return $props;
@@ -533,6 +530,7 @@ class CustomPropertiesBackend implements BackendInterface {
 	}
 
 	/**
+	 * @param array<string, string> $properties
 	 * @throws Exception
 	 */
 	private function updateProperties(string $path, array $properties): bool {
@@ -590,10 +588,7 @@ class CustomPropertiesBackend implements BackendInterface {
 	}
 
 	/**
-	 * long paths are hashed to ensure they fit in the database
-	 *
-	 * @param string $path
-	 * @return string
+	 * Long paths are hashed to ensure they fit in the database
 	 */
 	private function formatPath(string $path): string {
 		if (strlen($path) > 250) {

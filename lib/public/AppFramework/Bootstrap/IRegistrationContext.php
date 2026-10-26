@@ -16,6 +16,7 @@ use OCP\Capabilities\ICapability;
 use OCP\Collaboration\Reference\IReferenceProvider;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Template\ICustomTemplateProvider;
+use OCP\GlobalScale\IGlobalScaleService;
 use OCP\IContainer;
 use OCP\Mail\Provider\IProvider as IMailProvider;
 use OCP\Notification\INotifier;
@@ -382,6 +383,15 @@ interface IRegistrationContext {
 	public function registerSetupCheck(string $setupCheckClass): void;
 
 	/**
+	 * Register an implementation of \OCP\SystemReport\ISystemReportSection that
+	 * will contribute a section to the system report
+	 *
+	 * @param class-string<\OCP\SystemReport\ISystemReportSection> $sectionClass
+	 * @since 33.0.10
+	 */
+	public function registerSystemReportSection(string $sectionClass): void;
+
+	/**
 	 * Register an implementation of \OCP\Settings\IDeclarativeSettings that
 	 * will handle the implementation of declarative settings
 	 *
@@ -447,4 +457,12 @@ interface IRegistrationContext {
 	 * @since 31.0.0
 	 */
 	public function registerConfigLexicon(string $configLexiconClass): void;
+
+	/**
+	 * Register an implementation of {@see IGlobalScaleService}.
+	 *
+	 * @param class-string<IGlobalScaleService> $globalScaleServiceClass
+	 * @since 34.0.3
+	 */
+	public function registerGlobalScaleService(string $globalScaleServiceClass): void;
 }

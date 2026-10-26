@@ -27,7 +27,7 @@ use OCP\ISession;
 abstract class PublicShareController extends Controller {
 
 	/**
-	 * @since 32.0.2
+	 * @since 33.0.0
 	 */
 	public const DAV_AUTHENTICATED_FRONTEND = 'public_link_authenticated_frontend';
 
@@ -122,7 +122,7 @@ abstract class PublicShareController extends Controller {
 	/**
 	 * Validate the token and password hash stored in session
 	 *
-	 * @since 32.0.2
+	 * @since 33.0.0
 	 */
 	protected function validateTokenSession(string $token, string $passwordHash): bool {
 		$allowedTokensJSON = $this->session->get(self::DAV_AUTHENTICATED_FRONTEND) ?? '[]';
@@ -137,7 +137,7 @@ abstract class PublicShareController extends Controller {
 	/**
 	 * Store the token and password hash in session
 	 *
-	 * @since 32.0.2
+	 * @since 33.0.0
 	 */
 	protected function storeTokenSession(string $token, string $passwordHash = ''): void {
 		$allowedTokensJSON = $this->session->get(self::DAV_AUTHENTICATED_FRONTEND) ?? '[]';

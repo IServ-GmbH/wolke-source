@@ -11,7 +11,6 @@ use OC\Files\SetupManager;
 use OC\Files\View;
 use OCA\Files_Trashbin\AppInfo\Application;
 use OCA\Files_Trashbin\Expiration;
-use OCA\Files_Trashbin\Helper;
 use OCA\Files_Trashbin\Trashbin;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
@@ -19,6 +18,7 @@ use OCP\IAppConfig;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Lock\ILockingProvider;
+use OCP\Lock\LockedException;
 use Psr\Log\LoggerInterface;
 
 class ExpireTrash extends TimedJob {
@@ -65,8 +65,7 @@ class ExpireTrash extends TimedJob {
 
 				try {
 					if ($this->setupFS($user)) {
-						$dirContent = Helper::getTrashFiles('/', $uid, 'mtime');
-						Trashbin::deleteExpiredFiles($dirContent, $uid);
+						Trashbin::expire($uid);
 					}
 				} catch (\Throwable $e) {
 					$this->logger->error('Error while expiring trashbin for user ' . $uid, ['exception' => $e]);
@@ -111,7 +110,7 @@ class ExpireTrash extends TimedJob {
 	}
 
 	private function resetOffset() {
-		$this->runMutexOperation(function () {
+		$this->runMutexOperation(function (): void {
 			$this->appConfig->setValueInt(Application::APP_ID, self::OFFSET_CONFIG_KEY_NAME, 0);
 		});
 	}
@@ -123,7 +122,7 @@ class ExpireTrash extends TimedJob {
 			try {
 				$this->lockingProvider->acquireLock(self::OFFSET_CONFIG_KEY_NAME, ILockingProvider::LOCK_EXCLUSIVE, 'Expire trashbin background job offset');
 				$acquired = true;
-			} catch (\OCP\Lock\LockedException $e) {
+			} catch (LockedException $e) {
 				// wait a bit and try again
 				usleep(100000);
 			}

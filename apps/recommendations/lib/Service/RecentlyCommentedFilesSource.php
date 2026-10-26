@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SPDX-FileCopyrightText: 2018 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -130,6 +131,7 @@ class RecentlyCommentedFilesSource implements IRecommendationSource {
 	/**
 	 * @return IRecommendation[]
 	 */
+	#[\Override]
 	public function getMostRecentRecommendation(IUser $user, int $max): array {
 		$all = iterator_to_array($this->getAllCommentedFiles($user));
 

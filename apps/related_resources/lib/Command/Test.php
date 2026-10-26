@@ -59,6 +59,7 @@ class Test extends Base {
 		$this->relatedService = $relatedService;
 	}
 
+
 	/**
 	 * @return void
 	 */
@@ -73,6 +74,7 @@ class Test extends Base {
 			->addOption('resource-type', '', InputOption::VALUE_REQUIRED, 'limit to a type of resources', '')
 			->addArgument('itemId', InputArgument::REQUIRED, 'Item Id');
 	}
+
 
 	/**
 	 * @param InputInterface $input
@@ -112,6 +114,7 @@ class Test extends Base {
 		return 0;
 	}
 
+
 	private function displayRecipients(string $providerId, string $itemId): void {
 		$result = $this->relatedService->getRelatedFromItem($providerId, $itemId);
 
@@ -122,6 +125,7 @@ class Test extends Base {
 		$output->writeln('<info>Recipients</info>: ' . json_encode($result->getRecipients()));
 		$output->writeln('');
 	}
+
 
 	private function displayRelated(string $providerId, string $itemId, string $resourceType, bool $json): void {
 		$result = $this->relatedService->getRelatedToItem($providerId, $itemId, -1, $resourceType);

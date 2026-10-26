@@ -1,8 +1,8 @@
 diff --git apps/files_sharing/src/components/SharingInput.vue apps/files_sharing/src/components/SharingInput.vue
-index 12429e9..1f3bb68 100644
+index 17677e9..ddbe7da 100644
 --- apps/files_sharing/src/components/SharingInput.vue
 +++ apps/files_sharing/src/components/SharingInput.vue
-@@ -490,7 +490,11 @@ export default {
+@@ -499,7 +499,11 @@ export default {
  					subname = result.extra?.email?.value ?? ''
  					displayName = result.extra?.name?.value ?? displayName
  				} else if (result.value.server) {

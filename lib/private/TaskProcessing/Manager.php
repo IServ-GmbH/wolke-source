@@ -51,11 +51,15 @@ use OCP\TaskProcessing\Events\TaskSuccessfulEvent;
 use OCP\TaskProcessing\Exception\NotFoundException;
 use OCP\TaskProcessing\Exception\ProcessingException;
 use OCP\TaskProcessing\Exception\UnauthorizedException;
+use OCP\TaskProcessing\Exception\UserFacingProcessingException;
 use OCP\TaskProcessing\Exception\ValidationException;
+use OCP\TaskProcessing\IInternalTaskType;
 use OCP\TaskProcessing\IManager;
 use OCP\TaskProcessing\IProvider;
 use OCP\TaskProcessing\ISynchronousProvider;
+use OCP\TaskProcessing\ISynchronousWatermarkingProvider;
 use OCP\TaskProcessing\ITaskType;
+use OCP\TaskProcessing\ITriggerableProvider;
 use OCP\TaskProcessing\ShapeDescriptor;
 use OCP\TaskProcessing\ShapeEnumValue;
 use OCP\TaskProcessing\Task;
@@ -89,7 +93,7 @@ class Manager implements IManager {
 	private ?array $providers = null;
 
 	/**
-	 * @var array<array-key,array{name: string, description: string, inputShape: ShapeDescriptor[], inputShapeEnumValues: ShapeEnumValue[][], inputShapeDefaults: array<array-key, numeric|string>, optionalInputShape: ShapeDescriptor[], optionalInputShapeEnumValues: ShapeEnumValue[][], optionalInputShapeDefaults: array<array-key, numeric|string>, outputShape: ShapeDescriptor[], outputShapeEnumValues: ShapeEnumValue[][], optionalOutputShape: ShapeDescriptor[], optionalOutputShapeEnumValues: ShapeEnumValue[][]}>
+	 * @var array<array-key,array{name: string, description: string, inputShape: ShapeDescriptor[], inputShapeEnumValues: ShapeEnumValue[][], inputShapeDefaults: array<array-key, numeric|string>, isInternal: bool, optionalInputShape: ShapeDescriptor[], optionalInputShapeEnumValues: ShapeEnumValue[][], optionalInputShapeDefaults: array<array-key, numeric|string>, outputShape: ShapeDescriptor[], outputShapeEnumValues: ShapeEnumValue[][], optionalOutputShape: ShapeDescriptor[], optionalOutputShapeEnumValues: ShapeEnumValue[][]}>
 	 */
 	private ?array $availableTaskTypes = null;
 
@@ -211,7 +215,7 @@ class Manager implements IManager {
 					try {
 						return ['output' => $this->provider->process($input['input'])];
 					} catch (\RuntimeException $e) {
-						throw new ProcessingException($e->getMessage(), 0, $e);
+						throw new ProcessingException($e->getMessage(), previous: $e);
 					}
 				}
 
@@ -350,14 +354,19 @@ class Manager implements IManager {
 						$folder = $this->appData->newFolder('text2image');
 					}
 					if ($input['numberOfImages'] > 12) {
-						throw new ProcessingException(
-							'numberOfImages cannot be greater than 12'
+						throw new UserFacingProcessingException(
+							'numberOfImages cannot be greater than 12',
+							userFacingMessage:
+								$this->l10nFactory->get('core', $this->l10nFactory->getUserLanguage($this->userManager->get($userId)))
+									->t('Cannot generate more than 12 images')
 						);
 					}
 					if ($input['numberOfImages'] < 1) {
-						throw new ProcessingException(
-							'numberOfImages must be greater than 0'
-						);
+						throw new UserFacingProcessingException(
+							'numberOfImages must be greater than 0',
+							userFacingMessage:
+								$this->l10nFactory->get('core', $this->l10nFactory->getUserLanguage($this->userManager->get($userId)))
+									->t('Cannot generate less than 1 image'));
 					}
 					$resources = [];
 					$files = [];
@@ -377,7 +386,7 @@ class Manager implements IManager {
 					try {
 						$this->provider->generate($input['input'], $resources);
 					} catch (\RuntimeException $e) {
-						throw new ProcessingException($e->getMessage(), 0, $e);
+						throw new ProcessingException($e->getMessage(), previous: $e);
 					}
 					for ($i = 0; $i < $input['numberOfImages']; $i++) {
 						if (is_resource($resources[$i])) {
@@ -495,7 +504,7 @@ class Manager implements IManager {
 					try {
 						$result = $this->provider->transcribeFile($input['input']);
 					} catch (\RuntimeException $e) {
-						throw new ProcessingException($e->getMessage(), 0, $e);
+						throw new ProcessingException($e->getMessage(), previous: $e);
 					}
 					return ['output' => $result];
 				}
@@ -624,6 +633,7 @@ class Manager implements IManager {
 			\OCP\TaskProcessing\TaskTypes\AudioToAudioChat::ID => \OCP\Server::get(\OCP\TaskProcessing\TaskTypes\AudioToAudioChat::class),
 			\OCP\TaskProcessing\TaskTypes\ContextAgentAudioInteraction::ID => \OCP\Server::get(\OCP\TaskProcessing\TaskTypes\ContextAgentAudioInteraction::class),
 			\OCP\TaskProcessing\TaskTypes\AnalyzeImages::ID => \OCP\Server::get(\OCP\TaskProcessing\TaskTypes\AnalyzeImages::class),
+			\OCP\TaskProcessing\TaskTypes\ImageToTextOpticalCharacterRecognition::ID => \OCP\Server::get(\OCP\TaskProcessing\TaskTypes\ImageToTextOpticalCharacterRecognition::class),
 		];
 
 		foreach ($context->getTaskProcessingTaskTypes() as $providerServiceRegistration) {
@@ -901,6 +911,7 @@ class Manager implements IManager {
 						'outputShapeEnumValues' => $provider->getOutputShapeEnumValues(),
 						'optionalOutputShape' => $provider->getOptionalOutputShape(),
 						'optionalOutputShapeEnumValues' => $provider->getOptionalOutputShapeEnumValues(),
+						'isInternal' => $taskType instanceof IInternalTaskType,
 					];
 				} catch (\Throwable $e) {
 					$this->logger->error('Failed to set up TaskProcessing provider ' . $provider::class, ['exception' => $e]);
@@ -997,6 +1008,28 @@ class Manager implements IManager {
 		if ($provider instanceof ISynchronousProvider) {
 			$this->jobList->add(SynchronousBackgroundJob::class, null);
 		}
+		if ($provider instanceof ITriggerableProvider) {
+			try {
+				if (!$this->taskMapper->hasRunningTasksForTaskType($task->getTaskTypeId())) {
+					// If no tasks are currently running for this task type, nudge the provider to ask for tasks
+					try {
+						$provider->trigger();
+					} catch (\Throwable $e) {
+						$this->logger->error('Failed to trigger the provider after scheduling a task.', [
+							'exception' => $e,
+							'taskId' => $task->getId(),
+							'providerId' => $provider->getId(),
+						]);
+					}
+				}
+			} catch (Exception $e) {
+				$this->logger->error('Failed to check DB for running tasks after a task was scheduled for a triggerable provider. Not triggering the provider.', [
+					'exception' => $e,
+					'taskId' => $task->getId(),
+					'providerId' => $provider->getId()
+				]);
+			}
+		}
 	}
 
 	public function runTask(Task $task): Task {
@@ -1036,10 +1069,15 @@ class Manager implements IManager {
 			}
 			try {
 				$this->setTaskStatus($task, Task::STATUS_RUNNING);
-				$output = $provider->process($task->getUserId(), $input, fn (float $progress) => $this->setTaskProgress($task->getId(), $progress));
+				if ($provider instanceof ISynchronousWatermarkingProvider) {
+					$output = $provider->process($task->getUserId(), $input, fn (float $progress) => $this->setTaskProgress($task->getId(), $progress), $task->getIncludeWatermark());
+				} else {
+					$output = $provider->process($task->getUserId(), $input, fn (float $progress) => $this->setTaskProgress($task->getId(), $progress));
+				}
 			} catch (ProcessingException $e) {
 				$this->logger->warning('Failed to process a TaskProcessing task with synchronous provider ' . $provider->getId(), ['exception' => $e]);
-				$this->setTaskResult($task->getId(), $e->getMessage(), null);
+				$userFacingErrorMessage = $e instanceof UserFacingProcessingException ? $e->getUserFacingMessage() : null;
+				$this->setTaskResult($task->getId(), $e->getMessage(), null, userFacingError: $userFacingErrorMessage);
 				return false;
 			} catch (\Throwable $e) {
 				$this->logger->error('Unknown error while processing TaskProcessing task', ['exception' => $e]);
@@ -1110,7 +1148,7 @@ class Manager implements IManager {
 		return true;
 	}
 
-	public function setTaskResult(int $id, ?string $error, ?array $result, bool $isUsingFileIds = false): void {
+	public function setTaskResult(int $id, ?string $error, ?array $result, bool $isUsingFileIds = false, ?string $userFacingError = null): void {
 		// TODO: Not sure if we should rather catch the exceptions of getTask here and fail silently
 		$task = $this->getTask($id);
 		if ($task->getStatus() === Task::STATUS_CANCELLED) {
@@ -1120,8 +1158,12 @@ class Manager implements IManager {
 		if ($error !== null) {
 			$task->setStatus(Task::STATUS_FAILED);
 			$task->setEndedAt(time());
-			// truncate error message to 1000 characters
-			$task->setErrorMessage(mb_substr($error, 0, 1000));
+			// truncate error message to 4000 characters
+			$task->setErrorMessage(substr($error, 0, 4000));
+			// truncate error message to 4000 characters
+			if ($userFacingError !== null) {
+				$task->setUserFacingErrorMessage(substr($userFacingError, 0, 4000));
+			}
 			$this->logger->warning('A TaskProcessing ' . $task->getTaskTypeId() . ' task with id ' . $id . ' failed with the following message: ' . $error);
 		} elseif ($result !== null) {
 			$taskTypes = $this->getAvailableTaskTypes();
@@ -1205,11 +1247,23 @@ class Manager implements IManager {
 			$taskEntity = $this->taskMapper->findOldestScheduledByType($taskTypeIds, $taskIdsToIgnore);
 			return $taskEntity->toPublicTask();
 		} catch (DoesNotExistException $e) {
-			throw new \OCP\TaskProcessing\Exception\NotFoundException('Could not find the task', 0, $e);
+			throw new \OCP\TaskProcessing\Exception\NotFoundException('Could not find the task', previous: $e);
 		} catch (\OCP\DB\Exception $e) {
-			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem finding the task', 0, $e);
+			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem finding the task', previous: $e);
 		} catch (\JsonException $e) {
-			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem parsing JSON after finding the task', 0, $e);
+			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem parsing JSON after finding the task', previous: $e);
+		}
+	}
+
+	public function getNextScheduledTasks(array $taskTypeIds = [], array $taskIdsToIgnore = [], int $numberOfTasks = 1): array {
+		try {
+			return array_map(fn ($taskEntity) => $taskEntity->toPublicTask(), $this->taskMapper->findNOldestScheduledByType($taskTypeIds, $taskIdsToIgnore, $numberOfTasks));
+		} catch (DoesNotExistException $e) {
+			throw new \OCP\TaskProcessing\Exception\NotFoundException('Could not find the task', previous: $e);
+		} catch (\OCP\DB\Exception $e) {
+			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem finding the task', previous: $e);
+		} catch (\JsonException $e) {
+			throw new \OCP\TaskProcessing\Exception\Exception('There was a problem parsing JSON after finding the task', previous: $e);
 		}
 	}
 

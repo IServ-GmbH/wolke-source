@@ -27,7 +27,9 @@ final class TextStringObject extends AbstractCBORObject implements Normalizable
     public function __toString(): string
     {
         $result = parent::__toString();
-        $result .= $this->length ?? '';
+        if ($this->length !== null) {
+            $result .= $this->length;
+        }
 
         return $result . $this->data;
     }

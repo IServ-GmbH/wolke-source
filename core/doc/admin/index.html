@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Introduction &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -64,8 +64,11 @@
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#videos-and-blogs">Videos and blogs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#target-audience">Target audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#target-audience">Target Audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-components">Core Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editions">Editions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#further-resources">Further Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="release_schedule.html">Maintenance and release schedule</a></li>
@@ -116,6 +119,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -140,7 +144,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -160,35 +164,83 @@
              
   <section id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
-<p>Welcome to the Nextcloud Server Administration Guide. This guide describes
-administration tasks for Nextcloud, the flexible open source file synchronization
-and sharing solution. Nextcloud includes the Nextcloud server, which runs on
-Linux, client applications for Microsoft Windows, macOS and Linux, and mobile
-clients for the Android and iOS operating systems.</p>
-<p>Current editions of Nextcloud manuals are always available online at
+<p><strong>Welcome to the Nextcloud Server Administration Guide.</strong></p>
+<p>This guide explains how to perform administrative tasks in Nextcloud, a highly versatile and scalable open-source platform for file synchronization and content collaboration.</p>
+<p>With over 400,000 deployments, Nextcloud can run on a simple two-user Raspberry Pi or scale to support global, distributed installations serving tens of millions of users. It can be deployed on-premises, in private or public clouds, or in hybrid environments. Supported by a large and growing community, Nextcloud is available in more than 60 languages.</p>
+<p>The latest editions of the Nextcloud manuals are always available online at
 <a class="reference external" href="https://docs.nextcloud.com/">docs.nextcloud.com</a>.</p>
-<p>Nextcloud server is available:</p>
-<ul class="simple">
-<li><p>As a free, full featured community-supported server, with all enterprise features.</p></li>
-<li><p>Or with full enterprise support, including phone and email access to Nextcloud developers.</p></li>
-</ul>
-<section id="videos-and-blogs">
-<h2>Videos and blogs<a class="headerlink" href="#videos-and-blogs" title="Link to this heading"></a></h2>
-<p>See the <a class="reference external" href="https://www.youtube.com/c/Nextcloud">official Nextcloud channel</a>
-on YouTube for tutorials, overviews, and conference videos.</p>
-<p>Visit <a class="reference external" href="https://nextcloud.com/news/">our blog</a> for latest news and to learn more
-about what is going on in and around Nextcloud.</p>
-</section>
 <section id="target-audience">
-<h2>Target audience<a class="headerlink" href="#target-audience" title="Link to this heading"></a></h2>
-<p>This guide is for users who want to install, administer, and
-optimize their Nextcloud servers. To learn more about the Nextcloud Web
-user interface, and desktop and mobile clients, please refer to their
-respective manuals:</p>
+<h2>Target Audience<a class="headerlink" href="#target-audience" title="Link to this heading"></a></h2>
+<p>This guide is for users who want to:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://docs.nextcloud.com/server/32/user_manual/en/">Nextcloud User Manual</a></p></li>
+<li><p>Install Nextcloud Server</p></li>
+<li><p>Administer and manage their instance</p></li>
+<li><p>Optimize server performance</p></li>
+</ul>
+<p>For documentation on Nextcloud web, desktop, or mobile clients, see:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.nextcloud.com/server/33/user_manual/en/">Nextcloud User Manual</a></p></li>
 <li><p><a class="reference external" href="https://docs.nextcloud.com/desktop/latest/">Nextcloud Desktop Client</a></p></li>
 </ul>
+<p>For documentation on development topics, see:</p>
+<ul class="simple">
+<li><p>The individual repositories on GitHub within <a class="reference external" href="https://github.com/nextcloud/">the &#64;nextcloud organization</a></p></li>
+<li><p><a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/">Nextcloud Development Manual</a></p></li>
+</ul>
+</section>
+<section id="core-components">
+<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading"></a></h2>
+<p>Nextcloud includes:</p>
+<ul class="simple">
+<li><p>Nextcloud Server (backend running on Linux)</p></li>
+<li><p>A responsive, integrated web client</p></li>
+<li><p>Cross-platform desktop clients (Windows, macOS, and Linux) for file synchronization and local access</p></li>
+<li><p>Dedicated mobile clients (Android and iOS)</p></li>
+<li><p>An extensive app ecosystem for expanded functionality</p></li>
+</ul>
+</section>
+<section id="editions">
+<h2>Editions<a class="headerlink" href="#editions" title="Link to this heading"></a></h2>
+<p>Nextcloud Server is available in two editions:</p>
+<ul class="simple">
+<li><p><strong>Community:</strong> Community-supported (peer-to-peer help), 100% free.</p></li>
+<li><p><strong>Enterprise:</strong> Supported by core developers or authorized partners, with official packaging, extensive enterprise-specific documentation, and support options.</p></li>
+</ul>
+<p><em>Both editions include all functionality and source code.</em></p>
+<p>Enterprise editions can include deployment guidance, phone and email access to Nextcloud developers, official support for integrations and add-ons, custom branding, and extended support cycles, among other benefits.</p>
+<p>This guide primarily focuses on the Community edition, but the information applies to both editions.</p>
+</section>
+<section id="further-resources">
+<h2>Further Resources<a class="headerlink" href="#further-resources" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Video tutorials, overviews, and conference presentations: <a class="reference external" href="https://www.youtube.com/c/Nextcloud">Nextcloud YouTube channel</a>.</p></li>
+<li><p>Latest news and updates: <a class="reference external" href="https://nextcloud.com/news/">Nextcloud blog</a>.</p></li>
+<li><p>Community support: <a class="reference external" href="https://help.nextcloud.com/">Nextcloud Help Forum</a>.</p></li>
+<li><p>Commercial support: <a class="reference external" href="https://nextcloud.com/">Nextcloud GmbH</a>.</p></li>
+<li><p>Documentation: <a class="reference external" href="https://docs.nextcloud.com/">Nextcloud Documentation</a>.</p></li>
+</ul>
+</section>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>To get started, see the Installation section.</p>
+<div class="admonition-who-develops-nextcloud admonition">
+<p class="admonition-title">Who develops Nextcloud?</p>
+<p>The development of the Nextcloud platform is a cooperative
+endeavor overseen by the core maintainers – primarily
+employed by Nextcloud GmbH – along with thousands of
+partners, providers, collaborators, project members, and
+community participants.</p>
+<p>The Nextcloud community includes everyone – from individual
+users and independent developers to large organizations.</p>
+<p>Community members share and discuss their experiences with
+the platform every day. They suggest improvements,
+collaborate on design, write code, create documentation,
+test for bugs, triage bug reports and enhancement ideas,
+support others, improve translations, and help fund and
+organize the logistics of a project this size. Most
+importantly, they use Nextcloud in their daily lives and
+work.</p>
+</div>
 </section>
 </section>
 
@@ -217,7 +269,7 @@ respective manuals:</p>
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -243,6 +295,8 @@ respective manuals:</p>
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -250,8 +304,6 @@ respective manuals:</p>
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

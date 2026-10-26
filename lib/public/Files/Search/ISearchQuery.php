@@ -62,7 +62,7 @@ interface ISearchQuery {
 	 * The fields to include in the search results
 	 *
 	 * @return list<string>
-	 * @since 32.0.12
+	 * @since 33.0.6
 	 */
 	public function getSelectFields(): array;
 }

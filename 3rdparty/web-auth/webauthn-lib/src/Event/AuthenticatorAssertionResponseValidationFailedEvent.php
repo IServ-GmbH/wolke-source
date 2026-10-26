@@ -9,7 +9,6 @@ use Throwable;
 use Webauthn\AuthenticatorAssertionResponse;
 use Webauthn\PublicKeyCredentialRequestOptions;
 use Webauthn\PublicKeyCredentialSource;
-use function sprintf;
 
 class AuthenticatorAssertionResponseValidationFailedEvent
 {

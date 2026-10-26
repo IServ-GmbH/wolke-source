@@ -1,5 +1,5 @@
 diff --git apps/federation/composer/composer/autoload_static.php apps/federation/composer/composer/autoload_static.php
-index 4754c83..52082e6 100644
+index edae4c8..3b29748 100644
 --- apps/federation/composer/composer/autoload_static.php
 +++ apps/federation/composer/composer/autoload_static.php
 @@ -25,6 +25,10 @@ class ComposerStaticInitFederation

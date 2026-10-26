@@ -13,6 +13,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use OCA\AppAPI\Db\DaemonConfig;
 use OCA\AppAPI\Db\ExApp;
+use OCA\AppAPI\Db\ExAppMapper;
 use OCA\AppAPI\DeployActions\ManualActions;
 use OCP\ICertificateManager;
 use OCP\IConfig;
@@ -106,7 +107,7 @@ class HarpService {
 				return $exApp->getAppid();
 			}
 		}
-		return "127.0.0.1";
+		return '127.0.0.1';
 	}
 
 	public function getHarpExApp(ExApp $exApp): array {
@@ -116,14 +117,10 @@ class HarpService {
 			'host' => $this->getExAppHost($exApp),
 			'port' => $exApp->getPort(),
 			'routes' => array_map(function ($route) {
-				$bruteforceList = json_decode($route['bruteforce_protection'], true);
-				if (!$bruteforceList) {
-					$bruteforceList = [];
-				}
 				return [
 					'url' => $route['url'],
 					'access_level' => $route['access_level'],
-					'bruteforce_protection' => $bruteforceList,
+					'bruteforce_protection' => ExAppMapper::parseJsonList($route['bruteforce_protection'] ?? null),
 				];
 			}, $exApp->getRoutes()),
 		];
@@ -156,5 +153,35 @@ class HarpService {
 		} catch (\Exception $e) {
 			$this->logger->error("HarpService: harpExAppUpdate ($addedStr) failed: " . $e->getMessage());
 		}
+	}
+
+	public function getHarpVersion(DaemonConfig $daemonConfig): ?string {
+		if (!self::isHarp($daemonConfig->getDeployConfig())) {
+			return null;
+		}
+		$this->initGuzzleClient($daemonConfig);
+		$url = $this->buildHarpUrl($daemonConfig, '/info');
+		$this->logger->info('HarpService: getHarpVersion: ' . $url);
+
+		try {
+			$response = $this->guzzleClient->get($url);
+			$data = json_decode($response->getBody()->getContents(), true);
+			if (isset($data['version'])) {
+				if (gettype($data['version']) === 'double') {
+					return $this->versionFloatToString($data['version']);
+				}
+				return (string) $data['version'];
+			}
+			return null;
+		} catch (\Exception $e) {
+			$this->logger->error('HarpService: getHarpVersion failed: ' . $e->getMessage());
+			return null;
+		}
+	}
+
+	private function versionFloatToString(float $version): string {
+		// If the Harp version was reported as a float, e.g. `4.2`, convert it to the string "4.2.0".
+		// We use number_format to avoid potential issues from locale-dependent float to string conversions.
+		return rtrim(number_format($version, 10, '.', ''), '0') . '.0';
 	}
 }

@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use Webauthn\AuthenticatorAttestationResponse;
 use Webauthn\PublicKeyCredentialCreationOptions;
-use function sprintf;
 
 class AuthenticatorAttestationResponseValidationFailedEvent
 {

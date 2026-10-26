@@ -290,7 +290,7 @@ class Tags implements ITags {
 			return false;
 		}
 		$this->logger->debug(__METHOD__ . ' Added an tag with ' . $tag->getId(), ['app' => 'core']);
-		return $tag->getId();
+		return $tag->getId() ?? false;
 	}
 
 	/**
@@ -538,7 +538,7 @@ class Tags implements ITags {
 				}
 			}
 
-			$this->dispatcher->dispatchTyped(new NodeAddedToFavorite(new \OC\User\LazyUser($this->user, $this->userManager), $objid, $path));
+			$this->dispatcher->dispatchTyped(new NodeAddedToFavorite($this->userManager->getExistingUser($this->user), $objid, $path));
 		}
 		return true;
 	}
@@ -583,7 +583,7 @@ class Tags implements ITags {
 				}
 			}
 
-			$this->dispatcher->dispatchTyped(new NodeRemovedFromFavorite(new \OC\User\LazyUser($this->user, $this->userManager), $objid, $path));
+			$this->dispatcher->dispatchTyped(new NodeRemovedFromFavorite($this->userManager->getExistingUser($this->user), $objid, $path));
 		}
 		return true;
 	}

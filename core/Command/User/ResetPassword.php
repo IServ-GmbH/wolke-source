@@ -8,7 +8,10 @@
 namespace OC\Core\Command\User;
 
 use OC\Core\Command\Base;
+use OC\Core\Events\BeforePasswordResetEvent;
+use OC\Core\Events\PasswordResetEvent;
 use OCP\App\IAppManager;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -24,6 +27,7 @@ class ResetPassword extends Base {
 	public function __construct(
 		protected IUserManager $userManager,
 		private IAppManager $appManager,
+		private IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct();
 	}
@@ -100,6 +104,7 @@ class ResetPassword extends Base {
 
 
 		try {
+			$this->eventDispatcher->dispatchTyped(new BeforePasswordResetEvent($user, $password));
 			$success = $user->setPassword($password);
 		} catch (\Exception $e) {
 			$output->writeln('<error>' . $e->getMessage() . '</error>');
@@ -107,6 +112,7 @@ class ResetPassword extends Base {
 		}
 
 		if ($success) {
+			$this->eventDispatcher->dispatchTyped(new PasswordResetEvent($user, $password));
 			$output->writeln('<info>Successfully reset password for ' . $username . '</info>');
 		} else {
 			$output->writeln('<error>Error while resetting password!</error>');
@@ -122,7 +128,7 @@ class ResetPassword extends Base {
 	 */
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
 		if ($argumentName === 'user') {
-			return array_map(static fn (IUser $user) => $user->getUID(), $this->userManager->search($context->getCurrentWord()));
+			return array_map(static fn (IUser $user) => $user->getUID(), $this->userManager->searchDisplayName($context->getCurrentWord()));
 		}
 		return [];
 	}

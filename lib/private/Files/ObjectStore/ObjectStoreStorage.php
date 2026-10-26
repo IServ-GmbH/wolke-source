@@ -16,6 +16,7 @@ use OC\Files\Cache\Cache;
 use OC\Files\Cache\CacheEntry;
 use OC\Files\Storage\PolyFill\CopyDirectory;
 use OC\Files\Storage\Wrapper\Encryption;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Cache\ICache;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\Cache\IScanner;
@@ -27,6 +28,9 @@ use OCP\Files\ObjectStore\IObjectStoreMetaData;
 use OCP\Files\ObjectStore\IObjectStoreMultiPartUpload;
 use OCP\Files\Storage\IChunkedFileWrite;
 use OCP\Files\Storage\IStorage;
+use OCP\IDBConnection;
+use OCP\Server;
+use Override;
 use Psr\Log\LoggerInterface;
 
 class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFileWrite {
@@ -39,6 +43,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 	private LoggerInterface $logger;
 	protected bool $validateWrites = true;
 	private bool $preserveCacheItemsOnDelete = false;
+	private ?int $totalSizeLimit = null;
 
 	/**
 	 * @param array $parameters
@@ -60,6 +65,9 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		}
 		if (isset($parameters['validateWrites'])) {
 			$this->validateWrites = (bool)$parameters['validateWrites'];
+		}
+		if (isset($parameters['totalSizeLimit'])) {
+			$this->totalSizeLimit = $parameters['totalSizeLimit'];
 		}
 
 		$this->logger = \OCP\Server::get(LoggerInterface::class);
@@ -585,9 +593,9 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 				$sourceEntry = $sourceStorage->getCache()->get($sourceInternalPath);
 				$sourceEntryData = $sourceEntry->getData();
 				// $sourceEntry['permissions'] here is the permissions from the jailed storage for the current
-				// user. Instead we use $sourceEntryData['scan_permissions'] that are the permissions from the
+				// user. Instead, we use $sourceEntryData['scan_permissions'] that are the permissions from the
 				// unjailed storage.
-				if (is_array($sourceEntryData) && array_key_exists('scan_permissions', $sourceEntryData)) {
+				if (is_array($sourceEntryData) && $sourceEntryData['scan_permissions'] !== null) {
 					$sourceEntry['permissions'] = $sourceEntryData['scan_permissions'];
 				}
 				$this->copyInner($sourceStorage->getCache(), $sourceEntry, $targetInternalPath);
@@ -798,6 +806,7 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 		if (!$this->objectStore instanceof IObjectStoreMultiPartUpload) {
 			throw new GenericFileException('Object store does not support multipart upload');
 		}
+
 		$cacheEntry = $this->getCache()->get($targetPath);
 		$urn = $this->getURN($cacheEntry->getId());
 
@@ -854,5 +863,47 @@ class ObjectStoreStorage extends \OC\Files\Storage\Common implements IChunkedFil
 
 	public function setPreserveCacheOnDelete(bool $preserve) {
 		$this->preserveCacheItemsOnDelete = $preserve;
+	}
+
+	public function free_space(string $path): int|float|false {
+		if ($this->totalSizeLimit === null) {
+			return FileInfo::SPACE_UNLIMITED;
+		}
+
+		// To avoid iterating all objects in the object store, calculate the sum of the cached sizes of the root folders of all object storages.
+		$qb = Server::get(IDBConnection::class)->getQueryBuilder();
+		$result = $qb->select($qb->func()->sum('f.size'))
+			->from('storages', 's')
+			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('f.storage', 's.numeric_id'))
+			->where($qb->expr()->like('s.id', $qb->createNamedParameter('object::%'), IQueryBuilder::PARAM_STR))
+			->andWhere($qb->expr()->eq('f.path', $qb->createNamedParameter('')))
+			->executeQuery();
+		$used = $result->fetchOne();
+		$result->closeCursor();
+
+		$available = $this->totalSizeLimit - $used;
+		if ($available < 0) {
+			$available = 0;
+		}
+
+		return $available;
+	}
+
+	#[Override]
+	public function getDirectDownloadById(string $fileId): array|false {
+		$expiration = new \DateTimeImmutable('+60 minutes');
+		$url = $this->objectStore->preSignedUrl($this->getURN((int)$fileId), $expiration);
+		return $url ? ['url' => $url, 'expiration' => $expiration->getTimestamp()] : false;
+	}
+
+	#[Override]
+	public function getDirectDownload(string $path): array|false {
+		$path = $this->normalizePath($path);
+		$cacheEntry = $this->getCache()->get($path);
+
+		if (!$cacheEntry || $cacheEntry->getMimeType() === FileInfo::MIMETYPE_FOLDER) {
+			return false;
+		}
+		return $this->getDirectDownloadById((string)$cacheEntry->getId());
 	}
 }

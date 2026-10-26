@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Model;
 
@@ -44,6 +46,7 @@ class CalendarShare implements IQueryRow, JsonSerializable {
 		return $this->sharePrincipalUri;
 	}
 
+
 	/**
 	 * @param int $type
 	 *
@@ -79,6 +82,7 @@ class CalendarShare implements IQueryRow, JsonSerializable {
 	public function getUser(): string {
 		return $this->user;
 	}
+
 
 	public function importFromDatabase(array $data): IQueryRow {
 		$this->setCalendarId($this->getInt('resourceid', $data))

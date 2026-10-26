@@ -2,7 +2,7 @@ OC.L10N.register(
     "user_ldap",
     {
     "Password change rejected. Hint: %s" : "Parola değişimi reddedildi. İpucu: %s",
-    "Mandatory field \"%s\" left empty" : "\"%s\" zorunlu alanı boş olamaz",
+    "Mandatory field \"%s\" left empty" : "\"%s\" zorunlu alanı boş bırakılamaz",
     "A password is given, but not an LDAP agent" : "Bir parola belirtilmiş ancak bir LDAP aracısı değil",
     "No password is given for the user agent" : "Kullanıcı uygulaması için bir parola belirtilmemiş",
     "No LDAP base DN was given" : "LDAP base DN değeri belirtilmemiş",
@@ -26,6 +26,8 @@ OC.L10N.register(
     "Invalid LDAP UUIDs" : "LDAP UUID değerleri geçersiz",
     "None found" : "Herhangi bir şey bulunamadı",
     "Invalid UUIDs of LDAP accounts or groups have been found. Please review your \"Override UUID detection\" settings in the Expert part of the LDAP configuration and use \"occ ldap:update-uuid\" to update them." : "LDAP hesapları ya da grupları için geçersiz UUID değerleri bulundu. Lütfen LDAP yapılandırmasının Uzman bölümündeki \"UUID algılaması değiştirilsin\" seçeneğini gözden geçirin ve bunları güncellemek için \"occ ldap:update-uuid\" komutunu kullanın.",
+    "LDAP" : "LDAP",
+    "LDAP configuration" : "LDAP yapılandırması",
     "_%n group found_::_%n groups found_" : ["%n grup bulundu","%n grup bulundu"],
     "> 1000 groups found" : "> 1000 grup bulundu",
     "> 1000 users found" : "> 1000 kullanıcı bulundu",
@@ -55,6 +57,8 @@ OC.L10N.register(
     "Base User Tree" : "Temel Kullanıcı Ağacı",
     "Optional; one attribute per line" : "İsteğe bağlı; her satıra bir öznitelik",
     "User Search Attributes" : "Kullanıcı arama öznitelikleri",
+    "User Active/Inactive Attribute" : "Kullanıcı Etkin/Etkisiz özniteliği",
+    "User attribute whether user is active or inactive, should be `TRUE` if active, `FALSE` if not." : "Kullanıcının etkin ya da etkisiz olup olmadığı kullanıcı özniteliği. Etkinse `TRUE`, etkisizse `FALSE` olmalıdır.",
     "When switched on, users imported from LDAP which are then missing will be disabled" : "Açıldığında, LDAP üzerinden içe aktarılmış ancak daha sonra kaybolmuş kullanıcılar kullanımdan kaldırılır",
     "Disable users missing from LDAP" : "LDAP üzerinde bulunmayan kullanıcılar kullanımdan kaldırılsın",
     "Group Display Name Field" : "Görüntülenecek Grup Adı Alanı",
@@ -66,7 +70,7 @@ OC.L10N.register(
     "Dynamic Group Member URL" : "Devingen Grup Üye Adresi",
     "The LDAP attribute that on group objects contains an LDAP search URL that determines what objects belong to the group. (An empty setting disables dynamic group membership functionality.)" : "Bu grup nesneleri üzerindeki LDAP özniteliğinde, gruba hangi nesnelerin ait olduğunu bulan bir LDAP arama adresi bulunuyor (seçenek boş bırakıldığında dinamik grup üyeliği özelliği kapatılır).",
     "When switched on, groups that contain groups are supported. (Only works if the group member attribute contains DNs.)" : "Açılırsa, gruplar içinde gruplar desteklenir (Yalnızca grup üyesi özniteliğinde DN bulunuyorsa çalışır).",
-    "Nested Groups" : "İç İçe Gruplar",
+    "Nested Groups" : "Alt alta gruplar",
     "Paging chunksize" : "Sayfalandırma yığın boyutu",
     "Chunksize used for paged LDAP searches that may return bulky results like user or group enumeration. (Setting it 0 disables paged LDAP searches in those situations.)" : "Yığın boyutu, kullanıcı ya da grup listeleri gibi, çok sayıda sonuç verebilen sayfalandırılmış LDAP aramaları için kullanılır (0 olarak ayarlandığında bu durumlarda sayfalandırılmış LDAP aramaları kapatılır).",
     "Allow LDAP users to change their password and allow Super Administrators and Group Administrators to change the password of their LDAP users. Only works when access control policies are configured accordingly on the LDAP server. As passwords are sent in plaintext to the LDAP server, transport encryption must be used and password hashing should be configured on the LDAP server." : "LDAP kullanıcıları kendi parolalarını değiştirebilir ve Süper Yöneticiler ile Grup Yöneticileri kendi LDAP kullanıcılarının parolalarını değiştirebilir. Yalnızca erişim denetimi ilkeleri LDAP sunucusuna uygun olarak yapılandırılmış ise çalışır. Parolalar LDAP sunucusuna düz yazı biçiminde aktarıldığından, LDAP sunucusu üzerinde aktarım şifrelemesi ve parola karması kullanılmalıdır.",
@@ -133,7 +137,7 @@ OC.L10N.register(
     "Allows login against an email attribute. 'mail' and 'mailPrimaryAddress' allowed." : "E-posta adresi ile oturum açılmasını sağlar. 'mail' ve 'mailPrimaryAddress' kullanılabilir.",
     "LDAP/AD Email Address:" : "LDAP/AD e-posta adresi:",
     "Other Attributes:" : "Diğer öznitelikler:",
-    "Defines the filter to apply, when login is attempted. `%%uid` replaces the username in the login action. Example: `uid=%%uid`" : "Oturum açma girişiminde uygulanacak süzgeci tanımlar. Oturum açma işleminde `%%uid` kullanıcı adı ile değiştirilir. Örnek: `uid=%%uid`",
+    "Defines the filter to apply, when login is attempted. `%uid` replaces the username in the login action. Example: `uid=%uid`" : "Oturum açma girişiminde uygulanacak süzgeci tanımlar. `%uid`, oturum açılırken kullanıcı adı ile değiştirilir. Örnek: `uid=%uid`",
     "Attempts to receive a DN for the given login name and the current login filter" : "Belirtilen kullanıcı adı ve geçerli oturum açma süzgeci için bir etki alanı adı almayı dener",
     "Test Login name" : "Kullanıcı adını sına",
     "Verify settings" : "Ayarları doğrula",
@@ -267,6 +271,7 @@ OC.L10N.register(
     "Pronouns Field" : "Hitap alanı",
     "User profile Pronouns will be set from the specified attribute" : "Kullanıcı profilindeki hitap alanının değeri belirtilen öznitelikten alınır",
     "UUID Attribute for Users:" : "Kullanıcılar için UUID Özniteliği:",
-    "UUID Attribute for Groups:" : "Gruplar için UUID Özniteliği:"
+    "UUID Attribute for Groups:" : "Gruplar için UUID Özniteliği:",
+    "Defines the filter to apply, when login is attempted. `%%uid` replaces the username in the login action. Example: `uid=%%uid`" : "Oturum açma girişiminde uygulanacak süzgeci tanımlar. Oturum açma işleminde `%%uid` kullanıcı adı ile değiştirilir. Örnek: `uid=%%uid`"
 },
 "nplurals=2; plural=(n > 1);");

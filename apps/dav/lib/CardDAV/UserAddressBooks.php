@@ -9,11 +9,12 @@ declare(strict_types=1);
  */
 namespace OCA\DAV\CardDAV;
 
+use OCA\DAV\AppInfo\Application;
 use OCA\DAV\AppInfo\PluginManager;
 use OCA\DAV\CardDAV\Integration\ExternalAddressBook;
 use OCA\DAV\CardDAV\Integration\IAddressBookProvider;
+use OCA\DAV\ConfigLexicon;
 use OCA\Federation\TrustedServers;
-use OCP\AppFramework\QueryException;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -32,14 +33,9 @@ use Sabre\DAV\MkCol;
 use function array_map;
 
 class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
-	/** @var IL10N */
-	protected $l10n;
-
-	/** @var IConfig */
-	protected $config;
-
-	/** @var IAppConfig */
-	protected $appConfig;
+	protected IL10N $l10n;
+	protected IConfig $config;
+	protected IAppConfig $appConfig;
 
 	public function __construct(
 		Backend\BackendInterface $carddavBackend,
@@ -66,7 +62,7 @@ class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 		$addressBooks = $this->carddavBackend->getAddressBooksForUser($this->principalUri);
 		// add the system address book
 		$systemAddressBook = null;
-		$systemAddressBookExposed = $this->appConfig->getValueBool('dav', 'system_addressbook_exposed', true);
+		$systemAddressBookExposed = $this->appConfig->getValueBool(Application::APP_ID, ConfigLexicon::SYSTEM_ADDRESSBOOK_EXPOSED);
 		if ($systemAddressBookExposed && is_string($principal) && $principal !== 'principals/system/system' && $this->carddavBackend instanceof CardDavBackend) {
 			$systemAddressBook = $this->carddavBackend->getAddressBooksByUri('principals/system/system', 'system');
 			if ($systemAddressBook !== null) {
@@ -86,7 +82,7 @@ class UserAddressBooks extends \Sabre\CardDAV\AddressBookHome {
 				try {
 					$trustedServers = Server::get(TrustedServers::class);
 					$request = Server::get(IRequest::class);
-				} catch (QueryException|NotFoundExceptionInterface|ContainerExceptionInterface $e) {
+				} catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
 					// nothing to do, the request / trusted servers don't exist
 				}
 				if ($addressBook['principaluri'] === 'principals/system/system') {

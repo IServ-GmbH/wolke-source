@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App: Local Text-To-Speech (text2speech_kokoro) &mdash; Nextcloud 32 Administration Manual</title>
+  <title>App: Local Text-To-Speech (text2speech_kokoro) &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -30,7 +30,7 @@
     <script src="../_static/js/versions.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="App: Live Transcription in Nextcloud Talk (live_transcription)" href="app_live_transcription.html" />
+    <link rel="next" title="App: Live Transcription and Translation in Nextcloud Talk (live_transcription)" href="app_live_transcription.html" />
     <link rel="prev" title="App: Summary Bot (Talk chat summarize bot)" href="app_summary_bot.html" />
    
   <meta name="robots" content="noindex, follow" />
@@ -115,9 +115,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#known-limitations">Known Limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription in Nextcloud Talk (live_transcription)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_live_transcription.html">App: Live Transcription and Translation in Nextcloud Talk (live_transcription)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ai_as_a_service.html">AI as a Service</a></li>
 <li class="toctree-l2"><a class="reference internal" href="insight_and_debugging.html">Insight and debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eu_ai_act.html">Legal: Compliance with EU AI Act</a></li>
 </ul>
 </li>
 </ul>
@@ -136,6 +137,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -160,7 +162,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -251,7 +253,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="app_summary_bot.html" class="btn btn-neutral float-left" title="App: Summary Bot (Talk chat summarize bot)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="app_live_transcription.html" class="btn btn-neutral float-right" title="App: Live Transcription in Nextcloud Talk (live_transcription)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="app_live_transcription.html" class="btn btn-neutral float-right" title="App: Live Transcription and Translation in Nextcloud Talk (live_transcription)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
@@ -271,7 +273,7 @@
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -297,6 +299,8 @@
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -304,8 +308,6 @@
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

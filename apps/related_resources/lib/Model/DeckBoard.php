@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Model;
 
@@ -24,6 +26,7 @@ class DeckBoard implements IQueryRow, JsonSerializable {
 	public function __construct() {
 	}
 
+
 	/**
 	 * @param int $boardId
 	 *
@@ -41,6 +44,7 @@ class DeckBoard implements IQueryRow, JsonSerializable {
 	public function getBoardId(): int {
 		return $this->boardId;
 	}
+
 
 	/**
 	 * @param string $boardName
@@ -77,6 +81,7 @@ class DeckBoard implements IQueryRow, JsonSerializable {
 	public function getOwner(): string {
 		return $this->owner;
 	}
+
 
 	/**
 	 * @param int $lastModified

@@ -1,5 +1,5 @@
 diff --git apps/workflowengine/appinfo/info.xml apps/workflowengine/appinfo/info.xml
-index ebbfb57..f924067 100644
+index 87a9243..4e06d2c 100644
 --- apps/workflowengine/appinfo/info.xml
 +++ apps/workflowengine/appinfo/info.xml
 @@ -46,7 +46,5 @@

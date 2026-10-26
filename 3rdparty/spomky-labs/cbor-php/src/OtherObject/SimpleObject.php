@@ -10,13 +10,12 @@ use CBOR\Utils;
 use InvalidArgumentException;
 use function chr;
 use function ord;
-use function strlen;
 
 final class SimpleObject extends Base implements Normalizable
 {
     public static function supportedAdditionalInformation(): array
     {
-        return [...range(0, 19), 24];
+        return array_merge(range(0, 19), [24]);
     }
 
     public static function create(int $value): self|FalseObject|TrueObject|NullObject|UndefinedObject
@@ -47,7 +46,7 @@ final class SimpleObject extends Base implements Normalizable
             if ($data === null) {
                 throw new InvalidArgumentException('Invalid simple value. Content data is missing.');
             }
-            if (strlen($data) !== 1) {
+            if (mb_strlen($data, '8bit') !== 1) {
                 throw new InvalidArgumentException('Invalid simple value. Content data is too long.');
             }
             if (ord($data) < 32) {

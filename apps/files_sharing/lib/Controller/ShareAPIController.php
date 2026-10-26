@@ -55,6 +55,7 @@ use OCP\IURLGenerator;
 use OCP\IUserManager;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
+use OCP\Mail\IEmailValidator;
 use OCP\Mail\IMailer;
 use OCP\Server;
 use OCP\Share\Exceptions\GenericShareException;
@@ -103,6 +104,7 @@ class ShareAPIController extends OCSController {
 		private IProviderFactory $factory,
 		private IMailer $mailer,
 		private ITagManager $tagManager,
+		private IEmailValidator $emailValidator,
 		private ?TrustedServers $trustedServers,
 		private ?string $userId = null,
 	) {
@@ -238,9 +240,8 @@ class ShareAPIController extends OCSController {
 			$result['expiration'] = $expiration->format('Y-m-d H:i:s');
 		}
 
-		$currentUserPermissions = $recipientNode?->getPermissions() ?? Constants::PERMISSION_ALL;
-		$userHasEnoughPermissions = ($currentUserPermissions & $share->getPermissions()) === $share->getPermissions();
-		$token = $userHasEnoughPermissions ? $share->getToken() : null;
+		$userHasEnoughPermissions = ($node->getPermissions() & $share->getPermissions()) === $share->getPermissions();
+		$token = $userHasEnoughPermissions && $this->canEditShare($share) ? $share->getToken() : null;
 
 		if ($share->getShareType() === IShare::TYPE_USER) {
 			$sharedWith = $this->userManager->get($share->getSharedWith());
@@ -333,16 +334,6 @@ class ShareAPIController extends OCSController {
 				/** @var array{share_with: string, share_with_displayname: string, share_with_link: string} $deckShare */
 				$deckShare = $this->getDeckShareHelper()->formatShare($share);
 				$result = array_merge($result, $deckShare);
-			} catch (ContainerExceptionInterface $e) {
-			}
-		} elseif ($share->getShareType() === IShare::TYPE_SCIENCEMESH) {
-			$result['share_with'] = $share->getSharedWith();
-			$result['share_with_displayname'] = '';
-
-			try {
-				/** @var array{share_with: string, share_with_displayname: string, token: string} $scienceMeshShare */
-				$scienceMeshShare = $this->getSciencemeshShareHelper()->formatShare($share);
-				$result = array_merge($result, $scienceMeshShare);
 			} catch (ContainerExceptionInterface $e) {
 			}
 		}
@@ -758,7 +749,7 @@ class ShareAPIController extends OCSController {
 			// Only share by mail have a recipient
 			if (is_string($shareWith) && $shareType === IShare::TYPE_EMAIL) {
 				// If sending a mail have been requested, validate the mail address
-				if ($share->getMailSend() && !$this->mailer->validateMailAddress($shareWith)) {
+				if ($share->getMailSend() && !$this->emailValidator->isValid($shareWith)) {
 					throw new OCSNotFoundException($this->l->t('Please specify a valid email address'));
 				}
 				$share->setSharedWith($shareWith);
@@ -827,12 +818,6 @@ class ShareAPIController extends OCSController {
 			} catch (ContainerExceptionInterface $e) {
 				throw new OCSForbiddenException($this->l->t('Sharing %s failed because the back end does not support room shares', [$node->getPath()]));
 			}
-		} elseif ($shareType === IShare::TYPE_SCIENCEMESH) {
-			try {
-				$this->getSciencemeshShareHelper()->createShare($share, $shareWith, $permissions, $expireDate ?? '');
-			} catch (ContainerExceptionInterface $e) {
-				throw new OCSForbiddenException($this->l->t('Sharing %s failed because the back end does not support ScienceMesh shares', [$node->getPath()]));
-			}
 		} else {
 			throw new OCSBadRequestException($this->l->t('Unknown share type'));
 		}
@@ -874,9 +859,8 @@ class ShareAPIController extends OCSController {
 		$circleShares = $this->shareManager->getSharedWith($this->userId, IShare::TYPE_CIRCLE, $node, -1, 0);
 		$roomShares = $this->shareManager->getSharedWith($this->userId, IShare::TYPE_ROOM, $node, -1, 0);
 		$deckShares = $this->shareManager->getSharedWith($this->userId, IShare::TYPE_DECK, $node, -1, 0);
-		$sciencemeshShares = $this->shareManager->getSharedWith($this->userId, IShare::TYPE_SCIENCEMESH, $node, -1, 0);
 
-		$shares = array_merge($userShares, $groupShares, $circleShares, $roomShares, $deckShares, $sciencemeshShares);
+		$shares = array_merge($userShares, $groupShares, $circleShares, $roomShares, $deckShares);
 
 		$filteredShares = array_filter($shares, function (IShare $share) {
 			return $share->getShareOwner() !== $this->userId && $share->getSharedBy() !== $this->userId;
@@ -1608,14 +1592,6 @@ class ShareAPIController extends OCSController {
 			}
 		}
 
-		if ($share->getShareType() === IShare::TYPE_SCIENCEMESH) {
-			try {
-				return $this->getSciencemeshShareHelper()->canAccessShare($share, $this->userId);
-			} catch (ContainerExceptionInterface $e) {
-				return false;
-			}
-		}
-
 		return false;
 	}
 
@@ -1705,7 +1681,6 @@ class ShareAPIController extends OCSController {
 		if ($share->getShareType() !== IShare::TYPE_GROUP
 			&& $share->getShareType() !== IShare::TYPE_ROOM
 			&& $share->getShareType() !== IShare::TYPE_DECK
-			&& $share->getShareType() !== IShare::TYPE_SCIENCEMESH
 		) {
 			return false;
 		}
@@ -1737,14 +1712,6 @@ class ShareAPIController extends OCSController {
 		if ($share->getShareType() === IShare::TYPE_DECK) {
 			try {
 				return $this->getDeckShareHelper()->canAccessShare($share, $this->userId);
-			} catch (ContainerExceptionInterface $e) {
-				return false;
-			}
-		}
-
-		if ($share->getShareType() === IShare::TYPE_SCIENCEMESH) {
-			try {
-				return $this->getSciencemeshShareHelper()->canAccessShare($share, $this->userId);
 			} catch (ContainerExceptionInterface $e) {
 				return false;
 			}
@@ -1790,7 +1757,6 @@ class ShareAPIController extends OCSController {
 			'ocMailShare' => IShare::TYPE_EMAIL,
 			'ocRoomShare' => null,
 			'deck' => IShare::TYPE_DECK,
-			'sciencemesh' => IShare::TYPE_SCIENCEMESH,
 		];
 
 		// Add federated sharing as a provider only if it's allowed
@@ -1904,7 +1870,6 @@ class ShareAPIController extends OCSController {
 			IShare::TYPE_CIRCLE,
 			IShare::TYPE_ROOM,
 			IShare::TYPE_DECK,
-			IShare::TYPE_SCIENCEMESH
 		];
 
 		// Should we assume that the (currentUser) viewer is the owner of the node !?
@@ -2060,9 +2025,6 @@ class ShareAPIController extends OCSController {
 		// DECK SHARES
 		$deckShares = $this->shareManager->getSharesBy($this->userId, IShare::TYPE_DECK, $path, $reshares, -1, 0);
 
-		// SCIENCEMESH SHARES
-		$sciencemeshShares = $this->shareManager->getSharesBy($this->userId, IShare::TYPE_SCIENCEMESH, $path, $reshares, -1, 0);
-
 		// FEDERATION
 		if ($this->shareManager->outgoingServer2ServerSharesAllowed()) {
 			$federatedShares = $this->shareManager->getSharesBy($this->userId, IShare::TYPE_REMOTE, $path, $reshares, -1, 0);
@@ -2075,7 +2037,7 @@ class ShareAPIController extends OCSController {
 			$federatedGroupShares = [];
 		}
 
-		return array_merge($userShares, $groupShares, $linkShares, $mailShares, $circleShares, $roomShares, $deckShares, $sciencemeshShares, $federatedShares, $federatedGroupShares);
+		return array_merge($userShares, $groupShares, $linkShares, $mailShares, $circleShares, $roomShares, $deckShares, $federatedShares, $federatedGroupShares);
 	}
 
 

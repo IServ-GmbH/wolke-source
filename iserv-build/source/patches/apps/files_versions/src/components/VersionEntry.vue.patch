@@ -1,0 +1,45 @@
+diff --git apps/files_versions/src/components/VersionEntry.vue apps/files_versions/src/components/VersionEntry.vue
+index 5effd42..25a587c 100644
+--- apps/files_versions/src/components/VersionEntry.vue
++++ apps/files_versions/src/components/VersionEntry.vue
+@@ -8,7 +8,7 @@
+ 		:forceDisplayActions="true"
+ 		:actions-aria-label="t('files_versions', 'Actions for version from {versionHumanExplicitDate}', { versionHumanExplicitDate })"
+ 		:data-files-versions-version="version.fileVersion"
+-		:href="downloadURL"
++		:href="isDownloadable ? downloadURL : undefined"
+ 		@click="click">
+ 		<!-- Icon -->
+ 		<template #icon>
+@@ -136,6 +136,7 @@ import type { INode } from '@nextcloud/files'
+ import type { Version } from '../utils/versions.ts'
+ 
+ import { getCurrentUser } from '@nextcloud/auth'
++import { showInfo } from '@nextcloud/dialogs'
+ import { formatFileSize, Permission } from '@nextcloud/files'
+ import { loadState } from '@nextcloud/initial-state'
+ import { getCanonicalLocale, t } from '@nextcloud/l10n'
+@@ -244,6 +245,11 @@ const hasUpdatePermissions = computed(() => {
+ })
+ 
+ const isDownloadable = computed(() => {
++	// Configuration option to disable download buttons
++	if (window.OC?.appConfig?.core?.disableFileDownloads) {
++		return false
++	}
++
+ 	if ((props.node.permissions & Permission.READ) === 0) {
+ 		return false
+ 	}
+@@ -294,6 +300,11 @@ async function deleteVersion() {
+ function click(event: MouseEvent) {
+ 	if (props.canView) {
+ 		event.preventDefault()
++	} else if (!isDownloadable.value) {
++		// The entry links to the download URL for files the viewer cannot open
++		event.preventDefault()
++		showInfo(t('files_versions', 'This version cannot be viewed.'))
++		return
+ 	}
+ 
+ 	emit('click', props.version)

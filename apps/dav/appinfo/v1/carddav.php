@@ -8,6 +8,7 @@
 // Backends
 use OC\KnownUser\KnownUserService;
 use OCA\DAV\AppInfo\PluginManager;
+use OCA\DAV\CalDAV\Principal\Collection as PrincipalCollection;
 use OCA\DAV\CalDAV\Proxy\ProxyMapper;
 use OCA\DAV\CardDAV\AddressBookRoot;
 use OCA\DAV\CardDAV\CardDavBackend;
@@ -30,6 +31,7 @@ use OCP\IRequest;
 use OCP\ISession;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory as IL10nFactory;
 use OCP\Security\Bruteforce\IThrottler;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
@@ -53,7 +55,7 @@ $principalBackend = new Principal(
 	Server::get(ProxyMapper::class),
 	Server::get(KnownUserService::class),
 	Server::get(IConfig::class),
-	\OC::$server->getL10NFactory(),
+	Server::get(IL10nFactory::class),
 	'principals/'
 );
 $db = Server::get(IDBConnection::class);
@@ -69,7 +71,7 @@ $cardDavBackend = new CardDavBackend(
 $debugging = Server::get(IConfig::class)->getSystemValue('debug', false);
 
 // Root nodes
-$principalCollection = new \Sabre\CalDAV\Principal\Collection($principalBackend);
+$principalCollection = new PrincipalCollection($principalBackend);
 $principalCollection->disableListing = !$debugging; // Disable listing
 
 $pluginManager = new PluginManager(\OC::$server, Server::get(IAppManager::class));
@@ -85,9 +87,10 @@ $nodes = [
 $server = new \Sabre\DAV\Server($nodes);
 $server::$exposeVersion = false;
 $server->httpRequest->setUrl(Server::get(IRequest::class)->getRequestUri());
+/** @var string $baseuri defined in remote.php */
 $server->setBaseUri($baseuri);
 // Add plugins
-$server->addPlugin(new MaintenancePlugin(Server::get(IConfig::class), \OC::$server->getL10N('dav')));
+$server->addPlugin(new MaintenancePlugin(Server::get(IConfig::class), \OCP\Server::get(IL10nFactory::class)->get('dav')));
 $server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 $server->addPlugin(new Plugin());
 
@@ -104,4 +107,4 @@ $server->addPlugin(Server::get(CardDavRateLimitingPlugin::class));
 $server->addPlugin(Server::get(CardDavValidatePlugin::class));
 
 // And off we go!
-$server->exec();
+$server->start();

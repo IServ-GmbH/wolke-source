@@ -79,7 +79,7 @@ If for some reason you need to manually restart the container with a new image, 
 
 ### 1. Clone Nextcloud and apply existing patches  
 - `rm -rf ~/nextcloud-server`
-- `./docker/cloudfiles/source/clone_and_apply_patches.sh 32.0.15 ~/nextcloud-server`  
+- `./docker/cloudfiles/source/clone_and_apply_patches.sh 33.0.10 ~/nextcloud-server`  
   - arg1: Nextcloud version currently used for the image  
     - You can find the current version in the [.env](.env) file.  
   - arg2: destination path for the repo that gets temporarily checked out.

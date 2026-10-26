@@ -9,7 +9,6 @@ namespace OC\Files\Storage\Wrapper;
 
 use OC\Encryption\Exceptions\ModuleDoesNotExistsException;
 use OC\Encryption\Util;
-use OC\Files\Cache\CacheEntry;
 use OC\Files\Filesystem;
 use OC\Files\Mount\Manager;
 use OC\Files\ObjectStore\ObjectStoreStorage;
@@ -22,7 +21,6 @@ use OCP\Encryption\IFile;
 use OCP\Encryption\IManager;
 use OCP\Encryption\Keys\IStorage;
 use OCP\Files;
-use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\GenericFileException;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage;
@@ -64,28 +62,18 @@ class Encryption extends Wrapper {
 		$fullPath = $this->getFullPath($path);
 
 		$info = $this->getCache()->get($path);
-		if ($info === false) {
-			/* Pass call to wrapped storage, it may be a special file like a part file */
-			return $this->storage->filesize($path);
-		}
+
+		// The size we tracked while writing the file is authoritative, even for
+		// files that have no cache entry (yet), e.g. *.part files or files that
+		// are only scanned once the caller is done writing them.
 		if (isset($this->unencryptedSize[$fullPath])) {
 			$size = $this->unencryptedSize[$fullPath];
 
 			// Update file cache (only if file is already cached).
 			// Certain files are not cached (e.g. *.part).
-			if (isset($info['fileid'])) {
-				if ($info instanceof ICacheEntry) {
-					$info['encrypted'] = $info['encryptedVersion'];
-				} else {
-					/**
-					 * @psalm-suppress RedundantCondition
-					 */
-					if (!is_array($info)) {
-						$info = [];
-					}
-					$info['encrypted'] = true;
-					$info = new CacheEntry($info);
-				}
+			if ($info !== false && isset($info['fileid'])) {
+				$isEncryptedInCache = !empty($info['encrypted']);
+				$info['encrypted'] = $info['encryptedVersion'];
 
 				if ($size !== $info->getUnencryptedSize()) {
 					$this->getCache()->update($info->getId(), [
@@ -95,6 +83,11 @@ class Encryption extends Wrapper {
 			}
 
 			return $size;
+		}
+
+		if ($info === false) {
+			/* Pass call to wrapped storage, it may be a special file like a part file */
+			return $this->getWrapperStorage()->filesize($path);
 		}
 
 		if (isset($info['fileid']) && $info['encrypted']) {
@@ -388,6 +381,7 @@ class Encryption extends Wrapper {
 		if ($unencryptedSize < 0
 			|| ($size > 0 && $unencryptedSize === $size)
 			|| $unencryptedSize > $size
+			|| ($unencryptedSize === 0 && $size > $this->util->getHeaderSize())
 		) {
 			// check if we already calculate the unencrypted size for the
 			// given path to avoid recursions
@@ -596,10 +590,26 @@ class Encryption extends Wrapper {
 
 			// Rename of the cache already happened, so we do the cleanup on the target
 			if ($sourceCacheEntry === false && $targetCacheEntry !== false) {
-				$encryptedVersion = $targetCacheEntry['encryptedVersion'];
 				$isRename = false;
+			}
+
+			if ($keepEncryptionVersion) {
+				// a 1:1 copy reuses the keys and the ciphertext of the source, so the
+				// target stays at the version of the source
+				if ($sourceCacheEntry !== false) {
+					$encryptedVersion = (int)($sourceCacheEntry['encryptedVersion'] ?? 0);
+				} elseif ($targetCacheEntry !== false) {
+					$encryptedVersion = (int)($targetCacheEntry['encryptedVersion'] ?? 0);
+				} else {
+					// a file that is not in the file cache, e.g. a part file, is at version 1
+					$encryptedVersion = 1;
+				}
 			} else {
-				$encryptedVersion = $sourceCacheEntry['encryptedVersion'];
+				// The target was written through the encryption stream, which signs the
+				// blocks with the version that follows the version of the file they
+				// replaced and records it on the target's cache entry. A target that has
+				// no cache entry was written at version 1.
+				$encryptedVersion = $targetCacheEntry === false ? 1 : (int)($targetCacheEntry['encryptedVersion'] ?? 0);
 			}
 
 			// In case of a move operation from an unencrypted to an encrypted
@@ -607,7 +617,7 @@ class Encryption extends Wrapper {
 			// correct value would be "1". Thus we manually set the value to "1"
 			// for those cases.
 			// See also https://github.com/owncloud/core/issues/23078
-			if ($encryptedVersion === 0 || !$keepEncryptionVersion) {
+			if ($encryptedVersion === 0) {
 				$encryptedVersion = 1;
 			}
 
@@ -891,7 +901,7 @@ class Encryption extends Wrapper {
 		}
 		$fullPath = $this->getFullPath($path);
 		$mountPointConfig = $this->mount->getOption('encrypt', true);
-		if ($mountPointConfig === false) {
+		if ($mountPointConfig === false || $mountPointConfig === '') {
 			return false;
 		}
 

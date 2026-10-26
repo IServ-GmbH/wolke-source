@@ -1,5 +1,5 @@
 diff --git apps/files_linkeditor/src/views/Editor.svelte apps/files_linkeditor/src/views/Editor.svelte
-index 6c571cb..b47af4a 100644
+index 80c6918..99b0f66 100644
 --- apps/files_linkeditor/src/views/Editor.svelte
 +++ apps/files_linkeditor/src/views/Editor.svelte
 @@ -55,17 +55,6 @@
@@ -19,4 +19,4 @@ index 6c571cb..b47af4a 100644
 -				</label>
  			{/if}
  		</div>
- 		<div class="oc-dialog-buttonrow onebutton urlvisit">
+ 		<div class="linkeditor-oc-dialog-buttonrow onebutton urlvisit">

@@ -7,7 +7,7 @@
   <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Windmill Workflows &mdash; Nextcloud 32 Administration Manual</title>
+  <title>Windmill Workflows &mdash; Nextcloud 33 Administration Manual</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -85,12 +85,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../webhook_listeners/index.html">Webhook Listeners</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Windmill Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#selecting-the-right-workspace">Selecting the right Workspace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-correct-nextcloud-url">Setting up the Correct Nextcloud URL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-a-workflow">Building a workflow</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#the-magic-listener-script">The magic listener script</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-workspace-connection">Setting up the workspace connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-workflow">Building a workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#nextcloud-scripts">Nextcloud Scripts</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#authentication">Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#passing-values-between-blocks">Passing values between blocks</a></li>
@@ -131,6 +127,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Maintenance</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../configuration_monitoring/index.html">Monitoring</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../maintenance/index.html">Maintenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../issues/index.html">Issues and troubleshooting</a></li>
 </ul>
@@ -155,7 +152,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../contents.html">Nextcloud 32 Administration Manual</a>
+          <a href="../contents.html">Nextcloud 33 Administration Manual</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -175,48 +172,38 @@
              
   <section id="windmill-workflows">
 <h1>Windmill Workflows<a class="headerlink" href="#windmill-workflows" title="Link to this heading"></a></h1>
-<p>Nextcloud integrates the Windmill workflow engine (<a class="reference external" href="https://www.windmill.dev/">https://www.windmill.dev/</a>) to allow advanced custom workflows interacting with your Nextcloud instance.</p>
+<p>Nextcloud integrates the <a class="reference external" href="https://www.windmill.dev/">Windmill workflow engine</a> to allow advanced custom workflows interacting with your Nextcloud instance.</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><p>Install Windmill</p>
-<ul>
-<li><p>Either as a standalone install or via the External App “Flow” in Nextcloud (see <a class="reference internal" href="../exapps_management/AppAPIAndExternalApps.html#ai-app-api"><span class="std std-ref">External Apps</span></a>)</p></li>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Set up a Windmill instance</dt><dd><ul>
+<li><p>This should be a stand-alone instance. The External App “Flow” (see <a class="reference internal" href="../exapps_management/AppAPIAndExternalApps.html#ai-app-api"><span class="std std-ref">External Apps</span></a>) made it possible to have a packaged instance installed in Nextcloud, but this is deprecated since Nextcloud 33. For more information, please check out the admin manual for Nextcloud 32.</p></li>
 </ul>
+</dd>
+</dl>
 </li>
 <li><p>Enable the <code class="docutils literal notranslate"><span class="pre">webhook_listeners</span></code> app that comes with Nextcloud</p></li>
 </ul>
-</div></blockquote>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>occ<span class="w"> </span>app:enable<span class="w"> </span>webhook_listeners
 </pre></div>
 </div>
+<ul class="simple">
+<li><p>Install the <a class="reference external" href="https://apps.nextcloud.com/apps/integration_windmill">Windmill integration</a></p></li>
+<li><p>Enable <a class="reference internal" href="../installation/source_installation.html#pretty-urls-label"><span class="std std-ref">Pretty URLs</span></a> in your Nextcloud instance</p></li>
+</ul>
 </section>
-<section id="selecting-the-right-workspace">
-<h2>Selecting the right Workspace<a class="headerlink" href="#selecting-the-right-workspace" title="Link to this heading"></a></h2>
-<p>With Windmill installed as an ExApp, the first time one visits Windmill’s web interface,
-make sure to select the right workspace on the first run:
-Only the pre-existing “nextcloud” workspace is hooked up to nextcloud’s internal event system,
-all other workspaces will need manual webhook setups for each workflow.
-If the wrong workspace is selected on the first run, it is always possible to switch workspace later in the left sidebar.</p>
-<img alt="Screenshot of the workspace selector screen when opening Windmill for the first time" src="../_images/windmill_initial_workspace_selection.png" />
-<p>If you wish to change to a different workspace at a later time, you can do so via the workspace selector in the left sidebar of Windmill.</p>
-<img alt="Screenshot of the workspace selector when a workspace is already opened" src="../_images/windmill_later_workspace_selection.png" />
-</section>
-<section id="setting-up-the-correct-nextcloud-url">
-<h2>Setting up the Correct Nextcloud URL<a class="headerlink" href="#setting-up-the-correct-nextcloud-url" title="Link to this heading"></a></h2>
-<p>During the initial installation, the ExApp Flow will create a <strong>Nextcloud Authentication Resource</strong> for AppAPI.</p>
-<p>This resource includes a <strong>baseUrl</strong> field, which specifies the URL that Windmill scripts/apps use to reach the Nextcloud instance. In most cases, this URL will be configured correctly. However, certain configurations and network topologies may result in an incorrect URL, which you will need to adjust manually.</p>
-<p>To set the correct URL, navigate to the Windmill interface, go to the <strong>Resources</strong> tab, locate the resource labeled <code class="docutils literal notranslate"><span class="pre">u/admin/exapp_resource</span></code>, click the three dots on the right, and select the “Edit” button.</p>
-<p>Next, navigate to <strong>Settings-&gt;Instance-&gt;Core</strong> in Windmill and check if the <strong>Base url</strong> for the Windmill instance is correct.</p>
-<p>If you are using DockerSocketProxy, the Base URL should be:</p>
-<blockquote>
-<div><p><cite>https://&lt;your-nextcloud-base-url&gt;/index.php/apps/app_api/proxy/flow</cite></p>
-</div></blockquote>
-<p>If you are using HaRP (as introduced in Nextcloud 32), the Base URL should be:</p>
-<blockquote>
-<div><p><cite>https://&lt;your-nextcloud-base-url&gt;/exapps/flow</cite></p>
-</div></blockquote>
+<section id="setting-up-the-workspace-connection">
+<h2>Setting up the workspace connection<a class="headerlink" href="#setting-up-the-workspace-connection" title="Link to this heading"></a></h2>
+<p>In Windmill, you have separate workspaces available. To enable Windmill to react to events happening on your Nextcloud instance, you need to connect a workspace to your Nextcloud connection. This is only possible for workspace admins.</p>
+<ul class="simple">
+<li><p>In Windmill, open the workspace settings of the workspace you want to connect to Nextcloud via Settings -&gt; Workspace</p></li>
+<li><p>Go to the Native Triggers tab and choose Nextcloud -&gt; Configure OAuth</p></li>
+<li><p>Follow the instructions to set up the OAuth connection</p></li>
+<li><p>Click on “Connect” and accept the OAuth connection <strong>with a Nextcloud admin account</strong> or an account that has webhook admin privileges</p></li>
+<li><p>If it shows “Connected”, the workspace connection is successfully set up.</p></li>
+</ul>
+<p>Every Flow configured in this workspace can now add Nextcloud triggers and scripts based on the credentials of the account you accepted the OAuth connection with.</p>
 </section>
 <section id="building-a-workflow">
 <h2>Building a workflow<a class="headerlink" href="#building-a-workflow" title="Link to this heading"></a></h2>
@@ -224,50 +211,109 @@ If the wrong workspace is selected on the first run, it is always possible to sw
 If you are using the ExApp-packaged Windmill, it will automatically register webhooks for the workflows you build using the following mechanism.
 If you are not using the ExApp-packaged windmill install then you will have to register
 webhooks for your workflows manually via the webhook_listeners API:
-see <a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
-<section id="the-magic-listener-script">
-<h3>The magic listener script<a class="headerlink" href="#the-magic-listener-script" title="Link to this heading"></a></h3>
-<p>The first script (after the “Input” block) in any workflow you build that should listen to a Nextcloud webhook must have “Summary” set to the exact, literal string <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code>. It must be an empty script with two parameters that you should fill statically: <code class="docutils literal notranslate"><span class="pre">events</span></code>, which is a list of event IDs to listen to and <code class="docutils literal notranslate"><span class="pre">filters</span></code> a filter condition that allows more fine grained filtering for which events should be used. The filter condition as well as the available events with their payloads is documented in <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">the webhook_listeners documentation</span></a>.</p>
-<p>You can copy the following Deno script for this:</p>
-<div class="highlight-typescript notranslate"><div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">(</span><span class="nx">events</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[],</span><span class="w"> </span><span class="nx">filters</span><span class="o">:</span><span class="w"> </span><span class="kt">object</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
-</pre></div>
-</div>
-<p>The webhook data will be made available on the flow “Input” block, <strong>not</strong> the <code class="docutils literal notranslate"><span class="pre">CORE:LISTEN_TO_EVENT</span></code> block. Updates to the webhook configuration take effect only when the flow is deployed. Consider disabling any schedule for the flow, since it will be started when a webhook is received.</p>
-</section>
+see <a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index">https://docs.nextcloud.com/server/33/developer_manual/_static/openapi.html#/operations/webhook_listeners-webhooks-index</a></p>
+<img alt="Screenshot of adding a Nextcloud trigger in a workflow" src="../_images/windmill_add_trigger.png" />
+<p>Now you can choose an event out of a drop-down list  of events that your flow should react to. You can additionally fill in some parameters:</p>
+<ul class="simple">
+<li><p><em>Event filters</em> allows more fine grained filtering for which events should be used. The filter condition as well as the available events with their payloads is documented in the <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">webhook_listeners documentation</span></a>.</p></li>
+<li><p>The <em>User ID filter</em> allows to define the user that can trigger a flow with their actions in Nextcloud. The webhook will only be called by requests from this user. Empty or null means no filtering.</p></li>
+<li><p>The <em>Headers</em> field allows to define an array of headers to be sent in a webhook call, which will mostly not be needed.</p></li>
+</ul>
+<p>You can add more than one trigger to a flow.</p>
 </section>
 <section id="nextcloud-scripts">
 <h2>Nextcloud Scripts<a class="headerlink" href="#nextcloud-scripts" title="Link to this heading"></a></h2>
 <p>Nextcloud makes available a variety of scripts to be used in Windmill for interfacing with Nextcloud apps. You can find them
 at <a class="reference external" href="https://hub.windmill.dev/integrations/nextcloud">https://hub.windmill.dev/integrations/nextcloud</a> and <a class="reference external" href="https://hub.windmill.dev/integrations/nextcloud/approvals">https://hub.windmill.dev/integrations/nextcloud/approvals</a>
 or in your windmill instance when selecting existing scripts for creating a new workflow.</p>
-<p>To synchronize the scripts with the ones provided by the Windmill hub,
-you can run a flow named “Synchronize Hub Resource types with instance” in the Windmill admin workspace.</p>
+<p>If you want to use a function that is not already represented there, you can easily write your own scripts using a skeleton script and our OCS API that provides lots of endpoints. You can check out the available endpoints in the <a class="reference external" href="https://docs.nextcloud.com/server/latest/developer_manual/_static/openapi.html">Nextcloud OCS API documentation</a> or you can install our <a class="reference external" href="https://apps.nextcloud.com/apps/ocs_api_viewer">OCS API Viewer app</a> and check it out directly in your Nextcloud.</p>
 <p>You can create your own Nextcloud-related scripts by taking one of the existing ones as example.
 In a script, when sending a request to Nextcloud, make sure that the <code class="docutils literal notranslate"><span class="pre">EX-APP-ID</span></code> header is set to <code class="docutils literal notranslate"><span class="pre">flow</span></code>.
 Your custom scripts can make requests to any endpoint of the
-<a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
-<p>All the scripts we provide have a set of common input parameters:</p>
-<ul class="simple">
-<li><p>nextcloudResource: This should be set to the path of the Windmill resource that was automatically created and contains what is necessary to authenticate against Nextcloud with the AppAPI authentication method. For example “u/wapp_user/appapi_nextcloud”. You can find this path by looking at the resource list in Windmill.</p></li>
-<li><p>userId: This is the ID of the user you want the request to be authenticated as.</p></li>
-<li><p>useAppApiAuth: This is a boolean to choose between using the AppAPI authentication or basic auth. More details in the next section.</p></li>
-</ul>
+<a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">wmill</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;windmill-client&quot;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">createClient</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">type</span><span class="w"> </span><span class="nx">Middleware</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s2">&quot;openapi-fetch&quot;</span><span class="p">;</span>
+
+<span class="nx">type</span><span class="w"> </span><span class="nx">Nextcloud</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="nx">baseUrl</span><span class="o">:</span><span class="w"> </span><span class="nx">string</span><span class="p">,</span>
+<span class="w">   </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="nx">string</span><span class="p">,</span>
+<span class="w">   </span><span class="nx">username</span><span class="o">:</span><span class="w"> </span><span class="nx">string</span>
+<span class="p">};</span>
+
+<span class="k">export</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">main</span><span class="p">(</span>
+<span class="w">   </span><span class="nx">nextcloud</span><span class="o">:</span><span class="w"> </span><span class="nx">Nextcloud</span><span class="p">,</span>
+<span class="w">   </span><span class="nx">$PARAMETER</span><span class="o">:</span><span class="w"> </span><span class="nx">$TYPE</span><span class="p">,</span>
+<span class="w">   </span><span class="c1">// add any input parameters you need here</span>
+<span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">   </span><span class="c1">// this part is the same for any script and should  not be changed</span>
+
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createClient</span><span class="o">&lt;</span><span class="nx">paths</span><span class="o">&gt;</span><span class="p">({</span><span class="w"> </span><span class="nx">baseUrl</span><span class="o">:</span><span class="w"> </span><span class="nx">nextcloud</span><span class="p">.</span><span class="nx">baseUrl</span><span class="w"> </span><span class="p">});</span>
+<span class="w">   </span><span class="kd">const</span><span class="w"> </span><span class="nx">authMiddleware</span><span class="o">:</span><span class="w"> </span><span class="nx">Middleware</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">async</span><span class="w"> </span><span class="nx">onRequest</span><span class="p">({</span><span class="w"> </span><span class="nx">request</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="c1">// fetch token, if it doesn’t exist</span>
+<span class="w">         </span><span class="c1">// add Authorization header to every request</span>
+<span class="w">         </span><span class="nx">request</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s2">&quot;Authorization&quot;</span><span class="p">,</span><span class="w"> </span><span class="sb">`Basic </span><span class="si">${</span><span class="nx">btoa</span><span class="p">(</span><span class="nx">nextcloud</span><span class="p">.</span><span class="nx">username</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">nextcloud</span><span class="p">.</span><span class="nx">password</span><span class="p">)</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="nx">request</span><span class="p">;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">   </span><span class="p">};</span>
+<span class="w">   </span><span class="nx">client</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">authMiddleware</span><span class="p">);</span>
+
+<span class="w">   </span><span class="c1">//starting here you can adapt the script</span>
+
+<span class="w">   </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">GET</span><span class="p">(</span><span class="s2">&quot;/ocs/v2.php/apps/$APP/$PATH/{$PATHPARAMETER}&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nx">header</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;OCS-APIRequest&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">         </span><span class="p">},</span>
+<span class="w">         </span><span class="nx">query</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">format</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="p">},</span>
+<span class="w">         </span><span class="nx">path</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">$PATHPARAMETER</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$VALUE&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="p">},</span>
+
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nx">$BODYPARAMETER</span><span class="o">:</span><span class="w"> </span><span class="nx">$VALUE</span><span class="p">,</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">   </span><span class="p">});</span>
+
+<span class="k">return</span><span class="w"> </span><span class="nx">data</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The endpoint path you have to fill in is provided in the API documentation.</p>
+<p>OCS uses two kinds of parameters: Path parameters that are part of the endpoint URL, and body parameters that are transmitted in the request body. In the example script, you can provide both kinds in the function parameters.</p>
+<p>Remember to also adapt the HTTP method (GET, POST, PUT etc.) if needed.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">data</span></code> variable receives the response of the HTTP request, so any data or error messages coming from the Nextcloud instance is available in there.</p>
 <section id="authentication">
 <h3>Authentication<a class="headerlink" href="#authentication" title="Link to this heading"></a></h3>
-<p>All bricks have the option to use “AppAPI Authentication” or normal authentication using a Nextcloud resource in Windmill.
-When using normal authentication you will need to provide the correct password or app password of the user
-on behalf of whom you want to execute the script. When using “AppAPI Authentication” you can impersonate any Nextcloud user.
-This will only work when using the ExApp-packaged version of windmill.</p>
+<p>All the scripts we provide have one input parameter in common: <em>nextcloud</em> needs to be an object of the type “Nextcloud” and contain what is necessary to authenticate against Nextcloud:</p>
+<ul class="simple">
+<li><p>baseUrl: the URL your instance is reachable at, e.g. <code class="code docutils literal notranslate"><span class="pre">https://example.cloud</span></code></p></li>
+<li><p>userId: the user id of the user the script should authenticate with</p></li>
+<li><p>token: a password or token for that user</p></li>
+</ul>
+<p>We advise to either add these credentials as a resource of the Nextcloud type to your workspace and refer to the resource in your script, or use the authentication credentials that are provided in the webhook callback.
+For every flow that is triggered by a Nextcloud event, there are 2 sets of temporary credentials included:</p>
+<ul class="simple">
+<li><p>the credentials for the user account that is saved in the initial OAuth connection, available as <code class="code docutils literal notranslate"><span class="pre">flow_input.authentication.owner</span></code></p></li>
+<li><p>the credentials for the user account that triggered the event with their action, available as <code class="code docutils literal notranslate"><span class="pre">flow_input.authentication.trigger</span></code></p></li>
+</ul>
+<p>These temporary authentication credentials are valid for one hour after triggering the event.</p>
 </section>
 <section id="passing-values-between-blocks">
 <h3>Passing values between blocks<a class="headerlink" href="#passing-values-between-blocks" title="Link to this heading"></a></h3>
 <p>When specifying script inputs you can either fill the parameters with static values or make references to the workflow input and the previous workflow steps.</p>
-<p>In order to reference the workflow input, use the <code class="docutils literal notranslate"><span class="pre">flow_input</span></code> variable.
-For example, <code class="docutils literal notranslate"><span class="pre">flow_input.event.form.hash</span></code> will reference the hash of a form from a nextcloud Forms event.</p>
+<p>In order to reference the workflow input (details about the event that triggered the webhook), use the <code class="docutils literal notranslate"><span class="pre">flow_input</span></code> variable.
+For example, <code class="docutils literal notranslate"><span class="pre">flow_input.event.form.hash</span></code> will reference the hash of a form from a nextcloud Forms event. As it is a JavaScript expression and not a static value, you have to switch the parameter input with the button next to it.</p>
+<img alt="Screenshot of adding a Nextcloud trigger in a workflow" src="../_images/windmill_js_expression.png" />
+<p>The fields available for each event are listed in the <a class="reference internal" href="../webhook_listeners/index.html#id1"><span class="std std-ref">webhook_listeners documentation</span></a>.</p>
 <p>Each step in a workflow is automatically assigned a letter identifier.
 In order to reference results from previous steps in your parameters, use the <code class="docutils literal notranslate"><span class="pre">results</span></code> variable with the id of the step
 to reference as a sub property. For example, use <code class="docutils literal notranslate"><span class="pre">results.e.submission.answers</span></code> to use the answers of of a form submission
-retrieved via the “Get form submission from Nextcloud Forms” script identified with the letter “e”.</p>
+retrieved via the “Get form submission from Nextcloud Forms” script identified with the letter “e”. You can identify the letters in the flow overview diagram.</p>
 </section>
 <section id="approval-suspend-steps">
 <h3>Approval/Suspend steps<a class="headerlink" href="#approval-suspend-steps" title="Link to this heading"></a></h3>
@@ -292,7 +338,7 @@ which allows creating a beautiful temporary approval page with a custom message 
 <p>If the Windmill Hub does not contain any script to perform the action you have in mind,
 you can take an existing Nextcloud script as example and create your own.
 Your custom scripts can make requests to any endpoint of the
-<a class="reference external" href="https://docs.nextcloud.com/server/32/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
+<a class="reference external" href="https://docs.nextcloud.com/server/33/developer_manual/_static/openapi.html">Nextcloud OCS API</a> .</p>
 </section>
 </section>
 </section>
@@ -322,7 +368,7 @@ Your custom scripts can make requests to any endpoint of the
 
   <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
-      ☁️ 32
+      ☁️ 33
       <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -348,6 +394,8 @@ Your custom scripts can make requests to any endpoint of the
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/33/admin_manual"
              
+             style="color: var(--dark-link-color);"
+             
           >
             33
           </a>
@@ -355,8 +403,6 @@ Your custom scripts can make requests to any endpoint of the
         
         <dd style="width: 32%">
           <a href="https://docs.nextcloud.com/server/32/admin_manual"
-             
-             style="color: var(--dark-link-color);"
              
           >
             32

@@ -8,14 +8,7 @@
 /** @var \OCP\IL10N $l */
 /** @var array $_ */
 
-script('settings', [
-	'usersettings',
-	'templates',
-	'federationsettingsview',
-	'federationscopemenu',
-	'settings/personalInfo',
-	'vue-settings-personal-info',
-]);
+\OCP\Util::addScript('settings', 'vue-settings-personal-info');
 ?>
 <?php if (!$_['isFairUseOfFreePushService']) : ?>
 	<div class="section">

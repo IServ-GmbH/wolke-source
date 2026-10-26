@@ -1,5 +1,5 @@
 diff --git apps/richdocuments/lib/Service/CapabilitiesService.php apps/richdocuments/lib/Service/CapabilitiesService.php
-index e66ce2321..473d33cf7 100644
+index fbf57613a..f9822c060 100644
 --- apps/richdocuments/lib/Service/CapabilitiesService.php
 +++ apps/richdocuments/lib/Service/CapabilitiesService.php
 @@ -106,7 +106,7 @@ class CapabilitiesService extends CachedRequestService {

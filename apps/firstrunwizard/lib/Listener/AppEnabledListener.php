@@ -13,15 +13,17 @@ use OCA\FirstRunWizard\Notification\AppHint;
 use OCP\App\Events\AppEnableEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use Override;
 
 /** @template-implements IEventListener<AppEnableEvent> */
 class AppEnabledListener implements IEventListener {
 
 	public function __construct(
-		private AppHint $appHint,
+		private readonly AppHint $appHint,
 	) {
 	}
 
+	#[Override]
 	public function handle(Event $event): void {
 		if (!$event instanceof AppEnableEvent) {
 			return;

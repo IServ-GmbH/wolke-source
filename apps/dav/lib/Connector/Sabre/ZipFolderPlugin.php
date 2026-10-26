@@ -38,6 +38,12 @@ class ZipFolderPlugin extends ServerPlugin {
 	 */
 	private ?Server $server = null;
 
+	/**
+	 * Whether handleDownload has fully streamed an archive for the current request.
+	 * Used by afterDownload to decide whether to suppress sabre/dav's own response logic.
+	 */
+	private bool $streamed = false;
+
 	public function __construct(
 		private Tree $tree,
 		private LoggerInterface $logger,
@@ -92,7 +98,7 @@ class ZipFolderPlugin extends ServerPlugin {
 	 * either by passing (multiple) `X-NC-Files: the-file` headers
 	 * or by setting a `files=JSON_ARRAY_OF_FILES` URL query.
 	 */
-	public function handleDownload(Request $request, Response $response): ?bool {
+	public function handleDownload(Request $request, Response $response): ?false {
 		if ($request->getHeader('X-Sabre-Original-Method') === 'HEAD') {
 			return null;
 		}
@@ -180,22 +186,23 @@ class ZipFolderPlugin extends ServerPlugin {
 			$this->streamNode($streamer, $node, $rootPath);
 		}
 		$streamer->finalize();
+		$this->streamed = true; // archive fully streamed
+
 		return false;
 	}
 
 	/**
 	 * Tell sabre/dav not to trigger its own response sending logic as the handleDownload will have already sent the response
 	 */
-	public function afterDownload(Request $request, Response $response): ?bool {
+	public function afterDownload(Request $request, Response $response): ?false {
 		if ($request->getHeader('X-Sabre-Original-Method') === 'HEAD') {
 			return null;
 		}
-		$node = $this->tree->getNodeForPath($request->getPath());
-		if (!($node instanceof Directory)) {
-			// only handle directories
+
+		if (!$this->streamed) {
 			return null;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 }

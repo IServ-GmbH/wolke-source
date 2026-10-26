@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+
 /**
  * SPDX-FileCopyrightText: 2022 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+
 
 namespace OCA\RelatedResources\Tools\Db;
 
@@ -31,6 +33,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	private string $defaultSelectAlias = '';
 	private array $defaultValues = [];
 
+
 	public function __construct() {
 		parent::__construct(
 			Server::get(ConnectionAdapter::class),
@@ -38,6 +41,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			Server::get(LoggerInterface::class)
 		);
 	}
+
 
 	/**
 	 * @param string $alias
@@ -56,6 +60,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	public function getDefaultSelectAlias(): string {
 		return $this->defaultSelectAlias;
 	}
+
 
 	/**
 	 * @return array
@@ -101,6 +106,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			$this->setMaxResults($limit);
 		}
 	}
+
 
 	/**
 	 * Limit the request to the Id
@@ -174,6 +180,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$this->limit('token', $token);
 	}
 
+
 	/**
 	 * Limit the request to the creation
 	 *
@@ -190,6 +197,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $this;
 	}
+
 
 	/**
 	 * @param string $field
@@ -213,6 +221,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		$this->andWhere($orX);
 	}
+
 
 	/**
 	 * @param int $timestamp
@@ -240,6 +249,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$this->andWhere($orX);
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param string $value
@@ -253,6 +263,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$this->andWhere($expr->iLike($field, $this->createNamedParameter($value)));
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param string $value
@@ -262,6 +273,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	public function like(string $field, string $value, string $alias = '', bool $cs = true): void {
 		$this->andWhere($this->exprLike($field, $value, $alias, $cs));
 	}
+
 
 	/**
 	 * @param string $field
@@ -357,6 +369,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$this->andWhere($this->exprLt($field, $value, $lte, $alias));
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param string $value
@@ -405,6 +418,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $expr->eq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 	}
+
 
 	/**
 	 * @param string $field
@@ -475,6 +489,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $orX;
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param array $values
@@ -505,6 +520,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $andX;
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param array $values
@@ -523,6 +539,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			$field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY)
 		);
 	}
+
 
 	/**
 	 * @param string $field
@@ -543,6 +560,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			$this->createNamedParameter(0, IQueryBuilder::PARAM_INT)
 		);
 	}
+
 
 	/**
 	 * @param string $field
@@ -588,6 +606,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		}
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param string $value
@@ -597,6 +616,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	public function unlike(string $field, string $value, string $alias = '', bool $cs = true): void {
 		$this->andWhere($this->exprUnlike($field, $value, $alias, $cs));
 	}
+
 
 	/**
 	 * @param string $field
@@ -672,6 +692,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		$this->andWhere($this->exprFilterBitwise($field, $flag, $alias));
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param string $value
@@ -694,6 +715,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			return $expr->notLike($func->lower($field), $func->lower($this->createNamedParameter($value)));
 		}
 	}
+
 
 	/**
 	 * @param string $field
@@ -721,6 +743,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		}
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param int $value
@@ -737,6 +760,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $expr->neq($field, $this->createNamedParameter($value, IQueryBuilder::PARAM_INT));
 	}
+
 
 	/**
 	 * @param string $field
@@ -807,6 +831,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $andX;
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param array $values
@@ -837,6 +862,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $orX;
 	}
 
+
 	/**
 	 * @param string $field
 	 * @param array $values
@@ -853,6 +879,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $expr->notIn($field, $this->createNamedParameter($values, IQueryBuilder::PARAM_STR_ARRAY));
 	}
+
 
 	/**
 	 * @param string $field
@@ -873,6 +900,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 			$this->createNamedParameter(0, IQueryBuilder::PARAM_INT)
 		);
 	}
+
 
 	/**
 	 * @param string $object
@@ -895,6 +923,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	public function asItems(string $object, array $params = []): array {
 		return $this->getRows([$this, 'parseSimpleSelectSql'], $object, $params);
 	}
+
 
 	/**
 	 * @param string $field
@@ -921,6 +950,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $this->getRows([$this, 'parseSimpleSelectSql'], $field, $params);
 	}
+
 
 	/**
 	 * @param array $data
@@ -964,6 +994,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $item;
 	}
 
+
 	/**
 	 * @param callable $method
 	 * @param string $object
@@ -973,7 +1004,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	 * @throws RowNotFoundException
 	 */
 	public function getRow(callable $method, string $object = '', array $params = []): IQueryRow {
-		$cursor = $this->execute();
+		$cursor = $this->executeQuery();
 		$data = $cursor->fetch();
 		$cursor->closeCursor();
 
@@ -984,6 +1015,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 		return $method($data, $this, $object, $params);
 	}
 
+
 	/**
 	 * @param callable $method
 	 * @param string $object
@@ -993,7 +1025,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 	 */
 	public function getRows(callable $method, string $object = '', array $params = []): array {
 		$rows = [];
-		$cursor = $this->execute();
+		$cursor = $this->executeQuery();
 		while ($data = $cursor->fetch()) {
 			try {
 				$rows[] = $method($data, $this, $object, $params);
@@ -1004,6 +1036,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $rows;
 	}
+
 
 	/**
 	 * @param string $table
@@ -1033,6 +1066,7 @@ class ExtendedQueryBuilder extends QueryBuilder {
 
 		return $this;
 	}
+
 
 	/**
 	 * @param array $fields

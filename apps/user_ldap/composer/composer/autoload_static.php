@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInitUser_LDAP
 {
     public static $prefixLengthsPsr4 = array (
-        'O' => 
+        'O' =>
         array (
             'OCA\\User_LDAP\\' => 14,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'OCA\\User_LDAP\\' => 
+        'OCA\\User_LDAP\\' =>
         array (
             0 => __DIR__ . '/..' . '/../lib',
         ),
@@ -45,6 +45,7 @@ class ComposerStaticInitUser_LDAP
         'OCA\\User_LDAP\\ConnectionFactory' => __DIR__ . '/..' . '/../lib/ConnectionFactory.php',
         'OCA\\User_LDAP\\Controller\\ConfigAPIController' => __DIR__ . '/..' . '/../lib/Controller/ConfigAPIController.php',
         'OCA\\User_LDAP\\Controller\\RenewPasswordController' => __DIR__ . '/..' . '/../lib/Controller/RenewPasswordController.php',
+        'OCA\\User_LDAP\\Controller\\WizardController' => __DIR__ . '/..' . '/../lib/Controller/WizardController.php',
         'OCA\\User_LDAP\\DataCollector\\LdapDataCollector' => __DIR__ . '/..' . '/../lib/DataCollector/LdapDataCollector.php',
         'OCA\\User_LDAP\\Db\\GroupMembership' => __DIR__ . '/..' . '/../lib/Db/GroupMembership.php',
         'OCA\\User_LDAP\\Db\\GroupMembershipMapper' => __DIR__ . '/..' . '/../lib/Db/GroupMembershipMapper.php',
@@ -102,6 +103,7 @@ class ComposerStaticInitUser_LDAP
         'OCA\\User_LDAP\\Settings\\Section' => __DIR__ . '/..' . '/../lib/Settings/Section.php',
         'OCA\\User_LDAP\\SetupChecks\\LdapConnection' => __DIR__ . '/..' . '/../lib/SetupChecks/LdapConnection.php',
         'OCA\\User_LDAP\\SetupChecks\\LdapInvalidUuids' => __DIR__ . '/..' . '/../lib/SetupChecks/LdapInvalidUuids.php',
+        'OCA\\User_LDAP\\Support\\SystemReportSection' => __DIR__ . '/..' . '/../lib/Support/SystemReportSection.php',
         'OCA\\User_LDAP\\UserPluginManager' => __DIR__ . '/..' . '/../lib/UserPluginManager.php',
         'OCA\\User_LDAP\\User\\DeletedUsersIndex' => __DIR__ . '/..' . '/../lib/User/DeletedUsersIndex.php',
         'OCA\\User_LDAP\\User\\Manager' => __DIR__ . '/..' . '/../lib/User/Manager.php',
@@ -110,6 +112,7 @@ class ComposerStaticInitUser_LDAP
         'OCA\\User_LDAP\\User_LDAP' => __DIR__ . '/..' . '/../lib/User_LDAP.php',
         'OCA\\User_LDAP\\User_Proxy' => __DIR__ . '/..' . '/../lib/User_Proxy.php',
         'OCA\\User_LDAP\\Wizard' => __DIR__ . '/..' . '/../lib/Wizard.php',
+        'OCA\\User_LDAP\\WizardFactory' => __DIR__ . '/..' . '/../lib/WizardFactory.php',
         'OCA\\User_LDAP\\WizardResult' => __DIR__ . '/..' . '/../lib/WizardResult.php',
     );
 

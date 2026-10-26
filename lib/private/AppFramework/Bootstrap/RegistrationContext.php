@@ -26,6 +26,7 @@ use OCP\Dashboard\IManager;
 use OCP\Dashboard\IWidget;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Template\ICustomTemplateProvider;
+use OCP\GlobalScale\IGlobalScaleService;
 use OCP\Http\WellKnown\IHandler;
 use OCP\Mail\Provider\IProvider as IMailProvider;
 use OCP\Notification\INotifier;
@@ -36,6 +37,7 @@ use OCP\SetupCheck\ISetupCheck;
 use OCP\Share\IPublicShareTemplateProvider;
 use OCP\SpeechToText\ISpeechToTextProvider;
 use OCP\Support\CrashReport\IReporter;
+use OCP\SystemReport\ISystemReportSection;
 use OCP\Talk\ITalkBackend;
 use OCP\Teams\ITeamResourceProvider;
 use OCP\TextProcessing\IProvider as ITextProcessingProvider;
@@ -136,6 +138,9 @@ class RegistrationContext {
 	/** @var ServiceRegistration<ISetupCheck>[] */
 	private array $setupChecks = [];
 
+	/** @var ServiceRegistration<ISystemReportSection>[] */
+	private array $systemReportSections = [];
+
 	/** @var PreviewProviderRegistration[] */
 	private array $previewProviders = [];
 
@@ -159,6 +164,9 @@ class RegistrationContext {
 
 	/** @var ServiceRegistration<IMailProvider>[] */
 	private $mailProviders = [];
+
+	/** @var class-string<IGlobalScaleService>|null */
+	private ?string $globalScaleService = null;
 
 	public function __construct(LoggerInterface $logger) {
 		$this->logger = $logger;
@@ -402,6 +410,13 @@ class RegistrationContext {
 				);
 			}
 
+			public function registerSystemReportSection(string $sectionClass): void {
+				$this->context->registerSystemReportSection(
+					$this->appId,
+					$sectionClass
+				);
+			}
+
 			public function registerDeclarativeSettings(string $declarativeSettingsClass): void {
 				$this->context->registerDeclarativeSettings(
 					$this->appId,
@@ -441,6 +456,13 @@ class RegistrationContext {
 				$this->context->registerConfigLexicon(
 					$this->appId,
 					$configLexiconClass
+				);
+			}
+
+			#[\Override]
+			public function registerGlobalScaleService(string $globalScaleServiceClass): void {
+				$this->context->registerGlobalScaleService(
+					$globalScaleServiceClass
 				);
 			}
 		};
@@ -616,6 +638,13 @@ class RegistrationContext {
 	}
 
 	/**
+	 * @psalm-param class-string<ISystemReportSection> $sectionClass
+	 */
+	public function registerSystemReportSection(string $appId, string $sectionClass): void {
+		$this->systemReportSections[] = new ServiceRegistration($appId, $sectionClass);
+	}
+
+	/**
 	 * @psalm-param class-string<IDeclarativeSettingsForm> $declarativeSettingsClass
 	 */
 	public function registerDeclarativeSettings(string $appId, string $declarativeSettingsClass): void {
@@ -655,6 +684,13 @@ class RegistrationContext {
 	 */
 	public function registerConfigLexicon(string $appId, string $configLexiconClass): void {
 		$this->configLexiconClasses[$appId] = $configLexiconClass;
+	}
+
+	/**
+	 * @param class-string<IGlobalScaleService> $class
+	 */
+	public function registerGlobalScaleService(string $class): void {
+		$this->globalScaleService = $class;
 	}
 
 	/**
@@ -975,6 +1011,13 @@ class RegistrationContext {
 	}
 
 	/**
+	 * @return ServiceRegistration<ISystemReportSection>[]
+	 */
+	public function getSystemReportSections(): array {
+		return $this->systemReportSections;
+	}
+
+	/**
 	 * @return ServiceRegistration<ITeamResourceProvider>[]
 	 */
 	public function getTeamResourceProviders(): array {
@@ -1030,5 +1073,12 @@ class RegistrationContext {
 		}
 
 		return \OCP\Server::get($this->configLexiconClasses[$appId]);
+	}
+
+	/**
+	 * @return ?class-string<IGlobalScaleService>
+	 */
+	public function getGlobalScaleService(): ?string {
+		return $this->globalScaleService;
 	}
 }

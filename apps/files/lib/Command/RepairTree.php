@@ -27,7 +27,7 @@ class RepairTree extends Command {
 	protected function configure(): void {
 		$this
 			->setName('files:repair-tree')
-			->setDescription('Try and repair malformed filesystem tree structures')
+			->setDescription('Try and repair malformed filesystem tree structures (may be necessary to run multiple times for nested malformations)')
 			->addOption('dry-run')
 			->addOption('storage-id', 's', InputOption::VALUE_OPTIONAL, 'If set, only repair files within the given storage numeric ID', null)
 			->addOption('path', 'p', InputOption::VALUE_OPTIONAL, 'If set, only repair files within the given path', null);
@@ -67,7 +67,7 @@ class RepairTree extends Command {
 						'path' => $row['parent_path'] . '/' . $row['name'],
 						'storage' => $row['parent_storage'],
 					]);
-					$query->execute();
+					$query->executeStatement();
 				}
 			}
 		}
@@ -85,14 +85,14 @@ class RepairTree extends Command {
 			->from('filecache')
 			->where($query->expr()->eq('storage', $query->createNamedParameter($storage)))
 			->andWhere($query->expr()->eq('path_hash', $query->createNamedParameter(md5($path))));
-		return $query->execute()->fetch(\PDO::FETCH_COLUMN);
+		return $query->executeQuery()->fetchOne();
 	}
 
 	private function deleteById(int $fileId): void {
 		$query = $this->connection->getQueryBuilder();
 		$query->delete('filecache')
 			->where($query->expr()->eq('fileid', $query->createNamedParameter($fileId)));
-		$query->execute();
+		$query->executeStatement();
 	}
 
 	private function findBrokenTreeBits(?string $storageId, ?string $path): array {
@@ -123,6 +123,6 @@ class RepairTree extends Command {
 			$query->andWhere($query->expr()->like('f.path', $query->createNamedParameter($path . '%')));
 		}
 
-		return $query->execute()->fetchAll();
+		return $query->executeQuery()->fetchAllAssociative();
 	}
 }

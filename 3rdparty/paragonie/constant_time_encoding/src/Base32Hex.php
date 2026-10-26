@@ -2,9 +2,6 @@
 declare(strict_types=1);
 namespace ParagonIE\ConstantTime;
 
-use Override;
-use function pack;
-
 /**
  *  Copyright (c) 2016 - 2022 Paragon Initiative Enterprises.
  *  Copyright (c) 2014 Steve "Sc00bz" Thomas (steve at tobtu dot com)
@@ -43,7 +40,6 @@ abstract class Base32Hex extends Base32
      * @param int $src
      * @return int
      */
-    #[Override]
     protected static function decode5Bits(int $src): int
     {
         $ret = -1;
@@ -64,7 +60,6 @@ abstract class Base32Hex extends Base32
      * @param int $src
      * @return int
      */
-    #[Override]
     protected static function decode5BitsUpper(int $src): int
     {
         $ret = -1;
@@ -85,7 +80,6 @@ abstract class Base32Hex extends Base32
      * @param int $src
      * @return string
      */
-    #[Override]
     protected static function encode5Bits(int $src): string
     {
         $src += 0x30;
@@ -93,7 +87,7 @@ abstract class Base32Hex extends Base32
         // if ($src > 0x39) $src += 0x61 - 0x3a; // 39
         $src += ((0x39 - $src) >> 8) & 39;
 
-        return pack('C', $src);
+        return \pack('C', $src);
     }
 
     /**
@@ -105,7 +99,6 @@ abstract class Base32Hex extends Base32
      * @param int $src
      * @return string
      */
-    #[Override]
     protected static function encode5BitsUpper(int $src): string
     {
         $src += 0x30;
@@ -113,6 +106,6 @@ abstract class Base32Hex extends Base32
         // if ($src > 0x39) $src += 0x41 - 0x3a; // 7
         $src += ((0x39 - $src) >> 8) & 7;
 
-        return pack('C', $src);
+        return \pack('C', $src);
     }
 }
